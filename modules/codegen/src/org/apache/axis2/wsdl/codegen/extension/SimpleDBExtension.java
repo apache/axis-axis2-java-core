@@ -18,8 +18,10 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompiler;
+import org.apache.axis2.schema.SchemaConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.wsdl.WSDLExtensibilityElement;
@@ -36,7 +38,7 @@ import java.util.Stack;
 import java.util.Vector;
 
 /**
- * Work in progress to test simple DataBinding with the XmlSchema lib
+ * This extension provides the
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
@@ -117,7 +119,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
             }else{
                 //get the processed model map and transfer it to the type mapper
-                //since the options mentiond that its
+                //since the options mentiond that its not writable, it should have
+                //populated the model map
                 Map processedModelMap = schemaCompiler.getProcessedModelMap();
                 Iterator processedkeys = processedModelMap.keySet().iterator();
                 QName qNameKey;
@@ -125,6 +128,20 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                     qNameKey = (QName) processedkeys.next();
                     mapper.addTypeMappingObject(qNameKey, processedModelMap.get(qNameKey));
                 }
+
+                Map processedMap = schemaCompiler.getProcessedElementMap();
+                processedkeys = processedMap.keySet().iterator();
+                while (processedkeys.hasNext()) {
+                    qNameKey = (QName) processedkeys.next();
+                    mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
+                }
+
+                //get the ADB template from the schema compilers property bag and set the
+                //template
+                configuration.putProperty(XSLTConstants.EXTERNAL_TEMPLATE_PROPERTY_KEY,
+                                          schemaCompiler.getCompilerProperties().getProperty(
+                                                  SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY));
+
             }
 
             //set the type mapper to the config
@@ -142,21 +159,24 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
         options.setOutputLocation(configuration.getOutputLocation());
         options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
 
-        options.setWrapClasses(configuration.isWrapClasses());
-        options.setWriteOutput(true);
+//        options.setWrapClasses(configuration.isWrapClasses());
+//        options.setWriteOutput(true);
 
         //todo this needs to be attended to later
         //default setting is to set the wrap status depending on whether it's
         //the server side or the client side
-//        if (configuration.isServerSide()){
-//            //for the serverside we generate unwrapped  by default
-//            options.setWrapClasses(false);
-//            //for the serverside we write the output
-//            options.setWriteOutput(true);
-//        }else{
-//            options.setWrapClasses(configuration.isWrapClasses());
-//            options.setWriteOutput(true);
-//            //options.setWriteOutput(false);
-//        }
+        if (configuration.isServerSide()){
+            //for the serverside we generate unwrapped  by default
+            options.setWrapClasses(false);
+            //for the serverside we write the output by default
+            options.setWriteOutput(true);
+        }else{
+            // for the client let the users preference be the word here
+            options.setWrapClasses(configuration.isWrapClasses());
+            //for the client side the default setting is not to write the
+            //output
+            options.setWriteOutput(false);
+            //options.setWriteOutput(false);
+        }
     }
 }

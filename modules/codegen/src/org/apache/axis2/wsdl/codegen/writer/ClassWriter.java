@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.URIResolver;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -159,12 +160,12 @@ public abstract class ClassWriter {
      * @param doc
      * @throws Exception
      */
-    public void parse(Document doc) throws Exception {
+    public void parse(Document doc, URIResolver resolver) throws Exception {
         if (!fileExists) {
             XSLTTemplateProcessor.parse(this.stream,
                     doc,
                     this.xsltStream,
-                    new XSLTIncludeResolver());
+                    resolver);
             this.stream.flush();
             this.stream.close();
             if ("java".equals(language) && outputFile != null) {

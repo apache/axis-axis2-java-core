@@ -118,7 +118,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @param key
      * @param value
      */
-    public void put(Object key, Object value) {
+    public void putProperty(Object key, Object value) {
         configurationProperties.put(key, value);
     }
 
@@ -128,7 +128,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @param key
      * @return
      */
-    public Object get(Object key) {
+    public Object getProperty(Object key) {
         return configurationProperties.get(key);
     }
 

@@ -21,6 +21,7 @@ import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
+import org.apache.axis2.wsdl.codegen.XSLTIncludeResolver;
 import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
 import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
@@ -54,8 +55,8 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.URIResolver;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,9 +84,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String SERVICE_XML_OUTPUT_FOLDER_NAME = "service_descriptors.";
 
 
-    protected InputStream xsltStream = null;
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
+    protected URIResolver reslover;
 
 
     /**
@@ -105,6 +106,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.configuration = configuration;
+        reslover = new XSLTIncludeResolver(this.configuration.getProperties());
     }
 
     /**
@@ -500,8 +502,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         writer.createOutFile(
                 model.getDocumentElement().getAttribute("package"),
                 model.getDocumentElement().getAttribute("name"));
-        writer.parse(
-                model);
+        //use the global resolver
+        writer.parse(model,reslover);
     }
 
 
@@ -1146,6 +1148,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "callbackname",
                 localPart + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
+
         //add the wrap classes flag
         if (configuration.isWrapClasses()) {
             addAttribute(doc,
@@ -1175,6 +1178,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         rootElement.appendChild(
                 createDOMElementforDatabinders(doc, binding));
 
+        //check for the special models in the mapper and if they are present process them
+        if (mapper.isObjectMappingPresent()){
+            processModelObjects(mapper.getAllMappedObjects(),rootElement,doc);
+        }
 
         doc.appendChild(rootElement);
 
@@ -1183,6 +1190,31 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
+    /**
+     *
+     * @param objectMappings
+     * @param root
+     * @param doc
+     */
+    private void processModelObjects(Map objectMappings,Element root,Document doc){
+        Iterator objectIterator = objectMappings.values().iterator();
+        while (objectIterator.hasNext()) {
+            Object o =  objectIterator.next();
+            if (o instanceof Document){
+              root.appendChild(doc.importNode(((Document)o).getDocumentElement(),false));
+            }else{
+                //oops we have no idea how to do this
+            }
+        }
+
+    }
+
+    /**
+     * Look for the SOAPVersion and add it
+     * @param binding
+     * @param doc
+     * @param rootElement
+     */
     protected void addSoapVersion(WSDLBinding binding, Document doc, Element rootElement) {
         //loop through the extensibility elements to get to the bindings element
         List extensibilityElementsList = binding.getExtensibilityElements();

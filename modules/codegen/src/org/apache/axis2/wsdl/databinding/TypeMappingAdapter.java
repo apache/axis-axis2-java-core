@@ -18,6 +18,7 @@ package org.apache.axis2.wsdl.databinding;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class TypeMappingAdapter implements TypeMapper {
 
@@ -33,6 +34,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     //counter variable to generate unique parameter ID's
     protected int counter = 0;
 
+    protected boolean isObject = false;
 
     //Upper limit for the paramete count
     protected static final int UPPER_PARAM_LIMIT = 1000;
@@ -91,13 +93,29 @@ public abstract class TypeMappingAdapter implements TypeMapper {
      * @see TypeMapper#addTypeMappingObject(javax.xml.namespace.QName, Object)
      */
     public void addTypeMappingObject(QName qname, Object value) {
+        isObject = true;
         qName2ObjectMap.put(qname, value);
     }
 
     /**
+     * @see org.apache.axis2.wsdl.databinding.TypeMapper#isObjectMappingPresent()
      * @return
      */
-    public HashMap getAllTypeMappings() {
+    public boolean isObjectMappingPresent() {
+        return isObject;
+    }
+
+    /**
+     * @see org.apache.axis2.wsdl.databinding.TypeMapper#getAllMappedNames()
+     */
+    public Map getAllMappedNames() {
         return qName2NameMap;
+    }
+
+    /**
+     * @see org.apache.axis2.wsdl.databinding.TypeMapper#getAllMappedObjects()
+     */
+    public Map getAllMappedObjects() {
+        return qName2ObjectMap;
     }
 }

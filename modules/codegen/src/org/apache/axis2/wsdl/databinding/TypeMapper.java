@@ -19,6 +19,7 @@ package org.apache.axis2.wsdl.databinding;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
+import java.util.Map;
 
 public interface TypeMapper {
 
@@ -26,6 +27,12 @@ public interface TypeMapper {
      * Default class name is the OMElement ?
      */
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+
+    /**
+     * returns whether the mapping is the object type or the normal class name type
+     * @return
+     */
+    public boolean isObjectMappingPresent();
 
     /**
      * Get the type mapping class name
@@ -71,4 +78,16 @@ public interface TypeMapper {
      * @see #getTypeMappingObject(javax.xml.namespace.QName)
      */
     public void addTypeMappingObject(QName qname, Object value);
+
+    /**
+     * @return a map containing all type mapping names
+     * i.e. Qname to  classname
+     */
+    public Map getAllMappedNames();
+
+    /**
+     * @return a map containing all type mapping model objects
+     * i.e. Qname to model objects
+     */
+    public Map getAllMappedObjects();
 }

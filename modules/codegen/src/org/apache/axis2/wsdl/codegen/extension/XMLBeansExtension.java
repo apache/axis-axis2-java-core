@@ -192,7 +192,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             configuration.setTypeMapper(mapper);
 
             // write the mapper to a file for later retriival
-            writeMappingsToFile(mapper.getAllTypeMappings());
+            writeMappingsToFile(mapper.getAllMappedNames());
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -261,7 +261,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
         }
 
-        configuration.put(XSLTConstants.BASE_64_PROPERTY_KEY, base64ElementQNamesList);
+        configuration.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY, base64ElementQNamesList);
     }
 
     /**

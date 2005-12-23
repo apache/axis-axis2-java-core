@@ -85,4 +85,13 @@ public class SchemaConstants {
     public static final Integer ANY_ARRAY_TYPE = new Integer(4);
 
 
+    public static class SchemaPropertyNames{
+
+        public static final String SCHEMA_COMPILER_PROPERTIES = "/org/apache/axis2/schema/schema-compile.properties";
+        public static final String BEAN_WRITER_KEY = "schema.bean.writer.class";
+        public static final String BEAN_WRITER_TEMPLATE_KEY = "schema.bean.writer.template";
+        public static final String BEAN_WRITER_TYPEMAP_KEY = "schema.bean.typemap";
+    }
+
+
 }

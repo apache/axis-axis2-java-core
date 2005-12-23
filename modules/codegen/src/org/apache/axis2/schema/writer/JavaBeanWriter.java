@@ -210,7 +210,7 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         namesList = new ArrayList();
-        javaBeanTemplateName = SchemaPropertyLoader.getUnwrappedBeanTemplate();
+        javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
 
 

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -74,10 +75,20 @@ public class SchemaCompiler {
     private static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
 
+    /**
+     * @return the processes element map
+     * includes the Qname of the element as the key and a
+     * String representing the fully qualified class name
+     */
     public HashMap getProcessedElementMap() {
         return processedElementMap;
     }
 
+    /**
+     * @return a map of Qname vs models. A model can be anything,
+     * ranging from a DOM document to a stream. This is taken from the
+     * writer and the schema compiler has no control over it
+     */
     public Map getProcessedModelMap() {
         return writer.getModelMap();
     }
@@ -183,6 +194,15 @@ public class SchemaCompiler {
         if (options.isWrapClasses()) {
             writer.writeBatch();
         }
+    }
+
+    /**
+     * @return the property map of the schemacompiler.
+     * In this case it would be the property map loaded from
+     * the configuration file
+     */
+    public Properties getCompilerProperties(){
+        return SchemaPropertyLoader.getPropertyMap() ;
     }
 
 
@@ -624,5 +644,7 @@ public class SchemaCompiler {
         }
 
     }
+
+
 
 }

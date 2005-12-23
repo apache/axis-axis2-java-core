@@ -7,6 +7,9 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.util.Properties;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,19 +28,44 @@ import java.io.InputStream;
 
 public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
 
+    private Map externalPropertyMap;
+
+    public XSLTIncludeResolver() {
+    }
+
+    public XSLTIncludeResolver(Map externalPropertyMap) {
+        this.externalPropertyMap = externalPropertyMap;
+    }
+
+    public void setExternalPropertyMap(Map externalPropertyMap) {
+        this.externalPropertyMap = externalPropertyMap;
+    }
 
     public Source resolve(String href, String base) throws TransformerException {
+        String templateName;
+        InputStream supporterTemplateStream;
         if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF.equals(href)){
-            String supporterTemplate = ConfigPropertyFileLoader.getDbSupporterTemplateName();
-            if(supporterTemplate!=null){
-                InputStream supporterTemplateStream = getClass().getResourceAsStream(supporterTemplate);
+            templateName = ConfigPropertyFileLoader.getDbSupporterTemplateName();
+            if(templateName!=null){
+                supporterTemplateStream = getClass().getResourceAsStream(templateName);
                 return new StreamSource(supporterTemplateStream);
             } else{
                 throw new TransformerException("Databinding template not found!");
             }
-
         }
 
-        return null;
+        if (externalPropertyMap.get(href)!=null){
+            templateName = externalPropertyMap.get(href).toString();
+            if(templateName!=null){
+                supporterTemplateStream = getClass().getResourceAsStream(templateName);
+                return new StreamSource(supporterTemplateStream);
+            }
+        }
+        //if nothing could be found return an empty source
+        return getEmptySource();
+    }
+
+    private Source getEmptySource(){
+        return new StreamSource(new ByteArrayInputStream("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>".getBytes()));
     }
 }

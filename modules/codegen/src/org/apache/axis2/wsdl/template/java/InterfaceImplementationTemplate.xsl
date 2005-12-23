@@ -1,7 +1,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
+    <!-- import the databinding template-->
     <xsl:include href="databindsupporter"/>
+    <!-- import the other templates for databinding -->
+    <xsl:include href="externalTemplate"/>
 
     <xsl:template match="/class">
         <xsl:variable name="interfaceName"><xsl:value-of select="@interfaceName"/></xsl:variable>
@@ -391,5 +394,5 @@
 
     </xsl:template>
 
-   
+
 </xsl:stylesheet>
