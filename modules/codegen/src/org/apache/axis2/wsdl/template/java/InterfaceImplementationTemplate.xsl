@@ -359,33 +359,6 @@
             </xsl:if>
         </xsl:for-each>
 
-        /**
-        *
-        */
-     private void optimizeContent(org.apache.axis2.om.OMElement element, javax.xml.namespace.QName[] qNames){
-        for (int i = 0; i &lt; qNames.length; i++) {
-            markElementsAsOptimized(qNames[i],element);
-        }
-    }
-
-        /**
-        *
-        */
-    private void markElementsAsOptimized(javax.xml.namespace.QName qName,org.apache.axis2.om.OMElement rootElt){
-        if (rootElt.getQName().equals(qName)){
-            //get the text node and mark it
-            org.apache.axis2.om.OMNode node = rootElt.getFirstOMChild();
-            if (node.getType()==org.apache.axis2.om.OMNode.TEXT_NODE){
-                ((org.apache.axis2.om.OMText)node).setOptimize(true);
-            }
-
-        }
-        java.util.Iterator childElements = rootElt.getChildElements();
-        while (childElements.hasNext()) {
-            markElementsAsOptimized(qName,(org.apache.axis2.om.OMElement)childElements.next());
-        }
-    }
-
         //<xsl:apply-templates/>
 
         }
