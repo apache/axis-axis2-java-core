@@ -22,6 +22,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -43,13 +44,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class HTTPWorker implements HttpRequestHandler {
+
     protected Log log = LogFactory.getLog(getClass().getName());
     private ConfigurationContext configurationContext;
+    // to store session object
+    private Hashtable sessionContextTable = new Hashtable();
 
     public HTTPWorker(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
@@ -70,9 +72,10 @@ public class HTTPWorker implements HttpRequestHandler {
             TransportOutDescription transportOut =
                     configurationContext.getAxisConfiguration().getTransportOut(
                             new QName(Constants.TRANSPORT_HTTP));
+            String cookieID = request.getCookieID();
+            SessionContext sessionContext = getSessionContext(cookieID);
 
-            msgContext = new MessageContext(
-                    configurationContext,
+            msgContext = new MessageContext(configurationContext, sessionContext,
                     configurationContext.getAxisConfiguration().getTransportIn(
                             new QName(Constants.TRANSPORT_HTTP)), transportOut);
             msgContext.setServerSide(true);
@@ -83,12 +86,12 @@ public class HTTPWorker implements HttpRequestHandler {
                 throw new AxisFault("HTTP version can not be Null");
             }
 
-            String httpVersion = null;
+//            String httpVersion = null;
 
             if (HttpVersion.HTTP_1_0.equals(ver)) {
-                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+//                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else if (HttpVersion.HTTP_1_1.equals(ver)) {
-                httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+//                httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
                 /**
                  * Transport Sender configuration via axis2.xml
@@ -129,7 +132,7 @@ public class HTTPWorker implements HttpRequestHandler {
                     response.addHeader(new Header("Content-Type", "text/html"));
                     response.setBodyString(
                             HTTPTransportReceiver.getServicesHTML(configurationContext));
-                    setResponseHeaders(conn, request, response, 0);
+                    setResponseHeaders(conn, request, response, 0, msgContext);
                     conn.writeResponse(response);
 
                     return true;
@@ -137,7 +140,7 @@ public class HTTPWorker implements HttpRequestHandler {
             } else {
                 ByteArrayOutputStream baosIn = new ByteArrayOutputStream();
                 byte[]                bytes = new byte[8192];
-                int size = 0;
+                int size;
 
                 while ((size = inStream.read(bytes)) > 0) {
                     baosIn.write(bytes, 0, size);
@@ -164,7 +167,8 @@ public class HTTPWorker implements HttpRequestHandler {
             }
 
             response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-            setResponseHeaders(conn, request, response, baos.toByteArray().length);
+            setResponseHeaders(conn, request, response, baos.toByteArray().length, msgContext);
+
             conn.writeResponse(response);
         } catch (Throwable e) {
             if (!(e instanceof java.net.SocketException)) {
@@ -183,7 +187,7 @@ public class HTTPWorker implements HttpRequestHandler {
                             "Internal server error");
                     engine.sendFault(faultContext);
                     response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-                    setResponseHeaders(conn, request, response, baos.toByteArray().length);
+                    setResponseHeaders(conn, request, response, baos.toByteArray().length, msgContext);
                     conn.writeResponse(response);
                 }
             } catch (SocketException e1) {
@@ -207,7 +211,6 @@ public class HTTPWorker implements HttpRequestHandler {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
         HashMap trasportOuts = axisConf.getTransportsOut();
         Iterator values = trasportOuts.values().iterator();
-        String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
         while (values.hasNext()) {
             TransportOutDescription transportOut = (TransportOutDescription) values.next();
@@ -217,7 +220,6 @@ public class HTTPWorker implements HttpRequestHandler {
 
             if (version != null) {
                 if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
-                    httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
                     Parameter transferEncoding =
                             transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
@@ -230,12 +232,6 @@ public class HTTPWorker implements HttpRequestHandler {
                                             HTTPConstants.HEADER_TRANSFER_ENCODING,
                                             HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED));
                         }
-                    } else {
-                        continue;
-                    }
-                } else {
-                    if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
-                        httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
                     }
                 }
             }
@@ -254,7 +250,7 @@ public class HTTPWorker implements HttpRequestHandler {
     }
 
     private void setResponseHeaders(final SimpleHttpServerConnection conn, SimpleRequest request,
-                                    SimpleResponse response, long contentLength) {
+                                    SimpleResponse response, long contentLength, MessageContext msgContext) {
         if (!response.containsHeader("Connection")) {
 
             // See if the the client explicitly handles connection persistence
@@ -284,6 +280,13 @@ public class HTTPWorker implements HttpRequestHandler {
                 }
             }
         }
+        //TODO : provide a way to enable and diable cookies
+        //setting the coolie in the out path
+        Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
+        if (cookieString != null) {
+            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE, (String) cookieString));
+            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE2, (String) cookieString));
+        }
 
         if (!response.containsHeader("Transfer-Encoding")) {
             if (contentLength != 0) {
@@ -293,4 +296,43 @@ public class HTTPWorker implements HttpRequestHandler {
             }
         }
     }
+
+    /**
+     * To get the sessioncontext , if its not there in the hashtable , new one will be created and
+     * added to the list.
+     *
+     * @param cookieID
+     * @return <code>SessionContext</code>
+     */
+    private synchronized SessionContext getSessionContext(String cookieID) {
+        SessionContext sessionContext = null;
+        if (!(cookieID == null || cookieID.trim().equals(""))) {
+            sessionContext = (SessionContext) sessionContextTable.get(cookieID);
+        }
+        if (sessionContext == null) {
+            String cookieString = UUIDGenerator.getUUID();
+            sessionContext = new SessionContext(null);
+            sessionContext.setCookieID(cookieString);
+            sessionContextTable.put(cookieString, sessionContext);
+        }
+        sessionContext.touch();
+        cleanupServiceGroupContexts();
+        return sessionContext;
+    }
+
+    private void cleanupServiceGroupContexts() {
+        synchronized (sessionContextTable) {
+            long currentTime = new Date().getTime();
+            Iterator sgCtxtMapKeyIter = sessionContextTable.keySet().iterator();
+            while (sgCtxtMapKeyIter.hasNext()) {
+                String cookieID = (String) sgCtxtMapKeyIter.next();
+                SessionContext sessionContext = (SessionContext) sessionContextTable.get(cookieID);
+                if ((currentTime - sessionContext.getLastTouchedTime()) >
+                        sessionContext.sessionContextTimeoutInterval) {
+                    sgCtxtMapKeyIter.remove();
+                }
+            }
+        }
+    }
+
 }

@@ -49,9 +49,9 @@ public class SimpleConnectionThread implements Runnable {
     private String name = null;
     transient boolean stopped;
 
+
     public SimpleConnectionThread(final String name, final SimpleHttpServerConnection conn,
-                                  final SimpleConnSet connpool, final HttpRequestHandler handler)
-            {
+                                  final SimpleConnSet connpool, final HttpRequestHandler handler) {
 
         // super(tg, name);
         if (conn == null) {
@@ -80,8 +80,6 @@ public class SimpleConnectionThread implements Runnable {
             conn = null;
         }
         this.stopped = true;
-
-
 
         // interrupt();
     }

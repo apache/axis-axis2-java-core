@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
  * HTTP protocol and message context constants.
  */
 public class HTTPConstants {
+
     public static final String HTTP_CONTENT_TYPE = "HTTP_CONTENT_TYPE";
     public static final String PROTOCOL_VERSION = "PROTOCOL";
     public static final String MEDIA_TYPE_X_WWW_FORM =

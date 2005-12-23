@@ -10,15 +10,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
@@ -67,9 +59,9 @@ public abstract class AbstractHTTPSender {
                                              TransportOutDescription proxySetting, HostConfiguration config, MessageContext msgCtx)
             throws AxisFault {
         Parameter proxyParam = proxySetting.getParameter(HTTPConstants.PROXY);
-        String usrName = null;
-        String domain = null;
-        String passwd = null;
+        String usrName;
+        String domain;
+        String passwd;
         Credentials proxyCred = null;
         String proxyHostName = null;
         int proxyPort = -1;
@@ -150,8 +142,8 @@ public abstract class AbstractHTTPSender {
                 NameValuePair charsetEnc =
                         headers[i].getParameterByName(HTTPConstants.CHAR_SET_ENCODING);
                 OperationContext opContext = msgContext.getOperationContext();
-
-                if (headers[i].getName().equalsIgnoreCase(
+                String name = headers[i].getName();
+                if (name.equalsIgnoreCase(
                         HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
                     if (opContext != null) {
                         opContext.setProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
@@ -162,6 +154,14 @@ public abstract class AbstractHTTPSender {
                             charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
                 }
             }
+        }
+        Header cookieHeader = method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE);
+        if (cookieHeader == null) {
+            cookieHeader = method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE2);
+        }
+        if (cookieHeader != null) {
+            msgContext.getServiceContext().setProperty(Constants.COOKIE_STRING,
+                    cookieHeader.getValue());
         }
     }
 
@@ -336,7 +336,7 @@ public abstract class AbstractHTTPSender {
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) {    
+                if (doingMTOM) {
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
@@ -370,7 +370,7 @@ public abstract class AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {    
+                if (doingMTOM) {
                     if (chuncked) {
                         return -1;
                     } else {

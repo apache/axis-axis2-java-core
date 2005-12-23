@@ -18,7 +18,6 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 
@@ -61,17 +60,10 @@ public class ServiceGroupContext extends AbstractContext {
             throw new AxisFault("Invalid service " + service.getName() + " not belong to " +
                     "service group " + axisServiceGroup.getServiceGroupName());
         }
-        String scope = axisService.getScope();
-        ServiceContext serviceContext;
-        if (Constants.APPLICATION_SCOPE.equals(scope) || Constants.SOAP_SESSION_SCOPE.equals(scope)) {
-            //since the session scope is longer that trasport or request we need to store that some where
-            serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
-            if (serviceContext == null) {
-                serviceContext = new ServiceContext(service, this);
-            }
-            serviceContextMap.put(service.getName(), serviceContext);
-        } else {
+        ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
+        if (serviceContext == null) {
             serviceContext = new ServiceContext(service, this);
+            serviceContextMap.put(service.getName(), serviceContext);
         }
         return serviceContext;
     }

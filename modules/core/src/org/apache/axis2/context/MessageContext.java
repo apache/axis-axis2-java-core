@@ -871,6 +871,7 @@ public class MessageContext extends AbstractContext {
 
     public void setServiceGroupContext(ServiceGroupContext serviceGroupContext) {
         this.serviceGroupContext = serviceGroupContext;
+        this.axisServiceGroup = serviceGroupContext.getDescription();
     }
 
     public void setServiceGroupContextId(String serviceGroupContextId) {

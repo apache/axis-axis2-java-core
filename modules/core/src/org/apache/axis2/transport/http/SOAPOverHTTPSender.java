@@ -1,17 +1,14 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -64,6 +61,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         if (msgContext.isSOAP11()) {
             postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
         } else {
+        }
+
+        //TODO : provide a way to enable and diable cookies
+        //setting the coolie in the out path
+        Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
+        if (cookieString != null) {
+            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, (String) cookieString);
+            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE2, (String) cookieString);
         }
 
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
@@ -170,7 +175,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) {    
+                if (doingMTOM) {
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
@@ -204,7 +209,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {    
+                if (doingMTOM) {
                     if (chuncked) {
                         return -1;
                     } else {

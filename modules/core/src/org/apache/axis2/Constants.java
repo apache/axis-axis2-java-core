@@ -179,6 +179,9 @@ public class Constants {
     public static final String ADDRESSING_FROM = "WS-Addressing:From";
     public static final String ADDRESSING_FAULT_TO = "WS-Addressing:FaultTo";
 
+    //to set and get the property from service context
+    public static final String COOKIE_STRING = "Cookie";
+
     //See
 
     /**

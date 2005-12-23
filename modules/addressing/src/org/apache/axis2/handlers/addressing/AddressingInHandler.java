@@ -88,7 +88,8 @@ public class AddressingInHandler extends AddressingHandler {
                 Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX));
         if (serviceGroupId != null) {
             String groupId = serviceGroupId.getText();
-            ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().getServiceGroupContext(groupId);
+            ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
+                    getServiceGroupContext(groupId,msgContext);
             if (serviceGroupContext == null) {
                 throw new AxisFault("Invalid Service Group Id." + groupId);
             }

@@ -53,7 +53,8 @@ public class ServiceGroupContextTest extends TestCase {
      */
 
     protected EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:" +
-            (UtilServer.TESTING_PORT) +
+            (5000) +
+//            (UtilServer.TESTING_PORT) +
             "/axis/services/RequestCounter");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("RequestCounter");

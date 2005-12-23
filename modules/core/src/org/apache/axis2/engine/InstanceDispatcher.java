@@ -96,8 +96,15 @@ public class InstanceDispatcher extends AbstractHandler {
         String serviceGroupContextId = msgContext.getServiceGroupContextId();
         if (serviceGroupContextId != null) {
             //setting service group context which is teken from session context
-            msgContext.setServiceGroupContext(
-                    sessionContext.getServiceGroupContext(serviceGroupContextId));
+            ServiceGroupContext serviceGroupContext = sessionContext.getServiceGroupContext(
+                    serviceGroupContextId);
+            if (serviceGroupContext != null) {
+                //setting service group context
+                msgContext.setServiceGroupContext(serviceGroupContext);
+                // setting Service conetxt
+                msgContext.setServiceContext(serviceGroupContext.getServiceContext(service));
+                return;
+            }
         }
         String scope = service.getScope();
 

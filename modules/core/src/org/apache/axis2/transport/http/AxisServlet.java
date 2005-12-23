@@ -227,7 +227,7 @@ public class AxisServlet extends HttpServlet {
 
     private Object getSessionContext(HttpServletRequest httpServletRequest) {
         Object sessionContext =
-                httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+                httpServletRequest.getSession(true).getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
 
         if (sessionContext == null) {
             sessionContext = new SessionContext(null);
