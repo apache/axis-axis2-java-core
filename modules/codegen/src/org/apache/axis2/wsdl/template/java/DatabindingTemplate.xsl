@@ -77,7 +77,7 @@
                         }else{
                            <!-- treat this as a plain bean. use the reflective bean converter -->
                            //todo finish this onece the bean serializer has the necessary methods
-                            retrun null;
+                            return null;
                         }
                     }
                 </xsl:if>
