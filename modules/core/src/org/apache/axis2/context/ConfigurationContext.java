@@ -110,7 +110,7 @@ public class ConfigurationContext extends AbstractContext {
             }
 
             /**
-             * 1. Check the max scope of the service gruop , if it is grater than TarnsportSession
+             * 1. Check the max scope of the service gruop , if it is grater than TransportSession
              *    then need to store in configurationContext
              * 2. Else need to store in SessionContext , and need to store both service context and
              *    service group context

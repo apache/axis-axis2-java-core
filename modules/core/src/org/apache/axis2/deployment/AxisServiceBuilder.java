@@ -61,8 +61,6 @@ import org.xml.sax.SAXException;
  * AxisServiceBuilder builds an AxisService using a WSDL document which is feed
  * as a javax.wsdl.Definition or as an InputStream. If there are multiple
  * javax.wsdl.Service elements in the WSDL, the first is picked.
- *
- * @author Sanka Samaranayake (sanka@apache.org)
  */
 public class AxisServiceBuilder {
 

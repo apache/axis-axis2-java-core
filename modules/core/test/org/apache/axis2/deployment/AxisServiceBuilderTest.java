@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 
 /**
  * TestCase for AxisServiceBuilder.
- * 
- * @author Thilini Gunawardhana (thilini@wso2.com)
  */
 public class AxisServiceBuilderTest extends TestCase {
 	private AxisServiceBuilder builder;

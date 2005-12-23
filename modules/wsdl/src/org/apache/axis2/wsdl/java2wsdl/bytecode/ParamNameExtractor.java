@@ -11,8 +11,6 @@ import java.lang.reflect.Proxy;
 /**
  * This class retrieves function parameter names from bytecode built with
  * debugging symbols.  Used as a last resort when creating WSDL.
- *
- * @author <a href="mailto:tomj@macromedia.com">Tom Jordahl</a>
  */
 public class ParamNameExtractor {
 

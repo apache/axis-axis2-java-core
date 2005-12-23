@@ -8,10 +8,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.dom.soap12.SOAP12Factory;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class DOOMAbstractFactory {
 
 	public static OMFactory getOMFactory() {

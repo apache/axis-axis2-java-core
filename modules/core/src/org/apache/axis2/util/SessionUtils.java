@@ -20,12 +20,16 @@ import java.util.Iterator;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @author : Deepal Jayasinghe (deepal@apache.org)
-*
 */
 
 public class SessionUtils {
 
+    /**
+     * Walk through the list of services and use the minimum of the scopes as the scope for the whole service group
+     * 
+     * @param axisServiceGroup
+     * @return scope for the service group
+     */
     public static String calculateMaxScopeForServiceGroup(AxisServiceGroup axisServiceGroup) {
         Iterator servics = axisServiceGroup.getServices();
         int maxScope = 1;
@@ -39,6 +43,12 @@ public class SessionUtils {
         return getScopeString(maxScope);
     }
 
+    /**
+     * convert scope into a numerical value
+     * 
+     * @param scope
+     * @return integer
+     */
     private static int getScopeIntValue(String scope) {
         if (Constants.REQUEST_SCOPE.equals(scope)) {
             return 1;
@@ -53,6 +63,12 @@ public class SessionUtils {
         }
     }
 
+    /**
+     * Get the actual scope string given the numerical value
+     * 
+     * @param scope
+     * @return string
+     */
     private static String getScopeString(int scope) {
         switch (scope) {
             case 1 : {
