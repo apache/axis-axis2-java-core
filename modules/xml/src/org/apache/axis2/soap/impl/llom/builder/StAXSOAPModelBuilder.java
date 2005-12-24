@@ -146,7 +146,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 	            log.info("Starting to process SOAP 1.2 message");
 	        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
 	            soapFactory = OMAbstractFactory.getSOAP11Factory();
-	            log.info("Starting to pocess SOAP 1.1 message");
+	            log.info("Starting to process SOAP 1.1 message");
 	
 	        } else {
 	            throw new SOAPProcessingException("Only SOAP 1.1 or SOAP 1.2 messages are supported in the" +
