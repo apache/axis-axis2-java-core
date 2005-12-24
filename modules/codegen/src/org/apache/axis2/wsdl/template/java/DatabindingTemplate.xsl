@@ -93,7 +93,7 @@
                     public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-                            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(null));
+                            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(param.MY_NAME));
                             return builder.getDocumentElement();
                         }else{
                            <!-- treat this as a plain bean. use the reflective bean converter -->
