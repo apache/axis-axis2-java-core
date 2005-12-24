@@ -17,23 +17,6 @@
      */
     package <xsl:value-of select="$package"/>;
     
-	import java.io.InputStream;
-	import java.net.ServerSocket;
-
-	import javax.xml.namespace.QName;
-	
-	import org.apache.axis2.context.ConfigurationContext;
-	import org.apache.axis2.deployment.DeploymentEngine;
-	import org.apache.axis2.description.AxisService;
-	import org.apache.axis2.engine.AxisConfiguration;
-	import org.apache.axis2.wsdl.codegen.Constants;
-	import org.apache.axis2.om.OMAbstractFactory;
-	import org.apache.axis2.om.OMElement;
-	import org.apache.axis2.om.OMFactory;
-	import org.apache.axis2.om.impl.llom.OMTextImpl;
-	import org.apache.axis2.transport.http.SimpleHTTPServer;
-
-
     /*
      *  <xsl:value-of select="@name"/> Junit test case 
     */
@@ -52,27 +35,27 @@
 
         <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/> stub =
                     new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();//the default implementation should point to the right endpoint
-          //create a new databinder
-        <xsl:variable name="fullsupporterclassname"><xsl:value-of select="$dbpackage"/>.<xsl:value-of select="$dbsupportclassname"/></xsl:variable>
-        <xsl:value-of select="$fullsupporterclassname"/> databindSupporter = new <xsl:value-of select="$fullsupporterclassname"/>();
 
            <xsl:choose>
              <xsl:when test="count(input/param)>0">
-<!--                //<xsl:variable name="firstInput"><xsl:value-of select="input/param[1]"/></xsl:variable>  -->
+                <xsl:for-each select="input/param[@type!='']">
+                    <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text> = </xsl:text><xsl:value-of select="@value"/><xsl:text>;</xsl:text>
+                </xsl:for-each>
+                 
                 <xsl:choose>
                     <xsl:when test="$outputtype=''">
                     <!-- for now think there is only one input element -->
                     //There is no output to be tested!
                     stub.<xsl:value-of select="@name"/>(
                         <xsl:for-each select="input/param">
-                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)databindSupporter.getTestObject(<xsl:value-of select="@type"/>.class)
+                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>
                         </xsl:if>
                         </xsl:for-each>);
                     </xsl:when>
                     <xsl:otherwise>
                         assertNotNull(stub.<xsl:value-of select="@name"/>(
                         <xsl:for-each select="input/param">
-                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)databindSupporter.getTestObject(<xsl:value-of select="@type"/>.class)
+                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>
                         </xsl:if>
                         </xsl:for-each>));
                   </xsl:otherwise>

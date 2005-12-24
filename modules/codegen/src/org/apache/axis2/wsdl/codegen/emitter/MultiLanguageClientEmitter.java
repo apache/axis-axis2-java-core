@@ -618,6 +618,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 addAttribute(doc, "default", "yes", param);
             }
 
+            addAttribute(doc, "value", getParamInitializer(typeMapping), param);
+            
             //add this as a body parameter
             addAttribute(doc, "location", "body", param);
             Iterator iter = inputMessage.getExtensibilityAttributes().iterator();
@@ -1334,6 +1336,49 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
     }
 
+    /** Field constructorMap */
+    private static HashMap constructorMap = new HashMap(50);
 
+    static {
+
+        // Type maps to a valid initialization value for that type
+        // Type var = new Type(arg)
+        // Where "Type" is the key and "new Type(arg)" is the string stored
+        // Used in emitting test cases and server skeletons.
+        constructorMap.put("int", "0");
+        constructorMap.put("float", "0");
+        constructorMap.put("boolean", "true");
+        constructorMap.put("double", "0");
+        constructorMap.put("byte", "(byte)0");
+        constructorMap.put("short", "(short)0");
+        constructorMap.put("long", "0");
+        constructorMap.put("java.lang.Boolean", "new java.lang.Boolean(false)");
+        constructorMap.put("java.lang.Byte", "new java.lang.Byte((byte)0)");
+        constructorMap.put("java.lang.Double", "new java.lang.Double(0)");
+        constructorMap.put("java.lang.Float", "new java.lang.Float(0)");
+        constructorMap.put("java.lang.Integer", "new java.lang.Integer(0)");
+        constructorMap.put("java.lang.Long", "new java.lang.Long(0)");
+        constructorMap.put("java.lang.Short", "new java.lang.Short((short)0)");
+        constructorMap.put("java.math.BigDecimal",
+                "new java.math.BigDecimal(0)");
+        constructorMap.put("java.math.BigInteger",
+                "new java.math.BigInteger(\"0\")");
+        constructorMap.put("java.lang.Object", "new java.lang.String()");
+        constructorMap.put("byte[]", "new byte[0]");
+        constructorMap.put("java.util.Calendar",
+                "java.util.Calendar.getInstance()");
+        constructorMap.put(
+                "javax.xml.namespace.QName",
+                "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
+    }    
+
+    String getParamInitializer(String paramType) {
+        // Look up paramType in the table
+        String out = (String) constructorMap.get(paramType);
+        if(out == null) {
+            out = "null";
+        }
+        return out;
+    }        
 }
 
