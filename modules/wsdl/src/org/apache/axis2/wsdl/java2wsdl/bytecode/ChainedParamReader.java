@@ -75,7 +75,7 @@ public class ChainedParamReader {
         }
         //if we here, it means we need to create new chain.
         Class cls = (Class) clsChain.get(chain.size() - 1);
-        while (cls.getSuperclass() != null) {
+        while (cls != null && cls != java.lang.Object.class && cls.getSuperclass() != null) {
             Class superClass = cls.getSuperclass();
             try {
                 ParamReader _reader = new ParamReader(superClass);
@@ -90,6 +90,7 @@ public class ChainedParamReader {
                 //can not find the super class in the class path, abort here
                 return null;
             }
+            cls = superClass;
         }
         methodToParamMap.put(method, ret);
         return null;
