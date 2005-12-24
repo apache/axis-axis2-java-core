@@ -101,7 +101,9 @@ public class CodeGenerationEngine {
 
             if (configuration.isServerSide()) {
                 emitter.emitSkeleton();
-            } else {
+            } 
+            
+            if(!configuration.isServerSide() || configuration.isWriteTestCase()){
                 emitter.emitStub();
             }
 
