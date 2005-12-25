@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.Arrays;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -601,24 +602,36 @@ public class ConverterUtil {
     public static Object convertToArray(Class baseArrayClass, List objectList) {
         int listSize = objectList.size();
         Object returnArray = Array.newInstance(baseArrayClass, listSize);
-        for (int i = 0; i < listSize; i++) {
-            if (int.class.equals(baseArrayClass)) {
+        if (int.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
                 Array.setInt(returnArray, i, Integer.parseInt(objectList.get(i).toString()));
-            } else if (float.class.equals(baseArrayClass)) {
-                Array.setFloat(returnArray, i, Float.parseFloat(objectList.get(i).toString()));
-            } else if (short.class.equals(baseArrayClass)) {
-                Array.setShort(returnArray, i, Short.parseShort(objectList.get(i).toString()));
-            } else if (long.class.equals(baseArrayClass)) {
-                Array.setLong(returnArray, i, Long.parseLong(objectList.get(i).toString()));
-            } else if (boolean.class.equals(baseArrayClass)) {
-                Array.setBoolean(returnArray, i, Boolean.getBoolean(objectList.get(i).toString()));
-            } else if (char.class.equals(baseArrayClass)) {
-                Array.setChar(returnArray, i, objectList.get(i).toString().toCharArray()[0]);
-            } else if (double.class.equals(baseArrayClass)) {
-                Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
-            } else {
-                Array.set(returnArray, i, objectList.get(i));
             }
+        } else if (float.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.setFloat(returnArray, i, Float.parseFloat(objectList.get(i).toString()));
+            }
+        } else if (short.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.setShort(returnArray, i, Short.parseShort(objectList.get(i).toString()));
+            }
+        } else if (long.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.setLong(returnArray, i, Long.parseLong(objectList.get(i).toString()));
+            }
+        } else if (boolean.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.setBoolean(returnArray, i, Boolean.getBoolean(objectList.get(i).toString()));
+            }
+        } else if (char.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.setChar(returnArray, i, objectList.get(i).toString().toCharArray()[0]);
+            }
+        } else if (double.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
+            }
+        } else {
+            objectList.toArray((Object[])returnArray);
         }
         return returnArray;
     }
