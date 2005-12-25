@@ -263,7 +263,7 @@ public class AxisService
             ModuleDescription module = (ModuleDescription) itr_engageModules.next();
 
             if (module.getName().equals(moduleref.getName())) {
-                log.info(moduleref.getName().getLocalPart()
+                log.debug(moduleref.getName().getLocalPart()
                         + " module has alredy been engaged on the service. "
                         + " Operation terminated !!!");
                 needToadd = false;

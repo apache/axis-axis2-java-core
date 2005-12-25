@@ -136,7 +136,7 @@ public abstract class AxisOperation
             ModuleDescription module = (ModuleDescription) module_itr.next();
 
             if (module.getName().equals(moduleref.getName())) {
-                log.info(moduleref.getName().getLocalPart()
+                log.debug(moduleref.getName().getLocalPart()
                         + " module has alredy engaged to the operation"
                         + "  operation terminated !!!");
                 needToadd = false;
