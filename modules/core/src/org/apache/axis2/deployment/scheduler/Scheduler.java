@@ -22,7 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Scheduler {
-    private final Timer timer = new Timer();
+    private final Timer timer = new Timer(true);
 
     private void reschedule(SchedulerTask schedulerTask, DeploymentIterator iterator) {
         Date time = iterator.next();
