@@ -52,6 +52,7 @@ public class SimpleHttpServerConnection {
     private OutputStream out = null;
     private boolean keepAlive = false;
     private InputStream in = null;
+    public static final int DEFAULT_TIMEOUT = 60000;  // 1 Minute
 
     public SimpleHttpServerConnection(final Socket socket) throws IOException {
         super();
@@ -62,7 +63,7 @@ public class SimpleHttpServerConnection {
 
         this.socket = socket;
         this.socket.setTcpNoDelay(true);
-        this.socket.setSoTimeout(500);
+        this.socket.setSoTimeout(DEFAULT_TIMEOUT);
         this.in = socket.getInputStream();
         this.out = socket.getOutputStream();
     }
