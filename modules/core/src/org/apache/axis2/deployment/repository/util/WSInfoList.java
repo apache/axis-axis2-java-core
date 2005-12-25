@@ -55,7 +55,7 @@ public class WSInfoList implements DeploymentConstants {
      * keep those infor call WSInfo and that will be added to jarist and actual
      * jar file will be added to DeploymentEngine
      * <p/>
-     * If it is alredy exsit then it check whether it has been updated
+     * If it is already exists then it check whether it has been updated
      * then change the last update date of the wsInfo and added two entries to DeploymentEngine
      * one for New Deployment and other for undeployment
      *
@@ -220,7 +220,7 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * to check whether the file is alredy in the list
+     * to check whether the file is already in the list
      *
      * @param filename
      */

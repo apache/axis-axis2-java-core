@@ -69,7 +69,7 @@ public class InvalidPhaselastTest extends TestCase {
             rule1.setPhaseLast(true);
             hm1.setRules(rule1);
             ph.addHandler(hm1);
-            fail("This should be faild with Phaselast alredy has been set, cannot have two " +
+            fail("This should be faild with Phaselast already has been set, cannot have two " +
                     "phaseFirst Handler for same phase ");
         } catch (AxisFault axisFault) {
             return;

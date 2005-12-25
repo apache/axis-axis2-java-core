@@ -137,7 +137,7 @@ public class AxisServiceGroup implements ParameterInclude {
 
             if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
                 log.debug(moduleName.getLocalPart()
-                        + " module has alredy been engaged on the service Group. "
+                        + " module has already been engaged on the service Group. "
                         + " Operation terminated !!!");
                 needToadd = false;
             }

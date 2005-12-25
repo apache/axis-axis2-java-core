@@ -69,7 +69,7 @@ public class InvalidPhaseFirstTest extends TestCase {
             rule1.setPhaseFirst(true);
             hm1.setRules(rule1);
             ph.addHandler(hm1);
-            fail("This should be faild with PhaseFirst alredy has been set, cannot have two " +
+            fail("This should be faild with PhaseFirst already has been set, cannot have two " +
                     "phaseFirst Handler for same phase ");
         } catch (AxisFault axisFault) {
             return;

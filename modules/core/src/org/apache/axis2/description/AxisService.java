@@ -264,7 +264,7 @@ public class AxisService
 
             if (module.getName().equals(moduleref.getName())) {
                 log.debug(moduleref.getName().getLocalPart()
-                        + " module has alredy been engaged on the service. "
+                        + " module has already been engaged on the service. "
                         + " Operation terminated !!!");
                 needToadd = false;
             }

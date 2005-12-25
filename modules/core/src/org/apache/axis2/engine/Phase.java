@@ -464,7 +464,7 @@ public class Phase implements Handler {
      */
     public void setPhaseFirst(Handler phaseFirst) throws PhaseException {
         if (phasefirstset) {
-            throw new PhaseException("PhaseFirst alredy has been set, cannot have two"
+            throw new PhaseException("PhaseFirst has been set already, cannot have two"
                     + " phaseFirst Handler for same phase " + this.getPhaseName());
         } else {
             handlers.add(0, phaseFirst);

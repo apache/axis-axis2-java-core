@@ -184,7 +184,7 @@ public class AxisConfiguration implements ParameterInclude {
 
             if (allservices.get(description.getName()) != null) {
                 throw new AxisFault("Two services can not have same name, a service with "
-                        + description.getName() + " alredy exist in the system");
+                        + description.getName() + " already exists in the system");
             }
         }
 
