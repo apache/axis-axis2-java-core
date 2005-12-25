@@ -119,15 +119,19 @@ public class ConfigurationContext extends AbstractContext {
             if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
                 //todo : needed to add to two tables
                 registerServiceGroupContext(serviceGroupContext);
-            } else if (Constants.SCOPES_SOAP_SESSION.equals(maxScope)) {
+            } else if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
                 //todo : needed to add to two tables
                 registerServiceGroupContext(serviceGroupContext);
-            } else {
+            } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
                 sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
                 sessionContext.addServiceContext(serviceContext);
             }
             messageContext.setServiceContext(serviceContext);
-            messageContext.setServiceGroupContext(serviceGroupContext);
+            if(Constants.SCOPE_REQUEST.equals(maxScope)) {
+                messageContext.setServiceGroupContextId(null);
+            } else {
+                messageContext.setServiceGroupContext(serviceGroupContext);
+            }
         }
         // when you come here operation context MUST already been assigned to the message context
         serviceContext.setProperty(Constants.COOKIE_STRING, sessionContext.getCookieID());

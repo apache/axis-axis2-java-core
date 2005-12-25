@@ -90,8 +90,8 @@ public class AxisService
         this.paramterInclude = new ParameterIncludeImpl();
         this.operationsAliasesMap = new HashMap();
         moduleConfigmap = new HashMap();
-        //by dafault service scop is TranportSession
-        scope = Constants.SCOPE_TRANSPORT_SESSION;
+        //by dafault service scope is for the request
+        scope = Constants.SCOPE_REQUEST;
         messageReceivers = new HashMap();
     }
 
@@ -628,7 +628,7 @@ public class AxisService
     public void setScope(String scope) {
         if (Constants.SCOPE_APPLICATION.equals(scope) ||
                 Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
-                Constants.SCOPES_SOAP_SESSION.equals(scope) ||
+                Constants.SCOPE_SOAP_SESSION.equals(scope) ||
                 Constants.SCOPE_REQUEST.equals(scope)) {
             this.scope = scope;
         }

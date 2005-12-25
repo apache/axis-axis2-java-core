@@ -54,7 +54,7 @@ public class SessionUtils {
             return 1;
         } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
             return 2;
-        } else if (Constants.SCOPES_SOAP_SESSION.equals(scope)) {
+        } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
             return 3;
         } else if (Constants.SCOPE_APPLICATION.equals(scope)) {
             return 4;
@@ -78,7 +78,7 @@ public class SessionUtils {
                 return Constants.SCOPE_TRANSPORT_SESSION;
             }
             case 3 : {
-                return Constants.SCOPES_SOAP_SESSION;
+                return Constants.SCOPE_SOAP_SESSION;
             }
             case 4 : {
                 return Constants.SCOPE_APPLICATION;

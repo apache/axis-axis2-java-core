@@ -65,6 +65,7 @@ public class ServiceGroupContextTest extends TestCase {
         UtilServer.start();
         service = Utils.createSimpleService(serviceName, new RequestCounterMessageReceiver(),
                 RequestCounter.class.getName(), operationName);
+        service.setScope(Constants.SCOPE_TRANSPORT_SESSION);
         UtilServer.deployService(service);
     }
 
