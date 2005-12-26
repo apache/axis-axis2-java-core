@@ -26,6 +26,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
@@ -123,17 +124,17 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 OMElement result = (OMElement) method.invoke(obj, args);
                 OMElement bodyContent;
 
+                SOAPFactory fac = getSOAPFactory(msgContext);
                 if (WSDLService.STYLE_RPC.equals(style)) {
-                    OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
-
-                    bodyContent = getSOAPFactory().createOMElement(method.getName() + "Response",
+                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
+                    bodyContent = fac.createOMElement(method.getName() + "Response",
                             ns);
                     bodyContent.addChild(result);
                 } else {
                     bodyContent = result;
                 }
 
-                SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
+                SOAPEnvelope envelope = fac.getDefaultEnvelope();
 
                 if (bodyContent != null) {
                     envelope.getBody().addChild(bodyContent);

@@ -164,6 +164,10 @@ public class AddressingOutHandler extends AddressingHandler {
                             addressingNamespaceObject);
                 }
         }
+        
+        // We are done, cleanup the references
+        addressingNamespaceObject = null;
+        addressingNamespace = null;
     }
 
 

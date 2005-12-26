@@ -84,10 +84,10 @@
                     </xsl:choose>
 
 
-                    //Create a default envelop
-                    envelope = getSOAPFactory().getDefaultEnvelope();
-                    //Create a Omelement of the result if a result exist
+                    //Create a default envelope
+                    envelope = getSOAPFactory(msgContext).getDefaultEnvelope();
 
+                    //Create a OMElement of the result if a result exists
                     <xsl:if test="$returntype!=''">envelope.getBody().setFirstChild(toOM(<xsl:value-of select="$returnvariable"/>));
                     </xsl:if>
                 </xsl:when>

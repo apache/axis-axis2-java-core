@@ -32,7 +32,6 @@ import org.apache.axis2.soap.SOAPFactory;
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
     public static final String SCOPE = "scope";
-    protected SOAPFactory fac;
 
     /**
      * Method makeNewServiceObject
@@ -43,16 +42,6 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
-            String nsURI = msgContext.getEnvelope().getNamespace().getName();
-
-            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                fac = OMAbstractFactory.getSOAP12Factory();
-            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                fac = OMAbstractFactory.getSOAP11Factory();
-            } else {
-                throw new AxisFault(Messages.getMessage("invalidSOAPversion"));
-            }
-
             AxisService service =
                     msgContext.getOperationContext().getServiceContext().getAxisService();
             ClassLoader classLoader = service.getClassLoader();
@@ -71,8 +60,15 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         }
     }
 
-    public SOAPFactory getSOAPFactory() {
-        return fac;
+    public SOAPFactory getSOAPFactory(MessageContext msgContext) throws AxisFault {
+        String nsURI = msgContext.getEnvelope().getNamespace().getName();
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+            return OMAbstractFactory.getSOAP12Factory();
+        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+            return OMAbstractFactory.getSOAP11Factory();
+        } else {
+            throw new AxisFault(Messages.getMessage("invalidSOAPversion"));
+        }
     }
 
     /**

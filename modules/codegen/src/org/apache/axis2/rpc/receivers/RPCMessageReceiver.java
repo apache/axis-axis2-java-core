@@ -34,6 +34,7 @@ import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -94,12 +95,13 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
             Object[] objectArray = processRequest(methodElement);
             Object resObject = method.invoke(obj, objectArray);
+            SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response
             //todo NameSpace has to be taken from the AxisService
-            OMNamespace ns = getSOAPFactory().createOMNamespace(
+            OMNamespace ns = fac.createOMNamespace(
                     "http://soapenc/", "res");
-            SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
+            SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
 
             if (resObject instanceof Object[]) {
@@ -107,7 +109,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 OMElement bodyChild = getResponseElement(resName, (Object[]) resObject);
                 envelope.getBody().addChild(bodyChild);
             } else {
-                processResponse(resObject, bodyContent, ns, envelope);
+                processResponse(fac, resObject, bodyContent, ns, envelope);
             }
 
             outMessage.setEnvelope(envelope);
@@ -126,20 +128,20 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
         return BeanUtil.getOMElement(resname, objs);
     }
 
-    private void processResponse(Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
+    private void processResponse(SOAPFactory fac, Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
         if (resObject != null) {
             //todo first check to see where the desrilizer for the return object
             //simple type
             if (resObject instanceof OMElement) {
                 bodyContent = (OMElement) resObject;
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
-                bodyContent = getSOAPFactory().createOMElement(
+                bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement child = getSOAPFactory().createOMElement(RETURN_WRAPPER, null);
+                OMElement child = fac.createOMElement(RETURN_WRAPPER, null);
                 child.addChild(fac.createText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
-                bodyContent = getSOAPFactory().createOMElement(
+                bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
                 // Java Beans
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
