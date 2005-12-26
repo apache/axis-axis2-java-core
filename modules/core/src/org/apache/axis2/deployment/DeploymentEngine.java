@@ -89,96 +89,33 @@ public class DeploymentEngine implements DeploymentConstants {
     private ArchiveFileData currentArchiveFile;
     private String engineConfigName;
 
-    /**
-     * this constaructor for the testing
-     */
-    private String folderName;
-    private File repository;
 
     /**
-     * Default constructor is need to deploye module and service programatically
+     * Default constructor is need to deploy module and service programatically
      */
     public DeploymentEngine() {
     }
 
     /**
-     * This the constructor which is used by Engine inorder to start
-     * Deploymenat module,
+     * This the constructor which is used by Engine in order to start
+     * Deployment module,
      *
-     * @param repositoryName is the path to which Repositary Listner should
-     *                       listent.
+     * @param repositoryName is the path to which Repositary Listener should
+     *                       listen to.
      */
     public DeploymentEngine(String repositoryName) throws DeploymentException {
-        this(repositoryName, SERVER_XML_FILE);
+        this(repositoryName, AXIS2_CONFIGURATION_XML);
     }
 
-    public DeploymentEngine(String repositoryName, String serverXMLFile)
+    public DeploymentEngine(String repositoryName, String xmlFile)
             throws DeploymentException {
         if ((repositoryName == null) || repositoryName.trim().equals("")) {
             throw new DeploymentException(
                     Messages.getMessage(DeploymentErrorMsgs.REPOSITORY_CANNOT_BE_NULL));
         }
-
-        this.folderName = repositoryName;
         axis2repository = repositoryName;
-        repository = new File(repositoryName);
-
-        if (!repository.exists()) {
-            repository.mkdirs();
-
-            File services = new File(repository, DIRECTORY_SERVICES);
-            File modules = new File(repository, DIRECTORY_MODULES);
-
-            modules.mkdirs();
-            services.mkdirs();
-        }
-
-        File serverConf = new File(repository, serverXMLFile);
-
-        if (!serverConf.exists()) {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
-            FileOutputStream out = null;
-
-            if (in != null) {
-                try {
-                    serverConf.createNewFile();
-                    out = new FileOutputStream(serverConf);
-
-                    int BUFSIZE = 512;    // since only a test file going to load , the size has selected
-                    byte[] buf = new byte[BUFSIZE];
-                    int read;
-
-                    while ((read = in.read(buf)) > 0) {
-                        out.write(buf, 0, read);
-                    }
-
-                    in.close();
-                    out.close();
-                } catch (IOException e) {
-                    throw new DeploymentException(e);
-                } finally {
-                    if (out != null) {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        // ignore
-                    }
-                }
-            } else {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
-            }
-        }
-
-        this.engineConfigName = repositoryName + '/' + serverXMLFile;
+        prepareRepository(repositoryName, xmlFile);
+        this.engineConfigName = repositoryName + '/' + xmlFile;
     }
 
     /**
@@ -405,53 +342,9 @@ public class DeploymentEngine implements DeploymentConstants {
         return axisService;
     }
 
-    private void checkClientHome(String clientHome) throws DeploymentException {
-        String clientXML = SERVER_XML_FILE;
-
-        this.folderName = clientHome;
-        repository = new File(clientHome);
-
-        if (!repository.exists()) {
-            repository.mkdirs();
-
-            File services = new File(repository, DIRECTORY_SERVICES);
-            File modules = new File(repository, DIRECTORY_MODULES);
-
-            modules.mkdirs();
-            services.mkdirs();
-        }
-
-        File serverConf = new File(repository, clientXML);
-
-        if (!serverConf.exists()) {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
-
-            if (in != null) {
-                try {
-                    serverConf.createNewFile();
-
-                    FileOutputStream out = new FileOutputStream(serverConf);
-                    int BUFSIZE = 512;    // since only a test file going to load , the size has selected
-                    byte[] buf = new byte[BUFSIZE];
-                    int read;
-
-                    while ((read = in.read(buf)) > 0) {
-                        out.write(buf, 0, read);
-                    }
-
-                    in.close();
-                    out.close();
-                } catch (IOException e) {
-                    throw new DeploymentException(e);
-                }
-            } else {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
-            }
-        }
-
-        this.engineConfigName = clientHome + '/' + clientXML;
+    private void checkClientHome(String repositoryName) throws DeploymentException {
+        prepareRepository(repositoryName, AXIS2_CONFIGURATION_XML);
+        this.engineConfigName = repositoryName + '/' + AXIS2_CONFIGURATION_XML;
     }
 
     private AxisConfiguration createEngineConfig() {
@@ -623,13 +516,13 @@ public class DeploymentEngine implements DeploymentConstants {
             axisConfig.setPhasesinfo(phasesinfo);
 
             // setting the CLs
-            setClassLoaders(repository);
+            setClassLoaders(axis2repository);
         } catch (FileNotFoundException e) {
             throw new DeploymentException(e);
         }
 
         setDeploymentFeatures();
-        repoListener = new RepositoryListenerImpl(folderName, this);
+        repoListener = new RepositoryListenerImpl(axis2repository, this);
 
         try {
             axisConfig.setRepository(axis2repository);
@@ -693,8 +586,8 @@ public class DeploymentEngine implements DeploymentConstants {
             hotUpdate = false;
 
             // setting CLs
-            setClassLoaders(repository);
-            repoListener = new RepositoryListenerImpl(folderName, this);
+            setClassLoaders(axis2repository);
+            repoListener = new RepositoryListenerImpl(axis2repository, this);
         }
 
         try {
@@ -846,7 +739,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param axis2repo : The repository folder of Axis2
      * @throws DeploymentException
      */
-    private void setClassLoaders(File axis2repo) throws DeploymentException {
+    private void setClassLoaders(String axis2repo) throws DeploymentException {
         ClassLoader sysClassLoader =
                 Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repo);
 
@@ -898,5 +791,71 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void setPhasesinfo(PhasesInfo phasesinfo) {
         this.phasesinfo = phasesinfo;
+    }
+
+    /**
+     * Create directories for modules/services, copy configuration xml from class loader if necessary
+     * 
+     * @param repositoryName
+     * @param xmlFile
+     * @throws DeploymentException
+     */
+    private void prepareRepository(String repositoryName, String xmlFile) throws DeploymentException {
+        File repository = new File(repositoryName);
+
+        if (!repository.exists()) {
+            repository.mkdirs();
+
+            File services = new File(repository, DIRECTORY_SERVICES);
+            File modules = new File(repository, DIRECTORY_MODULES);
+
+            modules.mkdirs();
+            services.mkdirs();
+        }
+
+        File serverConf = new File(repository, xmlFile);
+
+        if (!serverConf.exists()) {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
+            FileOutputStream out = null;
+
+            if (in != null) {
+                try {
+                    serverConf.createNewFile();
+                    out = new FileOutputStream(serverConf);
+
+                    int BUFSIZE = 512;    // since only a test file going to load , the size has selected
+                    byte[] buf = new byte[BUFSIZE];
+                    int read;
+
+                    while ((read = in.read(buf)) > 0) {
+                        out.write(buf, 0, read);
+                    }
+
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    throw new DeploymentException(e);
+                } finally {
+                    if (out != null) {
+                        try {
+                            out.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                }
+            } else {
+                throw new DeploymentException(
+                        Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
+            }
+        }
     }
 }

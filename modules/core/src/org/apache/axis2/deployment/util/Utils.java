@@ -75,6 +75,11 @@ public class Utils {
         }
     }
 
+    public static ClassLoader getClassLoader(ClassLoader parent, String path)
+            throws DeploymentException {
+        return getClassLoader(parent, new File(path));
+    }
+    
     public static ClassLoader getClassLoader(ClassLoader parent, File file)
             throws DeploymentException {
         URLClassLoader classLoader;

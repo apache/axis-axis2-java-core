@@ -85,7 +85,7 @@ public interface DeploymentConstants {
      */
     String AXIS2_CONFIGURATION_RESOURCE =
             "org/apache/axis2/deployment/axis2.xml";
-    String SERVER_XML_FILE = "axis2.xml";
+    String AXIS2_CONFIGURATION_XML = "axis2.xml";
     String DIRECTORY_SERVICES = "services";
     String BOOLEAN_TRUE = "true";
     String BOOLEAN_FALSE = "false";

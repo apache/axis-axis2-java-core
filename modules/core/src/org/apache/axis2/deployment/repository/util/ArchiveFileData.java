@@ -33,7 +33,7 @@ import java.util.ArrayList;
  */
 public class ArchiveFileData {
     private File file = null;
-    private ArrayList deploybleServices = new ArrayList();
+    private ArrayList deployableServices = new ArrayList();
     private ClassLoader classLoader;
     private String messgeReceiver;
 
@@ -58,8 +58,8 @@ public class ArchiveFileData {
         return classLoader;
     }
 
-    public ArrayList getDeploybleServices() {
-        return deploybleServices;
+    public ArrayList getDeployableServices() {
+        return deployableServices;
     }
 
     public File getFile() {
@@ -127,8 +127,8 @@ public class ArchiveFileData {
         }
     }
 
-    public void setDeploybleServices(ArrayList deploybleServices) {
-        this.deploybleServices = deploybleServices;
+    public void setDeployableServices(ArrayList deployableServices) {
+        this.deployableServices = deployableServices;
     }
 
     public void setMessgeReceiver(String messgeReceiver) {
