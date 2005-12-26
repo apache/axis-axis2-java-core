@@ -156,8 +156,9 @@ public class HTTPWorker implements HttpRequestHandler {
                 response.setStatusLine(request.getRequestLine().getHttpVersion(), 202, "OK");
             }
 
-            response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-            setResponseHeaders(conn, request, response, baos.toByteArray().length, msgContext);
+            byte[] buf = baos.toByteArray();
+            response.setBody(new ByteArrayInputStream(buf));
+            setResponseHeaders(conn, request, response, buf.length, msgContext);
 
             conn.writeResponse(response);
         } catch (Throwable e) {
@@ -176,8 +177,9 @@ public class HTTPWorker implements HttpRequestHandler {
                     response.setStatusLine(request.getRequestLine().getHttpVersion(), 500,
                             "Internal server error");
                     engine.sendFault(faultContext);
-                    response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-                    setResponseHeaders(conn, request, response, baos.toByteArray().length, msgContext);
+                    byte[] buf = baos.toByteArray();
+                    response.setBody(new ByteArrayInputStream(buf));
+                    setResponseHeaders(conn, request, response, buf.length, msgContext);
                     conn.writeResponse(response);
                 }
             } catch (SocketException e1) {
