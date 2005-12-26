@@ -39,11 +39,9 @@ import java.util.Map;
 public class AddressingOutHandler extends AddressingHandler {
 
 
-    OMNamespace addressingNamespaceObject;
-    String addressingNamespace;
-
-
     public void invoke(MessageContext msgContext) throws AxisFault {
+        OMNamespace addressingNamespaceObject = null;
+        String addressingNamespace = null;
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (addressingVersionFromCurrentMsgCtxt != null) {
@@ -87,7 +85,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
         // processing WSA To
         EndpointReference epr = messageContextOptions.getTo();
-        if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope)) {
+        if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject)) {
 
             String address = epr.getAddress();
             if (!"".equals(address) && address != null) {
@@ -95,20 +93,20 @@ public class AddressingOutHandler extends AddressingHandler {
                 toHeaderBlock.setText(address);
             }
 
-            processReferenceInformation(epr.getAllReferenceParameters(), soapHeader );
-            processReferenceInformation(epr.getAllReferenceProperties(), soapHeader);
+            processReferenceInformation(epr.getAllReferenceParameters(), soapHeader, addressingNamespaceObject);
+            processReferenceInformation(epr.getAllReferenceProperties(), soapHeader, addressingNamespaceObject);
 
-            addToHeader(epr, soapHeader);
+            addToHeader(epr, soapHeader, addressingNamespaceObject, addressingNamespace);
         }
 
         // processing WSA Action
         String action = messageContextOptions.getAction();
-        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope)) {
-            processStringInfo(action, WSA_ACTION, envelope);
+        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope, addressingNamespaceObject)) {
+            processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
         }
 
         // processing WSA replyTo
-        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope)) {
+        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject)) {
             epr = messageContextOptions.getReplyTo();
             if (epr == null) {//optional
                 // setting anonymous URI. Defaulting to Final.
@@ -124,25 +122,25 @@ public class AddressingOutHandler extends AddressingHandler {
                 epr.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
                         Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
             }
-            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope);
+            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, addressingNamespace);
         }
 
         epr = messageContextOptions.getFrom();
         if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope);
+            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope, addressingNamespaceObject, addressingNamespace);
         }
 
         epr = messageContextOptions.getFaultTo();
         if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope);
+            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope, addressingNamespaceObject, addressingNamespace);
         }
 
         String messageID = messageContextOptions.getMessageId();
-        if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope)) {//optional
-            processStringInfo(messageID, WSA_MESSAGE_ID, envelope);
+        if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope, addressingNamespaceObject)) {//optional
+            processStringInfo(messageID, WSA_MESSAGE_ID, envelope, addressingNamespaceObject);
         }
 
-        if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope)) {
+        if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject)) {
             RelatesTo relatesTo = messageContextOptions.getRelatesTo();
             OMElement relatesToHeader = null;
 
@@ -150,7 +148,7 @@ public class AddressingOutHandler extends AddressingHandler {
                 relatesToHeader =
                         processStringInfo(relatesTo.getValue(),
                                 WSA_RELATES_TO,
-                                envelope);
+                                envelope, addressingNamespaceObject);
             }
 
             if (relatesToHeader != null)
@@ -173,7 +171,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
     private OMElement processStringInfo(String value,
                                         String type,
-                                        SOAPEnvelope soapEnvelope) {
+                                        SOAPEnvelope soapEnvelope, OMNamespace addressingNamespaceObject) {
         if (!"".equals(value) && value != null) {
             SOAPHeaderBlock soapHeaderBlock =
                     soapEnvelope.addHeaderBlock(type, addressingNamespaceObject);
@@ -186,8 +184,8 @@ public class AddressingOutHandler extends AddressingHandler {
 
     protected void addToSOAPHeader(EndpointReference epr,
                                    String type,
-                                   SOAPEnvelope envelope) {
-        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope)) {
+                                   SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, String addressingNamespace) {
+        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject)) {
             return;
         }
 
@@ -204,7 +202,7 @@ public class AddressingOutHandler extends AddressingHandler {
             addressElement.setText(address);
         }
 
-        addToHeader(epr, soapHeaderBlock);
+        addToHeader(epr, soapHeaderBlock, addressingNamespaceObject, addressingNamespace);
 
 
         Map referenceParameters = epr.getAllReferenceParameters();
@@ -214,7 +212,7 @@ public class AddressingOutHandler extends AddressingHandler {
                             EPR_REFERENCE_PARAMETERS,
                             addressingNamespaceObject);
             soapHeaderBlock.addChild(reference);
-            processReferenceInformation(referenceParameters, reference);
+            processReferenceInformation(referenceParameters, reference, addressingNamespaceObject);
 
         }
 
@@ -226,14 +224,14 @@ public class AddressingOutHandler extends AddressingHandler {
                                 Submission.EPR_REFERENCE_PROPERTIES,
                                 addressingNamespaceObject);
                 envelope.getHeader().addChild(reference);
-                processReferenceInformation(referenceParameters, reference);
+                processReferenceInformation(referenceParameters, reference, addressingNamespaceObject);
             }
 
         }
 
     }
 
-    private void addToHeader(EndpointReference epr, OMElement parentElement) {
+    private void addToHeader(EndpointReference epr, OMElement parentElement, OMNamespace addressingNamespaceObject, String addressingNamespace) {
 
         if (addressingNamespace.equals(Submission.WSA_NAMESPACE)) {
             QName portType = epr.getPortType();
@@ -273,7 +271,7 @@ public class AddressingOutHandler extends AddressingHandler {
      *
      * @param referenceInformation
      */
-    private void processReferenceInformation(Map referenceInformation, OMElement parent) {
+    private void processReferenceInformation(Map referenceInformation, OMElement parent, OMNamespace addressingNamespaceObject) {
         if (referenceInformation != null && parent != null) {
             Iterator iterator = referenceInformation.keySet().iterator();
             while (iterator.hasNext()) {
@@ -290,7 +288,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
     }
 
-    private boolean isAddressingHeaderAlreadyAvailable(String name, SOAPEnvelope envelope) {
+    private boolean isAddressingHeaderAlreadyAvailable(String name, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject) {
         boolean isAvail = envelope.getFirstChildWithName(new QName(addressingNamespaceObject.getName(), name, addressingNamespaceObject.getPrefix())) != null;
         if(!isAvail && envelope.getHeader() != null){
             // check in headers too
