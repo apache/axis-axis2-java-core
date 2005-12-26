@@ -138,16 +138,6 @@ public class HTTPWorker implements HttpRequestHandler {
                     return true;
                 }
             } else {
-                ByteArrayOutputStream baosIn = new ByteArrayOutputStream();
-                byte[]                bytes = new byte[8192];
-                int size;
-
-                while ((size = inStream.read(bytes)) > 0) {
-                    baosIn.write(bytes, 0, size);
-                }
-
-                inStream = new ByteArrayInputStream(baosIn.toByteArray());
-
                 // It is POST, handle it
                 HTTPTransportUtils.processHTTPPostRequest(msgContext, inStream, baos,
                         request.getContentType(), soapAction, request.getRequestLine().getUri());
