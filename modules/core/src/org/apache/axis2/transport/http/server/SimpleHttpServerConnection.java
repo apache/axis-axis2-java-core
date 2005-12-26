@@ -71,6 +71,8 @@ public class SimpleHttpServerConnection {
     public synchronized void close() {
         try {
             if (socket != null) {
+                socket.shutdownInput();
+                socket.shutdownOutput();
                 in.close();
                 out.close();
                 socket.close();
