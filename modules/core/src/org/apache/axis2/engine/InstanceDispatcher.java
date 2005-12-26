@@ -47,7 +47,7 @@ public class InstanceDispatcher extends AbstractHandler {
             return;
         }
         //trying to get service context from Session context
-        fillContextsFromSessionContetxt(msgContext);
+        fillContextsFromSessionContext(msgContext);
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
 
@@ -87,14 +87,14 @@ public class InstanceDispatcher extends AbstractHandler {
         }
     }
 
-    private void fillContextsFromSessionContetxt(MessageContext msgContext) throws AxisFault {
+    private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
         AxisService service = msgContext.getAxisService();
         if (service == null) {
             throw new AxisFault("AxisService Not found yet");
         }
         SessionContext sessionContext = msgContext.getSessionContext();
         String serviceGroupContextId = msgContext.getServiceGroupContextId();
-        if (serviceGroupContextId != null) {
+        if (serviceGroupContextId != null && sessionContext != null) {
             //setting service group context which is teken from session context
             ServiceGroupContext serviceGroupContext = sessionContext.getServiceGroupContext(
                     serviceGroupContextId);

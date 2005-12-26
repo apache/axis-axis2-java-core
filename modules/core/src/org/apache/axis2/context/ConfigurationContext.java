@@ -133,8 +133,10 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.setServiceGroupContext(serviceGroupContext);
             }
         }
-        // when you come here operation context MUST already been assigned to the message context
-        serviceContext.setProperty(Constants.COOKIE_STRING, sessionContext.getCookieID());
+        if(sessionContext != null) {
+            // when you come here operation context MUST already been assigned to the message context
+            serviceContext.setProperty(Constants.COOKIE_STRING, sessionContext.getCookieID());
+        }
         messageContext.getOperationContext().setParent(serviceContext);
     }
 
@@ -202,7 +204,7 @@ public class ConfigurationContext extends AbstractContext {
                 serviceGroupContext.touch();
             }
         }
-        if (serviceGroupContext == null) {
+        if (serviceGroupContext == null && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
