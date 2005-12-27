@@ -129,6 +129,11 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
     private OMNode lastNode = null;
 
+    /**
+     * Track depth to ensure we stop generating events when we are done with the root node.  
+     */
+    int depth = 0;
+
     private boolean needToThrowEndDocument = false;
 
     /**
@@ -852,7 +857,10 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 } catch (Exception e) {
                     throw new XMLStreamException("problem accessing the parser", e);
                 }
-
+                // Initialize the depth
+                depth = 0;
+                // We should throw an END_DOCUMENT as well
+                needToThrowEndDocument = true;
                 if ((currentEvent == START_DOCUMENT) &&
                         (currentEvent == parser.getEventType())) {
                     currentEvent = parser.next();
@@ -945,6 +953,16 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 }
             }
         } else {
+            if (state == SWITCHED) {
+                if (currentEvent == START_ELEMENT) {
+                    ++depth;
+                } else if (currentEvent == END_ELEMENT) {
+                    --depth;
+                    if(depth < 0) {
+                        state = COMPLETED;
+                    }
+                }
+            }
             state = (currentEvent == END_DOCUMENT)
                     ? DOCUMENT_COMPLETE
                     : state;
