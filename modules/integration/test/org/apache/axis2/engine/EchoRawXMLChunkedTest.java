@@ -39,7 +39,7 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 
     private AxisService service;
 
-    private static final String CLIENT_HOME = Constants.TESTING_PATH + "chunked-enabledRepository";
+    private static final String CLIENT_HOME = Constants.TESTING_PATH + "chunking-enabledRepository";
 
     public EchoRawXMLChunkedTest() {
         super(EchoRawXMLChunkedTest.class.getName());
@@ -66,7 +66,7 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 //    public void testEchoXMLASync() throws Exception {
 //                OMElement payload = createEnvelope();
 //
-//        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_PATH + "chunked-enabledRepository");
+//        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_PATH + "chunking-enabledRepository");
 //
 //        call.setTo(targetEPR);
 //        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);

@@ -26,10 +26,15 @@
             tofile="target/test-resources/repository-client/modules/addressing.mar"/>
         <mkdir dir="target/toWar/services/"/>
 
-        <!-- Create Chuncked enabled Repository -->
-        <mkdir dir="target/test-resources/chunked-enabledRepository"/>
-        <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
-            tofile="target/test-resources/chunked-enabledRepository/axis2.xml"/>
+        <!-- Create Chunked enabled Repository -->
+        <mkdir dir="target/test-resources/chunking-enabledRepository"/>
+        <copy file="test/org/apache/axis2/engine/chunking-enabled-axis2.xml"
+            tofile="target/test-resources/chunking-enabledRepository/axis2.xml"/>
+
+        <!-- Create Chunked disabled Repository -->
+        <mkdir dir="target/test-resources/chunking-disabledRepository"/>
+        <copy file="test/org/apache/axis2/engine/chunking-disabled-axis2.xml"
+            tofile="target/test-resources/chunking-disabledRepository/axis2.xml"/>
 
         <!-- Create Mail Client transport enabled Repository -->
         <mkdir dir="target/test-resources/mail-transport-client-enabledRepository"/>
