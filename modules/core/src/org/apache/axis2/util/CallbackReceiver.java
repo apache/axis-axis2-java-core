@@ -26,11 +26,11 @@ public class CallbackReceiver implements MessageReceiver {
         callbackStore.put(MsgID, callback);
     }
 
-    public void receive(MessageContext messgeCtx) throws AxisFault {
-        RelatesTo relatesTO = messgeCtx.getOptions().getRelatesTo();
+    public void receive(MessageContext messageCtx) throws AxisFault {
+        RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
-        AsyncResult result = new AsyncResult(messgeCtx);
+        AsyncResult result = new AsyncResult(messageCtx);
 
         if (callback != null) {
             callback.onComplete(result);

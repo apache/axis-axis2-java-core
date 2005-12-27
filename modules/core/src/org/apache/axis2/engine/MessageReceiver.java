@@ -26,5 +26,5 @@ import org.apache.axis2.context.MessageContext;
  * the MessageReceiver can handle a message, send a response back and/or send other messages.
  */
 public interface MessageReceiver {
-    public void receive(MessageContext messgeCtx) throws AxisFault;
+    public void receive(MessageContext messageCtx) throws AxisFault;
 }

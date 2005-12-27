@@ -30,7 +30,7 @@ public abstract class AbstractRobustInMessageReceiver extends AbstractMessageRec
 
     public abstract void invokeBusinessLogic(MessageContext inMessage) throws AxisFault;
 
-    public final void receive(final MessageContext messgeCtx) throws AxisFault {
-        invokeBusinessLogic(messgeCtx);
+    public final void receive(final MessageContext messageCtx) throws AxisFault {
+        invokeBusinessLogic(messageCtx);
     }
 }

@@ -42,7 +42,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
             assertNotNull(er);
             AxisService service = er.getService("service2");
             assertNotNull(service);
-            //commentd since there is no service based messgeReceivers
+            //commentd since there is no service based messageReceivers
             /*MessageReceiver provider = service.getMessageReceiver();
           assertNotNull(provider);
           assertTrue(provider instanceof RawXMLINOutMessageReceiver);*/

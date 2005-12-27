@@ -28,7 +28,7 @@ public class OutInAxisOperation extends InOutAxisOperation {
         MessageContext outmsgContext = (MessageContext) mep.get(MESSAGE_LABEL_OUT_VALUE);
 
         if ((immsgContext != null) && (outmsgContext != null)) {
-            throw new AxisFault("Invalid messge addition , operation context completed");
+            throw new AxisFault("Invalid message addition , operation context completed");
         }
 
         if (outmsgContext == null) {

@@ -109,8 +109,8 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         AxisOperation axisOperation = new OutInAxisOperation();
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messgeCtx) {
-                envelope = messgeCtx.getEnvelope();
+            public void receive(MessageContext messageCtx) {
+                envelope = messageCtx.getEnvelope();
             }
         });
         service.addOperation(axisOperation);

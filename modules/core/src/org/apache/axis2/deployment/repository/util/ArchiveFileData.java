@@ -35,7 +35,7 @@ public class ArchiveFileData {
     private File file = null;
     private ArrayList deployableServices = new ArrayList();
     private ClassLoader classLoader;
-    private String messgeReceiver;
+    private String messageReceiver;
 
     private String name;
     private int type;
@@ -66,8 +66,8 @@ public class ArchiveFileData {
         return file;
     }
 
-    public String getMessgeReceiver() {
-        return messgeReceiver;
+    public String getMessageReceiver() {
+        return messageReceiver;
     }
 
     public String getName() {
@@ -131,7 +131,7 @@ public class ArchiveFileData {
         this.deployableServices = deployableServices;
     }
 
-    public void setMessgeReceiver(String messgeReceiver) {
-        this.messgeReceiver = messgeReceiver;
+    public void setMessageReceiver(String messageReceiver) {
+        this.messageReceiver = messageReceiver;
     }
 }

@@ -59,7 +59,7 @@ public class EnginePausingTest extends TestCase {
 
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messgeCtx) {
+            public void receive(MessageContext messageCtx) {
 
             }
         });

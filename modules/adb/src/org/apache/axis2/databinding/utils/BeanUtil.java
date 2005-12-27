@@ -251,7 +251,7 @@ public class BeanUtil {
 /**
  * If the body first child contains , then there can not be any other element withot
  * refs , so I can assume if the first child of the body first element has ref then
- * the messge has to handle as mutiref message.
+ * the message has to handle as mutiref message.
  * as an exmple if the body is like below
  * <foo>
  *  <arg0 href="#0"/>

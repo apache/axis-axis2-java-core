@@ -114,8 +114,8 @@ public class MailCharSetEncodingTest extends TestCase {
                     );
             clientOperation.setName(operationName);
             clientOperation.setMessageReceiver(new MessageReceiver() {
-                public void receive(MessageContext messgeCtx) throws AxisFault {
-                    envelope = messgeCtx.getEnvelope();
+                public void receive(MessageContext messageCtx) throws AxisFault {
+                    envelope = messageCtx.getEnvelope();
                 }
             });
             engineRegistry.removeService(serviceName.getLocalPart());

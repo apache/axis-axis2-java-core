@@ -62,8 +62,8 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
         AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messgeCtx) throws AxisFault {
-                envelope = messgeCtx.getEnvelope();
+            public void receive(MessageContext messageCtx) throws AxisFault {
+                envelope = messageCtx.getEnvelope();
                 TestingUtils.campareWithCreatedOMElement(
                         envelope.getBody().getFirstElement());
             }

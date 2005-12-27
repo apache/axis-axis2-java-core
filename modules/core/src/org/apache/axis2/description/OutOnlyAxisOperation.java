@@ -52,7 +52,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
             opContext.setComplete(true);
         } else {
             throw new AxisFault(
-                    "Invalid messge addition , operation context completed");
+                    "Invalid message addition , operation context completed");
         }
     }
 

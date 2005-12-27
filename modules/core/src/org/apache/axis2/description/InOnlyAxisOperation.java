@@ -45,7 +45,7 @@ public class InOnlyAxisOperation extends AxisOperation {
             opContext.getMessageContexts().put(MESSAGE_LABEL_IN_VALUE, msgContext);
             opContext.setComplete(true);
         } else {
-            throw new AxisFault("Invalid messge addition , operation context completed");
+            throw new AxisFault("Invalid message addition , operation context completed");
         }
     }
 
