@@ -42,7 +42,7 @@
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
-                return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReader()) ;
+                return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching()) ;
                 }
             </xsl:if>
         </xsl:for-each>
@@ -111,7 +111,7 @@
                     java.lang.reflect.Method parseMethod = type.getMethod("parse",new Class[]{javax.xml.stream.XMLStreamReader.class});
                     obj = null;
                     if (parseMethod!=null){
-                        obj = parseMethod.invoke(null,new Object[]{param.getXMLStreamReader()});
+                        obj = parseMethod.invoke(null,new Object[]{param.getXMLStreamReaderWithoutCaching()});
                     }else{
                         //oops! we don't know how to deal with this. Perhaps the reflective one is a good choice here
                     }
