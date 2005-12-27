@@ -67,7 +67,7 @@ public class AxisService
     private long lastupdate;
     private HashMap moduleConfigmap;
     private String name;
-    private ParameterInclude paramterInclude;
+    private ParameterInclude parameterInclude;
     private AxisServiceGroup parent;
     private ClassLoader serviceClassLoader;
 
@@ -87,7 +87,7 @@ public class AxisService
      * Constructor AxisService
      */
     public AxisService() {
-        this.paramterInclude = new ParameterIncludeImpl();
+        this.parameterInclude = new ParameterIncludeImpl();
         this.operationsAliasesMap = new HashMap();
         moduleConfigmap = new HashMap();
         //by dafault service scope is for the request
@@ -200,7 +200,7 @@ public class AxisService
         if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else {
-            paramterInclude.addParameter(param);
+            parameterInclude.addParameter(param);
         }
     }
 
@@ -236,7 +236,7 @@ public class AxisService
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        paramterInclude.deserializeParameters(parameterElement);
+        parameterInclude.deserializeParameters(parameterElement);
     }
 
     /*
@@ -500,11 +500,11 @@ public class AxisService
      * @return Parameter
      */
     public Parameter getParameter(String name) {
-        return paramterInclude.getParameter(name);
+        return parameterInclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
-        return paramterInclude.getParameters();
+        return parameterInclude.getParameters();
     }
 
     /**

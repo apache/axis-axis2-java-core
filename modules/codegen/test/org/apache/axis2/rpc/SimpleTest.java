@@ -158,10 +158,10 @@ public class SimpleTest extends TestCase {
         AxisOperation axisOperation = new InOutAxisOperation(new QName(methodName));
         axisOperation.setMessageReceiver(new RPCInOutMessageReceiver());
         service.addOperation(axisOperation);
-        Parameter paramter = new ParameterImpl();
-        paramter.setName(RPCInOutMessageReceiver.RPCMETHOD_PROPERTY);
-        paramter.setValue(method);
-        axisOperation.addParameter(paramter);
+        Parameter parameter = new ParameterImpl();
+        parameter.setName(RPCInOutMessageReceiver.RPCMETHOD_PROPERTY);
+        parameter.setValue(method);
+        axisOperation.addParameter(parameter);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()
                 .addService(service);
