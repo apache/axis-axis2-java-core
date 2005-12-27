@@ -50,8 +50,8 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	protected ParentNode() {
 	}
 	
-	///
-	///OMContainer methods
+	// /
+	// /OMContainer methods
 	///
 	
 	public void addChild(OMNode omNode) {
@@ -116,6 +116,9 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	///	
 	
 	public NodeList getChildNodes() {
+		if (!this.done) {
+			this.build();
+		}
 		return new NodeListImpl(this, null,null);
 	}
 	
@@ -131,6 +134,9 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 			
 	public boolean hasChildNodes() {
+        while ((firstChild == null) && !done) {
+            buildNext();
+        }
 		return this.firstChild != null;
 	}
 	
