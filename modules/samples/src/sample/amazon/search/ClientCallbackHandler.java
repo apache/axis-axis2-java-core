@@ -68,15 +68,15 @@ public class ClientCallbackHandler extends Callback {
      */
     public void onComplete(AsyncResult result) {
         log.info(
-                "Responce message received to the ClientCallbackHandler ...");
+                "Response message received to the ClientCallbackHandler ...");
         try {
             result.getResponseEnvelope().serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
                             System.out));
         } catch (XMLStreamException e) {
-            log.info("Error occured after responce is received");
+            log.info("Error occured after response is received");
             e.printStackTrace();
         } catch (FactoryConfigurationError e) {
-            log.info("Error occured after responce is received");
+            log.info("Error occured after response is received");
             e.printStackTrace();
         }
         myResult = result;

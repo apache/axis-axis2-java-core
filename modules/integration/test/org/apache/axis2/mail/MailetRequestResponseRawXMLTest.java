@@ -48,9 +48,9 @@ import javax.xml.stream.XMLStreamException;
 
 /**
  * This will use the In out functionality to test the mailet functionality. This code was
- * based on the code on the MailRequestResponceRawXMLTest.java.
+ * based on the code on the MailRequestResponseRawXMLTest.java.
  */
-public class MailetRequestResponceRawXMLTest extends TestCase {
+public class MailetRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("axis2-server@127.0.0.1" +
                     "/axis/services/EchoXMLService/echoOMElement");
@@ -67,11 +67,11 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
 
     private boolean finish = false;
 
-    public MailetRequestResponceRawXMLTest() {
-        super(MailetRequestResponceRawXMLTest.class.getName());
+    public MailetRequestResponseRawXMLTest() {
+        super(MailetRequestResponseRawXMLTest.class.getName());
     }
 
-    public MailetRequestResponceRawXMLTest(String testName) {
+    public MailetRequestResponseRawXMLTest(String testName) {
         super(testName);
     }
 

@@ -473,7 +473,7 @@
                 <path refid="maven.dependency.classpath"/>
             </classpath>
             <formatter type="plain"/>
-            <test name="org.apache.axis2.mail.MailetRequestResponceRawXMLTest"/>
+            <test name="org.apache.axis2.mail.MailetRequestResponseRawXMLTest"/>
             <test name="org.apache.axis2.mail.MailOneWayRawXMLTest"/>
             <test name="org.apache.axis2.mail.MailRequestResponseRawXMLTest"/>
         </junit>
