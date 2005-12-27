@@ -289,15 +289,15 @@ public abstract class AbstractHTTPSender {
         private boolean doingMTOM = false;
         private byte[] bytes;
         private String charSetEnc;
-        private boolean chuncked;
+        private boolean chunked;
         private OMElement element;
         private MessageContext msgCtxt;
         private String soapActionString;
 
-        public AxisRequestEntity(OMElement element, boolean chuncked, MessageContext msgCtxt,
+        public AxisRequestEntity(OMElement element, boolean chunked, MessageContext msgCtxt,
                                  String charSetEncoding, String soapActionString) {
             this.element = element;
-            this.chuncked = chuncked;
+            this.chunked = chunked;
             this.msgCtxt = msgCtxt;
             this.doingMTOM = msgCtxt.isDoingMTOM();
             this.charSetEnc = charSetEncoding;
@@ -337,7 +337,7 @@ public abstract class AbstractHTTPSender {
         public void writeRequest(OutputStream out) throws IOException {
             try {
                 if (doingMTOM) {
-                    if (chuncked) {
+                    if (chunked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
                         if (bytes == null) {
@@ -347,7 +347,7 @@ public abstract class AbstractHTTPSender {
                         out.write(bytes);
                     }
                 } else {
-                    if (chuncked) {
+                    if (chunked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
                         if (bytes == null) {
@@ -371,7 +371,7 @@ public abstract class AbstractHTTPSender {
         public long getContentLength() {
             try {
                 if (doingMTOM) {
-                    if (chuncked) {
+                    if (chunked) {
                         return -1;
                     } else {
                         if (bytes == null) {
@@ -381,7 +381,7 @@ public abstract class AbstractHTTPSender {
                         return bytes.length;
                     }
                 } else {
-                    if (chuncked) {
+                    if (chunked) {
                         return -1;
                     } else {
                         if (bytes == null) {

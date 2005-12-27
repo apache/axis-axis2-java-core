@@ -33,7 +33,7 @@ public class AxisServiceGroup implements ParameterInclude {
     private Log log = LogFactory.getLog(getClass());
 
     // to store module ref at deploy time parsing
-    private ArrayList mdoulesList = new ArrayList();
+    private ArrayList modulesList = new ArrayList();
 
     // to store service Group engagedModules name
     private ArrayList engagedModules;
@@ -85,7 +85,7 @@ public class AxisServiceGroup implements ParameterInclude {
     }
 
     public void addModuleref(QName moduleref) {
-        mdoulesList.add(moduleref);
+        modulesList.add(moduleref);
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -188,7 +188,7 @@ public class AxisServiceGroup implements ParameterInclude {
     }
 
     public ArrayList getModuleRefs() {
-        return mdoulesList;
+        return modulesList;
     }
 
     public Parameter getParameter(String name) {

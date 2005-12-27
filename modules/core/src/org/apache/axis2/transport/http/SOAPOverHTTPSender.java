@@ -128,15 +128,15 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         private boolean doingMTOM = false;
         private byte[] bytes;
         private String charSetEnc;
-        private boolean chuncked;
+        private boolean chunked;
         private OMElement element;
         private MessageContext msgCtxt;
         private String soapActionString;
 
-        public AxisSOAPRequestEntity(OMElement element, boolean chuncked, MessageContext msgCtxt,
+        public AxisSOAPRequestEntity(OMElement element, boolean chunked, MessageContext msgCtxt,
                                      String charSetEncoding, String soapActionString) {
             this.element = element;
-            this.chuncked = chuncked;
+            this.chunked = chunked;
             this.msgCtxt = msgCtxt;
             this.doingMTOM = msgCtxt.isDoingMTOM();
             this.charSetEnc = charSetEncoding;
@@ -176,7 +176,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         public void writeRequest(OutputStream out) throws IOException {
             try {
                 if (doingMTOM) {
-                    if (chuncked) {
+                    if (chunked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
                         if (bytes == null) {
@@ -186,7 +186,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                         out.write(bytes);
                     }
                 } else {
-                    if (chuncked) {
+                    if (chunked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
                         if (bytes == null) {
@@ -210,7 +210,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         public long getContentLength() {
             try {
                 if (doingMTOM) {
-                    if (chuncked) {
+                    if (chunked) {
                         return -1;
                     } else {
                         if (bytes == null) {
@@ -220,7 +220,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                         return bytes.length;
                     }
                 } else {
-                    if (chuncked) {
+                    if (chunked) {
                         return -1;
                     } else {
                         if (bytes == null) {

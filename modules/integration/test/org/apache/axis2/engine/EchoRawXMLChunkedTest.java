@@ -35,22 +35,17 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
-
-    private Log log = LogFactory.getLog(getClass());
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 
     private AxisService service;
 
-    private boolean finish = false;
     private static final String CLIENT_HOME = Constants.TESTING_PATH + "chunked-enabledRepository";
 
-    public EchoRawXMLChunckedTest() {
-        super(EchoRawXMLChunckedTest.class.getName());
+    public EchoRawXMLChunkedTest() {
+        super(EchoRawXMLChunkedTest.class.getName());
     }
 
-    public EchoRawXMLChunckedTest(String testName) {
+    public EchoRawXMLChunkedTest(String testName) {
         super(testName);
     }
 
