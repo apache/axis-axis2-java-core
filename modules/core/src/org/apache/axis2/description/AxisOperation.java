@@ -53,6 +53,9 @@ public abstract class AxisOperation
 
     private AxisService parent;
     private ArrayList wsamappingList;
+    
+    // to store policies which are valid for entire operation
+    private PolicyInclude policyInclude;
 
     public AxisOperation() {
         mepURI = MEP_URI_IN_OUT;
@@ -417,5 +420,13 @@ public abstract class AxisOperation
      */
     public OperationClient createClient (ServiceContext sc, Options options){
         throw new UnsupportedOperationException ("The MEP you are using (" + mepURI + ") has not implemented createClient().");
+    }
+    
+    public void setPolicyInclude(PolicyInclude policyInclude) {
+        this.policyInclude = policyInclude;
+    }
+    
+    public PolicyInclude getPolicyInclude() {
+        return policyInclude;
     }
 }

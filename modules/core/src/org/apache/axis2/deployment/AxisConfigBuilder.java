@@ -107,6 +107,25 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (hostElement != null) {
                 processHostCongiguration(hostElement, axisConfiguration);
             }
+            
+            // setting the PolicyInclude
+            PolicyInclude policyInclude = new PolicyInclude();
+            axisConfiguration.setPolicyInclude(policyInclude);
+            
+            // processing <wsp:Policy> .. </..> elements
+            Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            
+            if (policyElements != null) {
+                processPolicyElements(policyElements, axisConfiguration.getPolicyInclude());
+            }
+            
+            // processing <wsp:PolicyReference> .. </..> elements
+            Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            
+            if (policyRefElements != null) {
+                processPolicyRefElements(policyElements, axisConfiguration.getPolicyInclude());
+            }
+            
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }

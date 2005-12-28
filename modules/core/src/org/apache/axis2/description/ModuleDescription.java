@@ -57,6 +57,11 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     // to store module operations , which are suppose to be added to a service if it is engaged to a service
     private HashMap operations;
     private AxisConfiguration parent;
+    
+    /*
+     * to store policies which are falid for any service for which the module is
+     */ 
+    private PolicyInclude policyInclude;
 
     /**
      * Constructor ModuleDescription
@@ -228,5 +233,13 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
 
     public void setParent(AxisConfiguration parent) {
         this.parent = parent;
+    }
+    
+    public void setPolicyInclude(PolicyInclude policyInclude) {
+        this.policyInclude = policyInclude;
+    }
+    
+    public PolicyInclude getPolicyInclude() {
+        return policyInclude;
     }
 }

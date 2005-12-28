@@ -118,6 +118,15 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <!-- Added this to support WS Policy in Axis2 -->
+        <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>ws-policy</artifactId>
+            <version>${ws_policy.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
     </dependencies>
 	<!-- add the build properties-->
 	<build>

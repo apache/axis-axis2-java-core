@@ -25,11 +25,13 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
+import org.apache.ws.policy.util.PolicyRegistry;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.security.cert.PolicyNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,7 +53,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     public ServiceBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig,
                           AxisService service) {
         super(serviceInputStream, axisConfig);
-        this.service = service;
+        this.service = service;       
     }
 
     /**
@@ -88,6 +90,32 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (serviceNameatt != null) {
                     service.setServiceDescription(serviceNameatt.getAttributeValue());
                 }
+            }
+            
+            // setting the PolicyInclude
+            PolicyInclude policyInclude;
+            
+            if (axisConfig != null) {
+                PolicyInclude parent = axisConfig.getPolicyInclude();
+                policyInclude = new PolicyInclude(parent);
+            
+            } else {
+                policyInclude = new PolicyInclude();
+            }
+            service.setPolicyInclude(policyInclude);
+            
+            // processing <wsp:Policy> .. </..> elements
+            Iterator policyElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            
+            if (policyElements != null) {
+                processPolicyElements(policyElements, service.getPolicyInclude());
+            }
+            
+            // processing <wsp:PolicyReference> .. </..> elements
+            Iterator policyRefElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            
+            if (policyRefElements != null) {
+                processPolicyRefElements(policyRefElements, service.getPolicyInclude());
             }
 
             //processin Service Scop
@@ -132,6 +160,10 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
             processServiceModuleConfig(moduleConfigs, service, service);
+            
+            
+            
+            
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
@@ -154,8 +186,29 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             AxisMessage message = new AxisMessage();
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
+            
+            // setting the PolicyInclude
+            PolicyInclude parent = operation.getPolicyInclude();
+            PolicyInclude policyInclude = new PolicyInclude(parent);
+            message.setPolicyInclude(policyInclude);
+            
+            // processing <wsp:Policy> .. </..> elements
+            Iterator policyElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            
+            if (policyElements != null) {
+                processPolicyElements(policyElements, message.getPolicyInclude());
+            }
+            
+            // processing <wsp:PolicyReference> .. </..> elements
+            Iterator policyRefElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            
+            if (policyRefElements != null) {
+                processPolicyRefElements(policyRefElements, message.getPolicyInclude());
+            }
 
             processParameters(parameters, message, operation);
+            
+            
             operation.addMessage(message, lable.getAttributeValue().trim());
         }
     }
@@ -246,7 +299,34 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
                 op_descrip.setName(new QName(opname));
             }
-
+            
+            // setting the PolicyInclude
+            PolicyInclude policyInclude;
+            
+            if (service != null) {
+                PolicyInclude parent = service.getPolicyInclude();
+                policyInclude = new PolicyInclude(parent);
+                
+            } else {
+                policyInclude = new PolicyInclude();
+            }
+            
+            op_descrip.setPolicyInclude(policyInclude);
+            
+            // processing <wsp:Policy> .. </..> elements
+            Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            
+            if (policyElements != null) {
+                processPolicyElements(policyElements, op_descrip.getPolicyInclude());
+            }
+            
+            // processing <wsp:PolicyReference> .. </..> elements
+            Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            
+            if (policyRefElements != null) {
+                processPolicyRefElements(policyRefElements, op_descrip.getPolicyInclude());
+            }
+            
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             ArrayList wsamappings = processParameters(parameters, op_descrip, service);
@@ -287,7 +367,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator moduleConfigs = operation.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processOperationModuleConfig(moduleConfigs, op_descrip, op_descrip);
-
+            
             // adding the operation
             operations.add(op_descrip);
         }
@@ -315,5 +395,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                 service.addModuleConfig(moduleConfiguration);
             }
         }
-    }
+    }    
+  
 }

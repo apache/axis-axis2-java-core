@@ -51,5 +51,8 @@ public interface ExtensionConstants {
             "http://schemas.xmlsoap.org/wsdl/soap/", "binding");
      public static final QName SOAP_12_BINDING = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap12/", "binding");
+     
+     public static final QName POLICY = new QName(
+             "http://schemas.xmlsoap.org/ws/2004/09/policy", "Policy");
 
 }

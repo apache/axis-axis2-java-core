@@ -69,6 +69,9 @@ public class AxisConfiguration implements ParameterInclude {
     private ArrayList inFaultPhases;
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     private HashMap messageReceivers;
+    
+    // to store policies which are valid for entire system
+    private PolicyInclude policyInclude;
 
     private ClassLoader moduleClassLoader;
     private HashMap moduleConfigmap;
@@ -94,6 +97,9 @@ public class AxisConfiguration implements ParameterInclude {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
+        
+        policyInclude = new PolicyInclude();
+        
         systemClassLoader = Thread.currentThread().getContextClassLoader();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
@@ -554,6 +560,14 @@ public class AxisConfiguration implements ParameterInclude {
 
     public void setSystemClassLoader(ClassLoader classLoader) {
         this.systemClassLoader = classLoader;
+    }
+    
+    public void setPolicyInclude(PolicyInclude policyInclude) {
+        this.policyInclude = policyInclude;
+    }
+    
+    public PolicyInclude getPolicyInclude() {
+        return policyInclude;
     }
     
     public static String getAxis2HomeDirectory() {

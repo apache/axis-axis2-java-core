@@ -36,6 +36,8 @@ public class AxisMessage implements ParameterInclude {
     //to keep data in WSDL message refference and to keep the Java2WSDL data
     // such as SchemaElementName , direction etc.
     private MessageReference messageReference;
+    
+    private PolicyInclude policyInclude;
 
     public AxisMessage() {
         parameterinclude = new ParameterIncludeImpl();
@@ -115,5 +117,13 @@ public class AxisMessage implements ParameterInclude {
 
     public void setElementQName(QName element) {
         messageReference.setElementQName(element);
+    }
+    
+    public void setPolicyInclude(PolicyInclude policyInclude) {
+        this.policyInclude = policyInclude;
+    }
+    
+    public PolicyInclude getPolicyInclude() {
+        return policyInclude;
     }
 }

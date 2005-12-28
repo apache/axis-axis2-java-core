@@ -24,6 +24,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
@@ -82,6 +83,9 @@ public class AxisService
 
     //to store default message receivers
     private HashMap messageReceivers;
+    
+    // to store policies which are valid for the entire service
+    private PolicyInclude policyInclude;
 
     /**
      * Constructor AxisService
@@ -344,6 +348,10 @@ public class AxisService
         AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null, serviceURL);
         try {
             WSDLDescription desc = axisService2WOM.generateWOM();
+            
+            // populate it with policy information ..
+            PolicyUtil.populatePolicy(desc, this);
+            
             WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
             womWriter.setdefaultWSDLPrefix("wsdl");
             womWriter.writeWOM(desc, out);
@@ -632,5 +640,13 @@ public class AxisService
                 Constants.SCOPE_REQUEST.equals(scope)) {
             this.scope = scope;
         }
+    }
+    
+    public void setPolicyInclude(PolicyInclude policyInclude) {
+        this.policyInclude = policyInclude;
+    }
+    
+    public PolicyInclude getPolicyInclude() {
+        return policyInclude;
     }
 }

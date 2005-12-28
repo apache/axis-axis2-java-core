@@ -91,4 +91,9 @@ public interface DeploymentConstants {
     String BOOLEAN_FALSE = "false";
     char SEPARATOR_DOT = '.';
     char SEPARATOR_COLON = ':';
+    
+    String POLICY_NS_URI = "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    String TAG_POLICY = "Policy";
+    String TAG_POLICY_REF = "PolicyReference";
+    
 }
