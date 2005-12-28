@@ -20,17 +20,14 @@
                 org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
                 (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
+                org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
                 <xsl:choose>
                     <xsl:when test="$base64">
-                         org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
                          optimizeContent(documentElement,qNameArray);
-                         return documentElement;
                     </xsl:when>
-                    <xsl:otherwise>
-                        return  builder.getDocumentElement();
-                    </xsl:otherwise>
                 </xsl:choose>
-
+                  ((org.apache.axis2.om.impl.OMNodeEx)documentElement).setParent(null);
+                  return documentElement;
                 }
             </xsl:if>
 
@@ -94,7 +91,9 @@
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
                             (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(param.MY_QNAME));
-                            return builder.getDocumentElement();
+                            org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
+                            ((org.apache.axis2.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
+                            return documentElement;
                         }else{
                            <!-- treat this as a plain bean. use the reflective bean converter -->
                            //todo finish this onece the bean serializer has the necessary methods
