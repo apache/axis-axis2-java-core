@@ -99,8 +99,6 @@ public class JavaBeanWriter implements BeanWriter {
             }else{
                 wrapClasses = options.isWrapClasses();
             }
-            System.out.println("writeClasses = " + writeClasses);
-
 
             //if the wrap mode is set then create a global document to keep the wrapped
             //element models
