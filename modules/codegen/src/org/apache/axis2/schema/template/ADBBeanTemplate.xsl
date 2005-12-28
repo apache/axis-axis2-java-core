@@ -33,7 +33,7 @@
         <!-- write the class header. this should be done only when unwrapped -->
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
 
-        <xsl:if test="@unwrapped">
+        <xsl:if test="not(@skip-write)">
             /**
             * <xsl:value-of select="$name"/>.java
             *
@@ -46,7 +46,7 @@
             *  <xsl:value-of select="$name"/> bean class
             */
         </xsl:if>
-        public <xsl:if test="not(@unwrapped)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="@extension"> extends <xsl:value-of select="@extension"/></xsl:if>
+        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="@extension"> extends <xsl:value-of select="@extension"/></xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
             <xsl:when test="@type">/* This type was generated from the piece of schema that had

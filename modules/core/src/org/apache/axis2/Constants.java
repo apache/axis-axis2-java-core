@@ -153,7 +153,7 @@ public class Constants {
     public static final String WSA_ACTION = "wsamapping";
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
-    public static final String TESTING_PATH = "/home/sanka/axis2-src/java/modules/integration/target/test-resources/";
+    public static final String TESTING_PATH = "target/test-resources/";
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
     public static final char SERVICE_NAME_SPLIT_CHAR = ':';
     public static final String SERVICE_GROUP_ID = "ServiceGroupId";

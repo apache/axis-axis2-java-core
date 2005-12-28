@@ -23,6 +23,7 @@ import org.apache.wsdl.WSDLDescription;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
@@ -43,7 +44,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean writeTestCase = false;
     private boolean writeMessageReceiver = true;
     private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
-    private boolean wrapClasses = false;
+
+    // Default wrap classes is true, which means the classes generated
+    // by default are wrapped. The effect of this setting will be controlled
+    // to some extent, by the other settings as well.
+
+    private boolean wrapClasses = true;
 
     private boolean generateAll = false;
 
@@ -260,10 +266,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             setDatabindingType(dataBindingOption.getOptionValue());
         }
 
-        CommandLineOption wrapClassesOption = (CommandLineOption) optionMap.get(
-                WRAP_CLASSES_OPTION);
-        if (wrapClassesOption != null) {
-            wrapClasses = true;
+        CommandLineOption unwrapClassesOption = (CommandLineOption) optionMap.get(
+                UNWRAP_CLASSES_OPTION);
+        if (unwrapClassesOption != null) {
+            wrapClasses = false;
         }
 
         CommandLineOption generateAllOption = (CommandLineOption) optionMap.get(
@@ -271,6 +277,19 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         if (generateAllOption != null) {
             generateAll = true;
         }
+
+        //loop through the map and find parameters having the extra prefix.
+        //put them in the property map
+        Iterator keyIterator = optionMap.keySet().iterator();
+        while (keyIterator.hasNext()) {
+            Object key = keyIterator.next();
+            CommandLineOption option =  (CommandLineOption)optionMap.get(key);
+            if (key.toString().startsWith(EXTRA_OPTIONTYPE_PREFIX)){
+                //add this to the property map
+                configurationProperties.put(key.toString().replaceFirst("E",""),option.getOptionValue());
+            }
+        }
+
     }
 
 

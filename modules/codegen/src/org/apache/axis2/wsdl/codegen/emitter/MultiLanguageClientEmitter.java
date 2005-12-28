@@ -86,7 +86,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
-    protected URIResolver reslover;
+    protected URIResolver resolver;
 
 
     /**
@@ -106,7 +106,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.configuration = configuration;
-        reslover = new XSLTIncludeResolver(this.configuration.getProperties());
+        resolver = new XSLTIncludeResolver(this.configuration.getProperties());
     }
 
     /**
@@ -204,6 +204,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
                 axisBinding = (WSDLBinding) iterator.next();
 
+                //see the comment at updateMapperClassnames for details and reasons for
+                //calling this method
+                if (mapper.isObjectMappingPresent()){
+                    updateMapperForMessageReceiver(axisBinding.getBoundInterface());
+                }
                 //write skeleton
                 writeSkeleton(axisBinding.getBoundInterface(), axisBinding);
                 //write service xml
@@ -284,6 +289,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 axisBinding = (WSDLBinding) iterator.next();
                 //Check the service
                 axisService = checkService(wom, axisService);
+
+                //see the comment at updateMapperClassnames for details and reasons for
+                //calling this method
+                if (mapper.isObjectMappingPresent()){
+                    updateMapperForStub(axisBinding.getBoundInterface());
+                }
+
                 //write the inteface
                 //feed the binding information also
                 //note that we do not create this interface if the user switched on the wrap classes mode
@@ -307,6 +319,38 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
     }
 
+    /**
+     * we need to modify the mapper's class name list. The issue here is that in this case we do not
+     * expect the fully qulified class names to be present in the class names list due to the simple
+     * reason that they've not been written yet! Hence the mappers class name list needs to be updated
+     * to suit the expected package to be written
+     * in this case we modify the package name to have make the class a inner class of the stub
+     */
+    private void updateMapperClassnames(WSDLInterface boundInterface,String fullyQulifiedIncludingClassNamePrefix) {
+
+
+        Map classNameMap = mapper.getAllMappedNames();
+        Iterator keys = classNameMap.keySet().iterator();
+        while (keys.hasNext()) {
+            Object key =  keys.next();
+            classNameMap.put(key,fullyQulifiedIncludingClassNamePrefix + classNameMap.get(key));
+        }
+    }
+
+
+    private void updateMapperForStub(WSDLInterface boundInterface){
+        String packageName = configuration.getPackageName();
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String stubName = localPart + STUB_SUFFIX;
+        updateMapperClassnames(boundInterface,packageName + "." + stubName + ".");
+    }
+
+    private void updateMapperForMessageReceiver(WSDLInterface boundInterface){
+        String packageName = configuration.getPackageName();
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String stubName = localPart + MESSAGE_RECEIVER_SUFFIX;
+        updateMapperClassnames(boundInterface,packageName + "." + stubName + ".");
+    }
     /**
      * emit the stubcode with the automatic mode. Look for the binding and if present
      * emit the skeleton with the binding. Else go for the interface
@@ -475,10 +519,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         writeClass(interfaceImplModel, writer);
     }
 
-    protected void writeMessageReceiver(WSDLBinding axisBinding) throws Exception {
+    protected void writeMessageReceiver(WSDLBinding binding) throws Exception {
         if (configuration.isWriteMessageReceiver()) {
             Document classModel = createDocumentForMessageReceiver(
-                    axisBinding);
+                    binding);
             MessageReceiverWriter writer =
                     new MessageReceiverWriter(
                             this.configuration.getOutputLocation(),
@@ -503,7 +547,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 model.getDocumentElement().getAttribute("package"),
                 model.getDocumentElement().getAttribute("name"));
         //use the global resolver
-        writer.parse(model,reslover);
+        writer.parse(model,resolver);
     }
 
 
@@ -738,9 +782,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
 
-    protected Document createDocumentForMessageReceiver(WSDLBinding binding) {
+    protected Document createDocumentForMessageReceiver( WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
-
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,
@@ -760,13 +803,28 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "basereceiver",
                 "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver",
                 rootElement);
-        addAttribute(doc,
-                "dbsupportpackage",
-                configuration.getPackageName() +
-                        DATABINDING_PACKAGE_NAME_SUFFIX,
-                rootElement);
+
         fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement, binding);
+
+         //###########################################################################################
+        //this block of code specifically applies to the integration of databinding code into the
+        //generated classes tightly (probably as inner classes)
+        //###########################################################################################
+        //check for the special models in the mapper and if they are present process them
+        if (mapper.isObjectMappingPresent()){
+            // add an attribute to the root element showing that the writing has been skipped
+            addAttribute(doc,
+                    "skip-write",
+                    "yes",
+                    rootElement);
+            //process the mapper objects
+            processModelObjects(mapper.getAllMappedObjects(),rootElement,doc);
+
+
+        }
+      // #############################################################################################
+
+        loadOperations(boundInterface, doc, rootElement, null);
 
         /////////////////////////
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
@@ -1127,6 +1185,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected Document createDOMDocumentForInterfaceImplementation(
             WSDLBinding binding, WSDLService service) throws Exception {
         WSDLInterface boundInterface = binding.getBoundInterface();
+
+        String packageName = configuration.getPackageName();
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String stubName = localPart + STUB_SUFFIX;
+
         HashMap endpoints = new HashMap(1);
         if (service != null) {
             endpoints = service.getEndpoints();
@@ -1134,12 +1197,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
+
         addAttribute(doc,
                 "package",
-                configuration.getPackageName(),
+                packageName,
                 rootElement);
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
-        addAttribute(doc, "name", localPart + STUB_SUFFIX, rootElement);
+
+
+        addAttribute(doc, "name", stubName, rootElement);
         addAttribute(doc, "servicename", localPart, rootElement);
         addAttribute(doc,
                 "namespace",
@@ -1159,12 +1224,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     rootElement);
         }
 
-        //todo fix this
-        addAttribute(doc,
-                "dbsupportpackage",
-                configuration.getPackageName() +
-                        DATABINDING_PACKAGE_NAME_SUFFIX,
-                rootElement);
 
         //add SOAP version
         addSoapVersion(binding, doc, rootElement);
@@ -1172,6 +1231,25 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addEndpoints(doc, rootElement, endpoints);
         //set the sync/async attributes
         fillSyncAttributes(doc, rootElement);
+
+        //###########################################################################################
+        //this block of code specifically applies to the integration of databinding code into the
+        //generated classes tightly (probably as inner classes)
+        //###########################################################################################
+        //check for the special models in the mapper and if they are present process them
+        if (mapper.isObjectMappingPresent()){
+            // add an attribute to the root element showing that the writing has been skipped
+            addAttribute(doc,
+                    "skip-write",
+                    "yes",
+                    rootElement);
+            //process the mapper objects
+            processModelObjects(mapper.getAllMappedObjects(),rootElement,doc);
+
+
+        }
+      // #############################################################################################
+
         //load the operations
         loadOperations(boundInterface, doc, rootElement, binding);
 
@@ -1180,10 +1258,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         rootElement.appendChild(
                 createDOMElementforDatabinders(doc, binding));
 
-        //check for the special models in the mapper and if they are present process them
-        if (mapper.isObjectMappingPresent()){
-            processModelObjects(mapper.getAllMappedObjects(),rootElement,doc);
-        }
+
 
         doc.appendChild(rootElement);
 
@@ -1203,7 +1278,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         while (objectIterator.hasNext()) {
             Object o =  objectIterator.next();
             if (o instanceof Document){
-              root.appendChild(doc.importNode(((Document)o).getDocumentElement(),false));
+                root.appendChild(doc.importNode(((Document)o).getDocumentElement(),true));
             }else{
                 //oops we have no idea how to do this
             }

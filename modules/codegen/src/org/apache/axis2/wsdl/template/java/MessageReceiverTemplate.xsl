@@ -1,7 +1,14 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
+    <!-- include the databind supporters  -->
     <xsl:include href="databindsupporter"/>
+    <!-- import the other templates for databinding
+           Note  -  these names would be handled by a special
+           URI resolver during the xslt transformations
+       -->
+       <xsl:include href="externalTemplate"/>
+
 
     <xsl:template match="/interface">
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonname"/></xsl:variable>

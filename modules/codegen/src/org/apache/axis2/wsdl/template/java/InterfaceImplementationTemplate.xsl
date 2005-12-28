@@ -3,7 +3,10 @@
 
     <!-- import the databinding template-->
     <xsl:include href="databindsupporter"/>
-    <!-- import the other templates for databinding -->
+    <!-- import the other templates for databinding
+         Note  -  these names would be handled by a special
+         URI resolver during the xslt transformations
+     -->
     <xsl:include href="externalTemplate"/>
 
     <xsl:template match="/class">

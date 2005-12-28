@@ -237,7 +237,7 @@ public class JavaBeanWriter implements BeanWriter {
         String originalName = qName.getLocalPart();
         String className = getNonConflictingName(this.namesList, originalName);
 
-        String packagePrefix;
+        String packagePrefix = null;
 
         String fullyqualifiedClassName;
         ArrayList propertyNames = new ArrayList();
@@ -265,16 +265,21 @@ public class JavaBeanWriter implements BeanWriter {
                 File out = createOutFile(packageName, className);
                 //parse with the template and create the files
                 parse(model, out);
+
+                packagePrefix = packageName ;
             }
 
             //add the model to the model map
             modelMap.put(qName,model);
 
-            packagePrefix = packageName ;
+
         }
 
-        fullyqualifiedClassName = packagePrefix + (packagePrefix.endsWith(".")?"":".") + className;
-
+        if (packagePrefix!=null){
+            fullyqualifiedClassName = packagePrefix + (packagePrefix.endsWith(".")?"":".") + className;
+        }else{
+            fullyqualifiedClassName = className;
+        }
         //return the fully qualified class name
         return fullyqualifiedClassName;
 
@@ -309,6 +314,10 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (!wrapClasses) {
             XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
+        }
+
+        if (!writeClasses){
+            XSLTUtils.addAttribute(model, "skip-write", "yes", rootElt);
         }
 
         if (!isElement) {
@@ -406,6 +415,9 @@ public class JavaBeanWriter implements BeanWriter {
 
     /**
      * gets a non conflicting java name
+     * the comparison with existing classnames need to be
+     * case insensitive, since certain file systems (specifaically
+     * the windows file system) has case insensitive file names)
      *
      * @param listOfNames
      * @param nameBase
@@ -416,11 +428,11 @@ public class JavaBeanWriter implements BeanWriter {
         if (JavaUtils.isJavaKeyword(nameToReturn)) {
             nameToReturn = JavaUtils.makeNonJavaKeyword(nameToReturn);
         }
-        while (listOfNames.contains(nameToReturn)) {
+        while (listOfNames.contains(nameToReturn.toLowerCase())) {
             nameToReturn = nameToReturn + count++;
         }
 
-        listOfNames.add(nameToReturn);
+        listOfNames.add(nameToReturn.toLowerCase());
         return nameToReturn;
     }
 

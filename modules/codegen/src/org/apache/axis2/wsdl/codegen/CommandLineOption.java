@@ -35,7 +35,12 @@ public class CommandLineOption implements CommandLineOptionConstants {
 
     private void updateType(String type) {
         if (type.startsWith("-")) type = type.replaceFirst("-", "");
-        type = type.toLowerCase();
+
+        //for options that start with the extra prefix, don't do any change for the
+        //case
+        if (!type.startsWith(EXTRA_OPTIONTYPE_PREFIX)){
+            type = type.toLowerCase();
+        }
         this.type = type;
     }
 
@@ -87,18 +92,24 @@ public class CommandLineOption implements CommandLineOptionConstants {
     }
 
     private void validate(String optionType) {
-        invalid = !((WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(optionType) ||
-                (OUTPUT_LOCATION_OPTION).equalsIgnoreCase(optionType) ||
-                (SERVER_SIDE_CODE_OPTION).equalsIgnoreCase(optionType) ||
-                (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
-                (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
-                (PACKAGE_OPTION).equalsIgnoreCase(optionType) ||
-                (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType) ||
-                (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType) ||
-                (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType) ||
-                (DATA_BINDING_TYPE_OPTION).equalsIgnoreCase(optionType) ||
-                (WRAP_CLASSES_OPTION).equalsIgnoreCase(optionType) ||
-                (GENERATE_ALL_OPTION).equalsIgnoreCase(optionType))
-                ;
+
+        if (optionType.startsWith(EXTRA_OPTIONTYPE_PREFIX)){
+            invalid = false;
+        } else{
+            invalid = !((WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(optionType) ||
+                    (OUTPUT_LOCATION_OPTION).equalsIgnoreCase(optionType) ||
+                    (SERVER_SIDE_CODE_OPTION).equalsIgnoreCase(optionType) ||
+                    (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
+                    (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
+                    (PACKAGE_OPTION).equalsIgnoreCase(optionType) ||
+                    (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType) ||
+                    (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType) ||
+                    (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType) ||
+                    (DATA_BINDING_TYPE_OPTION).equalsIgnoreCase(optionType) ||
+                    (UNWRAP_CLASSES_OPTION).equalsIgnoreCase(optionType) ||
+                    (GENERATE_ALL_OPTION).equalsIgnoreCase(optionType))
+                    ;
+        }
+
     }
 }

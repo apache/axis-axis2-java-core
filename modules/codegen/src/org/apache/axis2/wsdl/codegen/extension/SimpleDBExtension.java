@@ -95,10 +95,11 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
             //set the default options
             setDefaultOptions(options);
-            
 
-            //todo allow the user to override the default options here
-            //perhaps by allowing -Eparameters
+            //set the user parameters. the user parameters get the preference over
+            //the default once. But the user better know what he's doing if he
+            //used module specific parameters
+            setUserparameters(options);
 
             SchemaCompiler schemaCompiler = new SchemaCompiler(options);
             schemaCompiler
@@ -139,8 +140,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                 //get the ADB template from the schema compilers property bag and set the
                 //template
                 configuration.putProperty(XSLTConstants.EXTERNAL_TEMPLATE_PROPERTY_KEY,
-                                          schemaCompiler.getCompilerProperties().getProperty(
-                                                  SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY));
+                        schemaCompiler.getCompilerProperties().getProperty(
+                                SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY));
 
             }
 
@@ -154,15 +155,35 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
     }
 
+    private void setUserparameters(CompilerOptions options){
+        Map propertyMap = configuration.getProperties();
+        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES)){
+            if (Boolean.valueOf(
+                    propertyMap.get(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES).toString()).
+                    booleanValue()) {
+             options.setWrapClasses(true);
+            }else{
+              options.setWrapClasses(true);
+            }
+        }
+
+        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.WRITE_SCHEMA_CLASSES)){
+          if (Boolean.valueOf(
+                    propertyMap.get(SchemaConstants.SchemaCompilerArguments.WRITE_SCHEMA_CLASSES).toString()).
+                    booleanValue()) {
+             options.setWriteOutput(true);
+            }else{
+              options.setWriteOutput(false);
+            }
+        }
+    }
+
+
     private void setDefaultOptions(CompilerOptions options) {
         /// these options need to be taken from the command line
         options.setOutputLocation(configuration.getOutputLocation());
         options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
 
-//        options.setWrapClasses(configuration.isWrapClasses());
-//        options.setWriteOutput(true);
-
-        //todo this needs to be attended to later
         //default setting is to set the wrap status depending on whether it's
         //the server side or the client side
         if (configuration.isServerSide()){
