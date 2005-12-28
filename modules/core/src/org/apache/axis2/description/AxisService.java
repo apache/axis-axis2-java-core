@@ -350,7 +350,7 @@ public class AxisService
             WSDLDescription desc = axisService2WOM.generateWOM();
             
             // populate it with policy information ..
-            PolicyUtil.populatePolicy(desc, this);
+            //PolicyUtil.populatePolicy(desc, this);
             
             WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
             womWriter.setdefaultWSDLPrefix("wsdl");

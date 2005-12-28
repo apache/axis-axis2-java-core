@@ -160,9 +160,11 @@ public class AxisServiceBuilder {
                 AxisOperation axisOperation = AxisOperationFactory
                         .getAxisOperation(getMessageExchangePattern(bindingOperation));
 
+                // setting parent
+                axisOperation.setParent(axisService);
                 // setting operation name
                 axisOperation.setName(new QName(operation.getName()));
-
+                
                 // Input
                 Input input = operation.getInput();
                 AxisMessage inAxisMsg = axisOperation
@@ -179,7 +181,11 @@ public class AxisServiceBuilder {
                     // axisService.addSchema(getXmlSchema(wrapper));
 
                 } else {
-                    inAxisMsg.setElementQName(inMsg.getQName());
+                    Iterator parts = inMsg.getParts().values().iterator();
+                    Part part = (Part) parts.next();
+                    QName qname = part.getElementName();
+                    inAxisMsg.setElementQName(qname);
+                    
                 }
 
                 // Output
@@ -200,7 +206,10 @@ public class AxisServiceBuilder {
                         // axisService.addSchema(getXmlSchema(wrapper));
 
                     } else {
-                        outAxisMsg.setElementQName(outMsg.getQName());
+                        Iterator parts = outMsg.getParts().values().iterator();
+                        Part part = (Part) parts.next();
+                        QName qname = part.getElementName();
+                        outAxisMsg.setElementQName(qname);
                     }
                 }
 

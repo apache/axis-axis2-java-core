@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+
+The original wsdl document was taken from: "http://wsi.alphaworks.ibm.com:8080/wspolicy/interop2.jsp"
+
+-->
+<wsdl:definitions 
+    targetNamespace="http://ws-policy.tests" 
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" 
+    xmlns:intf="http://ws-policy.tests" 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:apachesoap="http://xml.apache.org/xml-soap" 
+    xmlns="http://schemas.xmlsoap.org/wsdl" 
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+	<wsp:UsingPolicy wsdl:Required="true" />
+	<!--
+		Dummy Assertion scattered throughout as a "spoiler", i.e. the marker value of 9 
+		should NEVER appear in any of the Effective Policies calculated.
+	-->
+	<wsp:Policy wsu:Id="Dummy1-9">
+		<intf:PolicyTestAssertion1 marker="9" />
+	</wsp:Policy>
+
+	<!--
+		Message level assertions.  
+	-->
+	<wsp:Policy wsu:Id="Message1-6">
+		<intf:MessagePolicyTestAssertion1 marker="6" />
+	</wsp:Policy>
+	<wsp:Policy wsu:Id="Message2-7">
+		<intf:MessagePolicyTestAssertion2 marker="7" />
+	</wsp:Policy>
+	<wsp:Policy wsu:Id="Message2-Aggregate">
+		<intf:MessagePolicyTestAssertion2 marker="8" />
+		<wsp:PolicyReference URI="#Message2-7" />
+	</wsp:Policy>
+
+	<!--
+		Operation level assertions.  
+	-->
+	<wsp:Policy wsu:Id="Operation1-6">
+		<intf:OperationPolicyTestAssertion1 marker="6" />
+	</wsp:Policy>
+
+	<wsp:Policy wsu:Id="Operation2-7">
+		<intf:OperationPolicyTestAssertion2 marker="7" />
+	</wsp:Policy>
+	<wsp:Policy wsu:Id="Operation2-Aggregate">
+		<intf:OperationPolicyTestAssertion2 marker="8" />
+		<wsp:PolicyReference URI="#Operation2-7" />
+	</wsp:Policy>
+
+	<!--
+		Endpoint level assertions.  
+	-->
+	<wsp:Policy wsu:Id="Endpoint2-7">
+		<intf:EndpointPolicyTestAssertion2 marker="7" />
+	</wsp:Policy>
+
+	<wsp:Policy wsu:Id="Endpoint2-Aggregate">
+		<intf:EndpointPolicyTestAssertion2 marker="8" />
+		<wsp:PolicyReference URI="#Endpoint2-7" />
+	</wsp:Policy>
+
+	<!--
+		Service level assertions.  
+	-->
+	<wsp:Policy wsu:Id="Service1-6">
+		<intf:ServicePolicyTestAssertion1 marker="6" />
+	</wsp:Policy>
+	<wsp:Policy wsu:Id="Service2-7">
+		<intf:ServicePolicyTestAssertion2 marker="7" />
+	</wsp:Policy>
+	<wsp:Policy wsu:Id="Service2-Aggregate">
+		<intf:ServicePolicyTestAssertion2 marker="8" />
+		<wsp:PolicyReference URI="#Service2-7" />
+	</wsp:Policy>
+
+	<wsdl:types>
+		<schema elementFormDefault="qualified" targetNamespace="http://ws-policy.tests" xmlns="http://www.w3.org/2001/XMLSchema">
+			<element name="SimpleRequest">
+				<complexType>
+					<sequence>
+						<element name="request" nillable="true" type="xsd:string" />
+					</sequence>
+				</complexType>
+			</element>
+			<element name="SimpleResponse">
+				<complexType>
+					<sequence>
+						<element name="response" nillable="true" type="xsd:string" />
+					</sequence>
+				</complexType>
+			</element>
+		</schema>
+	</wsdl:types>
+	
+	<wsdl:message name="MyRequestMessage">	
+		<wsp:PolicyReference URI="#Message2-Aggregate" />				
+		<wsdl:part name="parameters" element="intf:SimpleRequest" />
+	</wsdl:message>
+	
+	<wsdl:message name="MyResponseMessage">
+		<wsp:PolicyReference URI="#Message2-Aggregate" />				
+		<wsdl:part name="parameters" element="intf:SimpleResponse" />
+	</wsdl:message>
+	
+	<wsdl:message name="MyFaultMessage">
+		<wsp:PolicyReference URI="#Message2-Aggregate"/>				
+		<wsdl:part name="parameters" element="intf:SimpleFault" />
+	</wsdl:message>
+	<wsdl:portType name="MyPortType" wsp:PolicyURIs="#Endpoint2-Aggregate">
+		<wsdl:operation name="MyOperation">
+			<wsp:Policy>
+                                <wsp:PolicyReference URI="Operation2-Aggregate"/>
+				<wsp:PolicyReference URI="#Operation1-6"/>	
+			</wsp:Policy>
+			<wsdl:input name="MyInput" message="intf:MyRequestMessage" wsp:PolicyURIs="#Message1-6" />
+			<wsdl:output name="MyOutput" message="intf:MyResponseMessage" wsp:PolicyURIs="#Message1-6" />
+			<wsdl:fault name="MyFault" message="intf:MyFaultMessage" wsp:PolicyURIs="#Message1-6" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="MyBinding" type="intf:MyPortType">
+		<wsp:Policy wsu:Id="Endpoint1-6">
+			<intf:EndpointPolicyTestAssertion1 marker="6" />
+		</wsp:Policy>
+		<wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="MyOperation">
+			<wsp:Policy>
+				<wsp:ExactlyOne>
+					<intf:OperationPolicyTestAssertion1 marker="3" />
+					<intf:OperationPolicyTestAssertion2 marker="3" />
+				</wsp:ExactlyOne>
+			</wsp:Policy>
+
+			<wsdlsoap:operation soapAction="" />
+			<wsdl:input name="MyInput">
+				<wsp:Policy>
+					<wsp:ExactlyOne>
+						<intf:MessagePolicyTestAssertion1 marker="2" />
+						<intf:MessagePolicyTestAssertion2 marker="2" />
+					</wsp:ExactlyOne>
+				</wsp:Policy>
+				<wsdlsoap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="MyOutput">
+				<wsp:Policy>
+					<wsp:ExactlyOne>
+						<intf:MessagePolicyTestAssertion1 marker="1" />
+						<intf:MessagePolicyTestAssertion2 marker="1" />
+					</wsp:ExactlyOne>
+				</wsp:Policy>
+				<wsdlsoap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="MyFault">
+				<wsp:Policy>
+					<wsp:ExactlyOne>
+						<intf:MessagePolicyTestAssertion1 marker="0" />
+						<intf:MessagePolicyTestAssertion2 marker="0" />
+					</wsp:ExactlyOne>
+				</wsp:Policy>
+				<wsdlsoap:body use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="MyService">
+		<wsp:Policy>
+			<wsp:ExactlyOne>
+				<intf:ServicePolicyTestAssertion1 marker="5" />
+				<intf:ServicePolicyTestAssertion2 marker="5" />
+			</wsp:ExactlyOne>
+			<wsp:PolicyReference URI="#Service1-6" />
+			<wsp:PolicyReference URI="#Service2-Aggregate" />
+		</wsp:Policy>
+
+		<wsdl:port name="MyPort" binding="intf:MyBinding">
+			<wsp:Policy>
+				<wsp:ExactlyOne>
+					<intf:EndpointPolicyTestAssertion1 marker="4" />
+					<intf:EndpointPolicyTestAssertion2 marker="4" />
+				</wsp:ExactlyOne>
+			</wsp:Policy>
+			<wsdlsoap:address location="http://localhost:9080/services/MyServiceMyPort" />
+		</wsdl:port>
+
+	</wsdl:service>		
+
+</wsdl:definitions>
