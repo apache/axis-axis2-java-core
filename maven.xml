@@ -290,6 +290,7 @@
 
     <goal name="clean">
         <attainGoal name="modules:clean"/>
+        <attainGoal name="clean-repo"/>
     </goal>
 
     <!-- ================================================================ -->
