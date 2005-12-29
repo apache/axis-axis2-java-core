@@ -52,8 +52,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class OMElementImpl extends OMNodeImpl
         implements OMElement, OMConstants, OMContainerEx {
-
-    private Log logger;
     /**
      * Field ns
      */
@@ -96,7 +94,6 @@ public class OMElementImpl extends OMNodeImpl
         }
         this.builder = builder;
         firstChild = null;
-        getLogger();
     }
 
 
@@ -125,7 +122,6 @@ public class OMElementImpl extends OMNodeImpl
         if (ns != null) {
             setNamespace(ns);
         }
-        getLogger();
     }
 
     /**
@@ -820,11 +816,8 @@ public class OMElementImpl extends OMNodeImpl
         try {
             this.serialize(baos);
         } catch (XMLStreamException e) {
-            // can not throw out an exception here. Can't do anything other than logging
-            // and swallowing this :(
-            logger.error("Can not serialize OM Element " + this.getLocalName(), e);
+            throw new RuntimeException("Can not serialize OM Element " + this.getLocalName(), e);
         }
-
         return new String(baos.toByteArray());
     }
 
@@ -857,16 +850,5 @@ public class OMElementImpl extends OMNodeImpl
         OMElement clonedElement = new StAXOMBuilder(this.getXMLStreamReader(true)).getDocumentElement();
         clonedElement.build();
         return clonedElement;
-    }
-
-    public Log getLogger() {
-        if (logger == null) {
-            if (parent != null && parent instanceof OMElementImpl) {
-                logger = ((OMElementImpl) parent).getLogger();
-            }else {
-                logger = LogFactory.getLog(getClass());
-            }
-        }
-        return logger;
     }
 }
