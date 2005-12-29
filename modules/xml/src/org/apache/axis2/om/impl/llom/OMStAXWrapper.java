@@ -875,7 +875,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 updateLastNode();
                 break;
             case SWITCHED:
-                currentEvent = parser.next();
+                if(parser.hasNext()) {
+                    currentEvent = parser.next();
+                }
                 updateCompleteStatus();
                 break;
             default :

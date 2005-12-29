@@ -619,7 +619,11 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     public int getEventType() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+        try {
+            return next();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("FIXME");
+        }
     }
 
     public char[] getTextCharacters() {

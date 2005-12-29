@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
 public class OMElementImpl extends OMNodeImpl
         implements OMElement, OMConstants, OMContainerEx {
 
-    private Log logger = LogFactory.getLog(getClass());
+    private Log logger;
     /**
      * Field ns
      */
@@ -96,6 +96,7 @@ public class OMElementImpl extends OMNodeImpl
         }
         this.builder = builder;
         firstChild = null;
+        getLogger();
     }
 
 
@@ -124,6 +125,7 @@ public class OMElementImpl extends OMNodeImpl
         if (ns != null) {
             setNamespace(ns);
         }
+        getLogger();
     }
 
     /**
@@ -199,7 +201,7 @@ public class OMElementImpl extends OMNodeImpl
      * the OMNodes.
      * This QName can contain any combination of prefix, localname and URI
      *
-     * @throws org.apache.axis2.om.OMException
+     * @throws OMException
      *
      * @throws OMException
      */
@@ -254,14 +256,14 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
      *
-     * @throws org.apache.axis2.om.OMException
+     * @throws OMException
      *
      * @throws OMException
      */
     public OMNode getNextOMSibling() throws OMException {
         while (!done) {
             int token = builder.next();
-            if(token == XMLStreamConstants.END_DOCUMENT) {
+            if (token == XMLStreamConstants.END_DOCUMENT) {
                 throw new OMException();
             }
         }
@@ -349,21 +351,21 @@ public class OMElementImpl extends OMNodeImpl
      * This can also be used to retrieve the prefix of a known namespace URI
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
-        
-    	
-    	if(uri == null) {
-    		return null;
-    	}
-    	
-    	//If the prefix is available and uri is available and its the xml namespace
-    	if(prefix != null && prefix.equals(OMConstants.XMLNS_PREFIX) && uri.equals(OMConstants.XMLNS_URI)) {
-    		return new OMNamespaceImpl(uri, prefix);
-    	}
-    	
-    	if (namespaces == null) {
+
+
+        if (uri == null) {
             return null;
         }
-	        
+
+        //If the prefix is available and uri is available and its the xml namespace
+        if (prefix != null && prefix.equals(OMConstants.XMLNS_PREFIX) && uri.equals(OMConstants.XMLNS_URI)) {
+            return new OMNamespaceImpl(uri, prefix);
+        }
+
+        if (namespaces == null) {
+            return null;
+        }
+
         if (prefix == null || "".equals(prefix)) {
             Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
@@ -380,11 +382,11 @@ public class OMElementImpl extends OMNodeImpl
             if (namespace != null && uri.equalsIgnoreCase(namespace.getName())) {
                 return namespace;
             } else {
-            	return null;
+                return null;
             }
         }
-	}
-    
+    }
+
 
     /**
      * Method getAllDeclaredNamespaces
@@ -397,9 +399,11 @@ public class OMElementImpl extends OMNodeImpl
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
+
                 public boolean hasNext() {
                     return false;
                 }
+
                 public Object next() {
                     return null;
                 }
@@ -539,7 +543,7 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * This will remove this information item and its children, from the model completely
      *
-     * @throws org.apache.axis2.om.OMException
+     * @throws OMException
      *
      * @throws OMException
      */
@@ -571,7 +575,7 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * getXMLStreamReader
      *
-     * @see org.apache.axis2.om.OMElement#getXMLStreamReader()
+     * @see OMElement#getXMLStreamReader()
      */
     public XMLStreamReader getXMLStreamReader() {
         return getXMLStreamReader(true);
@@ -580,7 +584,7 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * getXMLStreamReaderWithoutCaching
      *
-     * @see org.apache.axis2.om.OMElement#getXMLStreamReaderWithoutCaching()
+     * @see OMElement#getXMLStreamReaderWithoutCaching()
      */
     public XMLStreamReader getXMLStreamReaderWithoutCaching() {
         return getXMLStreamReader(false);
@@ -699,16 +703,18 @@ public class OMElementImpl extends OMNodeImpl
             //has nothing to do if the element is already built!
             if (this.done) {
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-                //serializeAndConsume children
-                Iterator children = this.getChildren();
-                while (children.hasNext()) {
-                    //A call to the  Serialize or the serializeAndConsume wont make a difference here
-                    ((OMNodeEx) children.next()).serializeAndConsume(omOutput);
+                OMNodeImpl child = (OMNodeImpl) firstChild;
+                while(child != null && ((!(child instanceof OMElement)) || child.isComplete())) {
+                    child.serializeAndConsume(omOutput);
+                    child = child.nextSibling;
+                }
+                if(child != null) {
+                    OMElement element = (OMElement) child;
+                    element.getBuilder().setCache(false);
+                    OMSerializerUtil.serializeByPullStream(element, omOutput, cache);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else {
-                //take the XMLStream reader and feed it to the stream serilizer.
-                //todo is this right ?????
                 OMSerializerUtil.serializeByPullStream(this, omOutput, cache);
             }
 
@@ -729,15 +735,6 @@ public class OMElementImpl extends OMNodeImpl
      */
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         this.serialize(omOutput, false);
-    }
-
-    /**
-     * Method getNextNamespacePrefix
-     *
-     * @return prefix
-     */
-    private String getNextNamespacePrefix() {
-        return "ns" + ++noPrefixNamespaceCounter;
     }
 
     /**
@@ -860,5 +857,16 @@ public class OMElementImpl extends OMNodeImpl
         OMElement clonedElement = new StAXOMBuilder(this.getXMLStreamReader(true)).getDocumentElement();
         clonedElement.build();
         return clonedElement;
+    }
+
+    public Log getLogger() {
+        if (logger == null) {
+            if (parent != null && parent instanceof OMElementImpl) {
+                logger = ((OMElementImpl) parent).getLogger();
+            }else {
+                logger = LogFactory.getLog(getClass());
+            }
+        }
+        return logger;
     }
 }

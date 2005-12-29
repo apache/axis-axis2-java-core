@@ -143,8 +143,13 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
 
         // add the namespaces
         int count = reader.getNamespaceCount();
+        String namespacePrefix;
         for (int i = 0; i < count; i++) {
-            serializeNamespace(reader.getNamespacePrefix(i),
+            namespacePrefix = reader.getNamespacePrefix(i);
+            if(namespacePrefix != null && namespacePrefix.length()==0)
+                continue;
+            
+            serializeNamespace(namespacePrefix,
                     reader.getNamespaceURI(i), writer);
         }
     }
