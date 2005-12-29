@@ -96,11 +96,13 @@ public class HTTPTransportUtils {
         if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM) != null) {
             enableMTOM = Constants.VALUE_TRUE.equals(
                     msgContext.getParameter(Constants.Configuration.ENABLE_MTOM).getValue());
-        } else if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
+        } 
+        
+        if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
             enableMTOM = Constants.VALUE_TRUE.equals(
                     msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
         }
-
+        
         boolean forceMIME =
                 Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.FORCE_MIME));
 
@@ -108,6 +110,11 @@ public class HTTPTransportUtils {
             return true;
         }
 
+        // If MTOM is explicitly disabled, no need to check the envelope
+        if(!enableMTOM) {
+            return false;
+        }
+        
         boolean envelopeContainsOptimise =
                 HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
 

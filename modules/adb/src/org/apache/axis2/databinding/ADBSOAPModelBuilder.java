@@ -14,17 +14,23 @@ import javax.xml.stream.XMLStreamException;
  * Builds a SOAPEnvelope around an ADB pull parser
  */
 public class ADBSOAPModelBuilder extends StAXOMBuilder {
-    SOAPBody body = null;
+    private SOAPBody body = null;
+    private SOAPEnvelope envelope = null;
     
     public ADBSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
         super(factory, parser);
+
         document = factory.createSOAPMessage(this);
-        SOAPEnvelope env = factory.getDefaultEnvelope();
-        document.addChild(env);
-        body = env.getBody();
-        ((OMNodeEx)body).setComplete(false);
+        envelope = factory.getDefaultEnvelope();
+        document.addChild(envelope);
+        body = envelope.getBody();
+
+        envelope.setBuilder(this);
+        envelope.getHeader().setBuilder(this);
         body.setBuilder(this);
         lastNode = body;
+
+        ((OMNodeEx)body).setComplete(false);
     }
 
     public int next() throws OMException {
@@ -39,5 +45,9 @@ public class ADBSOAPModelBuilder extends StAXOMBuilder {
             throw new OMException(e);
         }
         return ret;
+    }
+
+    public SOAPEnvelope getEnvelope() {
+        return envelope;
     }
 }

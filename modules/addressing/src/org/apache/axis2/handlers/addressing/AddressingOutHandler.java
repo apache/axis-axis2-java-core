@@ -289,12 +289,7 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private boolean isAddressingHeaderAlreadyAvailable(String name, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject) {
-        boolean isAvail = envelope.getFirstChildWithName(new QName(addressingNamespaceObject.getName(), name, addressingNamespaceObject.getPrefix())) != null;
-        if(!isAvail && envelope.getHeader() != null){
-            // check in headers too
-            isAvail = envelope.getHeader().getFirstChildWithName(new QName(addressingNamespaceObject.getName(), name, addressingNamespaceObject.getPrefix())) != null;
-        }
-        return isAvail;
+        return envelope.getHeader().getFirstChildWithName(new QName(addressingNamespaceObject.getName(), name, addressingNamespaceObject.getPrefix())) != null;
     }
 }
 
