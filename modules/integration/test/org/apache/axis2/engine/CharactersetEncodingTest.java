@@ -21,6 +21,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -75,15 +78,24 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             text.addChild(fac.createText(text, value));
             payload.addChild(text);
 
-            Call call = new Call(
-                    Constants.TESTING_PATH + "chunking-enabledRepository");
+//            Call call = new Call(
+//                    Constants.TESTING_PATH + "chunking-enabledRepository");
             Options options = new Options();
-            call.setClientOptions(options);
+//            call.setClientOptions(options);
             options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "utf-16");
 
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
+//            OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
+
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext(Constants.TESTING_PATH + "chunking-enabledRepository");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+
+            OMElement resultElem = sender.sendReceive(payload);
 
 
             assertNotNull("Result is null", resultElem);
@@ -93,10 +105,10 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 
             assertEquals("Expected result not received.", expected, result);
 
-            call.close();
+//            call.close();
 
         } catch (AxisFault e) {
-            log.error(e,e);
+            log.error(e, e);
             assertFalse("Failure in processing", true);
         }
     }

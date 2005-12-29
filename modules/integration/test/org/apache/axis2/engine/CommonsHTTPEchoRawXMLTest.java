@@ -21,8 +21,11 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.description.AxisService;
@@ -70,11 +73,11 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
     public void testEchoXMLASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        Call call = new Call(
-                Constants.TESTING_PATH + "commons-http-enabledRepository");
+//        Call call = new Call(
+//                Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         Options options = new Options();
-        call.setClientOptions(options);
+//        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
@@ -91,9 +94,19 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(),
-                payload,
-                callback);
+//        call.invokeNonBlocking(operationName.getLocalPart(),
+//                payload,
+//                callback);
+
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        sender.sendReceiveNonblocking(payload,callback);
+
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
@@ -103,8 +116,8 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        call.close();
-
+//        call.close();
+//
 
         log.info("send the reqest");
     }
@@ -113,19 +126,29 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        Call call = new Call(
-                Constants.TESTING_PATH + "commons-http-enabledRepository");
+//        Call call = new Call(
+//                Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         Options options = new Options();
-        call.setClientOptions(options);
+//        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+//        OMElement result =
+//                call.invokeBlocking(operationName.getLocalPart(),
+//                        payload);
+
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payload);
+
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
+//        call.close();
     }
 
 }

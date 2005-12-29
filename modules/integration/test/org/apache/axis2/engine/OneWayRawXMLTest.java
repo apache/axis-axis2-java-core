@@ -20,7 +20,6 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -32,20 +31,13 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
-
     private SOAPEnvelope envelope;
 
-    private boolean finish = false;
 
     public OneWayRawXMLTest() {
         super(OneWayRawXMLTest.class.getName());
@@ -62,7 +54,7 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
         AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messageCtx) throws AxisFault {
+            public void receive(MessageContext messageCtx) {
                 envelope = messageCtx.getEnvelope();
                 TestingUtils.campareWithCreatedOMElement(
                         envelope.getBody().getFirstElement());
@@ -80,7 +72,6 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = TestingUtils.createDummyOMElement();
 

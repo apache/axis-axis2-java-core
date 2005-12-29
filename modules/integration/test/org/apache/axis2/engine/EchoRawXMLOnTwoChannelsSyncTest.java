@@ -18,8 +18,8 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -36,11 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestConstants {
-
-    private Log log = LogFactory.getLog(getClass());
-
-    private boolean finish = false;
-
 
     public EchoRawXMLOnTwoChannelsSyncTest() {
         super(EchoRawXMLOnTwoChannelsSyncTest.class.getName());
@@ -71,7 +66,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
 
     public void testEchoXMLCompleteSync() throws Exception {
         AxisService service =
-                Utils.createSimpleService(serviceName,
+                Utils.createSimpleServiceforClient(serviceName,
                         Echo.class.getName(),
                         operationName);
 
@@ -85,19 +80,21 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
-
-        Call call = new Call(serviceContext);
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setUseSeparateListener(true);
         options.setAction(operationName.getLocalPart());
 
-        OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), method);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setCurrentOperationName(operationName);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(method);
+
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
+        sender.finalizeInvoke();
 
     }
 

@@ -19,19 +19,17 @@ package org.apache.axis2.mtom;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -97,29 +95,27 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
 
     public void testEchoXMLSync() throws Exception {
         for (int i = 0; i < 10; i++) {
-            SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
             OMElement payload = createEnvelope();
-
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
-
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setProperty(Constants.Configuration.ENABLE_MTOM,
                     Constants.VALUE_TRUE);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-            OMElement result = call.invokeBlocking(operationName
-                    .getLocalPart(),
-                    payload);
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            OMElement result = sender.sendReceive(payload);
+
             OMElement ele = (OMElement) result.getFirstOMChild();
             OMElement ele1 = (OMElement) ele.getFirstOMChild();
             OMText binaryNode = (OMText) ele1.getFirstOMChild();
             compareWithActualOMText(binaryNode);
             log.info("" + i);
+            sender.finalizeInvoke();
             UtilServer.unDeployClientService();
         }
     }

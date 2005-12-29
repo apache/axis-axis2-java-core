@@ -21,8 +21,10 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -86,13 +88,13 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
         UtilServer.start();
         UtilServer.deployService(service);
         AxisOperation operation = service.getOperation(operationName);
-        ArrayList phasec= new ArrayList();
+        ArrayList phasec = new ArrayList();
         phasec.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         operation.setRemainingPhasesInFlow(phasec);
         ArrayList phase = operation.getRemainingPhasesInFlow();
         for (int i = 0; i < phase.size(); i++) {
             Phase phase1 = (Phase) phase.get(i);
-            if(PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())){
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())) {
                 phase1.addHandler(culprit);
             }
         }
@@ -155,18 +157,18 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             OMElement value = fac.createOMElement("myValue", omNs);
             value.setText("Isaac Asimov, The Foundation Trilogy");
             method.addChild(value);
-
-            String clientHome = "target/test-resources/integrationRepo";
-
             Options options = new Options();
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setTo(targetEPR);
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
 
-            Call call = new Call(clientHome);
-            call.setClientOptions(options);
+            OMElement result = sender.sendReceive(method);
 
-            OMElement result = call.invokeBlocking(
-                    operationName.getLocalPart(), method);
+
             result.serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
                     System.out));
             fail("the test must fail due to bad service Name");
@@ -174,7 +176,6 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             log.info(e.getMessage());
             String message = e.getMessage();
             assertTrue((message.indexOf(UtilServer.FAILURE_MESSAGE)) >= 0);
-            return;
         }
 
     }

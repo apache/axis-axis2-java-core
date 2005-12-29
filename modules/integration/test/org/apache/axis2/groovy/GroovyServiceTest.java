@@ -21,6 +21,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.EchoRawXMLTest;
 import org.apache.axis2.integration.UtilServer;
@@ -28,7 +31,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -77,22 +79,28 @@ public class GroovyServiceTest extends TestCase {
 
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-        //OMElement payload = createPayLoad();
         OMElement payload = getpayLoad();
 
-        Call call =
-                new Call("target/test-resources/integrationRepo");
+//        Call call =
+//                new Call("target/test-resources/integrationRepo");
 
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setAction(operationName.getLocalPart());
 
-        call.setClientOptions(options);
+//        call.setClientOptions(options);
 
-        OMElement result = call.invokeBlocking(operationName.getLocalPart(),
-                payload);
+//        OMElement result = call.invokeBlocking(operationName.getLocalPart(),
+//                payload);
+
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        OMElement result = sender.sendReceive(payload);
+
         assertNotNull(result);
         OMElement person = (OMElement) result.getFirstOMChild();
         assertEquals(person.getLocalName(), "person");
@@ -101,7 +109,7 @@ public class GroovyServiceTest extends TestCase {
         result.build();
         result.serialize(writer);
         writer.flush();
-        call.close();
+        sender.finalizeInvoke();
     }
 
 

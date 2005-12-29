@@ -21,30 +21,17 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
-
-    private Log log = LogFactory.getLog(getClass());
-
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
-    //private Thread thisThread;
-    // private SimpleHTTPServer sas;
-//    private ServiceContext serviceContext;
-    private AxisService service;
-
-    private boolean finish = false;
 
     public EchoRawXMLLoadTest() {
         super(EchoRawXMLLoadTest.class.getName());
@@ -56,7 +43,7 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
@@ -109,27 +96,19 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
 //    }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = TestingUtils.createDummyOMElement();
-
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
-        options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
 
-        OMElement result1 =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+        OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
     }
 }

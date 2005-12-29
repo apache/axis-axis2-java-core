@@ -22,12 +22,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
@@ -51,8 +46,7 @@ public class Utils {
         flow.addHandler(handlerDesc);
     }
 
-    public static MessageContext createOutMessageContext(MessageContext inMessageContext)
-            {
+    public static MessageContext createOutMessageContext(MessageContext inMessageContext) {
         MessageContext newmsgCtx = new MessageContext(inMessageContext.getConfigurationContext(),
                 inMessageContext.getSessionContext(),
                 inMessageContext.getTransportIn(),
@@ -92,6 +86,11 @@ public class Utils {
         return createSimpleService(serviceName, new RawXMLINOutMessageReceiver(), className,
                 opName);
     }
+     public static AxisService createSimpleServiceforClient(QName serviceName, String className, QName opName)
+            throws AxisFault {
+        return createSimpleServiceforClient(serviceName, new RawXMLINOutMessageReceiver(), className,
+                opName);
+    }
 
     public static AxisService createSimpleService(QName serviceName,
                                                   MessageReceiver messageReceiver, String className, QName opName)
@@ -111,9 +110,28 @@ public class Utils {
         return service;
     }
 
+    public static AxisService createSimpleServiceforClient(QName serviceName,
+                                                           MessageReceiver messageReceiver,
+                                                           String className,
+                                                           QName opName)
+            throws AxisFault {
+        AxisService service = new AxisService(serviceName.getLocalPart());
+
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
+
+        // todo I assumed in-out mep , this has to be imroved : Deepal
+        AxisOperation axisOp = new OutInAxisOperation(opName);
+
+        axisOp.setMessageReceiver(messageReceiver);
+        axisOp.setStyle(WSDLService.STYLE_RPC);
+        service.addOperation(axisOp);
+
+        return service;
+    }
+
     public static void extractServiceGroupAndServiceInfo(String filePart,
-                                                         MessageContext messageContext)
-            {
+                                                         MessageContext messageContext) {
         String[] values = parseRequestURLForServiceAndOperation(filePart);
         String serviceNameAndGroup = values[0];
 
@@ -145,8 +163,7 @@ public class Utils {
     }
 
     public static ServiceContext fillContextInformation(AxisOperation axisOperation,
-                                                        AxisService axisService, ConfigurationContext configurationContext)
-            {
+                                                        AxisService axisService, ConfigurationContext configurationContext) {
 
         // 2. if null, create new opCtxt
         OperationContext operationContext = new OperationContext(axisOperation);
@@ -156,8 +173,7 @@ public class Utils {
     }
 
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
-                                                                           ConfigurationContext configurationContext)
-            {
+                                                                           ConfigurationContext configurationContext) {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,
                 axisService.getParent());

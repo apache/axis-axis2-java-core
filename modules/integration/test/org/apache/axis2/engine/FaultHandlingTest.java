@@ -24,30 +24,15 @@ import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.soap.*;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
-import java.io.FileReader;
 
 public class FaultHandlingTest extends TestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
-
     protected String testResourceDir = "test-resources";
     private MyInOutMEPClient inOutMEPClient;
-
-
-    private boolean finish = false;
 
     protected void setUp() throws Exception {
         UtilServer.start();
@@ -113,16 +98,6 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         return inOutMEPClient;
-    }
-
-    private SOAPEnvelope createEnvelope(String fileName) throws Exception {
-        if (fileName == "" || fileName == null) {
-            throw new Exception("A SOAP file name must be provided !!");
-        }
-        XMLStreamReader parser = XMLInputFactory.newInstance()
-                .createXMLStreamReader(new FileReader(getTestResourceFile(fileName)));
-
-        return (SOAPEnvelope) new StAXSOAPModelBuilder(parser, null).getDocumentElement();
     }
 
     public File getTestResourceFile(String relativePath) {

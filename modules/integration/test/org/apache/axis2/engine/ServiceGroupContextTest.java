@@ -4,11 +4,15 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.RequestCounter;
 import org.apache.axis2.engine.util.RequestCounterMessageReceiver;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
@@ -79,35 +83,45 @@ public class ServiceGroupContextTest extends TestCase {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         SOAPEnvelope payload = fac.getDefaultEnvelope();
-
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         options.setAction(operationName.getLocalPart());
 
-        SOAPEnvelope result = call.invokeBlocking(operationName.getLocalPart(), payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
 
+        OMElement result = sender.sendReceive(payload.getBody().getFirstElement());
 
         OMNamespace axis2Namespace = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI,
                 Constants.AXIS2_NAMESPACE_PREFIX);
         SOAPEnvelope defaultEnvelope = fac.getDefaultEnvelope();
+
+
         SOAPHeaderBlock soapHeaderBlock = defaultEnvelope.getHeader().addHeaderBlock(Constants.SERVICE_GROUP_ID,
                 axis2Namespace);
 
         System.out.println("soapHeaderBlock = " + soapHeaderBlock);
-        String serviceGroupId = result.getHeader().getFirstChildWithName(new QName("ReplyTo"))
+
+        //TODO : ple imporove this , what I have done is a hack
+        OMElement body = (OMElement) result.getParent();
+        SOAPEnvelope soapEnvlop = (SOAPEnvelope) body.getParent();
+
+        String serviceGroupId = soapEnvlop.getHeader().getFirstChildWithName(new QName("ReplyTo"))
                 .getFirstChildWithName(new QName("ReferenceParameters")).
                 getFirstChildWithName(new QName("ServiceGroupId")).getText();
 
-        soapHeaderBlock.setText(serviceGroupId);
+        OMElement soapHeaderElement = fac.createOMElement(Constants.SERVICE_GROUP_ID, axis2Namespace);
+        soapHeaderElement.setText(serviceGroupId);
 
-        SOAPEnvelope soapEnvelope = call.invokeBlocking(operationName.getLocalPart(),
-                defaultEnvelope);
-        String text = soapEnvelope.getBody().getFirstElement().getText();
+        sender.addHeader(soapHeaderElement);
+        OMElement result2 = sender.sendReceive(defaultEnvelope.getBody().getFirstElement());
+        String text = result2.getText();
         assertEquals("Number of requests should be 2", 2, Integer.parseInt(text));
     }
 

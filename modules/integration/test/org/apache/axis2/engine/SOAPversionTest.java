@@ -31,22 +31,17 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
 public class SOAPversionTest extends TestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
     QName assumedServiceName = new QName("AnonymousService");
 
 
     private AxisService service;
 
-    private boolean finish = false;
 
     protected void setUp() throws Exception {
         UtilServer.start();
@@ -65,8 +60,6 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
 
     public void testSOAP11() throws AxisFault {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
@@ -86,8 +79,6 @@ public class SOAPversionTest extends TestCase implements TestConstants {
     }
 
     public void testSOAP12() throws AxisFault {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
@@ -109,8 +100,6 @@ public class SOAPversionTest extends TestCase implements TestConstants {
     }
 
     public void testSOAPfault() throws AxisFault {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
@@ -120,10 +109,8 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        SOAPEnvelope result =
-                inOutMEPClient.invokeBlockingWithEnvelopeOut(
-                        operationName.getLocalPart(), payload);
+        inOutMEPClient.invokeBlockingWithEnvelopeOut(
+                operationName.getLocalPart(), payload);
 //        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
 
         inOutMEPClient.close();

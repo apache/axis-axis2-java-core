@@ -4,6 +4,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -73,6 +74,8 @@ public class Options {
     protected TransportOutDescription senderTransport;
     private String senderTransportProtocol;
     private EndpointReference to;
+    // TODO : This is a hack to solve the problem of passsing CallBack object into OperationClient
+    private Callback callback;
 
     /**
      * Default constructor
@@ -436,5 +439,15 @@ public class Options {
         }
 
         referenceParameters.add(referenceParameter);
+    }
+
+    public Callback getCallback() {
+        //todo : pls remove this
+        return callback;
+    }
+
+    public void setCallback(Callback callback) {
+        //todo : pls remove this
+        this.callback = callback;
     }
 }

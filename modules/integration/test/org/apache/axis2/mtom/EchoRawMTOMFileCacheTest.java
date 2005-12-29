@@ -25,9 +25,6 @@ import org.apache.axis2.util.Utils;
 
 public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
 
-
-    private ServiceContext serviceContext;
-
     private AxisService service;
 
 

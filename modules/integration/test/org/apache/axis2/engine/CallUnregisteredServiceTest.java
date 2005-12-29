@@ -22,14 +22,14 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 
 public class CallUnregisteredServiceTest extends TestCase {
@@ -63,26 +63,23 @@ public class CallUnregisteredServiceTest extends TestCase {
                             "Isaac Asimov, The Foundation Trilogy"));
             method.addChild(value);
 
-            Call call = new Call("target/test-resources/integrationRepo");
             EndpointReference targetEPR =
                     new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService1");
+                            + (UtilServer.TESTING_PORT)
+                            + "/axis/services/EchoXMLService1");
 
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setTo(targetEPR);
-            
-            SOAPEnvelope resEnv =
-                    (SOAPEnvelope) call.invokeBlocking(
-                            "echoOMElement", method);
 
-            SOAPBody sb = resEnv.getBody();
-            if (sb.hasFault()) {
-                throw new AxisFault(
-                        sb.getFault().getReason().getSOAPText().getText());
-            }
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+
+            sender.sendReceive(method);
             fail("The test must fail due to wrong service Name");
 
         } catch (AxisFault e) {

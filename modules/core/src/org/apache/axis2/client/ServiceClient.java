@@ -1,16 +1,23 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.util.UUIDGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -21,6 +28,9 @@ import java.util.ArrayList;
  * need to be explained here.
  */
 public class ServiceClient {
+
+    private Log log = LogFactory.getLog(getClass());
+
     // service and operation names used for anonymously stuff
     private static final String ANON_SERVICE = "__ANONYMOUS_SERVICE__";
 
@@ -47,6 +57,12 @@ public class ServiceClient {
 
     // list of headers to be sent with the simple APIs
     ArrayList headers;
+    //to set the name of the operation to be invoked , and this is usefull if the user
+    // try to reuse same ServiceClent to invoke more than one operation in the service ,
+    //  in that case he can set the current operation name and invoke that.
+    private QName currentOperationName = null;
+
+    private CallbackReceiver callbackReceiver;
 
     /**
      * Create a service client configured to work with a specific AxisService.
@@ -92,7 +108,13 @@ public class ServiceClient {
      * necessary information.
      */
     public ServiceClient() throws AxisFault {
-        this(null);
+        this((ConfigurationContext) null);
+    }
+
+    public ServiceClient(ServiceContext serviceContext) {
+        this.serviceContext = serviceContext;
+        this.configContext = serviceContext.getConfigurationContext();
+        this.axisService = serviceContext.getAxisService();
     }
 
     /**
@@ -225,18 +247,7 @@ public class ServiceClient {
         if (serviceContext == null) {
             createServiceContext();
         }
-        mc.setServiceContext(serviceContext);
-        SOAPFactory sf = getSOAPFactory();
-        SOAPEnvelope se = sf.getDefaultEnvelope();
-        se.getBody().addChild(elem);
-        if (headers != null) {
-            SOAPHeader sh = se.getHeader();
-            for (int i = 0; i < headers.size(); i++) {
-                OMElement headerBlock = (OMElement) headers.get(i);
-                sh.addChild(headerBlock);
-            }
-        }
-        mc.setEnvelope(se);
+        fillSoapEnevelop(mc, elem);
 
         // look up the appropriate axisop and create the client
         OperationClient mepClient = getAxisService().getOperation(ANON_OUT_ONLY_OP)
@@ -251,24 +262,140 @@ public class ServiceClient {
         if (serviceContext == null) {
             createServiceContext();
         }
-        // look up the appropriate axisop and create the client
-        OperationClient mepClient = getAxisService().getOperation(ANON_OUT_IN_OP)
-                .createClient(serviceContext, options);
-        // TODO
-        throw new UnsupportedOperationException(
-                "ServiceClient.sendReceive() is not yet implemented");
+        if (options.isUseSeparateListener()) {
+
+            // This mean doing a Request-Response invocation using two channel. If the
+            // transport is two way transport (e.g. http) Only one channel is used (e.g. in http cases
+            // 202 OK is sent to say no repsone avalible). Axis2 get blocked return when the response is avalible.
+            SyncCallBack callback = new SyncCallBack();
+
+            // this method call two channel non blocking method to do the work and wait on the callbck
+            sendReceiveNonblocking(elem, callback);
+
+            long timeout = options.getTimeOutInMilliSeconds();
+
+            if (timeout < 0) {
+                while (!callback.isComplete()) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new AxisFault(e);
+                    }
+                }
+            } else {
+                long index = timeout / 100;
+
+                while (!callback.isComplete()) {
+
+                    // wait till the reponse arrives
+                    if (index-- >= 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new AxisFault(e);
+                        }
+                    } else {
+                        throw new AxisFault(Messages.getMessage("responseTimeOut"));
+                    }
+                }
+            }
+            // process the resule of the invocation
+            if (callback.envelope != null) {
+                MessageContext resMsgctx =
+                        new MessageContext(serviceContext.getConfigurationContext());
+
+                resMsgctx.setEnvelope(callback.envelope);
+
+                return callback.envelope.getBody().getFirstElement();
+            } else {
+                if (callback.error instanceof AxisFault) {
+                    throw(AxisFault) callback.error;
+                } else {
+                    throw new AxisFault(callback.error);
+                }
+            }
+        } else {
+            MessageContext mc = new MessageContext();
+            fillSoapEnevelop(mc, elem);
+
+            setMessageID(mc);
+
+            OperationClient mepClient;
+            if (currentOperationName != null) {
+                AxisOperation operation = getAxisService().getOperation(currentOperationName);
+                if (operation == null) {
+                    throw new AxisFault("Operation " + currentOperationName + " not find in the given service");
+                }
+                mepClient = operation.createClient(serviceContext, options);
+            } else {
+                // look up the appropriate axisop and create the client
+                mepClient = getAxisService().getOperation(ANON_OUT_IN_OP)
+                        .createClient(serviceContext, options);
+            }
+
+            mepClient.setOptions(options);
+            mepClient.addMessageContext(mc);
+
+            mepClient.execute(false);
+            MessageContext response = mepClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            return response.getEnvelope().getBody().getFirstElement();
+        }
     }
 
     public void sendReceiveNonblocking(OMElement elem, Callback callback) throws AxisFault {
         if (serviceContext == null) {
             createServiceContext();
         }
-        // look up the appropriate axisop and create the client
-        OperationClient mepClient = getAxisService().getOperation(ANON_OUT_IN_OP)
-                .createClient(serviceContext, options);
-        // TODO
-        throw new UnsupportedOperationException(
-                "ServiceClient.sendReceiveNonblocking() is not yet implemented");
+        MessageContext mc = new MessageContext();
+        fillSoapEnevelop(mc, elem);
+
+        setMessageID(mc);
+
+        AxisOperation operation;
+        if (currentOperationName != null) {
+            operation = getAxisService().getOperation(currentOperationName);
+            if (operation == null) {
+                throw new AxisFault("Operation " + currentOperationName + " not find in the given service");
+            }
+        } else {
+            // look up the appropriate axisop and create the client
+            operation = getAxisService().getOperation(ANON_OUT_IN_OP);
+        }
+        OperationClient mepClient = operation.createClient(serviceContext, options);
+        // here a bloking invocation happens in a new thread, so the
+        // progamming model is non blocking
+        OperationContext opcontxt = new OperationContext(operation, serviceContext);
+
+        mc.setOperationContext(opcontxt);
+        mc.setServiceContext(serviceContext);
+        opcontxt.setProperties(options.getProperties());
+        options.setCallback(callback);
+        mepClient.addMessageContext(mc);
+        mepClient.setOptions(options);
+        if (options.isUseSeparateListener()) {
+            if (callbackReceiver == null) {
+                callbackReceiver = new CallbackReceiver();
+            }
+            mepClient.setMessageReceiver(callbackReceiver);
+        }
+        mepClient.execute(true);
+    }
+
+    private void fillSoapEnevelop(MessageContext mc, OMElement elem) throws AxisFault {
+        mc.setServiceContext(serviceContext);
+        SOAPFactory sf = getSOAPFactory();
+        SOAPEnvelope se = sf.getDefaultEnvelope();
+        if (elem != null) {
+            se.getBody().addChild(elem);
+        }
+        if (headers != null) {
+            SOAPHeader sh = se.getHeader();
+            for (int i = 0; i < headers.size(); i++) {
+                OMElement headerBlock = (OMElement) headers.get(i);
+                sh.addChild(headerBlock);
+            }
+        }
+        mc.setEnvelope(se);
     }
 
     /**
@@ -317,7 +444,7 @@ public class ServiceClient {
                 try {
                     axisConfig.addService(getAxisService());
                 } catch (AxisFault axisFault) {
-                    //todo : need to log this
+                    log.info("Error in getAxisService(): " + axisFault.getMessage());
                 }
             }
         }
@@ -325,6 +452,69 @@ public class ServiceClient {
     }
 
     public void setAxisService(AxisService axisService) {
+        // adding service into system
+        AxisConfiguration axisConfig = this.configContext
+                .getAxisConfiguration();
+        if (axisConfig.getService(getAxisService().getName()) == null) {
+            try {
+                axisConfig.addService(getAxisService());
+            } catch (AxisFault axisFault) {
+                log.info("Error in getAxisService(): " + axisFault.getMessage());
+            }
+        }
         this.axisService = axisService;
+    }
+
+    private void setMessageID(MessageContext mc) {
+        // now its the time to put the parameters set by the user in to the
+        // correct places and to the
+        // if there is no message id still, set a new one.
+        String messageId = options.getMessageId();
+        if (messageId == null || "".equals(messageId)) {
+            messageId = UUIDGenerator.getUUID();
+            options.setMessageId(messageId);
+        }
+        mc.setMessageID(messageId);
+    }
+
+    /**
+     * To set the opration that need to be invoke , as an example say client creat a
+     * service with mutiple operation and he need to invoke all of them using one service
+     * client in that case he can give the operation name and invoke that operation
+     *
+     * @param currentOperationName
+     */
+    public void setCurrentOperationName(QName currentOperationName) {
+        //todo : pls ask from Sanjiva about this
+        this.currentOperationName = currentOperationName;
+    }
+
+    /**
+     * This will close the out put stream or , and remove entry from waiting queue of the transport
+     * Listener queue
+     *
+     * @throws AxisFault
+     */
+    public void finalizeInvoke() throws AxisFault {
+        if (options.isUseSeparateListener()) {
+            ListenerManager.stop(serviceContext.getConfigurationContext(),
+                    options.getTransportInDescription().getName().getLocalPart());
+        }
+    }
+
+    /**
+     * This class acts as a callback that allows users to wait on the result.
+     */
+    private class SyncCallBack extends Callback {
+        private SOAPEnvelope envelope;
+        private Exception error;
+
+        public void onComplete(AsyncResult result) {
+            this.envelope = result.getResponseEnvelope();
+        }
+
+        public void reportError(Exception e) {
+            error = e;
+        }
     }
 }

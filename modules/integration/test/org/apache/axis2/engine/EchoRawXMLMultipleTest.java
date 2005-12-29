@@ -19,8 +19,11 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -78,12 +81,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call(
-                            "target/test-resources/integrationRepo");
             Options options = new Options();
-            call.setClientOptions(options);
-            options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             Callback callback = new Callback() {
@@ -99,10 +97,16 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                     finish = true;
                 }
             };
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
 
-            call.invokeNonBlocking(operationName.getLocalPart(),
-                    payload,
-                    callback);
+            sender.sendReceiveNonblocking(payload, callback);
+
+
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -112,7 +116,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                             "Server was shutdown as the async response take too long to complete");
                 }
             }
-            call.close();
         }
 
 
@@ -122,13 +125,13 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
     public void testEchoXMLMultipleDuelASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call(
-                            "target/test-resources/integrationRepo");
             Options options = new Options();
-            call.setClientOptions(options);
-            options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
@@ -146,9 +149,12 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                 }
             };
 
-            call.invokeNonBlocking(operationName.getLocalPart(),
-                    payload,
-                    callback);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+
+            sender.sendReceiveNonblocking(payload, callback);
+            System.out.println("send the request");
+
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -158,9 +164,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                             "Server is shutdown as the Async response take too longs time");
                 }
             }
-            call.close();
+            sender.finalizeInvoke();
         }
-
 
         log.info("send the request");
     }
@@ -170,42 +175,52 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call(
-                            "target/test-resources/integrationRepo");
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
 
-            OMElement result =
-                    call.invokeBlocking(operationName.getLocalPart(),
-                            payload);
+            OMElement result = sender.sendReceive(payload);
+
+
             TestingUtils.campareWithCreatedOMElement(result);
-            call.close();
+            sender.finalizeInvoke();
         }
     }
 
     public void testEchoXMLMultipleDuelSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = TestingUtils.createDummyOMElement();
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call(
-                            "target/test-resources/integrationRepo");
+//            org.apache.axis2.client.Call call =
+//                    new org.apache.axis2.client.Call(
+//                            "target/test-resources/integrationRepo");
 
             Options options = new Options();
-            call.setClientOptions(options);
+//            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
-            OMElement result =
-                    call.invokeBlocking(operationName.getLocalPart(),
-                            payload);
+//            OMElement result =
+//                    call.invokeBlocking(operationName.getLocalPart(),
+//                            payload);
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+
+            sender.setOptions(options);
+
+            OMElement result = sender.sendReceive(payload);
+
             TestingUtils.campareWithCreatedOMElement(result);
-            call.close();
+            sender.finalizeInvoke();
+//            call.close();
         }
     }
 

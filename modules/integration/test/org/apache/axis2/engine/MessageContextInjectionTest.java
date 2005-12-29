@@ -18,16 +18,11 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -36,26 +31,12 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
 public class MessageContextInjectionTest extends TestCase implements TestConstants {
-
-    private Log log = LogFactory.getLog(getClass());
-
-
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
-
-    private SOAPEnvelope envelope;
-
-    private boolean finish = false;
     private TransportOutDescription tOut;
 
     public MessageContextInjectionTest() {
@@ -108,18 +89,19 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createEnvelope();
 
-        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
-
+//        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
         Options options = new Options();
-        sender.setClientOptions(options);
+        sender.setOptions(options);
         options.setTo(targetEPR);
         options.setSenderTransport(tOut);
         options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        sender.send(operationName.getLocalPart(), payload);
+        sender.fireAndForget(payload);
 
     }
 

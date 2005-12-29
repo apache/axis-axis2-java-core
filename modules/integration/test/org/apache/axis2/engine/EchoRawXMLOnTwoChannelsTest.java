@@ -19,8 +19,8 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ServiceContext;
@@ -74,7 +74,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
 
     public void testEchoXMLCompleteASync() throws Exception {
         AxisService service =
-                Utils.createSimpleService(serviceName,
+                Utils.createSimpleServiceforClient(serviceName,
                         Echo.class.getName(),
                         operationName);
 
@@ -88,11 +88,12 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
+        ServiceClient sender = null;
 
-        Call call =
-                new Call(
-                serviceContext);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+//        Call call =
+//                new Call(
+//                        serviceContext);
+//        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
         try {
             Options options = new Options();
@@ -100,13 +101,13 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
             options.setAction(operationName.getLocalPart());
-            call.setClientOptions(options);
+//            call.setClientOptions(options);
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     TestingUtils.campareWithCreatedOMElement(
                             result.getResponseEnvelope().getBody()
-                            .getFirstElement());
+                                    .getFirstElement());
                     finish = true;
                 }
 
@@ -116,9 +117,16 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
                 }
             };
 
-            call.invokeNonBlocking(operationName.getLocalPart(),
-                    method,
-                    callback);
+            sender = new ServiceClient(serviceContext);
+            sender.setCurrentOperationName(operationName);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+
+            sender.sendReceiveNonblocking(method, callback);
+
+//            call.invokeNonBlocking(operationName.getLocalPart(),
+//                    method,
+//                    callback);
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -129,9 +137,9 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
                 }
             }
             log.info("send the reqest");
-            call.close();
+            sender.finalizeInvoke();
         } finally {
-            call.close();
+            sender.finalizeInvoke();
         }
 
     }

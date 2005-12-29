@@ -22,9 +22,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
@@ -34,7 +34,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,11 +49,6 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                     + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private MessageContext mc;
-    private SimpleHTTPServer sas;
     private AxisService service;
     private ServiceContext serviceContext;
 
@@ -81,7 +75,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         UtilsTCPServer.deployService(service);
 
         AxisService service =
-                Utils.createSimpleService(serviceName,
+                Utils.createSimpleServiceforClient(serviceName,
                         org.apache.axis2.engine.Echo.class.getName(),
                         operationName);
         serviceContext = UtilServer.createAdressedEnabledClientSide(service);
@@ -91,25 +85,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         UtilsTCPServer.stop();
     }
 
-    private OMElement createEnvelope() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(
-                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
-        method.addChild(value);
-
-        return method;
-    }
-
     public void testEchoXMLCompleteASync() throws Exception {
-        AxisService service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
-
-
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
@@ -118,13 +94,10 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        ServiceClient sender = null;
 
         try {
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_TCP);
             options.setUseSeparateListener(true);
@@ -147,9 +120,12 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                 }
             };
 
-            call.invokeNonBlocking(operationName.getLocalPart(),
-                    method,
-                    callback);
+            sender = new ServiceClient(serviceContext);
+            sender.setCurrentOperationName(operationName);
+            sender.setOptions(options);
+
+            sender.sendReceiveNonblocking(method,callback);
+
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -160,7 +136,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                 }
             }
         } finally {
-            call.close();
+            sender.finalizeInvoke();
         }
 
     }

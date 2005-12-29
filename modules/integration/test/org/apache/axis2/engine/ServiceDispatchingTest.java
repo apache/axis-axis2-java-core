@@ -19,8 +19,10 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -59,18 +61,22 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
     public void testDispatchWithURLOnly() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
-        Call call =
-                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), payload);
+
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payload);
+
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
     }
 
     public void testDispatchWithURLAndSOAPAction() throws Exception {
@@ -81,18 +87,20 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         value.addChild(
                 fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
-        Call call =
-                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapAction("echoOMElement");
-        OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payload);
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
     }
 
     public void testDispatchWithSOAPBody() throws Exception {
@@ -105,18 +113,19 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         value.addChild(
                 fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
-
-
-        Call call =
-                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payload);
+
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
     }
 }

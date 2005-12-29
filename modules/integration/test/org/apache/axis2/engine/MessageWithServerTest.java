@@ -40,7 +40,6 @@ public class MessageWithServerTest extends TestCase {
     private QName serviceName = new QName("", "EchoService");
     private QName operationName =
             new QName("http://ws.apache.org/axis2", "echoVoid");
-    private QName transportName = new QName("", "NullTransport");
 
     private AxisConfiguration engineRegistry;
     private ClassLoader cl;
@@ -56,7 +55,6 @@ public class MessageWithServerTest extends TestCase {
                 Echo.class.getName(),
                 operationName);
 
-
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
         ModuleDescription m1 = new ModuleDescription(
@@ -64,10 +62,10 @@ public class MessageWithServerTest extends TestCase {
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         engineRegistry = new AxisConfiguration();
-        service.engageModule(m1,engineRegistry);
+        service.engageModule(m1, engineRegistry);
 
         AxisOperation axisOperation = new OutInAxisOperation(
-                );
+        );
         axisOperation.setName(operationName);
         service.addOperation(axisOperation);
 

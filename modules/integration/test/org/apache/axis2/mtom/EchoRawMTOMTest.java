@@ -22,19 +22,18 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -104,12 +103,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
 
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createEnvelope();
-
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                "target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_16);
@@ -131,10 +125,14 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
                 finish = true;
             }
         };
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
 
-        call.invokeNonBlocking(operationName.getLocalPart(),
-                payload,
-                callback);
+        sender.sendReceiveNonblocking(payload, callback);
+
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
@@ -144,7 +142,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {

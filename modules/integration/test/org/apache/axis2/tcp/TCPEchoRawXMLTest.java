@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -40,7 +41,6 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,11 +56,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                     + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
 
-    private MessageContext mc;
-    private SimpleHTTPServer sas;
     private AxisService service;
     private AxisService clientService;
     private ServiceContext serviceContext;
@@ -85,7 +81,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilsTCPServer.deployService(service);
-        clientService = Utils.createSimpleService(serviceName,
+        clientService = Utils.createSimpleServiceforClient(serviceName,
                 Echo.class.getName(),
                 operationName);
         serviceContext = UtilServer.createAdressedEnabledClientSide(clientService);
@@ -109,14 +105,8 @@ public class TCPEchoRawXMLTest extends TestCase {
 
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
-
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
 
         Callback callback = new Callback() {
@@ -137,9 +127,12 @@ public class TCPEchoRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(),
-                payload,
-                callback);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setCurrentOperationName(operationName);
+        sender.setOptions(options);
+
+        sender.sendReceiveNonblocking(payload, callback);
+
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
@@ -149,37 +142,27 @@ public class TCPEchoRawXMLTest extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createPayload();
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setCurrentOperationName(operationName);
+        sender.setOptions(options);
+        OMElement result = sender.sendReceive(payload);
+
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
-        AxisService service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
-
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
@@ -188,25 +171,25 @@ public class TCPEchoRawXMLTest extends TestCase {
         value.setText("Isaac Asimov, The Foundation Trilogy");
         payloadElement.addChild(value);
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
         options.setUseSeparateListener(true);
 
-        OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), payloadElement);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setCurrentOperationName(operationName);
+        sender.setOptions(options);
+        OMElement result = sender.sendReceive(payloadElement);
+
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
-        call.close();
+        sender.finalizeInvoke();
 
     }
 
     public void testEchoXMLSyncMC() throws Exception {
+        //TODO : Fix Me deepal , I am not complete
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
         ConfigurationContext configContext = confac.buildConfigurationContext(Constants.TESTING_REPOSITORY);
 
@@ -239,7 +222,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         //  requestContext.setTo(targetEPR);
 
         requestContext.setEnvelope(envelope);
-        MessageContext res = call.invokeBlocking(opdesc, requestContext);
+        call.invokeBlocking(opdesc, requestContext);
 
         SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
 //        SOAPEnvelope env=  res.getEnvelope();

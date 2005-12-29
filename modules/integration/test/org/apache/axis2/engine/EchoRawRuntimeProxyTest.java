@@ -4,6 +4,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
@@ -32,7 +35,7 @@ import javax.xml.namespace.QName;
 
 public class EchoRawRuntimeProxyTest extends TestCase {
     public static final EndpointReference targetEPR = new EndpointReference(
-            "http://apache.axis2.host" 
+            "http://apache.axis2.host"
                     + "/axis2/services/EchoXMLService/echoOMElement");
 
     public static final QName serviceName = new QName("EchoXMLService");
@@ -68,10 +71,6 @@ public class EchoRawRuntimeProxyTest extends TestCase {
     public void testEchoXMLSync() throws Exception {
 
         OMElement payload = TestingUtils.createDummyOMElement();
-
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call(
-                        "target/test-resources/integrationRepo");
         /**
          * Proxy setting in runtime
          */
@@ -83,16 +82,19 @@ public class EchoRawRuntimeProxyTest extends TestCase {
         proxyproperties.setUserName("anonymous");
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setProperty(HTTPConstants.PROXY, proxyproperties);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
     }
 }

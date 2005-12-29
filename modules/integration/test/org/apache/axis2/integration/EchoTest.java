@@ -17,10 +17,6 @@
 package org.apache.axis2.integration;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -28,23 +24,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class EchoTest extends TestCase {
-    private final SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-    private final OMNamespace ns =
-            fac.createOMNamespace("http://apache.ws.apache.org/samples",
-                    "samples");
-    private final OMNamespace arrayNs =
-            fac.createOMNamespace(OMConstants.ARRAY_ITEM_NSURI,
-                    OMConstants.ARRAY_ITEM_NS_PREFIX);
-    private final OMNamespace targetNs = fac.createOMNamespace(
-            "http://axis.apache.org", "s");
+
     private final URLClassLoader cl;
 
     public EchoTest() throws MalformedURLException {
         cl =
                 new URLClassLoader(
                         new URL[]{
-                            new File(
-                                    "target/test-resources/samples/services/echo.jar").toURL()},
+                                new File(
+                                        "target/test-resources/samples/services/echo.jar").toURL()},
                         EchoTest.class.getClassLoader());
     }
 
@@ -53,8 +41,8 @@ public class EchoTest extends TestCase {
         cl =
                 new URLClassLoader(
                         new URL[]{
-                            new File(
-                                    "target/test-resources/samples/services/echo.jar").toURL()},
+                                new File(
+                                        "target/test-resources/samples/services/echo.jar").toURL()},
                         EchoTest.class.getClassLoader());
 
     }

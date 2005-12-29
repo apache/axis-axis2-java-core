@@ -22,15 +22,17 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsJMSServer;
@@ -38,8 +40,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,14 +102,8 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
-
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("echoOMElement");
@@ -132,9 +126,13 @@ public class JMSEchoRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(),
-                payload,
-                callback);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setCurrentOperationName(operationName);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+        sender.sendReceiveNonblocking(payload, callback);
+
+
         int index = 0;
         while (!finish) {
             Thread.sleep(10000);
@@ -144,38 +142,31 @@ public class JMSEchoRawXMLTest extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createPayload();
-
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("EchoXMLService/echoOMElement");
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setOptions(options);
+        sender.setCurrentOperationName(operationName);
+        options.setTo(targetEPR);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+        OMElement result = sender.sendReceive(payload);
+
+
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
-        call.close();
+
+        sender.finalizeInvoke();
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
-        AxisService service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -185,22 +176,23 @@ public class JMSEchoRawXMLTest extends TestCase {
         value.setText("Isaac Asimov, The Foundation Trilogy");
         payloadElement.addChild(value);
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
         options.setUseSeparateListener(true);
 
-        OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), payloadElement);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setOptions(options);
+        sender.setCurrentOperationName(operationName);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payloadElement);
+
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
-        call.close();
+        sender.finalizeInvoke();
 
     }
 
@@ -209,9 +201,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         ConfigurationContext configContext = confac.buildConfigurationContext(Constants.TESTING_REPOSITORY);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
@@ -224,22 +214,36 @@ public class JMSEchoRawXMLTest extends TestCase {
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
-        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope envelope = factory.getDefaultEnvelope();
-        envelope.getBody().addChild(method);
-
-        MessageContext requestContext = new MessageContext(configContext);
+//        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+//        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+//        envelope.getBody().addChild(method);
+//
+//        MessageContext requestContext = new MessageContext(configContext);
         AxisService srevice = new AxisService(serviceName.getLocalPart());
         srevice.addOperation(opdesc);
-        configContext.getAxisConfiguration().addService(srevice);
-        requestContext.setAxisService(service);
-        requestContext.setAxisOperation(opdesc);
+//        configContext.getAxisConfiguration().addService(srevice);
+//        requestContext.setAxisService(service);
+//        requestContext.setAxisOperation(opdesc);
 
-        requestContext.setEnvelope(envelope);
-        MessageContext res = call.invokeBlocking(opdesc, requestContext);
+//        requestContext.setEnvelope(envelope);
+        //  call.invokeBlocking(opdesc, requestContext);
 
-        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
-        env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+//        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
+
+        AxisConfiguration axisConfig = configContext.getAxisConfiguration();
+        axisConfig.addService(srevice);
+        ServiceContext serviceContext = new ServiceGroupContext(configContext,
+                srevice.getParent()).getServiceContext(srevice);
+
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setOptions(options);
+        sender.setCurrentOperationName(operationName);
+        options.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(method);
+
+
+        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
     }
 }

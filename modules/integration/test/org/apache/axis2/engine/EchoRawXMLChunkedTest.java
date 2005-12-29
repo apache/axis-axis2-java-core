@@ -20,8 +20,11 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -103,21 +106,29 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 //    }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = TestingUtils.createDummyOMElement();
 
         Options clientOptions = new Options();
-        Call call = new Call(CLIENT_HOME);
-        call.setClientOptions(clientOptions);
+//        Call call = new Call(CLIENT_HOME);
+//        call.setClientOptions(clientOptions);
 
-        clientOptions.setTo(targetEPR);
+//        clientOptions.setTo(targetEPR);
         clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+//        OMElement result =
+//                call.invokeBlocking(operationName.getLocalPart(),
+//                        payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext(CLIENT_HOME);
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(clientOptions);
+        clientOptions.setTo(targetEPR);
+
+        OMElement result = sender.sendReceive(payload);
+
+
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
+//        call.close();
     }
 }

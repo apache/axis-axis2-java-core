@@ -120,8 +120,6 @@ public class InOutMEPClient extends MEPClient {
             ListenerManager.stop(serviceContext.getConfigurationContext(),
                     clientOptions.getTransportInDescription().getName().getLocalPart());
         }
-
-
     }
 
     protected void configureTransportInformation(MessageContext msgCtx) throws AxisFault {

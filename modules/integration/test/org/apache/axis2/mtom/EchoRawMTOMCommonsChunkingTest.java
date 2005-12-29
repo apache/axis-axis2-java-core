@@ -21,35 +21,26 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import java.awt.*;
 import java.io.InputStream;
 
 public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestConstants {
-
-
-    private Log log = LogFactory.getLog(getClass());
-
     private AxisService service;
 
     private OMElement data;
-
-    private boolean finish = false;
 
     public EchoRawMTOMCommonsChunkingTest() {
         super(EchoRawMTOMCommonsChunkingTest.class.getName());
@@ -98,19 +89,21 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                Constants.TESTING_PATH + "commons-http-enabledRepository");
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        OMElement result = call.invokeBlocking(operationName
-                .getLocalPart(), payload);
 
-        OMElement ele = (OMElement) result.getFirstOMChild();
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+        sender.sendReceive(payload);
         this.campareWithCreatedOMElement(data);
 
     }

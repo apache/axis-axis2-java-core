@@ -40,6 +40,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     private final Map operationContextMap = new HashMap();
     private Hashtable serviceGroupContextMap = new Hashtable();
+    private Hashtable applicationSessionServiceGroupContextTabale = new Hashtable();
     private transient AxisConfiguration axisConfiguration;
     private File rootDir;
     private transient ThreadFactory threadPool;
@@ -53,7 +54,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     protected void finalize() throws Throwable {
-        super.finalize(); 
+        super.finalize();
     }
 
     /**
@@ -117,10 +118,8 @@ public class ConfigurationContext extends AbstractContext {
              */
             String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
             if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
-                //todo : needed to add to two tables
-                registerServiceGroupContext(serviceGroupContext);
+                addServiceGroupContextintoApplicatoionScopeTable(serviceGroupContext);
             } else if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
-                //todo : needed to add to two tables
                 registerServiceGroupContext(serviceGroupContext);
             } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
                 sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
@@ -162,6 +161,11 @@ public class ConfigurationContext extends AbstractContext {
 
         // this is the best time to clean up the SGCtxts that are not being used anymore
         cleanupServiceGroupContexts();
+    }
+
+    private synchronized void addServiceGroupContextintoApplicatoionScopeTable(
+            ServiceGroupContext serviceGroupContext) {
+        applicationSessionServiceGroupContextTabale.put(serviceGroupContext.getId(), serviceGroupContext);
     }
 
     public AxisConfiguration getAxisConfiguration() {
@@ -207,6 +211,10 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceGroupContext == null && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
+        }
+        if (serviceGroupContext == null) {
+            serviceGroupContext = (ServiceGroupContext)
+                    applicationSessionServiceGroupContextTabale.get(serviceGroupContextId);
         }
 
         return serviceGroupContext;
