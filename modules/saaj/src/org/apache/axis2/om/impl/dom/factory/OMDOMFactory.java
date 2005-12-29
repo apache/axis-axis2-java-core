@@ -15,27 +15,9 @@
  */
 package org.apache.axis2.om.impl.dom.factory;
 
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMComment;
-import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMDocType;
-import org.apache.axis2.om.OMDocument;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMProcessingInstruction;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.dom.AttrImpl;
-import org.apache.axis2.om.impl.dom.CommentImpl;
-import org.apache.axis2.om.impl.dom.DocumentFragmentimpl;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
-import org.apache.axis2.om.impl.dom.OMDOMException;
-import org.apache.axis2.om.impl.dom.ParentNode;
-import org.apache.axis2.om.impl.dom.TextImpl;
+import org.apache.axis2.om.*;
+import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.om.impl.dom.*;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
@@ -165,14 +147,20 @@ public class OMDOMFactory implements OMFactory {
 			return txt;
 	}
 
-	/**
-	 * Create a OMDOM Text node carrying the given value
-	 * 
-	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.String)
-	 */
-	public OMText createText(String s) {
-		return new TextImpl(s);
-	}
+    public OMText createText(OMElement parent, String text, int type) {
+        OMText textNode = createText(parent, text);
+        ((OMNodeEx) textNode).setType(type);
+        return textNode;
+    }
+
+    /**
+     * Create a OMDOM Text node carrying the given value
+     *
+     * @see org.apache.axis2.om.OMFactory#createText(java.lang.String)
+     */
+    public OMText createText(String s) {
+        return new TextImpl(s);
+    }
 
 	/**
 	 * Create a Character node of the given type

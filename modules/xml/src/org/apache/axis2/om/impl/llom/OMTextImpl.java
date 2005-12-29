@@ -29,11 +29,10 @@ import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.UUIDGenerator;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     protected String value = null;
@@ -104,6 +103,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this.value = text;
         done = true;
         this.nodeType = TEXT_NODE;
+    }
+
+    public OMTextImpl(OMElement parent, String text, int nodeType) {
+        super(parent);
+        this.value = text;
+        done = true;
+        this.nodeType = nodeType;
     }
 
     /**

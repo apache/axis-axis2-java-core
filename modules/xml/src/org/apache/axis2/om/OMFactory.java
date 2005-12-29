@@ -90,6 +90,16 @@ public interface OMFactory {
     public OMText createText(OMElement parent, String text);
 
     /**
+     *
+     * @param parent
+     * @param text
+     * @param type - this should be either of XMLStreamConstants.CHARACTERS, XMLStreamConstants.CDATA,
+     * XMLStreamConstants.SPACE, XMLStreamConstants.ENTITY_REFERENCE
+     * @return
+     */
+    public OMText createText(OMElement parent, String text, int type);
+
+    /**
      * @param s
      * @return
      */

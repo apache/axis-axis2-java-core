@@ -1,6 +1,11 @@
 package org.apache.axis2.engine.util.profiling;
 
-import org.apache.axis2.engine.EchoRawXMLTest;
+import org.apache.axis2.Constants;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.om.OMElement;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -18,23 +23,34 @@ import org.apache.axis2.engine.EchoRawXMLTest;
  * limitations under the License.
  */
 
-public class ContextMemoryHandlingUtil extends EchoRawXMLTest {
+public class ContextMemoryHandlingUtil implements TestConstants {
+
+//    public static final EndpointReference targetEPR = new EndpointReference(
+//            "http://192.168.1.219:" + 8080
+//                    + "/axis2/services/echo/echoOMElement");
+//
+//    public static final QName serviceName = new QName("echo");
+//    public static final QName operationName = new QName("echoOMElement");
 
     public ContextMemoryHandlingUtil() {
     }
 
-    public void startup() throws Exception {
-        super.setUp();
-    }
-
     public void runOnce() throws Exception {
-        super.testEchoXMLSync();
-    }
+        OMElement payload = TestingUtils.createDummyOMElement();
 
-    public void shutdown() throws Exception {
-        super.tearDown();
+        Call call =
+                new Call("target/test-resources/integrationRepo");
 
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
+        OMElement result =
+                call.invokeBlocking(operationName.getLocalPart(),
+                        payload);
+        TestingUtils.campareWithCreatedOMElement(result);
+        call.close();
     }
 
     public static void main(String[] args) throws Exception {
@@ -46,15 +62,12 @@ public class ContextMemoryHandlingUtil extends EchoRawXMLTest {
             int numberOfTimes = 0;
 
             while (true) {
-
                 System.out.println("Iterations # = " + ++numberOfTimes);
                 contextMemoryHandlingTest.runOnce();
                 System.out.println("Memory Usage = " + (initialMemory - Runtime.getRuntime().freeMemory()));
-
             }
         } catch (Exception e) {
             e.printStackTrace();
-            contextMemoryHandlingTest.shutdown();
             System.exit(-1);
         }
     }

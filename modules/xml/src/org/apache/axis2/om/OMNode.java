@@ -123,6 +123,9 @@ public interface OMNode {
      * <p>Removes a node from its parent.  Partially complete nodes will be completed before
      * they are detached from the model.  A node cannot be detached until its next sibling
      * has been identified, so that the next sibling and parent can be updated appropriately.
+     * Please note that this will not handle the namespaces. For example, if there you have used a
+     * namespace within the detaching node and which is defined outside the detaching node, user has
+     * to handle it manually.
      * </p>
      *
      * @throws OMException If a node is not complete, the detach can trigger further

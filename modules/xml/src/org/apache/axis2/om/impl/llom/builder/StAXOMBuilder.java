@@ -26,7 +26,6 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;

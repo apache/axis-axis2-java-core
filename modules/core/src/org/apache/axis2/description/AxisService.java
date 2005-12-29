@@ -42,7 +42,11 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Class AxisService
@@ -350,7 +354,7 @@ public class AxisService
             WSDLDescription desc = axisService2WOM.generateWOM();
             
             // populate it with policy information ..
-            //PolicyUtil.populatePolicy(desc, this);
+            PolicyUtil.populatePolicy(desc, this);
             
             WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
             womWriter.setdefaultWSDLPrefix("wsdl");

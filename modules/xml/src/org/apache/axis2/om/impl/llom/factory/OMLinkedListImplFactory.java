@@ -27,15 +27,20 @@ import org.apache.axis2.om.impl.llom.OMProcessingInstructionImpl;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 
 import javax.xml.namespace.QName;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class OMLinkedListImplFactory
  */
 public class OMLinkedListImplFactory implements OMFactory {
+
+    private static final String uriAndPrefixSeparator = ";";
     /**
-     * Field MAX_TO_POOL
+     * This is a map of namespaces with the namespace URI as the key and
+     * Namespace object itself as the value
      */
-    public static final int MAX_TO_POOL = 100;
+    protected Map namespaceTable = new HashMap(5);
 
     /**
      * Method createOMElement
@@ -104,7 +109,13 @@ public class OMLinkedListImplFactory implements OMFactory {
      * @return namespace
      */
     public OMNamespace createOMNamespace(String uri, String prefix) {
-        return new OMNamespaceImpl(uri, prefix);
+        String key = uri + uriAndPrefixSeparator + prefix;
+        OMNamespace existingNamespaceObject = (OMNamespace) namespaceTable.get(key);
+        if (existingNamespaceObject == null) {
+            existingNamespaceObject = new OMNamespaceImpl(uri, prefix);
+            namespaceTable.put(key, existingNamespaceObject);
+        }
+        return existingNamespaceObject;
     }
 
     /**
@@ -116,6 +127,10 @@ public class OMLinkedListImplFactory implements OMFactory {
      */
     public OMText createText(OMElement parent, String text) {
         return new OMTextImpl(parent, text);
+    }
+
+    public OMText createText(OMElement parent, String text, int type) {
+        return new OMTextImpl(parent, text, type);
     }
 
     /**
@@ -134,6 +149,7 @@ public class OMLinkedListImplFactory implements OMFactory {
 
     /**
      * create Text
+     *
      * @param s
      * @param mimeType
      * @param optimize
@@ -145,6 +161,7 @@ public class OMLinkedListImplFactory implements OMFactory {
 
     /**
      * create text
+     *
      * @param dataHandler
      * @param optimize
      * @return text
@@ -152,14 +169,15 @@ public class OMLinkedListImplFactory implements OMFactory {
     public OMText createText(Object dataHandler, boolean optimize) {
         return new OMTextImpl(dataHandler, optimize);
     }
-    
+
     public OMText createText(String contentID, OMElement parent,
-            OMXMLParserWrapper builder) {
-    	return new OMTextImpl(contentID, parent,builder);
+                             OMXMLParserWrapper builder) {
+        return new OMTextImpl(contentID, parent, builder);
     }
 
     /**
      * create text
+     *
      * @param parent
      * @param s
      * @param mimeType
@@ -175,6 +193,7 @@ public class OMLinkedListImplFactory implements OMFactory {
 
     /**
      * create attribute
+     *
      * @param localName
      * @param ns
      * @param value
@@ -188,6 +207,7 @@ public class OMLinkedListImplFactory implements OMFactory {
 
     /**
      * create DocType/DTD
+     *
      * @param parent
      * @param content
      * @return doctype
@@ -198,6 +218,7 @@ public class OMLinkedListImplFactory implements OMFactory {
 
     /**
      * create a PI
+     *
      * @param parent
      * @param piTarget
      * @param piData
@@ -209,6 +230,7 @@ public class OMLinkedListImplFactory implements OMFactory {
 
     /**
      * create a comment
+     *
      * @param parent
      * @param content
      * @return comment
@@ -220,14 +242,14 @@ public class OMLinkedListImplFactory implements OMFactory {
     /* (non-Javadoc)
     * @see org.apache.axis2.om.OMFactory#createOMDocument()
     */
-	public OMDocument createOMDocument() {
-		return new OMDocumentImpl();
-	}
+    public OMDocument createOMDocument() {
+        return new OMDocumentImpl();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMFactory#createOMDocument(org.apache.axis2.om.OMXMLParserWrapper)
-	 */
-	public OMDocument createOMDocument(OMXMLParserWrapper builder) {
-		return new OMDocumentImpl(builder);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.om.OMFactory#createOMDocument(org.apache.axis2.om.OMXMLParserWrapper)
+      */
+    public OMDocument createOMDocument(OMXMLParserWrapper builder) {
+        return new OMDocumentImpl(builder);
+    }
 }
