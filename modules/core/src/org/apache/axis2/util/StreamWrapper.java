@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 public class StreamWrapper implements XMLStreamReader {
     private static final int STATE_SWITCHED = 0;
     private static final int STATE_INIT = 1;
-    private static final int STATE_SWITHC_AT_NEXT = 2;
+    private static final int STATE_SWITCH_AT_NEXT = 2;
     private XMLStreamReader realReader = null;
     private int state = STATE_INIT;
     private int prevState = state;
@@ -58,11 +58,11 @@ public class StreamWrapper implements XMLStreamReader {
 
                 return realReader.getEventType();
             } else {
-                state = STATE_SWITHC_AT_NEXT;
+                state = STATE_SWITCH_AT_NEXT;
 
                 return START_DOCUMENT;
             }
-        } else if (state == STATE_SWITHC_AT_NEXT) {
+        } else if (state == STATE_SWITCH_AT_NEXT) {
             state = STATE_SWITCHED;
 
             return realReader.getEventType();
