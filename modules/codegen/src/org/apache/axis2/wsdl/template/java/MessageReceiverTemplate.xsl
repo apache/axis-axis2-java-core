@@ -91,22 +91,21 @@
                     </xsl:choose>
 
 
-                    //Create a default envelope
-                    envelope = getSOAPFactory(msgContext).getDefaultEnvelope();
-
-                    //Create a OMElement of the result if a result exists
-                    <xsl:if test="$returntype!=''">envelope.getBody().setFirstChild(toOM(<xsl:value-of select="$returnvariable"/>));
-                    </xsl:if>
+                    <xsl:choose>
+                      <xsl:when test="$returntype!=''">
+                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>);
+                      </xsl:when>
+                      <xsl:otherwise>
+                        envelope = getSOAPFactory(msgContext).getDefaultEnvelope();
+                      </xsl:otherwise>
+                    </xsl:choose>                    
                 </xsl:when>
-
 
                 <xsl:otherwise>
                     //Unknown style!! No code is generated
                     throw UnsupportedOperationException("Unknown Style");
                 </xsl:otherwise>
             </xsl:choose>
-
-
 
             }
         </xsl:for-each>

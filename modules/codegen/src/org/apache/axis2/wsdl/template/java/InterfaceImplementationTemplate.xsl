@@ -134,7 +134,6 @@
                     populateModules(_call);
 
                     org.apache.axis2.soap.SOAPEnvelope env;
-                    env = createEnvelope();
                     <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -151,7 +150,7 @@
 
                                     //Style is Doc.
                                     <xsl:for-each select="input/param[@location='body']">
-                                        setValueDoc(env,toOM(<xsl:value-of select="@name"/>));
+                                        env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="@name"/>);
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
                                         setValueDoc(env,toOM(<xsl:value-of select="@name"/>),true);
@@ -239,7 +238,7 @@
 
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc
-                                    setValueDoc(env,toOM(<xsl:value-of select="input/param[1]/@name"/>));
+                                    env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>);
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -325,7 +324,7 @@
                             <xsl:when test="$style='doc'">
                                 <!-- for the doc lit case there can be only one element. So take the first element -->
                                 //Style is Doc.
-                                setValueDoc(env,toOM(<xsl:value-of select="input/param[1]/@name"/>));
+                                env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>);
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated

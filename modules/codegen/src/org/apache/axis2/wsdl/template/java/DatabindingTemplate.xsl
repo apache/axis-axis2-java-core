@@ -29,6 +29,12 @@
                   ((org.apache.axis2.om.impl.OMNodeEx)documentElement).setParent(null);
                   return documentElement;
                 }
+                
+                public org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                    org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+                    envelope.getBody().addChild(toOM(param));
+                    return envelope;
+                }
             </xsl:if>
 
         </xsl:for-each>
@@ -86,7 +92,6 @@
 
             <xsl:for-each select="param">
                 <xsl:if test="@type!=''">
-
                     public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
@@ -94,6 +99,19 @@
                             org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
                             ((org.apache.axis2.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
                             return documentElement;
+                        }else{
+                           <!-- treat this as a plain bean. use the reflective bean converter -->
+                           //todo finish this onece the bean serializer has the necessary methods
+                            return null;
+                        }
+                    }
+                    
+                    public  org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                        if (param instanceof org.apache.axis2.databinding.ADBBean){
+                            org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new 
+                                    org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(param.MY_QNAME),
+                                                                                     factory);
+                            return builder.getEnvelope();
                         }else{
                            <!-- treat this as a plain bean. use the reflective bean converter -->
                            //todo finish this onece the bean serializer has the necessary methods
@@ -130,6 +148,10 @@
            }
 
            public  org.apache.axis2.om.OMElement  toOM(org.apache.axis2.om.OMElement param){
+               return param;
+           }
+           
+           public org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, org.apache.axis2.om.OMElement param){
                return param;
            }
        </xsl:template>
