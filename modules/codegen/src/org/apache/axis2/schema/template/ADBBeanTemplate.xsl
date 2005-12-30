@@ -200,7 +200,7 @@
         <!-- First loop creates arrayLists for handling arrays -->
         <xsl:for-each select="property">
             <xsl:if test="@array">
-                java.util.ArrayList list<xsl:value-of select="position()"></xsl:value-of> = new java.util.ArrayList();
+                java.util.ArrayList list<xsl:value-of select="position()"></xsl:value-of> = new java.util.ArrayList(5000);
             </xsl:if>
         </xsl:for-each>
         while(!done){

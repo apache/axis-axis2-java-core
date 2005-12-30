@@ -308,7 +308,7 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "package", packageName, rootElt);
         XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
-        XSLTUtils.addAttribute(model, "nsprefix", qName.getPrefix(), rootElt);
+        XSLTUtils.addAttribute(model, "nsprefix", getPrefixForURI(qName.getNamespaceURI(), qName.getPrefix()), rootElt);
 
         if (!wrapClasses) {
             XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
@@ -490,5 +490,55 @@ public class JavaBeanWriter implements BeanWriter {
         outStream.close();
 
         PrettyPrinter.prettify(outputFile);
+    }
+
+    /**
+     * Get a prefix for a namespace URI.  This method will ALWAYS
+     * return a valid prefix - if the given URI is already mapped in this
+     * serialization, we return the previous prefix.  If it is not mapped,
+     * we will add a new mapping and return a generated prefix of the form
+     * "ns<num>".
+     *
+     * @param uri is the namespace uri
+     * @return prefix
+     */
+    public String getPrefixForURI(String uri) {
+        return getPrefixForURI(uri, null);
+    }
+
+    /**
+     * Last used index suffix for "ns"
+     */
+    private int lastPrefixIndex = 1;
+
+    /**
+     * Map of namespaces URI to prefix(es)
+     */
+    HashMap mapURItoPrefix = new HashMap();
+    HashMap mapPrefixtoURI = new HashMap();
+
+    /**
+     * Get a prefix for the given namespace URI.  If one has already been
+     * defined in this serialization, use that.  Otherwise, map the passed
+     * default prefix to the URI, and return that.  If a null default prefix
+     * is passed, use one of the form "ns<num>"
+     */
+    public String getPrefixForURI(String uri, String defaultPrefix) {
+        if ((uri == null) || (uri.length() == 0))
+            return null;
+        String prefix = (String) mapURItoPrefix.get(uri);
+        if (prefix == null) {
+            if (defaultPrefix == null || defaultPrefix.length() == 0) {
+                prefix = "ns" + lastPrefixIndex++;
+                while (mapPrefixtoURI.get(prefix) != null) {
+                    prefix = "ns" + lastPrefixIndex++;
+                }
+            } else {
+                prefix = defaultPrefix;
+            }
+            mapPrefixtoURI.put(prefix, uri);
+            mapURItoPrefix.put(uri, prefix);
+        }
+        return prefix;
     }
 }

@@ -817,21 +817,20 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @see javax.xml.stream.XMLStreamReader#getElementText()
      */
     public String getElementText() throws XMLStreamException {
-        String returnText = "";
         if (parser != null) {
             try {
-                returnText = parser.getElementText();
+                return parser.getElementText();
             } catch (XMLStreamException e) {
                 throw new OMStreamingException(e);
             }
         } else {
             if (currentNode.getType() == OMNode.ELEMENT_NODE) {
-                returnText = ((OMElement)currentNode).getText();
+                return ((OMElement)currentNode).getText();
             }else if (currentNode.getType() == OMNode.TEXT_NODE){
-                 returnText = ((OMText)currentNode).getText();
+                 return ((OMText)currentNode).getText();
             }
         }
-        return returnText;
+        return "";
     }
 
     /**
