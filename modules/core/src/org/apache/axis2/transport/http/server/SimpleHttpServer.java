@@ -53,7 +53,6 @@ public class SimpleHttpServer implements Runnable {
     private HttpRequestHandler requestHandler = null;
     private SimpleConnSet connectionsPool = new SimpleConnSet();
     private Thread t;
-    private ThreadGroup tg;
 
     /**
      * Creates a new HTTP server instance, using an arbitrary free TCP port
@@ -125,7 +124,8 @@ public class SimpleHttpServer implements Runnable {
             LOG.debug("Starting test HTTP server on port " + getLocalPort());
         }
 
-        this.threadPool.execute(this);
+        t = new Thread(this);
+        t.start();
     }
 
     /**
@@ -142,8 +142,7 @@ public class SimpleHttpServer implements Runnable {
             LOG.debug("Stopping test HTTP server on port " + getLocalPort());
         }
 
-        // tg.interrupt();
-        // threadPool.doStop();
+        t.interrupt();
 
         if (listener != null) {
             try {

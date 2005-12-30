@@ -26,6 +26,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.util.threadpool.ThreadFactory;
+import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,7 +51,7 @@ public class SimpleHTTPServer extends TransportListener {
     /**
      * Field log
      */
-    protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
+    protected static Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
 
     /**
      * Embedded commons http client based server
@@ -58,6 +59,8 @@ public class SimpleHTTPServer extends TransportListener {
     SimpleHttpServer embedded = null;
     int port = -1;
     private ThreadFactory threadPool = null;
+    
+    public static int DEFAULT_PORT = 8080;
 
     /**
      * Field systemContext
@@ -169,27 +172,43 @@ public class SimpleHTTPServer extends TransportListener {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.out.println("SimpleHTTPServer repositoryLocation port");
-            System.exit(1);
+        int port = DEFAULT_PORT;
+        OptionsParser optionsParser = new OptionsParser(args);
+
+        args = optionsParser.getRemainingArgs();
+        // first check if we should print usage
+        if ((optionsParser.isFlagSet('?') > 0) || (optionsParser.isFlagSet('h') > 0) ||
+                args == null || args.length == 0 || args.length > 1) {
+            printUsage();
+        }
+        String paramPort = optionsParser.isValueSet('p');
+        if (paramPort != null) {
+            port = Integer.parseInt(paramPort);
         }
 
-        SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], Integer.parseInt(args[1]));
-
-        System.out.println("starting SimpleHTTPServer in port " + args[1]
-                + " using the repository " + new File(args[0]).getAbsolutePath());
-
-        try {
-            System.out.println("[Axis2] Using the Repository "
-                    + new File(args[0]).getAbsolutePath());
-            System.out.println("[Axis2] Starting the SimpleHTTPServer on port " + args[1]);
+        System.out.println("[SimpleHTTPServer] Starting");
+        System.out.println("[SimpleHTTPServer] Using the Axis2 Repository "
+                + new File(args[0]).getAbsolutePath());
+        System.out.println("[SimpleHTTPServer] Listening on port " + port);
+        try  {
+            SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], port);
+            Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
-            System.out.println("[Axis2] SimpleHTTPServer started");
-            System.in.read();
-        } finally {
-            receiver.stop();
+            System.out.println("[SimpleHTTPServer] Started");
+        } catch (Throwable t){
+            log.fatal("Error starting SimpleHTTPServer", t);
+            System.out.println("[SimpleHTTPServer] Shutting down");
         }
     }
+    
+    public static void printUsage() {
+        System.out.println("Usage: SimpleHTTPServer [options] <repository>");
+        System.out.println(" Opts: -? this message");
+        System.out.println();
+        System.out.println("       -p port to listen on (default is 8080)");
+        System.exit(1);
+    }
+    
 
     /**
      * Start this server as a NON-daemon.
@@ -200,7 +219,6 @@ public class SimpleHTTPServer extends TransportListener {
             embedded.setRequestHandler(new HTTPWorker(configurationContext));
         } catch (IOException e) {
             log.error(e);
-
             throw new AxisFault(e);
         }
     }
@@ -211,13 +229,10 @@ public class SimpleHTTPServer extends TransportListener {
      * This will interrupt any pending accept().
      */
     public void stop() {
-        log.info("stop called");
-
+        System.out.println("[SimpleHTTPServer] Stop called");
         if (embedded != null) {
             embedded.destroy();
         }
-
-        log.info("Simple Axis Server Quits");
     }
 
     /**
@@ -294,5 +309,20 @@ public class SimpleHTTPServer extends TransportListener {
         }
 
         return embedded.isRunning();
+    }
+
+    static class ShutdownThread extends Thread {
+        private SimpleHTTPServer server = null;
+
+        public ShutdownThread(SimpleHTTPServer server) {
+            super();
+            this.server = server;
+        }
+
+        public void run() {
+            System.out.println("[SimpleHTTPServer] Shutting down");
+            server.stop();
+            System.out.println("[SimpleHTTPServer] Shutdown complete");
+        }
     }
 }
