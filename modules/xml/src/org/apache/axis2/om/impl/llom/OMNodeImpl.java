@@ -19,15 +19,15 @@ package org.apache.axis2.om.impl.llom;
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.OMOutputFormat;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
 
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
 import java.io.OutputStream;
 import java.io.Writer;
 
@@ -223,17 +223,19 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
         if (parent == null) {
             throw new OMException();
         }
-        ((OMNodeEx)sibling).setParent(parent);
         if (sibling instanceof OMNodeImpl) {
             OMNodeImpl siblingImpl = (OMNodeImpl) sibling;
-            siblingImpl.setPreviousOMSibling(previousSibling);
-            siblingImpl.setNextOMSibling(this);
+            siblingImpl.nextSibling = this;
             if (previousSibling == null) {
                 parent.setFirstChild(siblingImpl);
+                siblingImpl.previousSibling = null;
             } else {
+                siblingImpl.setParent(parent);
                 previousSibling.setNextOMSibling(siblingImpl);
+                siblingImpl.setPreviousOMSibling(previousSibling);
             }
             previousSibling = siblingImpl;
+
         }
     }
 
