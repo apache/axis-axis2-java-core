@@ -50,14 +50,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MultirefTest extends TestCase {
-
-    private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    //  0123456789 0 123456789
-
 
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
@@ -129,6 +124,7 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
 
         SOAPEnvelope env = call.invokeBlocking("echoString", envelope);
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "hello Axis2");

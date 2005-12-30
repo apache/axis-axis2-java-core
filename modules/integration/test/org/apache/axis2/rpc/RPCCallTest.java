@@ -21,6 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -35,7 +37,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.rpc.client.RPCCall;
+import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -99,11 +101,14 @@ public class RPCCallTest extends TestCase {
         String clientHome = "target/test-resources/integrationRepo";
 
         Options options = new Options();
-        options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call = new RPCCall(clientHome);
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext(clientHome);
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -119,12 +124,12 @@ public class RPCCallTest extends TestCase {
         args.add(bean);
         args.add("159");
 
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     private void configureSystem(String opName) throws AxisFault {
@@ -153,9 +158,11 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -170,12 +177,12 @@ public class RPCCallTest extends TestCase {
         args.add(bean);
 
 
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
-        call.close();
+        sender.finalizeInvoke();
     }
 
 
@@ -186,15 +193,17 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("foo");
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(response.getFirstElement().getText(), "foo");
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoInt() throws AxisFault {
@@ -204,70 +213,81 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("100");
 
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 100);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testAdd() throws AxisFault {
         configureSystem("add");
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
 
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        call.setClientOptions(options);
+        sender.setOptions(options);
         ArrayList args = new ArrayList();
         args.add("100");
         args.add("200");
 
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testDivide() throws AxisFault {
         configureSystem("divide");
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
+
 
         ArrayList args = new ArrayList();
         args.add("10");
         args.add("0");
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(response.getFirstElement().getText(), "INF");
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoBool() throws AxisFault {
         configureSystem("echoBool");
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        call.setClientOptions(options);
+
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("true");
 
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Boolean.valueOf(response.getFirstElement().getText()).booleanValue(), true);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testEchoByte() throws AxisFault {
@@ -278,15 +298,17 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testCompany() throws AxisFault {
@@ -296,9 +318,11 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         Company com = new Company();
         com.setName("MyCompany");
@@ -323,8 +347,8 @@ public class RPCCallTest extends TestCase {
         com.setPersons(ps);
         ArrayList args = new ArrayList();
         args.add(com);
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
-        call.close();
+        sender.invokeBlocking(operationName, args.toArray());
+        sender.finalizeInvoke();
     }
 
     public void testEchoOM() throws AxisFault {
@@ -334,15 +358,17 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testCalender() throws AxisFault {
@@ -353,16 +379,18 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         Date date = Calendar.getInstance().getTime();
         args.add(zulu.format(date));
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(response.getFirstElement().getText(), zulu.format(date));
-        call.close();
+        sender.finalizeInvoke();
     }
 
 
@@ -374,9 +402,11 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -393,11 +423,11 @@ public class RPCCallTest extends TestCase {
         ArrayList ret = new ArrayList();
         ret.add(MyBean.class);
 
-        Object [] response = call.invokeBlocking(operationName, args.toArray(), ret.toArray());
+        Object [] response = sender.invokeBlocking(operationName, args.toArray(), ret.toArray());
         MyBean resBean = (MyBean) response[0];
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testechoInt2() throws AxisFault {
@@ -407,9 +437,11 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("100");
@@ -417,9 +449,9 @@ public class RPCCallTest extends TestCase {
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
 
-        Object [] response = call.invokeBlocking(operationName, args.toArray(), ret.toArray());
+        Object [] response = sender.invokeBlocking(operationName, args.toArray(), ret.toArray());
         assertEquals(((Integer) response[0]).intValue(), 100);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testmultireturn() throws AxisFault {
@@ -429,9 +461,11 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("1");
@@ -440,11 +474,11 @@ public class RPCCallTest extends TestCase {
         ret.add(Integer.class);
         ret.add(String.class);
 
-        Object [] response = call.invokeBlocking(operationName, args.toArray(), ret.toArray());
+        Object [] response = sender.invokeBlocking(operationName, args.toArray(), ret.toArray());
         assertEquals(((Integer) response[0]).intValue(), 10);
         assertEquals(response[1], "foo");
 //        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
-        call.close();
+        sender.finalizeInvoke();
     }
 
     public void testmulReturn() throws AxisFault {
@@ -454,17 +488,19 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("foo");
 
 
-        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        sender.invokeBlocking(operationName, args.toArray());
 //        assertEquals(response.getFirstElement().getText(), "foo");
-        call.close();
+        sender.finalizeInvoke();
     }
 
 
@@ -475,13 +511,15 @@ public class RPCCallTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-        call.setClientOptions(options);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
 
-        OMElement elem = call.invokeBlocking("handleArrayList", getpayLoad());
+        OMElement elem = sender.sendReceive(getpayLoad());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
-        call.close();
+        sender.finalizeInvoke();
     }
 
     private OMElement getpayLoad() throws AxisFault {
