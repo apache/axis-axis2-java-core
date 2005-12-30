@@ -153,7 +153,7 @@
                                         env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="@name"/>);
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
-                                        setValueDoc(env,toOM(<xsl:value-of select="@name"/>),true);
+                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -171,7 +171,7 @@
                                 </xsl:when>
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc. No input parameters
-                                    setValueDoc(env,null);
+                                    <!-- setValueDoc(env,null); -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -259,7 +259,7 @@
                                 <!-- The follwing code is specific to XML beans-->
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc. No input parameters
-                                    setValueDoc(env,null);
+                                    <!-- setValueDoc(env,null); -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -341,7 +341,7 @@
                             </xsl:when>
                             <xsl:when test="$style='doc'">
                                 //Style is Doc. No input parameters
-                                setValueDoc(env,null);
+                                <!-- setValueDoc(env,null); -->
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated

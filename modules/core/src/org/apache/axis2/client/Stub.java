@@ -174,22 +174,4 @@ public abstract class Stub {
     protected MessageContext getMessageContext() throws AxisFault {
         return new MessageContext(_configurationContext);
     }
-
-    protected void setValueDoc(SOAPEnvelope env, OMElement value) {
-        setValueDoc(env, value, false);
-    }
-
-    protected void setValueDoc(SOAPEnvelope env, OMElement value, boolean isHeader) {
-        if (value != null) {
-            if (isHeader) {
-                SOAPHeader header = env.getHeader();
-
-                header.addChild(value);
-            } else {
-                SOAPBody body = env.getBody();
-
-                body.addChild(value);
-            }
-        }
-    }
 }
