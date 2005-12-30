@@ -18,16 +18,17 @@ package org.apache.axis2.security.trust.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
-import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.security.trust.token.RequestSecurityToken;
 import org.apache.axis2.security.trust.token.RequestSecurityTokenResponse;
+
+import javax.xml.namespace.QName;
 
 /**
  * Client to interact with a given SecurityTokenService
@@ -48,14 +49,16 @@ public class STSClient {
 
     public RequestSecurityTokenResponse doRequest(RequestSecurityToken rst) throws TrustException {
         try {
-            Call call = new Call();
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(new EndpointReference(this.stsUrl));
             options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, this.outConfig.getProperty());
             options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, this.inConfig.getProperty());
 
-            OMElement res = call.invokeBlocking(Constants.LN.REQUEST_SECURITY_TOKEN, this.prepareRequst(rst));
+            ServiceClient sender = new ServiceClient();
+            sender.engageModule(new QName(org.apache.axis2.Constants.MODULE_ADDRESSING));
+            sender.setOptions(options);
+            OMElement res = sender.sendReceive(this.prepareRequst(rst));
+
             RequestSecurityTokenResponse rstr = new RequestSecurityTokenResponse(res);
             return rstr;
         } catch (AxisFault e) {

@@ -19,8 +19,10 @@ package org.apache.axis2.rest;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
@@ -81,22 +83,23 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
 
     public void testEchoXMLSync() throws Exception {
         OMElement payload = createEnvelope();
-
-        Call call = new Call("target/test-resources/integrationRepo");
-
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
-        call.setClientOptions(options);
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+        OMElement result = sender.sendReceive(payload);
+
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
 
 
-        call.close();
+        sender.finalizeInvoke();
     }
 }

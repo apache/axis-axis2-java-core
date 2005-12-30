@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -118,14 +119,10 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         ServiceContext serviceContext = new ServiceGroupContext(configContext,
                 service.getParent()).getServiceContext(service);
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
-
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
-        call.setClientOptions(options);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -146,8 +143,12 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(), createEnvelope(),
-                callback);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setOptions(options);
+        sender.setCurrentOperationName(operationName);
+        options.setTo(targetEPR);
+        sender.sendReceiveNonblocking(createEnvelope(), callback);
+
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
@@ -157,7 +158,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        call.close();
+        sender.finalizeInvoke();
 
     }
 

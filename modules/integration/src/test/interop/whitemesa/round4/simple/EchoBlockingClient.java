@@ -19,8 +19,10 @@ package test.interop.whitemesa.round4.simple;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.om.OMElement;
 import test.interop.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
 
@@ -33,19 +35,20 @@ public class EchoBlockingClient {
         EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc");
 
         try {
-
-
-            Call call = new Call("target/test-resources/integrationRepo");
-
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setExceptionToBeThrownOnSOAPFault(false);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapAction(soapAction);
             //Blocking invocation
 
-            firstchild = call.invokeBlocking("", util.getEchoOMElement());
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+            firstchild = sender.sendReceive(util.getEchoOMElement());
 
 
         } catch (Exception e) {

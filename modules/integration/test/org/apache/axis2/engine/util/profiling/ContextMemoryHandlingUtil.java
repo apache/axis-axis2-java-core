@@ -1,8 +1,10 @@
 package org.apache.axis2.engine.util.profiling;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.om.OMElement;
@@ -37,21 +39,20 @@ public class ContextMemoryHandlingUtil implements TestConstants {
 
     public void runOnce() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
-
-        Call call =
-                new Call("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
-        options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+        OMElement result = sender.sendReceive(payload);
 
-        OMElement result =
-                call.invokeBlocking(operationName.getLocalPart(),
-                        payload);
         TestingUtils.campareWithCreatedOMElement(result);
-        call.close();
+        sender.finalizeInvoke();
     }
+
 
     public static void main(String[] args) throws Exception {
         ContextMemoryHandlingUtil contextMemoryHandlingTest = new ContextMemoryHandlingUtil();

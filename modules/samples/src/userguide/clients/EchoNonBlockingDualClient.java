@@ -20,8 +20,8 @@ package userguide.clients;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMElement;
@@ -47,9 +47,6 @@ public class EchoNonBlockingDualClient {
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
-            Call call = new Call();
-            call.setClientOptions(options);
-
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -72,14 +69,16 @@ public class EchoNonBlockingDualClient {
             };
 
             //Non-Blocking Invocation
-            call.invokeNonBlocking("echo", payload, callback);
+            ServiceClient sender = new ServiceClient();
+            sender.setOptions(options);
+            sender.sendReceiveNonblocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
             //Need to close the Client Side Listener.
-            call.close();
+            sender.finalizeInvoke();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

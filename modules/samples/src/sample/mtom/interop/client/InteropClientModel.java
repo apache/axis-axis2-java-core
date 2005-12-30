@@ -18,13 +18,9 @@ package sample.mtom.interop.client;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.activation.DataHandler;
@@ -63,7 +59,6 @@ public class InteropClientModel {
     public OMElement testEchoXMLSync(String fileName) throws Exception {
 
         OMElement payload = createEnvelope(fileName);
-        Call call = new Call();
         Options options = new Options();
 
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
@@ -71,11 +66,10 @@ public class InteropClientModel {
         // enabling MTOM in the client side
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_FALSE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        call.setClientOptions(options);
 
-        return call.invokeBlocking(operationName
-                .getLocalPart(),
-                payload);
+        ServiceClient sender = new ServiceClient();
+        sender.setOptions(options);
+        return sender.sendReceive(payload);
     }
 
     public void setTargetEPR(String targetEPR) {

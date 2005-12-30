@@ -21,8 +21,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -67,17 +67,16 @@ public class PostTest extends TestCase implements TestConstants {
             StAXOMBuilder builder = new StAXOMBuilder(reader);
             OMElement websearch = builder.getDocumentElement();
 
-            Call call = new Call();
-
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
             options.setProperty(HTTPConstants.HTTP_CONTENT_TYPE, "application/x-www-form-urlencoded");
 
-            //Blocking invocation
-            OMElement result = call.invokeBlocking("echo", websearch);
+            ServiceClient sender = new ServiceClient();
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+            OMElement result = sender.sendReceive(websearch);
 
             StringWriter writer = new StringWriter();
             result.serialize(XMLOutputFactory.newInstance()

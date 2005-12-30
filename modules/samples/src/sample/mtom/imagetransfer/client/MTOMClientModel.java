@@ -20,13 +20,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.ImageIO;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.SOAP11Constants;
 
 import javax.activation.DataHandler;
@@ -81,9 +77,6 @@ public class MTOMClientModel {
     public OMElement sendFile(String fileName) throws Exception {
 
         OMElement payload = createEnvelope(fileName);
-
-        Call call = new Call();
-
         Options options = new Options();
         options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
@@ -91,11 +84,9 @@ public class MTOMClientModel {
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        call.setClientOptions(options);
-        return call.invokeBlocking(operationName
-                .getLocalPart(),
-                payload);
-
+        ServiceClient sender = new ServiceClient();
+        sender.setOptions(options);
+        return sender.sendReceive(payload);
     }
 
 

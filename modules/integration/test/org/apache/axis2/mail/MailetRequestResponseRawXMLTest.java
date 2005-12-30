@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -30,7 +31,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -57,11 +57,6 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
 
     private SOAPEnvelope envelope;
 
@@ -111,7 +106,7 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
         AxisOperation axisOperation = new OutInAxisOperation();
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messageCtx) throws AxisFault {
+            public void receive(MessageContext messageCtx) {
                 envelope = messageCtx.getEnvelope();
             }
         });
@@ -120,14 +115,10 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
 
 
         ServiceContext serviceContext = Utils.fillContextInformation(axisOperation, service, configContext);
-
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
-        call.setClientOptions(options);
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
@@ -146,10 +137,11 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
                 finish = true;
             }
         };
-
-        call.invokeNonBlocking(operationName.getLocalPart(),
-                createEnvelope(),
-                callback);
+        ServiceClient sender = new ServiceClient(serviceContext);
+        sender.setOptions(options);
+        sender.setCurrentOperationName(operationName);
+        options.setTo(targetEPR);
+        sender.sendReceiveNonblocking(createEnvelope(), callback);
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
@@ -159,7 +151,7 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
                         "Async response is taking too long[10s+]. Server is being shut down.");
             }
         }
-        call.close();
+        sender.finalizeInvoke();
 
     }
 }

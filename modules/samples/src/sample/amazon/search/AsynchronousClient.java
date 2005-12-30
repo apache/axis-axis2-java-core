@@ -135,7 +135,6 @@ public class AsynchronousClient {
      * @throws AxisFault
      */
     public static void sendMsg() throws AxisFault {
-        search.trim();
         prevSearch = search;
         Call call = new Call();
         URL url = null;
@@ -171,6 +170,7 @@ public class AsynchronousClient {
             call.invokeNonBlocking(opdesc,
                     requestContext,
                     new ClientCallbackHandler());
+
         } catch (AxisFault e1) {
             e1.printStackTrace();
         } catch (XMLStreamException e) {

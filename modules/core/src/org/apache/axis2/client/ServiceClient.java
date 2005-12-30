@@ -502,6 +502,11 @@ public class ServiceClient {
         }
     }
 
+    public void engageModule(QName moduleName) throws AxisFault {
+        //TODO : This is a hack pls implement this in properway
+        configContext.getAxisConfiguration().engageModule(moduleName);
+    }
+
     /**
      * This class acts as a callback that allows users to wait on the result.
      */

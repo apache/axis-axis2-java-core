@@ -2,8 +2,8 @@ package sample.google.spellcheck;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -63,31 +63,23 @@ public class FormModel {
 
     public void doAsyncSpellingSuggestion(String word) {
         OMElement requestElement = getElement(word);
-        Call call = null;
-        try {
-            call = new Call();
-        } catch (AxisFault axisFault) {
-            observer.updateError(axisFault.getMessage());
-        }
         URL url = null;
         try {
-            url =
-                    new URL(PROTOCOL,
-                            PropertyLoader.getGoogleEndpointURL(),
-                            PropertyLoader.getGoogleEndpointServiceName());
+            url = new URL(PROTOCOL,
+                    PropertyLoader.getGoogleEndpointURL(),
+                    PropertyLoader.getGoogleEndpointServiceName());
             //url=new URL( "http","127.0.0.1",7070,"/search/beta2");
         } catch (MalformedURLException e) {
             observer.updateError(e.getMessage());
-            ;
         }
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(new EndpointReference(url.toString()));
         try {
-            call.invokeNonBlocking("doGoogleSpellingSugg",
-                    requestElement,
-                    new GoogleCallBack(word));
+            ServiceClient sender = new ServiceClient();
+            sender.setOptions(options);
+            sender.sendReceiveNonblocking(requestElement, new GoogleCallBack(word));
+
         } catch (AxisFault axisFault) {
             observer.updateError(axisFault.getMessage());
         }
@@ -97,12 +89,6 @@ public class FormModel {
     public void doSyncSpellingSuggestion(String word) {
         OMElement responseElement = null;
         OMElement requestElement = getElement(word);
-        Call call = null;
-        try {
-            call = new Call();
-        } catch (AxisFault axisFault) {
-            observer.updateError(axisFault.getMessage());
-        }
         URL url = null;
         try {
             url =
@@ -115,12 +101,14 @@ public class FormModel {
         }
 
         Options options = new Options();
-        call.setClientOptions(options);
+
         options.setTo(new EndpointReference(url.toString()));
         try {
-            responseElement =
-                    call.invokeBlocking("doGoogleSpellingSugg",
-                            requestElement);
+
+            ServiceClient sender = new ServiceClient();
+            sender.setOptions(options);
+            responseElement = sender.sendReceive(requestElement);
+
         } catch (AxisFault axisFault) {
             observer.updateError(axisFault.getMessage());
         }
@@ -141,8 +129,6 @@ public class FormModel {
     public String getResponse(SOAPEnvelope responseEnvelope) {
         QName qName1 = new QName("urn:GoogleSearch",
                 "doSpellingSuggestionResponse");
-        QName qName2 = new QName("urn:GoogleSearch", "return");
-
 
         SOAPBody body = responseEnvelope.getBody();
         if (body.hasFault()) {
@@ -150,7 +136,7 @@ public class FormModel {
             return null;
         } else {
             OMElement root = body.getFirstChildWithName(qName1);
-            OMElement val = null;
+            OMElement val;
             if (root != null) {
                 // val = root.getFirstChildWithName(qName2);
                 val = root.getFirstElement();

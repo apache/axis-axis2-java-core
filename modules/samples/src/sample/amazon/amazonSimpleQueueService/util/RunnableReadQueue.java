@@ -19,8 +19,8 @@ package sample.amazon.amazonSimpleQueueService.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
@@ -63,9 +63,9 @@ public class RunnableReadQueue extends QueueManager implements Runnable {
             options.setTo(new EndpointReference(url));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            Call call = new Call();
-            call.setClientOptions(options);
-            call.invokeNonBlocking(operation, element, specificCallbackObject);
+            ServiceClient sender = new ServiceClient();
+            sender.setOptions(options);
+            sender.sendReceiveNonblocking(element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
         } catch (Exception e) {

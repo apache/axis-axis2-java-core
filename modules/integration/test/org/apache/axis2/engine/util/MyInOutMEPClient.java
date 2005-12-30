@@ -34,20 +34,20 @@ public class MyInOutMEPClient extends Call {
 
     public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
                                                       OMElement toSend) throws AxisFault {
-        AxisOperation axisConfig =
+        AxisOperation axisOperation =
                 getServiceContext().getAxisService().getOperation(new QName(axisop));
-        if (axisConfig == null) {
-            axisConfig = new OutInAxisOperation();
-            axisConfig.setName(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(axisOperationTemplate.getPhasesOutFaultFlow());
-            getServiceContext().getAxisService().addOperation(axisConfig);
+        if (axisOperation == null) {
+            axisOperation = new OutInAxisOperation();
+            axisOperation.setName(new QName(axisop));
+            axisOperation.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
+            axisOperation.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
+            axisOperation.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
+            axisOperation.setPhasesOutFaultFlow(axisOperationTemplate.getPhasesOutFaultFlow());
+            getServiceContext().getAxisService().addOperation(axisOperation);
         }
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
-        MessageContext responseContext = super.invokeBlocking(axisConfig,
+        MessageContext responseContext = super.invokeBlocking(axisOperation,
                 msgctx);
         return responseContext.getEnvelope();
     }
@@ -55,20 +55,20 @@ public class MyInOutMEPClient extends Call {
 
     public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
                                                       SOAPEnvelope reqEnvelope) throws AxisFault {
-        AxisOperation axisConfig =
+        AxisOperation axisOperation =
                 getServiceContext().getAxisService().getOperation(new QName(axisop));
-        if (axisConfig == null) {
-            axisConfig = new OutInAxisOperation();
-            axisConfig.setName(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(axisOperationTemplate.getPhasesOutFaultFlow());
-            getServiceContext().getAxisService().addOperation(axisConfig);
+        if (axisOperation == null) {
+            axisOperation = new OutInAxisOperation();
+            axisOperation.setName(new QName(axisop));
+            axisOperation.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
+            axisOperation.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
+            axisOperation.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
+            axisOperation.setPhasesOutFaultFlow(axisOperationTemplate.getPhasesOutFaultFlow());
+            getServiceContext().getAxisService().addOperation(axisOperation);
         }
         MessageContext msgctx = getMessageContext(reqEnvelope);
 
-        MessageContext responseContext = super.invokeBlocking(axisConfig,
+        MessageContext responseContext = super.invokeBlocking(axisOperation,
                 msgctx);
         return responseContext.getEnvelope();
     }

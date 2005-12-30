@@ -17,8 +17,8 @@ package userguide.clients;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -44,16 +44,16 @@ public class EchoBlockingWsaBasedClient {
     }
 
     public static void main(String[] args) throws Exception {
-
-        Call call = new Call();
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         //Blocking invocation via wsa mapping
         options.setAction("urn:sample/echo");
-        OMElement result = (OMElement) call.invokeBlocking("echo", getBody());
+
+        ServiceClient sender = new ServiceClient();
+        sender.setOptions(options);
+        OMElement result = sender.sendReceive(getBody());
 
         StringWriter writer = new StringWriter();
         result.serialize(writer);

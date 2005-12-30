@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -59,14 +60,9 @@ public class MailCharSetEncodingTest extends TestCase {
 
     private QName operationName = new QName("echoOMElement");
 
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
     OMElement resultElem = null;
 
     private AxisConfiguration engineRegistry;
-
-    private MessageContext mc;
 
     private SOAPEnvelope envelope;
 
@@ -103,7 +99,7 @@ public class MailCharSetEncodingTest extends TestCase {
         envelope = null;
         String expected = value;
         try {
-            if (clientConfigContext ==null) {
+            if (clientConfigContext == null) {
                 clientConfigContext = UtilsMailServer
                         .createClientConfigurationContext();
                 engineRegistry = clientConfigContext.getAxisConfiguration();
@@ -111,23 +107,20 @@ public class MailCharSetEncodingTest extends TestCase {
             AxisService clientService = new AxisService(
                     serviceName.getLocalPart());
             AxisOperation clientOperation = new OutInAxisOperation(
-                    );
+            );
             clientOperation.setName(operationName);
             clientOperation.setMessageReceiver(new MessageReceiver() {
-                public void receive(MessageContext messageCtx) throws AxisFault {
+                public void receive(MessageContext messageCtx) {
                     envelope = messageCtx.getEnvelope();
                 }
             });
             engineRegistry.removeService(serviceName.getLocalPart());
             clientService.addOperation(clientOperation);
             engineRegistry.addService(clientService);
-            clientServiceContext = Utils.fillContextInformation(clientOperation,  clientService, clientConfigContext);
+            clientServiceContext = Utils.fillContextInformation(clientOperation, clientService, clientConfigContext);
 
-            org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                    clientServiceContext);
 
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
             options.setUseSeparateListener(true);
@@ -142,8 +135,12 @@ public class MailCharSetEncodingTest extends TestCase {
                     finish = true;
                 }
             };
-            call.invokeNonBlocking(operationName.getLocalPart(),
-                    createEnvelope(value), callback);
+            ServiceClient sender = new ServiceClient(clientServiceContext);
+            sender.setCurrentOperationName(operationName);
+            sender.setOptions(options);
+            options.setTo(targetEPR);
+            sender.sendReceiveNonblocking(createEnvelope(value), callback);
+
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -153,8 +150,7 @@ public class MailCharSetEncodingTest extends TestCase {
                             "Async response is taking too long[10s+]. Server is being shut down.");
                 }
             }
-           // call.close();
-            call = null;
+            // call.close();
             assertNotNull("Result is null", resultElem);
             String result = ((OMElement) resultElem.getFirstOMChild()
                     .getNextOMSibling()).getFirstElement().getFirstElement()

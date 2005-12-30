@@ -19,8 +19,8 @@ package org.apache.axis2.rest;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -59,10 +59,11 @@ public class GetTest extends TestCase implements TestConstants {
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
         options.setProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET, Constants.VALUE_TRUE);
 
-        Call call = new Call();
-        call.setClientOptions(options);
-        //if post is through GET of HTTP
-        OMElement response = call.invokeBlocking("webSearch", data);
+        ServiceClient sender = new ServiceClient();
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+        OMElement response = sender.sendReceive(data);
+
         response.serialize(System.out);
     }
 }

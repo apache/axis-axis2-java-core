@@ -20,8 +20,8 @@ package userguide.clients;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMElement;
@@ -40,10 +40,7 @@ public class EchoNonBlockingClient {
     public static void main(String[] args) {
         try {
             OMElement payload = ClientUtil.getEchoOMElement();
-
-            Call call = new Call();
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
@@ -69,7 +66,9 @@ public class EchoNonBlockingClient {
             };
 
             //Non-Blocking Invocation
-            call.invokeNonBlocking("echo", payload, callback);
+            ServiceClient sender = new ServiceClient();
+            sender.setOptions(options);
+            sender.sendReceiveNonblocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {

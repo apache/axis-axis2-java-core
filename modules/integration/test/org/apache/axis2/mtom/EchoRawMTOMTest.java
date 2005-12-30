@@ -28,7 +28,6 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
@@ -37,7 +36,6 @@ import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,8 +48,6 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
 
 
     private Log log = LogFactory.getLog(getClass());
-
-    private ServiceContext serviceContext;
 
     private AxisService service;
 
@@ -146,15 +142,8 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
     }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createEnvelope();
-
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
         //options.setTimeOutInMilliSeconds(-1);
         //options.setProperty(HTTPConstants.SO_TIMEOUT,new Integer(Integer.MAX_VALUE));
@@ -162,10 +151,14 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+        OMElement result = sender.sendReceive(payload);
 
-        OMElement result = call.invokeBlocking(operationName
-                .getLocalPart(),
-                payload);
         // result.serializeAndConsume(new
         // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         OMElement ele = (OMElement) result.getFirstOMChild();
@@ -177,7 +170,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         // Save the image
         DataHandler actualDH;
         actualDH = (DataHandler) binaryNode.getDataHandler();
-        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
+        new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
 //        FileOutputStream imageOutStream = new FileOutputStream("target/testout.jpg");
 //        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);

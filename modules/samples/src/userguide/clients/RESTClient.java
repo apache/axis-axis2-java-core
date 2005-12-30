@@ -19,13 +19,14 @@ package userguide.clients;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,10 +47,10 @@ public class RESTClient {
 
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
-        Call call = new Call();
-        call.setClientOptions(options);
-
-        OMElement result = call.invokeBlocking("echo", getPayload());
+        ServiceClient sender = new ServiceClient();
+        sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        sender.setOptions(options);
+        OMElement result = sender.sendReceive(getPayload());
 
         try {
             XMLStreamWriter writer = XMLOutputFactory.newInstance()

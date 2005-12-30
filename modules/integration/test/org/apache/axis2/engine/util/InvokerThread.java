@@ -3,8 +3,10 @@ package org.apache.axis2.engine.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMElement;
@@ -47,22 +49,22 @@ public class InvokerThread extends Thread {
 
     public void run() {
         try {
-            log.info("Starting Thread number "+ threadNumber + " .............");
-            Call call =
-                    new Call("target/test-resources/integrationRepo");
+            log.info("Starting Thread number " + threadNumber + " .............");
             OMElement payload = TestingUtils.createDummyOMElement();
 
             Options options = new Options();
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            call.setClientOptions(options);
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                    factory.buildConfigurationContext("target/test-resources/integrationRepo");
+            ServiceClient sender = new ServiceClient(configContext);
+            sender.setOptions(options);
+            OMElement result = sender.sendReceive(payload);
 
-            OMElement result =
-                    call.invokeBlocking(operationName.getLocalPart(),
-                            payload);
             TestingUtils.campareWithCreatedOMElement(result);
-            call.close();
-            log.info("Finishing Thread number "+ threadNumber + " .....");
+            sender.finalizeInvoke();
+            log.info("Finishing Thread number " + threadNumber + " .....");
         } catch (AxisFault axisFault) {
             thrownException = axisFault;
             log.error("Error has occured invoking the service ", axisFault);
