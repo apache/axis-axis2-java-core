@@ -8,7 +8,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.util.Properties;
 import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -44,14 +43,12 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
     public Source resolve(String href, String base) throws TransformerException {
         String templateName;
         InputStream supporterTemplateStream;
-        if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF.equals(href)){
-            templateName = ConfigPropertyFileLoader.getDbSupporterTemplateName();
-            if(templateName!=null){
-                supporterTemplateStream = getClass().getResourceAsStream(templateName);
-                return new StreamSource(supporterTemplateStream);
-            } else{
-                throw new TransformerException("Databinding template not found!");
-            }
+        if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY.equals(href)){
+            return getSourceFromTemplateName(ConfigPropertyFileLoader.getDbSupporterTemplateName());
+        }
+
+        if (XSLT_INCLUDE_TEST_OBJECT_HREF_KEY.equals((href))){
+              return getSourceFromTemplateName(ConfigPropertyFileLoader.getTestObjectTemplateName());
         }
 
         if (externalPropertyMap.get(href)!=null){
@@ -63,6 +60,16 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
         }
         //if nothing could be found return an empty source
         return getEmptySource();
+    }
+
+    private Source getSourceFromTemplateName(String templateName) throws TransformerException {
+        InputStream supporterTemplateStream;
+        if(templateName!=null){
+            supporterTemplateStream = getClass().getResourceAsStream(templateName);
+            return new StreamSource(supporterTemplateStream);
+        } else{
+            throw new TransformerException(templateName + " template not found!");
+        }
     }
 
     private Source getEmptySource(){

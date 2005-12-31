@@ -663,7 +663,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             }
 
             addAttribute(doc, "value", getParamInitializer(typeMapping), param);
-            
+
             //add this as a body parameter
             addAttribute(doc, "location", "body", param);
             Iterator iter = inputMessage.getExtensibilityAttributes().iterator();
@@ -1081,6 +1081,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
+
+        //add the databind supporters. Now the databind supporters are completly contained inside
+        //the stubs implementation and not visible outside
+        rootElement.appendChild(
+                createDOMElementforDatabinders(doc, binding));
+
+
         doc.appendChild(rootElement);
         return doc;
 
@@ -1445,7 +1452,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         constructorMap.put(
                 "javax.xml.namespace.QName",
                 "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
-    }    
+    }
 
     String getParamInitializer(String paramType) {
         // Look up paramType in the table
@@ -1454,6 +1461,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             out = "null";
         }
         return out;
-    }        
+    }
 }
 

@@ -1,5 +1,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
+
+    <!-- Incldue the test object creation template  -->
+    <xsl:include href="testObject"/>
+
     <xsl:template match="/class">
     <xsl:variable name="interfaceName"><xsl:value-of select="@interfaceName"/></xsl:variable>
     <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
@@ -26,7 +30,6 @@
      <xsl:for-each select="method">
          <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-out'">
           <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
-          <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>
           <xsl:if test="$isSync='1'">
         /**
          * Auto generated test method
@@ -39,7 +42,8 @@
            <xsl:choose>
              <xsl:when test="count(input/param)>0">
                 <xsl:for-each select="input/param[@type!='']">
-                    <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text> = </xsl:text><xsl:value-of select="@value"/><xsl:text>;</xsl:text>
+                    <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text>=
+                                                        </xsl:text>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class);
                 </xsl:for-each>
                  
                 <xsl:choose>
@@ -86,13 +90,11 @@
         public  void testStart<xsl:value-of select="@name"/>() throws java.lang.Exception{
             <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/> stub = new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();
              //create a new databinder
-            <xsl:variable name="fullsupporterclassname"><xsl:value-of select="$dbpackage"/>.<xsl:value-of select="$dbsupportclassname"/></xsl:variable>
-            <xsl:value-of select="$fullsupporterclassname"/> databindSupporter = new <xsl:value-of select="$fullsupporterclassname"/>();
              <xsl:choose>
              <xsl:when test="count(input/param)>0">
                 stub.start<xsl:value-of select="@name"/>(
                          <xsl:for-each select="input/param">
-                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)databindSupporter.getTestObject(<xsl:value-of select="@type"/>.class)
+                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class)
                         </xsl:if>
                         </xsl:for-each>,
                     new <xsl:value-of select="$tempCallbackName"/>()
@@ -112,7 +114,7 @@
             public <xsl:value-of select="$tempCallbackName"/>(){ super(null);}
 
             public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.client.async.AsyncResult result) {
-			    assertNotNull(result.getResponseEnvelope().getBody().getFirstChild());
+			    assertNotNull(result.getResponseEnvelope().getBody().getFirstElement());
             }
 
             public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {
@@ -124,6 +126,10 @@
       <!-- end of in-out mep -->
       </xsl:if>
      </xsl:for-each>
-	}
+
+       <!-- generate the test object -->
+        <xsl:apply-templates/>
+
+    }
     </xsl:template>
  </xsl:stylesheet>

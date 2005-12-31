@@ -15,7 +15,6 @@
         <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
         <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
         <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
-        <xsl:variable name="dbpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
         <xsl:variable name="soapVersion"><xsl:value-of select="@soap-version"/></xsl:variable>
         /**
         * <xsl:value-of select="@name"/>.java

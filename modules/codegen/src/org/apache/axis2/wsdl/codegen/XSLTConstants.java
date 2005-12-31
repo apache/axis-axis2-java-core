@@ -24,9 +24,10 @@ public interface XSLTConstants {
     QName XMIME_CONTENT_TYPE_QNAME = new QName("http://www.w3.org/2004/06/xmlmime", "contentType");
 
     String BASE_64_PROPERTY_KEY = "base64map";
-    String EXTERNAL_TEMPLATE_PROPERTY_KEY = "externalTemplate";
 
-    String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF = "databindsupporter"; 
+    String EXTERNAL_TEMPLATE_PROPERTY_KEY = "externalTemplate";
+    String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY = "databindsupporter";
+    String XSLT_INCLUDE_TEST_OBJECT_HREF_KEY = "testObject"; 
 
 
     public interface CodegenStyle {

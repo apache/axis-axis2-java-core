@@ -17,6 +17,7 @@ public class ConfigPropertyFileLoader {
 
 
     private static String dbSupporterTemplateName;
+    private static String testObjectTemplateName;
     private static String[] extensionClassNames;
     private static String[] thirdPartySchemaNames;
     private static String[] languageTypes;
@@ -38,6 +39,9 @@ public class ConfigPropertyFileLoader {
     private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
     private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY = "codegen.databinding.supporter.template";
+    private static final String DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY = "codegen.databinding.testobject.template";
+
+
     public static final String CODEGEN_CONFIG_PROPERTIES = "/org/apache/axis2/wsdl/codegen/codegen-config.properties";
 
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
@@ -104,6 +108,8 @@ public class ConfigPropertyFileLoader {
             //the db supporter template name
             dbSupporterTemplateName = props.getProperty(DATA_BINDING_TEMPLATE_NAME_KEY);
 
+            testObjectTemplateName = props.getProperty(DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY);
+
 
 
             //load the language names
@@ -161,6 +167,21 @@ public class ConfigPropertyFileLoader {
         }
 
     }
+
+    /**
+     * Get the test object support template. this is used in the
+     * generated test class
+     * @return
+     */
+    public static String getTestObjectTemplateName() {
+        return testObjectTemplateName;
+    }
+
+    /**
+     * The databinder template. This is the template that has the
+     * logic for creating the databind supporters
+     * @return
+     */
     public static String getDbSupporterTemplateName() {
         return dbSupporterTemplateName;
     }

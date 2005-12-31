@@ -95,7 +95,7 @@
                     public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-                            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(param.MY_QNAME));
+                            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
                             org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
                             ((org.apache.axis2.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
                             return documentElement;
