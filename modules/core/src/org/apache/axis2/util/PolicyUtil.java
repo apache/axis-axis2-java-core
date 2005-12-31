@@ -106,6 +106,9 @@ public class PolicyUtil {
     private static void populatePolicy(
             WSDLBindingMessageReference wsdlBindingMsgReference,
             AxisMessage axisMessage) {
+        if(axisMessage == null || axisMessage.getPolicyInclude() == null) {
+            return;
+        }
         Policy messagePolicy = axisMessage.getPolicyInclude().getPolicy();
 
         if (messagePolicy != null) {
