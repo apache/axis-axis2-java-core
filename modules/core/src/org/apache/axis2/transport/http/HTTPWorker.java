@@ -25,6 +25,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
@@ -118,7 +119,36 @@ public class HTTPWorker implements HttpRequestHandler {
             }
 
             if (HTTPConstants.HEADER_GET.equals(request.getRequestLine().getMethod())) {
-
+                String uri = request.getRequestLine().getUri();
+                log.debug("HTTP GET:" + uri);
+                if(uri.equals("/favicon.ico")) {
+                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 301, "Redirect");
+                    response.addHeader(new Header("Location", "http://ws.apache.org/favicon.ico"));
+                    conn.writeResponse(response);
+                    return true;                        
+                }
+                if(!uri.startsWith("/axis2/services/")) {
+                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 301, "Redirect");
+                    response.addHeader(new Header("Location", "/axis2/services/"));
+                    conn.writeResponse(response);
+                    return true;                        
+                }
+                
+                if(uri.endsWith("?wsdl")){
+                    String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length()-5);
+                    HashMap services = configurationContext.getAxisConfiguration().getServices();
+                    AxisService service = (AxisService) services.get(serviceName);
+                    if(service != null){
+                        response.addHeader(new Header("Content-Type", "text/xml"));
+                        String url = conn.getURL(uri.substring(1,uri.length()-5));
+                        service.printWSDL(baos,url);
+                        byte[] buf = baos.toByteArray();
+                        response.setBody(new ByteArrayInputStream(buf));
+                        conn.writeResponse(response);
+                        return true;
+                    }
+                }
+                
                 // It is GET handle the Get request
                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(
                         msgContext, inStream, baos, request.getContentType(),

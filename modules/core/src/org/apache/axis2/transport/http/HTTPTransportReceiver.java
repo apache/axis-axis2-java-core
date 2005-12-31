@@ -341,7 +341,7 @@ public class HTTPTransportReceiver {
 
                 operations = axisService.getOperations();
                 operationsList = operations.values();
-                temp += "<h3>" + axisService.getName() + "</h3>";
+                temp += "<h3><a href=\""+ axisService.getName() + "?wsdl\">"+ axisService.getName() + "</a></h3>";
 
                 if (operationsList.size() > 0) {
                     temp += "Available operations <ul>";

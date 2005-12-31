@@ -47,7 +47,7 @@ public class ListingAgent {
      */
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME = "listServices.jsp";
     private static final String LIST_SERVICE_GROUP_JSP = "ListServiceGroup.jsp";
-    private static final String LIST_SRVICES_JSP_NAME = "listService.jsp";
+    private static final String LIST_SERVICES_JSP_NAME = "listService.jsp";
     private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
     private static final String REMOVE_SERVICE_JSP_NAME = "RemoveService.jsp";
 
@@ -106,7 +106,7 @@ public class ListingAgent {
         }
     }
 
-    private void chageParameters(HttpServletRequest req, HttpServletResponse res)
+    private void changeParameters(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
         if (req.getParameter("editServicepara") != null) {
             String serviceName = req.getParameter("axisService");
@@ -371,7 +371,7 @@ public class ListingAgent {
 
             return;
         } else if ((filePart != null) && filePart.endsWith(Constants.EDIR_SERVICE_PARA)) {
-            chageParameters(httpServletRequest, httpServletResponse);
+            changeParameters(httpServletRequest, httpServletResponse);
 
             return;
         } else if ((filePart != null) && filePart.endsWith(Constants.LIST_SERVICE_GROUPS)) {
@@ -407,7 +407,7 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                 configContext.getAxisConfiguration().getFaultyServices());
-        res.sendRedirect(LIST_SRVICES_JSP_NAME);
+        res.sendRedirect(LIST_SERVICES_JSP_NAME);
     }
 
     private void listContexts(HttpServletRequest req, HttpServletResponse res) throws IOException {

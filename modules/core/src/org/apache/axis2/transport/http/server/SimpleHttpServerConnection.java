@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.ChunkedOutputStream;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpParser;
 import org.apache.commons.httpclient.StatusLine;
+import org.apache.axis2.AxisFault;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +42,10 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.NetworkInterface;
+import java.net.InetAddress;
 import java.util.Iterator;
+import java.util.Enumeration;
 
 /**
  * A connection to the SimpleHttpServer.
@@ -278,5 +282,46 @@ public class SimpleHttpServerConnection {
 
     public void setSocketTimeout(int timeout) throws SocketException {
         this.socket.setSoTimeout(timeout);
+    }
+
+    public String getURL(String suffix) throws Exception {
+        String hostAddress = getIpAddress();
+        return "http://" + hostAddress + ":" + socket.getLocalPort() + "/" + suffix;
+    }
+
+    /**
+     * Returns the ip address to be used for the replyto epr
+     * CAUTION:
+     * This will simply go though the list of available network
+     * interfaces and will return the final address of the final interface
+     * available in the list. This workes fine for the simple cases where
+     * 1.) there's only the loopback interface, where the ip is 127.0.0.1
+     * 2.) there's an additional interface availbale which is used to
+     * access an external network and has only one ip assigned to it.
+     * <p/>
+     * TODO:
+     * - Improve this logic to genaralize it a bit more
+     * - Obtain the ip to be used here from the Call API
+     *
+     * @return
+     * @throws SocketException
+     */
+    public static String getIpAddress() throws SocketException {
+        Enumeration e = NetworkInterface.getNetworkInterfaces();
+        String address = null;
+
+        while (e.hasMoreElements()) {
+            NetworkInterface netface = (NetworkInterface) e.nextElement();
+            Enumeration addresses = netface.getInetAddresses();
+
+            while (addresses.hasMoreElements()) {
+                InetAddress ip = (InetAddress) addresses.nextElement();
+
+                // the last available ip address will be returned
+                address = ip.getHostAddress();
+            }
+        }
+
+        return address;
     }
 }

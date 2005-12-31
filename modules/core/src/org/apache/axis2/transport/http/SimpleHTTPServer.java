@@ -25,6 +25,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
+import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
@@ -32,10 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -59,7 +57,7 @@ public class SimpleHTTPServer extends TransportListener {
     SimpleHttpServer embedded = null;
     int port = -1;
     private ThreadFactory threadPool = null;
-    
+
     public static int DEFAULT_PORT = 8080;
 
     /**
@@ -200,7 +198,7 @@ public class SimpleHTTPServer extends TransportListener {
             System.out.println("[SimpleHTTPServer] Shutting down");
         }
     }
-    
+
     public static void printUsage() {
         System.out.println("Usage: SimpleHTTPServer [options] <repository>");
         System.out.println(" Opts: -? this message");
@@ -208,7 +206,7 @@ public class SimpleHTTPServer extends TransportListener {
         System.out.println("       -p port to listen on (default is 8080)");
         System.exit(1);
     }
-    
+
 
     /**
      * Start this server as a NON-daemon.
@@ -245,46 +243,6 @@ public class SimpleHTTPServer extends TransportListener {
     }
 
     /**
-     * Returns the ip address to be used for the replyto epr
-     * CAUTION:
-     * This will simply go though the list of available network
-     * interfaces and will return the final address of the final interface
-     * available in the list. This workes fine for the simple cases where
-     * 1.) there's only the loopback interface, where the ip is 127.0.0.1
-     * 2.) there's an additional interface availbale which is used to
-     * access an external network and has only one ip assigned to it.
-     * <p/>
-     * TODO:
-     * - Improve this logic to genaralize it a bit more
-     * - Obtain the ip to be used here from the Call API
-     *
-     * @return
-     * @throws AxisFault
-     */
-    private String getIpAddress() throws AxisFault {
-        try {
-            Enumeration e = NetworkInterface.getNetworkInterfaces();
-            String address = null;
-
-            while (e.hasMoreElements()) {
-                NetworkInterface netface = (NetworkInterface) e.nextElement();
-                Enumeration addresses = netface.getInetAddresses();
-
-                while (addresses.hasMoreElements()) {
-                    InetAddress ip = (InetAddress) addresses.nextElement();
-
-                    // the last available ip address will be returned
-                    address = ip.getHostAddress();
-                }
-            }
-
-            return address;
-        } catch (SocketException e) {
-            throw new AxisFault(e);
-        }
-    }
-
-    /**
      * replyToEPR
      *
      * @param serviceName
@@ -292,7 +250,12 @@ public class SimpleHTTPServer extends TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getReplyToEPR(String)
      */
     public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
-        String hostAddress = getIpAddress();
+        String hostAddress = null;
+        try {
+            hostAddress = SimpleHttpServerConnection.getIpAddress();
+        } catch (SocketException e) {
+            throw AxisFault.makeFault(e);
+        }
 
         return new EndpointReference("http://" + hostAddress + ":" + (embedded.getLocalPort())
                 + "/axis2/services/" + serviceName);
