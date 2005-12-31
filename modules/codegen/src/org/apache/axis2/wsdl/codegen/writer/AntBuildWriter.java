@@ -1,8 +1,11 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.FileWriter;
+import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.URIResolver;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Iterator;
@@ -43,7 +46,7 @@ public class AntBuildWriter extends ClassWriter {
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
                 "",
-                packageName.replaceAll("\\.", "_") + "build",
+                "build",
                 ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
@@ -78,6 +81,5 @@ public class AntBuildWriter extends ClassWriter {
         }
 
         return templateName;
-
     }
 }

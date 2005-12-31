@@ -3,7 +3,7 @@
     <xsl:template match="/ant">
         <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
 
-        <project basedir="." default="jar.xbeans">
+        <project basedir="." default="jar.all">
             <xsl:comment>Auto generated ant build file</xsl:comment>
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
@@ -116,7 +116,7 @@
 
             <target name="compile.all" depends="pre.compile.test">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
-                <javac>
+                <javac debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
