@@ -27,6 +27,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.SynchronousQueue;
+
 /**
  * This the thread pool for axis2. This class will be used a singleton
  * across axis2 engine. <code>ThreadPool</code> is accepts <code>AxisWorkers</code> which has
@@ -38,28 +43,25 @@ public class ThreadPool implements ThreadFactory {
     protected static long SLEEP_INTERVAL = 1000;
     private static int MAX_THREAD_COUNT = 10;
     private static boolean shutDown;
-    private static List tasks;
-    private static List threads;
-
+    protected ThreadPoolExecutor executor;
+    
     public ThreadPool() {
-        threads = new ArrayList();
-        tasks = Collections.synchronizedList(new ArrayList());
+        setExecutor(createDefaultExecutor("Axis2 Task", Thread.NORM_PRIORITY, true));
+    }
 
-        for (int i = 0; i < MAX_THREAD_COUNT; i++) {
-            ThreadWorker threadWorker = new ThreadWorker();
+    public Executor getExecutor() {
+        return executor;
+    }
 
-            threadWorker.setPool(this);
-            threads.add(threadWorker);
-            threadWorker.start();
-        }
+    public void setExecutor(ThreadPoolExecutor executor) {
+        this.executor = executor;
     }
 
     public void execute(Runnable worker) {
         if (shutDown) {
             throw new RuntimeException(Messages.getMessage("threadpoolshutdown"));
         }
-
-        tasks.add(worker);
+        executor.execute(worker);
     }
 
     /**
@@ -69,14 +71,7 @@ public class ThreadPool implements ThreadFactory {
         if (log.isDebugEnabled()) {
             log.debug("forceShutDown called. Thread workers will be stopped");
         }
-
-        Iterator ite = threads.iterator();
-
-        while (ite.hasNext()) {
-            ThreadWorker worker = (ThreadWorker) ite.next();
-
-            worker.setStop(true);
-        }
+        executor.shutdownNow();
     }
 
     /**
@@ -91,26 +86,19 @@ public class ThreadPool implements ThreadFactory {
             shutDown = true;
         }
 
-        while (!tasks.isEmpty()) {
-            try {
-                Thread.sleep(SLEEP_INTERVAL);
-            } catch (InterruptedException e) {
-                throw new AxisFault(Messages.getMessage("errorWhileSafeShutDown"));
-            }
-        }
-
-        forceShutDown();
+        executor.shutdown();
     }
 
-    public synchronized Runnable getWorker() {
-        if (!tasks.isEmpty()) {
-            Runnable worker = (Runnable) tasks.get(0);
-
-            tasks.remove(worker);
-
-            return worker;
-        } else {
-            return null;
-        }
+    protected ThreadPoolExecutor createDefaultExecutor(final String name, final int priority, final boolean daemon) {
+        ThreadPoolExecutor rc = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 10, TimeUnit.SECONDS, new SynchronousQueue(), new edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory() {
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable, name);
+                thread.setDaemon(daemon);
+                thread.setPriority(priority);
+                return thread;
+            }
+        });
+        rc.allowCoreThreadTimeOut(true);
+        return rc;
     }
 }

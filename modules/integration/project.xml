@@ -280,6 +280,14 @@
             <version>${XmlSchema.version}</version>
         </dependency>
         <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+            <version>${backport_util_concurrent.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>ws-policy</artifactId>
             <version>${ws_policy.version}</version>
