@@ -364,7 +364,11 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
                 throws IOException {
             typename =
                     typename.replace('.', File.separatorChar);
-            File file = new File(configuration.getOutputLocation(),
+            File outputDir = new File(configuration.getOutputLocation(), "src");
+            if(!outputDir.exists()) {
+                outputDir.mkdirs();
+            }
+            File file = new File(outputDir,
                     typename + ".java");
             file.getParentFile().mkdirs();
             file.createNewFile();

@@ -57,6 +57,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.URIResolver;
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -400,7 +401,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     wsdlInterface, axisBinding);
             CallbackHandlerWriter callbackWriter =
                     new CallbackHandlerWriter(
-                            this.configuration.getOutputLocation(),
+                            getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
                             this.configuration.getOutputLanguage());
             writeClass(interfaceModel, callbackWriter);
         }
@@ -416,7 +417,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         if (configuration.isWriteTestCase()) {
             Document classModel = createDOMDocumentForTestCase(binding);
             TestClassWriter callbackWriter =
-                    new TestClassWriter(this.configuration.getOutputLocation(),
+                    new TestClassWriter(
+                            getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
                             this.configuration.getOutputLanguage());
             writeClass(classModel, callbackWriter);
         }
@@ -434,7 +436,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document interfaceModel = createDOMDocumentForInterface(axisInterface, axisBinding);
         InterfaceWriter interfaceWriter =
-                new InterfaceWriter(this.configuration.getOutputLocation(),
+                new InterfaceWriter(
+                        getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
                         this.configuration.getOutputLanguage());
         writeClass(interfaceModel, interfaceWriter);
 
@@ -453,7 +456,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         //Note -  One can generate the skeleton using the interface XML
         Document skeletonModel = createDOMDocumentForSkeleton(axisInteface, axisBinding);
         ClassWriter skeletonWriter = new SkeletonWriter(
-                this.configuration.getOutputLocation(),
+                getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
                 this.configuration.getOutputLanguage());
         writeClass(skeletonModel, skeletonWriter);
 
@@ -514,7 +517,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 axisBinding, service);
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(
-                        this.configuration.getOutputLocation(),
+                        getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
                         this.configuration.getOutputLanguage());
         writeClass(interfaceImplModel, writer);
     }
@@ -525,7 +528,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     binding);
             MessageReceiverWriter writer =
                     new MessageReceiverWriter(
-                            this.configuration.getOutputLocation(),
+                            getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
                             this.configuration.getOutputLanguage());
             writeClass(classModel, writer);
         }
@@ -1453,6 +1456,20 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             out = "null";
         }
         return out;
+    }
+
+    /**
+     * Get the output directory for source files
+     * 
+     * @param outputDir
+     * @return
+     */
+    protected File getOutputDirectoryForSourceFiles(File outputDir) {
+        outputDir = new File(outputDir, "src");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        return outputDir;
     }
 }
 

@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
+import java.io.File;
 
 /**
  * This extension provides the
@@ -178,8 +179,12 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
 
     private void setDefaultOptions(CompilerOptions options) {
+        File outputDir = new File(configuration.getOutputLocation(), "src");
+        if(!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
         /// these options need to be taken from the command line
-        options.setOutputLocation(configuration.getOutputLocation());
+        options.setOutputLocation(outputDir);
 
         //default setting is to set the wrap status depending on whether it's
         //the server side or the client side
