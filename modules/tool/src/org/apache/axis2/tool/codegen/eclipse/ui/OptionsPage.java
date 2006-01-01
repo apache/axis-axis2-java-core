@@ -200,7 +200,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
       String storedPackageName = settings.get(PREF_PACKAGE_NAME);
       if (storedPackageName.equals(""))
       {
-         packageName = URLProcessor.getNameSpaceFromURL("");
+         packageName = URLProcessor.makePackageName("");
       }
       else
       {

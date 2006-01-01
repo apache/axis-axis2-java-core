@@ -30,7 +30,7 @@ public class SimpleTypeDoublePopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-       className = "org.soapinterop.doubleParam";
+       className = "org.soapinterop.xsd.DoubleParam";
        propertyClass = float.class;
     }
 

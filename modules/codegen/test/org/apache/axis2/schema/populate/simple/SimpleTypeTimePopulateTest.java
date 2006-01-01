@@ -29,7 +29,7 @@ public class SimpleTypeTimePopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.timeParam";
+        className = "org.soapinterop.xsd.TimeParam";
         propertyClass = Time.class;
     }
 

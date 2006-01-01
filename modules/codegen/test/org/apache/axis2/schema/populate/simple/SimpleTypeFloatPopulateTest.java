@@ -34,7 +34,7 @@ public class SimpleTypeFloatPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.floatParam";
+        className = "org.soapinterop.xsd.FloatParam";
         propertyClass = float.class;
     }
 

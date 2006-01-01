@@ -33,7 +33,7 @@ public class DerivedTypeIntPopulateTest extends AbstractDerivedPopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedInt";
+        className = "org.soapinterop.xsd.DerivedInt";
         propertyClass = int.class;
     }
 

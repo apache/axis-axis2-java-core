@@ -32,7 +32,7 @@ public class SimpleTypeDurationPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.durationParam";
+        className = "org.soapinterop.xsd.DurationParam";
         propertyClass = Duration.class;
     }
 

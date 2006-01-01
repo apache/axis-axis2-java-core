@@ -32,7 +32,7 @@ public class DerivedTypeBytePopulateTest extends AbstractDerivedPopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedByte";
+        className = "org.soapinterop.xsd.DerivedByte";
         propertyClass = byte.class;
     }
 

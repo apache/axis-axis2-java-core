@@ -28,7 +28,7 @@ public class SimpleTypeBooleanPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className ="org.soapinterop.booleanParam";
+        className ="org.soapinterop.xsd.BooleanParam";
         propertyClass = boolean.class;
     }
 

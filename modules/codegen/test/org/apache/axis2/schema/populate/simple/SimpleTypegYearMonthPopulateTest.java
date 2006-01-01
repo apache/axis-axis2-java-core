@@ -32,7 +32,7 @@ public class SimpleTypegYearMonthPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.yearMonthParam";
+        className = "org.soapinterop.xsd.YearMonthParam";
         propertyClass = YearMonth.class;
     }
 

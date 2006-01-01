@@ -32,7 +32,7 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.dateParam";
+        className = "org.soapinterop.xsd.DateParam";
         propertyClass = java.util.Date.class;
     }
 

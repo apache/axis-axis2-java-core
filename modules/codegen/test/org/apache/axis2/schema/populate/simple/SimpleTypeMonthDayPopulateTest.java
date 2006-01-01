@@ -32,7 +32,7 @@ public class SimpleTypeMonthDayPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.monthDayParam";
+        className = "org.soapinterop.xsd.MonthDayParam";
         propertyClass = MonthDay.class;
     }
 

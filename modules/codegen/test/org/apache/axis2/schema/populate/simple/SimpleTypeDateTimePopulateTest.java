@@ -37,7 +37,7 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
     }
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.dateTimeParam";
+        className = "org.soapinterop.xsd.DateTimeParam";
         propertyClass = Calendar.class;
     }
 

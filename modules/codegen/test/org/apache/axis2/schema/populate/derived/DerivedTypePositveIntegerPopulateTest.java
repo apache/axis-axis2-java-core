@@ -42,7 +42,7 @@ public class DerivedTypePositveIntegerPopulateTest extends AbstractDerivedPopula
 
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedPositiveInteger";
+        className = "org.soapinterop.xsd.DerivedPositiveInteger";
         propertyClass = PositiveInteger.class;
     }
 

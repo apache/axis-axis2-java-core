@@ -48,7 +48,7 @@ public class PopulateArrayInArrayTest extends TestCase{
     public void testPopulate() throws Exception{
 
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlString.getBytes()));
-            Class clazz = Class.forName("org.soapinterop.myobject");
+            Class clazz = Class.forName("org.soapinterop.xsd.Myobject");
             Method parseMethod = clazz.getMethod("parse",new Class[]{XMLStreamReader.class});
             Object obj = parseMethod.invoke(null,new Object[]{reader});
 
@@ -68,19 +68,5 @@ public class PopulateArrayInArrayTest extends TestCase{
             }
 
             assertNotNull(myObject);
-
-//            int length = Array.getLength(myObject);
-//            for (int i = 0; i < length; i++) {
-//                System.out.println(Array.get(myObject,i));
-//
-//            }
-
-
-
-
-
     }
-
-
-
 }

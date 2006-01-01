@@ -23,8 +23,8 @@ public class SimpleTypeQNamePopulateTest extends AbstractSimplePopulater{
     };
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.qNameParam");
-        process(xmlString[1],"org.soapinterop.qNameParam");
+        process(xmlString[0],"org.soapinterop.xsd.QNameParam");
+        process(xmlString[1],"org.soapinterop.xsd.QNameParam");
        // process(xmlString[2],"org.soapinterop.qNameParam");
     }
 }

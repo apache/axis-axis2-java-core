@@ -42,7 +42,7 @@ public class DerivedTypeUnsignedIntPopulateTest extends AbstractDerivedPopulater
 
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedUnsignedInt";
+        className = "org.soapinterop.xsd.DerivedUnsignedInt";
         propertyClass = UnsignedInt.class;
     }
 

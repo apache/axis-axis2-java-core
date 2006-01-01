@@ -41,7 +41,7 @@ public class DerivedTypeShortPopulateTest extends AbstractDerivedPopulater{
 
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedShort";
+        className = "org.soapinterop.xsd.DerivedShort";
         propertyClass = Short.class;
     }
 

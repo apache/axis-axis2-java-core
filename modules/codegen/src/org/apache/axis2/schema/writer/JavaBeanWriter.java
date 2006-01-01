@@ -226,7 +226,7 @@ public class JavaBeanWriter implements BeanWriter {
      */
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
 
-        String nameSpaceFromURL = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
+        String nameSpaceFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
 
         String packageName = this.packageName == null ?
                 nameSpaceFromURL :

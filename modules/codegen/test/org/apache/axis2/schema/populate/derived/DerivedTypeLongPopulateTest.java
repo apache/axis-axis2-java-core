@@ -40,7 +40,7 @@ public class DerivedTypeLongPopulateTest extends AbstractDerivedPopulater{
 
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedLong";
+        className = "org.soapinterop.xsd.DerivedLong";
         propertyClass = long.class;
     }
 

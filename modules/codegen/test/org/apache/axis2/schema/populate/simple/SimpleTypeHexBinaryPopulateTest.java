@@ -32,7 +32,7 @@ public class SimpleTypeHexBinaryPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.hexBinParam";
+        className = "org.soapinterop.xsd.HexBinParam";
         propertyClass = HexBinary.class;
     }
 

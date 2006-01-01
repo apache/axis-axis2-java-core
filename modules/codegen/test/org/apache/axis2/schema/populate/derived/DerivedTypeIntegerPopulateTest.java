@@ -34,7 +34,7 @@ public class DerivedTypeIntegerPopulateTest extends AbstractDerivedPopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedInteger";
+        className = "org.soapinterop.xsd.DerivedInteger";
         propertyClass = BigInteger.class;
     }
 

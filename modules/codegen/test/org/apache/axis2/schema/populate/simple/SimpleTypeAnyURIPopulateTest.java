@@ -28,7 +28,7 @@ public class SimpleTypeAnyURIPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.anyURIParam";
+        className = "org.soapinterop.xsd.AnyURIParam";
         propertyClass = URI.class;
     }
 

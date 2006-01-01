@@ -37,7 +37,7 @@ public class DerivedTypeNegativeIntegerPopulateTest extends AbstractDerivedPopul
     };
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedNegativeInteger";
+        className = "org.soapinterop.xsd.DerivedNegativeInteger";
         propertyClass = NegativeInteger.class;
     }
 

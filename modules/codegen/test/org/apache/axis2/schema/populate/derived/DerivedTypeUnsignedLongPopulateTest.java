@@ -42,7 +42,7 @@ public class DerivedTypeUnsignedLongPopulateTest extends AbstractDerivedPopulate
 
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedUnsignedLong";
+        className = "org.soapinterop.xsd.DerivedUnsignedLong";
         propertyClass = UnsignedLong.class;
     }
 

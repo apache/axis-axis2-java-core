@@ -67,14 +67,12 @@ public class CompilerOptions {
     }
 
     public CompilerOptions setPackageName(String packageName) {
-        //validate the package name
-        //should be ***.***.***. type value
+        // Validate the package name.
         if (packageName != null && testValue(packageName)) {
             this.packageName = packageName;
         } else {
             throw new RuntimeException("Unsupported value!");
         }
-
         return this;
     }
 

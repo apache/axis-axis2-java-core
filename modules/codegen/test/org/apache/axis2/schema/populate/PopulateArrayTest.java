@@ -38,7 +38,7 @@ public class PopulateArrayTest extends TestCase {
     public void testPopulate() throws Exception{
 
         XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlString.getBytes()));
-        Class clazz = Class.forName("org2.soapinterop.myobject");
+        Class clazz = Class.forName("org2.soapinterop.xsd.Myobject");
         Method parseMethod = clazz.getMethod("parse",new Class[]{XMLStreamReader.class});
         Object obj = parseMethod.invoke(null,new Object[]{reader});
 

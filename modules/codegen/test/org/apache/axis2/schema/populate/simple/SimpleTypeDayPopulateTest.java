@@ -31,7 +31,7 @@ public class SimpleTypeDayPopulateTest extends AbstractSimplePopulater{
     };
 
     protected void setUp() throws Exception {
-        className ="org.soapinterop.dayParam";
+        className ="org.soapinterop.xsd.DayParam";
         propertyClass = Day.class;
     }
 

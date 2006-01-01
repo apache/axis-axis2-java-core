@@ -21,6 +21,7 @@ import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
@@ -62,8 +63,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
@@ -378,31 +377,9 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
      * how the namespaces are suffixed/prefixed
      */
     private class Axis2BindingConfig extends BindingConfig {
-        Pattern pattern = Pattern.compile("//[\\w\\.]*");
-        private static final String DATABINDING_PACKAGE_SUFFIX = "databinding";
-
         public String lookupPackageForNamespace(String uri) {
-            //take the **.**.** part from the uri
-            Matcher matcher = pattern.matcher(uri);
-            String packageName = "";
-            if (matcher.find()) {
-                String tempPackageName = matcher.group().replaceFirst("//", "");
-                //reverse the names
-                String[] parts = tempPackageName.split("\\.");
-                for (int i = parts.length - 1; i >= 0; i--) {
-                    packageName = packageName + "." + parts[i];
-
-                }
-
-            } else {
-                //replace all none word chars with an underscore
-                packageName = uri.replaceAll("\\W", "_");
-            }
-
-            return configuration.getPackageName() == null ? "" : (configuration.getPackageName() + ".") + DATABINDING_PACKAGE_SUFFIX + packageName;
+            return URLProcessor.makePackageName(uri);
         }
-
     }
-
 }
 

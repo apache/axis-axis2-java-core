@@ -29,7 +29,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
                     AxisBindingBuilder.AXIS_BINDING_QNAME);
             String temp = binding.getBoundInterface().getName()
                     .getNamespaceURI();
-            packageName = URLProcessor.getNameSpaceFromURL(temp);
+            packageName = URLProcessor.makePackageName(temp);
         }
 
         if (null == packageName || "".equals(packageName))

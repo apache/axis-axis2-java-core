@@ -42,8 +42,6 @@ import java.util.Vector;
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
-    public static final String ADB_PACKAGE_NAME_PREFIX = "adb.";
-
     public void engage() {
         //test the databinding type. If not just fall through
         if (testFallthrough(configuration.getDatabindingType())) {
@@ -182,7 +180,6 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
     private void setDefaultOptions(CompilerOptions options) {
         /// these options need to be taken from the command line
         options.setOutputLocation(configuration.getOutputLocation());
-        options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
 
         //default setting is to set the wrap status depending on whether it's
         //the server side or the client side

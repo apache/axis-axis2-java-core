@@ -42,7 +42,7 @@ public class DerivedTypeUnsignedBytePopulateTest extends AbstractDerivedPopulate
 
 
     protected void setUp() throws Exception {
-        className = "org.soapinterop.DerivedUnsignedByte";
+        className = "org.soapinterop.xsd.DerivedUnsignedByte";
         propertyClass = UnsignedByte.class;
     }
 

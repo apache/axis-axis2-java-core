@@ -35,7 +35,7 @@ public class SimpleTypegMonthPopulateTest  extends AbstractSimplePopulater {
 
 
      protected void setUp() throws Exception {
-        className = "org.soapinterop.monthParam";
+        className = "org.soapinterop.xsd.MonthParam";
         propertyClass = Month.class;
     }
 

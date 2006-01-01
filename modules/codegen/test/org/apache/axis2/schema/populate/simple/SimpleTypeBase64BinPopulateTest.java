@@ -23,12 +23,12 @@ public class SimpleTypeBase64BinPopulateTest extends AbstractSimplePopulater{
     };
 
      protected void setUp() throws Exception {
-        className = "org.soapinterop.base64BinParam";
+        className = "org.soapinterop.xsd.Base64BinParam";
         propertyClass = byte[].class;
     }
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.base64BinParam");
-        process(xmlString[1],"org.soapinterop.base64BinParam");
+        process(xmlString[0],"org.soapinterop.xsd.Base64BinParam");
+        process(xmlString[1],"org.soapinterop.xsd.Base64BinParam");
     }
 }
