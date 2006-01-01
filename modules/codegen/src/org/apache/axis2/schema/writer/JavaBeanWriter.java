@@ -233,7 +233,7 @@ public class JavaBeanWriter implements BeanWriter {
                 this.packageName + nameSpaceFromURL;
 
         String originalName = qName.getLocalPart();
-        String className = getNonConflictingName(this.namesList, originalName);
+        String className = makeUniqueJavaClassName(this.namesList, originalName);
 
         String packagePrefix = null;
 
@@ -344,14 +344,7 @@ public class JavaBeanWriter implements BeanWriter {
             String xmlName = name.getLocalPart();
             XSLTUtils.addAttribute(model, "name", xmlName, property);
 
-            String javaName;
-            if (JavaUtils.isJavaKeyword(xmlName)) {
-                javaName = JavaUtils.makeNonJavaKeyword(xmlName);
-            } else {
-                javaName = JavaUtils.xmlNameToJava(xmlName, false);
-            }
-
-            javaName = getNonConflictingName(propertyNames, javaName);
+            String javaName = makeUniqueJavaClassName(propertyNames, xmlName);
             XSLTUtils.addAttribute(model, "name", xmlName, property);
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
             String javaClassNameForElement = metainf.getClassNameForQName(name);
@@ -412,26 +405,27 @@ public class JavaBeanWriter implements BeanWriter {
 
 
     /**
-     * gets a non conflicting java name
-     * the comparison with existing classnames need to be
-     * case insensitive, since certain file systems (specifaically
-     * the windows file system) has case insensitive file names)
+     * Given the xml name, make a unique class name taking into account that some
+     * file systems are case sensitive and some are not.
      *
      * @param listOfNames
-     * @param nameBase
+     * @param xmlName
      * @return
      */
-    private String getNonConflictingName(List listOfNames, String nameBase) {
-        String nameToReturn = nameBase;
-        if (JavaUtils.isJavaKeyword(nameToReturn)) {
-            nameToReturn = JavaUtils.makeNonJavaKeyword(nameToReturn);
-        }
-        while (listOfNames.contains(nameToReturn.toLowerCase())) {
-            nameToReturn = nameToReturn + count++;
+    private String makeUniqueJavaClassName(List listOfNames, String xmlName) {
+        String javaName;
+        if (JavaUtils.isJavaKeyword(xmlName)) {
+            javaName = JavaUtils.makeNonJavaKeyword(xmlName);
+        } else {
+            javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(xmlName));
         }
 
-        listOfNames.add(nameToReturn.toLowerCase());
-        return nameToReturn;
+        while (listOfNames.contains(javaName.toLowerCase())) {
+            javaName = javaName + count++;
+        }
+
+        listOfNames.add(javaName.toLowerCase());
+        return javaName;
     }
 
 

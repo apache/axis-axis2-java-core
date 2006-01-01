@@ -340,14 +340,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     private void updateMapperForStub(WSDLInterface boundInterface){
         String packageName = configuration.getPackageName();
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
         String stubName = localPart + STUB_SUFFIX;
         updateMapperClassnames(boundInterface,packageName + "." + stubName + ".");
     }
 
     private void updateMapperForMessageReceiver(WSDLInterface boundInterface){
         String packageName = configuration.getPackageName();
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
         String stubName = localPart + MESSAGE_RECEIVER_SUFFIX;
         updateMapperClassnames(boundInterface,packageName + "." + stubName + ".");
     }
@@ -576,7 +576,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 rootElement);
         addAttribute(doc,
                 "name",
-                reformatName(boundInterface.getName().getLocalPart(), false) +
+                makeJavaClassName(boundInterface.getName().getLocalPart()) +
                         CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         addAttribute(doc,
@@ -737,7 +737,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
         if (forTesting) {
             addAttribute(doc,
                     "package",
@@ -790,7 +790,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "package",
                 configuration.getPackageName(),
                 rootElement);
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
         addAttribute(doc,
                 "name",
                 localPart + MESSAGE_RECEIVER_SUFFIX,
@@ -843,7 +843,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("ant");
-        String localPart = reformatName(wsdlInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(wsdlInterface.getName().getLocalPart());
         String packageName = configuration.getPackageName();
         String[] dotSeparatedValues = packageName.split("\\.");
         addAttribute(doc,
@@ -870,7 +870,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localPart = reformatName(wsdlInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(wsdlInterface.getName().getLocalPart());
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
@@ -904,7 +904,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localpart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localpart = makeJavaClassName(boundInterface.getName().getLocalPart());
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
@@ -963,7 +963,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                 WSDLBinding binding) {
 
         Collection col = boundInterface.getOperations().values();
-        String portTypeName = reformatName(boundInterface.getName().getLocalPart(), false);
+        String portTypeName = makeJavaClassName(boundInterface.getName().getLocalPart());
 
         Element methodElement;
         WSDLOperation operation;
@@ -975,7 +975,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
-            String localPart = reformatName(operation.getName().getLocalPart(), false);
+            String localPart = makeJavaClassName(operation.getName().getLocalPart());
             addAttribute(doc, "name", localPart, methodElement);
             addAttribute(doc,
                     "namespace",
@@ -1055,7 +1055,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected Document createDOMDocumentForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
@@ -1194,7 +1194,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         String packageName = configuration.getPackageName();
-        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
+        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
         String stubName = localPart + STUB_SUFFIX;
 
         HashMap endpoints = new HashMap(1);
@@ -1402,19 +1402,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param word
      * @return character removed string
      */
-    protected String reformatName(String word) {
-        return reformatName(word, true);
-    }
-
-    /**
-     * @param word
-     * @return character removed string
-     */
-    protected String reformatName(String word, boolean decapitalizaFirst) {
+    protected String makeJavaClassName(String word) {
         if (JavaUtils.isJavaKeyword(word)) {
             return JavaUtils.makeNonJavaKeyword(word);
         } else {
-            return JavaUtils.xmlNameToJava(word, decapitalizaFirst);
+            return JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(word));
         }
     }
 

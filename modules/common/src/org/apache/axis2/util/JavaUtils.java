@@ -83,10 +83,6 @@ public class JavaUtils {
     }
 
     public static String xmlNameToJava(String name) {
-        return xmlNameToJava(name,true);
-    }
-
-    public static String xmlNameToJava(String name,boolean decapitalizeFirst) {
         // protect ourselves from garbage
         if (name == null || name.equals(""))
             return name;
@@ -155,13 +151,6 @@ public class JavaUtils {
         // covert back to a String
         String newName = result.toString();
 
-        // Follow JavaBean rules, but we need to check if the first
-        // letter is uppercase first
-        // do the decapitalization only if requested
-        if (decapitalizeFirst){
-            if (Character.isUpperCase(newName.charAt(0)))
-                newName = Introspector.decapitalize(newName);
-        }
         // check for Java keywords
         if (isJavaKeyword(newName))
             newName = makeNonJavaKeyword(newName);
@@ -169,4 +158,26 @@ public class JavaUtils {
         return newName;
     } // xmlNameToJava
 
+    /**
+     * Capitalize the first character of the name.
+     *
+     * @param name
+     * @return
+     */
+    public static String capitalizeFirstChar(String name) {
+
+        if ((name == null) || name.equals("")) {
+            return name;
+        }
+
+        char start = name.charAt(0);
+
+        if (Character.isLowerCase(start)) {
+            start = Character.toUpperCase(start);
+
+            return start + name.substring(1);
+        }
+
+        return name;
+    }    // capitalizeFirstChar
 }
