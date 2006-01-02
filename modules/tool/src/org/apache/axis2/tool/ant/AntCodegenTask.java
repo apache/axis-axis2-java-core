@@ -36,103 +36,157 @@ public class AntCodegenTask extends Task {
     private String output = ".";
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
     private String language = ConfigPropertyFileLoader.getDefaultLanguage();
+    private String databindingName=ConfigPropertyFileLoader.getDefaultDBFrameworkName();
 
     private boolean asyncOnly = false;
     private boolean syncOnly = false;
     private boolean serverSide = false;
     private boolean testcase = false;
-    private boolean generateServerXml = false;
+    private boolean generateServiceXml = false;
+    private boolean generateAllClasses = false;
+    private boolean unwrapClasses = false;
+
     private Path classpath;
- 
- 
+
+
+
+
     /**
      * 
      */
     public AntCodegenTask() {
         super();
     }
-    
-    
-    /**
-      * set the classpath
-      * @return
-      */
-     public Path createClasspath() {
-         if (classpath == null) {
-             classpath = new Path(getProject());
-         }
-         return classpath.createPath();
-     }
+
 
     /**
-     *
+     * set the classpath
+     * @return
+     */
+    public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(getProject());
+        }
+        return classpath.createPath();
+    }
+
+    /**
+     * Fill the option map. This map is passed onto
+     * the code generation API to generate the code
      */
     private Map fillOptionMap() {
         Map optionMap = new HashMap();
 
+        ////////////////////////////////////////////////////////////////
+        //WSDL file name
         optionMap.put(
-            CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-            new CommandLineOption(
                 CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                getStringArray(WSDLFileName)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                        getStringArray(WSDLFileName)));
+        //output location
+        optionMap.put(
+                CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                        getStringArray(output)));
+        //////////////////////////////////////////////////////////////////
+        // Databinding type
+        optionMap.put(
+                CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                        getStringArray(databindingName)));
 
+        // Async only option - forcing to generate async methods only
         if (asyncOnly) {
             optionMap.put(
-                CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                new CommandLineOption(
                     CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                    new String[0]));
+                    new CommandLineOption(
+                            CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                            new String[0]));
         }
+        // Sync only option - forcing to generate Sync methods only
         if (syncOnly) {
             optionMap.put(
-                CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                new CommandLineOption(
                     CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                    new String[0]));
+                    new CommandLineOption(
+                            CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                            new String[0]));
         }
+
+        //Package
         optionMap.put(
-            CommandLineOptionConstants.PACKAGE_OPTION,
-            new CommandLineOption(
                 CommandLineOptionConstants.PACKAGE_OPTION,
-                getStringArray(packageName)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.PACKAGE_OPTION,
+                        getStringArray(packageName)));
+
+        //stub language
         optionMap.put(
-            CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-            new CommandLineOption(
                 CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                getStringArray(language)));
-        optionMap.put(
-            CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-            new CommandLineOption(
-                CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                getStringArray(output)));
+                new CommandLineOption(
+                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+                        getStringArray(language)));
+
+
+        //server side and generate services.xml options
         if (serverSide) {
             optionMap.put(
-                CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                new CommandLineOption(
                     CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                    new String[0]));
-
-            if (generateServerXml) {
-                optionMap.put(
-                    CommandLineOptionConstants
-                        .GENERATE_SERVICE_DESCRIPTION_OPTION,
                     new CommandLineOption(
+                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                            new String[0]));
+
+            //services XML generation - effective only when specified as the server side
+            if (generateServiceXml) {
+                optionMap.put(
                         CommandLineOptionConstants
-                            .GENERATE_SERVICE_DESCRIPTION_OPTION,
-                        new String[0]));
+                                .GENERATE_SERVICE_DESCRIPTION_OPTION,
+                        new CommandLineOption(
+                                CommandLineOptionConstants
+                                        .GENERATE_SERVICE_DESCRIPTION_OPTION,
+                                new String[0]));
             }
+            //generate all option - Only valid when generating serverside code
+            if (generateAllClasses) {
+                optionMap.put(
+                        CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                        new CommandLineOption(
+                                CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                                new String[0]));
+            }
+
         }
+
+        //generate the test case
         if (testcase) {
             optionMap.put(
-                CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                new CommandLineOption(
                     CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                    new String[0]));
+                    new CommandLineOption(
+                            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                            new String[0]));
         }
+
+        //Unwrap classes option - this determines whether the generated classes are inside the stub/MR
+        //or gets generates as seperate classes
+        if (unwrapClasses) {
+            optionMap.put(
+                    CommandLineOptionConstants.UNWRAP_CLASSES_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.UNWRAP_CLASSES_OPTION,
+                            new String[0]));
+        }
+
+
         return optionMap;
     }
 
-
+    /**
+     * Utility method to convert a string into a single item string[]
+     * @param value
+     * @return
+     */
     private String[] getStringArray(String value) {
         String[] values = new String[1];
         values[0] = value;
@@ -142,24 +196,25 @@ public class AntCodegenTask extends Task {
     public void execute() throws BuildException {
         try {
             /**
-             * This needs the ClassLoader we use to load the task have all the dependancyies set, hope that 
+             * This needs the ClassLoader we use to load the task have all the dependancies set, hope that
              * is ok for now
+             *
+             * todo look into this further!!!!!
              */
-            
-            
+
+
             AntClassLoader cl = new AntClassLoader(
-                                    null,
-                                    getProject(),
-                                    classpath,
-                                    false);
-            
+                    null,
+                    getProject(),
+                    classpath,
+                    false);
+
             Thread.currentThread().setContextClassLoader(cl);
             cl.addPathElement(output);
-            System.out.println("path is "+cl.getClasspath());    
 
             Map commandLineOptions = this.fillOptionMap();
             CommandLineOptionParser parser =
-                new CommandLineOptionParser(commandLineOptions);
+                    new CommandLineOptionParser(commandLineOptions);
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
             throw new BuildException(e);
@@ -199,17 +254,17 @@ public class AntCodegenTask extends Task {
         this.testcase = testcase;
     }
 
-    public void setGenerateServerXml(boolean generateServerXml) {
-        this.generateServerXml = generateServerXml;
+    public void setGenerateServiceXml(boolean generateServiceXml) {
+        this.generateServiceXml = generateServiceXml;
     }
 
-    public static void main(String[] args) {
-        AntCodegenTask task = new AntCodegenTask();
-        task.setWSDLFileName(
-            "modules/samples/test-resources/wsdl/compound2.wsdl");
-        task.setOutput("temp");
-        task.execute();
-    }
+//    public static void main(String[] args) {
+//        AntCodegenTask task = new AntCodegenTask();
+//        task.setWSDLFileName(
+//                "modules/samples/test-resources/wsdl/compound2.wsdl");
+//        task.setOutput("temp");
+//        task.execute();
+//    }
 
     /**
      * @return
@@ -225,4 +280,11 @@ public class AntCodegenTask extends Task {
         classpath = path;
     }
 
+    public String getDatabindingName() {
+        return databindingName;
+    }
+
+    public void setDatabindingName(String databindingName) {
+        this.databindingName = databindingName;
+    }
 }

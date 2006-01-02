@@ -21,15 +21,14 @@
                 (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
                 org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
-                <xsl:choose>
-                    <xsl:when test="$base64">
+                <xsl:if test="$base64">
                          optimizeContent(documentElement,qNameArray);
-                    </xsl:when>
-                </xsl:choose>
+                </xsl:if>
+
                   ((org.apache.axis2.om.impl.OMNodeEx)documentElement).setParent(null);
                   return documentElement;
                 }
-                
+
                 public org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                     org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     envelope.getBody().addChild(toOM(param));
@@ -55,7 +54,9 @@
         return null;
         }
 
-     private void optimizeContent(org.apache.axis2.om.OMElement element, javax.xml.namespace.QName[] qNames){
+    <!-- Generate the base 64 optimize methods only if the base64 items are present -->    
+   <xsl:if test="$base64">
+   private void optimizeContent(org.apache.axis2.om.OMElement element, javax.xml.namespace.QName[] qNames){
         for (int i = 0; i &lt; qNames.length; i++) {
             markElementsAsOptimized(qNames[i],element);
         }
@@ -75,7 +76,7 @@
             markElementsAsOptimized(qName,(org.apache.axis2.om.OMElement)childElements.next());
         }
     }
-
+    </xsl:if>
     </xsl:template>
     <!-- #################################################################################  -->
        <!-- ############################   ADB template   ##############################  -->
@@ -105,10 +106,10 @@
                             return null;
                         }
                     }
-                    
+
                     public  org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new 
+                            org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
                                     org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(param.MY_QNAME),
                                                                                      factory);
                             return builder.getEnvelope();
@@ -150,9 +151,11 @@
            public  org.apache.axis2.om.OMElement  toOM(org.apache.axis2.om.OMElement param){
                return param;
            }
-           
+
            public org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, org.apache.axis2.om.OMElement param){
-               return param;
+                org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+                envelope.getBody().addChild(param));
+                return envelope;
            }
        </xsl:template>
 

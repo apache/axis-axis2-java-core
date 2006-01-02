@@ -4,11 +4,26 @@
     <!-- #################################################################################  -->
     <!-- ############################   xmlbeans template   ##############################  -->
     <xsl:template match="databinders[@dbtype='xmlbeans']">
-        //Create an ADBBean and provide it as the test object
-        //todo Fill this properly
+        //Create the desired XmlObject and provide it as the test object
         public  org.apache.xmlbeans.XmlObject getTestObject(java.lang.Class type) throws Exception{
-           <!--Need to fix this-->
-           return null;
+        java.lang.reflect.Method creatorMethod = null;
+                if (org.apache.xmlbeans.XmlObject.class.isAssignableFrom(type)){
+                    Class[] declaredClasses = type.getDeclaredClasses();
+                    for (int i = 0; i &lt; declaredClasses.length; i++) {
+                        Class declaredClass = declaredClasses[i];
+                        if (declaredClass.getName().endsWith("$Factory")){
+                            creatorMethod = declaredClass.getMethod("newInstance",null);
+                            break;
+                        }
+
+                    }
+                }
+                if (creatorMethod!=null){
+                    return  (org.apache.xmlbeans.XmlObject)creatorMethod.invoke(null,null);
+                }else{
+                    throw new Exception("Creator not found!");
+                }
+
         }
 
     </xsl:template>
@@ -16,12 +31,8 @@
     <!-- ############################   ADB template   ###################################  -->
     <xsl:template match="databinders[@dbtype='adb']">
         //Create an ADBBean and provide it as the test object
-        //todo Fill this properly
         public org.apache.axis2.databinding.ADBBean getTestObject(java.lang.Class type) throws Exception{
-           org.apache.axis2.databinding.ADBBean bean = (org.apache.axis2.databinding.ADBBean)type.newInstance();
-
-
-           return bean;
+           return (org.apache.axis2.databinding.ADBBean) type.newInstance();
         }
 
     </xsl:template>
@@ -29,14 +40,10 @@
     <!-- ############################   none template!!!   ###############################  -->
     <xsl:template match="databinders[@dbtype='none']">
         //Create an OMElement and provide it as the test object
-        //todo Fill this properly
         public org.apache.axis2.om.OMElement getTestObject(java.lang.Object dummy){
-
            org.apache.axis2.om.OMFactory factory = org.apache.axis2.om.OMAbstractFactory.getOMFactory();
            org.apache.axis2.om.OMNamespace defNamespace = factory.createOMNamespace("",null);
            return org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMElement("test",defNamespace);
-
-
         }
     </xsl:template>
 

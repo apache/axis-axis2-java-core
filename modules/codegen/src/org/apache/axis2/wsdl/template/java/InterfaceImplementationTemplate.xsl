@@ -146,7 +146,6 @@
                                     new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                                 </xsl:when>
                                 <xsl:when test="$style='doc'">
-
                                     //Style is Doc.
                                     <xsl:for-each select="input/param[@location='body']">
                                         env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="@name"/>);
