@@ -849,11 +849,15 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             //has nothing to do if the element is already built!
             if (this.done) {
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-                //serializeAndConsume children
-                Iterator children = this.getChildren();
-                while (children.hasNext()) {
-                    //A call to the  Serialize or the serializeAndConsume wont make a difference here
-                    ((OMNodeEx) children.next()).serializeAndConsume(omOutput);
+                ChildNode child = this.firstChild;
+                while(child != null && ((!(child instanceof OMElement)) || child.isComplete())) {
+                    child.serializeAndConsume(omOutput);
+                    child = child.nextSibling;
+                }
+                if(child != null) {
+                    OMElement element = (OMElement) child;
+                    element.getBuilder().setCache(false);
+                    OMSerializerUtil.serializeByPullStream(element, omOutput, cache);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else {

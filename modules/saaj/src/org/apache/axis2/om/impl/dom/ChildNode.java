@@ -142,15 +142,26 @@ public abstract class ChildNode extends NodeImpl {
 	 * Insert the given sibling before this item
 	 */
 	public void insertSiblingBefore(OMNode sibling) throws OMException {
-		((OMNodeEx)sibling).setParent(this.parentNode);
+//		((OMNodeEx)sibling).setParent(this.parentNode);
 		if(sibling instanceof ChildNode) {
-			ChildNode domSibling = (ChildNode)sibling;
-			domSibling.nextSibling = this;
-			if(this.previousSibling != null) {
-				this.previousSibling.nextSibling = domSibling;
-			}
-			domSibling.previousSibling = this.previousSibling;
-			this.previousSibling = domSibling;
+//			ChildNode domSibling = (ChildNode)sibling;
+//			domSibling.nextSibling = this;
+//			if(this.previousSibling != null) {
+//				this.previousSibling.nextSibling = domSibling;
+//			}
+//			domSibling.previousSibling = this.previousSibling;
+//			this.previousSibling = domSibling;
+            ChildNode siblingImpl = (ChildNode) sibling;
+            siblingImpl.nextSibling = this;
+            if (previousSibling == null) {
+                this.parentNode.setFirstChild(siblingImpl);
+                siblingImpl.previousSibling = null;
+            } else {
+                siblingImpl.setParent(this.parentNode);
+                previousSibling.setNextOMSibling(siblingImpl);
+                siblingImpl.setPreviousOMSibling(previousSibling);
+            }
+            previousSibling = siblingImpl;
 			
 		} else {
 			throw new OMException("The given child is not of type " + ChildNode.class);

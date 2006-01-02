@@ -16,8 +16,11 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
@@ -27,8 +30,6 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultRole;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPFaultImpl;
-
-import javax.xml.stream.XMLStreamException;
 
 public class SOAP11FaultImpl extends SOAPFaultImpl {
 
@@ -113,5 +114,10 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
     protected void serializeFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         
     }
+    
+    public SOAPFaultRole getRole() {
+		return (SOAP11FaultRoleImpl) this
+				.getChildWithName(SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME);
+	}
 
 }
