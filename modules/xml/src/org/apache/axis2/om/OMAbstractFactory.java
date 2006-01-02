@@ -20,6 +20,9 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.factory.SOAPLinkedListImplFactory;
 
 public class OMAbstractFactory {
+    public static final String OM_FACTORY_NAME_PROPERTY = "om.factory";
+    public static final String SOAP11_FACTORY_NAME_PROPERTY = "soap11.factory";
+    public static final String SOAP12_FACTORY_NAME_PROPERTY = "soap12.factory";
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
@@ -47,6 +50,28 @@ public class OMAbstractFactory {
      */
     public static OMFactory getOMFactory(ClassLoader classLoader) {
         return FactoryFinder.findOMFactory(classLoader);
+    }
+
+    /**
+     * This will pick up the provided <code>soapFactory</code> factory implementation from the classpath
+     *
+     * @param soapFactory Fully qualified SOAP 1.1 or SOAP 1.2 Factory implementation class name
+     * @return The SOAP 1.1 or 1.2 Factory implementation instance corresponding to <code>soapFactory</code>
+     */
+    public static SOAPFactory getSOAPFactory(String soapFactory) {
+        return FactoryFinder.findSOAPFactory(null, soapFactory);
+    }
+
+    /**
+     * This will pick up the provided <code>soapFactory</code> factory implementation using the provided
+     * <code>classLoader</code>
+     *
+     * @param classLoader
+     * @param soapFactory Fully qualified SOAP 1.1 or SOAP 1.2 Factory implementation class name
+     * @return The SOAP 1.1 or 1.2 Factory implementation instance corresponding to <code>soapFactory</code>
+     */
+    public static SOAPFactory getSOAPFactory(ClassLoader classLoader, String soapFactory) {
+        return FactoryFinder.findSOAPFactory(classLoader, soapFactory);
     }
 
     /**
@@ -98,6 +123,8 @@ public class OMAbstractFactory {
      * So this method is to solve the chicken and egg problem, we have. If you do not know the SOAP version to be used
      * to process a particluar SOAP message you have recd, use this method to buid the SOAP envelope, and then extract the SOAP
      * version from that envlope and switch to the proper factory using that.
+     *
+     * @deprecated
      */
     public static SOAPFactory getDefaultSOAPFactory() {
         return new SOAPLinkedListImplFactory();

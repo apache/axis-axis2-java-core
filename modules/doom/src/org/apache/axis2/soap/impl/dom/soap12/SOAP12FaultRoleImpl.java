@@ -18,13 +18,14 @@ package org.apache.axis2.soap.impl.dom.soap12;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPFaultRoleImpl;
 
 public class SOAP12FaultRoleImpl extends SOAPFaultRoleImpl {
     public SOAP12FaultRoleImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, true);
+        super(parent, SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, true);
     }
 
     public SOAP12FaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder) {

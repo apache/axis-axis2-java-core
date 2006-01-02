@@ -30,11 +30,6 @@ class FactoryFinder {
     private static final String DEFAULT_SOAP12_FACTORY_CLASS_NAME =
             "org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory";
 
-    private static final String OM_FACTORY_NAME_PROPERTY = "om.factory";
-    private static final String SOAP11_FACTORY_NAME_PROPERTY = "soap11.factory";
-    private static final String SOAP12_FACTORY_NAME_PROPERTY = "soap12.factory";
-
-
     /**
      * @param loader
      * @return
@@ -50,12 +45,12 @@ class FactoryFinder {
         String factoryClassName = factoryClass;
 
         //first look for a java system property
-        if (System.getProperty(systemPropertyName) != null) {
+        if (systemPropertyName != null &&
+            System.getProperty(systemPropertyName) != null) {
             factoryClassName = systemPropertyName;
         }
-        ;
 
-        Object factory = null;
+        Object factory;
         try {
             if (loader == null) {
                 factory = Class.forName(factoryClassName).newInstance();
@@ -82,8 +77,8 @@ class FactoryFinder {
     public static SOAPFactory findSOAP11Factory(ClassLoader loader)
             throws OMFactoryException {
         return (SOAPFactory) findFactory(loader,
-                DEFAULT_SOAP11_FACTORY_CLASS_NAME,
-                SOAP11_FACTORY_NAME_PROPERTY);
+                                         DEFAULT_SOAP11_FACTORY_CLASS_NAME,
+                                         OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
     }
 
     /**
@@ -100,8 +95,8 @@ class FactoryFinder {
     public static SOAPFactory findSOAP12Factory(ClassLoader loader)
             throws OMFactoryException {
         return (SOAPFactory) findFactory(loader,
-                DEFAULT_SOAP12_FACTORY_CLASS_NAME,
-                SOAP12_FACTORY_NAME_PROPERTY);
+                                         DEFAULT_SOAP12_FACTORY_CLASS_NAME,
+                                         OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY);
     }
 
     /**
@@ -118,7 +113,20 @@ class FactoryFinder {
     public static OMFactory findOMFactory(ClassLoader loader)
             throws OMFactoryException {
         return (OMFactory) findFactory(loader,
-                DEFAULT_OM_FACTORY_CLASS_NAME,
-                OM_FACTORY_NAME_PROPERTY);
+                                       DEFAULT_OM_FACTORY_CLASS_NAME,
+                                       OMAbstractFactory.OM_FACTORY_NAME_PROPERTY);
+    }
+
+    /**
+     *
+     * @param classLoader
+     * @param soapFactory
+     * @return The SOAPFactory
+     */
+    public static SOAPFactory findSOAPFactory(final ClassLoader classLoader,
+                                              final String soapFactory) {
+        return (SOAPFactory) findFactory(classLoader,
+                                         soapFactory,
+                                         null);
     }
 }

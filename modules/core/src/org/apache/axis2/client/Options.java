@@ -54,6 +54,7 @@ public class Options {
     private Boolean isExceptionToBeThrownOnSOAPFault; // defaults to true;
     private long timeOutInMilliSeconds = -1; // = DEFAULT_TIMEOUT_MILLISECONDS;
     private Boolean useSeparateListener;   // defaults to false
+    private String soapFactory;
 
     // Addressing specific properties
     private String action;
@@ -212,6 +213,14 @@ public class Options {
         }
 
         return soapVersionURI == null ? SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI : soapVersionURI;
+    }
+
+    public String getSoapFactory() {
+        if (soapFactory == null && parent != null) {
+            soapFactory = parent.getSoapFactory();
+        }
+
+        return soapFactory == null ? "" : soapFactory;
     }
 
     /**
@@ -408,7 +417,7 @@ public class Options {
         if (!useSeparateListener) {
             boolean isTransportsEqual = senderTransport.equals(listenerTransport);
             boolean isATwoWaytransport = Constants.TRANSPORT_HTTP.equals(senderTransport)
-                    || Constants.TRANSPORT_TCP.equals(senderTransport);
+                                         || Constants.TRANSPORT_TCP.equals(senderTransport);
 
             if ((!isTransportsEqual || !isATwoWaytransport)) {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));

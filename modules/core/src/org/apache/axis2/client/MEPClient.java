@@ -174,11 +174,23 @@ public abstract class MEPClient {
         }
 
         String soapVersionURI = clientOptions.getSoapVersionURI();
+        String soapFactory = clientOptions.getSoapFactory();
 
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
-            return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
-        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)
-                || "".equals(soapVersionURI) || (soapVersionURI == null)) {
+            String factory = (String) clientOptions.getProperty(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY);
+            if(factory != null) {
+                return OMAbstractFactory.getSOAPFactory(soapFactory).getDefaultEnvelope();
+            } else {
+                return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
+            }
+        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
+            String factory = (String) clientOptions.getProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
+            if(factory != null) {
+                return OMAbstractFactory.getSOAPFactory(soapFactory).getDefaultEnvelope();
+            } else {
+                return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+            }
+        } else if ("".equals(soapVersionURI) || (soapVersionURI == null)) {
             return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         } else {
             throw new AxisFault(Messages.getMessage("invaidSOAPversion"));
@@ -243,7 +255,7 @@ public abstract class MEPClient {
     protected void inferTransportOutDescription(MessageContext msgCtx) throws AxisFault {
 
         // user can set the transport by giving a TransportOutDescription or we
-        // will deduce that from the "to" epr information, if user has not set the 
+        // will deduce that from the "to" epr information, if user has not set the
         // TransportOutDescription, lets infer that
         if (clientOptions.getSenderTransport() == null) {
             AxisConfiguration axisConfig =

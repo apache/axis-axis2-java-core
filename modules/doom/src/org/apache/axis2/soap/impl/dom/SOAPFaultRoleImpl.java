@@ -30,10 +30,11 @@ import javax.xml.stream.XMLStreamException;
 public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apache.axis2.soap.SOAPFaultRole {
 
     public SOAPFaultRoleImpl(SOAPFault parent,
+                             String localName,
                              boolean extractNamespaceFromParent) throws SOAPProcessingException {
         super(parent,
-                SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME,
-                extractNamespaceFromParent);
+              localName,
+              extractNamespaceFromParent);
     }
 
     public SOAPFaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder) {
@@ -55,7 +56,7 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
             builderType = this.builder.getBuilderType();
         }
         if ((builderType == PUSH_TYPE_BUILDER)
-                && (builder.getRegisteredContentHandler() == null)) {
+            && (builder.getRegisteredContentHandler() == null)) {
             builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
         }
 

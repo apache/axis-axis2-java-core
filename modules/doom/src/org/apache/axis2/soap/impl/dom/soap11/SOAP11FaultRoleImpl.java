@@ -30,7 +30,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
     public SOAP11FaultRoleImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, false);
+        super(parent, SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME,  false);
     }
 
     public SOAP11FaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder) {
