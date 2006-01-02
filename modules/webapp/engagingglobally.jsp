@@ -16,12 +16,6 @@
 *
 *
 */
-
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
         %>
 
 <%@ page import="org.apache.axis2.Constants,

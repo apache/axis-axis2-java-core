@@ -40,12 +40,8 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class SoapProcessingModelTest extends TestCase implements TestConstants {
-
-    private Log log = LogFactory.getLog(getClass());
 
     private AxisService service;
 
@@ -77,7 +73,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
         try {
             ConfigurationContext configContext = Utils
-                    .getNewConfigurationContext(org.apache.axis2.Constants.TESTING_REPOSITORY);
+                    .getNewConfigurationContext(Constants.TESTING_REPOSITORY);
 
             ServiceContext serviceContext = new ServiceGroupContext(
                     configContext, service.getParent())
@@ -94,7 +90,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            MessageContext result = inOutMC.invokeBlocking(serviceContext
+            inOutMC.invokeBlocking(serviceContext
                     .getAxisService().getOperation(operationName), msgctx);
         } catch (Exception e) {
             e.printStackTrace();
