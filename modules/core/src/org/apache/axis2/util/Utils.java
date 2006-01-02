@@ -86,7 +86,8 @@ public class Utils {
         return createSimpleService(serviceName, new RawXMLINOutMessageReceiver(), className,
                 opName);
     }
-     public static AxisService createSimpleServiceforClient(QName serviceName, String className, QName opName)
+
+    public static AxisService createSimpleServiceforClient(QName serviceName, String className, QName opName)
             throws AxisFault {
         return createSimpleServiceforClient(serviceName, new RawXMLINOutMessageReceiver(), className,
                 opName);
@@ -166,8 +167,6 @@ public class Utils {
                                                         AxisService axisService, ConfigurationContext configurationContext) {
 
         // 2. if null, create new opCtxt
-        OperationContext operationContext = new OperationContext(axisOperation);
-
         // fill the service group context and service context info
         return fillServiceContextAndServiceGroupContext(axisService, configurationContext);
     }
@@ -240,6 +239,22 @@ public class Utils {
             return null;
         } else {
             return (String) param.getValue();
+        }
+    }
+
+    /**
+     * To get the name of the module , where archive name is combination of module name + its version
+     * The format of the module version will be like follow
+     * moduleName-00.0000 as an exmple addressing-01.0001.aar
+     */
+
+    public static String getModuleName(String moduleName) {
+        char version_seperator = '-';
+        int version_index = moduleName.indexOf(version_seperator);
+        if (version_index > 0) {
+            return moduleName.substring(0, version_index);
+        } else {
+            return moduleName;
         }
     }
 }

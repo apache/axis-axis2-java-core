@@ -39,29 +39,35 @@ public class SchemaGenerator {
 
     public static String METHOD_REQUEST_WRAPPER = "Request";
     public static String METHOD_RESPONSE_WRAPPER = "Response";
-    public static String TARGET_NAMESPACE = null;
+    public static String TARGET_NAMESPACE = "http://org.apache.axis2/";
     public static String SCHEMA_TARGET_NAMESPACE = "http://org.apache.axis2/xsd";
     public static String SCHEMA_NAMESPACE_PRFIX = "ns1";
     public static String TARGET_NAMESPACE_PREFIX = "tns";
+    private String scheamTargetNameSpace;
+    private String scheam_namespace_prefix;
 
     public SchemaGenerator(ClassLoader loader, String className,
                            String scheamtargetNamespace,
                            String scheamtargetNamespacePrefix) {
         this.classLoader = loader;
         this.className = className;
-        TARGET_NAMESPACE = "http://" + className;
+//        TARGET_NAMESPACE = "http://" + className;
         if (scheamtargetNamespace != null && !scheamtargetNamespace.trim().equals("")) {
-            SCHEMA_TARGET_NAMESPACE = scheamtargetNamespace;
+            this.scheamTargetNameSpace = scheamtargetNamespace;
+        } else {
+            this.scheamTargetNameSpace = SCHEMA_TARGET_NAMESPACE;
         }
         if (scheamtargetNamespacePrefix != null && !scheamtargetNamespacePrefix.trim().equals("")) {
-            SCHEMA_NAMESPACE_PRFIX = scheamtargetNamespacePrefix;
+            this.scheam_namespace_prefix = scheamtargetNamespacePrefix;
+        } else {
+            this.scheam_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
         }
         Hashtable prefixmap = new Hashtable();
-        prefixmap.put(SCHEMA_NAMESPACE_PRFIX, SCHEMA_TARGET_NAMESPACE);
+        prefixmap.put(this.scheam_namespace_prefix, this.scheamTargetNameSpace);
 
         XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 
-        schema = new XmlSchema(SCHEMA_TARGET_NAMESPACE, schemaCollection);
+        schema = new XmlSchema(this.scheamTargetNameSpace, schemaCollection);
         schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
         schema.setPrefixToNamespaceMap(prefixmap);
         this.typeTable = new TypeTable();
@@ -198,8 +204,8 @@ public class SchemaGenerator {
 //        eltOuter.setSchemaTypeName(complexType.getQName());
         eltOuter.setSchemaType(complexType);
         // adding this type to the table
-        QName elementName = new QName(SchemaGenerator.SCHEMA_TARGET_NAMESPACE,
-                eltOuter.getName(), SCHEMA_NAMESPACE_PRFIX);
+        QName elementName = new QName(this.scheamTargetNameSpace,
+                eltOuter.getName(), this.scheam_namespace_prefix);
         typeTable.addComplexScheam(methodName + METHOD_REQUEST_WRAPPER, elementName);
 
         JParameter [] paras = method.getParameters();
@@ -255,8 +261,8 @@ public class SchemaGenerator {
             ret_eltOuter.setName(methodName + METHOD_RESPONSE_WRAPPER);
             schema.getItems().add(ret_eltOuter);
             ret_eltOuter.setSchemaType(retuen_com_type);
-            QName ret_comTypeName = new QName(SchemaGenerator.SCHEMA_TARGET_NAMESPACE,
-                    ret_eltOuter.getName(), SCHEMA_NAMESPACE_PRFIX);
+            QName ret_comTypeName = new QName(this.scheamTargetNameSpace,
+                    ret_eltOuter.getName(), this.scheam_namespace_prefix);
             typeTable.addComplexScheam(methodName + METHOD_RESPONSE_WRAPPER, ret_comTypeName);
             String classTypeName = retuenType.getQualifiedName();
             boolean isArryType = retuenType.isArrayType();
@@ -295,7 +301,7 @@ public class SchemaGenerator {
             XmlSchemaSequence sequence = new XmlSchemaSequence();
 
             XmlSchemaElement eltOuter = new XmlSchemaElement();
-            QName elemntName = new QName(SCHEMA_TARGET_NAMESPACE, simpleName, SCHEMA_NAMESPACE_PRFIX);
+            QName elemntName = new QName(this.scheamTargetNameSpace, simpleName, this.scheam_namespace_prefix);
             eltOuter.setName(simpleName);
             eltOuter.setQName(elemntName);
             complexType.setParticle(sequence);

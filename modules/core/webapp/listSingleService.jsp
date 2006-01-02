@@ -25,7 +25,3 @@
 
         </body>
 </html>
-
-
-<%--        <jsp:include page="include/link-footer.inc"></jsp:include>--%>
-<%--        <jsp:include page="include/footer.inc"></jsp:include>--%>

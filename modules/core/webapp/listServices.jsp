@@ -43,7 +43,7 @@
          boolean status = false;
         if (serviceMap!=null && !serviceMap.isEmpty()){
         HashMap operations;
-        String serviceName = "";
+        String serviceName ;
         Collection servicecol = serviceMap.values();
         Collection operationsList;
        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {

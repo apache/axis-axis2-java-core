@@ -10,9 +10,9 @@ import org.apache.wsdl.extensions.impl.SOAPBindingImpl;
 import org.apache.wsdl.extensions.impl.SOAPBodyImpl;
 import org.apache.wsdl.extensions.impl.SOAPOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
+import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -44,6 +44,8 @@ public class Java2WOM {
     private JMethod method [];
     private XmlSchema schema;
     private String serviceName;
+    private String targentNamespece;
+    private String targetNamespecheprefix;
 
     public Java2WOM(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName,
                     String targentNamespece,
@@ -54,10 +56,10 @@ public class Java2WOM {
         this.serviceName = serviceName;
 
         if (targentNamespece != null && !targentNamespece.trim().equals("")) {
-            SchemaGenerator.TARGET_NAMESPACE = targentNamespece;
+            this.targentNamespece = targentNamespece;
         }
         if (targetNamespecheprefix != null && !targetNamespecheprefix.trim().equals("")) {
-            SchemaGenerator.TARGET_NAMESPACE_PREFIX = targetNamespecheprefix;
+            this.targetNamespecheprefix = targetNamespecheprefix;
         }
 
     }
@@ -75,18 +77,18 @@ public class Java2WOM {
         womDescription = wsdlComponentFactory.createDescription();
         HashMap namspaceMap = new HashMap();
         namspaceMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namspaceMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
+        namspaceMap.put(targetNamespecheprefix, targentNamespece);
         namspaceMap.put("ns1", "http://org.apache.axis2/xsd");
         namspaceMap.put("xs", "http://www.w3.org/2001/XMLSchema");
         womDescription.setNamespaces(namspaceMap);
-        womDescription.setTargetNameSpace(SchemaGenerator.TARGET_NAMESPACE);
+        womDescription.setTargetNameSpace(targentNamespece);
 
         //generating port type
         WSDLInterface portType = generatePortType(womDescription, wsdlComponentFactory, documentElement);
         womDescription.addInterface(portType);
 
-        QName bindingName = new QName(SchemaGenerator.TARGET_NAMESPACE, serviceName + "Binding"
-                , SchemaGenerator.TARGET_NAMESPACE_PREFIX);
+        QName bindingName = new QName(targentNamespece, serviceName + "Binding"
+                , targetNamespecheprefix);
         //generating binding
         WSDLBinding binding = generateBinding(wsdlComponentFactory,
                 portType,

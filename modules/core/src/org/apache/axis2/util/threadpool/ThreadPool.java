@@ -17,20 +17,14 @@
 
 package org.apache.axis2.util.threadpool;
 
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import edu.emory.mathcs.backport.java.util.concurrent.SynchronousQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
-import edu.emory.mathcs.backport.java.util.concurrent.SynchronousQueue;
 
 /**
  * This the thread pool for axis2. This class will be used a singleton
@@ -44,7 +38,7 @@ public class ThreadPool implements ThreadFactory {
     private static int MAX_THREAD_COUNT = 10;
     private static boolean shutDown;
     protected ThreadPoolExecutor executor;
-    
+
     public ThreadPool() {
         setExecutor(createDefaultExecutor("Axis2 Task", Thread.NORM_PRIORITY, true));
     }

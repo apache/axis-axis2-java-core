@@ -47,7 +47,7 @@
          boolean status = false;
          if (serviceMap!=null && !serviceMap.isEmpty()){
              HashMap operations;
-             String serviceName = "";
+             String serviceName ;
              Collection servicecol = serviceMap.values();
              Collection operationsList;
              for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
@@ -60,7 +60,7 @@
      <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
                  Collection engagedModules = axisService.getEngagedModules();
-                 String moduleName = "";
+                 String moduleName;
 		boolean modules_present=false;
                  if(engagedModules.size() >0){
            %>
@@ -93,9 +93,7 @@
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
 <%--                 <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                  <%
-                     engagedModules = null;
                      engagedModules = axisOperation.getEngagedModules();
-                     moduleName = "";
                      if(engagedModules.size() >0){
                 %>
                 <br><i>Engaged Modules for the Operation</i><ul>

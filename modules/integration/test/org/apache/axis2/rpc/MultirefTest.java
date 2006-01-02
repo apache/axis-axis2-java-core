@@ -21,6 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -37,6 +39,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.client.RPCCall;
+import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
@@ -127,6 +130,15 @@ public class MultirefTest extends TestCase {
 
 
         SOAPEnvelope env = call.invokeBlocking("echoString", envelope);
+
+        ConfigurationContextFactory configfactory = new ConfigurationContextFactory();
+        ConfigurationContext configContext = configfactory.buildConfigurationContext(
+                "target/test-resources/integrationRepo");
+        RPCServiceClient sender = new RPCServiceClient(configContext);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+
+
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "hello Axis2");
     }
 

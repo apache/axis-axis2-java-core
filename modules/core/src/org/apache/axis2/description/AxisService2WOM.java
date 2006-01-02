@@ -39,20 +39,26 @@ public class AxisService2WOM {
     private XmlSchema schema;
     private AxisService axisService;
     private String url;
+    private String targetNamespece;
+    private String targetNamespecheprefix;
 
 
     public AxisService2WOM(XmlSchema schema, AxisService service,
-                           String targentNamespece,
+                           String targetNamespece,
                            String targetNamespecheprefix, String serviceURL) {
         this.schema = schema;
         this.axisService = service;
         url = serviceURL;
 
-        if (targentNamespece != null && !targentNamespece.trim().equals("")) {
-            SchemaGenerator.TARGET_NAMESPACE = targentNamespece;
+        if (targetNamespece != null && !targetNamespece.trim().equals("")) {
+            this.targetNamespece = targetNamespece;
+        } else {
+            this.targetNamespece = SchemaGenerator.TARGET_NAMESPACE;
         }
         if (targetNamespecheprefix != null && !targetNamespecheprefix.trim().equals("")) {
-            SchemaGenerator.TARGET_NAMESPACE_PREFIX = targetNamespecheprefix;
+            this.targetNamespecheprefix = targetNamespecheprefix;
+        } else {
+            this.targetNamespecheprefix = SchemaGenerator.TARGET_NAMESPACE_PREFIX;
         }
 
     }
@@ -70,18 +76,18 @@ public class AxisService2WOM {
         womDescription = wsdlComponentFactory.createDescription();
         HashMap namespaceMap = new HashMap();
         namespaceMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namespaceMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
+        namespaceMap.put(targetNamespecheprefix, targetNamespece);
         namespaceMap.put("ns1", "http://org.apache.axis2/xsd");
         namespaceMap.put("xs", "http://www.w3.org/2001/XMLSchema");
         womDescription.setNamespaces(namespaceMap);
-        womDescription.setTargetNameSpace(SchemaGenerator.TARGET_NAMESPACE);
+        womDescription.setTargetNameSpace(targetNamespece);
 
         //generating port type
         WSDLInterface portType = generatePortType(womDescription, wsdlComponentFactory, documentElement);
         womDescription.addInterface(portType);
 
-        QName bindingName = new QName(SchemaGenerator.TARGET_NAMESPACE, axisService.getName() + "Binding"
-                , SchemaGenerator.TARGET_NAMESPACE_PREFIX);
+        QName bindingName = new QName(targetNamespece, axisService.getName() + "Binding"
+                , targetNamespecheprefix);
         //generating binding
         WSDLBinding binding = generateBinding(wsdlComponentFactory,
                 portType,

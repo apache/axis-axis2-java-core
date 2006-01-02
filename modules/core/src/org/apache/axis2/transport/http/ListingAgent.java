@@ -25,7 +25,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.server.AdminAppException;
 
@@ -163,7 +162,7 @@ public class ListingAgent {
 
     private void engageModulesGlobally(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        HashMap modules = ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
+        HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -187,7 +186,7 @@ public class ListingAgent {
 
     private void engageModulesToOperation(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        HashMap modules = ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
+        HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -233,7 +232,7 @@ public class ListingAgent {
 
     private void engageModulesToService(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        HashMap modules = ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
+        HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -269,7 +268,7 @@ public class ListingAgent {
 
     private void engageModulesToServiceGroup(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        HashMap modules = ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
+        HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -417,15 +416,14 @@ public class ListingAgent {
 
     private void listGloballyModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        Collection modules =
-                ((AxisConfiguration) configContext.getAxisConfiguration()).getEngagedModules();
+        Collection modules = configContext.getAxisConfiguration().getEngagedModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }
 
     private void listModules(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        HashMap modules = ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
+        HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
@@ -469,7 +467,7 @@ public class ListingAgent {
             if (serviceObj != null) {
                 if (wsdl != null) {
                     res.setContentType("text/xml");
-                    ((AxisService) serviceObj).printWSDL(out,filePart);
+                    ((AxisService) serviceObj).printWSDL(out, filePart);
 
 //                    PrintWriter out_writer = new PrintWriter(out);
 
