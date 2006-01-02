@@ -91,7 +91,7 @@ public class MessageContext extends AbstractContext {
 
     private boolean paused = false;
 
-    public boolean outPutWritten = false;
+    public boolean outputWritten = false;
 
     /**
      * Field newThreadRequired
@@ -627,8 +627,8 @@ public class MessageContext extends AbstractContext {
     /**
      * @return Returns boolean.
      */
-    public boolean isOutPutWritten() {
-        return outPutWritten;
+    public boolean isOutputWritten() {
+        return outputWritten;
     }
 
     /**
@@ -800,8 +800,8 @@ public class MessageContext extends AbstractContext {
     /**
      * @param b
      */
-    public void setOutPutWritten(boolean b) {
-        outPutWritten = b;
+    public void setOutputWritten(boolean b) {
+        outputWritten = b;
     }
 
     /**
