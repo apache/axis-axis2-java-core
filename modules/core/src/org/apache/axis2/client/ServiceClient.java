@@ -4,6 +4,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.*;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
@@ -120,7 +121,7 @@ public class ServiceClient {
     /**
      * If the AxisService is null this will create an AnonymousService
      */
-    private AxisService createAnonymousService() {
+    private AxisService createAnonymousService() throws AxisFault {
         // since I have not been created with real service metadata, let's
         // create an anonymous service and add myself to a newly created default
         // (and lonely) world where I'm the only service around
@@ -128,10 +129,23 @@ public class ServiceClient {
         // add anonymous operations as well for use with the shortcut client
         // API. NOTE: We only add the ones we know we'll use later; if you use
         // this constructor then you can't expect any magic!
-        axisService.addOperation(new RobustOutOnlyAxisOperation(
-                ANON_ROBUST_OUT_ONLY_OP));
-        axisService.addOperation(new OutOnlyAxisOperation(ANON_OUT_ONLY_OP));
-        axisService.addOperation(new OutInAxisOperation(ANON_OUT_IN_OP));
+        PhasesInfo phasesInfo = configContext.getAxisConfiguration().getPhasesInfo();
+
+        RobustOutOnlyAxisOperation robustoutoonlyOperation = new RobustOutOnlyAxisOperation(
+                ANON_ROBUST_OUT_ONLY_OP);
+        // setting operation default chains
+        phasesInfo.setOperationPhases(robustoutoonlyOperation);
+        axisService.addOperation(robustoutoonlyOperation);
+
+        OutOnlyAxisOperation outOnlyOperation = new OutOnlyAxisOperation(ANON_OUT_ONLY_OP);
+        // setting operation default chains
+        phasesInfo.setOperationPhases(outOnlyOperation);
+        axisService.addOperation(outOnlyOperation);
+
+        OutInAxisOperation outInOperation = new OutInAxisOperation(ANON_OUT_IN_OP);
+        // setting operation default chains
+        phasesInfo.setOperationPhases(outInOperation);
+        axisService.addOperation(outInOperation);
         return axisService;
     }
 
@@ -435,7 +449,7 @@ public class ServiceClient {
         }
     }
 
-    private AxisService getAxisService() {
+    private AxisService getAxisService() throws AxisFault {
         if (axisService == null) {
             axisService = createAnonymousService();
             AxisConfiguration axisConfig = this.configContext
@@ -451,7 +465,7 @@ public class ServiceClient {
         return axisService;
     }
 
-    public void setAxisService(AxisService axisService) {
+    public void setAxisService(AxisService axisService) throws AxisFault {
         // adding service into system
         AxisConfiguration axisConfig = this.configContext
                 .getAxisConfiguration();

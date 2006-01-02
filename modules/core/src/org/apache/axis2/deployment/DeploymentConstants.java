@@ -70,6 +70,7 @@ public interface DeploymentConstants {
 
     // for parameters
     String ATTRIBUTE_NAME = "name";
+    String ATTRIBUTE_DEFAULT_VERSION = "version";
     String ATTRIBUTE_SCOPE = "scope";
     String ATTRIBUTE_LOCKED = "locked";
 

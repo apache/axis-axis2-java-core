@@ -19,11 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -91,29 +87,29 @@ public class ModuleBuilder extends DescriptionBuilder {
                     loadModuleClass(module, moduleClass);
                 }
             }
-            
+
             // setting the PolicyInclude
             PolicyInclude policyInclude;
-            
+
             if (axisConfig != null) {
                 PolicyInclude parent = axisConfig.getPolicyInclude();
                 policyInclude = new PolicyInclude(parent);
-                
+
             } else {
                 policyInclude = new PolicyInclude();
             }
             module.setPolicyInclude(policyInclude);
-            
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
-            
+
             if (policyElements != null) {
                 processPolicyElements(policyElements, module.getPolicyInclude());
             }
-            
+
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
-            
+
             if (policyRefElements != null) {
                 processPolicyRefElements(policyRefElements, module.getPolicyInclude());
             }
@@ -238,7 +234,11 @@ public class ModuleBuilder extends DescriptionBuilder {
             // setting Operation phase
             PhasesInfo info = axisConfig.getPhasesInfo();
 
-            info.setOperationPhases(op_descrip);
+            try {
+                info.setOperationPhases(op_descrip);
+            } catch (AxisFault axisFault) {
+                throw new DeploymentException(axisFault);
+            }
 
             // adding the operation
             operations.add(op_descrip);

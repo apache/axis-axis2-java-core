@@ -19,8 +19,8 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
@@ -44,7 +44,14 @@ public class AxisConfiguration implements ParameterInclude {
     /**
      * Field modules
      */
-    private final HashMap modules = new HashMap();
+    private final HashMap defaultModules = new HashMap();
+
+    //to store all the availble modules (including version)
+    private final HashMap allModules = new HashMap();
+
+    //to store mapping between default version to module name
+//    private final HashMap
+
     private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
     private final HashMap transportsOut = new HashMap();
@@ -69,7 +76,7 @@ public class AxisConfiguration implements ParameterInclude {
     private ArrayList inFaultPhases;
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     private HashMap messageReceivers;
-    
+
     // to store policies which are valid for entire system
     private PolicyInclude policyInclude;
 
@@ -97,9 +104,9 @@ public class AxisConfiguration implements ParameterInclude {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-        
+
         policyInclude = new PolicyInclude();
-        
+
         systemClassLoader = Thread.currentThread().getContextClassLoader();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
@@ -134,7 +141,7 @@ public class AxisConfiguration implements ParameterInclude {
      */
     public void addModule(ModuleDescription module) throws AxisFault {
         module.setParent(this);
-        modules.put(module.getName(), module);
+        defaultModules.put(module.getName(), module);
     }
 
     /**
@@ -388,7 +395,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @return Returns ModuleDescription.
      */
     public ModuleDescription getModule(QName name) {
-        return (ModuleDescription) modules.get(name);
+        return (ModuleDescription) defaultModules.get(name);
     }
 
     // the class loder that become the parent of all the modules
@@ -404,7 +411,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @return Returns HashMap.
      */
     public HashMap getModules() {
-        return modules;
+        return defaultModules;
     }
 
     /**
@@ -561,21 +568,21 @@ public class AxisConfiguration implements ParameterInclude {
     public void setSystemClassLoader(ClassLoader classLoader) {
         this.systemClassLoader = classLoader;
     }
-    
+
     public void setPolicyInclude(PolicyInclude policyInclude) {
         this.policyInclude = policyInclude;
     }
-    
+
     public PolicyInclude getPolicyInclude() {
         return policyInclude;
     }
-    
+
     public static String getAxis2HomeDirectory() {
         // if user has set the axis2 home variable try to get that from System properties
         String axis2home = System.getProperty(Constants.HOME_AXIS2);
-        if(axis2home == null) {
+        if (axis2home == null) {
             axis2home = System.getProperty(Constants.HOME_USER);
-            if(axis2home != null){
+            if (axis2home != null) {
                 axis2home = axis2home + '/' + DeploymentConstants.DIRECTORY_AXIS2_HOME;
             }
         }

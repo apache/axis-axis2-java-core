@@ -66,9 +66,6 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     private String soapNsPrefix = null;
     private XMLStreamWriter writer;
 
-    private Writer rawWriter = null;
-
-
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -116,7 +113,6 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     public void writeWOM(WSDLDescription wsdlDescription, OutputStream out) throws WriterException, XMLStreamException {
         try {
             //create a writer from the stream
-            rawWriter = new OutputStreamWriter(out, encoding);
             writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
 
             writeStartDescripton(wsdlDescription, writer);
@@ -344,15 +340,13 @@ public class WOMtoWSDL11Writer implements WOMWriter {
      * Our simple rule in the 'guessing game' for the message and it's parts.
      * Message name is the localpart of the QName suffixed by MESSAGE_NAME_SUFFIX
      * Partname is just 'part1' (wouldn't matter!)
-     * Element reference is again the localpart of the QName but prefixed with the target 
+     * Element reference is again the localpart of the QName but prefixed with the target
      * namespaces prefix.
      */
 
     private void populateMessageSymbol(QName reference) {
-        if (messageMap.containsKey(reference)) {
+        if (!messageMap.containsKey(reference)) {
             //just return. The message is already there
-            return;
-        } else {
             //create a part with name part 1 and element ref to the QName value
             //these references need to be prefixed according to the correct target namespaces
             //of the schemas
@@ -586,7 +580,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     }
 
-    private void writeSOAPAddressExtensibilityElement(SOAPAddress address) throws IOException, XMLStreamException {
+    private void writeSOAPAddressExtensibilityElement(SOAPAddress address) throws XMLStreamException {
         writer.writeStartElement(soapNsPrefix, "address", WSDL1_1_SOAP_NAMESPACE_URI);
         writer.writeAttribute("location", address.getLocationURI());
         writer.writeEndElement();

@@ -17,6 +17,7 @@
 
 package org.apache.axis2.deployment.util;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.HandlerDescription;
@@ -215,12 +216,16 @@ public class PhasesInfo {
         this.OUT_FaultPhases = OUT_FaultPhases;
     }
 
-    public void setOperationPhases(AxisOperation axisOperation) throws DeploymentException {
+    public void setOperationPhases(AxisOperation axisOperation) throws AxisFault {
         if (axisOperation != null) {
-            axisOperation.setRemainingPhasesInFlow(getOperationInPhases());
-            axisOperation.setPhasesOutFlow(getOperationOutPhases());
-            axisOperation.setPhasesInFaultFlow(getOperationInFaultPhases());
-            axisOperation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
+            try {
+                axisOperation.setRemainingPhasesInFlow(getOperationInPhases());
+                axisOperation.setPhasesOutFlow(getOperationOutPhases());
+                axisOperation.setPhasesInFaultFlow(getOperationInFaultPhases());
+                axisOperation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
+            } catch (DeploymentException e) {
+                throw new AxisFault(e);
+            }
         }
     }
 }

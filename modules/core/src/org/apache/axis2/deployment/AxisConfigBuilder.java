@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
+
     private AxisConfiguration axisConfiguration;
     private DeploymentEngine engine;
 
@@ -107,25 +108,25 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (hostElement != null) {
                 processHostCongiguration(hostElement, axisConfiguration);
             }
-            
+
             // setting the PolicyInclude
             PolicyInclude policyInclude = new PolicyInclude();
             axisConfiguration.setPolicyInclude(policyInclude);
-            
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
-            
+
             if (policyElements != null) {
                 processPolicyElements(policyElements, axisConfiguration.getPolicyInclude());
             }
-            
+
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
-            
+
             if (policyRefElements != null) {
                 processPolicyRefElements(policyElements, axisConfiguration.getPolicyInclude());
             }
-            
+
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }
@@ -295,6 +296,24 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 info.setOUT_FaultPhases(processPhaseList(phaseOrders));
             }
         }
+    }
+
+    private void processDefaultModuleVersions(OMElement defaultVersions) throws DeploymentException {
+        Iterator moduleVersions = defaultVersions.getChildrenWithName(new QName(TAG_MODULE));
+        while (moduleVersions.hasNext()) {
+            OMElement omElement = (OMElement) moduleVersions.next();
+            String name = omElement.getAttributeValue(new QName(ATTRIBUTE_NAME));
+            if (name == null) {
+                throw new DeploymentException("Module name can not be null in side" +
+                        " default module vresion element ");
+            }
+            String defaultVeriosn = omElement.getAttributeValue(new QName(ATTRIBUTE_DEFAULT_VERSION));
+            if (defaultVeriosn == null) {
+                throw new DeploymentException("Module vresion can not be null in side" +
+                        " default module vresion element ");
+            }
+        }
+
     }
 
     private void processTransportReceivers(Iterator trs_senders) throws DeploymentException {
@@ -472,9 +491,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         if (className == null) {
             return new Phase();
         }
-
         Class phaseClass = axisConfiguration.getSystemClassLoader().loadClass(className);
-
         return (Phase) phaseClass.newInstance();
     }
 }

@@ -17,8 +17,8 @@ package userguide.clients;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.om.OMElement;
 
 /**
@@ -31,14 +31,13 @@ public class PingClient {
     public static void main(String[] args) {
         try {
             OMElement payload = ClientUtil.getPingOMElement();
-
-            MessageSender msgSender = new MessageSender();
+            ServiceClient serviceClient = new ServiceClient();
 
             Options options = new Options();
-            msgSender.setClientOptions(options);
+            serviceClient.setOptions(options);
             options.setTo(targetEPR);
 
-            msgSender.send("ping", payload);
+            serviceClient.fireAndForget(payload);
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
