@@ -599,10 +599,6 @@ public class MessageContext extends AbstractContext {
         return options.getAction();
     }
 
-    public String getWSAMessageId() {
-        return options.getMessageId();
-    }
-
     /**
      * @return Returns boolean.
      */
