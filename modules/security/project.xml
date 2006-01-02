@@ -54,7 +54,7 @@
         </dependency>        
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2-saaj</artifactId>
+            <artifactId>axis2-doom</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>      
         <!-- external JARs -->
