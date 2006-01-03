@@ -289,13 +289,13 @@ public class ServiceClient {
             // If the
             // transport is two way transport (e.g. http) Only one channel is
             // used (e.g. in http cases
-            // 202 OK is sent to say no repsone avalible). Axis2 get blocked
+            // 202 OK is sent to say no respsone avalible). Axis2 get blocked
             // return when the response is avalible.
             SyncCallBack callback = new SyncCallBack();
 
             // this method call two channel non blocking method to do the work
             // and wait on the callbck
-            sendReceiveNonblocking(elem, callback);
+            sendReceiveNonblocking(operation, elem, callback);
 
             long timeout = options.getTimeOutInMilliSeconds();
 
