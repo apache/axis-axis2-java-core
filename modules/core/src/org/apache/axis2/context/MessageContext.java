@@ -475,6 +475,20 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
+     * Set a property for this message context.
+     * 
+     * @param name
+     *            name of the property
+     * @param value
+     *            the value to set
+     */
+    public void setProperty(String name, Object value) {
+        // we override this method here to make sure the properties are set on
+        // options rather than in the inherited property bag.
+        options.setProperty(name, value);
+    }
+
+    /**
      * Retrieves a property value. The order of search is as follows: search in
      * my own options and then look in my context hierarchy. Since its possible
      * that the entire hierarchy is not present, I will start at whatever level
@@ -485,14 +499,8 @@ public class MessageContext extends AbstractContext {
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
-        // search in my own properties bag
-        Object obj = super.getProperty(name);
-        if (obj != null) {
-            return obj;
-        }
-
         // search in my own options
-        obj = options.getProperty(name);
+        Object obj = options.getProperty(name);
         if (obj != null) {
             return obj;
         }
@@ -512,7 +520,7 @@ public class MessageContext extends AbstractContext {
             return configurationContext.getProperty(name);
         }
 
-        // oops
+        // tough
         return null;
     }
 
