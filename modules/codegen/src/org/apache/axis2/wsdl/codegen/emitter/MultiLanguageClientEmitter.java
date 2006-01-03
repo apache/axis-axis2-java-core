@@ -179,7 +179,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             //write skeleton
             writeSkeleton(axisInteface, null);
             //write interface implementations
-            writeServiceXml(axisInteface, null);
+            writeServiceXml(axisInteface,wom);
         }
 
 
@@ -213,7 +213,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //write skeleton
                 writeSkeleton(axisBinding.getBoundInterface(), axisBinding);
                 //write service xml
-                writeServiceXml(axisBinding.getBoundInterface(), axisBinding);
+                writeServiceXml(axisBinding,wom);
                 //write a MessageReceiver for this particular service.
                 writeMessageReceiver(axisBinding);
                 //write the ant build if not asked for all
@@ -489,11 +489,30 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param axisBinding
      * @throws Exception
      */
-    protected void writeServiceXml(WSDLInterface axisInterface, WSDLBinding axisBinding) throws Exception {
+    protected void writeServiceXml(WSDLBinding axisBinding,WSDLDescription desc) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()) {
             //Write the service xml in a folder with the
             Document skeletonModel = createDOMDocumentForServiceXML(
-                    axisInterface, false, axisBinding);
+                    axisBinding.getBoundInterface(), axisBinding,desc);
+            ClassWriter serviceXmlWriter = new ServiceXMLWriter(
+                    getOutputDirectory(this.configuration.getOutputLocation(), "resources"),
+                    this.configuration.getOutputLanguage());
+            writeClass(skeletonModel, serviceXmlWriter);
+        }
+    }
+
+    /**
+     * Writes the Service XML
+     *
+     * @param axisInterface
+     * @param axisBinding
+     * @throws Exception
+     */
+    protected void writeServiceXml(WSDLInterface axisInterface,WSDLDescription desc) throws Exception {
+        if (this.configuration.isGenerateDeployementDescriptor()) {
+            //Write the service xml in a folder with the
+            Document skeletonModel = createDOMDocumentForServiceXML(
+                    axisInterface, null,desc);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(
                     getOutputDirectory(this.configuration.getOutputLocation(), "resources"),
                     this.configuration.getOutputLanguage());
@@ -702,6 +721,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
 
+    /**
+     *
+     * @param doc
+     * @param operation
+     * @return
+     */
     private Element getOutputParamElement(Document doc,
                                           WSDLOperation operation) {
         Element param = doc.createElement("param");
@@ -732,54 +757,128 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         return param;
     }
 
+    /**
+     * @see  #createDOMDocumentForServiceXML(org.apache.wsdl.WSDLInterface, org.apache.wsdl.WSDLBinding, org.apache.wsdl.WSDLDescription)
+     * @param boundInterface
+     * @param axisBinding
+     * @return
+     */
+    protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface ,
+                                                      WSDLBinding axisBinding) {
+        return createDOMDocumentForServiceXML(boundInterface ,
+                axisBinding,null);
 
-    protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface,
-                                                      boolean forTesting, WSDLBinding axisBinding) {
+    }
+
+
+    /**
+     *
+     * @param boundInterface
+     * @param axisBinding
+     * @param description
+     * @return
+     */
+    protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface ,
+                                                      WSDLBinding axisBinding,
+                                                      WSDLDescription description) {
 
         Document doc = getEmptyDocument();
-        Element rootElement = doc.createElement("interface");
-        String localPart = makeJavaClassName(boundInterface.getName().getLocalPart());
-        if (forTesting) {
-            addAttribute(doc,
-                    "package",
-                    configuration.getPackageName() + TEST_PACKAGE_NAME_SUFFIX,
-                    rootElement);
-            addAttribute(doc,
-                    "name",
-                    localPart + TEST_SERVICE_CLASS_NAME_SUFFIX,
-                    rootElement);
-            addAttribute(doc,
-                    "servicename",
-                    localPart + TEST_SERVICE_CLASS_NAME_SUFFIX,
-                    rootElement);
-        } else {
-            //put the package to be SERVICE_XML_OUTPUT_FOLDER_NAME.interface name
-            //this forces the service XML to be written in a folder of it's porttype
-            //name
-            addAttribute(doc,
-                    "package",
-                    "",
-                    rootElement);
-            addAttribute(doc,
-                    "classpackage",
-                    configuration.getPackageName(),
-                    rootElement);
-            addAttribute(doc,
-                    "name",
-                    localPart + SERVICE_CLASS_SUFFIX,
-                    rootElement);
-            addAttribute(doc, "servicename", localPart, rootElement);
+        String porttypeName = makeJavaClassName(boundInterface.getName().getLocalPart());
+
+        //find service that are attached to this binding
+        Map serviceMap  =  description.getServices();
+        Map relevantServicesMap = new HashMap();
+        Iterator serviceIterator = serviceMap.values().iterator();
+        while (serviceIterator.hasNext()) {
+            WSDLService service = (WSDLService)serviceIterator.next();
+            if (service.getServiceInterface().equals(boundInterface)){
+                relevantServicesMap.put(service.getName(),service);
+            }
         }
+
+        Iterator relevantServicesIterator = relevantServicesMap.keySet().iterator();
+        if (relevantServicesMap.isEmpty()){
+            //No service name. Make a service name here. Our choice for now is the
+            //portype name
+            doc.appendChild(getServiceElement(
+                    porttypeName,porttypeName, doc, boundInterface, axisBinding));
+
+        }else if (relevantServicesMap.size()==1){
+            //do the usual addition to attach a single interface element
+            QName serviceName = (QName)relevantServicesIterator.next();
+            //get the service object
+            WSDLService service = (WSDLService)relevantServicesMap.get(serviceName);
+            HashMap endpoints = service.getEndpoints();
+            //if this service element contains multiple endpoints, we generate a service group
+            //which has multiple service elements that refer to the same service
+            if (endpoints.size()>1){
+                Iterator endpointsIterator = endpoints.values().iterator();
+                Element rootElement = doc.createElement("interfaces");
+                doc.appendChild(rootElement);
+                while (endpointsIterator.hasNext()) {
+                    WSDLEndpoint ep =  (WSDLEndpoint)endpointsIterator.next();
+                    rootElement.appendChild(getServiceElement(
+                            ep.getName().getLocalPart(),porttypeName,doc, boundInterface, axisBinding));
+                }
+            }else{
+                //it's a single endpoint reference. so just add it
+                doc.appendChild(getServiceElement(
+                        serviceName.getLocalPart(),porttypeName,doc, boundInterface, axisBinding));
+            }
+        }else {
+            //we have multiple service elements! So make it into a service group
+            Element rootElement = doc.createElement("interfaces");
+            doc.appendChild(rootElement);
+            while (relevantServicesIterator.hasNext()) {
+                QName serviceName = (QName)relevantServicesIterator.next();
+                rootElement.appendChild(getServiceElement(
+                        serviceName.getLocalPart(),porttypeName,doc, boundInterface, axisBinding));
+
+            }
+        }
+
+        return doc;
+    }
+
+    /**
+     * Get the element
+     * @param doc
+     * @param boundInterface
+     * @param axisBinding
+     * @return
+     */
+    private Element getServiceElement(String serviceName,
+                                      String porttypeName,
+                                      Document doc,
+                                      WSDLInterface boundInterface,
+                                      WSDLBinding axisBinding) {
+        Element rootElement = doc.createElement("interface");
+
+        addAttribute(doc,
+                "package",
+                "",
+                rootElement);
+        addAttribute(doc,
+                "classpackage",
+                configuration.getPackageName(),
+                rootElement);
+        addAttribute(doc,
+                "name",
+                porttypeName + SERVICE_CLASS_SUFFIX,
+                rootElement);
+
+
+        addAttribute(doc, "servicename", serviceName, rootElement);
 
         addAttribute(doc,
                 "messagereceiver",
-                localPart + MESSAGE_RECEIVER_SUFFIX,
+                porttypeName + MESSAGE_RECEIVER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement, axisBinding);
-        doc.appendChild(rootElement);
 
-        return doc;
+        return rootElement;
+
     }
 
 
@@ -807,7 +906,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         fillSyncAttributes(doc, rootElement);
 
-         //###########################################################################################
+        //###########################################################################################
         //this block of code specifically applies to the integration of databinding code into the
         //generated classes tightly (probably as inner classes)
         //###########################################################################################
@@ -823,7 +922,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
         }
-      // #############################################################################################
+        // #############################################################################################
 
         loadOperations(boundInterface, doc, rootElement, null);
 
@@ -1256,7 +1355,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
         }
-      // #############################################################################################
+        // #############################################################################################
 
         //load the operations
         loadOperations(boundInterface, doc, rootElement, binding);
