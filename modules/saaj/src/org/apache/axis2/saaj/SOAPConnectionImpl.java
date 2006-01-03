@@ -28,7 +28,7 @@ import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.saaj.util.SAAJUtil;
-import org.apache.axis2.util.SessionUtils2;
+import org.apache.axis2.saaj.util.SessionUtils2;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;

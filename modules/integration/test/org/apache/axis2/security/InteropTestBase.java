@@ -129,24 +129,24 @@ public abstract class InteropTestBase extends TestCase {
         }
     }
 
-    public void testInteropWithDynamicConfig() {
-        try {
-            Class interopScenarioClientClass =  Class.forName("org.apache.axis2.security.InteropScenarioClient");
-            Constructor c = interopScenarioClientClass.getConstructor(new Class[]{boolean.class});
-            Object clientObj = c.newInstance(new Object[]{this.isUseSOAP12InStaticConfigTest()?Boolean.TRUE:Boolean.FALSE});
-            Method m = interopScenarioClientClass.getMethod("invokeWithGivenConfig",new Class[]{String.class,
-                    String.class,
-                    OutflowConfiguration.class,
-                    InflowConfiguration.class
-            });
-            m.invoke(clientObj,new Object[]{Constants.TESTING_PATH + getClientRepo(),targetEpr,getOutflowConfiguration(), getInflowConfiguration()});
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
-        }
-
-    }
+//    public void testInteropWithDynamicConfig() {
+//        try {
+//            Class interopScenarioClientClass =  Class.forName("org.apache.axis2.security.InteropScenarioClient");
+//            Constructor c = interopScenarioClientClass.getConstructor(new Class[]{boolean.class});
+//            Object clientObj = c.newInstance(new Object[]{this.isUseSOAP12InStaticConfigTest()?Boolean.TRUE:Boolean.FALSE});
+//            Method m = interopScenarioClientClass.getMethod("invokeWithGivenConfig",new Class[]{String.class,
+//                    String.class,
+//                    OutflowConfiguration.class,
+//                    InflowConfiguration.class
+//            });
+//            m.invoke(clientObj,new Object[]{Constants.TESTING_PATH + getClientRepo(),targetEpr,getOutflowConfiguration(), getInflowConfiguration()});
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
+//        }
+//
+//    }
 
     protected abstract OutflowConfiguration getOutflowConfiguration();
 

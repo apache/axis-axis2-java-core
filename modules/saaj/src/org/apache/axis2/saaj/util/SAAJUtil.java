@@ -19,22 +19,13 @@ package org.apache.axis2.saaj.util;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * Utility class for the Axis2-WSS4J Module
@@ -109,41 +100,5 @@ public class SAAJUtil {
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
                 new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
         return stAXSOAPModelBuilder.getSOAPEnvelope();
-    }
-
-    /**
-     * Convert a given DOM Element to an OMElement
-     *
-     * @param element
-     * @return
-     */
-    public static OMElement toOM(Element element) throws XMLStreamException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XMLUtils.outputDOM(element, os, true);
-
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
-
-        StAXOMBuilder builder = new StAXOMBuilder(reader);
-        builder.setCache(true);
-
-        return builder.getDocumentElement();
-    }
-
-    /**
-     * Convert a given OMElement to a DOM Element
-     *
-     * @param element
-     * @return
-     */
-    public static Element toDOM(OMElement element) throws Exception {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        element.serialize(baos);
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        return factory.newDocumentBuilder().parse(bais).getDocumentElement();
     }
 }
