@@ -79,6 +79,8 @@ public class ServiceClient {
                 : new ConfigurationContextFactory()
                 .buildConfigurationContext(null);
 
+        this.axisConfig = this.configContext.getAxisConfiguration();
+        
         // save the service and axisConfig
         if (axisService == null) {
             this.axisService = createAnonymousService();
@@ -86,7 +88,7 @@ public class ServiceClient {
             this.axisService = axisService;
         }
 
-        this.axisConfig = this.configContext.getAxisConfiguration();
+
 
         // add the service to the config context if it isn't in there already
         if (axisConfig.getService(this.axisService.getName()) == null) {
