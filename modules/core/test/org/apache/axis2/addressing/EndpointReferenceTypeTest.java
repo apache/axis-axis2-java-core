@@ -79,7 +79,6 @@ public class EndpointReferenceTypeTest extends TestCase {
     }
 
     public void testGetAndSetReferenceParameters() {
-        AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 10; i++) {
             endpointReference.addReferenceParameter(
                     new QName("http://www.opensouce.lk/" + i, "" + i),
