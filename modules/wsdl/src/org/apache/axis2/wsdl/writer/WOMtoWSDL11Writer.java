@@ -6,6 +6,10 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.ws.policy.Policy;
+import org.apache.ws.policy.PolicyReference;
+import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.ws.policy.util.StAXPolicyWriter;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.*;
 import org.w3c.dom.Element;
@@ -15,6 +19,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,7 +125,10 @@ public class WOMtoWSDL11Writer implements WOMWriter {
             findSOAPNsPrefix(wsdlDescription);
             //write the imports
             writeImports(wsdlDescription);
-            //write  the types
+            //write extensibility elements
+            handleExtensibiltyElements(wsdlDescription.getExtensibilityElements());
+            
+            //write  the types            
             writeTypes(wsdlDescription);
             //write the messages
             writeMessages(wsdlDescription);
@@ -155,6 +163,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                 service = (WSDLService) serviceIterator.next();
                 writer.writeStartElement(defaultWSDLPrefix, "service", WSDL1_1_NAMESPACE_URI);
                 writer.writeAttribute("name", service.getName().getLocalPart());
+                handleExtensibiltyElements(service.getExtensibilityElements());
                 //wrtie the porttypes
                 Map endPointMap = service.getEndpoints();
                 if (endPointMap != null && !endPointMap.isEmpty()) {
@@ -410,8 +419,10 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     /**
      * @param desc
+     * @throws XMLStreamException
+     * @throws IOException
      */
-    protected void writePortTypes(WSDLDescription desc) throws XMLStreamException {
+    protected void writePortTypes(WSDLDescription desc) throws XMLStreamException, IOException {
         Map interfaceMap = desc.getWsdlInterfaces();
         if (!interfaceMap.isEmpty()) {
             Iterator interfaceIterator = interfaceMap.values().iterator();
@@ -421,7 +432,8 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                 writer.writeStartElement(defaultWSDLPrefix, PORTTYPE_NAME, WSDL1_1_NAMESPACE_URI);
                 writer.writeAttribute("name",
                         wsdlInterface.getName() == null ? "" : wsdlInterface.getName().getLocalPart());
-
+                //write extensibility attributes
+                handleExtensibilityAttributes(wsdlInterface.getExtensibilityAttributes());
                 //write the operations
                 writePorttypeOperations(wsdlInterface);
 
@@ -437,8 +449,10 @@ public class WOMtoWSDL11Writer implements WOMWriter {
      * Writes the operation.
      *
      * @param wsdlInterface
+     * @throws XMLStreamException
+     * @throws IOException
      */
-    protected void writePorttypeOperations(WSDLInterface wsdlInterface) throws XMLStreamException {
+    protected void writePorttypeOperations(WSDLInterface wsdlInterface) throws XMLStreamException, IOException {
         Map operationsMap = wsdlInterface.getOperations();
         if (!operationsMap.isEmpty()) {
             Iterator opIterator = operationsMap.values().iterator();
@@ -449,12 +463,16 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                 writer.writeAttribute("name", operation.getName() == null ? "" : operation.getName().getLocalPart());
 //                writer.writeEndElement();
                 //write the inputs
+                //write extensibility elements
+                handleExtensibiltyElements(operation.getExtensibilityElements());
                 WSDL11Message message;
                 MessageReference inputMessage = operation.getInputMessage();
                 if (inputMessage != null) {
                     message = (WSDL11Message) messageMap.get(inputMessage.getElementQName());
                     writer.writeStartElement(defaultWSDLPrefix, INPUT_NAME, WSDL1_1_NAMESPACE_URI);
                     writer.writeAttribute("message", targetNamespacePrefix + ":" + message.getMessageName());
+                    //write extensibility attributes
+                    handleExtensibilityAttributes(inputMessage.getExtensibilityAttributes());
                     writer.writeEndElement();
                 }
 
@@ -464,6 +482,8 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                     message = (WSDL11Message) messageMap.get(outputMessage.getElementQName());
                     writer.writeStartElement(defaultWSDLPrefix, OUTPUT_NAME, WSDL1_1_NAMESPACE_URI);
                     writer.writeAttribute("message", targetNamespacePrefix + ":" + message.getMessageName());
+//                  write extensibility attributes
+                    handleExtensibilityAttributes(outputMessage.getExtensibilityAttributes());
                     writer.writeEndElement();
                 }
 
@@ -525,12 +545,19 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         WSDLBindingMessageReference output = bindingOp.getOutput();
         if (output != null) {
             writer.writeStartElement(defaultWSDLPrefix, BINDING_OUTPUT, WSDL1_1_NAMESPACE_URI);
-            handleExtensibiltyElements(output.getExtensibilityElements());
+            handleExtensibiltyElements(output.getExtensibilityElements());                                  
             writer.writeEndElement();
         }
         writer.writeEndElement();
     }
 
+    protected void handleExtensibilityAttributes(List extAttributeList) throws XMLStreamException {
+        int extAttributeCount = extAttributeList.size();
+        for (int i = 0; i < extAttributeCount; i++) {
+            writeExtensibilityAttribute((WSDLExtensibilityAttribute) extAttributeList.get(i));
+        }
+    }
+    
     protected void handleExtensibiltyElements(List extElementList) throws XMLStreamException, IOException {
         int extensibilityElementCount = extElementList.size();
         for (int i = 0; i < extensibilityElementCount; i++) {
@@ -550,6 +577,13 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement scheamElement = staxOMBuilder.getDocumentElement();
         scheamElement.serialize(writer);
+    }
+    
+    protected void writeExtensibilityAttribute(WSDLExtensibilityAttribute extAttribute) throws XMLStreamException {
+        QName qname = extAttribute.getKey();
+        QName value = extAttribute.getValue();
+        
+        writer.writeAttribute(qname.getPrefix(), qname.getNamespaceURI(), qname.getLocalPart(), value.getLocalPart());
     }
 
     /**
@@ -574,6 +608,8 @@ public class WOMtoWSDL11Writer implements WOMWriter {
             writeSOAPOpextensibilityElement((SOAPOperation) extElement);
         } else if (extElement instanceof SOAPBody) {
             writeSOAPBodyExtensibilityElement((SOAPBody) extElement);
+        } else if (extElement instanceof PolicyExtensibilityElement) {
+            writePolicyExtensibilityElement((PolicyExtensibilityElement) extElement);
         } else {
             writer.writeComment(" Unknown extensibility element" + extElement.toString());
         }
@@ -615,6 +651,18 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         writer.writeAttribute("soapAction", soapop.getSoapAction());
         writer.writeAttribute("style", soapop.getStyle());
         writer.writeEndElement();
+    }
+    
+    protected void writePolicyExtensibilityElement(PolicyExtensibilityElement policyExtensibilityElement) throws XMLStreamException {
+        StAXPolicyWriter policyWriter = (StAXPolicyWriter) PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
+        Object policyElement = policyExtensibilityElement.getPolicyElement();
+        
+        if (policyElement instanceof Policy) {
+            policyWriter.writePolicy((Policy) policyElement, writer);
+                        
+        } else if (policyElement instanceof PolicyReference) {
+            policyWriter.writePolicyReference((PolicyReference) policyElement, writer);
+        }
     }
 
     /**

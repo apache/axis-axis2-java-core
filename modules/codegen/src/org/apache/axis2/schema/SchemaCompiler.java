@@ -148,7 +148,6 @@ public class SchemaCompiler {
 
     /**
      * Compile (rather codegen) a single schema element
-     *
      * @param schema
      * @throws SchemaCompilationException
      */
@@ -428,6 +427,12 @@ public class SchemaCompiler {
         XmlSchemaAnyAttribute anyAtt = complexType.getAnyAttribute();
         if (anyAtt != null) {
             processAnyAttribute(metaInfHolder);
+        }
+
+
+        if (complexType.getContentModel()!=null){
+            //for the time being we cannot deal with these content. so throw an exception
+            throw new RuntimeException("Unsupported content! ");
         }
 
         // Process the other types - Say the complex content, extensions and so on

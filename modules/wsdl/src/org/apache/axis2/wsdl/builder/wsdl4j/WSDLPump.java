@@ -18,10 +18,14 @@ package org.apache.axis2.wsdl.builder.wsdl4j;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
+import org.apache.ws.policy.util.DOMPolicyReader;
+import org.apache.ws.policy.util.OMPolicyReader;
+import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.DefaultExtensibilityElement;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.ExtensionFactory;
+import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1035,6 +1039,19 @@ public class WSDLPump {
                     Element element = unknown.getElement();
                     soapAddressExtensibiltyElement.setLocationURI(element.getAttribute("location"));
                     component.addExtensibilityElement(soapAddressExtensibiltyElement);
+                    
+                } else if (ExtensionConstants.POLICY.equals(unknown.getElementType())) {
+                    PolicyExtensibilityElement policyExtensibilityElement = (PolicyExtensibilityElement) extensionFactory.getExtensionElement(wsdl4jElement.getElementType());
+                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory.getPolicyReader(PolicyFactory.DOM_POLICY_READER);
+                    policyExtensibilityElement.setPolicyElement(policyReader.readPolicy(unknown.getElement()));                    
+                    component.addExtensibilityElement(policyExtensibilityElement);
+                    
+                } else if (ExtensionConstants.POLICY_REFERENCE.equals(unknown.getElementType())) {
+                    PolicyExtensibilityElement policyExtensibilityElement = (PolicyExtensibilityElement) extensionFactory.getExtensionElement(wsdl4jElement.getElementType());
+                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory.getPolicyReader(PolicyFactory.DOM_POLICY_READER);
+                    policyExtensibilityElement.setPolicyElement(policyReader.readPolicyReference(unknown.getElement()));
+                    component.addExtensibilityElement(policyExtensibilityElement);                   
+                    
                 }else{
 
                     DefaultExtensibilityElement defaultExtensibilityElement = (DefaultExtensibilityElement) extensionFactory

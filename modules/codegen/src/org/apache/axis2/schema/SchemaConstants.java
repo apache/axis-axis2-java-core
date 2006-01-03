@@ -97,7 +97,6 @@ public class SchemaConstants {
 
         public static final String WRAP_SCHEMA_CLASSES = "w";
         public static final String WRITE_SCHEMA_CLASSES = "r";
-
         public static final String STYLE = "s";
 
     }

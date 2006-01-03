@@ -54,5 +54,6 @@ public interface ExtensionConstants {
      
      public static final QName POLICY = new QName(
              "http://schemas.xmlsoap.org/ws/2004/09/policy", "Policy");
-
+     public static final QName POLICY_REFERENCE = new QName(
+             "http://schemas.xmlsoap.org/ws/2004/09/policy", "PolicyReference");
 }

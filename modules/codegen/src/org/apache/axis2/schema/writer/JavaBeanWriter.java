@@ -108,8 +108,11 @@ public class JavaBeanWriter implements BeanWriter {
                 globalWrappedDocument.appendChild(rootElement);
                 XSLTUtils.addAttribute(globalWrappedDocument, "name", WRAPPED_DATABINDING_CLASS_NAME, rootElement);
                 String tempPackageName = null;
-                if (packageName.endsWith(".")) {
+
+                if (packageName !=null && packageName.endsWith(".")) {
                     tempPackageName = this.packageName.substring(0, this.packageName.lastIndexOf("."));
+                }else{
+                    tempPackageName = "adb"; //todo - fix this
                 }
 
                 XSLTUtils.addAttribute(globalWrappedDocument, "package", tempPackageName, rootElement);

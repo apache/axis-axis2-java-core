@@ -36,8 +36,8 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="50%">-l &lt;language&gt;</td>
       <td width="50%">Output language. Currently the code generator can
-        generate code in Java and CSharp. (CSharp support is limited) When
-        omitted defaults to Java.
+        generate code in Java and CSharp. (CSharp support is experimental)
+        When omitted defaults to Java.
 
         <p>Allowed options are</p>
         <ul>
@@ -67,12 +67,7 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="50%">-t</td>
       <td width="50%">Generates a test case. In the case of Java it would be
-        a junit test case. This test case will generate a dummy
-        implementation of the service and a relevant service.xml and will
-        deploy this particular service in a SimpleHttpServer. Then looking at
-        the WSDL it will generate test methods that will do web service
-        invocation both synchronously and asynchronously and test the
-        deployed service.</td>
+        a junit test case. </td>
     </tr>
     <tr>
       <td width="50%">-ss</td>
@@ -82,12 +77,26 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="50%">-sd</td>
       <td width="50%">Generates the service descriptor (i.e. server.xml).
-        Default is off. only valid with -ss</td>
+        Default is off. only valid with -ss, the server side code generation
+        option</td>
     </tr>
-  <tr>
+    <tr>
       <td width="50%">-d</td>
-      <td width="50%">Specifies the Databinding framwork. valid values are xmlbeans,adb and none.
-      Default is xmlbeans.
+      <td width="50%">Specifies the Databinding framework. valid values are
+        xmlbeans,adb and none. Default is adb.</td>
+    </tr>
+<tr>
+      <td width="50%">-g</td>
+      <td width="50%">Genrates all the classes. This option is valid only with the
+-ss (server side code generation) option. When on, the client code (stubs) will also be generated
+along with the skeleton.
+</td>
+    </tr>
+
+      <td width="50%">-u</td>
+      <td width="50%">
+Unwrap classes. This option specifies whether to unwrap the classes and generate seperate classes for
+the databinders.
 </td>
     </tr>
   </tbody>
@@ -189,8 +198,7 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
     wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
     output="C:\"
     serverside="true"
-    generateserverxml="true"
-/&gt;
+    generateserverxml="true"/&gt;
 &lt;/target&gt;
 &lt;/project&gt;</pre>
 
@@ -208,7 +216,7 @@ written to C:\ directory.</p>
 <p>For this Ant task to work the following jars need to be in the class
 path.</p>
 <ul>
-  <li>axis-M2.jar (from the Axis2 distribution)</li>
+  <li>axis-*.jar (from the Axis2 distribution)</li>
   <li>axis-wsdl4j-1.2.jar (The WSDL4J implementation jar. Bundled with the
     Axis2 distribution)</li>
   <li>stax-api-1.0.jar (The StAX API's that contain the
@@ -383,8 +391,7 @@ ready for deployment:</p>
     &lt;/java&gt;
   &lt;/target&gt;
 
-&lt;/project&gt;
-</pre>
+&lt;/project&gt;</pre>
 
 <p>The above build.xml depends on a build.properties file which defines
 'axis.home', such as:</p>
@@ -553,8 +560,7 @@ public class LoginEndpointSkeleton {
 
     }
  
-}
-</pre>
+}</pre>
 
 <p>The next steps assume the axis2.war has been deployed and has expanded in
 a servlet container.</p>
@@ -627,7 +633,6 @@ public class LoginClient {
         }
     }
 }
-
 </pre>
 
 <p>Now run the ant task 'ant runLogin' . The following output should

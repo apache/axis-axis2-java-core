@@ -16,7 +16,6 @@
 
 package org.apache.wsdl.extensions;
 
-import org.apache.ws.policy.Policy;
 import org.apache.wsdl.WSDLExtensibilityElement;
 
 /**
@@ -24,7 +23,7 @@ import org.apache.wsdl.WSDLExtensibilityElement;
  */
 public interface PolicyExtensibilityElement extends WSDLExtensibilityElement {
     
-    public void setPolicy(Policy policy);
+    public void setPolicyElement(Object policyElement);
     
-    public Policy getPolicy();
+    public Object getPolicyElement();
 }

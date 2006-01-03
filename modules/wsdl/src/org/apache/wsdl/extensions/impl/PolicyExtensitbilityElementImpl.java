@@ -24,20 +24,21 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
  * @author Sanka Samaranayake (sanka@apache.org)
  */
 public class PolicyExtensitbilityElementImpl extends WSDLExtensibilityElementImpl implements PolicyExtensibilityElement {
-    private Policy policy;
+    private Object policyElement;
     
     public PolicyExtensitbilityElementImpl() {
     }
     
-    public PolicyExtensitbilityElementImpl(Policy policy) {
-        setPolicy(policy);
+    
+    public PolicyExtensitbilityElementImpl(Object policyElement) {
+        setPolicyElement(policyElement);
     }
     
-    public void setPolicy(Policy policy) {
-        this.policy = policy;
+    public void setPolicyElement(Object policyElement) {
+        this.policyElement = policyElement;
     }
     
-    public Policy getPolicy() {
-        return policy;
+    public Object getPolicyElement() {
+        return policyElement;
     }
 }

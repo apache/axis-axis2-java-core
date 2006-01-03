@@ -183,6 +183,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
         if(!outputDir.exists()) {
             outputDir.mkdirs();
         }
+
         /// these options need to be taken from the command line
         options.setOutputLocation(outputDir);
 
