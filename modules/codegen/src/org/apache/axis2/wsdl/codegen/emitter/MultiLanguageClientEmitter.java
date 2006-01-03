@@ -82,7 +82,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
     private static final String TEST_SERVICE_CLASS_NAME_SUFFIX = "SkeletonTest";
     private static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
-    private static final String SERVICE_XML_OUTPUT_FOLDER_NAME = "service_descriptors.";
+    private static final String SERVICE_XML_OUTPUT_FOLDER_NAME = "resources.";
 
 
     protected CodeGenConfiguration configuration;
@@ -328,8 +328,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * in this case we modify the package name to have make the class a inner class of the stub
      */
     private void updateMapperClassnames(WSDLInterface boundInterface,String fullyQulifiedIncludingClassNamePrefix) {
-
-
         Map classNameMap = mapper.getAllMappedNames();
         Iterator keys = classNameMap.keySet().iterator();
         while (keys.hasNext()) {
@@ -401,7 +399,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     wsdlInterface, axisBinding);
             CallbackHandlerWriter callbackWriter =
                     new CallbackHandlerWriter(
-                            getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
+                            getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                             this.configuration.getOutputLanguage());
             writeClass(interfaceModel, callbackWriter);
         }
@@ -418,7 +416,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             Document classModel = createDOMDocumentForTestCase(binding);
             TestClassWriter callbackWriter =
                     new TestClassWriter(
-                            getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
+                            getOutputDirectory(this.configuration.getOutputLocation(), "test"),
                             this.configuration.getOutputLanguage());
             writeClass(classModel, callbackWriter);
         }
@@ -437,7 +435,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         Document interfaceModel = createDOMDocumentForInterface(axisInterface, axisBinding);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(
-                        getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
+                        getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
         writeClass(interfaceModel, interfaceWriter);
 
@@ -456,7 +454,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         //Note -  One can generate the skeleton using the interface XML
         Document skeletonModel = createDOMDocumentForSkeleton(axisInteface, axisBinding);
         ClassWriter skeletonWriter = new SkeletonWriter(
-                getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
+                getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                 this.configuration.getOutputLanguage());
         writeClass(skeletonModel, skeletonWriter);
 
@@ -497,7 +495,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             Document skeletonModel = createDOMDocumentForServiceXML(
                     axisInterface, false, axisBinding);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(
-                    this.configuration.getOutputLocation(),
+                    getOutputDirectory(this.configuration.getOutputLocation(), "resources"),
                     this.configuration.getOutputLanguage());
             writeClass(skeletonModel, serviceXmlWriter);
         }
@@ -517,7 +515,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 axisBinding, service);
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(
-                        getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
+                        getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
         writeClass(interfaceImplModel, writer);
     }
@@ -528,7 +526,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     binding);
             MessageReceiverWriter writer =
                     new MessageReceiverWriter(
-                            getOutputDirectoryForSourceFiles(this.configuration.getOutputLocation()),
+                            getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                             this.configuration.getOutputLanguage());
             writeClass(classModel, writer);
         }
@@ -760,7 +758,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             //name
             addAttribute(doc,
                     "package",
-                    SERVICE_XML_OUTPUT_FOLDER_NAME + localPart,
+                    "",
                     rootElement);
             addAttribute(doc,
                     "classpackage",
@@ -1462,10 +1460,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * Get the output directory for source files
      * 
      * @param outputDir
-     * @return
+     * @return file
      */
-    protected File getOutputDirectoryForSourceFiles(File outputDir) {
-        outputDir = new File(outputDir, "src");
+    protected File getOutputDirectory(File outputDir, String dir2) {
+        outputDir = new File(outputDir, dir2);
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
