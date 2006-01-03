@@ -241,10 +241,9 @@ public class Time implements java.io.Serializable {
         if (this == obj) return true;
 
         boolean _equals;
-        _equals = true &&
-            ((_value ==null && other._value ==null) ||
-             (_value !=null &&
-              _value.getTime().equals(other._value.getTime())));
+        _equals = ((_value == null && other._value == null) ||
+                (_value != null &&
+                        _value.getTime().equals(other._value.getTime())));
 
         return _equals;
 

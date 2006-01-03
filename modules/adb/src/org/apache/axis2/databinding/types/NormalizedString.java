@@ -48,7 +48,7 @@ public class NormalizedString implements java.io.Serializable {
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
-        if (NormalizedString.isValid(stValue) == false)
+        if (!NormalizedString.isValid(stValue))
             throw new IllegalArgumentException(
 //               Messages.getMessage("badNormalizedString00") +
                " data=[" + stValue + "]");

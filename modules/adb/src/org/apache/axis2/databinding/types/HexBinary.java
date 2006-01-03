@@ -17,11 +17,12 @@ package org.apache.axis2.databinding.types ;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
 /**
  * Custom class for supporting primitive XSD data type hexBinary.
  */
-public class HexBinary implements java.io.Serializable{
+public class HexBinary implements Serializable {
 
     byte[] m_value = null;
 

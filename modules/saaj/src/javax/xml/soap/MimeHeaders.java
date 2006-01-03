@@ -180,7 +180,7 @@ public class MimeHeaders {
 
         boolean flag = false;
 
-        if ((name == null) || name.equals("")) {
+        if ((name == null) || "".equals(name)) {
             throw new IllegalArgumentException("Illegal MimeHeader name");
         }
 
@@ -223,7 +223,7 @@ public class MimeHeaders {
      */
     public void addHeader(String name, String value) {
 
-        if ((name == null) || name.equals("")) {
+        if ((name == null) || "".equals(name)) {
             throw new IllegalArgumentException("Illegal MimeHeader name");
         }
 

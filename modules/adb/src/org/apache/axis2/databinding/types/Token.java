@@ -97,7 +97,7 @@ public class Token extends NormalizedString {
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
-        if (Token.isValid(stValue) == false)
+        if (!Token.isValid(stValue))
             throw new IllegalArgumentException(
                //Messages.getMessage("badToken00") +
                " data=[" + stValue + "]");

@@ -94,8 +94,6 @@ public class AxisOperationFactory implements WSDLConstants {
             abOpdesc = new InOutAxisOperation();
         } else if (MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (MEP_URI_IN_ONLY.equals(mepURI)) {
-            abOpdesc = new InOutAxisOperation();
         } else if (MEP_URI_OUT_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
         } else if (MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {

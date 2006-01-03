@@ -56,7 +56,7 @@ public class NCName extends Name {
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
-        if (NCName.isValid(stValue) == false)
+        if (!NCName.isValid(stValue))
             throw new IllegalArgumentException(
                //Messages.getMessage("badNCNameType00") +
                " data=[" + stValue + "]");
@@ -79,7 +79,7 @@ public class NCName extends Name {
               bValid = XMLChar.isNCNameStart(stValue.charAt(scan));
             else
               bValid = XMLChar.isNCName(stValue.charAt(scan));
-            if (bValid == false)
+            if (!bValid)
               break;
         }
     return bValid;

@@ -65,7 +65,6 @@ public class SOAPHeaderTest extends SOAPHeaderTestCase {
     public void testSOAP11ExamineHeaderBlocks() {
         soap11Header.addHeaderBlock("echoOk1", namespace).setRole(
                 "http://schemas.xmlsoap.org/soap/envelope/actor/ultimateReceiver");
-        ;
         soap11Header.addHeaderBlock("echoOk2", namespace).setRole(
                 "http://schemas.xmlsoap.org/soap/envelope/actor/next");
         Iterator iterator = soap11Header.examineHeaderBlocks(

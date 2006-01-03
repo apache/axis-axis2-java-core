@@ -86,10 +86,9 @@ public class UnsignedLong extends java.lang.Number {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true &&
-                ((lValue == null && other.lValue == null) ||
+        _equals = ((lValue == null && other.lValue == null) ||
                 (lValue != null &&
-                lValue.equals(other.lValue)));
+                        lValue.equals(other.lValue)));
         __equalsCalc = null;
         return _equals;
     }

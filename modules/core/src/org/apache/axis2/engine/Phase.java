@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -401,19 +402,22 @@ public class Phase implements Handler {
      *
      */
     private int getBeforeAfter(Handler handler) throws PhaseException {
-        if ((!handler.getHandlerDesc().getRules().getBefore().equals(""))
-                && (!handler.getHandlerDesc().getRules().getAfter().equals(""))) {
-            if (handler.getHandlerDesc().getRules().getBefore().equals(
-                    handler.getHandlerDesc().getRules().getAfter())) {
+        PhaseRule rules = handler.getHandlerDesc().getRules();
+        String beforeRules = rules.getBefore();
+        String afterRules = rules.getAfter();
+        if ((!"".equals(beforeRules))
+                && (!"".equals(afterRules))) {
+            if (beforeRules.equals(
+                    afterRules)) {
                 throw new PhaseException(
                         "Both before and after cannot be the same for this handler"
                                 + handler.getName());
             }
 
             return BOTH_BEFORE_AFTER;
-        } else if (!handler.getHandlerDesc().getRules().getBefore().equals("")) {
+        } else if (!"".equals(beforeRules)) {
             return BEFORE;
-        } else if (!handler.getHandlerDesc().getRules().getAfter().equals("")) {
+        } else if (!"".equals(afterRules)) {
             return AFTER;
         } else {
             return ANYWHERE;

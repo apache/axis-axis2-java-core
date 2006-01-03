@@ -57,7 +57,6 @@ public class WOMBuilderTest extends AbstractTestCase {
                 wsdl4jDefinition.getServices().size());
         assertEquals(womDescription.getWsdlInterfaces().size(),
                 wsdl4jDefinition.getPortTypes().size());
-        ;
         assertEquals(womDescription.getServices().size(),
                 wsdl4jDefinition.getServices().size());
         assertEquals(womDescription.getBindings().size(),

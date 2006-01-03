@@ -100,7 +100,7 @@ public class MIMEHelper {
                       String fileThreshold) throws OMException {
         this.attachmentRepoDir = attachmentRepoDir;
         this.fileCacheEnable = fileCacheEnable;
-        if (fileThreshold != null && (!fileThreshold.equals(""))) {
+        if (fileThreshold != null && (!"".equals(fileThreshold))) {
             this.fileStorageThreshold = Integer.parseInt(fileThreshold);
         } else {
             this.fileStorageThreshold = 1;
@@ -227,7 +227,7 @@ public class MIMEHelper {
                         .length() - 1));
         }
         // Strips off the "cid" part from content-id
-        if (rootContentID.substring(0, 3).equalsIgnoreCase("cid")) {
+        if ("cid".equalsIgnoreCase(rootContentID.substring(0, 3))) {
             rootContentID = rootContentID.substring(4);
         }
         return rootContentID;

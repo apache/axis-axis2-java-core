@@ -70,18 +70,18 @@ public class XMLComparatorInterop {
 
         log.info("Comparing Element Names .......");
         status = compare(elementOne.getLocalName(),elementTwo.getLocalName());
-        if (status == false)
+        if (!status)
             return false;
 
         log.info("Comparing Namespaces .........");
         status = compare(elementOne.getNamespace(),
                 elementTwo.getNamespace());
-        if (status == false)
+        if (!status)
             return false;
 
         log.info("Comparing attributes .....");
         status = compareAllAttributes(elementOne, elementTwo);
-        if (status == false)
+        if (!status)
             return false;
 
         log.info("Comparing texts .....");
@@ -96,7 +96,7 @@ public class XMLComparatorInterop {
         status = compare(
                 elementOne.getText().trim(),
                 elementTwo.getText().trim());
-        if (status == false)
+        if (!status)
             return false;
 
         log.info("Comparing Children ......");

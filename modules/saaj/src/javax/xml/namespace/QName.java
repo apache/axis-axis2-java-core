@@ -178,7 +178,7 @@ public class QName implements Serializable {
      */
     public static QName valueOf(String s) {
 
-        if ((s == null) || s.equals("")) {
+        if ((s == null) || "".equals(s)) {
             throw new IllegalArgumentException("invalid QName literal");
         }
 

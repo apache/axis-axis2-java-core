@@ -55,7 +55,7 @@ public class Name extends Token {
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
-        if (Name.isValid(stValue) == false)
+        if (!Name.isValid(stValue))
             throw new IllegalArgumentException(
                //Messages.getMessage("badNameType00") +
                " data=[" + stValue + "]");
@@ -79,7 +79,7 @@ public class Name extends Token {
           }else{
              bValid = XMLChar.isName(stValue.charAt(scan));
           }
-          if (bValid == false)
+          if (!bValid)
               break;
         }
 

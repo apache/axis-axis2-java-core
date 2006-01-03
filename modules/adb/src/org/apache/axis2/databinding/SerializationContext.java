@@ -203,7 +203,7 @@ public class SerializationContext {
             if (prefix != null) {
                 // Got a prefix
                 return prefix + ":" + qname.getLocalPart();
-            } else if (prefix.equals("")) {
+            } else if ("".equals(prefix)) {
                 if (doDefault) {
                     // Default namespace, no prefix
                     return qname.getLocalPart();

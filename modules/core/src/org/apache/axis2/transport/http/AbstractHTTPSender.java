@@ -336,17 +336,7 @@ public abstract class AbstractHTTPSender {
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) {
-                    if (chunked) {
-                        this.handleOMOutput(out, doingMTOM);
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        out.write(bytes);
-                    }
-                } else {
+                {
                     if (chunked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
@@ -370,17 +360,7 @@ public abstract class AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {
-                    if (chunked) {
-                        return -1;
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        return bytes.length;
-                    }
-                } else {
+                {
                     if (chunked) {
                         return -1;
                     } else {

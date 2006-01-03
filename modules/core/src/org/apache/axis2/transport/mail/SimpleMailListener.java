@@ -131,7 +131,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             if (this.password == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull", "Password"));
             }
-            ;
         }
     }
 

@@ -162,7 +162,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                     booleanValue()) {
              options.setWrapClasses(true);
             }else{
-              options.setWrapClasses(true);
+              options.setWrapClasses(false);
             }
         }
 

@@ -61,7 +61,7 @@ public class NMToken extends Token {
         int scan;
 
         for (scan=0; scan < stValue.length(); scan++) {
-          if (XMLChar.isName(stValue.charAt(scan)) == false)
+          if (!XMLChar.isName(stValue.charAt(scan)))
             return false;
         }
 

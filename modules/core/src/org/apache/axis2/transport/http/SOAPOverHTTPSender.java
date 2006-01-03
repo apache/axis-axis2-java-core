@@ -175,26 +175,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) {
-                    if (chunked) {
-                        this.handleOMOutput(out, doingMTOM);
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        out.write(bytes);
-                    }
+                if (chunked) {
+                    this.handleOMOutput(out, doingMTOM);
                 } else {
-                    if (chunked) {
-                        this.handleOMOutput(out, doingMTOM);
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        out.write(bytes);
+                    if (bytes == null) {
+                        bytes = writeBytes();
                     }
+
+                    out.write(bytes);
                 }
 
                 out.flush();
@@ -209,26 +197,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {
-                    if (chunked) {
-                        return -1;
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        return bytes.length;
-                    }
+                if (chunked) {
+                    return -1;
                 } else {
-                    if (chunked) {
-                        return -1;
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        return bytes.length;
+                    if (bytes == null) {
+                        bytes = writeBytes();
                     }
+
+                    return bytes.length;
                 }
             } catch (AxisFault e) {
                 return -1;

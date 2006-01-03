@@ -46,7 +46,7 @@ public class UnsignedShort extends UnsignedInt {
      * @param sValue value
      */
     public void setValue(long sValue) throws NumberFormatException {
-        if (UnsignedShort.isValid(sValue) == false)
+        if (!UnsignedShort.isValid(sValue))
             throw new NumberFormatException(
                // Messages.getMessage("badUnsignedShort00") +
                     String.valueOf(sValue) + "]");

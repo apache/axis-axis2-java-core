@@ -99,7 +99,7 @@ class SlowLinkSimulator {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                ;    // ignore the exception
+                // ignore the exception
             }
         }
     }

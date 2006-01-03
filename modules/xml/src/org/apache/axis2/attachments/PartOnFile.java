@@ -111,7 +111,6 @@ public class PartOnFile implements Part {
 
     public String getContentID() {
         String cID = (String) headers.get("Content-ID");
-        ;
         if (cID == null) {
             cID = (String) headers.get("Content-Id");
             if (cID == null) {

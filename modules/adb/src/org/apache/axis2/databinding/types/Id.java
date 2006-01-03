@@ -51,7 +51,7 @@ public class Id extends NCName {
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
-        if (Id.isValid(stValue) == false)
+        if (!Id.isValid(stValue))
             throw new IllegalArgumentException(
               // Messages.getMessage("badIdType00") +
                " data=[" + stValue + "]");

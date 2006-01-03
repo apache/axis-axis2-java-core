@@ -271,7 +271,8 @@ public class WSDoAllSender extends WSDoAllHandler {
             if(docBuilderFactory != null && docBuilderFactory.equals(DocumentBuilderFactoryImpl.class.getName())) {
 				if(originalDOcumentBuilderFactory != null) {
 					System.getProperties().remove(docBuilderFactory);
-				} else {
+					System.setProperty(DocumentBuilderFactory.class.getName(), originalDOcumentBuilderFactory);
+                } else {
 					System.getProperties().remove(docBuilderFactory);
 				}
             }

@@ -109,7 +109,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public DeploymentEngine(String repositoryName, String xmlFile)
             throws DeploymentException {
-        if ((repositoryName == null) || repositoryName.trim().equals("")) {
+        if ((repositoryName == null) || "".equals(repositoryName.trim())) {
             throw new DeploymentException(
                     Messages.getMessage(DeploymentErrorMsgs.REPOSITORY_CANNOT_BE_NULL));
         }
@@ -552,7 +552,7 @@ public class DeploymentEngine implements DeploymentConstants {
         boolean isRepositoryExist = false;
         RepositoryListenerImpl repoListener = null;
 
-        if (!((clientHome == null) || clientHome.trim().equals(""))) {
+        if (!((clientHome == null) || "".equals(clientHome.trim()))) {
             checkClientHome(clientHome);
             isRepositoryExist = true;
 

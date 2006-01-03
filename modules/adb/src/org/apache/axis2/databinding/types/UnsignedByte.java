@@ -48,7 +48,7 @@ public class UnsignedByte extends UnsignedShort {
      * @param sValue the number to set
      */
     public void setValue(long sValue) throws NumberFormatException {
-        if (UnsignedByte.isValid(sValue) == false)
+        if (!UnsignedByte.isValid(sValue))
             throw new NumberFormatException(
                    // Messages.getMessage("badUnsignedByte00") +
                     String.valueOf(sValue) + "]");

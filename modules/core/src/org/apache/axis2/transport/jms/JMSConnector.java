@@ -110,7 +110,6 @@ public abstract class JMSConnector {
                     } catch (InterruptedException ie) {
                     }
                 }
-                ;
             }
         }
 
