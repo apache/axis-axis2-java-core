@@ -74,10 +74,6 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                         operationName);
         UtilsTCPServer.deployService(service);
 
-        AxisService service =
-                Utils.createSimpleServiceforClient(serviceName,
-                        org.apache.axis2.engine.Echo.class.getName(),
-                        operationName);
         configContext = UtilServer.createClientConfigurationContext();
     }
 
@@ -120,7 +116,12 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                 }
             };
 
-            sender = new ServiceClient(configContext, service);
+            AxisService serviceClient =
+                    Utils.createSimpleServiceforClient(serviceName,
+                            org.apache.axis2.engine.Echo.class.getName(),
+                            operationName);
+
+            sender = new ServiceClient(configContext, serviceClient);
             sender.setOptions(options);
 
             sender.sendReceiveNonblocking(operationName, method, callback);
