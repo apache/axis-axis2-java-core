@@ -89,18 +89,12 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
         method.addChild(value);
         ServiceClient sender = null;
 
-//        Call call =
-//                new Call(
-//                        serviceContext);
-//        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-
         try {
             Options options = new Options();
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
             options.setAction(operationName.getLocalPart());
-//            call.setClientOptions(options);
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -119,13 +113,9 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             sender = new ServiceClient(configcontext, service);
             sender.engageModule(new QName("addressing"));
             sender.setOptions(options);
-            options.setTo(targetEPR);
 
             sender.sendReceiveNonBlocking(operationName, method, callback);
 
-//            call.invokeNonBlocking(operationName.getLocalPart(),
-//                    method,
-//                    callback);
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -136,7 +126,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
                 }
             }
             log.info("send the reqest");
-            sender.finalizeInvoke();
         } finally {
             sender.finalizeInvoke();
         }

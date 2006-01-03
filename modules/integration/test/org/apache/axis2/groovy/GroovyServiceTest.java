@@ -90,8 +90,6 @@ public class GroovyServiceTest extends TestCase {
 
 //        call.setClientOptions(options);
 
-//        OMElement result = call.invokeBlocking(operationName.getLocalPart(),
-//                payload);
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =

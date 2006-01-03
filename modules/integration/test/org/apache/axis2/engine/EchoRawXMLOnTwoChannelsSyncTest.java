@@ -87,7 +87,6 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         sender.setOptions(options);
 
         OMElement result = sender.sendReceive(operationName, method);
-        System.out.println("result = " + result);
 
         TestingUtils.campareWithCreatedOMElement(result);
         sender.finalizeInvoke();

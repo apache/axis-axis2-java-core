@@ -72,11 +72,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
     public void testEchoXMLASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
-//        Call call = new Call(
-//                Constants.TESTING_PATH + "commons-http-enabledRepository");
-
         Options options = new Options();
-//        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
@@ -93,16 +89,11 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
             }
         };
 
-//        call.invokeNonBlocking(operationName.getLocalPart(),
-//                payload,
-//                callback);
-
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         sender.sendReceiveNonblocking(payload, callback);
 
@@ -124,25 +115,15 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
-
-//        Call call = new Call(
-//                Constants.TESTING_PATH + "commons-http-enabledRepository");
-
         Options options = new Options();
-//        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-//        OMElement result =
-//                call.invokeBlocking(operationName.getLocalPart(),
-//                        payload);
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(payload);
 

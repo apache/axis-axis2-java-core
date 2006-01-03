@@ -114,6 +114,7 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
             }
         }
         log.info("send the request");
+        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {
@@ -128,11 +129,11 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        sender.finalizeInvoke();
     }
 
     public void testCorrectSOAPEnvelope() throws Exception {
@@ -148,11 +149,11 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        sender.finalizeInvoke();
     }
 
 

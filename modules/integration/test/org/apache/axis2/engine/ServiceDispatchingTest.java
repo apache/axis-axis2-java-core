@@ -62,8 +62,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
     public void testDispatchWithURLOnly() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
-        options.setTo(
-                new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
 
@@ -77,6 +75,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        sender.finalizeInvoke();
     }
 
     public void testDispatchWithURLAndSOAPAction() throws Exception {
@@ -97,10 +96,10 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(payload);
         TestingUtils.campareWithCreatedOMElement(result);
+        sender.finalizeInvoke();
     }
 
     public void testDispatchWithSOAPBody() throws Exception {
@@ -114,8 +113,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
                 fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
         Options options = new Options();
-        options.setTo(
-                new EndpointReference("http://127.0.0.1:5555/axis/services/"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
@@ -127,5 +124,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        sender.finalizeInvoke();
     }
 }

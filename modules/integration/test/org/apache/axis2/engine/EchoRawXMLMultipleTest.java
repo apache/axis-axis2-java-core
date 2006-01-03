@@ -116,10 +116,13 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                             "Server was shutdown as the async response take too long to complete");
                 }
             }
+            sender.finalizeInvoke();
+
         }
 
 
         log.info("send the request");
+
     }
 
     public void testEchoXMLMultipleDuelASync() throws Exception {
@@ -182,7 +185,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                     factory.buildConfigurationContext("target/test-resources/integrationRepo");
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
-            options.setTo(targetEPR);
 
             OMElement result = sender.sendReceive(payload);
 
@@ -195,19 +197,12 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
     public void testEchoXMLMultipleDuelSync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
         for (int i = 0; i < 5; i++) {
-//            org.apache.axis2.client.Call call =
-//                    new org.apache.axis2.client.Call(
-//                            "target/test-resources/integrationRepo");
 
             Options options = new Options();
-//            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
-//            OMElement result =
-//                    call.invokeBlocking(operationName.getLocalPart(),
-//                            payload);
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
                     factory.buildConfigurationContext("target/test-resources/integrationRepo");
@@ -219,7 +214,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
             TestingUtils.campareWithCreatedOMElement(result);
             sender.finalizeInvoke();
-//            call.close();
         }
     }
 

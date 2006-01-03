@@ -92,7 +92,6 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
                     factory.buildConfigurationContext(Constants.TESTING_PATH + "chunking-enabledRepository");
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
-            options.setTo(targetEPR);
 
             OMElement resultElem = sender.sendReceive(payload);
 

@@ -22,7 +22,12 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -91,7 +96,6 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     public void testEchoXMLSync() throws Exception {
         OMElement payload = createEnvelope();
 
-//        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");

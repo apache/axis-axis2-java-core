@@ -75,7 +75,6 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-//        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
@@ -83,10 +82,8 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
         Options options = new Options();
         sender.setOptions(options);
-//        sender.setClientOptions(options);
         options.setTo(targetEPR);
         sender.fireAndForget(payload);
-//        sender.send(operationName.getLocalPart(), payload);
         int index = 0;
         while (envelope == null) {
             Thread.sleep(4000);

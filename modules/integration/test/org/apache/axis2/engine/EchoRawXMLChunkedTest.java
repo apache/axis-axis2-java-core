@@ -102,15 +102,8 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         Options clientOptions = new Options();
-//        Call call = new Call(CLIENT_HOME);
-//        call.setClientOptions(clientOptions);
-
-//        clientOptions.setTo(targetEPR);
         clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-//        OMElement result =
-//                call.invokeBlocking(operationName.getLocalPart(),
-//                        payload);
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(CLIENT_HOME);
@@ -122,6 +115,6 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 
 
         TestingUtils.campareWithCreatedOMElement(result);
-//        call.close();
+        sender.finalizeInvoke();
     }
 }

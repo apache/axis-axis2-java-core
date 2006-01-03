@@ -127,7 +127,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.engageModule(new QName("addressing"));
         sender.setOptions(options);
-        options.setTo(targetEPR);
         sender.sendReceiveNonBlocking(operationName, payload, callback);
 
 
@@ -152,7 +151,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setSoapAction("EchoXMLService/echoOMElement");
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(operationName, payload);
 
@@ -182,7 +180,6 @@ public class JMSEchoRawXMLTest extends TestCase {
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(operationName, payloadElement);
 
@@ -231,7 +228,6 @@ public class JMSEchoRawXMLTest extends TestCase {
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(operationName, method);
 
