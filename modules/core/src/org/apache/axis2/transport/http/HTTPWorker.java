@@ -241,8 +241,8 @@ public class HTTPWorker implements HttpRequestHandler {
     private void transportOutConfiguration(ConfigurationContext configContext,
                                            SimpleResponse response) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
-        HashMap trasportOuts = axisConf.getTransportsOut();
-        Iterator values = trasportOuts.values().iterator();
+        HashMap transportOuts = axisConf.getTransportsOut();
+        Iterator values = transportOuts.values().iterator();
 
         while (values.hasNext()) {
             TransportOutDescription transportOut = (TransportOutDescription) values.next();

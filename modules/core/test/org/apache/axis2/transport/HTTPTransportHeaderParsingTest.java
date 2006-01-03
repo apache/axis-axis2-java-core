@@ -27,9 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 
-public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
+public class HTTPTransportHeaderParsingTest extends AbstractTestCase {
 
-    public HTTPTrasportHeaderParsingTest(String testName) {
+    public HTTPTransportHeaderParsingTest(String testName) {
         super(testName);
     }
 

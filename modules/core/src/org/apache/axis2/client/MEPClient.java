@@ -263,10 +263,10 @@ public abstract class MEPClient {
 
             // we have a deprecated method for user to set the transport
             // protocol directly. Lets support that also
-            String senderTrasportProtocol = clientOptions.getSenderTransportProtocol();
+            String senderTransportProtocol = clientOptions.getSenderTransportProtocol();
 
             if (axisConfig != null) {
-                if ((senderTrasportProtocol == null) || "".equals(senderTrasportProtocol)) {
+                if ((senderTransportProtocol == null) || "".equals(senderTransportProtocol)) {
 
                     // by this time we have passed all the information we
                     // collected via Options to the message context
@@ -276,13 +276,13 @@ public abstract class MEPClient {
                     // if he has not set the transport information, we gonna
                     // infer that from the to EPR
                     clientOptions.setSenderTransport(
-                            axisConfig.getTransportOut(new QName(senderTrasportProtocol)));
+                            axisConfig.getTransportOut(new QName(senderTransportProtocol)));
                 }
             }
 
             if (this.clientOptions.getSenderTransport() == null) {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
-                        senderTrasportProtocol));
+                        senderTransportProtocol));
             }
         }
     }
