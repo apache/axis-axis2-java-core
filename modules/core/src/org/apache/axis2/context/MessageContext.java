@@ -485,8 +485,14 @@ public class MessageContext extends AbstractContext {
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
+        // search in my own properties bag
+        Object obj = super.getProperty(name);
+        if (obj != null) {
+            return obj;
+        }
+
         // search in my own options
-        Object obj = options.getProperty(name);
+        obj = options.getProperty(name);
         if (obj != null) {
             return obj;
         }
