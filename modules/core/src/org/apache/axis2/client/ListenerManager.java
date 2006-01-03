@@ -51,7 +51,7 @@ public class ListenerManager {
 
         // If this config context is in the map, that means we already have a listener for that
         // config context
-        HashMap listeners = (HashMap) configurationContextMap.get(configurationContext);
+        Map listeners = (HashMap) configurationContextMap.get(configurationContext);
 
         if (listeners == null) {
             listeners = new HashMap();

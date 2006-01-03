@@ -423,7 +423,7 @@ public abstract class JMSConnector {
             m_isActive = true;
         }
 
-        private final void internalOnConnect() throws Exception {
+        private void internalOnConnect() throws Exception {
             onConnect();
 
             synchronized (m_lifecycleLock) {
@@ -436,7 +436,7 @@ public abstract class JMSConnector {
             }
         }
 
-        private final void internalOnShutdown() {
+        private void internalOnShutdown() {
             stopConnection();
             onShutdown();
 

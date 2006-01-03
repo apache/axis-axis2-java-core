@@ -147,7 +147,7 @@ public class Messages {
         return messageBundle;
     }
 
-    private static final String getPackage(String name) {
+    private static String getPackage(String name) {
         return name.substring(0, name.lastIndexOf('.')).intern();
     }
 }
