@@ -57,61 +57,71 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     protected Log log = LogFactory.getLog(getClass().getName());
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
-    private boolean  chunked = false;
+    private boolean chunked = false;
 
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     public CommonsHTTPTransportSender() {
-    }    
+    }
 
     public void cleanUp(MessageContext msgContext) throws AxisFault {
-        HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTP_METHOD);
+        HttpMethod httpMethod =
+                (HttpMethod) msgContext.getProperty(HTTP_METHOD);
 
         if (httpMethod != null) {
             httpMethod.releaseConnection();
         }
     }
 
-    public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
+    public void init(ConfigurationContext confContext,
+                     TransportOutDescription transportOut)
             throws AxisFault {
 
         // <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter> or
         // <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter> is
         // checked
-        Parameter version = transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
+        Parameter version =
+                transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
 
         if (version != null) {
             if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
                 Parameter transferEncoding =
-                        transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                        transportOut.getParameter(
+                                HTTPConstants.HEADER_TRANSFER_ENCODING);
 
                 if ((transferEncoding != null)
-                        && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
-                        transferEncoding.getValue())) {
-                     chunked = true;
+                        &&
+                        HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
+                                transferEncoding.getValue())) {
+                    chunked = true;
                 }
-            } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
+            } else
+            if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else {
-                throw new AxisFault("Parameter " + HTTPConstants.PROTOCOL_VERSION
-                        + " Can have values only HTTP/1.0 or HTTP/1.1");
+                throw new AxisFault(
+                        "Parameter " + HTTPConstants.PROTOCOL_VERSION
+                                + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
 
         // Get the timeout values from the configuration
         try {
-            Parameter tempSoTimeoutParam = transportOut.getParameter(HTTPConstants.SO_TIMEOUT);
+            Parameter tempSoTimeoutParam =
+                    transportOut.getParameter(HTTPConstants.SO_TIMEOUT);
             Parameter tempConnTimeoutParam =
                     transportOut.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
 
             if (tempSoTimeoutParam != null) {
-                soTimeout = Integer.parseInt((String) tempSoTimeoutParam.getValue());
+                soTimeout = Integer.parseInt(
+                        (String) tempSoTimeoutParam.getValue());
             }
 
             if (tempConnTimeoutParam != null) {
-                connectionTimeout = Integer.parseInt((String) tempConnTimeoutParam.getValue());
+                connectionTimeout = Integer.parseInt(
+                        (String) tempConnTimeoutParam.getValue());
             }
         } catch (NumberFormatException nfe) {
 
@@ -120,12 +130,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
-   
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         try {
             OMOutputFormat format = new OMOutputFormat();
             String charSetEnc =
-                    (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                    (String) msgContext
+                            .getProperty(MessageContext.CHARACTER_SET_ENCODING);
 
             if (charSetEnc != null) {
                 format.setCharSetEncoding(charSetEnc);
@@ -133,7 +144,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 OperationContext opctx = msgContext.getOperationContext();
 
                 if (opctx != null) {
-                    charSetEnc = (String) opctx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                    charSetEnc = (String) opctx
+                            .getProperty(MessageContext.CHARACTER_SET_ENCODING);
                 }
             }
 
@@ -154,14 +166,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             // that now.
             EndpointReference epr = null;
             String transportURL =
-                    (String) msgContext.getProperty(MessageContextConstants.TRANSPORT_URL);
+                    (String) msgContext
+                            .getProperty(MessageContextConstants.TRANSPORT_URL);
 
             if (transportURL != null) {
                 epr = new EndpointReference(transportURL);
             } else if ((msgContext.getTo() != null)
                     && !AddressingConstants.Submission.WSA_ANONYMOUS_URL
-                    .equals(msgContext.getTo().getAddress()) && !AddressingConstants.Final
-                    .WSA_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
+                    .equals(msgContext.getTo().getAddress()) &&
+                    !AddressingConstants.Final
+                            .WSA_ANONYMOUS_URL
+                            .equals(msgContext.getTo().getAddress())) {
                 epr = msgContext.getTo();
             }
 
@@ -184,14 +199,16 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             if (epr != null) {
-                writeMessageWithCommons(msgContext, epr, dataOut,format);
+                writeMessageWithCommons(msgContext, epr, dataOut, format);
             } else {
                 OutputStream out =
-                        (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+                        (OutputStream) msgContext
+                                .getProperty(MessageContext.TRANSPORT_OUT);
 
                 if (msgContext.isServerSide()) {
                     OutTransportInfo transportInfo =
-                            (OutTransportInfo) msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);
+                            (OutTransportInfo) msgContext
+                                    .getProperty(Constants.OUT_TRANSPORT_INFO);
 
                     if (transportInfo != null) {
                         boolean soap11 = msgContext.isSOAP11();
@@ -204,7 +221,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
                         transportInfo.setContentType(encoding);
                     } else {
-                        throw new AxisFault(Constants.OUT_TRANSPORT_INFO + " has not been set");
+                        throw new AxisFault(Constants.OUT_TRANSPORT_INFO +
+                                " has not been set");
                     }
                 }
 
@@ -213,8 +231,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             if (msgContext.getOperationContext() != null) {
-                msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
-                        Constants.VALUE_TRUE);
+                msgContext.getOperationContext()
+                        .setProperty(Constants.RESPONSE_WRITTEN,
+                                Constants.VALUE_TRUE);
             }
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
@@ -225,14 +244,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
-    public void writeMessageWithCommons(MessageContext msgContext, EndpointReference toURL,
-                                        OMElement dataout,OMOutputFormat format)
+    public void writeMessageWithCommons(MessageContext msgContext,
+                                        EndpointReference toURL,
+                                        OMElement dataout,
+                                        OMOutputFormat format)
             throws AxisFault {
         try {
             URL url = new URL(toURL.getAddress());
             String soapActionString = msgContext.getSoapAction();
 
-            if ((soapActionString == null) || (soapActionString.length() == 0)) {
+            if ((soapActionString == null) || (soapActionString.length() == 0))
+            {
                 soapActionString = msgContext.getWSAAction();
             }
 
@@ -248,6 +270,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             } else {
                 sender = new RESTSender();
             }
+            if (msgContext.getProperty(MessageContextConstants.CHUNKED) != null)
+            {
+                chunked = Constants.VALUE_TRUE.equals(msgContext.getProperty(
+                        MessageContextConstants.CHUNKED));
+            }
 
             sender.setChunked(chunked);
             sender.setFormat(format);
@@ -262,6 +289,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
-    public void writeMessageWithToOutPutStream(MessageContext msgContext, OutputStream out) {
+    public void writeMessageWithToOutPutStream(MessageContext msgContext,
+                                               OutputStream out) {
     }
 }
