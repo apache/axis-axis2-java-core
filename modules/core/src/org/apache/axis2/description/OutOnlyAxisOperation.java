@@ -8,12 +8,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.MessageReceiver;
 import org.apache.wsdl.WSDLConstants;
 
 public class OutOnlyAxisOperation extends AxisOperation {
@@ -217,11 +217,8 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * notification that a message has been received by it. Exactly when its
      * executed and under what conditions is a function of the specific MEP
      * client.
-     *
-     * @param mr
-     *            the message receiver
      */
-    public void setMessageReceiver(MessageReceiver mr) {
+    public void setCallback(Callback callback) {
         throw new UnsupportedOperationException(
                 "This feature is not supported by this MEP");
     }
@@ -248,8 +245,8 @@ class OutOnlyAxisOperationClient implements OperationClient {
         }
         ConfigurationContext cc = sc.getConfigurationContext();
 
-        // copy interesting info from options to message context.
-        ClientUtils.copyInfoFromOptionsToMessageContext(options, mc);
+        // set options on the message context
+        mc.setOptions(options);
 
         // if the transport to use for sending is not specified, try to find it
         // from the URL

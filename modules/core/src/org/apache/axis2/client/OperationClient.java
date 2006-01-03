@@ -1,8 +1,8 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.MessageReceiver;
 
 /**
  * An operation client is the way an advanced user interacts with Axis2. Actual
@@ -60,16 +60,17 @@ public interface OperationClient {
             throws AxisFault;
 
     /**
-     * Set the message receiver to be executed when a message comes into the MEP
-     * and the operation client is executed. This is the way the operation
-     * client provides notification that a message has been received by it.
-     * Exactly when its executed and under what conditions is a function of the
-     * specific operation client.
+     * Set the callback to be executed when a message comes into the MEP and the
+     * operation client is executed. This is the way the operation client
+     * provides notification that a message has been received by it. Exactly
+     * when its executed and under what conditions is a function of the specific
+     * operation client.
      * 
-     * @param mr
-     *            the message receiver
+     * @param callback
+     *            the callback to be used when the client decides its time to
+     *            use it
      */
-    public void setMessageReceiver(MessageReceiver mr);
+    public void setCallback(Callback callback);
 
     /**
      * Execute the MEP. What this does depends on the specific operation client.

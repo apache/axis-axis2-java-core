@@ -23,7 +23,7 @@ public abstract class Callback {
      *
      * @param e
      */
-    public abstract void reportError(Exception e);
+    public abstract void onError(Exception e);
 
     /**
      * Returns true if the asynchronous operation has completed, false otherwise. Typically this is

@@ -430,11 +430,11 @@ public class InOutMEPClient extends MEPClient {
                     Exception ex = body.getFault().getException();
 
                     if (ex != null) {
-                        callback.reportError(ex);
+                        callback.onError(ex);
                     } else {
 
                         // todo this needs to be fixed
-                        callback.reportError(new Exception(body.getFault().getReason().getText()));
+                        callback.onError(new Exception(body.getFault().getReason().getText()));
                     }
                 } else {
                     AsyncResult asyncResult = new AsyncResult(response);
@@ -444,7 +444,7 @@ public class InOutMEPClient extends MEPClient {
 
                 callback.setComplete(true);
             } catch (Exception e) {
-                callback.reportError(e);
+                callback.onError(e);
             }
         }
     }
@@ -461,7 +461,7 @@ public class InOutMEPClient extends MEPClient {
             this.envelope = result.getResponseEnvelope();
         }
 
-        public void reportError(Exception e) {
+        public void onError(Exception e) {
             error = e;
         }
     }
