@@ -23,7 +23,7 @@ package org.apache.axis2.databinding.types;
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#normalizedString">XML Schema Part 2: Datatypes 3.3.1</a>
  */
-public class NormalizedString extends Object implements java.io.Serializable {
+public class NormalizedString implements java.io.Serializable {
 
     String m_value = null;   // JAX-RPC maps xsd:string to java.lang.String
 

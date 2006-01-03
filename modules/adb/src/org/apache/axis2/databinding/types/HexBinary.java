@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Custom class for supporting primitive XSD data type hexBinary.
  */
-public class HexBinary extends Object implements java.io.Serializable{
+public class HexBinary implements java.io.Serializable{
 
     byte[] m_value = null;
 
