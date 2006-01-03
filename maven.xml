@@ -499,16 +499,18 @@
             use="true"
             windowtitle="Axis2 API">
             <ant:sourcepath>
+                <ant:pathelement location="modules/adb/src"/> 
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/codegen/src"/>
                 <ant:pathelement location="modules/common/src"/>
                 <ant:pathelement location="modules/core/src"/>
+                <ant:pathelement location="modules/doom/src"/>
+                <ant:pathelement location="modules/jaxws/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
                 <ant:pathelement location="modules/security/src"/>
                 <ant:pathelement location="modules/tool/src"/>
                 <ant:pathelement location="modules/wsdl/src"/>
                 <ant:pathelement location="modules/xml/src"/>
-                <ant:pathelement location="modules/adb/src"/> 
             </ant:sourcepath>
             <ant:classpath>
               <ant:fileset dir="target/lib">
