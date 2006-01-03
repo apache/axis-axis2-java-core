@@ -54,7 +54,7 @@ public class SimpleQueueEnqueueCallbackHandler extends Callback {
         getResults(body);
     }
 
-    public void reportError(Exception e) {
+    public void onError(Exception e) {
 
     }
 

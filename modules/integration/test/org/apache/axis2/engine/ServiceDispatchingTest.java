@@ -70,7 +70,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 
@@ -95,7 +95,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 
@@ -120,7 +120,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 

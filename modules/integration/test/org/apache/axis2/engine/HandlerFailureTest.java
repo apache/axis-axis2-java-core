@@ -163,7 +163,7 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
                     factory.buildConfigurationContext("target/test-resources/integrationRepo");
-            ServiceClient sender = new ServiceClient(configContext);
+            ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 
             OMElement result = sender.sendReceive(method);

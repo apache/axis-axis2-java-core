@@ -4,8 +4,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -32,16 +32,12 @@ import java.net.URL;
 
 public class RPCServiceClient extends ServiceClient {
 
-    public RPCServiceClient(ConfigurationContext configContext) throws AxisFault {
-        super(configContext);
+    public RPCServiceClient(ConfigurationContext configContext, AxisService service) throws AxisFault {
+        super(configContext, service);
     }
 
     public RPCServiceClient() throws AxisFault {
         super();
-    }
-
-    public RPCServiceClient(ServiceContext serviceContext) {
-        super(serviceContext);
     }
 
     public RPCServiceClient(ConfigurationContext configContext,

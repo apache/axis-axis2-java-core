@@ -28,6 +28,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.HostConfiguration;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,13 +45,13 @@ public class AxisConfiguration implements ParameterInclude {
     /**
      * Field modules
      */
-    private final HashMap defaultModules = new HashMap();
-
+//    private final HashMap defaultModules = new HashMap();
+//
     //to store all the availble modules (including version)
     private final HashMap allModules = new HashMap();
 
     //to store mapping between default version to module name
-//    private final HashMap
+    private final HashMap nameToverionMap = new HashMap();
 
     private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
@@ -141,7 +142,7 @@ public class AxisConfiguration implements ParameterInclude {
      */
     public void addModule(ModuleDescription module) throws AxisFault {
         module.setParent(this);
-        defaultModules.put(module.getName(), module);
+        allModules.put(module.getName(), module);
     }
 
     /**
@@ -212,9 +213,8 @@ public class AxisConfiguration implements ParameterInclude {
         Iterator enModule = engagedModules.iterator();
 
         while (enModule.hasNext()) {
-            QName moduleDescription = (QName) enModule.next();
-
-            axisServiceGroup.engageModuleToGroup(moduleDescription);
+            QName moduleName = (QName) enModule.next();
+            axisServiceGroup.engageModule(getModule(moduleName));
         }
 
         serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
@@ -280,47 +280,89 @@ public class AxisConfiguration implements ParameterInclude {
         this.paramInclude.deserializeParameters(parameters);
     }
 
+    /**
+     * This will engage the default module version corresponding to given module name , or if the module
+     * name contains version numbre init then it will engage the corret module ,therefore both of the
+     * following two cases are valid
+     * 1. engageModule("addressing");
+     * 2. engageModule("addressing-1.23");
+     *
+     * @param moduleref
+     * @throws AxisFault
+     */
     public void engageModule(QName moduleref) throws AxisFault {
         ModuleDescription module = getModule(moduleref);
-        boolean isNewmodule = false;
-
         if (module == null) {
-            File file =
-                    new ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart(),
-                            getRepository());
+            // there is no module found with the given name , so better check for dafult module version
+            String moduleName = moduleref.getLocalPart();
+            String defaultModuleVersion = getDefaultModuleVersion(moduleName);
+            if (defaultModuleVersion != null) {
+                QName moduleQName = Utils.getModuleName(moduleName, defaultModuleVersion);
+                module = loadModulefromResources(moduleQName.getLocalPart());
+            } else {
+                module = loadModulefromResources(moduleName);
+            }
+        }
+        engageModule(module, moduleref);
+    }
 
-            module = new DeploymentEngine().buildModule(file, this);
-            isNewmodule = true;
+    /**
+     * Engagging a module using give name and its version ID
+     *
+     * @param moduleName
+     * @param versionID
+     * @throws AxisFault
+     */
+    public void engageModule(String moduleName, String versionID) throws AxisFault {
+        QName moduleQName = Utils.getModuleName(moduleName, versionID);
+        ModuleDescription module = getModule(moduleQName);
+        if (module == null) {
+            module = loadModulefromResources(moduleQName.getLocalPart());
+            engageModule(module, moduleQName);
         }
 
+    }
+
+    private void engageModule(ModuleDescription module, QName moduleQName) throws AxisFault {
         if (module != null) {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
-
-                if (moduleref.equals(qName)) {
+                if (moduleQName.equals(qName)) {
                     log.info("Attempt to engage an already engaged module " + qName);
-
                     return;
                 }
             }
         } else {
-            throw new AxisFault(this + " Refer to invalid module " + moduleref.getLocalPart()
+            throw new AxisFault(this + " Refer to invalid module " + moduleQName.getLocalPart()
                     + " has not bean deployed yet !");
         }
-
         Iterator servicegroups = getServiceGroups();
-
         while (servicegroups.hasNext()) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
-
-            serviceGroup.engageModuleToGroup(module.getName());
+            serviceGroup.engageModule(module);
         }
+        engagedModules.add(module.getName());
+    }
 
-        if (isNewmodule) {
+    /**
+     * This method is used to load module from class path , the mar files in a jar file inside
+     * modules/    directory
+     *
+     * @param moduleName
+     * @return
+     * @throws AxisFault
+     */
+    public ModuleDescription loadModulefromResources(String moduleName) throws AxisFault {
+        ModuleDescription module;
+        // trying to read from resources
+        File file = new ArchiveReader().creatModuleArchivefromResource(moduleName,
+                getRepository());
+        module = new DeploymentEngine().buildModule(file, this);
+        if (module != null) {
+            // since it is a new module
             addModule(module);
         }
-
-        engagedModules.add(moduleref);
+        return module;
     }
 
     public void notifyObservers(int event_type, AxisService service) {
@@ -390,12 +432,34 @@ public class AxisConfiguration implements ParameterInclude {
 
     /**
      * Method getModule.
+     * first it will check whether the given module is there in the hashMap , if so just return that
+     * and the name can be either with version string or without vresion string
+     * <p/>
+     * if it not found and , the nane does not have version string in it  then try to check
+     * whether default vresion of module available in the sytem for the give name , if so return that
      *
      * @param name
      * @return Returns ModuleDescription.
      */
     public ModuleDescription getModule(QName name) {
-        return (ModuleDescription) defaultModules.get(name);
+        ModuleDescription module = (ModuleDescription) allModules.get(name);
+        if (module != null) {
+            return module;
+        }
+        String moduelName = name.getLocalPart();
+        // checking whether the version string seperator is not there in the module name
+        if (moduelName.indexOf('-') < 0) {
+            String moduleName = name.getLocalPart();
+            String defaultModuleVersion = getDefaultModuleVersion(moduleName);
+            if (defaultModuleVersion != null) {
+                module = (ModuleDescription) allModules.get(
+                        Utils.getModuleName(moduleName, defaultModuleVersion));
+                if (module != null) {
+                    return module;
+                }
+            }
+        }
+        return null;
     }
 
     // the class loder that become the parent of all the modules
@@ -411,7 +475,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @return Returns HashMap.
      */
     public HashMap getModules() {
-        return defaultModules;
+        return allModules;
     }
 
     /**
@@ -587,5 +651,23 @@ public class AxisConfiguration implements ParameterInclude {
             }
         }
         return axis2home;
+    }
+
+    /**
+     * To add a dafault module version , which can either done by programatically or using
+     * axis2.xml , and the dafault module version is important if user ask to engage a module without
+     * given version ID , in that case we will engage the dafault version
+     *
+     * @param moduleName
+     * @param moduleVersion
+     */
+    public void addDefaultModuleVersion(String moduleName, String moduleVersion) {
+        if (nameToverionMap.get(moduleName) == null) {
+            nameToverionMap.put(moduleName, moduleVersion);
+        }
+    }
+
+    public String getDefaultModuleVersion(String moduleName) {
+        return (String) nameToverionMap.get(moduleName);
     }
 }

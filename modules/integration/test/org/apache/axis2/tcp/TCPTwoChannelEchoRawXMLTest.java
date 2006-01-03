@@ -25,7 +25,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -50,7 +50,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
     private AxisService service;
-    private ServiceContext serviceContext;
+    private ConfigurationContext configContext;
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -78,7 +78,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                 Utils.createSimpleServiceforClient(serviceName,
                         org.apache.axis2.engine.Echo.class.getName(),
                         operationName);
-        serviceContext = UtilServer.createAdressedEnabledClientSide(service);
+        configContext = UtilServer.createClientConfigurationContext();
     }
 
     protected void tearDown() throws Exception {
@@ -108,23 +108,22 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                         result.getResponseEnvelope().serializeAndConsume(XMLOutputFactory.newInstance()
                                 .createXMLStreamWriter(System.out));
                     } catch (XMLStreamException e) {
-                        reportError(e);
+                        onError(e);
                     } finally {
                         finish = true;
                     }
                 }
 
-                public void reportError(Exception e) {
+                public void onError(Exception e) {
                     log.info(e.getMessage());
                     finish = true;
                 }
             };
 
-            sender = new ServiceClient(serviceContext);
-            sender.setCurrentOperationName(operationName);
+            sender = new ServiceClient(configContext, service);
             sender.setOptions(options);
 
-            sender.sendReceiveNonblocking(method,callback);
+            sender.sendReceiveNonblocking(operationName, method, callback);
 
             int index = 0;
             while (!finish) {

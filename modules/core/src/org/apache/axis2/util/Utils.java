@@ -33,6 +33,8 @@ import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Utils {
 
@@ -248,13 +250,40 @@ public class Utils {
      * moduleName-00.0000 as an exmple addressing-01.0001.aar
      */
 
-    public static String getModuleName(String moduleName) {
+    private static String getModuleName(String moduleName) {
         char version_seperator = '-';
         int version_index = moduleName.indexOf(version_seperator);
         if (version_index > 0) {
             return moduleName.substring(0, version_index);
         } else {
             return moduleName;
+        }
+    }
+
+    private static String getModuleVersion(String moduleName) {
+        char version_seperator = '-';
+        int version_index = moduleName.indexOf(version_seperator);
+        if (version_index > 0) {
+            return moduleName.substring(version_index + 1, moduleName.length());
+        } else {
+            return null;
+        }
+    }
+
+
+    public static QName getModuleName(String name, String versionID) {
+        return new QName(name + "-" + versionID);
+    }
+
+    public static void calculateDefaultModuleVersion(HashMap modules) {
+        Iterator allModules = modules.values().iterator();
+        HashMap defaultModules = new HashMap();
+        while (allModules.hasNext()) {
+            ModuleDescription moduleDescription = (ModuleDescription) allModules.next();
+            QName moduleName = moduleDescription.getName();
+            String moduleNameString = getModuleName(moduleName.getLocalPart());
+            String moduleVersionString = getModuleVersion(moduleName.getLocalPart());
+            
         }
     }
 }

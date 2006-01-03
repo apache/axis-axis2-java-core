@@ -99,7 +99,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 

@@ -155,7 +155,7 @@ public class ClientCallbackHandler extends Callback {
         this.handler.showResults(snippet);
     }
 
-    public void reportError(Exception e) {
+    public void onError(Exception e) {
         e.printStackTrace();
     }
 }

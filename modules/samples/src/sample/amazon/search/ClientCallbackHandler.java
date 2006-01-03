@@ -190,7 +190,7 @@ public class ClientCallbackHandler extends Callback {
         GUIHandler.showResults(strURL + endHTML);
     }
 
-    public void reportError(Exception e) {
+    public void onError(Exception e) {
         e.printStackTrace();
     }
 }

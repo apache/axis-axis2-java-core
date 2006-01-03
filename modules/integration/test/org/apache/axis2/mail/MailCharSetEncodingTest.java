@@ -130,16 +130,15 @@ public class MailCharSetEncodingTest extends TestCase {
                     finish = true;
                 }
 
-                public void reportError(Exception e) {
+                public void onError(Exception e) {
                     log.error(e.getMessage(), e);
                     finish = true;
                 }
             };
-            ServiceClient sender = new ServiceClient(clientServiceContext);
-            sender.setCurrentOperationName(operationName);
+            ServiceClient sender = new ServiceClient(clientConfigContext, clientService);
             sender.setOptions(options);
             options.setTo(targetEPR);
-            sender.sendReceiveNonblocking(createEnvelope(value), callback);
+            sender.sendReceiveNonblocking(operationName,createEnvelope(value), callback);
 
             int index = 0;
             while (!finish) {

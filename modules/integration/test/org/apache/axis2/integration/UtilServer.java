@@ -26,7 +26,6 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -139,6 +138,21 @@ public class UtilServer {
 
         return new ServiceGroupContext(configContext, service.getParent())
                 .getServiceContext(service);
+    }
+
+    public static ConfigurationContext createClientConfigurationContext() throws AxisFault {
+        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
+                + "/modules/addressing.mar");
+        TestCase.assertTrue(file.exists());
+        DeploymentEngine deploymentEngine = new DeploymentEngine();
+
+        ConfigurationContextFactory efac = new ConfigurationContextFactory();
+        ConfigurationContext configContext = efac .buildConfigurationContext("target/test-resources/integrationRepo");
+        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
+                configContext.getAxisConfiguration());
+        configContext.getAxisConfiguration().addModule(moduleDesc);
+        configContext.getAxisConfiguration().engageModule(new QName("addressing"));
+        return configContext;
     }
 
     public static ServiceContext createAdressedEnabledClientSide(

@@ -20,23 +20,16 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 
@@ -121,7 +114,7 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(CLIENT_HOME);
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
         clientOptions.setTo(targetEPR);
 

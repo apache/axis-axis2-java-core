@@ -49,7 +49,7 @@ public class SimpleQueueDeleteQueueCallbackHandler extends Callback {
         this.button.setText("Delete Queue");
     }
 
-    public void reportError(Exception e) {
+    public void onError(Exception e) {
 
     }
 

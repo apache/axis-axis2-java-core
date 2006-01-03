@@ -134,7 +134,7 @@ public class MultirefTest extends TestCase {
         ConfigurationContextFactory configfactory = new ConfigurationContextFactory();
         ConfigurationContext configContext = configfactory.buildConfigurationContext(
                 "target/test-resources/integrationRepo");
-        RPCServiceClient sender = new RPCServiceClient(configContext);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 

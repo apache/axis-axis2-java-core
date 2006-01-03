@@ -23,7 +23,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -78,8 +78,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
                         Echo.class.getName(),
                         operationName);
 
-        ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(
-                service);
+        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -111,18 +110,18 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
                     finish = true;
                 }
 
-                public void reportError(Exception e) {
+                public void onError(Exception e) {
                     log.info(e.getMessage());
                     finish = true;
                 }
             };
 
-            sender = new ServiceClient(serviceContext);
-            sender.setCurrentOperationName(operationName);
+            sender = new ServiceClient(configcontext, service);
+            sender.engageModule(new QName("addressing"));
             sender.setOptions(options);
             options.setTo(targetEPR);
 
-            sender.sendReceiveNonblocking(method, callback);
+            sender.sendReceiveNonblocking(operationName, method, callback);
 
 //            call.invokeNonBlocking(operationName.getLocalPart(),
 //                    method,

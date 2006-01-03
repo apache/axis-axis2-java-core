@@ -53,6 +53,7 @@ public interface DeploymentConstants {
     String TAG_MESSAGE_RECEIVER = "messageReceiver";
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_MEP = "mep";
+    String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
 
     String TAG_FLOW_OUT_FAULT = "Outfaultflow";    // faultflow start tag
     String TAG_FLOW_OUT = "outflow";         // outflow start tag

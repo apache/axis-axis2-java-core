@@ -125,13 +125,9 @@ public class AxisServiceGroup implements ParameterInclude {
         this.paramInclude.deserializeParameters(parameterElement);
     }
 
-    public void engageModuleToGroup(QName moduleName) {
-        if (moduleName == null) {
-            return;
-        }
-
+    public void engageModule(ModuleDescription module) throws AxisFault {
+        QName moduleName = module.getName();
         boolean needToadd = true;
-
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
             QName modu = (QName) iterator.next();
 
@@ -144,19 +140,13 @@ public class AxisServiceGroup implements ParameterInclude {
         }
 
         Iterator srevice = getServices();
-        ModuleDescription module = parent.getModule(moduleName);
-
-        if (module != null) {
-            while (srevice.hasNext()) {
-
-                // engaging each service
-                AxisService axisService = (AxisService) srevice.next();
-
-                try {
-                    axisService.engageModule(module, parent);
-                } catch (AxisFault axisFault) {
-                    log.info(axisFault.getMessage());
-                }
+        while (srevice.hasNext()) {
+            // engaging each service
+            AxisService axisService = (AxisService) srevice.next();
+            try {
+                axisService.engageModule(module, parent);
+            } catch (AxisFault axisFault) {
+                log.info(axisFault.getMessage());
             }
         }
 

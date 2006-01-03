@@ -48,7 +48,7 @@ public class SimpleQueueReadCallbackHandler extends Callback {
         this.getQueueEntryBody(body);
     }
 
-    public void reportError(Exception e) {
+    public void onError(Exception e) {
 
     }
 

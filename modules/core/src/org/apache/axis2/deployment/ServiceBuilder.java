@@ -184,7 +184,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                 throw new DeploymentException("message lebel can not be null");
             }
 
+            //TODO : fix that
             AxisMessage message = new AxisMessage();
+
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
             
             // setting the PolicyInclude

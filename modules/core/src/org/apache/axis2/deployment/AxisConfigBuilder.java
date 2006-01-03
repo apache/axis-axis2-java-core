@@ -42,13 +42,11 @@ import java.util.Iterator;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
-    private AxisConfiguration axisConfiguration;
     private DeploymentEngine engine;
 
     public AxisConfigBuilder(InputStream serviceInputStream, DeploymentEngine engine,
                              AxisConfiguration axisConfiguration) {
         super(serviceInputStream, axisConfiguration);
-        this.axisConfiguration = axisConfiguration;
         this.engine = engine;
     }
 
@@ -60,7 +58,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             // Processing service level parameters
             Iterator itr = config_element.getChildrenWithName(new QName(TAG_PARAMETER));
 
-            processParameters(itr, axisConfiguration, axisConfiguration);
+            processParameters(itr, axisConfig, axisConfig);
 
             // process MessageReciver
             OMElement messageReceiver = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVERS));
@@ -100,31 +98,40 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             Iterator moduleConfigs = config_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
-            processModuleConfig(moduleConfigs, axisConfiguration, axisConfiguration);
+            processModuleConfig(moduleConfigs, axisConfig, axisConfig);
 
             // setting host configuration
             OMElement hostElement = config_element.getFirstChildWithName(new QName(TAG_HOST_CONFIG));
 
             if (hostElement != null) {
-                processHostCongiguration(hostElement, axisConfiguration);
+                processHostCongiguration(hostElement, axisConfig);
             }
 
             // setting the PolicyInclude
             PolicyInclude policyInclude = new PolicyInclude();
-            axisConfiguration.setPolicyInclude(policyInclude);
+            axisConfig.setPolicyInclude(policyInclude);
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
+                    TAG_POLICY));
 
             if (policyElements != null) {
-                processPolicyElements(policyElements, axisConfiguration.getPolicyInclude());
+                processPolicyElements(policyElements, axisConfig.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
+                    TAG_POLICY_REF));
 
             if (policyRefElements != null) {
-                processPolicyRefElements(policyElements, axisConfiguration.getPolicyInclude());
+                processPolicyRefElements(policyElements, axisConfig.getPolicyInclude());
+            }
+
+            //to process default module versions
+            OMElement defaultModuleVerionElement = config_element.getFirstChildWithName(new QName(
+                    TAG_DEFAULT_MODULE_VERSION));
+            if (defaultModuleVerionElement != null) {
+                processDefaultModuleVersions(defaultModuleVerionElement);
             }
 
         } catch (XMLStreamException e) {
@@ -218,11 +225,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 // Processing service level parameters
                 Iterator itr = observerelement.getChildrenWithName(new QName(TAG_PARAMETER));
 
-                processParameters(itr, observer, axisConfiguration);
+                processParameters(itr, observer, axisConfig);
 
                 // initialization
                 observer.init();
-                axisConfiguration.addObservers(observer);
+                axisConfig.addObservers(observer);
             } catch (ClassNotFoundException e) {
                 throw new DeploymentException(e);
             } catch (IllegalAccessException e) {
@@ -256,10 +263,10 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             while (handlers.hasNext()) {
                 OMElement omElement = (OMElement) handlers.next();
-                HandlerDescription handler = processHandler(omElement, axisConfiguration);
+                HandlerDescription handler = processHandler(omElement, axisConfig);
 
                 handler.getRules().setPhaseName(phaseName);
-                Utils.loadHandler(axisConfiguration.getSystemClassLoader(), handler);
+                Utils.loadHandler(axisConfig.getSystemClassLoader(), handler);
 
                 try {
                     phase.addHandler(handler);
@@ -312,8 +319,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 throw new DeploymentException("Module vresion can not be null in side" +
                         " default module vresion element ");
             }
+            axisConfig.addDefaultModuleVersion(name, defaultVeriosn);
         }
-
     }
 
     private void processTransportReceivers(Iterator trs_senders) throws DeploymentException {
@@ -359,7 +366,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // Processing service level parameters
                     Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
 
-                    processParameters(itr, transportIN, axisConfiguration);
+                    processParameters(itr, transportIN, axisConfig);
 
                     // process INFLOW
                     OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
@@ -373,14 +380,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
 
                     if (outFlow != null) {
-                        transportIN.setInFlow(processFlow(outFlow, axisConfiguration));
+                        transportIN.setInFlow(processFlow(outFlow, axisConfig));
                     }
 
                     OMElement inFaultFlow =
                             transport.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
 
                     if (inFaultFlow != null) {
-                        transportIN.setFaultFlow(processFlow(inFaultFlow, axisConfiguration));
+                        transportIN.setFaultFlow(processFlow(inFaultFlow, axisConfig));
                     }
 
                     OMElement outFaultFlow =
@@ -393,7 +400,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     }
 
                     // adding to axis config
-                    axisConfiguration.addTransportIn(transportIN);
+                    axisConfig.addTransportIn(transportIN);
                 } catch (AxisFault axisFault) {
                     throw new DeploymentException(axisFault);
                 }
@@ -438,7 +445,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // Processing service level parameters
                     Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
 
-                    processParameters(itr, transportout, axisConfiguration);
+                    processParameters(itr, transportout, axisConfig);
 
                     // process INFLOW
                     OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
@@ -452,7 +459,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
 
                     if (outFlow != null) {
-                        transportout.setOutFlow(processFlow(outFlow, axisConfiguration));
+                        transportout.setOutFlow(processFlow(outFlow, axisConfig));
                     }
 
                     OMElement inFaultFlow =
@@ -468,11 +475,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                             transport.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
 
                     if (outFaultFlow != null) {
-                        transportout.setFaultFlow(processFlow(outFaultFlow, axisConfiguration));
+                        transportout.setFaultFlow(processFlow(outFaultFlow, axisConfig));
                     }
 
                     // adding to axis config
-                    axisConfiguration.addTransportOut(transportout);
+                    axisConfig.addTransportOut(transportout);
                 } catch (ClassNotFoundException e) {
                     throw new DeploymentException(e);
                 } catch (IllegalAccessException e) {
@@ -491,7 +498,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         if (className == null) {
             return new Phase();
         }
-        Class phaseClass = axisConfiguration.getSystemClassLoader().loadClass(className);
+        Class phaseClass = axisConfig.getSystemClassLoader().loadClass(className);
         return (Phase) phaseClass.newInstance();
     }
 }

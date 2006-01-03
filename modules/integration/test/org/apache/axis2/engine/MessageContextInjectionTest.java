@@ -95,7 +95,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         Options options = new Options();
         sender.setOptions(options);
         options.setTo(targetEPR);

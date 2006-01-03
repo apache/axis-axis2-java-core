@@ -27,7 +27,6 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -113,8 +112,6 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
 
-
-        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation, service, configContext);
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
@@ -126,22 +123,21 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
                             XMLOutputFactory.newInstance()
                                     .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
-                    reportError(e);
+                    onError(e);
                 } finally {
                     finish = true;
                 }
             }
 
-            public void reportError(Exception e) {
+            public void onError(Exception e) {
                 log.info(e.getMessage());
                 finish = true;
             }
         };
-        ServiceClient sender = new ServiceClient(serviceContext);
+        ServiceClient sender = new ServiceClient(configContext, service);
         sender.setOptions(options);
-        sender.setCurrentOperationName(operationName);
         options.setTo(targetEPR);
-        sender.sendReceiveNonblocking(createEnvelope(), callback);
+        sender.sendReceiveNonblocking(operationName, createEnvelope(), callback);
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);

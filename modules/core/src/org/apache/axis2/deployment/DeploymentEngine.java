@@ -28,34 +28,19 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class DeploymentEngine implements DeploymentConstants {
 
@@ -169,7 +154,7 @@ public class DeploymentEngine implements DeploymentConstants {
         while (itr_global_modules.hasNext()) {
             QName qName = (QName) itr_global_modules.next();
 
-            serviceGroup.engageModuleToGroup(qName);
+            serviceGroup.engageModule(axisConfig.getModule(qName));
         }
 
         // module from services.xml at serviceGroup level
@@ -180,7 +165,7 @@ public class DeploymentEngine implements DeploymentConstants {
             ModuleDescription module = axisConfig.getModule(moduleName);
 
             if (module != null) {
-                serviceGroup.engageModuleToGroup(moduleName);
+                serviceGroup.engageModule(axisConfig.getModule(moduleName));
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
@@ -299,6 +284,13 @@ public class DeploymentEngine implements DeploymentConstants {
 
             if (faultOutFlow != null) {
                 Utils.addFlowHandlers(faultOutFlow, moduleClassLoader);
+            }
+
+            //initilization Module
+            Module module = axismodule.getModule();
+
+            if (module != null) {
+                module.init(axisConfig);
             }
 
         } catch (AxisFault axisFault) {
@@ -795,7 +787,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Create directories for modules/services, copy configuration xml from class loader if necessary
-     * 
+     *
      * @param repositoryName
      * @param xmlFile
      * @throws DeploymentException

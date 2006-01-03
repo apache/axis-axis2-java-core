@@ -16,8 +16,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.UUIDGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -29,8 +27,6 @@ import java.util.ArrayList;
  * need to be explained here.
  */
 public class ServiceClient {
-
-    private Log log = LogFactory.getLog(getClass());
 
     // service and operation names used for anonymously stuff
     private static final String ANON_SERVICE = "__ANONYMOUS_SERVICE__";
@@ -62,13 +58,6 @@ public class ServiceClient {
     // list of headers to be sent with the simple APIs
     ArrayList headers;
 
-    // to set the name of the operation to be invoked , and this is usefull if
-    // the user
-    // try to reuse same ServiceClent to invoke more than one operation in the
-    // service ,
-    // in that case he can set the current operation name and invoke that.
-    private QName currentOperationName = null;
-
     private CallbackReceiver callbackReceiver;
 
     /**
@@ -76,61 +65,58 @@ public class ServiceClient {
      * If this service is already in the world that's handed in (in the form of
      * a ConfigurationContext) then I will happily work in it. If not I will
      * create a small little virtual world and live there.
-     * 
-     * @param configContext
-     *            The configuration context under which this service lives (may
-     *            be null, in which case a new local one will be created)
-     * @param axisService
-     *            The service for which this is the client. Must NOT be null.
-     * @throws AxisFault
-     *             if something goes wrong while creating a config context (if
-     *             needed)
+     *
+     * @param configContext The configuration context under which this service lives (may
+     *                      be null, in which case a new local one will be created)
+     * @param axisService   The service for which this is the client.
+     * @throws AxisFault if something goes wrong while creating a config context (if
+     *                   needed)
      */
     public ServiceClient(ConfigurationContext configContext,
-            AxisService axisService) throws AxisFault {
+                         AxisService axisService) throws AxisFault {
         // create a config context if needed
         this.configContext = (configContext != null) ? configContext
                 : new ConfigurationContextFactory()
-                        .buildConfigurationContext(null);
+                .buildConfigurationContext(null);
 
         // save the service and axisConfig
-        this.axisService = axisService;
+        if (axisService == null) {
+            this.axisService = createAnonymousService();
+        } else {
+            this.axisService = axisService;
+        }
+
         this.axisConfig = this.configContext.getAxisConfiguration();
 
         // add the service to the config context if it isn't in there already
-        if (axisConfig.getService(axisService.getName()) == null) {
-            axisConfig.addService(axisService);
+        if (axisConfig.getService(this.axisService.getName()) == null) {
+            axisConfig.addService(this.axisService);
         }
 
         // create a service context for myself: create a new service group
         // context and then get the service context for myself as I'll need that
         // later for stuff that I gotta do
         ServiceGroupContext sgc = new ServiceGroupContext(configContext,
-                axisService.getParent());
-        this.serviceContext = sgc.getServiceContext(axisService);
+                this.axisService.getParent());
+        this.serviceContext = sgc.getServiceContext(this.axisService);
     }
 
     /**
      * Create a service client for WSDL service identified by the QName of the
      * wsdl:service element in a WSDL document.
-     * 
-     * @param configContext
-     *            The configuration context under which this service lives (may
-     *            be null, in which case a new local one will be created) *
-     * @param wsdlURL
-     *            The URL of the WSDL document to read
-     * @param wsdlServiceName
-     *            The QName of the WSDL service in the WSDL document to create a
-     *            client for
-     * @param portName
-     *            The name of the WSDL 1.1 port to create a client for. May be
-     *            null (if WSDL 2.0 is used or if only one port is there). .
-     * @throws AxisFault
-     *             if something goes wrong while creating a config context (if
-     *             needed)
+     *
+     * @param configContext   The configuration context under which this service lives (may
+     *                        be null, in which case a new local one will be created) *
+     * @param wsdlURL         The URL of the WSDL document to read
+     * @param wsdlServiceName The QName of the WSDL service in the WSDL document to create a
+     *                        client for
+     * @param portName        The name of the WSDL 1.1 port to create a client for. May be
+     *                        null (if WSDL 2.0 is used or if only one port is there). .
+     * @throws AxisFault if something goes wrong while creating a config context (if
+     *                   needed)
      */
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
-            QName wsdlServiceName, String portName) throws AxisFault {
+                         QName wsdlServiceName, String portName) throws AxisFault {
         // TODO: Srinath to write this code :)
         throw new UnsupportedOperationException(
                 "ServiceClient currently does not support direct WSDL construction");
@@ -141,12 +127,17 @@ public class ServiceClient {
      * necessary information.
      */
     public ServiceClient() throws AxisFault {
-        this(null, new AxisService(ANON_SERVICE));
+        this(null, null);
 
+
+    }
+
+    private AxisService createAnonymousService() throws AxisFault {
         // now add anonymous operations to the axis service for use with the
         // shortcut client API. NOTE: We only add the ones we know we'll use
         // later in the convenience API; if you use
         // this constructor then you can't expect any magic!
+        AxisService axisService = new AxisService(ANON_SERVICE);
         PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
 
         RobustOutOnlyAxisOperation robustoutoonlyOperation = new RobustOutOnlyAxisOperation(
@@ -166,6 +157,7 @@ public class ServiceClient {
         // setting operation default chains
         phasesInfo.setOperationPhases(outInOperation);
         axisService.addOperation(outInOperation);
+        return axisService;
     }
 
     /**
@@ -177,7 +169,7 @@ public class ServiceClient {
 
     /**
      * Get the client configuration from this service interaction.
-     * 
+     *
      * @return set of options set earlier.
      */
     public Options getOptions() {
@@ -188,9 +180,8 @@ public class ServiceClient {
      * Add an XML element as a header to be sent with interactions. This allows
      * users to go a bit beyond the dirt simple XML in/out pattern using this
      * simplified API. A header
-     * 
-     * @param header
-     *            The header to be added for interactions. Must not be null.
+     *
+     * @param header The header to be added for interactions. Must not be null.
      */
     public void addHeader(OMElement header) {
         if (headers == null) {
@@ -202,7 +193,7 @@ public class ServiceClient {
     /**
      * Add a simple header consisting of some text (and a header name; duh) to
      * be sent with interactions.
-     * 
+     *
      * @param headerName
      * @param headerText
      */
@@ -219,12 +210,10 @@ public class ServiceClient {
      * possibly receive a fault. If you need more control over this interaction
      * then you need to create a client (@see createClient()) for the operation
      * and use that instead.
-     * 
-     * @param elem
-     *            The XML to send
-     * @throws AxisFault
-     *             if something goes wrong while sending it or if a fault is
-     *             received in response (per the Robust In-Only MEP).
+     *
+     * @param elem The XML to send
+     * @throws AxisFault if something goes wrong while sending it or if a fault is
+     *                   received in response (per the Robust In-Only MEP).
      */
     public void sendRobust(OMElement elem) throws AxisFault {
         sendRobust(ANON_ROBUST_OUT_ONLY_OP, elem);
@@ -236,14 +225,11 @@ public class ServiceClient {
      * possibly receive a fault under the guise of a specific operation. If you
      * need more control over this interaction then you need to create a client
      * (@see createClient()) for the operation and use that instead.
-     * 
-     * @param operation
-     *            The name of the operation to use. Must NOT be null.
-     * @param elem
-     *            The XML to send
-     * @throws AxisFault
-     *             if something goes wrong while sending it or if a fault is
-     *             received in response (per the Robust In-Only MEP).
+     *
+     * @param operation The name of the operation to use. Must NOT be null.
+     * @param elem      The XML to send
+     * @throws AxisFault if something goes wrong while sending it or if a fault is
+     *                   received in response (per the Robust In-Only MEP).
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
@@ -267,11 +253,9 @@ public class ServiceClient {
      * a service operation who's MEP is In-Only. That is, there is no
      * opportunity to get an error from the service via this API; one may still
      * get client-side errors, such as host unknown etc.
-     * 
-     * @param elem
-     *            The XML element to send to the service
-     * @throws AxisFault
-     *             If something goes wrong trying to send the XML
+     *
+     * @param elem The XML element to send to the service
+     * @throws AxisFault If something goes wrong trying to send the XML
      */
     public void fireAndForget(OMElement elem) throws AxisFault {
         fireAndForget(ANON_OUT_ONLY_OP, elem);
@@ -376,7 +360,7 @@ public class ServiceClient {
     }
 
     public void sendReceiveNonblocking(QName operation, OMElement elem,
-            Callback callback) throws AxisFault {
+                                       Callback callback) throws AxisFault {
         MessageContext mc = new MessageContext();
         fillSoapEnvelope(mc, elem);
 
@@ -422,13 +406,11 @@ public class ServiceClient {
      * you're doing and need the full capabilities of Axis2's client
      * architecture. This is meant for people with deep skin and not the light
      * user.
-     * 
-     * @param operation
-     *            The QName of the operation to create a client for.
+     *
+     * @param operation The QName of the operation to create a client for.
      * @return a MEP client configured to talk to the given operation or null if
      *         the operation name is not found.
-     * @throws AxisFault
-     *             if the operation is not found or something else goes wrong
+     * @throws AxisFault if the operation is not found or something else goes wrong
      */
     public OperationClient createClient(QName operation) throws AxisFault {
         AxisOperation axisOp = axisService.getOperation(operation);
@@ -441,7 +423,7 @@ public class ServiceClient {
     /**
      * Return the SOAP factory to use depending on what options have been set
      * (or default to SOAP 1.1)
-     * 
+     *
      * @return the SOAP factory
      */
     private SOAPFactory getSOAPFactory() {
@@ -454,7 +436,7 @@ public class ServiceClient {
         }
     }
 
-    private AxisService getAxisService() throws AxisFault {
+    public AxisService getAxisService() {
         return axisService;
     }
 
@@ -473,7 +455,7 @@ public class ServiceClient {
     /**
      * This will close the out put stream or , and remove entry from waiting
      * queue of the transport Listener queue
-     * 
+     *
      * @throws AxisFault
      */
     public void finalizeInvoke() throws AxisFault {
@@ -486,11 +468,9 @@ public class ServiceClient {
 
     /**
      * Engage a module for this service client.
-     * 
-     * @param moduleName
-     *            Name of the module to engage
-     * @throws AxisFault
-     *             if something goes wrong
+     *
+     * @param moduleName Name of the module to engage
+     * @throws AxisFault if something goes wrong
      */
     public void engageModule(QName moduleName) throws AxisFault {
         axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);

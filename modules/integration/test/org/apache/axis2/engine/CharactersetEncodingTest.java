@@ -19,7 +19,6 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -91,7 +90,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
                     factory.buildConfigurationContext(Constants.TESTING_PATH + "chunking-enabledRepository");
-            ServiceClient sender = new ServiceClient(configContext);
+            ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             options.setTo(targetEPR);
 

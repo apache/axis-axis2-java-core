@@ -21,13 +21,12 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -88,7 +87,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
                 finish = true;
             }
 
-            public void reportError(Exception e) {
+            public void onError(Exception e) {
                 log.info(e.getMessage());
                 finish = true;
             }
@@ -101,11 +100,11 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 
-        sender.sendReceiveNonblocking(payload,callback);
+        sender.sendReceiveNonblocking(payload, callback);
 
         int index = 0;
         while (!finish) {
@@ -141,7 +140,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext(Constants.TESTING_PATH + "commons-http-enabledRepository");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 

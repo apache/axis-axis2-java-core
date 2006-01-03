@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -30,8 +30,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -70,8 +68,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
                         Echo.class.getName(),
                         operationName);
 
-        ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(
-                service);
+        ConfigurationContext configConetxt = UtilServer.createClientConfigurationContext();
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -86,12 +83,11 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         options.setUseSeparateListener(true);
         options.setAction(operationName.getLocalPart());
 
-        ServiceClient sender = new ServiceClient(serviceContext);
-        sender.setCurrentOperationName(operationName);
+        ServiceClient sender = new ServiceClient(configConetxt, service);
         sender.setOptions(options);
         options.setTo(targetEPR);
 
-        OMElement result = sender.sendReceive(method);
+        OMElement result = sender.sendReceive(operationName, method);
 
         TestingUtils.campareWithCreatedOMElement(result);
         sender.finalizeInvoke();

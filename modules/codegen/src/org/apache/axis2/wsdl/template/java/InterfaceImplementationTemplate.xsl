@@ -279,7 +279,7 @@
                             java.lang.Object object = fromOM(getElement(result.getResponseEnvelope(),"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
                             callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);
                             }
-                            public void reportError(java.lang.Exception e){
+                            public void onError(java.lang.Exception e){
                             callback.receiveError<xsl:value-of select="@name"/>(e);
                             }
                             }

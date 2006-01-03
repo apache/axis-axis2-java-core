@@ -286,8 +286,8 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
 
         if ((serviceName != null) && (moduleName != null)) {
-            configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModuleToGroup(
-                    new QName(moduleName));
+            configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
+                    configContext.getAxisConfiguration().getModule(new QName(moduleName)));
             req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                     moduleName
                             + " module engaged to the serviceGroup Successfully");

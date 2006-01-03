@@ -27,8 +27,6 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -56,7 +54,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     private AxisService service;
     private AxisService clientService;
-    private ServiceContext serviceContext;
+    private ConfigurationContext configContext;
 
     private boolean finish = false;
     private Log log = LogFactory.getLog(getClass());
@@ -81,7 +79,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         clientService = Utils.createSimpleService(serviceName,
                 Echo.class.getName(),
                 operationName);
-        serviceContext = UtilServer.createAdressedEnabledClientSide(clientService);
+        configContext = UtilServer.createClientConfigurationContext();
     }
 
     protected void tearDown() throws Exception {
@@ -114,23 +112,23 @@ public class JMSEchoRawXMLTest extends TestCase {
                     result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
                             .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
-                    reportError(e);
+                    onError(e);
                 } finally {
                     finish = true;
                 }
             }
 
-            public void reportError(Exception e) {
+            public void onError(Exception e) {
                 log.info(e.getMessage());
                 finish = true;
             }
         };
 
-        ServiceClient sender = new ServiceClient(serviceContext);
-        sender.setCurrentOperationName(operationName);
+        ServiceClient sender = new ServiceClient(configContext, clientService);
+        sender.engageModule(new QName("addressing"));
         sender.setOptions(options);
         options.setTo(targetEPR);
-        sender.sendReceiveNonblocking(payload, callback);
+        sender.sendReceiveNonblocking(operationName, payload, callback);
 
 
         int index = 0;
@@ -152,12 +150,11 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("EchoXMLService/echoOMElement");
-        ServiceClient sender = new ServiceClient(serviceContext);
+        ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        sender.setCurrentOperationName(operationName);
         options.setTo(targetEPR);
 
-        OMElement result = sender.sendReceive(payload);
+        OMElement result = sender.sendReceive(operationName, payload);
 
 
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
@@ -183,12 +180,11 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setSoapAction("EchoXMLService/echoOMElement");
         options.setUseSeparateListener(true);
 
-        ServiceClient sender = new ServiceClient(serviceContext);
+        ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        sender.setCurrentOperationName(operationName);
         options.setTo(targetEPR);
 
-        OMElement result = sender.sendReceive(payloadElement);
+        OMElement result = sender.sendReceive(operationName, payloadElement);
 
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
@@ -232,15 +228,12 @@ public class JMSEchoRawXMLTest extends TestCase {
 
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
         axisConfig.addService(srevice);
-        ServiceContext serviceContext = new ServiceGroupContext(configContext,
-                srevice.getParent()).getServiceContext(srevice);
 
-        ServiceClient sender = new ServiceClient(serviceContext);
+        ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        sender.setCurrentOperationName(operationName);
         options.setTo(targetEPR);
 
-        OMElement result = sender.sendReceive(method);
+        OMElement result = sender.sendReceive(operationName, method);
 
 
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(

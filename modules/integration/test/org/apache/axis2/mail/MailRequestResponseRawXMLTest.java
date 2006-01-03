@@ -131,23 +131,22 @@ public class MailRequestResponseRawXMLTest extends TestCase {
                             XMLOutputFactory.newInstance()
                                     .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
-                    reportError(e);
+                    onError(e);
                 } finally {
                     finish = true;
                 }
             }
 
-            public void reportError(Exception e) {
+            public void onError(Exception e) {
                 log.info(e.getMessage());
                 finish = true;
             }
         };
 
-        ServiceClient sender = new ServiceClient(serviceContext);
+        ServiceClient sender = new ServiceClient(configContext, service);
         sender.setOptions(options);
-        sender.setCurrentOperationName(operationName);
         options.setTo(targetEPR);
-        sender.sendReceiveNonblocking(createEnvelope(), callback);
+        sender.sendReceiveNonblocking(operationName, createEnvelope(), callback);
 
         int index = 0;
         while (!finish) {

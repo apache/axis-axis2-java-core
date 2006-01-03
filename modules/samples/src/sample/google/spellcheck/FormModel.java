@@ -173,7 +173,7 @@ public class FormModel {
             }
         }
 
-        public void reportError(Exception e) {
+        public void onError(Exception e) {
             observer.updateError(e.getMessage());
         }
     }

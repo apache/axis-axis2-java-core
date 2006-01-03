@@ -56,7 +56,7 @@ public class SimpleQueueListMyQueuesCallbackHandler extends Callback {
         this.button.setText("Load Queue");
     }
 
-    public void reportError(Exception e) {
+    public void onError(Exception e) {
 
     }
 

@@ -110,7 +110,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
                 finish = true;
             }
 
-            public void reportError(Exception e) {
+            public void onError(Exception e) {
                 log.info(e.getMessage());
                 finish = true;
             }
@@ -119,7 +119,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
                 factory.buildConfigurationContext("target/test-resources/integrationRepo");
-        ServiceClient sender = new ServiceClient(configContext);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
 
         sender.sendReceiveNonblocking(payload, callback);
@@ -149,7 +149,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
                     factory.buildConfigurationContext("target/test-resources/integrationRepo");
-            ServiceClient sender = new ServiceClient(configContext);
+            ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(clientOptions);
 
             OMElement result = sender.sendReceive(payload);
