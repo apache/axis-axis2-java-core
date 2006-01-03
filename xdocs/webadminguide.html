@@ -7,45 +7,94 @@
 </head>
 
 <body lang="en">
-<p></p>
+<h1 align="center">Axis2 Web Administration Guide</h1>
 
-<h3>Introduction</h3>
+<p><i>Version 0.94</i></p>
+<i>Feedback: <a
+href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
+
+<h3>Contents</h3>
+<ul>
+  <li><a href="#Intro">Introduction</a>
+    <ul>
+      <li><p><a href="#login">Login into Administration Site</a></p>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#adminoptions">Administration Options</a>
+    <ul>
+      <li><p><a href="#tools">Tools</a></p>
+        <ul>
+          <li><a href="#upservice">Upload Service</a></li>
+        </ul>
+      </li>
+      <li><p><a href="#syscomponents">System components</a></p>
+        <ul>
+          <li><a href="#heading1">Available services</a></li>
+          <li><a href="#servgroups">Available service groups</a></li>
+          <li><a href="#avmodules">Available modules</a></li>
+          <li><a href="#globalmodules">Globally engaged modules</a></li>
+          <li><a href="#phases">Available phases</a></li>
+        </ul>
+      </li>
+      <li><p><a href="#executionchains">Execution chains</a></p>
+        <ul>
+          <li><a href="#globalchains">Global chains</a></li>
+          <li><a href="#operationchains">Operation specific chains</a></li>
+        </ul>
+      </li>
+      <li><p><a href="#engaginmodule">Engage module</a></p>
+      </li>
+      <li><a href="#services">Services</a>
+        <ul>
+          <li><a href="#turnoffservice">Undeploy service</a></li>
+          <li><a href="#editservicepara">Edit service parameters</a></li>
+        </ul>
+      </li>
+      <li><p><a href="#context">Contexts</a></p>
+        <ul>
+          <li><a href="#viewhierarchy">View Hierarchy</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3><a name="Intro">Introduction</a></h3>
 
 <p>Axis2 Web Administration Module provides a way to configure Axis2
 dynamically. It's important to note that this dynamic configuration will NOT
 be persistent, i.e. if the servlet container is restarted then all the
 dynamic configuration changes will be lost.</p>
 
-<h4><a name="_Toc96698076"></a></h4>
-
-<h4>Login into Administration Site</h4>
+<h4><a name="login">Login into Administration Site</a></h4>
 
 <p>From <a href="#homepage">Axis2 Web Application Home page</a> you can go to
 Administration page by following 'Administration' link, then login page shown
-below will appear requesting user name and a password. The default username
+below will appear requesting user name and a password. The default user name
 is 'admin' (without quotes) and default password is 'axis2' (without
 quotes).</p>
 
 <p align="left"><strong><img src="images/adminlogin.jpg"></strong></p>
 
-<p>You can change the username &amp; password values by changing following
+<p>You can change the user name &amp; password values by changing following
 two parameters in axis2.xml as required.</p>
 
 <p align="left"><strong><img src="images/parameters.jpg"></strong></p>
 
-<p>If the login is succeessful you will see the screen below. This is where
+<p>If the login is successful you will see the screen below. This is where
 you can view the configuration and the state of the running system and
 dynamically configure it.</p>
 
 <p align="left"><strong><img src="images/admin.jpg"></strong></p>
 
-<h3>Administration Options</h3>
+<h3><a name="adminoptions">Administration Options</a></h3>
 <ul>
-  <b>Tools</b>
+  <b><a name="tools">Tools</a></b>
   <ul>
     <li><a href="#upservice">Upload Service</a></li>
   </ul>
-  <b>System components</b>
+  <b><a name="syscomponents">System components</a></b>
   <ul>
     <li><a href="#heading1">Available services</a></li>
     <li><a href="#servgroups">Available service groups</a></li>
@@ -53,19 +102,19 @@ dynamically configure it.</p>
     <li><a href="#globalmodules">Globally engaged modules</a></li>
     <li><a href="#phases">Available phases</a></li>
   </ul>
-  <b>Execution chains</b>
+  <b><a name="executionchains">Execution chains</a></b>
   <ul>
     <li><a href="#globalchains">Global chains</a></li>
     <li><a href="#operationchains">Operation specific chains</a></li>
   </ul>
   <b><a href="#engaginmodule">Engage module</a></b> <br>
   <br>
-  <b>Services</b>
+  <b><a name="services">Services</a></b>
   <ul>
     <li><a href="#turnoffservice">Undeploy service</a></li>
     <li><a href="#editservicepara">Edit service parameters</a></li>
   </ul>
-  <b>Contexts</b>
+  <b><a name="context">Contexts</a></b>
   <ul>
     <li><a href="#viewhierarchy">View Hierarchy</a></li>
   </ul>
@@ -125,7 +174,7 @@ belong to that module will be executed irrespective of the service.</p>
 
 <h3><a name="phases"></a>Available Phases</h3>
 
-<p>'Available Phases' link will display all the avalable phases. In Axis2
+<p>'Available Phases' link will display all the avaliable phases. In Axis2
 there are two levels of phases:</p>
 <ul>
   <li>System predefined phases (not allowed to be changed)</li>
@@ -143,7 +192,7 @@ understanding of phases and phase ordering.</p>
 <h3><a name="globalchains"></a>Global Chains</h3>
 
 <p>'Global Chains' link will display all the Global Execution Chains. The
-most interesting feature of Axis2 Web Administratin Module is that it
+most interesting feature of Axis2 Web Administration Module is that it
 provides a very basic way of viewing the global phase list and handlers
 inside the phases depending on both phase and handler orders. This kind of
 information is extremely useful in debugging the system, as there is no other
