@@ -124,7 +124,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             sender = new ServiceClient(configContext, serviceClient);
             sender.setOptions(options);
 
-            sender.sendReceiveNonblocking(operationName, method, callback);
+            sender.sendReceiveNonBlocking(operationName, method, callback);
 
             int index = 0;
             while (!finish) {

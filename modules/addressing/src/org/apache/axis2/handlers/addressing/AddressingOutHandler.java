@@ -21,7 +21,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -52,7 +51,7 @@ public class AddressingOutHandler extends AddressingHandler {
             log.info("Addressing is disbaled .....");
             return;
         }
-        OMNamespace addressingNamespaceObject = null;
+        OMNamespace addressingNamespaceObject;
         String addressingNamespace = null;
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
@@ -101,7 +100,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
             String address = epr.getAddress();
             if (!"".equals(address) && address != null) {
-                SOAPHeaderBlock toHeaderBlock = envelope.addHeaderBlock(WSA_TO, addressingNamespaceObject);
+                SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
                 toHeaderBlock.setText(address);
             }
 
@@ -186,7 +185,7 @@ public class AddressingOutHandler extends AddressingHandler {
                                         SOAPEnvelope soapEnvelope, OMNamespace addressingNamespaceObject) {
         if (!"".equals(value) && value != null) {
             SOAPHeaderBlock soapHeaderBlock =
-                    soapEnvelope.addHeaderBlock(type, addressingNamespaceObject);
+                    soapEnvelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
             soapHeaderBlock.addChild(
                     OMAbstractFactory.getOMFactory().createText(value));
             return soapHeaderBlock;
@@ -202,7 +201,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         SOAPHeaderBlock soapHeaderBlock =
-                envelope.addHeaderBlock(type, addressingNamespaceObject);
+                envelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
 
         String address = epr.getAddress();
         if (!"".equals(address) && address != null) {
@@ -257,23 +256,9 @@ public class AddressingOutHandler extends AddressingHandler {
                 parentElement.addChild(interfaceName);
             }
 
-            ServiceName serviceName = epr.getServiceName();
-            if (serviceName != null) {
-                OMElement serviceNameElement =
-                        OMAbstractFactory.getOMFactory().createOMElement(
-                                EPR_SERVICE_NAME,
-                                addressingNamespaceObject);
-                serviceNameElement.addAttribute(Submission.EPR_SERVICE_NAME_PORT_NAME, serviceName.getPortName(),
-                        addressingNamespaceObject);
-                serviceNameElement.addChild(
-                        OMAbstractFactory.getOMFactory().createText(
-                                serviceName.getName().getPrefix()
-                                        + ":"
-                                        + serviceName.getName().getLocalPart()));
-                parentElement.addChild(serviceNameElement);
+            // Note : We are not handling ServiceName purposely here. Most of the time, it will not
+            // and even from the final version this has been removed.
             }
-        }
-
 
     }
 

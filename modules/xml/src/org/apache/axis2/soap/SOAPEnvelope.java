@@ -18,7 +18,6 @@ package org.apache.axis2.soap;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNamespace;
 
 /**
  * Interface SOAPEnvelope
@@ -38,18 +37,6 @@ public interface SOAPEnvelope extends OMElement {
      *          obtaining the <CODE>SOAPHeader</CODE> object
      */
     public abstract SOAPHeader getHeader() throws OMException;
-
-    /**
-     * Convenience method to add a SOAP header to this envelope
-     *
-     * @param name
-     * @param namespaceURI
-     */
-    public abstract SOAPHeaderBlock addHeaderBlock(String name, String namespaceURI)
-            throws OMException;
-
-    public abstract SOAPHeaderBlock addHeaderBlock(String name, OMNamespace namespace)
-            throws OMException;
 
     /**
      * Returns the <CODE>SOAPBody</CODE> object associated with

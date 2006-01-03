@@ -121,7 +121,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             sender.setOptions(options);
             options.setTo(targetEPR);
 
-            sender.sendReceiveNonblocking(operationName, method, callback);
+            sender.sendReceiveNonBlocking(operationName, method, callback);
 
 //            call.invokeNonBlocking(operationName.getLocalPart(),
 //                    method,

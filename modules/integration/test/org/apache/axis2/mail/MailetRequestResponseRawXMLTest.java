@@ -137,7 +137,7 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
         ServiceClient sender = new ServiceClient(configContext, service);
         sender.setOptions(options);
         options.setTo(targetEPR);
-        sender.sendReceiveNonblocking(operationName, createEnvelope(), callback);
+        sender.sendReceiveNonBlocking(operationName, createEnvelope(), callback);
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);

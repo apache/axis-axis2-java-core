@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -54,12 +53,6 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 new QName("http://www.from.org/service/port/",
                         "Port",
                         "portNS"));
-        epr.setServiceName(
-                new ServiceName(
-                        new QName("http://www.from.org/service/",
-                                "Service",
-                                "serviceNS"),
-                        "port"));
 
         for (int i = 0; i < 5; i++) {
             epr.addReferenceParameter(
@@ -102,13 +95,6 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         epr.addReferenceParameter(
                 new QName("http://reference.org", "Reference3", "myRef"),
                 "Value 300");
-
-        epr.setServiceName(
-                new ServiceName(
-                        new QName("http://www.from.org/service/",
-                                "Service",
-                                "serviceNS"),
-                        "port"));
 
         epr.setPortType(
                 new QName("http://www.from.org/service/port/",

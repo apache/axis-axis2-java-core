@@ -43,7 +43,6 @@ public class EndpointReference implements Serializable {
 
     // Properties from WS-A Submission version
     private Map referenceProperties;
-    private ServiceName serviceName;
 
     /**
      * @param address
@@ -159,13 +158,6 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     * Method getServiceName
-     */
-    public ServiceName getServiceName() {
-        return serviceName;
-    }
-
-    /**
      * Method setAddress
      *
      * @param address
@@ -204,14 +196,5 @@ public class EndpointReference implements Serializable {
      */
     public void setReferenceProperties(HashMap referenceProperties) {
         this.referenceProperties = referenceProperties;
-    }
-
-    /**
-     * Method setServiceName
-     *
-     * @param serviceName
-     */
-    public void setServiceName(ServiceName serviceName) {
-        this.serviceName = serviceName;
     }
 }

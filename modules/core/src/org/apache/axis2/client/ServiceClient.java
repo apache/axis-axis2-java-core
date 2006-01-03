@@ -3,9 +3,17 @@ package org.apache.axis2.client;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -295,7 +303,7 @@ public class ServiceClient {
 
             // this method call two channel non blocking method to do the work
             // and wait on the callbck
-            sendReceiveNonblocking(operation, elem, callback);
+            sendReceiveNonBlocking(operation, elem, callback);
 
             long timeout = options.getTimeOutInMilliSeconds();
 
@@ -358,10 +366,10 @@ public class ServiceClient {
 
     public void sendReceiveNonblocking(OMElement elem, Callback callback)
             throws AxisFault {
-        sendReceiveNonblocking(ANON_OUT_IN_OP, elem, callback);
+        sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
     }
 
-    public void sendReceiveNonblocking(QName operation, OMElement elem,
+    public void sendReceiveNonBlocking(QName operation, OMElement elem,
                                        Callback callback) throws AxisFault {
         MessageContext mc = new MessageContext();
         fillSoapEnvelope(mc, elem);

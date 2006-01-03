@@ -24,11 +24,7 @@ public class SOAPEnvelopeTest extends SOAPTestCase {
     public SOAPEnvelopeTest(String testName) {
         super(testName);
         soap11Envelope = soap11Factory.getDefaultEnvelope();
-        // Toss in a header to make sure the SOAPHeader gets set up
-        soap11Envelope.addHeaderBlock("dummy", "http://ns");
         soap12Envelope = soap12Factory.getDefaultEnvelope();
-        // Toss in a header to make sure the SOAPHeader gets set up
-        soap12Envelope.addHeaderBlock("dummy", "http://ns");
     }
 
     //SOAP 1.1 Envelope Test (Programaticaly Created)-----------------------------------------------

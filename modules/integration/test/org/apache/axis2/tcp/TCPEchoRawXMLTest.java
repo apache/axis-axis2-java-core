@@ -129,7 +129,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
 
-        sender.sendReceiveNonblocking(operationName, payload, callback);
+        sender.sendReceiveNonBlocking(operationName, payload, callback);
 
         int index = 0;
         while (!finish) {

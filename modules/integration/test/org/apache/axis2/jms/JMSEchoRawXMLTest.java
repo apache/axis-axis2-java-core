@@ -128,7 +128,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         sender.engageModule(new QName("addressing"));
         sender.setOptions(options);
         options.setTo(targetEPR);
-        sender.sendReceiveNonblocking(operationName, payload, callback);
+        sender.sendReceiveNonBlocking(operationName, payload, callback);
 
 
         int index = 0;

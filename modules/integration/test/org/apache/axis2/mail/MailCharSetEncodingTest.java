@@ -138,7 +138,7 @@ public class MailCharSetEncodingTest extends TestCase {
             ServiceClient sender = new ServiceClient(clientConfigContext, clientService);
             sender.setOptions(options);
             options.setTo(targetEPR);
-            sender.sendReceiveNonblocking(operationName,createEnvelope(value), callback);
+            sender.sendReceiveNonBlocking(operationName,createEnvelope(value), callback);
 
             int index = 0;
             while (!finish) {

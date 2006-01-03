@@ -5,7 +5,6 @@
         <wsa:Reference0>Value 0</wsa:Reference0>
         <wsa:Reference2>Value 200</wsa:Reference2>
         <wsa:Reference3>Value 300</wsa:Reference3>
-        <wsa:ServiceName wsa:PortName="port">serviceNS:Service</wsa:ServiceName>
         <wsa:PortType>portNS:Port</wsa:PortType>
         <wsa:To>http://www.to.org/service/</wsa:To>
         <wsa:ReplyTo>

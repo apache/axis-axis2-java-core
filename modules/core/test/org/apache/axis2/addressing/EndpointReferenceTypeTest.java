@@ -95,28 +95,4 @@ public class EndpointReferenceTypeTest extends TestCase {
                     "value " + i * 50);
         }
     }
-
-    public void testGetAndSetServiceName() {
-        ServiceName serviceName = new ServiceName(
-                new QName("www.someservicename.org", "service"));
-        endpointReference.setServiceName(serviceName);
-        ServiceName retrievedServiceName = endpointReference.getServiceName();
-        assertEquals("ServiceName name has not been get/set properly",
-                serviceName.getName(),
-                retrievedServiceName.getName());
-
-        serviceName =
-                new ServiceName(
-                        new QName("www.someservicename.org", "service"),
-                        "portName");
-        endpointReference.setServiceName(serviceName);
-        retrievedServiceName = endpointReference.getServiceName();
-        assertEquals("ServiceName name has not been get/set properly",
-                serviceName.getName(),
-                retrievedServiceName.getName());
-        assertEquals("ServiceName portName has not been get/set properly",
-                serviceName.getPortName(),
-                retrievedServiceName.getPortName());
-    }
-
 }

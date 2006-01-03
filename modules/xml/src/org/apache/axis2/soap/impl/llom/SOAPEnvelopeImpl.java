@@ -24,7 +24,14 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPConstants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.factory.SOAPLinkedListImplFactory;
 
 import javax.xml.namespace.QName;
@@ -86,28 +93,6 @@ public class SOAPEnvelopeImpl extends SOAPElement
                 factory = OMAbstractFactory.getSOAP11Factory();
             }
         }
-    }
-
-    /**
-     * Convenience method to add a SOAP header to this envelope
-     *
-     * @param name
-     * @param namespaceURI
-     */
-    public SOAPHeaderBlock addHeaderBlock(String name, String namespaceURI)
-            throws OMException {
-        // TODO : cache SOAP header and body instead of looking them up?
-
-
-        OMNamespace namespace = factory.createOMNamespace(namespaceURI, null);
-        return this.addHeaderBlock(name, namespace);
-    }
-
-    public SOAPHeaderBlock addHeaderBlock(String name, OMNamespace namespace) throws OMException {
-        SOAPHeader headerContainer = getHeader();
-        inferFactory();
-        
-        return factory.createSOAPHeaderBlock(name, namespace, headerContainer);
     }
 
     public void addChild(OMNode child) {

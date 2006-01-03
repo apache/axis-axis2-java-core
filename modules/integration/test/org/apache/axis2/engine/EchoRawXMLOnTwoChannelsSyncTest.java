@@ -85,9 +85,9 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
 
         ServiceClient sender = new ServiceClient(configConetxt, service);
         sender.setOptions(options);
-        options.setTo(targetEPR);
 
         OMElement result = sender.sendReceive(operationName, method);
+        System.out.println("result = " + result);
 
         TestingUtils.campareWithCreatedOMElement(result);
         sender.finalizeInvoke();
