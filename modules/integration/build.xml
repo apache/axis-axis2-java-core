@@ -91,6 +91,8 @@
         <move todir="${dir.classes}">
             <fileset dir="${dir.src}">
                 <include name="**/schema**/**/*.class"/>
+            </fileset>
+            <fileset dir="${dir.src}/resources">
                 <include name="**/schema**/**/*.xsb"/>
             </fileset>
         </move>

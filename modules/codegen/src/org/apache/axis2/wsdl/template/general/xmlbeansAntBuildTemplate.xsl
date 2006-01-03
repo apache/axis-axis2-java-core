@@ -8,87 +8,47 @@
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
             </property>
+            <property name="test">
+                <xsl:attribute name="value">${basedir}\test</xsl:attribute>
+            </property>
+            <property name="resources">
+                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
+            </property>
+            <property name="build">
+                <xsl:attribute name="value">${basedir}\build</xsl:attribute>
+            </property>
             <property name="classes">
-                <xsl:attribute name="value">${basedir}\classes</xsl:attribute>
+                <xsl:attribute name="value">${build}\classes</xsl:attribute>
             </property>
-            <property name="bin">
-                <xsl:attribute name="value">${basedir}\bin</xsl:attribute>
+            <property name="lib">
+                <xsl:attribute name="value">${build}\lib</xsl:attribute>
             </property>
-            <property name="other">
-                <xsl:attribute name="value">${basedir}\other</xsl:attribute>
-            </property>
-            <property name="temp">
-                <xsl:attribute name="value">${basedir}\temp</xsl:attribute>
-            </property>
+
             <property name="xbeans.packaged.jar.name" value="XBeans-packaged.jar"></property>
-            <!--<property name="xbeans.available" value=""></property>
-            <property name="stax.available" value=""></property>
-            <property name="axis2.available" value=""></property>-->
             <property name="jars.ok" value=""></property>
-            <property name="mappings.folder.name" value="Mapping"></property>
-            <property name="schemas.folder.name" value="schemas"></property>
-
-
-            <target name="move.files" depends="init">
-                <xsl:comment>first move the generated packages</xsl:comment>
-                <move>
-                    <xsl:attribute name="todir">${src}</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${basedir}</xsl:attribute>
-                        <xsl:attribute name="includes"><xsl:value-of select="$package"></xsl:value-of>\**\</xsl:attribute>
-                    </fileset>
-
-                </move>
-                <xsl:comment>move the XBeans stuff to the temp</xsl:comment>
-                <move>
-                    <xsl:attribute name="todir">${temp}</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${basedir}</xsl:attribute>
-                        <xsl:attribute name="includes">schemaorg_apache_xmlbeans\**\</xsl:attribute>
-                    </fileset>
-                </move>
-                <xsl:comment>move the rest of the stuff to the other folder</xsl:comment>
-                <move>
-                    <xsl:attribute name="todir">${other}</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${basedir}</xsl:attribute>
-                        <xsl:attribute name="includes">${mappings.folder.name}\**\</xsl:attribute>
-                    </fileset>
-                </move>
-                <move>
-                    <xsl:attribute name="todir">${other}</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${basedir}</xsl:attribute>
-                        <xsl:attribute name="includes">${schemas.folder.name}\**\</xsl:attribute>
-                    </fileset>
-                </move>
-
-            </target>
 
             <target name="init">
                 <mkdir>
-                    <xsl:attribute name="dir">${src}</xsl:attribute>
+                    <xsl:attribute name="dir">${build}</xsl:attribute>
                 </mkdir>
                 <mkdir>
                     <xsl:attribute name="dir">${classes}</xsl:attribute>
                 </mkdir>
                 <mkdir>
-                    <xsl:attribute name="dir">${bin}</xsl:attribute>
-                </mkdir>
-                <mkdir>
-                    <xsl:attribute name="dir">${temp}</xsl:attribute>
+                    <xsl:attribute name="dir">${lib}</xsl:attribute>
                 </mkdir>
             </target>
 
-            <target name="jar.xbeans" depends="move.files">
-                <!-- jar the  XMLbeans stuff to the bin folder-->
+            <target name="jar.xbeans">
+                <!-- jar the  XMLbeans stuff to the lib folder-->
                 <jar>
-                    <xsl:attribute name="basedir">${temp}</xsl:attribute>
-                    <xsl:attribute name="destfile">${bin}\${xbeans.packaged.jar.name}</xsl:attribute>
+                    <xsl:attribute name="basedir">${resources}</xsl:attribute>
+                    <xsl:attribute name="destfile">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                    <xsl:attribute name="excludes">**/services.xml</xsl:attribute>
                 </jar>
             </target>
 
-            <target name="pre.compile.test" depends="jar.xbeans">
+            <target name="pre.compile.test" depends="init, jar.xbeans">
                 <xsl:comment>Test the classpath for the availability of necesary classes</xsl:comment>
                 <available classname="org.apache.xmlbeans.XmlObject" property="xbeans.available"/>
                 <available classname="javax.xml.stream.XMLStreamReader" property="stax.available"/>
@@ -120,7 +80,7 @@
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
-                        <xsl:attribute name="location">${bin}\${xbeans.packaged.jar.name}</xsl:attribute>
+                        <xsl:attribute name="location">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
                     </classpath>
                     <classpath>
                         <xsl:attribute name="location">${java.class.path}</xsl:attribute>
@@ -141,8 +101,13 @@
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <jar>
                     <xsl:attribute name="basedir">${classes}</xsl:attribute>
-                    <xsl:attribute name="destfile">${bin}\service.jar</xsl:attribute>
+                    <xsl:attribute name="destfile">${lib}\service.jar</xsl:attribute>
                 </jar>
+            </target>
+            <target name="clean">
+              <delete>
+                <xsl:attribute name="dir">${build}</xsl:attribute>
+              </delete>
             </target>
         </project>
     </xsl:template>

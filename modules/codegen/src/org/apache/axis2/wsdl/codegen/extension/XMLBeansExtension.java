@@ -76,7 +76,8 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
-
+    boolean debug = false;
+    
     public void engage() {
 
         //test the databinding type. If not just fall through
@@ -125,25 +126,29 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
 
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
-                    File schemaFolder = new File(configuration.getOutputLocation(), SCHEMA_FOLDER);
-                    schemaFolder.mkdir();
+                    File schemaFolder = null;
+                    if(debug) {
+                        schemaFolder = new File(configuration.getOutputLocation(), SCHEMA_FOLDER);
+                        schemaFolder.mkdir();
+                    }
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
                         Element element = (Element) importedSchemaStack.pop();
                         String tagetNamespace = element.getAttribute("targetNamespace");
                         if (!processedSchemas.contains(tagetNamespace)) {
 
-                            // we are not using DOM toString method here, as it seems it depends on the
-                            // JDK version that is being used.
-                            String s = DOM2Writer.nodeToString(element);
-
-                            //write the schema to a file
-                            File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
-                            FileWriter writer = new FileWriter(tempFile);
-                            writer.write(s);
-                            writer.flush();
-                            writer.close();
-
+                            if(debug) {
+                                // we are not using DOM toString method here, as it seems it depends on the
+                                // JDK version that is being used.
+                                String s = DOM2Writer.nodeToString(element);
+    
+                                //write the schema to a file
+                                File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
+                                FileWriter writer = new FileWriter(tempFile);
+                                writer.write(s);
+                                writer.flush();
+                                writer.close();
+                            }
 
                             xmlObjectsVector.add(
                                     XmlObject.Factory.parse(
@@ -157,7 +162,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             }
 
             // add the third party schemas
-            //todo pehaps checking the namespaces would be a good idea to
+            //todo perhaps checking the namespaces would be a good idea to
             //make the generated code work efficiently
             for (int i = 0; i < additionalSchemas.length; i++) {
                 xmlObjectsVector.add(XmlObject.Factory.parse(
@@ -190,8 +195,10 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             //set the type mapper to the config
             configuration.setTypeMapper(mapper);
 
-            // write the mapper to a file for later retriival
-            writeMappingsToFile(mapper.getAllMappedNames());
+            if(debug) {
+                // write the mapper to a file for later retriival
+                writeMappingsToFile(mapper.getAllMappedNames());
+            }
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -354,7 +361,11 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
         public OutputStream createBinaryFile(String typename)
                 throws IOException {
-            File file = new File(configuration.getOutputLocation(), typename);
+            File resourcesDirectory = new File(configuration.getOutputLocation(), "resources");
+            if(!resourcesDirectory.exists()) {
+                resourcesDirectory.mkdirs();
+            }
+            File file = new File(resourcesDirectory, typename);
             file.getParentFile().mkdirs();
             file.createNewFile();
             return new FileOutputStream(file);
