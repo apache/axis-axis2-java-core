@@ -4,30 +4,37 @@ import junit.framework.TestCase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.soap.*;
+import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.Text;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class TextTest extends TestCase {
-	
-	public TextTest(String name){
-		super(name);
-	}
-	
-	//Test SAAJ addTextNode performance
-	public void testAddTextNode() throws Exception {
+
+    public TextTest(String name) {
+        super(name);
+    }
+
+    //Test SAAJ addTextNode performance
+    public void testAddTextNode() throws Exception {
         SOAPFactory soapFactory = SOAPFactory.newInstance();
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage();
-        SOAPHeader header = message.getSOAPHeader();
         SOAPBody body = message.getSOAPBody();
-        
+
         // Create the base element
         Name bodyName = soapFactory.createName("VBGenReceiver", "xsi",
-                "http://www.w3.org/2001/XMLSchema-instance");
+                                               "http://www.w3.org/2001/XMLSchema-instance");
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
-        
+
         // Create the MetaData Tag
         Name name = soapFactory.createName("MetaData");
         SOAPElement metaData = bodyElement.addChildElement(name);
@@ -119,49 +126,45 @@ public class TextTest extends TestCase {
         SOAPElement postalCode = delivery.addChildElement(name);
         postalCode.addTextNode("PostalCode015");
 
-        System.out.println("The message is lll:\n");
+        System.out.println("The message is:\n");
         message.writeTo(System.out);
+        System.out.flush();
+    }
 
-	}
-	
-	public void testComment() throws SOAPException, IOException{
-		
-		String xmlString = "<?xml version='1.0' encoding='utf-8'?> " +
-				"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-				"<soapenv:Header></soapenv:Header><soapenv:Body>" + 
-				"<Node:abc xmlns:Node=\"http://www.simpletest.org\">" + 
-				"This is some text" + 
-				"<!--This is comment-->This is other text</Node:abc>" + 
-				"</soapenv:Body></soapenv:Envelope>";
-		
-		MessageFactory mf = MessageFactory.newInstance();
-		SOAPMessage message = 
-    		mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
-        
+    public void testComment() throws SOAPException, IOException {
+
+        String xmlString = "<?xml version='1.0' encoding='utf-8'?> " +
+                           "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                           "<soapenv:Header></soapenv:Header>" +
+                           "<soapenv:Body>" +
+                           "<Node:abc xmlns:Node=\"http://www.simpletest.org\">" +
+                           "This is some text" +
+                           "<!--This is comment-->This is other text" +
+                           "<!--This is another comment-->This is some other text" +
+                           "</Node:abc>" +
+                           "</soapenv:Body>" +
+                           "</soapenv:Envelope>";
+
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage message =
+                mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
+
         SOAPBody body = message.getSOAPBody();
         Node bodyElement = body.getFirstChild();
         NodeList textNodes = bodyElement.getChildNodes();
-        
-        assertEquals(textNodes.getLength(), 3);
-        
-        for(int i = 0;i < textNodes.getLength(); i++){
-        	Node nde = textNodes.item(i);
-        	boolean isComment;
-        	if(nde instanceof Text){
-        		isComment = ((Text)nde).isComment();
-        		if(i == 1)
-        			assertEquals(true, isComment);
-        		else
-        			assertEquals(false, isComment);
-        	}
+
+        assertEquals(5, textNodes.getLength());
+
+        for (int i = 0; i < textNodes.getLength(); i++) {
+            Node nde = textNodes.item(i);
+            boolean isComment;
+            if (nde instanceof Text) {
+                isComment = ((Text) nde).isComment();
+                if (i == 1)
+                    assertEquals(true, isComment);
+                else
+                    assertEquals(false, isComment);
+            }
         }
-
-	}
-
-    public static void main(String[] args) throws Exception {
-        TextTest tester = new TextTest("TestEnvelope");
-        tester.testAddTextNode();
-        tester.testComment();
     }
-	
 }

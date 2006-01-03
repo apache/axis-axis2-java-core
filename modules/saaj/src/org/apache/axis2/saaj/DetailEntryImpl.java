@@ -15,33 +15,22 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axis2.om.impl.dom.ElementImpl;
+
 import javax.xml.soap.DetailEntry;
 
 /**
- * Class DetailEntryImpl
+ * The content for a Detail object, giving details for a SOAPFault object.
+ * A DetailEntry object, which carries information about errors related to the
+ * SOAPBody  object that contains it, is application-specific.
  */
 public class DetailEntryImpl extends SOAPElementImpl implements DetailEntry {
 
     /**
-     * Field detailEntry
+     * @param element
      */
-    private org.apache.axis2.om.OMElement detailEntry;
-
-    /**
-     * Constructor DetailEntryImpl
-     */
-    public DetailEntryImpl() {
-
-    }
-
-    /**
-     * Constructor DetailEntryImpl
-     *
-     * @param detailEntry
-     */
-    public DetailEntryImpl(org.apache.axis2.om.OMElement detailEntry) {
-    	super(detailEntry);
-        this.detailEntry = detailEntry;
+    public DetailEntryImpl(ElementImpl element) {
+        super(element);
     }
 
 }

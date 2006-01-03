@@ -15,98 +15,85 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.soap.SOAPFaultDetail;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Class DetailImpl
+ * A container for <code>DetailEntry</code> objects. <code>DetailEntry</code>
+ * objects give detailed error information that is application-specific and
+ * related to the <code>SOAPBody</code> object that contains it.
+ * <p/>
+ * A <code>Detail</code> object, which is part of a <code>SOAPFault</code>
+ * object, can be retrieved using the method <code>SOAPFault.getDetail</code>.
+ * The <code>Detail</code> interface provides two methods. One creates a new
+ * <code>DetailEntry</code> object and also automatically adds it to
+ * the <code>Detail</code> object. The second method gets a list of the
+ * <code>DetailEntry</code> objects contained in a <code>Detail</code>
+ * object.
+ * <p/>
+ * The following code fragment, in which <i>sf</i> is a <code>SOAPFault</code>
+ * object, gets its <code>Detail</code> object (<i>d</i>), adds a new
+ * <code>DetailEntry</code> object to <i>d</i>, and then gets a list of all the
+ * <code>DetailEntry</code> objects in <i>d</i>. The code also creates a
+ * <code>Name</code> object to pass to the method <code>addDetailEntry</code>.
+ * The variable <i>se</i>, used to create the <code>Name</code> object,
+ * is a <code>SOAPEnvelope</code> object.
+ * <PRE>
+ * Detail d = sf.getDetail();
+ * Name name = se.createName("GetLastTradePrice", "WOMBAT",
+ * "http://www.wombat.org/trader");
+ * d.addDetailEntry(name);
+ * Iterator it = d.getDetailEntries();
+ * </PRE>
  */
 public class DetailImpl extends SOAPFaultElementImpl implements Detail {
 
-    /**
-     * Field detail
-     */
-    protected SOAPFaultDetail detail;
+//    private SOAPFaultDetail faultDetail;
 
     /**
-     * Constructor DetailImpl
-     *
-     * @param detailName
-     * @param parent
+     * @param element
      */
-    public DetailImpl(SOAPFault parent) {
-        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-        org.apache.axis2.soap.SOAPFault omFault = ((SOAPFaultImpl) parent).getOMFault();
-        detail = soapFactory.createSOAPFaultDetail(omFault);
-    }
-
-    public DetailImpl(SOAPFaultDetail detail) {
-        this.detail = detail;
+    public DetailImpl(SOAPFaultDetail element) {
+        super((ElementImpl) element);
+//        faultDetail = element;
     }
 
     /**
-     * Method addDetailEntry
+     * Creates a new <code>DetailEntry</code> object with the given
+     * name and adds it to this <code>Detail</code> object.
      *
-     * @param name
-     * @return
-     * @throws SOAPException
-     * @see javax.xml.soap.Detail#addDetailEntry(javax.xml.soap.Name)
+     * @param name a <code>Name</code> object identifying the new <code>DetailEntry</code> object
+     * @return DetailEntry.
+     * @throws SOAPException thrown when there is a problem in adding a DetailEntry object to this Detail object.
      */
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
-
-        String localName = name.getLocalName();
-        OMFactory omFactory = OMAbstractFactory.getOMFactory();
-        OMNamespace ns = omFactory.createOMNamespace(name.getURI(),
-                name.getPrefix());
-        OMElement detailEntry = omFactory.createOMElement(localName, ns);
-        detail.addDetailEntry(detailEntry);
-        return (new DetailEntryImpl(detailEntry));
+        SOAPElementImpl childElement = (SOAPElementImpl) addChildElement(name);
+        DetailEntryImpl detailEntryImpl = new DetailEntryImpl(childElement.element);
+//        faultDetail.addDetailEntry(detailEntryImpl.element);  //This causes infinite recursion
+        return detailEntryImpl;
     }
 
     /**
-     * Method addDetailEntry
+     * Gets a list of the detail entries in this <code>Detail</code> object.
      *
-     * @param detailEntry
-     * @return
-     */
-    protected DetailEntry addDetailEntry(
-            org.apache.axis2.om.OMElement detailEntry) {
-        detail.addDetailEntry(detailEntry);
-        return (new DetailEntryImpl(detailEntry));
-    }
-
-    /**
-     * Method getDetailEntries
-     *
-     * @return
-     * @see javax.xml.soap.Detail#getDetailEntries()
+     * @return an <code>Iterator</code> object over the <code>DetailEntry</code>
+     *         objects in this <code>Detail</code> object
      */
     public Iterator getDetailEntries() {
-        // Get the detailEntried which will be omElements
-        // convert them to soap DetailEntry and return the iterator
-        Iterator detailEntryIter = detail.getAllDetailEntries();
-        ArrayList aList = new ArrayList();
-        while (detailEntryIter.hasNext()) {
-            Object o = detailEntryIter.next();
-            if (o instanceof org.apache.axis2.om.OMElement) {
-                OMElement omDetailEntry = (OMElement) o;
-                DetailEntry detailEntry = new DetailEntryImpl(omDetailEntry);
-                aList.add(detailEntry);
-            }
+        final Iterator detailEntriesIter = element.getChildElements();
+        Collection details = new ArrayList();
+        while (detailEntriesIter.hasNext()) {
+            details.add(new DetailEntryImpl((ElementImpl) detailEntriesIter.next()));
         }
-        return aList.iterator();
+        return details.iterator();
     }
 
 }

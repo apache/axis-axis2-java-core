@@ -32,18 +32,18 @@ public class HeadersTest extends TestCase {
     }
 
     public void testAddingHeaderElements() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage = javax.xml.soap.MessageFactory.newInstance()
-                .createMessage();
-        javax.xml.soap.SOAPEnvelope soapEnv = soapMessage.getSOAPPart()
-                .getEnvelope();
+        javax.xml.soap.SOAPMessage soapMessage =
+                javax.xml.soap.MessageFactory.newInstance().createMessage();
+        javax.xml.soap.SOAPEnvelope soapEnv =
+                soapMessage.getSOAPPart().getEnvelope();
         javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
         header.addChildElement("ebxmlms");
-        
+
         /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        soapMessage.writeTo(baos);
-        String xml = new String(baos.toByteArray());
-        assertTrue(xml.indexOf("ebxmlms") != -1);*/
-        
+      soapMessage.writeTo(baos);
+      String xml = new String(baos.toByteArray());
+      assertTrue(xml.indexOf("ebxmlms") != -1);*/
+
         Iterator it = header.getChildElements();
         boolean b = false;
         while (it.hasNext()) {

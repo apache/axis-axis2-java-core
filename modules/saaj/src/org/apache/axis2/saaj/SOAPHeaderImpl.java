@@ -15,182 +15,157 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
-/**
- * Class SOAPHeaderImpl
- */
 public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 
-    /**
-     * Field omHeader	OM's SOAPHeader field
-     */
-    private org.apache.axis2.soap.SOAPHeader omHeader;
+    private org.apache.axis2.soap.SOAPHeader omSOAPHeader;
 
     /**
-     * Constructor SOAPHeaderImpl
+     * Constructor
      *
      * @param header
      */
     public SOAPHeaderImpl(org.apache.axis2.soap.SOAPHeader header) {
-        super(header);
-        this.omHeader = header;
+        super((ElementImpl) header);
+        omSOAPHeader = header;
     }
 
     /**
-     * Method addHeaderElement
+     * Creates a new <CODE>SOAPHeaderElement</CODE> object
+     * initialized with the specified name and adds it to this
+     * <CODE>SOAPHeader</CODE> object.
      *
-     * @param name
-     * @return
-     * @throws SOAPException
-     * @see javax.xml.soap.SOAPHeader#addHeaderElement(javax.xml.soap.Name)
+     * @param name a <CODE>Name</CODE> object with
+     *             the name of the new <CODE>SOAPHeaderElement</CODE>
+     *             object
+     * @return the new <CODE>SOAPHeaderElement</CODE> object that
+     *         was inserted into this <CODE>SOAPHeader</CODE>
+     *         object
+     * @throws SOAPException if a SOAP error occurs
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
-        // Create an OMHeaderBlock out of name and add it a SOAPHeaderElement
-        //to SOAPHeader
-        String localName = name.getLocalName();
-        OMFactory omFactory = OMAbstractFactory.getOMFactory();
-        OMNamespace ns = omFactory.createOMNamespace(name.getURI(),
-                name.getPrefix());
-        org.apache.axis2.soap.SOAPHeaderBlock headerBlock = omHeader.addHeaderBlock(
-                localName, ns);
-        return (new SOAPHeaderElementImpl(headerBlock));
+        OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
+        SOAPHeaderBlock headerBlock = new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader);
+        return new SOAPHeaderElementImpl(headerBlock);
     }
 
     /**
-     * method examineHeaderElements
+     * Returns a list of all the <CODE>SOAPHeaderElement</CODE>
+     * objects in this <CODE>SOAPHeader</CODE> object that have the
+     * the specified actor. An actor is a global attribute that
+     * indicates the intermediate parties to whom the message should
+     * be sent. An actor receives the message and then sends it to
+     * the next actor. The default actor is the ultimate intended
+     * recipient for the message, so if no actor attribute is
+     * included in a <CODE>SOAPHeader</CODE> object, the message is
+     * sent to its ultimate destination.
      *
-     * @param actor
-     * @return
-     * @see javax.xml.soap.SOAPHeader#examineHeaderElements(java.lang.String)
+     * @param actor a <CODE>String</CODE> giving the
+     *              URI of the actor for which to search
+     * @return an <CODE>Iterator</CODE> object over all the <CODE>
+     *         SOAPHeaderElement</CODE> objects that contain the
+     *         specified actor
+     * @see #extractHeaderElements(java.lang.String) extractHeaderElements(java.lang.String)
      */
     public Iterator examineHeaderElements(String actor) {
-        // Get all the om specific header elements in an iterator and wrap it
-        // in a soap specific iterator and return
-        Iterator headerElementsIter = omHeader.examineHeaderBlocks(actor);
-        ArrayList aList = new ArrayList();
-        while (headerElementsIter.hasNext()) {
-            Object o = headerElementsIter.next();
-            if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
-                org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
-                        headerBlock));
-                aList.add(element);
-            }
+        Collection elements = new ArrayList();
+        for (Iterator iterator = omSOAPHeader.examineHeaderBlocks(actor); iterator.hasNext();) {
+            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
-        return aList.iterator();
+        return elements.iterator();
     }
 
     /**
-     * method extractHeaderElements
+     * Returns a list of all the <CODE>SOAPHeaderElement</CODE>
+     * objects in this <CODE>SOAPHeader</CODE> object that have
+     * the the specified actor and detaches them from this <CODE>
+     * SOAPHeader</CODE> object.
+     * <p/>
+     * <P>This method allows an actor to process only the parts of
+     * the <CODE>SOAPHeader</CODE> object that apply to it and to
+     * remove them before passing the message on to the next
+     * actor.
      *
-     * @param actor
-     * @return
-     * @see javax.xml.soap.SOAPHeader#extractHeaderElements(java.lang.String)
+     * @param actor a <CODE>String</CODE> giving the
+     *              URI of the actor for which to search
+     * @return an <CODE>Iterator</CODE> object over all the <CODE>
+     *         SOAPHeaderElement</CODE> objects that contain the
+     *         specified actor
+     * @see #examineHeaderElements(java.lang.String) examineHeaderElements(java.lang.String)
      */
     public Iterator extractHeaderElements(String actor) {
-        // Get all the om specific header elements in an iterator and wrap it
-        // in a soap specific iterator and return
-        Iterator headerElementsIter = omHeader.extractHeaderBlocks(actor);
-        ArrayList aList = new ArrayList();
-        while (headerElementsIter.hasNext()) {
-            Object o = headerElementsIter.next();
-            if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
-                org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
-                        headerBlock));
-                aList.add(element);
-            }
+        Collection elements = new ArrayList();
+        for (Iterator iterator = omSOAPHeader.extractHeaderBlocks(actor); iterator.hasNext();) {
+            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
-        return aList.iterator();
+        return elements.iterator();
     }
 
     /**
-     * method examineMustUnderstandHeaderElements
+     * Returns an <code>Iterator</code> over all the
+     * <code>SOAPHeaderElement</code> objects in this <code>SOAPHeader</code>
+     * object that have the specified actor and that have a MustUnderstand
+     * attribute whose value is equivalent to <code>true</code>.
      *
-     * @param actor
-     * @return
-     * @see javax.xml.soap.SOAPHeader#examineMustUnderstandHeaderElements(java.lang.String)
+     * @param actor a <code>String</code> giving the URI of the actor for which
+     *              to search
+     * @return an <code>Iterator</code> object over all the
+     *         <code>SOAPHeaderElement</code> objects that contain the
+     *         specified actor and are marked as MustUnderstand
      */
     public Iterator examineMustUnderstandHeaderElements(String actor) {
-        // Get all the om specific header elements in an iterator and wrap it
-        // in a soap specific iterator and return
-        Iterator headerElementsIter = omHeader.examineMustUnderstandHeaderBlocks(
-                actor);
-        ArrayList aList = new ArrayList();
-        while (headerElementsIter.hasNext()) {
-            Object o = headerElementsIter.next();
-            if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
-                org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
-                        headerBlock));
-                aList.add(element);
-            }
+        Collection elements = new ArrayList();
+        for (Iterator iterator = omSOAPHeader.examineMustUnderstandHeaderBlocks(actor); iterator.hasNext();)
+        {
+            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
-        return aList.iterator();
+        return elements.iterator();
     }
 
     /**
-     * method examineAllHeaderElements
+     * Returns an <code>Iterator</code> over all the
+     * <code>SOAPHeaderElement</code> objects in this <code>SOAPHeader</code>
+     * object.
      *
-     * @return
-     * @see javax.xml.soap.SOAPHeader#examineAllHeaderElements()
+     * @return an <code>Iterator</code> object over all the
+     *         <code>SOAPHeaderElement</code> objects contained by this
+     *         <code>SOAPHeader</code>
      */
     public Iterator examineAllHeaderElements() {
-        // Get all the om specific header elements in an iterator and wrap it
-        // in a soap specific iterator and return
-        Iterator headerElementsIter = omHeader.examineAllHeaderBlocks();
-        ArrayList aList = new ArrayList();
-        while (headerElementsIter.hasNext()) {
-            Object o = headerElementsIter.next();
-            if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
-                org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
-                        headerBlock));
-                aList.add(element);
-            }
+        Collection elements = new ArrayList();
+        for (Iterator iterator = omSOAPHeader.examineAllHeaderBlocks(); iterator.hasNext();) {
+            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
-        return aList.iterator();
+        return elements.iterator();
     }
 
     /**
-     * method extractAllHeaderElements
+     * Returns an <code>Iterator</code> over all the
+     * <code>SOAPHeaderElement</code> objects in this <code>SOAPHeader </code>
+     * object and detaches them from this <code>SOAPHeader</code> object.
      *
-     * @return
-     * @see javax.xml.soap.SOAPHeader#extractAllHeaderElements()
+     * @return an <code>Iterator</code> object over all the
+     *         <code>SOAPHeaderElement</code> objects contained by this
+     *         <code>SOAPHeader</code>
      */
     public Iterator extractAllHeaderElements() {
-        // Get all the om specific header elements in an iterator and wrap it
-        // in a soap specific iterator and return
-        Iterator headerElementsIter = omHeader.extractAllHeaderBlocks();
-        ArrayList aList = new ArrayList();
-        while (headerElementsIter.hasNext()) {
-            Object o = headerElementsIter.next();
-            if (o instanceof org.apache.axis2.soap.SOAPHeaderBlock) {
-                org.apache.axis2.soap.SOAPHeaderBlock headerBlock = (org.apache.axis2.soap.SOAPHeaderBlock) o;
-                SOAPHeaderElement element = (new SOAPHeaderElementImpl(
-                        headerBlock));
-                aList.add(element);
-            }
+        Collection elements = new ArrayList();
+        for (Iterator iterator = omSOAPHeader.extractAllHeaderBlocks(); iterator.hasNext();) {
+            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
-        return aList.iterator();
+        return elements.iterator();
     }
-
-    /*public boolean equals(Object o){
-        if(o instanceof SOAPHeaderImpl){
-            if(this.omHeader.equals(((SOAPHeaderImpl)o).omHeader))
-                    return true;
-        }
-        return false;
-    }*/
-
 }

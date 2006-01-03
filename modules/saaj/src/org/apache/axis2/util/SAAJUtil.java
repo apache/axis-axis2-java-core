@@ -1,0 +1,149 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.axis2.saaj.util;
+
+import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.xml.security.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+/**
+ * Utility class for the Axis2-WSS4J Module
+ */
+public class SAAJUtil {
+
+    /**
+     * Create a DOM Document using the org.apache.axis2.soap.SOAPEnvelope
+     *
+     * @param env An org.apache.axis2.soap.SOAPEnvelope instance
+     * @return the DOM Document of the given SOAP Envelope
+     */
+    public static Document getDocumentFromSOAPEnvelope(org.apache.axis2.soap.SOAPEnvelope env) {
+        env.build();
+
+        //Check the namespace and find SOAP version and factory
+        String nsURI;
+        SOAPFactory factory;
+        if (env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+            nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            factory = DOOMAbstractFactory.getSOAP11Factory();
+        } else {
+            nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            factory = DOOMAbstractFactory.getSOAP11Factory();
+        }
+
+        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(), factory, nsURI);
+        SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
+        envelope.build();
+
+        Element envElem = (Element) envelope;
+        return envElem.getOwnerDocument();
+    }
+
+    /**
+     * Create a DOM Document using the org.apache.axis2.soap.SOAPEnvelope
+     *
+     * @param env An org.apache.axis2.soap.SOAPEnvelope instance
+     * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
+     */
+    public static org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl
+            toDOOMSOAPEnvelope(org.apache.axis2.soap.SOAPEnvelope env) {
+        env.build();
+
+        //Check the namespace and find SOAP version and factory
+        String nsURI;
+        SOAPFactory factory;
+        if (env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+            nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            factory = DOOMAbstractFactory.getSOAP11Factory();
+        } else {
+            nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            factory = DOOMAbstractFactory.getSOAP11Factory();
+        }
+
+        StAXSOAPModelBuilder stAXSOAPModelBuilder =
+                new StAXSOAPModelBuilder(env.getXMLStreamReader(), factory, nsURI);
+        SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
+        envelope.build();
+
+        return (org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl) envelope;
+    }
+
+    public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(DocumentImpl doc) {
+        OMElement docElem = (OMElement) doc.getDocumentElement();
+        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
+        return stAXSOAPModelBuilder.getSOAPEnvelope();
+    }
+
+    public static SOAPEnvelope toOMSOAPEnvelope(Element elem) {
+        OMElement docElem = (OMElement) elem;
+        StAXSOAPModelBuilder stAXSOAPModelBuilder =
+                new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
+        return stAXSOAPModelBuilder.getSOAPEnvelope();
+    }
+
+    /**
+     * Convert a given DOM Element to an OMElement
+     *
+     * @param element
+     * @return
+     */
+    public static OMElement toOM(Element element) throws XMLStreamException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        XMLUtils.outputDOM(element, os, true);
+
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        builder.setCache(true);
+
+        return builder.getDocumentElement();
+    }
+
+    /**
+     * Convert a given OMElement to a DOM Element
+     *
+     * @param element
+     * @return
+     */
+    public static Element toDOM(OMElement element) throws Exception {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        element.serialize(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        return factory.newDocumentBuilder().parse(bais).getDocumentElement();
+    }
+}

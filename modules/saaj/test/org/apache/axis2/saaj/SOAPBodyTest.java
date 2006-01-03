@@ -26,6 +26,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import java.util.Iterator;
 
+import org.apache.axis2.saaj.SOAPEnvelopeImpl;
+
 public class SOAPBodyTest extends TestCase {
 
     /**
@@ -37,15 +39,6 @@ public class SOAPBodyTest extends TestCase {
           return new TestSuite(test.message.TestSOAPBody.class);
       }
     */
-    /**
-     * Method main
-     *
-     * @param argv
-     */
-    public static void main(String[] argv) throws Exception {
-        SOAPBodyTest tester = new SOAPBodyTest("TestSOAPBody");
-        tester.testSoapBodyBUG();
-    }
 
     /**
      * Constructor TestSOAPBody
@@ -61,7 +54,7 @@ public class SOAPBodyTest extends TestCase {
      *
      * @throws Exception
      */
-    public void testSoapBodyBUG() throws Exception {
+    public void testSoapBody() throws Exception {
 
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
@@ -69,24 +62,27 @@ public class SOAPBodyTest extends TestCase {
         SOAPEnvelopeImpl env = (SOAPEnvelopeImpl) soapPart.getEnvelope();
         SOAPHeader header = env.getHeader();
         Name hns = env.createName("Hello",
-                "shw",
-                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+                                  "shw",
+                                  "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPElement headElmnt = header.addHeaderElement(hns);
         Name hns1 = env.createName("Myname",
-                "shw",
-                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+                                   "shw",
+                                   "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPElement myName = headElmnt.addChildElement(hns1);
         myName.addTextNode("Tony");
         Name ns = env.createName("Address",
-                "shw",
-                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+                                 "shw",
+                                 "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPBody body = env.getBody();
         SOAPElement bodyElmnt = body.addBodyElement(ns);
         Name ns1 = env.createName("City",
-                "shw",
-                "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
+                                  "shw",
+                                  "http://www.jcommerce.net/soap/ns/SOAPHelloWorld");
         SOAPElement city = bodyElmnt.addChildElement(ns1);
         city.addTextNode("GENT");
+
+        SOAPElement city2 = body.addBodyElement(ns1);
+        city2.addTextNode("CIT2");
 
         Iterator it = body.getChildElements();
         int count = 0;
@@ -94,9 +90,9 @@ public class SOAPBodyTest extends TestCase {
         while (it.hasNext()) {
             SOAPElement el = (SOAPElement) it.next();
             count++;
-            Name name = el.getElementName();
+//            Name name = el.getElementName();
         }
-        assertTrue(count == 1);
+        assertEquals(2,count);
     }
 
 }

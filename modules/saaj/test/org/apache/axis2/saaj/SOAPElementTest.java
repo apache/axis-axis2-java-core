@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 import javax.xml.soap.SOAPElement;
 import java.util.List;
 
+import org.apache.axis2.saaj.TextImplEx;
+import org.apache.axis2.om.impl.dom.NodeImpl;
+
 public class SOAPElementTest extends TestCase {
 
     private SOAPElement soapElem;
@@ -27,8 +30,8 @@ public class SOAPElementTest extends TestCase {
     protected void setUp() throws Exception {
         soapElem =
                 SOAPFactoryImpl.newInstance().createElement("Test",
-                        "test",
-                        "http://test.apache.org/");
+                                                            "test",
+                                                            "http://test.apache.org/");
     }
 
     public void testAddTextNode() throws Exception {
@@ -36,17 +39,17 @@ public class SOAPElementTest extends TestCase {
         final String value = "foo";
         soapElem.addTextNode(value);
         assertEquals(value, soapElem.getValue());
-        TextImpl text = assertContainsText(soapElem);
+        TextImplEx text = assertContainsText(soapElem);
         assertEquals(value, text.getValue());
     }
 
-    private TextImpl assertContainsText(SOAPElement soapElem) {
+    private TextImplEx assertContainsText(SOAPElement soapElem) {
         assertTrue(soapElem.hasChildNodes());
         List childElems = toList(soapElem.getChildElements());
         assertTrue(childElems.size() == 1);
         NodeImpl node = (NodeImpl) childElems.get(0);
-        assertTrue(node instanceof TextImpl);
-        return (TextImpl) node;
+        assertTrue(node instanceof TextImplEx);
+        return (TextImplEx) node;
     }
 
     private List toList(java.util.Iterator iter) {

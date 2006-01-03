@@ -15,30 +15,17 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.impl.dom.ElementImpl;
 
 import javax.xml.soap.SOAPBodyElement;
 
-/**
- * Class SOAPBodeElementImpl
- */
-public class SOAPBodyElementImpl extends SOAPElementImpl implements
-        SOAPBodyElement {
+public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElement {
 
     /**
-     * Constructor SOAPBodeElementImpl
+     * @param element
      */
-    public SOAPBodyElementImpl() {
-        super();
-    }
-
-    /**
-     * Constructor SOAPBodeElementImpl
-     *
-     * @param bodyElement
-     */
-    public SOAPBodyElementImpl(OMElement bodyElement) {
-        super(bodyElement);
+    public SOAPBodyElementImpl(ElementImpl element) {
+        super(element);
     }
 
 }

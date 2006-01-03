@@ -15,13 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
 import org.w3c.dom.Document;
 
-import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
@@ -29,159 +26,139 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import java.util.Locale;
 
-/**
- * Class SOAPBodeImpl
- */
 public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
-    /**
-     * Field omSOAPBody
-     * omSOAPBody is the OM's SOAPBody object that is used for delegation purpose
-     */
+
     private org.apache.axis2.soap.SOAPBody omSOAPBody;
 
     /**
-     * Constructor SOAPBodeImpl
-     * The constructor to facilitate conversion of SAAJ SOAPBody out of OM SOAPBody
-     *
-     * @param omSoapBody
+     * @param omSOAPBody
      */
-    public SOAPBodyImpl(org.apache.axis2.soap.SOAPBody omSoapBody) {
-        super(omSoapBody);
-        this.omSOAPBody = omSoapBody;
+    public SOAPBodyImpl(org.apache.axis2.soap.SOAPBody omSOAPBody) {
+        super((ElementImpl) omSOAPBody);
+        this.omSOAPBody = omSOAPBody;
     }
 
     /**
-     * Method addFault
+     * Creates a new <code>SOAPFault</code> object and adds it to
+     * this <code>SOAPBody</code> object.
      *
-     * @return
-     * @throws SOAPException
-     * @see javax.xml.soap.SOAPBody#addFault()
+     * @return the new <code>SOAPFault</code> object
+     * @throws SOAPException if there is a SOAP error
      */
     public SOAPFault addFault() throws SOAPException {
-        try {
-            //OM SOAPFaultImpl has SOAPFaultImpl(OMElement parent, Exception e) constructor, will use that
-            SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
-            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
-                    omSOAPBody);
-            omSOAPBody.addFault(omSoapFault);
-            return (new SOAPFaultImpl(omSoapFault));
-        } catch (Exception e) {
-            throw new SOAPException(e);
-        }
+        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
+        omSOAPBody.addFault(fault);
+        return new SOAPFaultImpl(fault);
     }
 
     /**
-     * Method hasFault
+     * Indicates whether a <code>SOAPFault</code> object exists in
+     * this <code>SOAPBody</code> object.
      *
-     * @return
-     * @see javax.xml.soap.SOAPBody#hasFault()
+     * @return <code>true</code> if a <code>SOAPFault</code> object exists in
+     *         this <code>SOAPBody</code> object; <code>false</code>
+     *         otherwise
      */
     public boolean hasFault() {
         return omSOAPBody.hasFault();
     }
 
     /**
-     * Method getFault
+     * Returns the <code>SOAPFault</code> object in this <code>SOAPBody</code>
+     * object.
      *
-     * @return
-     * @see javax.xml.soap.SOAPBody#getFault()
+     * @return the <code>SOAPFault</code> object in this <code>SOAPBody</code>
+     *         object
      */
     public SOAPFault getFault() {
-        return (new SOAPFaultImpl(omSOAPBody.getFault()));
-    }
-
-    /**
-     * Method addBodyElement
-     *
-     * @param name
-     * @return
-     * @throws SOAPException
-     * @see javax.xml.soap.SOAPBody#addBodyElement(javax.xml.soap.Name)
-     */
-    public SOAPBodyElement addBodyElement(Name name) throws SOAPException {
-
-        try {
-            OMFactory omFactory = OMAbstractFactory.getOMFactory();
-            QName qname = new QName(name.getURI(),
-                    name.getLocalName(),
-                    name.getPrefix());
-            OMElement bodyElement = omFactory.createOMElement(qname,
-                    omSOAPBody);
-            omSOAPBody.addChild(bodyElement);
-            return (new SOAPBodyElementImpl(bodyElement));
-        } catch (Exception e) {
-            throw new SOAPException(e);
+        if (omSOAPBody.hasFault()) {
+            return new SOAPFaultImpl(omSOAPBody.getFault());
         }
-    }
-
-    /**
-     * Method addFault
-     *
-     * @param faultCode
-     * @param faultString
-     * @param
-     * @throws SOAPException
-     * @see javax.xml.soap.SOAPBody#addFault(javax.xml.soap.Name, java.lang.String, java.util.Locale)
-     */
-    public SOAPFault addFault(Name faultCode,
-                              String faultString,
-                              Locale locale)
-            throws SOAPException {
-        try {
-            //OM SOAPFaultImpl has SOAPFaultImpl(OMElement parent, Exception e) constructor, will use that
-            //actually soap fault is created with the OM's default SOAPFAULT_LOCALNAME and PREFIX, b'coz I've droppe the name param
-            //a work around can be possible but would be confusing as there is no straight forward soapfault constructor in om.
-            //So am deferring it.
-            //even locale param is dropped, don't know how to handle it at the moment. so dropped it.
-            SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
-                    omSOAPBody, new Exception(faultString));
-            omSOAPBody.addFault(omSoapFault);
-            return (new SOAPFaultImpl(omSoapFault));
-        } catch (Exception e) {
-            throw new SOAPException(e);
-        }
-    }
-
-    /**
-     * Method addFault
-     *
-     * @param faultCode
-     * @param faultString
-     * @return
-     * @throws SOAPException
-     * @see javax.xml.soap.SOAPBody#addFault(javax.xml.soap.Name, java.lang.String)
-     */
-    public SOAPFault addFault(Name faultCode, String faultString)
-            throws SOAPException {
-        try {
-            //OM SOAPFaultImpl has SOAPFaultImpl(OMElement parent, Exception e) constructor, will use that
-            //actually soap fault is created with the OM's default SOAPFAULT_LOCALNAME and PREFIX, b'coz I've droppe the name param
-            //a work around can be possible but would be confusing as there is no straight forward soapfault constructor in om.
-            //So am deferring it.
-            SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-            org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
-                    omSOAPBody, new Exception(faultString));
-            omSOAPBody.addFault(omSoapFault);
-            return (new SOAPFaultImpl(omSoapFault));
-        } catch (Exception e) {
-            throw new SOAPException(e);
-        }
-    }
-
-    /**
-     * Method addDocument
-     *
-     * @param document
-     * @return
-     * @throws SOAPException
-     * @see javax.xml.soap.SOAPBody#addDocument(org.w3c.dom.Document)
-     */
-    public SOAPBodyElement addDocument(Document document) throws SOAPException {
-        /*
-         * Don't know how to resolve this as yet. So deferring it.
-         */
         return null;
     }
 
+    /**
+     * Creates a new <code>SOAPBodyElement</code> object with the
+     * specified name and adds it to this <code>SOAPBody</code> object.
+     *
+     * @param name a <code>Name</code> object with the name for the new
+     *             <code>SOAPBodyElement</code> object
+     * @return the new <code>SOAPBodyElement</code> object
+     * @throws SOAPException if a SOAP error occurs
+     */
+    public SOAPBodyElement addBodyElement(Name name) throws SOAPException {
+        SOAPElementImpl elem = (SOAPElementImpl) addChildElement(name);
+        return new SOAPBodyElementImpl(elem.element);
+    }
+
+    /**
+     * Creates a new <code>SOAPFault</code> object and adds it to this
+     * <code>SOAPBody</code> object. The new <code>SOAPFault</code> will have a
+     * <code>faultcode</code> element that is set to the <code>faultCode</code>
+     * parameter and a <code>faultstring</code> set to <code>faultstring</code>
+     * and localized to <code>locale</code>.
+     *
+     * @param faultCode   a <code>Name</code> object giving the fault code to be
+     *                    set; must be one of the fault codes defined in the SOAP 1.1
+     *                    specification and of type QName
+     * @param faultString a <code>String</code> giving an explanation of the
+     *                    fault
+     * @param locale      a <code>Locale</code> object indicating the native language
+     *                    of the <ocde>faultString</code>
+     * @return the new <code>SOAPFault</code> object
+     * @throws SOAPException if there is a SOAP error
+     */
+    public SOAPFault addFault(Name faultCode, String faultString, Locale locale) throws SOAPException {
+        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, new Exception(faultString));
+        SOAPFaultImpl faultImpl = new SOAPFaultImpl(fault);
+        faultImpl.setFaultCode(faultCode);
+        if (locale != null) {
+            faultImpl.setFaultString(faultString, locale);
+        } else {
+            faultImpl.setFaultString(faultString);
+        }
+
+        return faultImpl;
+    }
+
+    /**
+     * Creates a new <code>SOAPFault</code> object and adds it to this
+     * <code>SOAPBody</code> object. The new <code>SOAPFault</code> will have a
+     * <code>faultcode</code> element that is set to the <code>faultCode</code>
+     * parameter and a <code>faultstring</code> set to <code>faultstring</code>.
+     *
+     * @param faultCode   a <code>Name</code> object giving the fault code to be
+     *                    set; must be one of the fault codes defined in the SOAP 1.1
+     *                    specification and of type QName
+     * @param faultString a <code>String</code> giving an explanation of the
+     *                    fault
+     * @return the new <code>SOAPFault</code> object
+     * @throws SOAPException if there is a SOAP error
+     */
+    public SOAPFault addFault(Name faultCode, String faultString) throws SOAPException {
+        return addFault(faultCode, faultString, null);
+    }
+
+    /**
+     * Adds the root node of the DOM <code>Document</code> to this
+     * <code>SOAPBody</code> object.
+     * <p/>
+     * Calling this method invalidates the <code>document</code> parameter. The
+     * client application should discard all references to this
+     * <code>Document</code> and its contents upon calling
+     * <code>addDocument</code>. The behavior of an application that continues
+     * to use such references is undefined.
+     *
+     * @param document the <code>Document</code> object whose root node will be
+     *                 added to this <code>SOAPBody</code>
+     * @return the <code>SOAPBodyElement</code> that represents the root node
+     *         that was added
+     * @throws SOAPException if the <code>Document</code> cannot be added
+     */
+    public SOAPBodyElement addDocument(Document document) throws SOAPException {
+
+        SOAPElementImpl elem = new SOAPElementImpl((ElementImpl) document.getDocumentElement());
+        return new SOAPBodyElementImpl(elem.element);
+
+    }
 }

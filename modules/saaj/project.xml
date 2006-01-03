@@ -44,6 +44,10 @@
             <includes>
                 <include>**/*Test.java</include>
             </includes>
+            <excludes>
+                <exclude>**/PrefixesTest.java</exclude>
+                <exclude>**/SOAPFaultsTest.java</exclude>
+            </excludes>
 
             <resources>
                 <resource>
@@ -88,7 +92,6 @@
             <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-core</artifactId>
@@ -105,7 +108,11 @@
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-doom</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -150,6 +157,14 @@
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-activation</artifactId>
             <version>${geronimo.spec.activation.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>${xmlsec.version}</version>
             <properties>
                 <module>true</module>
             </properties>

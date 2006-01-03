@@ -18,12 +18,14 @@ package org.apache.axis2.saaj;
 import junit.framework.TestCase;
 
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.MimeHeaders;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 
 public class PrefixesTest extends TestCase {
 
@@ -44,7 +46,6 @@ public class PrefixesTest extends TestCase {
                 se.createName
                 ("element2", "prefix2", "http://www.apache.org"));
 
-        org.apache.axis2.soap.SOAPEnvelope omEnv = ((SOAPEnvelopeImpl) se).getOMEnvelope();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         msg.writeTo(baos);
 
@@ -55,25 +56,45 @@ public class PrefixesTest extends TestCase {
         assertTrue(xml.indexOf("http://www.apache.org") != -1);
     }
 
-    /* public void testAttribute() throws Exception {
-         String soappacket = "<SOAP-ENV:Envelope xmlns:SOAP-ENV =\"http://schemas.xmlsoap.org/soap/envelope/\"" +
-                             "xmlns:xsi =\"http://www.w3.org/1999/XMLSchema-instance\"" +
-                             "xmlns:xsd =\"http://www.w3.org/1999/XMLSchema\">" +
-                             "<SOAP-ENV:Body>" +
-                             "<helloworld name=\"tester\" />" +
-                             "</SOAP-ENV:Body>" +
-                             "</SOAP-ENV:Envelope>";
-         SOAPMessage msg = MessageFactory.newInstance().createMessage(new MimeHeaders(), new ByteArrayInputStream(soappacket.getBytes()));
-         SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
-         msg.writeTo(System.out);
+     public void testAttribute() throws Exception {
+      /*  String soappacket = "<SOAP-ENV:Envelope xmlns:SOAP-ENV =\"http://schemas.xmlsoap.org/soap/envelope/\"" +
+                            "xmlns:xsi =\"http://www.w3.org/1999/XMLSchema-instance\"" +
+                            "xmlns:xsd =\"http://www.w3.org/1999/XMLSchema\">" +
+                            "<SOAP-ENV:Body>" +
+//                            "<t:helloworld t:name=\"tester\" xmlns:t='http://test.org/Test' />" +
+                            "</SOAP-ENV:Body>" +
+                            "</SOAP-ENV:Envelope>";*/
+//         System.err.println(soappacket);
 
-         SOAPElement ele = (SOAPElement) body.getChildElements().next();
-         java.util.Iterator attit = ele.getAllAttributes();
+         final String soappacket =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
+            "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+            " <soapenv:Header>\n" +
+            "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+            "    <shw:Myname>Tony</shw:Myname>\n" +
+            "  </shw:Hello>\n" +
+            " </soapenv:Header>\n" +
+            " <soapenv:Body>\n" +
+            "  <shw:Address xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\" shw:t='test' >\n" +
+            "    <shw:City>GENT</shw:City>\n" +
+            "  </shw:Address>\n" +
+            " </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
 
-         System.out.println(attit.next().getClass());
+        SOAPMessage msg = MessageFactory.newInstance().createMessage(new MimeHeaders(),
+                                                                     new ByteArrayInputStream(soappacket.getBytes()));
+        SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
+        msg.writeTo(System.out);
 
-         javax.xml.soap.Name n = (javax.xml.soap.Name) attit.next();
-         //assertEquals("Test fail prefix problem",n.getQualifiedName(),"name");
-     }*/
+        SOAPElement ele = (SOAPElement) body.getChildElements().next();
+        java.util.Iterator attit = ele.getAllAttributes();
+
+        System.out.println(attit.next().getClass());
+
+        javax.xml.soap.Name n = (javax.xml.soap.Name) attit.next();
+        //assertEquals("Test fail prefix problem",n.getQualifiedName(),"name");
+    }
 
 }

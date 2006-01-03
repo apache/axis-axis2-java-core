@@ -18,25 +18,15 @@ package org.apache.axis2.saaj;
 import javax.xml.soap.MimeHeader;
 import java.util.Iterator;
 
-public class MimeHeaders extends javax.xml.soap.MimeHeaders {
-    public MimeHeaders() {
+public class MimeHeadersEx extends javax.xml.soap.MimeHeaders {
+    public MimeHeadersEx() {
     }
 
-    public MimeHeaders(javax.xml.soap.MimeHeaders h) {
-        Iterator iterator = h.getAllHeaders();
+    public MimeHeadersEx(javax.xml.soap.MimeHeaders mimeHeaders) {
+        Iterator iterator = mimeHeaders.getAllHeaders();
         while (iterator.hasNext()) {
             MimeHeader hdr = (MimeHeader) iterator.next();
             addHeader(hdr.getName(), hdr.getValue());
         }
-    }
-
-    private int getHeaderSize() {
-        int size = 0;
-        Iterator iterator = getAllHeaders();
-        while (iterator.hasNext()) {
-            iterator.next();
-            size++;
-        }
-        return size;
     }
 }
