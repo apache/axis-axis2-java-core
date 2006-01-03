@@ -156,6 +156,7 @@
       <include name="security/src/**/*.java"/>
       <include name="wsdl/src/**/*.java"/>
       <include name="xml/src/**/*.java"/>
+      <include name="doom/src/**/*.java"/>
     </javac>
     <copy todir="${basedir}/target/classes/">
       <fileset dir="${basedir}/modules/common/src">
