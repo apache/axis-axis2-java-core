@@ -162,14 +162,6 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>xml-security</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>${xmlsec.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
             <version>${backport_util_concurrent.version}</version>
