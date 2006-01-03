@@ -30,6 +30,8 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -38,8 +40,18 @@ import java.util.Map;
 
 public class AddressingOutHandler extends AddressingHandler {
 
+    private Log log = LogFactory.getLog(getClass());
+
 
     public void invoke(MessageContext msgContext) throws AxisFault {
+
+        // it should be able to disable addressing by some one.
+        Boolean
+                property = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        if (property != null && property.booleanValue()) {
+            log.info("Addressing is disbaled .....");
+            return;
+        }
         OMNamespace addressingNamespaceObject = null;
         String addressingNamespace = null;
 
@@ -162,7 +174,7 @@ public class AddressingOutHandler extends AddressingHandler {
                             addressingNamespaceObject);
                 }
         }
-        
+
         // We are done, cleanup the references
         addressingNamespaceObject = null;
         addressingNamespace = null;
