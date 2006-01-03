@@ -55,7 +55,6 @@ public abstract class AbstractDerivedPopulater extends TestCase {
             PropertyDescriptor propDesc = propDescs[i];
             if  (propDesc.getPropertyType().equals(propertyClass)){
                 String s = convertToString(propDesc.getReadMethod().invoke(o, null));
-                System.out.println("Asserting value = " + s + " from " + o);
                 compare(value,s);
             }
 

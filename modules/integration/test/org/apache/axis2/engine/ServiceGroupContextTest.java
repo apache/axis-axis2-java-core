@@ -106,8 +106,6 @@ public class ServiceGroupContextTest extends TestCase {
         SOAPHeaderBlock soapHeaderBlock = defaultEnvelope.getHeader().addHeaderBlock(Constants.SERVICE_GROUP_ID,
                 axis2Namespace);
 
-        System.out.println("soapHeaderBlock = " + soapHeaderBlock);
-
         //TODO : ple imporove this , what I have done is a hack
         OMElement body = (OMElement) result.getParent();
         SOAPEnvelope soapEnvlop = (SOAPEnvelope) body.getParent();

@@ -91,7 +91,6 @@ public class EchoRawSwATest extends TestCase {
         InputStream requestMsgInStream = getResourceAsStream("/org/apache/axis2/swa/swainput.bin");
         int data;
         while ((data = requestMsgInStream.read()) != -1) {
-            System.out.print(data);
             outStream.write(data);
         }
         outStream.flush();
@@ -110,7 +109,6 @@ public class EchoRawSwATest extends TestCase {
             }
         }
 
-        System.out.println("sb:" + sb.toString());
         assertTrue(sb.toString().indexOf(
                 "Apache Axis2 - The NExt Generation Web Services Engine") > 0);
         assertTrue(sb.toString().indexOf("multipart/related") > 0);

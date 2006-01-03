@@ -85,12 +85,9 @@ public class WSDLMEPClientBuilder {
         while (elements.hasNext()) {
             Object obj = elements.next();
 
-            System.out.println("Extension = " + obj);
-
             if (obj instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) obj;
 
-                System.out.println(soapAddress.getLocationURI());
                 toepr = new EndpointReference(soapAddress.getLocationURI());
             }
         }

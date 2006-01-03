@@ -150,14 +150,12 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         msgCtxt.setTo(eprOne);
         outHandler.invoke(msgCtxt);
-        System.out.println("defaultEnvelope = " + defaultEnvelope);
 
         // now the soap message within the msgCtxt must have a to header.
         // lets invoke twice and see
         msgCtxt.setTo(duplicateEpr);
         outHandler.invoke(msgCtxt);
 
-        System.out.println("defaultEnvelope = " + defaultEnvelope);
         assertTrue(defaultEnvelope.getHeader().getFirstChildWithName(new QName("http://whatever.duplicate.org")) == null);
 
 

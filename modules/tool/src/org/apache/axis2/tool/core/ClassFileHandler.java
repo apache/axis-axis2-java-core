@@ -45,7 +45,6 @@ public class ClassFileHandler {
 
         while (enumerator.hasMoreElements()) {
             Object o =  enumerator.nextElement();
-            System.out.println("o = " + o);
         }
         return null;
 

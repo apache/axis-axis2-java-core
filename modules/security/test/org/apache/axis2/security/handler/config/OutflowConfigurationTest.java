@@ -190,7 +190,6 @@ public class OutflowConfigurationTest extends TestCase {
 		assertEquals("Action items mismatch", actionItems1, ofc.getActionItems());
 		assertEquals("Action items mismatch", user1, ofc.getUser());
 		
-		System.out.println(ofc.getProperty().getParameterElement());
 	}
 
 }

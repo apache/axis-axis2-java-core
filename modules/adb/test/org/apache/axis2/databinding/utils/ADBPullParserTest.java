@@ -511,7 +511,6 @@ public class ADBPullParserTest extends XMLTestCase {
 
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario", "ns1"), propertyList.toArray(), null);
         String actualXML = getStringXML(pullParser);
-        System.out.println("actualXML = " + actualXML);
 
         try {
             assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
@@ -589,7 +588,6 @@ public class ADBPullParserTest extends XMLTestCase {
             XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testElementText.org", "testElementText", "ns1"), properties.toArray(), attributes);
 
             String actualXML = getStringXML(pullParser);
-            System.out.println("actualXML = " + actualXML);
 
             assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
         } catch (ParserConfigurationException e) {

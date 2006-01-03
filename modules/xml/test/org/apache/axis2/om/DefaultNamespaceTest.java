@@ -49,8 +49,6 @@ public class DefaultNamespaceTest extends XMLTestCase {
         OMElement baz = factory.createOMElement(new QName(nsURI+2, "Baz", nsPrefix), foo);
         OMElement baz2 = factory.createOMElement(new QName(nsURI, "Baz", nsPrefix), foo);
 
-        System.out.println("element = " + element);
-
     }
 
 }

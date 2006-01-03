@@ -52,7 +52,6 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
 
         OMElement root = builder.getDocumentElement();
         assertTrue("Root element can not be null", root != null);
-        System.out.println(root.toString());
         Document expectedDOM = newDocument(expectedXML);
         Document actualDom = newDocument(root.toString());
         assertXMLEqual(actualDom, expectedDOM);

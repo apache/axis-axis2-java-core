@@ -45,7 +45,6 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
 
     protected String convertToString(Object o) {
         String s = ConverterUtil.convertToString((Date) o);
-        System.out.println("s = " + s);
         return s;
     }
 }

@@ -498,7 +498,6 @@ class Connection extends Thread {
             listener.tableModel.removeRow(index + 1);
             listener.connections.remove(index);
         } catch (Exception e) {
-            System.err.println("index:=" + index + this);
             e.printStackTrace();
         }
     }

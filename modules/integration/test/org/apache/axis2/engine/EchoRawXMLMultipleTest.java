@@ -153,7 +153,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             options.setTo(targetEPR);
 
             sender.sendReceiveNonblocking(payload, callback);
-            System.out.println("send the request");
 
             int index = 0;
             while (!finish) {
