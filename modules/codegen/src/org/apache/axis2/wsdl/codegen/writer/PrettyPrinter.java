@@ -25,14 +25,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * tidies up the java source code using Jalopy
+ * Tidies up the java source code using Jalopy.
  */
 public class PrettyPrinter {
     private static Log log = LogFactory.getLog(PrettyPrinter.class);
 
 
     /**
-     * Pretty print contents of the java source file
+     * Pretty prints contents of the java source file.
      *
      * @param file
      */

@@ -91,7 +91,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Sets the mapper
+     * Sets the mapper.
      *
      * @param mapper
      * @see org.apache.axis2.wsdl.databinding.TypeMapper
@@ -101,7 +101,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Sets the code generator configuration
+     * Sets the code generator configuration.
      *
      * @param configuration
      */
@@ -163,7 +163,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Emit the skeleton with inteface only
+     * Emits the skeleton with interface only.
      *
      * @param wom
      */
@@ -188,7 +188,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Emit the skelton with binding
+     * Emits the skeleton with binding.
      *
      * @param wom
      */
@@ -243,7 +243,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Emits the stub code with the interfaces only
+     * Emits the stub code with interfaces only.
      *
      * @param wom
      * @throws Exception
@@ -270,7 +270,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Emit the stubcode with bindings
+     * Emits the stubcode with bindings.
      *
      * @param wom
      * @throws Exception
@@ -390,7 +390,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Write the callback handlers
+     * Writes the callback handlers.
      */
     protected void writeCallBackHandlers(WSDLInterface wsdlInterface, WSDLBinding axisBinding) throws Exception {
 
@@ -424,7 +424,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Writes the interfaces
+     * Writes the interfaces.
      *
      * @param axisInterface
      * @param axisBinding
@@ -443,7 +443,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Writes the skeleton
+     * Writes the skeleton.
      *
      * @param axisInteface
      * @param axisBinding
@@ -463,7 +463,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Writes the Ant build
+     * Writes the Ant build.
      *
      * @param axisInterface
      * @param axisBinding
@@ -483,10 +483,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Writes the Service XML
+     * Writes the Service XML.
      *
-     * @param axisInterface
      * @param axisBinding
+     * @param desc
      * @throws Exception
      */
     protected void writeServiceXml(WSDLBinding axisBinding,WSDLDescription desc) throws Exception {
@@ -502,10 +502,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Writes the Service XML
+     * Writes the Service XML.
      *
      * @param axisInterface
-     * @param axisBinding
+     * @param desc
      * @throws Exception
      */
     protected void writeServiceXml(WSDLInterface axisInterface,WSDLDescription desc) throws Exception {
@@ -522,7 +522,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Writes the implementations
+     * Writes the implementations.
      *
      * @param axisBinding
      * @throws Exception
@@ -553,7 +553,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * A resusable method for the implementation of interface and implementation writing
+     * A resusable method for the implementation of interface and implementation writing.
      *
      * @param model
      * @param writer
@@ -581,7 +581,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Generating the model for the callbacks
+     * Generates the model for the callbacks.
      *
      * @param boundInterface
      * @param axisBinding
@@ -614,7 +614,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Finds the input element for the xml document
+     * Finds the input element for the xml document.
      *
      * @param doc
      * @param operation
@@ -660,7 +660,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * @param doc
      * @param operation
-     * @return the parameter element
+     * @return Returns the parameter element.
      */
     private Element getInputParamElement(Document doc,
                                          WSDLOperation operation) {
@@ -700,7 +700,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Finds the output element for the output element
+     * Finds the output element.
      *
      * @param doc
      * @param operation
@@ -725,7 +725,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      *
      * @param doc
      * @param operation
-     * @return
+     * @return Returns Element.
      */
     private Element getOutputParamElement(Document doc,
                                           WSDLOperation operation) {
@@ -761,7 +761,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @see  #createDOMDocumentForServiceXML(org.apache.wsdl.WSDLInterface, org.apache.wsdl.WSDLBinding, org.apache.wsdl.WSDLDescription)
      * @param boundInterface
      * @param axisBinding
-     * @return
+     * @return Returns Document.
      */
     protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface ,
                                                       WSDLBinding axisBinding) {
@@ -776,7 +776,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param boundInterface
      * @param axisBinding
      * @param description
-     * @return
+     * @return Returns Document.
      */
     protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface ,
                                                       WSDLBinding axisBinding,
@@ -841,11 +841,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Get the element
+     * Gets the element.
      * @param doc
      * @param boundInterface
      * @param axisBinding
-     * @return
+     * @return Returns Element.
      */
     private Element getServiceElement(String serviceName,
                                       String porttypeName,
@@ -934,7 +934,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Creates the DOM tree for the interface creation. Uses the interface
+     * Creates the DOM tree for the Ant build. Uses the interface.
      *
      * @param wsdlInterface
      * @param axisBinding
@@ -961,7 +961,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Creates the DOM tree for the interface creation. Uses the interface
+     * Creates the DOM tree for the interface creation. Uses the interface.
      *
      * @param wsdlInterface
      * @param axisBinding
@@ -994,11 +994,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     * Create the model for the skeleton
+     * Creates the model for the skeleton.
      *
      * @param boundInterface
      * @param axisBinding
-     * @return documentModel for the skeleton
+     * @return Returns documentModel for the skeleton.
      */
     protected Document createDOMDocumentForSkeleton(WSDLInterface boundInterface, WSDLBinding axisBinding) {
 
@@ -1038,7 +1038,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Loads operations based on the interface
+     * Loads operations based on the interface.
      *
      * @param boundInterface
      * @param doc
@@ -1258,10 +1258,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Get the base64 types. If not available this will be empty!!!
+     * Gets the base64 types. If not available this will be empty!!!
      *
      * @param doc
-     * @return element
+     * @return Returns Element.
      */
     private Element getBase64Elements(Document doc) {
         Element root = doc.createElement("base64Elements");
@@ -1284,7 +1284,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Creates the DOM tree for implementations
+     * Creates the DOM tree for implementations.
      *
      * @param binding
      * @param service
@@ -1394,7 +1394,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Look for the SOAPVersion and add it
+     * Looks for the SOAPVersion and adds it.
      * @param binding
      * @param doc
      * @param rootElement
@@ -1416,7 +1416,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Add the endpoint to the document
+     * Adds the endpoint to the document.
      *
      * @param doc
      * @param rootElement
@@ -1483,7 +1483,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 //    }
 
     /**
-     * Utility method to add an attribute to a given element
+     * Utility method to add an attribute to a given element.
      *
      * @param document
      * @param AttribName
@@ -1500,7 +1500,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     /**
      * @param word
-     * @return character removed string
+     * @return Returns character removed string.
      */
     protected String makeJavaClassName(String word) {
         if (JavaUtils.isJavaKeyword(word)) {
@@ -1556,10 +1556,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Get the output directory for source files
+     * Gets the output directory for source files.
      * 
      * @param outputDir
-     * @return file
+     * @return Returns File.
      */
     protected File getOutputDirectory(File outputDir, String dir2) {
         outputDir = new File(outputDir, dir2);

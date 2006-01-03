@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * The purpose of this extension is to build the bindings. bindings however may not be present
+ * The purpose of this extension is to build the bindings. Bindings, however, may not be present.
  */
 public class AxisBindingBuilder extends AbstractCodeGenerationExtension implements CodeGenExtension {
 

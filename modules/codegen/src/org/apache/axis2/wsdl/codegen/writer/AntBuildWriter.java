@@ -72,7 +72,7 @@ public class AntBuildWriter extends ClassWriter {
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
                 if (propertyValue.startsWith(ownClazzName)) {
                     if (key.indexOf(databindingFramework) != -1) {
-                        templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING) + 1);
+                        templateName = propertyValue.substring(propertyValue.indexOf(SEPARATOR_STRING) + 1);
                         break;
                     }
                 }

@@ -75,16 +75,16 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * get the wrap classes flag
+     * Gets the wrap classes flag.
      *
-     * @return
+     * @return Returns true if it is a wrap class, else returns false.
      */
     public boolean isWrapClasses() {
         return wrapClasses;
     }
 
     /**
-     * set the wrap classes flag
+     * Sets the wrap classes flag.
      *
      * @param wrapClasses
      */
@@ -93,7 +93,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * gets the policy map
+     * Gets the policy map.
      *
      * @return
      */
@@ -102,7 +102,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * sets the policy map
+     * Sets the policy map.
      *
      * @param policyMap
      */
@@ -119,7 +119,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
 
     /**
-     * put a property into the configuration
+     * Puts a property into the configuration.
      *
      * @param key
      * @param value
@@ -129,19 +129,19 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * get the property from the configuration
+     * Gets the property from the configuration.
      *
      * @param key
-     * @return
+     * @return Returns the property as Object.
      */
     public Object getProperty(Object key) {
         return configurationProperties.get(key);
     }
 
     /**
-     * Get the whole property object
+     * Gets all property objects.
      *
-     * @return
+     * @return Returns Map of all properties.
      */
     public Map getProperties() {
         return configurationProperties;
@@ -150,7 +150,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private TypeMapper typeMapper;
 
     /**
-     * @return
+     * @return Returns int.
      */
     public int getCodeGenerationStyle() {
         return codeGenerationStyle;
@@ -164,7 +164,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * @return
+     * @return Returns TypeMapper.
      */
     public TypeMapper getTypeMapper() {
         return typeMapper;
@@ -178,7 +178,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      */
     public String getDatabindingType() {
         return databindingType;
@@ -203,7 +203,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * Constructor for the configuration. populate the values using the options map
+     * Constructor for the configuration. It populates the values using the options map.
      *
      * @param wom
      * @param optionMap

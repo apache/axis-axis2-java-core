@@ -25,7 +25,7 @@ public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
     public void engage() throws CodeGenerationException {
         TypeMapper mappper = configuration.getTypeMapper();
-        if (testFallthrough(configuration.getDatabindingType())) {
+        if (testFallThrough(configuration.getDatabindingType())) {
             //if it's fall through for the default databinding extension and a mapper has
             //not yet being set, then there's a problem.
             //Hence check the mapper status here

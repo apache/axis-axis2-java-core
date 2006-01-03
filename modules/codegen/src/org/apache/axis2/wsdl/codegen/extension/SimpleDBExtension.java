@@ -39,13 +39,13 @@ import java.util.Vector;
 import java.io.File;
 
 /**
- * This extension provides the
+ * Extension for simple data binding.
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
     public void engage() {
         //test the databinding type. If not just fall through
-        if (testFallthrough(configuration.getDatabindingType())) {
+        if (testFallThrough(configuration.getDatabindingType())) {
             return;
         }
         try {

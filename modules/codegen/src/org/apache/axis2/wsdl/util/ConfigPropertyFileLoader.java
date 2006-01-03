@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Tries to load the properties from the config properties
+ * Loads the properties from the config properties.
  */
 public class ConfigPropertyFileLoader {
 
@@ -45,7 +45,7 @@ public class ConfigPropertyFileLoader {
     public static final String CODEGEN_CONFIG_PROPERTIES = "/org/apache/axis2/wsdl/codegen/codegen-config.properties";
 
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
-    private static final String SEPERATOR_CHAR = ",";
+    private static final String SEPARATOR_CHAR = ",";
 
     static {
         try {
@@ -67,20 +67,20 @@ public class ConfigPropertyFileLoader {
             //load the extension class names
             String tempString = props.getProperty(CODE_GEN_KEY_PREFIX);
             if (tempString != null) {
-                extensionClassNames = tempString.split(SEPERATOR_CHAR);
+                extensionClassNames = tempString.split(SEPARATOR_CHAR);
 
             }
 
             //load the data binding framework names
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
-                databindingFrameworkNames = tempString.split(SEPERATOR_CHAR);
+                databindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
             }
 
             //populate the data binding framework name to extension name map
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY);
             if (tempString != null) {
-                String[] frameworkExtensionNames = tempString.split(SEPERATOR_CHAR);
+                String[] frameworkExtensionNames = tempString.split(SEPARATOR_CHAR);
 
                 try {
                     for (int i = 0; i < frameworkExtensionNames.length; i++) {
@@ -102,7 +102,7 @@ public class ConfigPropertyFileLoader {
             //load the third party schema names
             tempString = props.getProperty(THIRD_PARTY_SCHEMA_KEY_PREFIX);
             if (tempString != null) {
-                thirdPartySchemaNames = tempString.split(SEPERATOR_CHAR);
+                thirdPartySchemaNames = tempString.split(SEPARATOR_CHAR);
 
             }
             //the db supporter template name
@@ -115,14 +115,14 @@ public class ConfigPropertyFileLoader {
             //load the language names
             tempString = props.getProperty(LANGUAGE_TYPE_KEY_PREFIX);
             if (tempString != null) {
-                languageTypes = tempString.split(SEPERATOR_CHAR);
+                languageTypes = tempString.split(SEPARATOR_CHAR);
 
                 //load the language emitter map
                 tempString = props.getProperty(EMITTER_CLASS_KEY);
                 if (tempString == null) {
                     throw new Exception("No emitters found");
                 } else {
-                    String[] tempClassNames = tempString.split(SEPERATOR_CHAR);
+                    String[] tempClassNames = tempString.split(SEPARATOR_CHAR);
                     //populate the map
                     languageEmitterMap = new HashMap();
                     for (int i = 0; i < tempClassNames.length; i++) {
@@ -169,99 +169,99 @@ public class ConfigPropertyFileLoader {
     }
 
     /**
-     * Get the test object support template. this is used in the
-     * generated test class
-     * @return
+     * Gets the test object support template. This is used in the
+     * generated test class.
+     * @return Returns String.
      */
     public static String getTestObjectTemplateName() {
         return testObjectTemplateName;
     }
 
     /**
-     * The databinder template. This is the template that has the
-     * logic for creating the databind supporters
-     * @return
+     * Gets the databinder template name. This is the template that has the
+     * logic for creating the databind supporters.
+     * @return Returns String.
      */
     public static String getDbSupporterTemplateName() {
         return dbSupporterTemplateName;
     }
     /**
-     * get the extension class names
+     * Gets the extension class names.
      *
-     * @return
+     * @return Returns String[].
      */
     public static String[] getExtensionClassNames() {
         return extensionClassNames;
     }
 
     /**
-     * get the third party schema names list
+     * Gets the third party schema names list.
      *
-     * @return
+     * @return Returns String[].
      */
     public static String[] getThirdPartySchemaNames() {
         return thirdPartySchemaNames;
     }
 
     /**
-     * get the language type names
+     * Gets the language type names.
      *
-     * @return
+     * @return Returns String[].
      */
     public static String[] getLanguageTypes() {
         return languageTypes;
     }
 
     /**
-     * get the emitter names map keyd with the language name
+     * Gets the emitter names map keys with the language name.
      *
-     * @return
+     * @return Returns Map.
      */
     public static Map getLanguageEmitterMap() {
         return languageEmitterMap;
     }
 
     /**
-     * get the default language name
+     * Gets the default language name.
      *
-     * @return
+     * @return Returns String.
      */
     public static String getDefaultLanguage() {
         return defaultLanguage;
     }
 
     /**
-     * get the language specific properties
+     * Gets the language specific properties.
      *
-     * @return
+     * @return Returns Map.
      */
     public static Map getLanguageSpecificPropertiesMap() {
         return languageSpecificPropertiesMap;
     }
 
     /**
-     * get the databinding framework names
+     * Gets the databinding framework names.
      *
-     * @return
+     * @return Returns String[].
      */
     public static String[] getDatabindingFrameworkNames() {
         return databindingFrameworkNames;
     }
 
     /**
-     * get the extensions map for the databinding frameworks
-     * the entries are keys by the framework name
+     * Gets the extensions map for the databinding frameworks.
+     * The entries are keys by the framework name.
      *
-     * @return
+     * @return Returns Map.
      */
     public static Map getDatabindingFrameworkNameToExtensionMap() {
         return databindingFrameworkNameToExtensionMap;
     }
 
     /**
-     * get the default DB framwork name
+     * Gets the default DB framwork name.
      *
-     * @return
+     * @return Returns String.
      */
     public static String getDefaultDBFrameworkName() {
         return defaultDBFrameworkName;

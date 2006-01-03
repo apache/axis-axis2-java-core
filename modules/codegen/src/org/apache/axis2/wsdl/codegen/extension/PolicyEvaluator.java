@@ -27,8 +27,8 @@ public class PolicyEvaluator implements CodeGenExtension {
     }
 
     /**
-     * Go through the WSDL and extract the WS-Policy elements
-     * and map it into a Axis Module.
+     * Goes through the WSDL and extracts the WS-Policy elements
+     * and maps it into an Axis Module.
      */
     public void init(CodeGenConfiguration configuration) {
         this.configuration = configuration;

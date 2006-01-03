@@ -45,12 +45,12 @@ public abstract class ClassWriter {
 
     protected static final String TEMPLATE_SUFFIX = ".template";
     protected static final String EXTENSION_SUFFIX = ".extension";
-    protected static final String SEPERATOR_STRING = ",";
+    protected static final String SEPARATOR_STRING = ",";
 
     protected boolean fileExists = false;//a flag saying the file is existing
 
     /**
-     * Sets the language
+     * Sets the language.
      *
      * @param language
      */
@@ -59,7 +59,7 @@ public abstract class ClassWriter {
     }
 
     /**
-     * Load the template
+     * Loads the template.
      */
     public void loadTemplate() throws CodeGenerationException {
         // the default behavior for the class writers is to use the property map from the languge specific types
@@ -100,7 +100,7 @@ public abstract class ClassWriter {
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
                 if (propertyValue.startsWith(ownClazzName)) {
                     //bingo! we found the right template
-                    templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING) + 1);
+                    templateName = propertyValue.substring(propertyValue.indexOf(SEPARATOR_STRING) + 1);
                     break;
                 }
             }
@@ -110,7 +110,7 @@ public abstract class ClassWriter {
     }
 
     /**
-     * Creates the output file
+     * Creates the output file.
      *
      * @param packageName
      * @param fileName
@@ -131,10 +131,10 @@ public abstract class ClassWriter {
     }
 
     /**
-     * Find the file name extension
+     * Finds the file name extension.
      *
      * @param language
-     * @return extension
+     * @return Returns the file extension.
      */
     protected String getFileExtensionForLanguage(String language) {
         Map languageSpecificPropertyMap = (Map) ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
@@ -155,7 +155,7 @@ public abstract class ClassWriter {
     }
 
     /**
-     * Writes the output file
+     * Writes the output file.
      *
      * @param doc
      * @throws Exception

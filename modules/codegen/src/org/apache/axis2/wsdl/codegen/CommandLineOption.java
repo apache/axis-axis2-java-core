@@ -77,7 +77,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
     }
 
     /**
-     * @return Returns the invalid.
+     * @return Returns boolean.
      */
     public boolean isInvalid() {
         return invalid;
