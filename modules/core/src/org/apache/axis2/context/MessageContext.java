@@ -187,8 +187,8 @@ public class MessageContext extends AbstractContext {
     }
 
     public MessageContext(ConfigurationContext configContext,
-                          TransportInDescription transportIn,
-                          TransportOutDescription transportOut) {
+            TransportInDescription transportIn,
+            TransportOutDescription transportOut) {
         this(configContext, null, transportIn, transportOut);
         this.options.setTransportInDescription(transportIn);
         this.transportOutname = transportOut.getName();
@@ -200,8 +200,8 @@ public class MessageContext extends AbstractContext {
      * @param transportOut
      */
     public MessageContext(ConfigurationContext configContext,
-                          SessionContext sessionContext, TransportInDescription transportIn,
-                          TransportOutDescription transportOut) {
+            SessionContext sessionContext, TransportInDescription transportIn,
+            TransportOutDescription transportOut) {
         super(null);
 
         options = new Options();
@@ -285,7 +285,6 @@ public class MessageContext extends AbstractContext {
         return options.getMessageId();
     }
 
-
     /**
      * Retrieves both module specific configuration parameters as well as other
      * parameters. The order of search is as follows:
@@ -305,16 +304,17 @@ public class MessageContext extends AbstractContext {
      * <p/> and the way of specifing module configuration is as follows
      * <moduleConfig name="addressing"> <parameter name="addressingPara"
      * locked="false">N/A</parameter> </moduleConfig>
-     *
-     * @param key        :
-     *                   Parameter Name
+     * 
+     * @param key :
+     *            Parameter Name
      * @param moduleName :
-     *                   Name of the module
-     * @param handler    <code>HandlerDescription</code>
+     *            Name of the module
+     * @param handler
+     *            <code>HandlerDescription</code>
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getModuleParameter(String key, String moduleName,
-                                        HandlerDescription handler) {
+            HandlerDescription handler) {
         Parameter param;
         ModuleConfiguration moduleConfig;
 
@@ -427,7 +427,7 @@ public class MessageContext extends AbstractContext {
      * <li> If parameter is not found or if axisService is null, search in
      * AxisConfiguration </li>
      * </ol>
-     *
+     * 
      * @param key
      * @return Parameter <code>Parameter</code>
      */
@@ -475,53 +475,39 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * Retrieves a property. The order of search is as follows: <p/>
-     * <ol>
-     * <li> Search in OperationContext, </li>
-     * <li> If OperationContext is null or if property is not found, search in
-     * ServiceContext,</li>
-     * <li> If ServiceContext is null or if property is not found, search in
-     * ServiceGroupContext,</li>
-     * <li> If ServiceGroupContext is null or if property is not found, search
-     * in ConfigurationContext.</li>
-     * </ol>
-     *
-     * @param key property Name
-     * @return Object
+     * Retrieves a property value. The order of search is as follows: search in
+     * my own options and then look in my context hierarchy. Since its possible
+     * that the entire hierarchy is not present, I will start at whatever level
+     * has been set and start there.
+     * 
+     * @param name
+     *            name of the property to search for
+     * @return the value of the property, or null if the property is not found
      */
-    public Object getProperty(String key) {
-
-        // search in MC
-        Object obj = super.getProperty(key);
-
+    public Object getProperty(String name) {
+        // search in my own options
+        Object obj = options.getProperty(name);
         if (obj != null) {
             return obj;
         }
 
-        // The context hierarchy might not have constructed fully, the check
-        // should
-        // look for the disconnected grandparents
-        // Search in Operation Context
+        // My own context hierarchy may not all be present. So look for whatever
+        // nearest level is present and ask that to find the property.
         if (operationContext != null) {
-            return operationContext.getProperty(key);
+            return operationContext.getProperty(name);
         }
-
-        // Search in ServiceContext
         if (serviceContext != null) {
-            return serviceContext.getProperty(key);
+            return serviceContext.getProperty(name);
         }
-
         if (serviceGroupContext != null) {
-            return serviceGroupContext.getProperty(key);
+            return serviceGroupContext.getProperty(name);
         }
-
         if (configurationContext != null) {
-
-            // search in Configuration Context
-            return configurationContext.getProperty(key);
+            return configurationContext.getProperty(name);
         }
 
-        return obj;
+        // oops
+        return null;
     }
 
     /**
@@ -739,7 +725,7 @@ public class MessageContext extends AbstractContext {
      * causes the current handler/phase indexes to reset to 0, since we have new
      * Handlers to execute (this usually only happens at initialization and when
      * a fault occurs).
-     *
+     * 
      * @param executionChain
      */
     public void setExecutionChain(ArrayList executionChain) {
@@ -844,13 +830,13 @@ public class MessageContext extends AbstractContext {
                 && (operationContext.getParent() != null)) {
             operationContext.setParent(context);
         }
-        //setting configcontext using configuration context in service context
+        // setting configcontext using configuration context in service context
         if (configurationContext == null) {
-            //setting configcontext
+            // setting configcontext
             configurationContext = context.getConfigurationContext();
         }
         if (serviceGroupContext == null) {
-            //setting service group context
+            // setting service group context
             serviceGroupContext = context.getServiceGroupContext();
         }
         this.setAxisService(context.getAxisService());
@@ -858,7 +844,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Sets the service context id.
-     *
+     * 
      * @param serviceContextID
      */
     public void setServiceContextID(String serviceContextID) {
@@ -936,6 +922,5 @@ public class MessageContext extends AbstractContext {
 
     public void setOptions(Options options) {
         this.options = options;
-        this.properties = options.getProperties();
     }
 }
