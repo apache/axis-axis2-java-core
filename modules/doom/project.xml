@@ -20,7 +20,7 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <name>Apache Axis 2.0 - DOOM</name>
+    <name>Apache Axis 2.0 - DOM over OM</name>
     <id>axis2-doom</id>
     <groupId>axis2</groupId>
     <description>Axis2 DOM implementation over AXIOM</description>
