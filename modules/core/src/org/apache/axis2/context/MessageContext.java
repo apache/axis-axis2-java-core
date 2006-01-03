@@ -920,7 +920,16 @@ public class MessageContext extends AbstractContext {
         return options;
     }
 
+    /**
+     * Set the options for myself. I make the given options my own options'
+     * parent so that that becomes the default. That allows the user to override
+     * specific options on a given message context and not affect the overall
+     * options.
+     * 
+     * @param options
+     *            the options to set
+     */
     public void setOptions(Options options) {
-        this.options = options;
+        this.options.setParent(options);
     }
 }
