@@ -116,7 +116,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     TAG_POLICY));
 
             if (policyElements != null) {
-                processPolicyElements(policyElements, axisConfig.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_POLICY, policyElements, axisConfig.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
@@ -124,7 +124,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     TAG_POLICY_REF));
 
             if (policyRefElements != null) {
-                processPolicyRefElements(policyElements, axisConfig.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_POLICY, policyElements, axisConfig.getPolicyInclude());
             }
 
             //to process default module versions

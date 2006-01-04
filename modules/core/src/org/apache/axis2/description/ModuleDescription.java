@@ -68,6 +68,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      */
     public ModuleDescription() {
         operations = new HashMap();
+        policyInclude = new PolicyInclude();
     }
 
     /**

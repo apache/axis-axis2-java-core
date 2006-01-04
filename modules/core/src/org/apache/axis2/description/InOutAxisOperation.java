@@ -62,10 +62,17 @@ public class InOutAxisOperation extends AxisOperation {
     private void createMessages() {
         inMessage = new AxisMessage();
         inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+        inMessage.setParent(this);
+        
         inFaultMessage = new AxisMessage();
+        inFaultMessage.setParent(this);
+        
         outFaultMessage = new AxisMessage();
+        outFaultMessage.setParent(this);
+        
         outMessage = new AxisMessage();
         outMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+        outMessage.setParent(this);
     }
 
     public AxisMessage getMessage(String label) {

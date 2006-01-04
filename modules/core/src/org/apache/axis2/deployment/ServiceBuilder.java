@@ -93,29 +93,20 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
             
             // setting the PolicyInclude
-            PolicyInclude policyInclude;
-            
-            if (axisConfig != null) {
-                PolicyInclude parent = axisConfig.getPolicyInclude();
-                policyInclude = new PolicyInclude(parent);
-            
-            } else {
-                policyInclude = new PolicyInclude();
-            }
-            service.setPolicyInclude(policyInclude);
+            PolicyInclude policyInclude = service.getPolicyInclude();
             
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
             
             if (policyElements != null) {
-                processPolicyElements(policyElements, service.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_SERVICE_POLICY, policyElements, service.getPolicyInclude());
             }
             
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
             
             if (policyRefElements != null) {
-                processPolicyRefElements(policyRefElements, service.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY, policyRefElements, service.getPolicyInclude());
             }
 
             //processin Service Scop
@@ -184,34 +175,29 @@ public class ServiceBuilder extends DescriptionBuilder {
                 throw new DeploymentException("message lebel can not be null");
             }
 
-            //TODO : fix that
-            AxisMessage message = new AxisMessage();
+            AxisMessage message = operation.getMessage(lable.getAttributeValue());
 
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
             
             // setting the PolicyInclude
-            PolicyInclude parent = operation.getPolicyInclude();
-            PolicyInclude policyInclude = new PolicyInclude(parent);
-            message.setPolicyInclude(policyInclude);
+            PolicyInclude policyInclude = message.getPolicyInclude();
             
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
             
             if (policyElements != null) {
-                processPolicyElements(policyElements, message.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyElements, message.getPolicyInclude());
             }
             
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
             
             if (policyRefElements != null) {
-                processPolicyRefElements(policyRefElements, message.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyRefElements, message.getPolicyInclude());
             }
 
             processParameters(parameters, message, operation);
             
-            
-            operation.addMessage(message, lable.getAttributeValue().trim());
         }
     }
 
@@ -296,6 +282,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (mepurl == null) {
                     // assumed MEP is in-out
                     op_descrip = new InOutAxisOperation();
+                    op_descrip.setParent(service);
+                    
                 } else {
                     op_descrip = AxisOperationFactory.getOperationDescription(mepurl);
                 }
@@ -303,30 +291,20 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
             
             // setting the PolicyInclude
-            PolicyInclude policyInclude;
-            
-            if (service != null) {
-                PolicyInclude parent = service.getPolicyInclude();
-                policyInclude = new PolicyInclude(parent);
-                
-            } else {
-                policyInclude = new PolicyInclude();
-            }
-            
-            op_descrip.setPolicyInclude(policyInclude);
-            
+            PolicyInclude policyInclude = op_descrip.getPolicyInclude();
+        
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
             
             if (policyElements != null) {
-                processPolicyElements(policyElements, op_descrip.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_OPERATION_POLICY, policyElements, op_descrip.getPolicyInclude());
             }
             
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
             
             if (policyRefElements != null) {
-                processPolicyRefElements(policyRefElements, op_descrip.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_OPERATION_POLICY, policyRefElements, op_descrip.getPolicyInclude());
             }
             
             // Operation Parameters

@@ -53,6 +53,9 @@ public class AxisServiceGroup implements ParameterInclude {
 
     // to keep name of the service group
     private String serviceGroupName;
+    
+    // to store policy information
+    private PolicyInclude policyInclude;
 
     /**
      * Field services
@@ -64,6 +67,7 @@ public class AxisServiceGroup implements ParameterInclude {
         services = new HashMap();
         moduleConfigmap = new HashMap();
         engagedModules = new ArrayList();
+        policyInclude = new PolicyInclude();
     }
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
@@ -233,6 +237,9 @@ public class AxisServiceGroup implements ParameterInclude {
 
     public void setParent(AxisConfiguration parent) {
         this.parent = parent;
+        if (parent.getPolicyInclude() != null) {
+            policyInclude.setParent(parent.getPolicyInclude());
+        }
     }
 
     public void setServiceGroupClassLoader(ClassLoader serviceGroupClassLoader) {
@@ -241,5 +248,13 @@ public class AxisServiceGroup implements ParameterInclude {
 
     public void setServiceGroupName(String serviceGroupName) {
         this.serviceGroupName = serviceGroupName;
+    }
+    
+    public PolicyInclude getPolicyInclude() {
+        return policyInclude;
+    }
+    
+    public void setPolicyInclude(PolicyInclude policyInclude) {
+        this.policyInclude = policyInclude;
     }
 }

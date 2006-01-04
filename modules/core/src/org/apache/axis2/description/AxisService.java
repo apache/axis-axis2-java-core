@@ -102,6 +102,7 @@ public class AxisService
         //by dafault service scope is for the request
         scope = Constants.SCOPE_REQUEST;
         messageReceivers = new HashMap();
+        policyInclude = new PolicyInclude();
     }
 
     /**
@@ -356,7 +357,7 @@ public class AxisService
             
             // populate it with policy information ..
             //TODO : This gives an NPE , Sanka pls fix that
-//            PolicyUtil.populatePolicy(desc, this);
+            PolicyUtil.populatePolicy(desc, this);
             
             WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
             womWriter.setdefaultWSDLPrefix("wsdl");
@@ -612,6 +613,9 @@ public class AxisService
 
     public void setParent(AxisServiceGroup parent) {
         this.parent = parent;
+        if (parent.getPolicyInclude() != null) {
+            policyInclude.setParent(parent.getPolicyInclude());
+        }
     }
 
     public void setWSDLDefinition(Definition difDefinition) {

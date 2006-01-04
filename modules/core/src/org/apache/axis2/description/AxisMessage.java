@@ -43,6 +43,7 @@ public class AxisMessage implements ParameterInclude {
         parameterinclude = new ParameterIncludeImpl();
         handlerChain = new ArrayList();
         messageReference = new MessageReferenceImpl();
+        policyInclude = new PolicyInclude();
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -101,6 +102,9 @@ public class AxisMessage implements ParameterInclude {
 
     public void setParent(AxisOperation parent) {
         this.parent = parent;
+        if (parent.getPolicyInclude() != null) {
+            policyInclude.setParent(parent.getPolicyInclude());
+        }
     }
 
     public String getDirection() {

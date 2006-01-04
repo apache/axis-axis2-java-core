@@ -62,6 +62,7 @@ public abstract class AxisOperation
         parameterInclude = new ParameterIncludeImpl();
         modulerefs = new ArrayList();
         moduleConfigmap = new HashMap();
+        policyInclude = new PolicyInclude();
     }
 
     public AxisOperation(QName name) {
@@ -398,6 +399,9 @@ public abstract class AxisOperation
 
     public void setParent(AxisService parent) {
         this.parent = parent;
+        if (parent.getPolicyInclude() != null) {
+            policyInclude.setParent(parent.getPolicyInclude());
+        }
     }
 
     public abstract void setPhasesInFaultFlow(ArrayList list);

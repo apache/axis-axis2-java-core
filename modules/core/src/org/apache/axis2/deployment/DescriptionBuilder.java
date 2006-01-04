@@ -376,7 +376,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         return wsamapping;
     }
     
-    protected void processPolicyElements(Iterator policyElements,
+    protected void processPolicyElements(int type, Iterator policyElements,
             PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
@@ -384,11 +384,11 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         while (policyElements.hasNext()) {
             Policy p = reader.readPolicy((OMElement) policyElements.next());
-            policyInclude.addPolicyElement(p);
+            policyInclude.addPolicyElement(type, p);
         }
     }
 
-    protected void processPolicyRefElements(Iterator policyRefElements,
+    protected void processPolicyRefElements(int type, Iterator policyRefElements,
             PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
@@ -397,7 +397,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         while (policyRefElements.hasNext()) {
             PolicyReference policyReference = reader
                     .readPolicyReference((OMElement) policyRefElements.next());
-            policyInclude.addPolicyRefElement(policyReference);
+            policyInclude.addPolicyRefElement(type, policyReference);
         }
     }
     
