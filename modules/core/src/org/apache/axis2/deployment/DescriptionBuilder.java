@@ -121,10 +121,28 @@ public class DescriptionBuilder implements DeploymentConstants {
         return mr_mep;
     }
 
-    protected MessageReceiver loadMessageReceiver(ClassLoader loader, OMElement reciverElement)
+    /**
+     * Processes default message receivers specified either in axis2.xml or services.xml.
+     *
+     * @param element
+     */
+    protected HashMap processMessageReceivers(ClassLoader loader, OMElement element) throws DeploymentException {
+        HashMap meps = new HashMap();
+        Iterator iterator = element.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
+        while (iterator.hasNext()) {
+            OMElement receiverElement = (OMElement) iterator.next();
+            MessageReceiver receiver =
+                    loadMessageReceiver(loader, receiverElement);
+            OMAttribute mepAtt = receiverElement.getAttribute(new QName(TAG_MEP));
+            meps.put(mepAtt.getAttributeValue(), receiver);
+        }
+        return meps;
+    }
+
+    protected MessageReceiver loadMessageReceiver(ClassLoader loader, OMElement element)
             throws DeploymentException {
-        OMAttribute recieverName = reciverElement.getAttribute(new QName(TAG_CLASS_NAME));
-        String className = recieverName.getAttributeValue();
+        OMAttribute receiverName = element.getAttribute(new QName(TAG_CLASS_NAME));
+        String className = receiverName.getAttributeValue();
         MessageReceiver receiver = null;
 
         try {

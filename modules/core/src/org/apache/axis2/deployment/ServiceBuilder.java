@@ -123,7 +123,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             OMElement messageReceiver = service_element.getFirstChildWithName(
                     new QName(TAG_MESSAGE_RECEIVERS));
             if (messageReceiver != null) {
-                HashMap mrs = processMessageReceivers(messageReceiver);
+                HashMap mrs = processMessageReceivers(service.getClassLoader(), messageReceiver);
                 Iterator keys = mrs.keySet().iterator();
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
