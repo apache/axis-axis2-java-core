@@ -23,7 +23,7 @@ import org.apache.axis2.util.UUIDGenerator;
 
 
 /**
- * Format options for OM Output
+ * Formats options for OM Output.
  */
 public class OMOutputFormat {
     private String mimeBoundary = null;
@@ -33,8 +33,8 @@ public class OMOutputFormat {
     private boolean isSoap11 = true;
 
     /**
-     * Field DEFAULT_CHAR_SET_ENCODING specifies the default
-     * character encoding scheme to be used
+     * Field DEFAULT_CHAR_SET_ENCODING. Specifies the default
+     * character encoding scheme to be used.
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
 
@@ -99,10 +99,10 @@ public class OMOutputFormat {
     }
 
     /**
-     * Returns the character set endocing scheme If the value of the
-     * charSetEncoding is not set then the default will be returned
+     * Returns the character set encoding scheme. If the value of the
+     * charSetEncoding is not set then the default will be returned.
      *
-     * @return encoding
+     * @return Returns encoding string.
      */
     public String getCharSetEncoding() {
         return this.charSetEncoding;

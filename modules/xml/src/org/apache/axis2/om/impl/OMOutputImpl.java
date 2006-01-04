@@ -33,8 +33,8 @@ import java.util.LinkedList;
 
 /**
  * For the moment this assumes that transport takes the decision of whether
- * to optimise or not by looking at whether the MTOM optimise is enabled &
- * also looking at the OM tree whether it has any optimisable content
+ * to optimize or not by looking at whether the MTOM optimize is enabled &
+ * also looking at the OM tree whether it has any optimizable content.
  */
 public class OMOutputImpl {
     private XMLStreamWriter xmlWriter;
@@ -48,7 +48,7 @@ public class OMOutputImpl {
     }
 
     /**
-     * This creates a new OMOutputImpl with specified encoding
+     * Creates a new OMOutputImpl with specified encoding.
      *
      * @param outStream
      * @param format
@@ -127,10 +127,10 @@ public class OMOutputImpl {
     }
 
     /**
-     * Returns the character set endocing scheme If the value of the
-     * charSetEncoding is not set then the default will be returned
+     * Returns the character set encoding scheme. If the value of the
+     * charSetEncoding is not set then the default will be returned.
      *
-     * @return encoding
+     * @return Returns encoding.
      */
     public String getCharSetEncoding() {
         return format.getCharSetEncoding();

@@ -42,7 +42,7 @@ public class SchedulerTask implements Runnable {
      * <p/>
      * This method may be called repeatedly; the second and subsequent calls have no effect.
      *
-     * @return true if this task was already scheduled to run
+     * @return Returns true if this task was already scheduled to run.
      */
     public boolean cancel() {
         synchronized (lock) {

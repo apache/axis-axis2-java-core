@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 /**
- * Defines the the base interface used by most of the XML object model within Axis.
+ * Defines the base interface used by most of the XML object model within Axis.
  *
  * <p>This tree model for XML captures the idea of deferring the construction of child nodes
  * until they are needed.  The <code>isComplete</code> function identifies whether or not
@@ -79,14 +79,14 @@ public interface OMNode {
     public static final short PI_NODE = XMLStreamConstants.PROCESSING_INSTRUCTION;
 
     /**
-     * This node is a <code>Entity Reference</code>.
+     * This node is an <code>Entity Reference</code>.
      *
      * @see #getType()
      */
     public static final short ENTITY_REFERENCE_NODE = XMLStreamConstants.ENTITY_REFERENCE;
 
     /**
-     * This node is a <code>Entity Reference</code>.
+     * This node is an <code>Entity Reference</code>.
      *
      * @see #getType()
      */
@@ -104,16 +104,16 @@ public interface OMNode {
     /**
      * Returns the next sibling in document order.
      *
-     * @return The next sibling in document order.
+     * @return Returns the next sibling in document order.
      */
     public OMNode getNextOMSibling() throws OMException;
 
     /**
-     * this will indicate whether parser has parsed this information item completely or not.
-     * If somethings info are not available in the item, one has to check this attribute to make sure that, this
+     * Indicates whether parser has parsed this information item completely or not.
+     * If some info are not available in the item, one has to check this attribute to make sure that, this
      * item has been parsed completely or not.
      *
-     * @return boolean
+     * @return Returns boolean.
      */
     public boolean isComplete();
 
@@ -153,7 +153,7 @@ public interface OMNode {
     public void insertSiblingAfter(OMNode sibling) throws OMException;
 
     /**
-     * This will insert a sibling just before the current node.
+     * Inserts a sibling just before the current node.
      *
      * @param sibling The node that will be added before the current node.
      * @throws OMException
@@ -163,21 +163,21 @@ public interface OMNode {
     /**
      * Returns the type of node.
      *
-     * @return One of {@link #ELEMENT_NODE}, {@link #TEXT_NODE}, {@link #CDATA_SECTION_NODE}, {@link #COMMENT_NODE},
+     * @return Returns one of {@link #ELEMENT_NODE}, {@link #TEXT_NODE}, {@link #CDATA_SECTION_NODE}, {@link #COMMENT_NODE},
      *  {@link #DTD_NODE}, {@link #PI_NODE}, {@link #ENTITY_REFERENCE_NODE}, {@link #SPACE_NODE},
      * or {@link #TEXT_NODE}.
      */
     public int getType();
 
     /**
-     * get the previous sibling
+     * Gets the previous sibling.
      *
-     * @return node
+     * @return Returns node.
      */
     public OMNode getPreviousOMSibling();
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param xmlWriter
      * @throws XMLStreamException
@@ -186,7 +186,7 @@ public interface OMNode {
             throws XMLStreamException;
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param output
      * @throws XMLStreamException
@@ -195,7 +195,7 @@ public interface OMNode {
             throws XMLStreamException;
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param writer
      * @throws XMLStreamException
@@ -204,7 +204,7 @@ public interface OMNode {
             throws XMLStreamException;
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param output
      * @param format
@@ -214,7 +214,7 @@ public interface OMNode {
             throws XMLStreamException;
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param writer
      * @param format
@@ -224,7 +224,7 @@ public interface OMNode {
             throws XMLStreamException;
     
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param xmlWriter
      * @throws XMLStreamException
@@ -232,7 +232,7 @@ public interface OMNode {
     public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException;
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param output
      * @throws XMLStreamException
@@ -240,7 +240,7 @@ public interface OMNode {
     public void serializeAndConsume(OutputStream output) throws XMLStreamException;
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param writer
      * @throws XMLStreamException
@@ -248,7 +248,7 @@ public interface OMNode {
     public void serializeAndConsume(Writer writer) throws XMLStreamException;
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param output
      * @param format
@@ -257,7 +257,7 @@ public interface OMNode {
     public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException;
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param writer
      * @param format
@@ -266,7 +266,7 @@ public interface OMNode {
     public void serializeAndConsume(Writer writer, OMOutputFormat format) throws XMLStreamException;
 
     /**
-     * Builds itself
+     * Builds itself.
      */
     public void build();
 }

@@ -33,25 +33,25 @@ public interface OMDocument extends OMContainer {
     public final static String XML_11 = "1.1";
 
     /**
-     * Returns the document element
-     * @return
+     * Returns the document element.
+     * @return Returns OMElement.
      */
     public OMElement getOMDocumentElement();
 
     /**
-     * Sets the document element of the XML document
+     * Sets the document element of the XML document.
      * @param rootElement
      */
     public void setOMDocumentElement(OMElement rootElement);
 
     /**
-     * Returns the XML version
-     * @return
+     * Returns the XML version.
+     * @return Returns String.
      */
     public String getXMLVersion();
 
     /**
-     * Sets the XML version
+     * Sets the XML version.
      * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_10 XML 1.0
      * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_11 XML 1.1
      * @param version
@@ -59,27 +59,27 @@ public interface OMDocument extends OMContainer {
     public void setXMLVersion(String version);
 
     /**
-     * Returns the caracter set encoding scheme
-     * @return
+     * Returns the character set encoding scheme.
+     * @return Returns String.
      */
     public String getCharsetEncoding();
 
     /**
-     * Sets the character set encoding scheme to be used
+     * Sets the character set encoding scheme to be used.
      * @param charsetEncoding
      */
     public void setCharsetEncoding(String charsetEncoding);
 
     /**
-     * XML standalone value
+     * XML standalone value.
      * This will be yes, no or null (if not available)
-     * @return boolean
+     * @return Returns boolean.
      */
     public String isStandalone();
     public void setStandalone(String isStandalone);
 
     /**
-     * Serialize the OMDocument
+     * Serializes the OMDocument.
      * @param output
      * @param format
      * @throws XMLStreamException
@@ -87,7 +87,7 @@ public interface OMDocument extends OMContainer {
     public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException;
 
     /**
-     * Serializa the document with cache on
+     * Builds the OM node/tree and then serializes the document.
      * @param output
      * @param format
      * @throws XMLStreamException
@@ -95,14 +95,14 @@ public interface OMDocument extends OMContainer {
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException;
 
     /**
-     * Serialize the OMDocument
+     * Serializes the OMDocument.
      * @param output
      * @throws XMLStreamException
      */
     public void serializeAndConsume(OutputStream output) throws XMLStreamException;
 
     /**
-     * Serializa the document with cache on
+     * Serializes the document with cache on.
      * @param output
      * @throws XMLStreamException
      */

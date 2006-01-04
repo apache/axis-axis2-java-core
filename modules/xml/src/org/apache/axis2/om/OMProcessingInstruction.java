@@ -21,26 +21,26 @@ package org.apache.axis2.om;
  */
 public interface OMProcessingInstruction extends OMNode {
     /**
-     * set the target of this PI
+     * Sets the target of this Processing Instruction.
      * @param target
      */
     public void setTarget(String target);
 
     /**
-     * get the target of this PI
-      * @return string
+     * Gets the target of this Processing Instruction.
+      * @return Returns string.
      */
     public String getTarget();
 
     /**
-     * set the value of this PI
+     * Sets the value of this Processing Instruction.
      * @param value
      */
     public void setValue(String value);
 
     /**
-     * get the value of this PI
-      * @return string
+     * Gets the value of this Processing Instruction.
+      * @return Returns String.
      */
     public String getValue();
 }

@@ -21,11 +21,11 @@ public interface MTOMConstants {
     public static final String XOP_NAMESPACE_URI = "http://www.w3.org/2004/08/xop/include";
 
     /**
-     * if the Message is MTOM optimised then <code>MTOM_TYPE</code>
+     * If the Message is MTOM optimised then <code>MTOM_TYPE</code>
      */
     String MTOM_TYPE = "application/xop+xml";
     /**
-     * If the message is Soap with Attachments <code>SwA_TYPE</code>
+     * If the message is Soap with Attachments <code>SWA_TYPE</code>
      */
     String SWA_TYPE = "text/xml";
     /**

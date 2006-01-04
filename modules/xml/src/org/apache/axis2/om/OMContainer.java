@@ -28,10 +28,9 @@ import java.util.Iterator;
 public interface OMContainer {
 
     /**
-     * This will add the given node as the last child.
-     *
-     * child to the element. One must preserve the order of children, in this operation
-     * Tip : appending the new child is prefered
+     * Adds the given node as the last child. One must preserve the order of children, 
+     * in this operation.
+     * Tip : appending the new child is preferred.
      *
      * @param omNode
      */
@@ -59,7 +58,7 @@ public interface OMContainer {
      * </p>
      *
      * @param elementQName The QName specifying namespace and local name to match.
-     * @return An iterator of {@link OMElement} items that match the given QName appropriately.
+     * @return Returns an iterator of {@link OMElement} items that match the given QName appropriately.
      */
     public Iterator getChildrenWithName(QName elementQName);
 
@@ -70,7 +69,7 @@ public interface OMContainer {
      *
      * @param elementQName The QName to use for matching.
      *
-     * @return The first element in document order that matches the <tt>elementQName</tt> criteria.
+     * @return Returns the first element in document order that matches the <tt>elementQName</tt> criteria.
      *
      * @see #getChildrenWithName
      *
@@ -89,7 +88,7 @@ public interface OMContainer {
     public Iterator getChildren();
 
     /**
-     * Get the first child.
+     * Gets the first child.
      *
      * @return Returns the first child.  May return null if the container has no children.
      */

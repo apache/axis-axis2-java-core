@@ -34,82 +34,82 @@ public class OMAbstractFactory {
     }
 
     /**
-     * This will pick up the default factory implementation from the classpath
+     * Picks up the default factory implementation from the classpath.
      *
-     * @return
+     * @return Returns OMFactory.
      */
     public static OMFactory getOMFactory() {
         return FactoryFinder.findOMFactory(null);
     }
 
     /**
-     * If user needs to provide his own factory implementation, here provide the
-     * Class Loader for that.
+     * If user needs to provide his own factory implementation, provide the
+     * Class Loader here.
      *
      * @param classLoader
-     * @return
+     * @return Returns OMFactory.
      */
     public static OMFactory getOMFactory(ClassLoader classLoader) {
         return FactoryFinder.findOMFactory(classLoader);
     }
 
     /**
-     * This will pick up the provided <code>soapFactory</code> factory implementation from the classpath
+     * Gets the <code>soapFactory</code> factory implementation from the classpath
      *
      * @param soapFactory Fully qualified SOAP 1.1 or SOAP 1.2 Factory implementation class name
-     * @return The SOAP 1.1 or 1.2 Factory implementation instance corresponding to <code>soapFactory</code>
+     * @return Returns the SOAP 1.1 or 1.2 Factory implementation instance corresponding to <code>soapFactory</code>
      */
     public static SOAPFactory getSOAPFactory(String soapFactory) {
         return FactoryFinder.findSOAPFactory(null, soapFactory);
     }
 
     /**
-     * This will pick up the provided <code>soapFactory</code> factory implementation using the provided
+     * Gets the <code>soapFactory</code> factory implementation using the provided
      * <code>classLoader</code>
      *
      * @param classLoader
      * @param soapFactory Fully qualified SOAP 1.1 or SOAP 1.2 Factory implementation class name
-     * @return The SOAP 1.1 or 1.2 Factory implementation instance corresponding to <code>soapFactory</code>
+     * @return Returns the SOAP 1.1 or 1.2 Factory implementation instance corresponding to <code>soapFactory</code>
      */
     public static SOAPFactory getSOAPFactory(ClassLoader classLoader, String soapFactory) {
         return FactoryFinder.findSOAPFactory(classLoader, soapFactory);
     }
 
     /**
-     * This will pick up the default factory implementation from the classpath
+     * Gets the default factory implementation from the classpath.
      *
-     * @return
+     * @return Returns SOAPFactory.
      */
     public static SOAPFactory getSOAP11Factory() {
         return FactoryFinder.findSOAP11Factory(null);
     }
 
     /**
-     * If user needs to provide his own factory implementation, here provide the
-     * Class Loader for that.
+     * If user needs to provide his own factory implementation, provide the
+     * Class Loader here.
      *
      * @param classLoader
-     * @return
+     * @return Returns SOAPFactory.
      */
     public static SOAPFactory getSOAP11Factory(ClassLoader classLoader) {
         return FactoryFinder.findSOAP11Factory(classLoader);
     }
 
     /**
-     * This will pick up the default factory implementation from the classpath
+     * Gets the default factory implementation from the classpath.
      *
-     * @return
+     * @return Returns SOAPFactory.
      */
     public static SOAPFactory getSOAP12Factory() {
         return FactoryFinder.findSOAP12Factory(null);
     }
 
     /**
-     * If user needs to provide his own factory implementation, here provide the
-     * Class Loader for that.
+     * If user needs to provide his own factory implementation, provide the
+     * Class Loader here.
      *
      * @param classLoader
-     * @return
+     * @return Returns SOAPFactory.
      */
     public static SOAPFactory getSOAP12Factory(ClassLoader classLoader) {
         return FactoryFinder.findSOAP12Factory(classLoader);

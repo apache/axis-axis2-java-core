@@ -21,8 +21,8 @@ package org.apache.axis2.om;
  */
 public interface OMDocType extends OMNode {
     /**
-     * Returns the value of this DocType
-     * @return string
+     * Returns the value of this DocType.
+     * @return Returns String.
      */
     public String getValue();
 

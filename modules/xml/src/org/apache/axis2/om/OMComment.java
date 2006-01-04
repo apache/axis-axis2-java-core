@@ -22,7 +22,7 @@ package org.apache.axis2.om;
 public interface OMComment extends OMNode {
     /**
      * Returns the value of this comment as defined by XPath 1.0.
-     * @return string
+     * @return Returns String.
      */
     public String getValue();
 

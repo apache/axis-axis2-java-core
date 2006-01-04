@@ -22,33 +22,33 @@ package org.apache.axis2.om;
  */
 public interface OMText extends OMNode {
     /**
-     * Returns the text value of this node
+     * Returns the text value of this node.
      *
-     * @return string
+     * @return Returns String.
      */
     String getText();
 
     /**
-     * get the datahandler
-     * @return datahandler
+     * Gets the datahandler.
+     * @return Returns datahandler.
      */
     Object getDataHandler();
 
     /**
-     * @return boolean flag saying whether the node contains
-     *         an optimized text or not
+     * @return Returns boolean flag saying whether the node contains
+     *         an optimized text or not.
      */
     boolean isOptimized();
 
     /**
-     * set the optimize flag
+     * Sets the optimize flag.
      * @param value
      */
     void setOptimize(boolean value);
 
     /**
-     * get the content id
-     * @return string
+     * Gets the content id.
+     * @return Returns String.
      */
     String getContentID();
 }

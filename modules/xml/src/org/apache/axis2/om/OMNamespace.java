@@ -21,25 +21,25 @@ package org.apache.axis2.om;
  */
 public interface OMNamespace {
     /**
-     * Method equals
+     * Method equals.
      *
      * @param uri
      * @param prefix
-     * @return
+     * @return Returns boolean.
      */
     public boolean equals(String uri, String prefix);
 
     /**
-     * Method getPrefix
+     * Method getPrefix.
      *
-     * @return
+     * @return Returns String.
      */
     public String getPrefix();
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return
+     * @return Returns String.
      */
     public String getName();
 }

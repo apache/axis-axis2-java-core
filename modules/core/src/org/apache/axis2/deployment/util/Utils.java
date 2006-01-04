@@ -154,7 +154,7 @@ public class Utils {
     }
 
     /**
-     * This guy will create a AxisService using java replection
+     * Creates an AxisService using java reflection.
      */
     public static void fillAxisService(AxisService axisService) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);

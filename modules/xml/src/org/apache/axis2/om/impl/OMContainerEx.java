@@ -23,7 +23,7 @@ import org.apache.axis2.om.OMNode;
  * Interface OMContainerEx
  *
  * Internal Implementation detail. Adding special interface to stop folks from accidently using OMContainer.
- * Please use at your own risk. May corrupt the data integrity
+ * Please use at your own risk. May corrupt the data integrity.
  */
 public interface OMContainerEx extends OMContainer {
     public void setComplete(boolean state);

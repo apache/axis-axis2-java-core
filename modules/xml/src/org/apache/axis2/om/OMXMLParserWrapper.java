@@ -21,9 +21,9 @@ package org.apache.axis2.om;
  */
 public interface OMXMLParserWrapper {
     /**
-     * Proceed the parser one step and return the event value
+     * Proceed the parser one step and return the event value.
      *
-     * @return
+     * @return Returns int.
      * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
@@ -31,8 +31,8 @@ public interface OMXMLParserWrapper {
     int next() throws OMException;
 
     /**
-     * Discard the current element
-     * This should remove the given element and its decendants.
+     * Discards the current element.
+     * This will remove the given element and its decendants.
      *
      * @param el
      * @throws org.apache.axis2.om.OMException
@@ -51,37 +51,36 @@ public interface OMXMLParserWrapper {
 
     /**
      * Allows to access the underlying parser. Since the parser
-     * depends on the underlying implementation,an Object is returned
+     * depends on the underlying implementation, an Object is returned.
      * However the implementations may have restrictions in letting access to
-     * the parser
+     * the parser.
      *
-     * @return
+     * @return Returns Object.
      */
     Object getParser();
 
     /**
-     * @return the complete status
+     * @return Returns the complete status.
      */
     boolean isCompleted();
 
     /**
-     * @return the document element
+     * @return Returns the document element.
      */
     OMElement getDocumentElement();
 
     /**
      * Returns the type of the builder.
-     * Can be either the
-     * PUSH_TYPE_BUILDER or PULL_TYPE_BUILDER
+     * Can be either PUSH_TYPE_BUILDER or PULL_TYPE_BUILDER.
      *
-     * @return
+     * @return Returns short.
      */
     short getBuilderType();
 
     /**
      * Registers an external content handler. Especially useful for
-     * push type builders. will throw an unsupportedOperationExcveption if
-     * such handler registration is not supported
+     * push type builders. Throws an unsupportedOperationException if
+     * such handler registration is not supported.
      *
      * @param obj
      */
@@ -90,7 +89,7 @@ public interface OMXMLParserWrapper {
     /**
      * get the registered external content handler
      *
-     * @return
+     * @return Returns Object.
      */
     Object getRegisteredContentHandler();
 }

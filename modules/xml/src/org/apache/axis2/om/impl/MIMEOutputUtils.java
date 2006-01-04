@@ -98,9 +98,9 @@ public class MIMEOutputUtils {
     }
 
     /**
-     * this will write a CRLF for the earlier boudary then the BodyPart data
+     * Writes a CRLF for the earlier boundary then the BodyPart data
      * with headers followed by boundary. Writes only the boundary. No more
-     * CRLF's are wriiting after that.
+     * CRLF's are written after that.
      *
      * @throws IOException
      * @throws MessagingException

@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
  */
 public interface OMAttribute {
     /**
-     * @return localName
+     * @return Returns localName.
      */
     public String getLocalName();
 
@@ -33,7 +33,7 @@ public interface OMAttribute {
     public void setLocalName(String localName);
 
     /**
-     * @return
+     * @return Returns String.
      */
     public String getAttributeValue();
 
@@ -48,12 +48,12 @@ public interface OMAttribute {
     public void setOMNamespace(OMNamespace omNamespace);
 
     /**
-     * @return OMNamespace
+     * @return Returns OMNamespace.
      */
     public OMNamespace getNamespace();
 
     /**
-     * @return javax.xml.namespace.QName
+     * @return Returns javax.xml.namespace.QName
      */
     public QName getQName();
 }

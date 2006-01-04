@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
  * Interface OMNodeEx
  *
  * Internal Implementation detail. Adding special interface to stop folks from accidently using OMNode.
- * Please use at your own risk. May corrupt the data integrity
+ * Please use at your own risk. May corrupt the data integrity.
  */
 public interface OMNodeEx extends OMNode {
     public void setNextOMSibling(OMNode node);
@@ -40,7 +40,7 @@ public interface OMNodeEx extends OMNode {
     public void setType(int nodeType) throws OMException;
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param omOutput
      * @throws javax.xml.stream.XMLStreamException
@@ -50,7 +50,7 @@ public interface OMNodeEx extends OMNode {
             throws XMLStreamException;
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param omOutput
      * @throws XMLStreamException

@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 public interface OMFactory {
 
 	/**
-	 * Create a new OMDocument
+	 * Creates a new OMDocument.
 	 */
 	public OMDocument createOMDocument();
 	public OMDocument createOMDocument(OMXMLParserWrapper builder);
@@ -56,7 +56,7 @@ public interface OMFactory {
      * @param localName
      * @param namespaceURI
      * @param namespacePrefix
-     * @return
+     * @return Returns the newly created OMElement.
      */
     public OMElement createOMElement(String localName,
                                      String namespaceURI,
@@ -69,7 +69,7 @@ public interface OMFactory {
      *
      * @param qname
      * @param parent
-     * @return
+     * @return Returns the new OMElement.
      * @throws OMException
      */
     public OMElement createOMElement(QName qname, OMContainer parent)
@@ -78,14 +78,14 @@ public interface OMFactory {
     /**
      * @param uri
      * @param prefix
-     * @return
+     * @return Returns OMNameSpace.
      */
     public OMNamespace createOMNamespace(String uri, String prefix);
 
     /**
      * @param parent
      * @param text
-     * @return
+     * @return Returns OMText.
      */
     public OMText createText(OMElement parent, String text);
 
@@ -95,13 +95,13 @@ public interface OMFactory {
      * @param text
      * @param type - this should be either of XMLStreamConstants.CHARACTERS, XMLStreamConstants.CDATA,
      * XMLStreamConstants.SPACE, XMLStreamConstants.ENTITY_REFERENCE
-     * @return
+     * @return Returns OMText.
      */
     public OMText createText(OMElement parent, String text, int type);
 
     /**
      * @param s
-     * @return
+     * @return Returns OMText.
      */
     public OMText createText(String s);
 
@@ -110,8 +110,8 @@ public interface OMFactory {
      * @param s
      * @param type - OMText node can handle SPACE, CHARACTERS, CDATA and ENTITY REFERENCES. For Constants, use either
      * XMLStreamConstants or constants found in OMNode.
-     * @return
-     */
+     * @return Returns OMText.
+     */ 
     public OMText createText(String s, int type);
 
     public OMText createText(String s, String mimeType, boolean optimize);
@@ -129,27 +129,27 @@ public interface OMFactory {
                                          String value);
 
     /**
-     * create DocType/DTD
+     * Creates DocType/DTD.
      * @param parent
      * @param content
-     * @return doctype
+     * @return Returns doctype.
      */
     public OMDocType createOMDocType(OMContainer parent, String content);
 
     /**
-     * create a PI
+     * Creates a PI.
      * @param parent
      * @param piTarget
      * @param piData
-     * @return pi
+     * @return Returns OMProcessingInstruction.
      */
     public OMProcessingInstruction createOMProcessingInstruction(OMContainer parent, String piTarget, String piData);
 
     /**
-     * create a comment
+     * Creates a comment.
      * @param parent
      * @param content
-     * @return comment
+     * @return Returns OMComment.
      */
     public OMComment createOMComment(OMContainer parent, String content);
 }
