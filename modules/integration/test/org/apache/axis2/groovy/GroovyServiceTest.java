@@ -93,7 +93,7 @@ public class GroovyServiceTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(payload);

@@ -303,7 +303,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //write the inteface
                 //feed the binding information also
                 //note that we do not create this interface if the user switched on the wrap classes mode
-                if (!configuration.isWrapClasses()) {
+                if (!configuration.isPackClasses()) {
                     writeInterface(axisBinding.getBoundInterface(), axisBinding);
                 }
                 //write the call back handlers
@@ -1327,7 +1327,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 rootElement);
 
         //add the wrap classes flag
-        if (configuration.isWrapClasses()) {
+        if (configuration.isPackClasses()) {
             addAttribute(doc,
                     "wrapped",
                     "yes",

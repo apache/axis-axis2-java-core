@@ -67,7 +67,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -93,7 +93,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setSoapAction("echoOMElement");
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -116,7 +116,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);

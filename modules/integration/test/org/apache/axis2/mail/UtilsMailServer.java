@@ -59,7 +59,7 @@ public class UtilsMailServer {
                     file.exists());
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             SERVER_CONFIG_CONTEXT =
-                    builder.buildConfigurationContext(file.getAbsolutePath());
+                    builder.createConfigurationContextFromFileSystem(file.getAbsolutePath());
         }
         return SERVER_CONFIG_CONTEXT;
     }
@@ -73,7 +73,7 @@ public class UtilsMailServer {
                 file.exists());
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         CLIENT_CONFIG_CONTEXT =
-                builder.buildConfigurationContext(file.getAbsolutePath());
+                builder.createConfigurationContextFromFileSystem(file.getAbsolutePath());
         }
         return CLIENT_CONFIG_CONTEXT;
     }

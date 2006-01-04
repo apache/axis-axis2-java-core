@@ -69,7 +69,7 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
             throws Exception {
         ConfigurationContextFactory erfac = new ConfigurationContextFactory();
 
-        this.configurationContext = erfac.buildConfigurationContext(repositoryDirectory);
+        this.configurationContext = erfac.createConfigurationContextFromFileSystem(repositoryDirectory);
         this.doThreads = doThreads;
         this.properties = new HashMap(connectorMap);
         this.properties.putAll(cfMap);

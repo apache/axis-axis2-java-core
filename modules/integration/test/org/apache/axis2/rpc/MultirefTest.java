@@ -128,7 +128,7 @@ public class MultirefTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -180,7 +180,7 @@ public class MultirefTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -227,7 +227,7 @@ public class MultirefTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -278,7 +278,7 @@ public class MultirefTest extends TestCase {
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                    .buildConfigurationContext("target/test-resources/integrationRepo");
+                    .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
             RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
             rpcClient.setOptions(options);
             MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -337,7 +337,7 @@ public class MultirefTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -397,7 +397,7 @@ public class MultirefTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -458,7 +458,7 @@ public class MultirefTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -533,7 +533,7 @@ public class MultirefTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);
@@ -599,7 +599,7 @@ public class MultirefTest extends TestCase {
 
 
         ConfigurationContext configConetxt = new ConfigurationContextFactory()
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = new MessageContext(configConetxt);

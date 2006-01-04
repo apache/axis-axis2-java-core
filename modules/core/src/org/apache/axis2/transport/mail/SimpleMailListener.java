@@ -86,7 +86,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
 
-            configurationContext = builder.buildConfigurationContext(dir);
+            configurationContext = builder.createConfigurationContextFromFileSystem(dir);
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -143,7 +143,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         } else {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             ConfigurationContext configurationContext =
-                    builder.buildConfigurationContext(args[0]);
+                    builder.createConfigurationContextFromFileSystem(args[0]);
             SimpleMailListener sas = new SimpleMailListener();
             TransportInDescription transportIn =
                     configurationContext.getAxisConfiguration().getTransportIn(

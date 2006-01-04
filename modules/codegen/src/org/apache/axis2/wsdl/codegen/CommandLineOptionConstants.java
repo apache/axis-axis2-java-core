@@ -30,11 +30,11 @@ public interface CommandLineOptionConstants {
     public static final String STUB_LANGUAGE_OPTION = "l";
     public static final String GENERATE_TEST_CASE_OPTION = "t";
     public static final String DATA_BINDING_TYPE_OPTION = "d";
-    public static final String UNWRAP_CLASSES_OPTION = "u";
+    public static final String UNPACK_CLASSES_OPTION = "u";
     public static final String GENERATE_ALL_OPTION = "g";
 
     public static final String INVALID_OPTION = "INVALID_OPTION";
 
 
-    String EXTRA_OPTIONTYPE_PREFIX = "E";
+     public static String EXTRA_OPTIONTYPE_PREFIX = "E";
 }

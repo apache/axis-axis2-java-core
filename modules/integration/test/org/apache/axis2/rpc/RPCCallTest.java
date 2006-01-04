@@ -105,7 +105,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext(clientHome);
+                factory.createConfigurationContextFromFileSystem(clientHome);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -160,7 +160,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -195,7 +195,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -215,7 +215,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -231,7 +231,7 @@ public class RPCCallTest extends TestCase {
         configureSystem("add");
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
 
         Options options = new Options();
@@ -256,7 +256,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -278,7 +278,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -300,7 +300,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -320,7 +320,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -360,7 +360,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -381,7 +381,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -404,7 +404,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -439,7 +439,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -463,7 +463,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -490,7 +490,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -513,7 +513,7 @@ public class RPCCallTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildConfigurationContext("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 

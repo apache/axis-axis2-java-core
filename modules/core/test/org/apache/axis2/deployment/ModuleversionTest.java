@@ -27,7 +27,7 @@ public class ModuleversionTest extends TestCase {
     public void testDefautModuleVersion() throws AxisFault {
         String filename = "./test-resources/deployment/moduleVersion/Test1";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        AxisConfiguration ac = builder.buildConfigurationContext(filename)
+        AxisConfiguration ac = builder.createConfigurationContextFromFileSystem(filename)
                 .getAxisConfiguration();
         assertNotNull(ac);
         assertEquals(ac.getDefaultModuleVersion("abc"), "1.23");

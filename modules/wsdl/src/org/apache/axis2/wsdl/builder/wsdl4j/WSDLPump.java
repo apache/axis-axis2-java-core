@@ -19,7 +19,6 @@ package org.apache.axis2.wsdl.builder.wsdl4j;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.ws.policy.util.DOMPolicyReader;
-import org.apache.ws.policy.util.OMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.DefaultExtensibilityElement;

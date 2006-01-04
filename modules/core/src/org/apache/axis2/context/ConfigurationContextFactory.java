@@ -1,14 +1,13 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.FileSystemConfigurationCreator;
+import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationCreator;
+import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -27,17 +26,17 @@ public class ConfigurationContextFactory {
 
     /**
      * To create a AxisConfiguration depending on the user requiremnt , this method can be used.
-     * First create a AxisConfigurationCreator object giving necessary parameters into it.
+     * First create a AxisConfigurator object giving necessary parameters into it.
      * Depending on the implementation getAxisConfiguration(); will give the AxisConfiguration and
      * using the ConfigurationContext will be created and return that.
      *
-     * @param axisConfigurationCreator
+     * @param axisConfigurator
      * @return
      * @throws AxisFault
      */
-    public ConfigurationContext getConfigurationContext(
-            AxisConfigurationCreator axisConfigurationCreator) throws AxisFault {
-        AxisConfiguration axisConfig = axisConfigurationCreator.getAxisConfiguration();
+    public ConfigurationContext createConfigurationContext(
+            AxisConfigurator axisConfigurator) throws AxisFault {
+        AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
         init(configContext);
         return configContext;
@@ -46,15 +45,12 @@ public class ConfigurationContextFactory {
     /**
      * Builds the configuration 
      *
-     * @param repositoryName
+     * @param path
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */
-    public ConfigurationContext buildConfigurationContext(String repositoryName) throws AxisFault {
-        AxisConfigurationCreator repoBasedConfigCreator =
-                new FileSystemConfigurationCreator(repositoryName, true);
-        return getConfigurationContext(repoBasedConfigCreator);
-
+    public ConfigurationContext createConfigurationContextFromFileSystem(String path) throws AxisFault {
+        return createConfigurationContext(new FileSystemConfigurator(path, true));
     }
 
     /**
@@ -152,9 +148,7 @@ public class ConfigurationContextFactory {
      *
      * @return ConfigurationContext
      */
-    public ConfigurationContext getDafaultConfigurationContext() {
-        AxisConfiguration axisConfig = new AxisConfiguration();
-
-        return new ConfigurationContext(axisConfig);
+    public ConfigurationContext createEmptyConfigurationContext() {
+        return new ConfigurationContext(new AxisConfiguration());
     }
 }

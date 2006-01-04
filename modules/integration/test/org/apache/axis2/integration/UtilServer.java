@@ -96,7 +96,7 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return erfac.buildConfigurationContext(file.getAbsolutePath());
+        return erfac.createConfigurationContextFromFileSystem(file.getAbsolutePath());
     }
 
     public static synchronized void stop() {
@@ -129,7 +129,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext configContext = efac
-                .buildConfigurationContext("target/test-resources/integrationRepo");
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(moduleDesc);
@@ -147,7 +147,7 @@ public class UtilServer {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = efac .buildConfigurationContext("target/test-resources/integrationRepo");
+        ConfigurationContext configContext = efac .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(moduleDesc);
@@ -164,7 +164,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext configContext = efac
-                .buildConfigurationContext(clientHome);
+                .createConfigurationContextFromFileSystem(clientHome);
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
 

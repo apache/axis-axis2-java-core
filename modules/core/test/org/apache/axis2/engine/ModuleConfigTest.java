@@ -41,7 +41,7 @@ public class ModuleConfigTest extends TestCase {
     public void testModuleConfigAtAxisConfig() {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
+            ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
             ModuleConfiguration moduleConfiguration =
                     ar.getModuleConfig(new QName("testModule"));
             assertNotNull(moduleConfiguration);
@@ -62,7 +62,7 @@ public class ModuleConfigTest extends TestCase {
     public void testModuleConfigAtService() {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
+            ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
 
 
             AxisService service = new AxisService();

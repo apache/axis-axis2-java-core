@@ -31,7 +31,7 @@ public class AxisMessageTest extends TestCase {
     public void testAxisMessage() throws Exception {
         String filename = "./test-resources/deployment/AxisMessageTestRepo";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        AxisConfiguration er = builder.buildConfigurationContext(filename)
+        AxisConfiguration er = builder.createConfigurationContextFromFileSystem(filename)
                 .getAxisConfiguration();
 
         assertNotNull(er);

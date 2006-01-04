@@ -172,9 +172,9 @@ public class AntCodegenTask extends Task {
         //or gets generates as seperate classes
         if (unwrapClasses) {
             optionMap.put(
-                    CommandLineOptionConstants.UNWRAP_CLASSES_OPTION,
+                    CommandLineOptionConstants.UNPACK_CLASSES_OPTION,
                     new CommandLineOption(
-                            CommandLineOptionConstants.UNWRAP_CLASSES_OPTION,
+                            CommandLineOptionConstants.UNPACK_CLASSES_OPTION,
                             new String[0]));
         }
 

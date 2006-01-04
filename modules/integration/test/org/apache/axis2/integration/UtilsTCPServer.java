@@ -65,7 +65,7 @@ public class UtilsTCPServer {
                 throw new Exception("Repository directory does not exist");
             }
 
-            ConfigurationContext er = erfac.buildConfigurationContext(file
+            ConfigurationContext er = erfac.createConfigurationContextFromFileSystem(file
                     .getAbsolutePath());
             try {
                 Thread.sleep(2000);

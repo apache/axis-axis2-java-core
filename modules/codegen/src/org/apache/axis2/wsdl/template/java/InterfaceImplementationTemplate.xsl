@@ -58,7 +58,7 @@
         */
         public <xsl:value-of select="@name"/>(String axis2Home,String targetEndpoint) throws java.lang.Exception {
         //creating the configuration
-        _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildConfigurationContext(axis2Home);
+        _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().createConfigurationContextFromFileSystem(axis2Home);
         _configurationContext.getAxisConfiguration().addService(_service);
         _serviceContext =new org.apache.axis2.context.ServiceGroupContext(_configurationContext, _service.getParent()).getServiceContext(_service);
         _clientOptions.setTo(new org.apache.axis2.addressing.EndpointReference(targetEndpoint));

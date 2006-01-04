@@ -20,12 +20,12 @@ import org.apache.axis2.AxisFault;
 *
 */
 
-public interface AxisConfigurationCreator {
+public interface AxisConfigurator {
 
     /**
      * Configurationcontextfactory will call this method to get the AxisConfiguration
      *
-     * @return AxisConfigurationCreator
+     * @return AxisConfigurator
      */
     AxisConfiguration getAxisConfiguration() throws AxisFault;
 }

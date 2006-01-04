@@ -233,7 +233,7 @@ public class Utils {
                     + " does not exists");
         }
 
-        return erfac.buildConfigurationContext(file.getAbsolutePath());
+        return erfac.createConfigurationContextFromFileSystem(file.getAbsolutePath());
     }
 
     public static String getParameterValue(Parameter param) {

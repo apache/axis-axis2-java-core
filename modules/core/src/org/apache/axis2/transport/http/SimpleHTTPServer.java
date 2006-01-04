@@ -124,7 +124,7 @@ public class SimpleHTTPServer extends TransportListener {
 
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
 
-            this.configurationContext = erfac.buildConfigurationContext(dir);
+            this.configurationContext = erfac.createConfigurationContextFromFileSystem(dir);
 
             // If a thread pool is not passed the thread pool from the config context
             // is used. If one is passed it is set on the config context.

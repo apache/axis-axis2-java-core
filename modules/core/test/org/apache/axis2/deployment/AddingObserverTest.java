@@ -28,7 +28,7 @@ public class AddingObserverTest extends TestCase{
         try {
             String filename = "./test-resources/deployment/ConfigWithObservers";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er =  builder.buildConfigurationContext(filename).getAxisConfiguration();
+            er =  builder.createConfigurationContextFromFileSystem(filename).getAxisConfiguration();
             assertNotNull(er);
         } catch (DeploymentException e) {
             throw new DeploymentException(e);

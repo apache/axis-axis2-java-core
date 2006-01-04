@@ -1,16 +1,9 @@
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.HostConfiguration;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContextFactory;
-
-import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 /*
@@ -38,7 +31,7 @@ public class HostCongigurationTest extends TestCase {
 
     protected void setUp() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
+        ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
     }
 
     public void testHostConfig() throws AxisFault {

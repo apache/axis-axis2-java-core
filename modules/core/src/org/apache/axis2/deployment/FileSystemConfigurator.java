@@ -2,7 +2,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationCreator;
+import org.apache.axis2.engine.AxisConfigurator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -22,7 +22,7 @@ import org.apache.axis2.engine.AxisConfigurationCreator;
 *
 */
 
-public class FileSystemConfigurationCreator implements AxisConfigurationCreator {
+public class FileSystemConfigurator implements AxisConfigurator {
 
     /**
      * To check whether need to create a service side or client side
@@ -36,7 +36,7 @@ public class FileSystemConfigurationCreator implements AxisConfigurationCreator 
      * @param repoLocation
      * @param isServer
      */
-    public FileSystemConfigurationCreator(String repoLocation, boolean isServer) {
+    public FileSystemConfigurator(String repoLocation, boolean isServer) {
         if (repoLocation == null) {
             repoLocation = AxisConfiguration.getAxis2HomeDirectory();
         }

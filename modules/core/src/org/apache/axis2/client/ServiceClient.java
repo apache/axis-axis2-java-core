@@ -65,6 +65,7 @@ public class ServiceClient {
      * If this service is already in the world that's handed in (in the form of
      * a ConfigurationContext) then I will happily work in it. If not I will
      * create a small little virtual world and live there.
+
      *
      * @param configContext The configuration context under which this service lives (may
      *                      be null, in which case a new local one will be created)
@@ -77,7 +78,9 @@ public class ServiceClient {
         // create a config context if needed
         this.configContext = (configContext != null) ? configContext
                 : new ConfigurationContextFactory()
-                .buildConfigurationContext(null);
+
+                        .createConfigurationContextFromFileSystem(null);
+
 
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
@@ -100,6 +103,7 @@ public class ServiceClient {
     /**
      * Create a service client for WSDL service identified by the QName of the
      * wsdl:service element in a WSDL document.
+
      *
      * @param configContext   The configuration context under which this service lives (may
      *                        be null, in which case a new local one will be created) *
@@ -110,6 +114,7 @@ public class ServiceClient {
      *                        null (if WSDL 2.0 is used or if only one port is there). .
      * @throws AxisFault if something goes wrong while creating a config context (if
      *                   needed)
+
      */
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
                          QName wsdlServiceName, String portName) throws AxisFault {
@@ -191,9 +196,11 @@ public class ServiceClient {
 
     /**
      * Engage a module for this service client.
+
      *
      * @param moduleName Name of the module to engage
      * @throws AxisFault if something goes wrong
+
      */
     public void engageModule(QName moduleName) throws AxisFault {
         axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);
@@ -205,6 +212,7 @@ public class ServiceClient {
      * simplified API. A header
      *
      * @param header The header to be added for interactions. Must not be null.
+
      */
     public void addHeader(OMElement header) {
         if (headers == null) {
@@ -237,6 +245,7 @@ public class ServiceClient {
      * @param elem The XML to send
      * @throws AxisFault if something goes wrong while sending it or if a fault is
      *                   received in response (per the Robust In-Only MEP).
+
      */
     public void sendRobust(OMElement elem) throws AxisFault {
         sendRobust(ANON_ROBUST_OUT_ONLY_OP, elem);
@@ -248,11 +257,13 @@ public class ServiceClient {
      * possibly receive a fault under the guise of a specific operation. If you
      * need more control over this interaction then you need to create a client
      * (@see createClient()) for the operation and use that instead.
+
      *
      * @param operation The name of the operation to use. Must NOT be null.
      * @param elem      The XML to send
      * @throws AxisFault if something goes wrong while sending it or if a fault is
      *                   received in response (per the Robust In-Only MEP).
+
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
@@ -290,10 +301,12 @@ public class ServiceClient {
      * MEP is In-Only. That is, there is no opportunity to get an error from the
      * service via this API; one may still get client-side errors, such as host
      * unknown etc.
+
      *
      * @param operation The operation to send fire the message under
      * @param elem      The XML element to send to the service
      * @throws AxisFault If something goes wrong trying to send the XML
+
      */
     public void fireAndForget(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
@@ -425,6 +438,7 @@ public class ServiceClient {
      * user.
      *
      * @param operation The QName of the operation to create a client for.
+
      * @return a MEP client configured to talk to the given operation or null if
      *         the operation name is not found.
      * @throws AxisFault if the operation is not found or something else goes wrong
@@ -468,6 +482,7 @@ public class ServiceClient {
     }
 
     /**
+
      * Create a message ID for the given message context if needed. If user gives an option with
      * MessageID then just copy that into MessageContext , and with that there can be mutiple
      * message with same MessageID unless user call setOption for each invocation.

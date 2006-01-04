@@ -287,7 +287,7 @@ class OutInAxisOperationClient implements OperationClient {
 
     /**
      * Sends the message using a two way transport and waits for a response
-     * 
+     *
      * @param msgctx
      * @param transportIn
      * @return

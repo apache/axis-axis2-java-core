@@ -196,7 +196,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             options.setWriteOutput(true);
         }else{
             // for the client let the users preference be the word here
-            options.setWrapClasses(configuration.isWrapClasses());
+            options.setWrapClasses(configuration.isPackClasses());
             //for the client side the default setting is not to write the
             //output
             options.setWriteOutput(false);

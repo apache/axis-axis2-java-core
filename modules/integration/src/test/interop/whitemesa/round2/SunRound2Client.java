@@ -53,7 +53,7 @@ public class SunRound2Client {
             msgCtx.setEnvelope(requestEnvilope);
 
             ConfigurationContext configContext =
-                    new ConfigurationContextFactory().buildConfigurationContext(
+                    new ConfigurationContextFactory().createConfigurationContextFromFileSystem(
                             "target/test-resources/integrationRepo");
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             serviceClient.setOptions(options);

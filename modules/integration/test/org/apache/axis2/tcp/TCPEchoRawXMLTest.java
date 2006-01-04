@@ -189,7 +189,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     public void testEchoXMLSyncMC() throws Exception {
         //TODO : Fix Me deepal , I am not complete
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = confac.buildConfigurationContext(Constants.TESTING_REPOSITORY);
+        ConfigurationContext configContext = confac.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         Options options = new Options();

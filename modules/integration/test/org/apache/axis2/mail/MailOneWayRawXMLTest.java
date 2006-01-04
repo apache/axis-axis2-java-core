@@ -139,7 +139,7 @@ public class MailOneWayRawXMLTest extends TestCase {
 //                file.exists());
 //        ConfigurationContextFactory builder = new ConfigurationContextFactory();
 //        ConfigurationContext configContext =
-//                builder.buildConfigurationContext(file.getAbsolutePath());
+//                builder.createConfigurationContext(file.getAbsolutePath());
 //        return configContext;
 //    }
 //

@@ -46,11 +46,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean writeMessageReceiver = true;
     private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
 
-    // Default wrap classes is true, which means the classes generated
+    // Default packClasses is true, which means the classes generated
     // by default are wrapped. The effect of this setting will be controlled
     // to some extent, by the other settings as well.
-
-    private boolean wrapClasses = true;
+    private boolean packClasses = true;
 
     private boolean generateAll = false;
 
@@ -80,17 +79,17 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      *
      * @return Returns true if it is a wrap class, else returns false.
      */
-    public boolean isWrapClasses() {
-        return wrapClasses;
+    public boolean isPackClasses() {
+        return packClasses;
     }
 
     /**
      * Sets the wrap classes flag.
      *
-     * @param wrapClasses
+     * @param packClasses
      */
-    public void setWrapClasses(boolean wrapClasses) {
-        this.wrapClasses = wrapClasses;
+    public void setPackClasses(boolean packClasses) {
+        this.packClasses = packClasses;
     }
 
     /**
@@ -268,9 +267,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         }
 
         CommandLineOption unwrapClassesOption = (CommandLineOption) optionMap.get(
-                UNWRAP_CLASSES_OPTION);
+                UNPACK_CLASSES_OPTION);
         if (unwrapClassesOption != null) {
-            wrapClasses = false;
+            packClasses = false;
         }
 
         CommandLineOption generateAllOption = (CommandLineOption) optionMap.get(

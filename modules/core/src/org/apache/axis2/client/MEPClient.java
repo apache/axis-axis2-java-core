@@ -133,7 +133,7 @@ public abstract class MEPClient {
      */
     protected void assumeServiceContext(String clientHome) throws AxisFault {
         ConfigurationContext configurationContext =
-                new ConfigurationContextFactory().buildConfigurationContext(clientHome);
+                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientHome);
         AxisService axisService =
                 configurationContext.getAxisConfiguration().getService(ANONYMOUS_SERVICE);
 
