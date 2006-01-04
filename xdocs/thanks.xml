@@ -21,6 +21,10 @@
             <td><A href="http://www.yourkit.com/"><img height="51" width="200" src="http://db.apache.org/ojb/images/yjp.gif"/></A></td>
             <td>Licenses for YourKit</td>
           </tr>
+          <tr>
+            <td><A href="http://www.ej-technologies.com/products/jprofiler/overview.html"><img height="51" width="200" src="http://www.ej-technologies.com/images/products/logo_jprofiler01.gif"/></A></td>
+            <td>Licenses for JProfiler</td>
+          </tr>
         </table>
     </section>
   </body>
