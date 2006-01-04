@@ -75,6 +75,21 @@
                     </classpath>
                 </javac>
             </target>
+            <target name="compile.test" depends="pre.compile.test">
+                <xsl:attribute name="if">jars.ok</xsl:attribute>
+                <javac debug="on">
+                    <xsl:attribute name="destdir">${classes}</xsl:attribute>
+                    <src>
+                        <xsl:attribute name="path">${src}</xsl:attribute>
+                    </src>
+                    <src>
+                        <xsl:attribute name="path">${test}</xsl:attribute>
+                    </src>
+                    <classpath>
+                        <xsl:attribute name="location">${java.class.path}</xsl:attribute>
+                    </classpath>
+                </javac>
+            </target>
 
             <target name="echo.classpath.problem" depends="pre.compile.test">
                 <xsl:attribute name="unless">jars.ok</xsl:attribute>
@@ -121,6 +136,31 @@
                         <xsl:attribute name="value">${build}/repo</xsl:attribute>
                     </arg>
                 </java>
+            </target>
+            <target if="jars.ok" name="run.test" depends="compile.test">
+                <mkdir>
+                    <xsl:attribute name="dir">${build}/test-reports/</xsl:attribute>
+                </mkdir>
+                <junit printsummary="yes" haltonfailure="yes">
+                    <classpath>
+                        <pathelement>
+                            <xsl:attribute name="location">${classes}</xsl:attribute>
+                        </pathelement>
+                        <pathelement>
+                            <xsl:attribute name="path">${java.class.path}</xsl:attribute>
+                        </pathelement>
+                    </classpath>
+                    <formatter type="plain"/>
+                    <batchtest fork="yes">
+                        <xsl:attribute name="toDir">${build}/test-reports/</xsl:attribute>
+                        <fileset>
+                            <xsl:attribute name="dir">${test}</xsl:attribute>
+                            <include>
+                                <xsl:attribute name="name">**/*Test*.java</xsl:attribute>
+                            </include>
+                        </fileset>
+                    </batchtest>			
+                </junit>
             </target>
             <target name="clean">
                 <delete>
