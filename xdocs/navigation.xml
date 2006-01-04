@@ -7,26 +7,11 @@
       <item name="Download Axis2">
         <item name="Releases" href="download.cgi"/>
         <item name="Source Code"
-          href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN"/>
+              href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN"/>
       </item>
-      <item name="Getting Started with Axis2">
-        <item name="Installation Guide" href="installationguide.html"/>
-        <item name="User Guide" href="userguide.html"/>
-        <item name="Web Administration Guide" href="webadminguide.html"/>
-      </item>
-       <item name="Additional Reference" href="docs.html">
-        <item name="Axis2 Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
-        <item name="Architecture Guide" href="Axis2ArchitectureGuide.html"/>
-        <item name="AXIOM Tutorial" href="OMTutorial.html"/>
-        <item name="Code Generation Tutorial" href="CodegenToolReference.html"/>
-        <item name="REST Support" href="rest-ws.html"/>
-        <item name="Handling Binary Data with Axis2" href="mtom-guide.html"/>
-        <item name="Axis2 Configuration Guide" href="axis2config.html"/>
-        <item name="Migrating from Axis 1.x" href="migration.html"/>
-        <item name="Online Java Docs" href="api.html"/>
-        <item name="ADB How-to" href="adb/adb-howto.html"/>
-        <item name="WS-Security How-to" href="security-module.html"/>
-        <item name="Other Tutorials" href="otherTutorials.html"/>
+      <item name="Documentation">
+        <item name="Version 0.93" href="/0_93/index.html"/>
+        <item name="Version 0.94" href="/0_94/index.html"/>
       </item>
       <item name="Get Invloved" href="overview.html">
         <item name="Checkout the Source" href="svn.html"/>
@@ -35,10 +20,9 @@
         <item name="Reference Library" href="refLib.html"/>
         <item name="Mailing Lists" href="mail-lists.html"/>
         <item name="FAQ" href="faq.html"/>
-        <item name="Thanks" href="thanks.html"/>
       </item>
+      <item name="Ackknowledgements" href="thanks.html"/>
       <item name="Project Information">
-        <item name="Mailing Lists" href="mail-lists.html"/>
         <item name="Project Team" href="team-list.html"/>
         <item name="Issue Tracking" href="issue-tracking.html"/>
       </item>
