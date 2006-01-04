@@ -25,7 +25,7 @@ import java.text.NumberFormat;
  */
 public class Day implements java.io.Serializable {
     int day;
-    String timezone = null;
+    String timezone;
 
     /**
      * Constructs a Day with the given values

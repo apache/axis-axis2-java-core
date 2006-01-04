@@ -9,7 +9,7 @@ public abstract class Callback {
     /**
      * Field complete
      */
-    private boolean complete = false;
+    private boolean complete;
 
     /**
      * This method is invoked by Axis Engine once the asynchronous operation has completed sucessfully.

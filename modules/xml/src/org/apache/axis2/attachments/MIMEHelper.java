@@ -48,7 +48,7 @@ public class MIMEHelper {
      * the message is MTOM optimised type is application/xop+xml If the message
      * is SWA, type is ??have to find out
      */
-    String applicationType = null;
+    String applicationType;
 
     /**
      * <code>pushbackInStream</code> stores the reference to the incoming
@@ -72,13 +72,13 @@ public class MIMEHelper {
      * <code>endOfStreamReached</code> flag which is to be set by
      * MIMEBodyPartStream when MIME message terminator is found.
      */
-    boolean endOfStreamReached = false;
+    boolean endOfStreamReached;
 
-    String firstPartId = null;
+    String firstPartId;
 
-    boolean fileCacheEnable = false;
+    boolean fileCacheEnable;
 
-    String attachmentRepoDir = null;
+    String attachmentRepoDir;
 
     int fileStorageThreshold;
 

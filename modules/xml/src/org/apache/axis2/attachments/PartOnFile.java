@@ -52,7 +52,7 @@ public class PartOnFile implements Part {
             repoDir = ".";
         }
         try {
-            cacheFile = java.io.File.createTempFile("Axis2", ".att",
+            cacheFile = File.createTempFile("Axis2", ".att",
                     (repoDir == null) ? null : new File(repoDir));
 
             FileOutputStream fileOutStream = new FileOutputStream(cacheFile);

@@ -39,7 +39,7 @@ import java.util.Map;
  * creation in the OperationContexFactory.
  */
 public class OperationContext extends AbstractContext {
-    private boolean isComplete = false;
+    private boolean isComplete;
 
     // the AxisOperation of which this is a running instance. The MEP of this
     // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.

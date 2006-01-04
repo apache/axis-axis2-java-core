@@ -1,6 +1,6 @@
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="">
+  <meta http-equiv="content-type" content="">
   <title>Sending Binary data with SOAP</title>
 </head>
 
@@ -69,7 +69,7 @@ XML;</p>
       data and wasting of processing power. The primary obstacle for using
       these unparsed entities is their heavy reliance on DTDs, which impedes
       modularity as well as use of XML namespaces.</p>
-      <p>There were several specifications introduced in the web services
+      <p>There were several specifications introduced in the Web services
       world to deal with this binary attachment problem using the "by
       reference" technique. <a
       href="http://www.w3.org/TR/SOAP-attachments">SOAP with Attachments</a>
@@ -88,11 +88,11 @@ XML;</p>
 <p><a href="http://www.w3.org/TR/2004/PR-soap12-mtom-20041116/">MTOM (SOAP
 Message Transmission Optimization Mechanism)</a> is another specification
 which focuses on solving the "Attachments" problem. MTOM tries to leverage
-the advantages of above two techniques by trying to merge the above two
-techniques. MTOM is actually a "by reference" method. Wire format of a MTOM
-optimized message is same as the Soap with Attachments message, which also
-makes it backward compatible with SwA endpoints. The most notable feature of
-MTOM is the use of XOP:Include element, which is defined in <a
+the advantages of above two techniques by trying to merge the two techniques.
+MTOM is actually a "by reference" method. Wire format of a MTOM optimized
+message is same as the Soap with Attachments message, which also makes it
+backward compatible with SwA endpoints. The most notable feature of MTOM is
+the use of XOP:Include element, which is defined in <a
 href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XML Binary Optimized
 Packaging (XOP)</a> specification to reference  the binary attachments
 (external unparsed general entities) of the message. With the use of this
@@ -130,9 +130,9 @@ Optimization Mechanism).</strong></p>
 
 <h2>Programming Model</h2>
 
-<p>AXIOM is an (may be the first) Object Model which has the ability to hold
+<p>AXIOM is (and may be the first) Object Model which has the ability to hold
 binary data. It has been given this ability by allowing OMText to hold raw
-binary content in the form of javax.activation.DataHandler.  OMText has been
+binary content in the form of javax.activation.DataHandler. OMText has been
 chosen for this purpose with two reasons. One is that XOP (MTOM) is capable
 of optimizing only base64-encoded Infoset data that is in the canonical
 lexical form of XML Schema base64Binary datatype. Other one is to preserve
@@ -240,9 +240,9 @@ in the server side for outgoing messages,</p>
 
     <blockquote>
       <p>add and set the "enableMTOM" parameter to true in the Axis2.xml.
-      When it is set,  *outgoing* messages *which contains optimizable
-      content* will be serialized and send as a MTOM optimized messages. If
-      it is not set all the binary data in binary content nodes will be
+      When it is set, *outgoing* messages *which contains optimizable
+      content* will be serialized and send as MTOM optimized messages. If it
+      is not set all the binary data in binary content nodes will be
       serialized as Base64 encoded strings.</p>
     </blockquote>
   </li>

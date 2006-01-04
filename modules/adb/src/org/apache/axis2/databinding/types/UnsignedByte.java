@@ -61,10 +61,7 @@ public class UnsignedByte extends UnsignedShort {
      * @param sValue number to check against range
      */
     public static boolean isValid(long sValue) {
-      if ( (sValue < 0L ) ||  (sValue > 255L) )
-        return false;
-      else
-        return true;
+        return !((sValue < 0L) || (sValue > 255L));
     }
 
 }

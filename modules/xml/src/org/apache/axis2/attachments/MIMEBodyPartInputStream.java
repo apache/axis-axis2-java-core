@@ -23,9 +23,9 @@ import java.io.PushbackInputStream;
 public class MIMEBodyPartInputStream extends InputStream {
     PushbackInputStream inStream;
 
-    boolean boundaryFound = false;
+    boolean boundaryFound;
 
-    MIMEHelper parent = null;
+    MIMEHelper parent;
 
     byte[] boundary;
 

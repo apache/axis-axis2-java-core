@@ -59,10 +59,7 @@ public class UnsignedShort extends UnsignedInt {
      *
      */
     public static boolean isValid(long sValue) {
-      if ( (sValue < 0L  ) || (sValue > 65535L) )
-        return false;
-      else
-        return true;
+        return !((sValue < 0L) || (sValue > 65535L));
     }
 
 }

@@ -25,7 +25,7 @@ import java.text.NumberFormat;
  */
 public class Month implements java.io.Serializable {
     int month;
-    String timezone = null;
+    String timezone;
 
     /**
      * Constructs a Month with the given values

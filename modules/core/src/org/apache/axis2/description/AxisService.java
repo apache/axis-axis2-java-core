@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -357,7 +358,7 @@ public class AxisService
             //TODO : This gives an NPE , Sanka pls fix that
 //            PolicyUtil.populatePolicy(desc, this);
             
-            WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
+            WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
             womWriter.setdefaultWSDLPrefix("wsdl");
             womWriter.writeWOM(desc, out);
 

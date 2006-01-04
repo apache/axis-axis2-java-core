@@ -48,8 +48,8 @@ public abstract class Stub {
      * ServiceContext. The user can share information through this
      * ServiceContext across operations.
      */
-    protected boolean _maintainSession = false;
-    protected String _currentSessionId = null;
+    protected boolean _maintainSession;
+    protected String _currentSessionId;
     protected Options _clientOptions = new Options();
     protected ConfigurationContext _configurationContext;
     protected ServiceContext _serviceContext;

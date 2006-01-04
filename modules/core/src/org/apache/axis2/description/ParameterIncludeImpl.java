@@ -61,7 +61,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
      * to get the original state this method can be used
      *
      * @param parameters <code>OMElement</code>
-     * @throws org.apache.axis2.AxisFault
+     * @throws AxisFault
      */
     public void deserializeParameters(OMElement parameters) throws AxisFault {
         Iterator iterator =

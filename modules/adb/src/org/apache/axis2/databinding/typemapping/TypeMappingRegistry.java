@@ -65,9 +65,8 @@ public class TypeMappingRegistry {
         //      looping case.  Con: Seems like an obtuse rule.)
         //
         // Changing the code from (1) to (2) to see if interop fairs better.
-        if (javaType.isArray()) return true;
+        return javaType.isArray();
 
-        return false;
     }
 
     public boolean isCollection() {

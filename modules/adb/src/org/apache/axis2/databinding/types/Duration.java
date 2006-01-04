@@ -25,7 +25,7 @@ import java.util.Calendar;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#duration">XML Schema 3.2.6</a>
  */
 public class Duration implements java.io.Serializable {
-    boolean isNegative = false;
+    boolean isNegative;
     int years;
     int months;
     int days;

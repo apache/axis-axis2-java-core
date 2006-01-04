@@ -77,10 +77,7 @@ public class UnsignedInt extends java.lang.Number {
      *
      */
     public static boolean isValid(long iValue) {
-      if ( (iValue < 0L)  || (iValue > 4294967295L))
-        return false;
-      else
-        return true;
+        return !((iValue < 0L) || (iValue > 4294967295L));
     }
 
     private Object __equalsCalc = null;

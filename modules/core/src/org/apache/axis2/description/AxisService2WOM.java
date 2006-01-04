@@ -108,8 +108,8 @@ public class AxisService2WOM {
                                            Element documentElement) {
         WSDLTypes wsdlTypes = wsdlComponentFactory.createTypes();
         ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
-        org.apache.wsdl.extensions.Schema schemaExtensibilityElement =
-                (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
+        Schema schemaExtensibilityElement =
+                (Schema) extensionFactory.getExtensionElement(
                         ExtensionConstants.SCHEMA);
         wsdlTypes.addExtensibilityElement(schemaExtensibilityElement);
         schemaExtensibilityElement.setElement(documentElement);
@@ -129,7 +129,7 @@ public class AxisService2WOM {
             if (inaxisMessage != null) {
                 MessageReference messageRefinput = wsdlComponentFactory.createMessageReference();
                 messageRefinput.setElementQName(inaxisMessage.getElementQName());
-                messageRefinput.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                messageRefinput.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
                 wsdlOperation.setInputMessage(messageRefinput);
             }
 
@@ -137,7 +137,7 @@ public class AxisService2WOM {
             if (outaxisMessage != null && outaxisMessage.getElementQName() != null) {
                 MessageReference messageRefout = wsdlComponentFactory.createMessageReference();
                 messageRefout.setElementQName(outaxisMessage.getElementQName());
-                messageRefout.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                messageRefout.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
                 wsdlOperation.setOutputMessage(messageRefout);
             }
             portType.setOperation(wsdlOperation);
@@ -199,7 +199,7 @@ public class AxisService2WOM {
             bindingoperation.addExtensibilityElement(soapOpimpl);
             if (inMessage != null) {
                 WSDLBindingMessageReference bindingInMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
-                bindingInMessage.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                bindingInMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
                 bindingoperation.setInput(bindingInMessage);
 
                 SOAPBody requestSoapbody = (SOAPBody) extensionFactory.getExtensionElement(
@@ -214,7 +214,7 @@ public class AxisService2WOM {
             if (outMessage != null) {
                 WSDLBindingMessageReference bindingOutMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
 
-                bindingOutMessage.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                bindingOutMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
                 bindingoperation.setOutput(bindingOutMessage);
                 SOAPBody resSoapbody = (SOAPBody) extensionFactory.getExtensionElement(
                         ExtensionConstants.SOAP_11_BODY);

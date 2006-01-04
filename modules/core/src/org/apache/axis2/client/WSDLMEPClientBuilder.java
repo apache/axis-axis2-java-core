@@ -47,7 +47,7 @@ import java.net.URL;
 import java.util.Iterator;
 
 public class WSDLMEPClientBuilder {
-    private boolean isoneway = false;
+    private boolean isoneway;
     private ConfigurationContext configurationContext;
     private WSDLDescription description;
 

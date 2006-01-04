@@ -35,7 +35,6 @@ import java.util.Map;
  * re-architectured. It allows the client to initialize only one ConfigurationContext in a given JVM.
  */
 public class ListenerManager {
-    public static int port = 6059;
     public static Map configurationContextMap = new HashMap();
 
     /**

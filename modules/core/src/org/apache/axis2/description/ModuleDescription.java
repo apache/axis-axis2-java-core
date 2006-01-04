@@ -177,11 +177,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
         } else {
             Parameter parameter = getParameter(parameterName);
 
-            if ((parameter != null) && parameter.isLocked()) {
-                return true;
-            } else {
-                return false;
-            }
+            return (parameter != null) && parameter.isLocked();
         }
     }
 

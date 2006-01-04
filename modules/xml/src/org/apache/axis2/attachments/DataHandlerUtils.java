@@ -18,18 +18,20 @@ package org.apache.axis2.attachments;
 
 import org.apache.axis2.util.Base64;
 
+import javax.activation.DataHandler;
+
 public class DataHandlerUtils {
 
   public static Object getDataHandlerFromText(String value, String mimeType)
   {
-      org.apache.axis2.attachments.ByteArrayDataSource dataSource;
+      ByteArrayDataSource dataSource;
       byte[] data = Base64.decode(value);
       if (mimeType != null) {
-          dataSource = new org.apache.axis2.attachments.ByteArrayDataSource(data, mimeType);
+          dataSource = new ByteArrayDataSource(data, mimeType);
       } else {
           // Assumes type as application/octet-stream
-          dataSource = new org.apache.axis2.attachments.ByteArrayDataSource(data);
+          dataSource = new ByteArrayDataSource(data);
       }
-      return new javax.activation.DataHandler(dataSource);
+      return new DataHandler(dataSource);
   }
 }

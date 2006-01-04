@@ -48,8 +48,8 @@ public class SerializationContext {
 
     static final QName MULTIREF_QNAME = new QName("MultiRef");
 
-    Map multirefObjects = null;
-    ArrayList multirefsToWrite = null;
+    Map multirefObjects;
+    ArrayList multirefsToWrite;
 
     int multirefs = NO_MULTIREFS;
     int lastID = 0;
@@ -61,7 +61,7 @@ public class SerializationContext {
         Serializer serializer;
     }
 
-    XMLStreamWriter writer = null;
+    XMLStreamWriter writer;
 
     public SerializationContext(XMLStreamWriter writer) {
         this.writer = writer;

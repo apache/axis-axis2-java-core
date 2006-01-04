@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 public class HexBinary implements Serializable {
 
-    byte[] m_value = null;
+    byte[] m_value;
 
     public HexBinary() {
     }

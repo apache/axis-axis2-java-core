@@ -17,6 +17,7 @@
 package org.apache.axis2.addressing;
 
 import junit.framework.TestCase;
+import junit.textui.TestRunner;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -29,7 +30,7 @@ public class EndpointReferenceTypeTest extends TestCase {
     private String address = "htttp://wwww.openource.lk/~chinthaka";
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(EndpointReferenceTypeTest.class);
+        TestRunner.run(EndpointReferenceTypeTest.class);
     }
 
     /*

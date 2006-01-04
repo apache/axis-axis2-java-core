@@ -56,11 +56,8 @@ public class UnsignedLong extends java.lang.Number {
     }
 
     public static boolean isValid(BigInteger value) {
-        if (value.compareTo(BigInteger.ZERO) == -1 || // less than zero
-                value.compareTo(MAX) == 1) {
-            return false;
-        }
-        return true;
+        return !(value.compareTo(BigInteger.ZERO) == -1 || // less than zero
+                value.compareTo(MAX) == 1);
     }
 
     public String toString() {

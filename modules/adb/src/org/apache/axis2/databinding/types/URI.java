@@ -226,9 +226,9 @@ import java.io.Serializable;
   private String m_queryString = null;
 
   /** If specified, stores the fragment for this URI; otherwise null */
-  private String m_fragment = null;
+  private String m_fragment;
 
-  private static boolean DEBUG = false;
+  private static boolean DEBUG;
 
   /**
   * Construct a new and uninitialized URI.

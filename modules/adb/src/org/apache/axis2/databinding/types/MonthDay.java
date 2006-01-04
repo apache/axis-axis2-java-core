@@ -26,7 +26,7 @@ import java.text.NumberFormat;
 public class MonthDay implements java.io.Serializable {
     int month;
     int day;
-    String timezone = null;
+    String timezone;
 
     /**
      * Constructs a MonthDay with the given values

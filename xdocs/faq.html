@@ -29,25 +29,14 @@
     look?</strong><br>
 
     <p>Look at the <a
-    href="../modules/core/src/org/apache/axis2/client/Call.java">Call</a>
+    href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java">ServiceClient</a>
     class, for more information please read the <a href="userguide.html">user
     guide</a></p>
   </li>
   <li><strong>I want to do One Way Messaging, Where should I
     look?</strong><br>
 
-    <p>Look at the <a
-    href="../modules/core/src/org/apache/axis2/client/MessageSender.java">MessageSender</a>
-    class, for more information please read the <a href="userguide.html">user
-    guide</a></p>
-  </li>
-  <li><strong>Why can not I set the some Addressing properties in the
-    Call?</strong><br>
-
-    <p>Only in the case of the Message Sender the user allowed to edit the
-    Message Properties, In the case of Call the Message correlation is taken
-    care by the Client API and the Addressing Headers are under the Control
-    of Axis2.</p>
+    <p>From Axis2 0.94 onwards, both request-response and one way messaging will be handled by <a href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java">ServiceClient</a>. </p>
   </li>
   <li><strong>When I try to do a non blocking call with use Separate Listener
     true I get the error <i>to do two Transport Channels the Addressing

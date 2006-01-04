@@ -87,16 +87,16 @@ public class MessageContext extends AbstractContext {
     /**
      * Field processingFault
      */
-    private boolean processingFault = false;
+    private boolean processingFault;
 
-    private boolean paused = false;
+    private boolean paused;
 
-    public boolean outputWritten = false;
+    public boolean outputWritten;
 
     /**
      * Field newThreadRequired
      */
-    private boolean newThreadRequired = false;
+    private boolean newThreadRequired;
 
     private boolean isSOAP11 = true;
 
@@ -106,20 +106,20 @@ public class MessageContext extends AbstractContext {
     private ArrayList executionChain = new ArrayList();
 
     // Are we doing REST now?
-    private boolean doingREST = false;
+    private boolean doingREST;
 
     // Are we doing MTOM now?
-    private boolean doingMTOM = false;
+    private boolean doingMTOM;
 
-    QName transportInName = null;
+    QName transportInName;
 
-    QName transportOutname = null;
+    QName transportOutname;
 
-    String serviceGroupId = null;
+    String serviceGroupId;
 
-    String axisServiceName = null;
+    String axisServiceName;
 
-    QName axisOperationName = null;
+    QName axisOperationName;
 
     private transient AxisOperation axisOperation;
 
@@ -476,7 +476,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Set a property for this message context.
-     * 
+     *
      * @param name
      *            name of the property
      * @param value
@@ -493,7 +493,7 @@ public class MessageContext extends AbstractContext {
      * my own options and then look in my context hierarchy. Since its possible
      * that the entire hierarchy is not present, I will start at whatever level
      * has been set and start there.
-     * 
+     *
      * @param name
      *            name of the property to search for
      * @return the value of the property, or null if the property is not found

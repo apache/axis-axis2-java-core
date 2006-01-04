@@ -25,7 +25,7 @@ package org.apache.axis2.databinding.types;
  */
 public class NormalizedString implements java.io.Serializable {
 
-    String m_value = null;   // JAX-RPC maps xsd:string to java.lang.String
+    String m_value;   // JAX-RPC maps xsd:string to java.lang.String
 
     public NormalizedString() {
         super();
