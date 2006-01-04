@@ -18,7 +18,7 @@ started.</p>
   <li><b>HTTP</b> - In the HTTP transport, the transport Listener is a
     Servlet or a Simple HTTP server provided by Axis2. The transport Sender
     uses sockets to connect and send the SOAP Message. Currently we have the
-    commons-HTTP-client based HTTP Transport sender as the default
+    commons-httpclient based HTTP Transport sender as the default
   transport.</li>
   <li><b>TCP</b> This is the most simple transport, but needs addressing
     support to be functional.</li>
@@ -37,7 +37,7 @@ read any further.</p>
 
 <p>Broadly speaking a transport inside Axis2 can be classified as a way of
 getting a messages that arrive though some channel into the Axis2 engine. The
-core of Axis2 is a transport agnostic one. All data that is transport
+core of Axis2 is transport independent. All data that is transport
 specific is striped out of the incoming message and inserted into the
 MessageContext and on the outgoing message all transport specific information
 like headers are added and sent.</p>
@@ -84,7 +84,7 @@ receiver.</p>
 in. This you will need to implement according to the transport that you are
 trying to build. After a message is received at the receiver you can use the
 following code to process the request and then forward the message context to
-the engine using thing the engine.receive(msgContext) method.</p>
+the engine using thing the engine.receive(msgContext) method.{Following code snippet extracted from MailListener as an example}</p>
 <source><pre>AxisEngine engine = new AxisEngine(configurationContext);
 MessageContext msgContext = null;
 // create and initialize a message context
