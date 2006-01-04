@@ -20,7 +20,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -38,13 +40,13 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.rpc.client.RPCCall;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
@@ -87,7 +89,6 @@ public class MultirefTest extends TestCase {
     private void configureSystem(String opName) throws AxisFault {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
-//                        + (5000)
                         + (UtilServer.TESTING_PORT)
                         + "/axis/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
@@ -120,23 +121,27 @@ public class MultirefTest extends TestCase {
         ref.addAttribute(fac.createOMAttribute("id", null, "1"));
         ref.setText("hello Axis2");
         envelope.getBody().addChild(ref);
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
-        call.setClientOptions(options);
+
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
 
-        SOAPEnvelope env = call.invokeBlocking("echoString", envelope);
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
 
-        ConfigurationContextFactory configfactory = new ConfigurationContextFactory();
-        ConfigurationContext configContext = configfactory.buildConfigurationContext(
-                "target/test-resources/integrationRepo");
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
-        options.setTo(targetEPR);
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
 
 
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "hello Axis2");
@@ -170,15 +175,27 @@ public class MultirefTest extends TestCase {
         ref2.setText("10");
         envelope.getBody().addChild(ref2);
 
-
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        SOAPEnvelope env = call.invokeBlocking("add", envelope);
+
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
+
+
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
     }
 
@@ -204,15 +221,26 @@ public class MultirefTest extends TestCase {
         ref.addAttribute(fac.createOMAttribute("id", null, "1"));
         ref.setText("10");
         envelope.getBody().addChild(ref);
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        SOAPEnvelope env = call.invokeBlocking("add", envelope);
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
+
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
     }
 
@@ -245,15 +273,22 @@ public class MultirefTest extends TestCase {
             ref2.setText("10");
             envelope.getBody().addChild(ref2);
 
-
-            RPCCall call =
-                    new RPCCall("target/test-resources/integrationRepo");
-
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            call.invokeBlocking("add", envelope);
+
+            ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                    .buildConfigurationContext("target/test-resources/integrationRepo");
+            RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+            rpcClient.setOptions(options);
+            MessageContext reqMessageContext = new MessageContext(configConetxt);
+            OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+            opClinet.setOptions(options);
+            reqMessageContext.setEnvelope(envelope);
+
+            opClinet.addMessageContext(reqMessageContext);
+            opClinet.execute(true);
+
             fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");
         } catch (AxisFault axisFault) {
             String val = axisFault.getMessage();
@@ -297,19 +332,31 @@ public class MultirefTest extends TestCase {
         OMElement om4 = getOMelemnt(ref4, fac);
         envelope.getBody().addChild(om4);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        SOAPEnvelope env = call.invokeBlocking("editBean", envelope);
+
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
+
         OMElement response = env.getBody().getFirstElement();
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
-        call.close();
+        rpcClient.finalizeInvoke();
     }
 
 
@@ -345,20 +392,31 @@ public class MultirefTest extends TestCase {
         OMElement om4 = getOMelemnt(ref4, fac);
         envelope.getBody().addChild(om4);
 
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        SOAPEnvelope env = call.invokeBlocking("beanOM", envelope);
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
+
         OMElement response = env.getBody().getFirstElement();
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
-        call.close();
+        rpcClient.finalizeInvoke();
     }
 
 
@@ -395,15 +453,26 @@ public class MultirefTest extends TestCase {
         String ref4 = "<reference id=\"4\">Colombo3</reference>";
         OMElement om4 = getOMelemnt(ref4, fac);
         envelope.getBody().addChild(om4);
-
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
-
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        SOAPEnvelope env = call.invokeBlocking("omrefs", envelope);
+
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
+
         OMElement response = env.getBody().getFirstElement();
 
         ArrayList args = new ArrayList();
@@ -412,7 +481,7 @@ public class MultirefTest extends TestCase {
         Object [] resBean = BeanUtil.deserialize(response, args.toArray());
         assertNotNull(resBean);
         assertEquals(((Boolean) resBean[0]).booleanValue(), true);
-        call.close();
+        rpcClient.finalizeInvoke();
     }
 
     private OMElement getOMelemnt(String str, OMFactory fac) throws AxisFault {
@@ -459,14 +528,26 @@ public class MultirefTest extends TestCase {
                 "<town>Colombo3</town><number>1010</number>\n" +
                 "</reference>";
         envelope.getBody().addChild(getOMelemnt(str, fac));
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        SOAPEnvelope env = call.invokeBlocking("echoEmployee", envelope);
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
+
         Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement());
         assertNotNull(emp);
     }
@@ -511,15 +592,27 @@ public class MultirefTest extends TestCase {
             throw new AxisFault(factoryConfigurationError);
         }
         envelope.getBody().addChild(staxOMBuilder.getDocumentElement());
-        RPCCall call =
-                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        SOAPEnvelope env = call.invokeBlocking("handleArrayList", envelope);
+
+        ConfigurationContext configConetxt = new ConfigurationContextFactory()
+                .buildConfigurationContext("target/test-resources/integrationRepo");
+        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        rpcClient.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.setOptions(options);
+        reqMessageContext.setEnvelope(envelope);
+
+        opClinet.addMessageContext(reqMessageContext);
+        opClinet.execute(true);
+
+        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope env = responseMessageContx.getEnvelope();
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "abcdefghiklm10");
     }
 

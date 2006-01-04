@@ -18,8 +18,8 @@ package userguide.clients;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -33,14 +33,14 @@ public class MailClient {
     private static String toEpr = "http://localhost:8080/axis2/services/myservice";
 
     public static void main(String[] args) throws AxisFault {
-        MessageSender msgSender = new MessageSender();
-
         Options options = new Options();
         options.setTo(
                 new EndpointReference(toEpr));
-        msgSender.setClientOptions(options);
+        ServiceClient servicClient = new ServiceClient();
 
-        msgSender.send("echo", getPayload());
+        servicClient.setOptions(options);
+
+        servicClient.sendRobust(getPayload());
     }
 
     private static OMElement getPayload() {

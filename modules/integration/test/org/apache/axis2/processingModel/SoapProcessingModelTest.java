@@ -21,8 +21,9 @@ package org.apache.axis2.processingModel;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.client.InOutMEPClient;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -44,6 +45,7 @@ import org.apache.axis2.util.Utils;
 public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
     private AxisService service;
+    private AxisService clientService;
 
     private boolean finish = false;
 
@@ -59,6 +61,8 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
         UtilServer.start();
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
+        clientService = Utils.createSimpleServiceforClient(serviceName, Echo.class.getName(),
+                operationName);
         UtilServer.deployService(service);
 
     }
@@ -69,37 +73,39 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
     }
 
     public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault {
-        InOutMEPClient inOutMC = null;
+        ServiceClient serviceClient = null;
 
         try {
             ConfigurationContext configContext = Utils
                     .getNewConfigurationContext(Constants.TESTING_REPOSITORY);
+            configContext.getAxisConfiguration().addService(clientService);
 
             ServiceContext serviceContext = new ServiceGroupContext(
-                    configContext, service.getParent())
-                    .getServiceContext(service);
-            inOutMC = new InOutMEPClient(serviceContext);
+                    configContext, clientService.getParent())
+                    .getServiceContext(clientService);
+            serviceClient = new ServiceClient(configContext, clientService);
 
-            MessageContext msgctx = new MessageContext(serviceContext
-                    .getConfigurationContext());
+            MessageContext msgctx = new MessageContext(serviceContext .getConfigurationContext());
 
             msgctx.setEnvelope(envelope);
 
             Options options = new Options();
-            inOutMC.setClientOptions(options);
+            serviceClient.setOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            inOutMC.invokeBlocking(serviceContext
-                    .getAxisService().getOperation(operationName), msgctx);
+            OperationClient opClient = serviceClient.createClient(operationName);
+            opClient.addMessageContext(msgctx);
+            opClient.setOptions(options);
+            opClient.execute(true);
+
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception Occurred !! ." + e.getMessage());
             throw new AxisFault(e);
         } finally {
-            inOutMC.close();
+            serviceClient.finalizeInvoke();
         }
-        // fail("Fix Me Deepal");
     }
 
     public void testSendingMustUnderstandWithNextRole() throws Exception {

@@ -31,14 +31,7 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.SOAPAddress;
 import org.apache.wsdl.extensions.SOAPOperation;
 
@@ -136,7 +129,7 @@ public class WSDLMEPClientBuilder {
             }
         }
 
-        MEPClient mepclient = null;
+        MEPClient mepclient;
 
         if ((wsdlop.getInputMessage() != null) && (wsdlop.getOutputMessage() != null) && !isoneway) {
             mepclient = new InOutMEPClient(serviceContext);
@@ -163,7 +156,7 @@ public class WSDLMEPClientBuilder {
     }
 
     private WSDLEndpoint findEndpoint(QName endpointname, WSDLService service) throws AxisFault {
-        WSDLEndpoint endpoint = null;
+        WSDLEndpoint endpoint;
 
         if (endpointname == null) {
             Iterator endpoints = service.getEndpoints().values().iterator();
@@ -197,7 +190,7 @@ public class WSDLMEPClientBuilder {
     }
 
     private WSDLService findService(QName serviceName) throws AxisFault {
-        WSDLService service = null;
+        WSDLService service;
 
         if (serviceName == null) {
             Iterator services = description.getServices().values().iterator();

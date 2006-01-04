@@ -19,14 +19,12 @@ package org.apache.axis2.mail;
 //todo
 
 import junit.framework.TestCase;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -36,19 +34,14 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.mail.SimpleMailListener;
-import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
 public class MailOneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("mailto:foo@127.0.0.1" +
-            "/axis/services/EchoXMLService/echoOMElement");
-    private Log log = LogFactory.getLog(getClass());
+                    "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 
@@ -57,7 +50,6 @@ public class MailOneWayRawXMLTest extends TestCase {
 
     private SOAPEnvelope envelope;
 
-    private boolean finish = false;
 
     public MailOneWayRawXMLTest() {
         super(MailOneWayRawXMLTest.class.getName());
@@ -79,16 +71,15 @@ public class MailOneWayRawXMLTest extends TestCase {
 
         AxisService service = new AxisService(serviceName.getLocalPart());
         AxisOperation axisOperation = new OutInAxisOperation(
-                );
+        );
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messageCtx) throws AxisFault {
+            public void receive(MessageContext messageCtx) {
                 envelope = messageCtx.getEnvelope();
             }
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
     }
 
     protected void tearDown() throws Exception {
@@ -110,28 +101,26 @@ public class MailOneWayRawXMLTest extends TestCase {
     public void testOneWay() throws Exception {
         AxisService service = new AxisService(serviceName.getLocalPart());
         AxisOperation axisOperation = new OutInAxisOperation(
-                );
+        );
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messageCtx) throws AxisFault {
+            public void receive(MessageContext messageCtx) {
                 envelope = messageCtx.getEnvelope();
             }
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
-
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
 
-        MessageSender sender = new MessageSender(serviceContext);
+        ServiceClient servicClient = new ServiceClient(configContext, service);
 
         Options options = new Options();
         options.setTo(targetEPR);
 
-        sender.send(operationName.getLocalPart(), payload);
-        int index = 0;
+        servicClient.setOptions(options);
+
+        servicClient.sendRobust(operationName, payload);
         while (envelope == null) {
 //          if(index < 10){
             Thread.sleep(4000);

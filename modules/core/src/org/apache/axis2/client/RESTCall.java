@@ -19,28 +19,22 @@ package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 
-public class RESTCall extends Call {
+public class RESTCall extends ServiceClient {
     public RESTCall() throws AxisFault {
         super();
     }
 
-    public RESTCall(ServiceContext service) {
-        super(service);
+
+    public OMElement sendReceive() throws AxisFault {
+        return super.sendReceive(OMAbstractFactory.getOMFactory().createOMElement("nothing",
+                "nothing", "nothing"));
     }
 
-    public OMElement invokeBlocking() throws AxisFault {
-        return super.invokeBlocking("nothing",
-                OMAbstractFactory.getOMFactory().createOMElement("nothing",
-                        "nothing", "nothing"));
-    }
-
-    public void invokeNonBlocking(Callback callback) throws AxisFault {
-        super.invokeNonBlocking("nothing",
-                OMAbstractFactory.getOMFactory().createOMElement("nothing",
-                        "nothing", "nothing"), callback);
+    public void sendReceiveNonblocking(Callback callback) throws AxisFault {
+        super.sendReceiveNonblocking(OMAbstractFactory.getOMFactory().createOMElement("nothing",
+                "nothing", "nothing"), callback);
     }
 }

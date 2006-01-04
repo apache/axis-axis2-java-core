@@ -14,14 +14,14 @@ public class RESTSearchClient {
 
             RESTCall call = new RESTCall();
             Options options = new Options();
-            call.setClientOptions(options);
+            call.setOptions(options);
             options.setTo(new EndpointReference(epr));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
             options.setProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET, Constants.VALUE_TRUE);
 
             //if post is through GET of HTTP
-            OMElement response = call.invokeBlocking();
+            OMElement response = call.sendReceive();
             response.serialize(System.out);
 
         } catch (Exception e) {
