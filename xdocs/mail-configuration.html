@@ -6,7 +6,7 @@
 </head>
 
 <body><h1>Mail transport</h1>
-<p>The inner workings of the mail transport has two parts, the transport Sender and the transport Listener. Here the transport Listener is a basic email client which will be on a loop checking for new messages for a particular email address. When an email comes in it will be tunneled into the Axis engine.</p>
+<p>The inner workings of the mail transport has two parts, the transport sender and the transport listener. The transport listener is a basic email client which will be on a loop checking for new messages for a particular email address. When an email comes in it will be tunneled into the Axis engine.</p>
 <p>Mail transport can be used against a generic mail server or it can be used like a mailet. The simple mailet provided with Axis2 will direct any message that is coming to a particular address into the Axis engine. The engine will process the message and will use the Transport sender to send the reply.</p>
 <p></p>
 <p>To get started on the mail transport you need the following additional jar dependencies on the classpath.</p>
@@ -14,7 +14,7 @@
   <li>javamail</li>
   <li>activation</li>
   </ol>
-<p>We use the Geronimo version of these jars. Specificaly we are using geronimo-spec-javamail-[version].jar and geronimo-spec-activation-[version].jar. These will be downloaded by maven when you run the maven build.</p>
+<p>We use the Geronimo version of these jars to compile but you will need the sun version to run the code. Specificaly we are using geronimo-spec-javamail-[version].jar and geronimo-spec-activation-[version].jar. These will be downloaded by maven when you run the maven build.</p>
 
 <h2>Transport Sender</h2>
 <p>You need to have a mail account to activate the mail functionality. This can either be a generic mail server or you can start up a james mail server. The Mail transport sender can be activated by adding following entry to the axis2.xml file.</p>

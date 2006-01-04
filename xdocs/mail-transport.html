@@ -86,7 +86,7 @@ and UtilsMailServer classes.</p>
 
 <p>Moving onto the client side have a look at the code listing below. It will
 call the axisService that was setup on the previous code listing.</p>
-<source><pre>        ConfigurationContext configContext = UtilsMailServer
+<source><pre>	ConfigurationContext configContext = UtilsMailServer
                 .createClientConfigurationContext();
         AxisService axisService = new AxisService(serviceName);
         AxisOperation axisOperation = new AxisOperation(operationName);
@@ -100,11 +100,11 @@ call the axisService that was setup on the previous code listing.</p>
         Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
         ServiceContext serviceContext = configContext
                 .createServiceContext(serviceName);
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
-                serviceContext);
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_MAIL,
-                Constants.TRANSPORT_MAIL, true);
+                
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
+        options.setUseSeparateListener(true);
         // Create a callback to set to the axisService invocation.
         Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -124,9 +124,12 @@ call the axisService that was setup on the previous code listing.</p>
                 }
          };
 
+        ServiceClient sender = new ServiceClient(configContext, axisService);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
         // Call the service and start poling for the reply from the server.
-        call.invokeNonBlocking(operationName.getLocalPart(), createEnvelope(),
-                callback);
+        sender.sendReceiveNonBlocking(operationName.getLocalPart(), createEnvelope(), callback);
+
         int index = 0;
         while (!finish) {
                 Thread.sleep(1000);
@@ -136,10 +139,12 @@ call the axisService that was setup on the previous code listing.</p>
                                 "Server is being shutdown as the Async response is taking too long.");
                 }
         }
-        call.close();</pre>
+</pre>
 </source>
 <p>This will call the service that was setup on the server and will poll the
-mail server till the response is received.Thats all there is to it.</p>
+mail server till the response is received.Thats all there is to it. Please do note that
+serviceName and operationName need to be QNames.
+</p>
 
 <p></p>
 
