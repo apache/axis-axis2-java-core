@@ -256,7 +256,7 @@ sure to prefix the subject of the mail with [Axis2].</p>
 Features List</h3>
 This release includes the following features:
 <ul>
-  <li><style="margin-bottom: 0in">AXIOM, an XML object model working on StAX
+  <li>AXIOM, an XML object model working on StAX
     (Streaming API for XML) parsing optimized for SOAP 1.1/1.2 Messages. This
     has complete XML infoset support.</li>
   <li><p style="margin-bottom: 0in">Support for One-Way Messaging (In-Only)
@@ -303,7 +303,7 @@ This release includes the following features:
 
 <h4><a name="experimental">Experimental Features List</a></h4>
 <ul>
-  <li><style="margin-bottom: 0in">Sessions scoping for Application, SOAP,
+  <li>Sessions scoping for Application, SOAP,
     Transport and Request levels</li>
   <li><p style="margin-bottom: 0in">Web Service Policy Support</p>
   </li>
@@ -316,14 +316,11 @@ This release includes the following features:
 
 <h3><a name="toolsinrelease">Tools included in this Release</a></h3>
 <ol>
-  <li><style="margin-bottom: 0in">Axis2 Web Appplication (Web App)</li>
-  <li><p style="margin-bottom: 0in">WSDL2WS, eclipse Plugin/Command line
-    version</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Service Archive Wizard, eclipse Plugin</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Module Archive Wizard, eclipse Plugin</p>
-  </li>
+  <li>Axis2 Web Appplication (Web App)</li>
+  <li>WSDL2WS, eclipse Plugin/Command line
+  version</li>
+  <li>Service Archive Wizard, eclipse Plugin</li>
+  <li>Module Archive Wizard, eclipse Plugin</li>
 
   <p>Axis2 is shipped with two standard tools. Both the tools are Eclipse
   plug-ins, the Codegen tool even has the accompanying Ant task and the
@@ -373,7 +370,7 @@ href="installationguide.html" target="_blank">Installation Guide</a>). User
 can select any of the  following two ways of writing web services using
 Axis2. </p>
 <ol>
-  <li><a href="#WSapi"><style="margin-bottom: 0in">Use Axis2's primary
+  <li><a href="#WSapi">Use Axis2's primary
     interfaces (APIs) and implement the business logic.</a></li>
   <li><p><a href="#generateskl">Start from the WSDL -&gt;Code generate the
     Skeleton -&gt;Implement the Business Logic.</a></p>
@@ -457,7 +454,7 @@ service with respective message receivers. For the "echo" operation we have
 used a <strong>RawXMLINOutMessageReceiver</strong> since it is an IN-OUT
 operation. For IN-ONLY operation "ping", we have used
 <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver.</p>
-
+<p>MessageReceivers will be the destination point that Axis2 engine will hand over the message, depending on the operation the message is destined to. The message receiver must work according to the rules defined in the operation to process the message and it will hand over the message to the service implementation class.</p>
 <p>You can write a services.xml file to include a group of services instead
 of a single service. This makes management and deployment of a set of related
 services very easy. At runtime you can share information between these
@@ -1295,7 +1292,7 @@ follows:</p>
 
 <p>As it can be seen there are four phases defined in this "module.xml"</p>
 <ol>
-  <li><style="margin-bottom: 0in">inflow               - Represents the
+  <li>inflow               - Represents the
     handler chain that will run when a message is coming in. </li>
   <li><p style="margin-bottom: 0in">outflow             - Represents the
     handler chain that will run when the message is going out. </p>
@@ -1436,7 +1433,7 @@ services and prove the capabilities of the Axis2 system.</p>
 
 <p>The included samples are</p>
 <ul>
-  <li><style="margin-bottom: 0in">Google spell checker sample</li>
+  <li>Google spell checker sample</li>
   <li><p style="margin-bottom: 0in">Google search sample</p>
   </li>
   <li><p style="margin-bottom: 0in">Amazon queuing sample</p>
@@ -1482,7 +1479,7 @@ batch/shell scripts required to run sample.</p>
 
 <h2><a name="Advanced_Topics"></a>Advanced Topics</h2>
 <ul>
-  <li><style="margin-bottom: 0in"><a href="rest-ws.html"
+  <li><a href="rest-ws.html"
     target="_blank">RESTful Web Services</a></li>
   <li><p style="margin-bottom: 0in"><a href="tcp-transport.html"
     target="_blank">TCP transport</a></p>
