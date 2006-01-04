@@ -354,7 +354,7 @@ public class HTTPTransportReceiver {
 
                     temp += "</ul>";
                 } else {
-                    temp += "No operations speficied for this service";
+                    temp += "No operations specified for this service";
                 }
             }
         }

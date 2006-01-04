@@ -5,14 +5,14 @@
 
         <project basedir="." default="jar.all">
             <xsl:comment>Auto generated ant build file</xsl:comment>
+            <property name="name">
+                <xsl:attribute name="value">myservice</xsl:attribute>
+            </property>
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
             </property>
             <property name="test">
                 <xsl:attribute name="value">${basedir}\test</xsl:attribute>
-            </property>
-            <property name="resources">
-                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
             </property>
             <property name="build">
                 <xsl:attribute name="value">${basedir}\build</xsl:attribute>
@@ -22,6 +22,9 @@
             </property>
             <property name="lib">
                 <xsl:attribute name="value">${build}\lib</xsl:attribute>
+            </property>
+            <property name="resources">
+                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
             </property>
 
             <property name="xbeans.packaged.jar.name" value="XBeans-packaged.jar"></property>
@@ -99,10 +102,45 @@
             </target>
             <target name="jar.all" depends="compile.all,echo.classpath.problem">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
+                <copy>
+                    <xsl:attribute name="toDir">${classes}/META-INF</xsl:attribute>
+                    <fileset>
+                        <xsl:attribute name="dir">${resources}</xsl:attribute>
+                        <include><xsl:attribute name="name">*.xml</xsl:attribute></include>
+                        <include><xsl:attribute name="name">*.wsdl</xsl:attribute></include>
+                        <exclude><xsl:attribute name="name">**/schemaorg_apache_xmlbean/**</xsl:attribute></exclude>
+                    </fileset>
+                </copy>
+                <copy>
+                    <xsl:attribute name="file">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                    <xsl:attribute name="toDir">${classes}/lib</xsl:attribute>
+                </copy>
                 <jar>
-                    <xsl:attribute name="basedir">${classes}</xsl:attribute>
-                    <xsl:attribute name="destfile">${lib}\service.jar</xsl:attribute>
+                    <xsl:attribute name="destfile">${lib}/${name}.aar</xsl:attribute>
+                    <fileset>
+                        <xsl:attribute name="excludes">**/Test.class</xsl:attribute>
+                        <xsl:attribute name="dir">${classes}</xsl:attribute>
+                    </fileset>
                 </jar>
+            </target>
+            <target depends="jar.all" name="make.repo" if="jars.ok">
+                <mkdir>
+                    <xsl:attribute name="dir">${build}/repo/</xsl:attribute>
+                </mkdir>
+                <mkdir>
+                    <xsl:attribute name="dir">${build}/repo/services</xsl:attribute>
+                </mkdir>
+                <copy>
+                    <xsl:attribute name="file">${build}/lib/${name}.aar</xsl:attribute>
+                    <xsl:attribute name="toDir">${build}/repo/services/</xsl:attribute>
+                </copy>
+            </target>
+            <target depends="make.repo" name="start.server" if="jars.ok">
+                <java classname="org.apache.axis2.transport.http.SimpleHTTPServer" fork="true">
+                    <arg>
+                        <xsl:attribute name="value">${build}/repo</xsl:attribute>
+                    </arg>
+                </java>
             </target>
             <target name="clean">
               <delete>

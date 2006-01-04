@@ -5,6 +5,9 @@
 
         <project basedir="." default="jar.all">
             <xsl:comment>Auto generated ant build file</xsl:comment>
+            <property name="name">
+                <xsl:attribute name="value">myservice</xsl:attribute>
+            </property>
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
             </property>
@@ -20,7 +23,10 @@
             <property name="lib">
                 <xsl:attribute name="value">${build}\lib</xsl:attribute>
             </property>
-
+            <property name="resources">
+                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
+            </property>
+ 
             <property name="jars.ok" value=""></property>
 
             <target name="init">

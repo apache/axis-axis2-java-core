@@ -1,10 +1,15 @@
-<xsl:stylesheet version="1.0" xmlns:xalan="http://xml.apache.org/xslt"  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xalan="http://xml.apache.org/xslt" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" xalan:indent-amount="4"/>
     <xsl:template match="/ant">
-        <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
+        <xsl:variable name="package">
+            <xsl:value-of select="@package"/>
+        </xsl:variable>
 
         <project basedir="." default="jar.all">
             <xsl:comment>Auto generated ant build file</xsl:comment>
+            <property name="name">
+                <xsl:attribute name="value">myservice</xsl:attribute>
+            </property>
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
             </property>
@@ -19,6 +24,9 @@
             </property>
             <property name="lib">
                 <xsl:attribute name="value">${build}\lib</xsl:attribute>
+            </property>
+            <property name="resources">
+                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
             </property>
 
             <property name="jars.ok" value=""></property>
@@ -40,7 +48,7 @@
 
                 <available classname="javax.xml.stream.XMLStreamReader" property="stax.available"/>
                 <available classname="org.apache.axis2.engine.AxisEngine" property="axis2.available"/>
-                <condition property="jars.ok" >
+                <condition property="jars.ok">
                     <and>
                         <isset property="stax.available"/>
                         <isset property="axis2.available"/>
@@ -49,10 +57,10 @@
 
                 <xsl:comment>Print out the availabilities</xsl:comment>
                 <echo>
-                     <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
+                    <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
                 </echo>
                 <echo>
-                     <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
+                    <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
                 </echo>
 
             </target>
@@ -79,15 +87,45 @@
             </target>
             <target name="jar.all" depends="compile.all,echo.classpath.problem">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
+                <copy>
+                    <xsl:attribute name="toDir">${classes}/META-INF</xsl:attribute>
+                    <fileset>
+                        <xsl:attribute name="dir">${resources}</xsl:attribute>
+                        <include><xsl:attribute name="name">*.xml</xsl:attribute></include>
+                        <include><xsl:attribute name="name">*.wsdl</xsl:attribute></include>
+                    </fileset>
+                </copy>
                 <jar>
-                    <xsl:attribute name="basedir">${classes}</xsl:attribute>
-                    <xsl:attribute name="destfile">${lib}\service.jar</xsl:attribute>
+                    <xsl:attribute name="destfile">${lib}/${name}.aar</xsl:attribute>
+                    <fileset>
+                        <xsl:attribute name="excludes">**/Test.class</xsl:attribute>
+                        <xsl:attribute name="dir">${classes}</xsl:attribute>
+                    </fileset>
                 </jar>
             </target>
+            <target depends="jar.all" name="make.repo" if="jars.ok">
+                <mkdir>
+                    <xsl:attribute name="dir">${build}/repo/</xsl:attribute>
+                </mkdir>
+                <mkdir>
+                    <xsl:attribute name="dir">${build}/repo/services</xsl:attribute>
+                </mkdir>
+                <copy>
+                    <xsl:attribute name="file">${build}/lib/${name}.aar</xsl:attribute>
+                    <xsl:attribute name="toDir">${build}/repo/services/</xsl:attribute>
+                </copy>
+            </target>
+            <target depends="make.repo" name="start.server" if="jars.ok">
+                <java classname="org.apache.axis2.transport.http.SimpleHTTPServer" fork="true">
+                    <arg>
+                        <xsl:attribute name="value">${build}/repo</xsl:attribute>
+                    </arg>
+                </java>
+            </target>
             <target name="clean">
-              <delete>
-                <xsl:attribute name="dir">${build}</xsl:attribute>
-              </delete>
+                <delete>
+                    <xsl:attribute name="dir">${build}</xsl:attribute>
+                </delete>
             </target>
         </project>
     </xsl:template>
