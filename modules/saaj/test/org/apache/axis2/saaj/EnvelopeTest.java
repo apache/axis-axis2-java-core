@@ -7,6 +7,8 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
@@ -15,8 +17,6 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPConnection;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
@@ -33,10 +33,10 @@ public class EnvelopeTest extends TestCase {
             "  </shw:Hello>\n" +
             " </soapenv:Header>\n" +
             " <soapenv:Body>\n" +
-            "  <shw:Address shw:t='test' xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
-            "    <shw:City>GENT</shw:City>\n" +
-            "  </shw:Address>\n" +
-            " </soapenv:Body>\n" +
+            "<shw:Address shw:t='test' xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+            "<shw:City>GENT</shw:City>\n" +
+            "</shw:Address>\n" +
+            "</soapenv:Body>\n" +
             "</soapenv:Envelope>";
 
     public EnvelopeTest(String name) {
@@ -51,6 +51,10 @@ public class EnvelopeTest extends TestCase {
         SOAPEnvelope se = sp.getEnvelope();
         smsg.writeTo(System.out);
         assertTrue(se != null);
+
+        // validate the body
+        final SOAPBody body = sp.getEnvelope().getBody();
+        validateBody(body.getChildElements());
     }
 
     public void testEnvelope2() throws Exception {
@@ -245,7 +249,7 @@ public class EnvelopeTest extends TestCase {
             SOAPHeaderElement resultHeaderEle = (SOAPHeaderElement) iterator.next();
 
             assertEquals(headerEle.getActor(), resultHeaderEle.getActor());
-            assertEquals(resultHeaderEle.getMustUnderstand(),headerEle.getMustUnderstand());
+            assertEquals(resultHeaderEle.getMustUnderstand(), headerEle.getMustUnderstand());
         }
         assertTrue(cnt == 1);
         iterator = header.extractHeaderElements("actor-URI");
@@ -438,4 +442,24 @@ public class EnvelopeTest extends TestCase {
         return count;
     }
 
+    private void validateBody(Iterator iter) {
+        while (iter.hasNext()) {
+            final Object obj = iter.next();
+            if (obj instanceof Text) {
+                final String data = ((Text) obj).getData();
+                assertTrue("\n".equals(data) || "GENT".equals(data));
+            } else {
+                final SOAPElement soapElement = (SOAPElement) obj;
+                final Iterator attIter = soapElement.getAllAttributes();
+                while (attIter.hasNext()) {
+                    final Object o = attIter.next();
+                    assertEquals("test", soapElement.getAttributeValue((Name) o));
+                }
+
+                final Iterator childElementIter = soapElement.getChildElements();
+                if (childElementIter == null) return;
+                validateBody(childElementIter);
+            }
+        }
+    }
 }

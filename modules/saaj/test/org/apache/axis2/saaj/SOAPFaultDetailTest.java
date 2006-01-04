@@ -57,15 +57,4 @@ public class SOAPFaultDetailTest extends TestCase {
     	}
     	assertTrue(d != null);
     }
-    
-    /**
-     * Main
-     */
-    public static void main(String[] args)
-            throws Exception
-    {
-        SOAPFaultDetailTest detailTest = new SOAPFaultDetailTest("faultdetails");
-        detailTest.testDetails();
-    }
-
 }

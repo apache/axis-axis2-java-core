@@ -18,8 +18,9 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
@@ -29,6 +30,7 @@ import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.saaj.util.SessionUtils2;
+import org.apache.axis2.soap.SOAP11Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -42,7 +44,7 @@ import java.net.URL;
 import java.util.Iterator;
 
 /**
- * 
+ *
  */
 public class SOAPConnectionImpl extends SOAPConnection {
     /**
@@ -71,56 +73,10 @@ public class SOAPConnectionImpl extends SOAPConnection {
             throw new SOAPException(e);
         }
 
-        // initialize the Call
-        Call call;
-        try {
-            call = new Call();
-        } catch (AxisFault e) {
-            throw new SOAPException(e);
-        }
-
-        // initialize and set Options
-        Options options = new Options();
-        options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setTo(new EndpointReference(url.toString()));
-        call.setClientOptions(options);
-
-        String axisOp = request.getSOAPBody().getFirstChild().getNodeName();
-
-        try {
-            final SOAPEnvelope saajEnvelope = request.getSOAPPart().getEnvelope();
-            /* final org.apache.axis2.soap.SOAPEnvelope omEnvelope =
-           ((SOAPEnvelopeImpl) saajEnvelope).getOMEnvelope();*/
-
-            final Iterator attachmentIter = request.getAttachments();
-            while (attachmentIter.hasNext()) {
-                System.err.println("########### Att=" + attachmentIter.next());
-            }
-
-//            final OMElement omEnvelope = ((SOAPEnvelopeImpl) saajEnvelope).getOMEnvelope();
-
-            //parse the omEnvelope element and stuff it with the attachment
-            //specific omText nodes
-//            insertAttachmentNodes(omEnvelope, request);
-
-            //-------------- Send the Request -----------------------
-
-            //Convert to Default OM Implementation(LLOM at the moment) before calling Call.invokeBlocking
-            OMElement result =
-                    call.invokeBlocking(axisOp,
-                                        SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement()));
-
-            //-------------- Handle the response --------------------
-            SOAPEnvelopeImpl responseEnv =
-                    new SOAPEnvelopeImpl(SAAJUtil.toDOOMSOAPEnvelope((org.apache.axis2.soap.SOAPEnvelope) result));
-
-            SOAPMessageImpl sMsg = new SOAPMessageImpl(responseEnv);
-//            extractAttachmentNodes(result, sMsg);
-            return sMsg;
-        }
-        catch (AxisFault af) {
-            throw new SOAPException(af);
+        if (request.countAttachments() != 0) { // SOAPMessage with attachments
+            return handleSOAPMessageWithAttachments(request, url);
+        } else { // simple SOAPMessage
+            return handleBasicSOAPMessage(request, url);
         }
     }
 
@@ -132,6 +88,84 @@ public class SOAPConnectionImpl extends SOAPConnection {
     public void close() throws SOAPException {
         //TODO: Method implementation
 
+    }
+
+    private SOAPMessage handleSOAPMessageWithAttachments(SOAPMessage request,
+                                                         URL url) throws SOAPException {
+        SOAPMessage response = null;
+
+        // initialize the Sender
+        ServiceClient sender;
+        try {
+            sender = new ServiceClient(null, null);  //TODO: create the config context properly
+        } catch (AxisFault e) {
+            throw new SOAPException(e);
+        }
+
+        // initialize and set Options
+        Options options = new Options();
+        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
+        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setTo(new EndpointReference(url.toString()));
+        sender.setOptions(options);
+
+        // process the attachments
+        final Iterator attachmentIter = request.getAttachments();
+        while (attachmentIter.hasNext()) {
+            System.err.println("########### Att=" + attachmentIter.next());
+            //TODO: process it
+        }
+
+        try {
+            OMElement result =
+                        sender.sendReceive(SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement()));
+
+            //-------------- Handle the response --------------------
+            SOAPEnvelopeImpl responseEnv =
+                    new SOAPEnvelopeImpl(SAAJUtil.toDOOMSOAPEnvelope((org.apache.axis2.soap.SOAPEnvelope) result));
+
+            response = new SOAPMessageImpl(responseEnv);
+
+            //TODO: process the attachments in result and add in those as attachments of response
+        } catch (AxisFault e) {
+            throw new SOAPException(e);
+        }
+
+        return response;
+    }
+
+    private SOAPMessage handleBasicSOAPMessage(SOAPMessage request, URL url) throws SOAPException {
+        SOAPMessage response = null;
+
+        // initialize the Sender
+        ServiceClient sender;
+        try {
+            sender = new ServiceClient();
+        } catch (AxisFault e) {
+            throw new SOAPException(e);
+        }
+
+        // initialize and set Options
+        Options options = new Options();
+        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-8");
+        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setTo(new EndpointReference(url.toString()));
+        sender.setOptions(options);
+
+        try {
+            OMElement result =
+                    sender.sendReceive(SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement()));
+            SOAPEnvelopeImpl responseEnv =
+                    new SOAPEnvelopeImpl(SAAJUtil.toDOOMSOAPEnvelope((org.apache.axis2.soap.SOAPEnvelope) result));
+
+            response = new SOAPMessageImpl(responseEnv);
+        } catch (AxisFault e) {
+            throw new SOAPException(e);
+        }
+        return response;
     }
 
     /**
@@ -159,7 +193,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
                                                                  soapMsg,
                                                                  (DocumentImpl) ((ElementImpl) child).getOwnerDocument());
 
-//                child.removeAttribute(hrefAttr); //y did SAAJ1 implementors remove the attribute???
+                child.removeAttribute(hrefAttr); //y did SAAJ1 implementors remove the attribute???
                 child.addChild(omText);
             } else { //possibly there can be references in the children of this omEnvelope
                 //so recurse through.

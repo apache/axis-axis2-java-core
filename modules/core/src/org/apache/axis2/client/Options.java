@@ -236,14 +236,6 @@ public class Options {
                 : soapVersionURI;
     }
 
-    public String getSoapFactory() {
-        if (soapFactory == null && parent != null) {
-            soapFactory = parent.getSoapFactory();
-        }
-
-        return soapFactory == null ? "" : soapFactory;
-    }
-
     /**
      * Gets the wait time after which a client times out in a blocking scenario.
      * The default is Options#DEFAULT_TIMEOUT_MILLISECONDS

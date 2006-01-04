@@ -47,7 +47,6 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      */
     public SOAPFault addFault() throws SOAPException {
         SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
-        omSOAPBody.addFault(fault);
         return new SOAPFaultImpl(fault);
     }
 

@@ -23,6 +23,7 @@ public class OMAbstractFactory {
     public static final String OM_FACTORY_NAME_PROPERTY = "om.factory";
     public static final String SOAP11_FACTORY_NAME_PROPERTY = "soap11.factory";
     public static final String SOAP12_FACTORY_NAME_PROPERTY = "soap12.factory";
+    public static final String SOAP_FACTORY_NAME_PROPERTY = "soap.factory";
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

@@ -91,7 +91,7 @@ public abstract class MEPClient {
      */
     public void addSOAPHeader(QName soapHeaderQName, String soapHeaderText) {
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(soapHeaderQName,
-                null);
+                                                                               null);
 
         omElement.setText(soapHeaderText);
 
@@ -104,7 +104,7 @@ public abstract class MEPClient {
 
     protected void addUserAddedSOAPHeaders(MessageContext msgCtx, Options options) {
         if ((soapHeaderList != null) && (soapHeaderList.size() > 0)
-                && (msgCtx.getEnvelope() != null)) {
+            && (msgCtx.getEnvelope() != null)) {
             SOAPFactory soapFactory;
             SOAPHeader header = msgCtx.getEnvelope().getHeader();
 
@@ -145,7 +145,7 @@ public abstract class MEPClient {
 
         configurationContext.getAxisConfiguration().addService(axisService);
         serviceContext = new ServiceGroupContext(configurationContext,
-                axisService.getParent()).getServiceContext(axisService);
+                                                 axisService.getParent()).getServiceContext(axisService);
     }
 
     /**
@@ -170,22 +170,23 @@ public abstract class MEPClient {
         if (clientOptions == null) {
             throw new AxisFault(
                     "Can not proceed without options being set for invocation. Set the"
-                            + "properties for this invocation via MEPClient.setOptions(Options) first.");
+                    + "properties for this invocation via MEPClient.setOptions(Options) first.");
         }
 
         String soapVersionURI = clientOptions.getSoapVersionURI();
-        String soapFactory = clientOptions.getSoapFactory();
+        String soapFactory =
+                (String) clientOptions.getProperty(OMAbstractFactory.SOAP_FACTORY_NAME_PROPERTY);
 
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             String factory = (String) clientOptions.getProperty(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY);
-            if(factory != null) {
+            if (factory != null) {
                 return OMAbstractFactory.getSOAPFactory(soapFactory).getDefaultEnvelope();
             } else {
                 return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
             }
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             String factory = (String) clientOptions.getProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
-            if(factory != null) {
+            if (factory != null) {
                 return OMAbstractFactory.getSOAPFactory(soapFactory).getDefaultEnvelope();
             } else {
                 return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
@@ -263,10 +264,10 @@ public abstract class MEPClient {
 
             // we have a deprecated method for user to set the transport
             // protocol directly. Lets support that also
-            String senderTransportProtocol = clientOptions.getSenderTransportProtocol();
+            String senderTrasportProtocol = clientOptions.getSenderTransportProtocol();
 
             if (axisConfig != null) {
-                if ((senderTransportProtocol == null) || "".equals(senderTransportProtocol)) {
+                if ((senderTrasportProtocol == null) || "".equals(senderTrasportProtocol)) {
 
                     // by this time we have passed all the information we
                     // collected via Options to the message context
@@ -276,13 +277,13 @@ public abstract class MEPClient {
                     // if he has not set the transport information, we gonna
                     // infer that from the to EPR
                     clientOptions.setSenderTransport(
-                            axisConfig.getTransportOut(new QName(senderTransportProtocol)));
+                            axisConfig.getTransportOut(new QName(senderTrasportProtocol)));
                 }
             }
 
             if (this.clientOptions.getSenderTransport() == null) {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
-                        senderTransportProtocol));
+                                                        senderTrasportProtocol));
             }
         }
     }
@@ -299,10 +300,10 @@ public abstract class MEPClient {
         // I should check that is
         // available either from the message context or from the options.
         if (((msgCtx == null) || (msgCtx.getTo() == null))
-                && ((clientOptions == null) || (clientOptions.getTo() == null))) {
+            && ((clientOptions == null) || (clientOptions.getTo() == null))) {
             throw new AxisFault(
                     "Can not proceed without options being set for invocation. Set the"
-                            + "properties for this invocation via MEPClient.setOptions(Options) first.");
+                    + "properties for this invocation via MEPClient.setOptions(Options) first.");
         }
 
         if (axisop == null) {
@@ -312,7 +313,7 @@ public abstract class MEPClient {
         // make sure operation is type right MEP
         if (mep.equals(axisop.getMessageExchangePattern())) {
             throw new AxisFault(Messages.getMessage("mepClientSupportOnly", mep,
-                    axisop.getMessageExchangePattern()));
+                                                    axisop.getMessageExchangePattern()));
         }
 
         // if operation not alrady added, add it

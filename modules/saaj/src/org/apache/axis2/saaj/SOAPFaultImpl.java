@@ -9,15 +9,13 @@ import org.apache.axis2.soap.SOAPFaultText;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
 import java.util.Locale;
 
 public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
@@ -48,12 +46,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #getFaultCode() getFaultCode()
      */
     public void setFaultCode(String faultCode) throws SOAPException {
-        /*SOAPFaultCode code = new SOAP11FaultCodeImpl(fault);
-        SOAP11FaultValueImpl faultValueImpl = new SOAP11FaultValueImpl(code);
-        faultValueImpl.setText(faultCode);
-        code.setValue(faultValueImpl);
-        this.fault.setCode(code);*/
-
         org.apache.axis2.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
         SOAPFaultCode fCode = soapFactory.createSOAPFaultCode(fault);
         SOAPFaultValue fValue = soapFactory.createSOAPFaultValue(fCode);
@@ -61,25 +53,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         fValue.setText(faultCode);
 
         this.fault.setCode(fCode);
-
-        /*try {
-            {
-                System.err.println("########################## Fault Code #########");
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                fCode.serialize(baos);
-                String xml2 = new String(baos.toByteArray());
-                System.out.println(xml2);
-                System.err.println("##########################");
-            }
-            System.err.println("########################## Fault -------");
-            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-            fault.serialize(baos2);
-            String xml3 = new String(baos2.toByteArray());
-            System.out.println(xml3);
-            System.err.println("##########################-----------");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }*/
     }
 
     /**
@@ -101,6 +74,11 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             SOAP11FaultRoleImpl faultRoleImpl = new SOAP11FaultRoleImpl(this.fault);
             faultRoleImpl.setRoleValue(faultActor);
             this.fault.setRole(faultRoleImpl);
+
+            /* SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+            SOAPFaultNode fNode = soapFactory.createSOAPFaultNode(fault);
+            fNode.setNodeValue(faultActor);*/
+
         } else {
             SOAPFaultRole role = this.fault.getRole();
             role.setRoleValue(faultActor);
@@ -115,6 +93,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             return this.fault.getRole().getRoleValue();
         }
         return null;
+
+//        return fault.getNode().getNodeValue();
     }
 
     /**
@@ -139,38 +119,11 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 reason.setSOAPText(text);
             }
         } else {
-            /*SOAPFaultReason fReason = new SOAP11FaultReasonImpl(this.fault);
-            SOAPFaultText fText = new SOAP11FaultTextImpl(fReason);
-            fText.setText(faultString);
-            fReason.setSOAPText(fText);
-            this.fault.setReason(fReason);*/
-
             org.apache.axis2.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
             SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
             SOAPFaultText fText = soapFactory.createSOAPFaultText(fReason);
             fText.setText(faultString);
             fReason.setSOAPText(fText);
-
-            this.fault.setReason(fReason);
-
-            try {
-              /*  System.err.println("########################## Fault String ######");
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                fReason.serialize(baos);
-                String xml2 = new String(baos.toByteArray());
-                System.out.println(xml2);
-                System.err.println("##########################");*/
-
-                System.err.println("########################## Fault -------");
-                ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-                fault.serialize(baos2);
-                String xml3 = new String(baos2.toByteArray());
-                System.out.println(xml3);
-                System.err.println("##########################-----------");
-
-            } catch (XMLStreamException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -199,7 +152,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       */
     public Detail addDetail() throws SOAPException {
         SOAP11FaultDetailImpl omDetail = new SOAP11FaultDetailImpl(this.fault);
-        this.fault.setDetail(omDetail);
         return new DetailImpl(omDetail);
     }
 

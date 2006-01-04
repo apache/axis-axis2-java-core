@@ -4,19 +4,28 @@ import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.xml.soap.*;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileInputStream;
 import java.util.Iterator;
 
-import org.w3c.dom.Document;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-
 public class AttachmentSerializationTest extends TestCase {
+
+    public static final String MIME_MULTIPART_RELATED = "multipart/related";
+    public static final String MIME_APPLICATION_DIME = "application/dime";
+    public static final String NS_PREFIX = "jaxmtst";
+    public static final String NS_URI = "http://www.jcommerce.net/soap/jaxm/TestJaxm";
 
     public AttachmentSerializationTest(String name) {
         super(name);
@@ -33,16 +42,10 @@ public class AttachmentSerializationTest extends TestCase {
             int count = saveMsgWithAttachments(bais);
             assertEquals(count, 2);
         } catch (Exception e) {
-//            throw new Exception("Fault returned from test: " + e);
             e.printStackTrace();
             fail("Unexpected Exception : " + e);
         }
     }
-
-    public static final String MIME_MULTIPART_RELATED = "multipart/related";
-    public static final String MIME_APPLICATION_DIME = "application/dime";
-    public static final String NS_PREFIX = "jaxmtst";
-    public static final String NS_URI = "http://www.jcommerce.net/soap/jaxm/TestJaxm";
 
     public int saveMsgWithAttachments(OutputStream os) throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
@@ -86,11 +89,13 @@ public class AttachmentSerializationTest extends TestCase {
         assertTrue(contentType != null);
 
         for (Iterator iter = msg.getAttachments(); iter.hasNext();) {
-            AttachmentPart attachmentPart =  (AttachmentPart) iter.next();
+            AttachmentPart attachmentPart = (AttachmentPart) iter.next();
             final Object content = attachmentPart.getDataHandler().getContent();
-            if(content instanceof String){
+            if (content instanceof String) {
                 assertEquals(testText, (String) content);
-            } else if(content instanceof FileInputStream){
+            } else if (content instanceof FileInputStream) {
+
+                // try to write to a File and check whether it is ok
                 final FileInputStream fis = (FileInputStream) content;
                 /*File file = new File("output-file.jpg");
                 file.createNewFile();
@@ -110,9 +115,11 @@ public class AttachmentSerializationTest extends TestCase {
         headers.setHeader("Content-Type", MIME_MULTIPART_RELATED);
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage msg = mf.createMessage(headers, is);
+
         SOAPPart sp = msg.getSOAPPart();
-        SOAPEnvelope envelope = sp.getEnvelope();
         assertTrue(sp != null);
+
+        SOAPEnvelope envelope = sp.getEnvelope();
         assertTrue(envelope != null);
         return msg.countAttachments();
     }

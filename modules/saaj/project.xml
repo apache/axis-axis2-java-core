@@ -44,10 +44,6 @@
             <includes>
                 <include>**/*Test.java</include>
             </includes>
-            <excludes>
-                <exclude>**/PrefixesTest.java</exclude>
-                <exclude>**/SOAPFaultsTest.java</exclude>
-            </excludes>
 
             <resources>
                 <resource>
