@@ -54,9 +54,9 @@ public class Round2EchoBase64ClientUtil implements SunRound2ClientUtil {
 }
 /**
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<SOAP-ENV:Body>
-		<m:echoBase64 xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<inputBase64 xsi:type="xsd:base64Binary">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</inputBase64>
-		</m:echoBase64>
-	</SOAP-ENV:Body>
+    <SOAP-ENV:Body>
+        <m:echoBase64 xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+            <inputBase64 xsi:type="xsd:base64Binary">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</inputBase64>
+        </m:echoBase64>
+    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>*/

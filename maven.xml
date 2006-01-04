@@ -36,10 +36,10 @@
      |    build the war with the default samples
      |
      | dist-src
-     | 	Source Distribution
+     |  Source Distribution
      |
      | dist-bin
-     |  	Binary Distribution
+     |      Binary Distribution
      |
    -->
 
@@ -308,6 +308,10 @@
 
     <goal name="all-tests">
         <modules:reactor goals="jar:install,test,itest"/>
+    </goal>
+
+    <goal name="cleanse-sources">
+        <modules:reactor goals="cleanse-sources"/>
     </goal>
 
     <goal name="clover">

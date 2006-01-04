@@ -82,19 +82,19 @@ public class GroupcEchoStringUtil implements SunRound2ClientUtil {
     }
     /**
      * <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:m0="http://soapinterop.org/echoheader/" xmlns:m1="http://soapinterop.org/xsd">
-	<SOAP-ENV:Header>
-		<echoMeStringRequest xsi:type="xsd:string">String</echoMeStringRequest>
-		<m0:echoMeStructRequest xsi:type="m1:SOAPStruct">
-			<varString xsi:type="xsd:string">String</varString>
-			<varInt xsi:type="xsd:int">0</varInt>
-			<varFloat xsi:type="xsd:float">3.14159E0</varFloat>
-		</m0:echoMeStructRequest>
-	</SOAP-ENV:Header>
-	<SOAP-ENV:Body>
-		<m:echoString xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<inputString xsi:type="xsd:string">String</inputString>
-		</m:echoString>
-	</SOAP-ENV:Body>
+    <SOAP-ENV:Header>
+        <echoMeStringRequest xsi:type="xsd:string">String</echoMeStringRequest>
+        <m0:echoMeStructRequest xsi:type="m1:SOAPStruct">
+            <varString xsi:type="xsd:string">String</varString>
+            <varInt xsi:type="xsd:int">0</varInt>
+            <varFloat xsi:type="xsd:float">3.14159E0</varFloat>
+        </m0:echoMeStructRequest>
+    </SOAP-ENV:Header>
+    <SOAP-ENV:Body>
+        <m:echoString xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+            <inputString xsi:type="xsd:string">String</inputString>
+        </m:echoString>
+    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
      */
 

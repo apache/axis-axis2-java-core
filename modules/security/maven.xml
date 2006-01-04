@@ -25,13 +25,13 @@
         <mkdir dir="target/modules"/>
         <mkdir dir="target/modules/lib"/>
 
-	<copy file="${maven.repo.local}/xml-security/jars/xmlsec-1.2.1.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/bouncycastle/jars/bcprov-jdk13-128.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/xml-security/jars/xmlsec-1.2.1.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-jdk13-128.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/classes/lib"/>
+    <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/classes/lib"/>
 
 
         <jar jarfile="target/security.mar" basedir="target/classes">
@@ -43,7 +43,7 @@
     <preGoal name="java:compile">
      <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 
-       	<j:set var="interop.dir" value="target/interop"/>
+        <j:set var="interop.dir" value="target/interop"/>
         <j:set var="work.dir" value="${interop.dir}/work"/>
         <j:set var="class.dir" value="${interop.dir}/classes"/>
 
@@ -51,55 +51,55 @@
         <mkdir dir="${work.dir}"/>
         <mkdir dir="${class.dir}"/>
         
-		<!-- Run WSDL2Java -->
+        <!-- Run WSDL2Java -->
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg value="-uri"/>
-			<arg file="interop/ping.wsdl"/>
-			<arg value="-ss"/>
-			<arg value="-o"/>
-			<arg file="${work.dir}"/>
-			<arg value="-p"/>
-			<arg value="org.apache.axis2.oasis.ping"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <arg value="-uri"/>
+            <arg file="interop/ping.wsdl"/>
+            <arg value="-ss"/>
+            <arg value="-o"/>
+            <arg file="${work.dir}"/>
+            <arg value="-p"/>
+            <arg value="org.apache.axis2.oasis.ping"/>
             <arg value="-d"/>
-			<arg value="xmlbeans"/>
+            <arg value="xmlbeans"/>
             <arg value="-g"/>
         </java>
 
-		<!-- move/copy schema stuff into class.dir -->
-    	<ant:move todir="${class.dir}">
+        <!-- move/copy schema stuff into class.dir -->
+        <ant:move todir="${class.dir}">
             <ant:fileset dir="${work.dir}/resources">
                 <ant:include name="**/schema*/**/*.xsb"/>
                 <ant:include name="**/schema*/**/*.class"/>
             </ant:fileset>
-	    </ant:move>
-		
-	    <!-- copy the service impl -->
-	    <copy file="interop/org/apache/axis2/oasis/ping/PingPortSkeleton.java" 
-		    tofile="${work.dir}/src/org/apache/axis2/oasis/ping/PingPortSkeleton.java" overwrite="yes"/>
-	
-	    <!-- Password callback class for the interop service -->
-	    <copy file="test-resources/PWCallback.java" 
-		    tofile="${work.dir}/src/org/apache/axis2/security/PWCallback.java" overwrite="yes"/>
-		
-	    <!-- Interop client -->
-	    <copy file="interop/org/apache/axis2/security/InteropScenarioClient.java" 
-		    tofile="${work.dir}/src/org/apache/axis2/security/InteropScenarioClient.java" overwrite="yes"/>
+        </ant:move>
+        
+        <!-- copy the service impl -->
+        <copy file="interop/org/apache/axis2/oasis/ping/PingPortSkeleton.java" 
+            tofile="${work.dir}/src/org/apache/axis2/oasis/ping/PingPortSkeleton.java" overwrite="yes"/>
+    
+        <!-- Password callback class for the interop service -->
+        <copy file="test-resources/PWCallback.java" 
+            tofile="${work.dir}/src/org/apache/axis2/security/PWCallback.java" overwrite="yes"/>
+        
+        <!-- Interop client -->
+        <copy file="interop/org/apache/axis2/security/InteropScenarioClient.java" 
+            tofile="${work.dir}/src/org/apache/axis2/security/InteropScenarioClient.java" overwrite="yes"/>
 
-   	    <ant:path id="classes.dir" location="${class.dir}"/>
+        <ant:path id="classes.dir" location="${class.dir}"/>
         <maven:addPath id="maven.dependency.classpath" refid="classes.dir"/>
 
-   	    <ant:path id="src.dir" location="${work.dir}/src"/>
-        <maven:addPath id="maven.compile.src.set" refid="src.dir"/>	
+        <ant:path id="src.dir" location="${work.dir}/src"/>
+        <maven:addPath id="maven.compile.src.set" refid="src.dir"/> 
      </j:if>
     </preGoal>
 
-	<!--Create the service.aar" -->
+    <!--Create the service.aar" -->
     <postGoal name="java:compile">
       <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 
-		<!-- move/copy interop classes into class.dir -->
-    	<ant:move todir="${class.dir}">
+        <!-- move/copy interop classes into class.dir -->
+        <ant:move todir="${class.dir}">
             <ant:fileset dir="${basedir}/target/classes">
                 <ant:include name="**/ping/**/*.class"/>
                 <ant:include name="**/oasisOpen/**/*.class"/>
@@ -107,7 +107,7 @@
                 <ant:include name="**/PWCallback.class"/>
                
             </ant:fileset>
-	</ant:move>
+    </ant:move>
 
         <delete includeEmptyDirs="true">
             <fileset dir="${basedir}/target/classes/org/apache/axis2/oasis/"/>
@@ -115,41 +115,41 @@
             <!--<fileset dir="${basedir}/target/classes/org/oasisOpen/"/>-->
         </delete>
 
-       	<j:set var="interop.dir" value="target/interop"/>
+        <j:set var="interop.dir" value="target/interop"/>
         <j:set var="work.dir" value="${interop.dir}/work"/>
         <j:set var="class.dir" value="${interop.dir}/classes"/>
         
-    	<!-- Create the META-INF directory -->
-    	<mkdir dir="${class.dir}/META-INF"/>
-    	
-    		<!-- copy the services.xml-->
-		<copy file="interop/services.xml"
-			tofile="${class.dir}/META-INF/services.xml" overwrite="yes"/>
+        <!-- Create the META-INF directory -->
+        <mkdir dir="${class.dir}/META-INF"/>
+        
+            <!-- copy the services.xml-->
+        <copy file="interop/services.xml"
+            tofile="${class.dir}/META-INF/services.xml" overwrite="yes"/>
 
 
-		<!-- copy axis2.crypto.properties -->
-		<copy file="interop/axis2.crypto.properties" 
-			tofile="${class.dir}/axis2.crypto.properties" overwrite="yes"/>
-		<!-- copy axis2.saml.properties -->
-		<copy file="interop/axis2.saml.properties" 
-			tofile="${class.dir}/axis2.saml.properties" overwrite="yes"/>
-		<!-- copy axis2.saml3.properties -->
-		<copy file="interop/axis2.saml3.properties" 
-			tofile="${class.dir}/axis2.saml3.properties" overwrite="yes"/>
-		<!-- copy axis2.saml4.properties -->
-		<copy file="interop/axis2.saml4.properties" 
-			tofile="${class.dir}/axis2.saml4.properties" overwrite="yes"/>
-		<!-- copy x509.PFX.MSFT -->
-		<copy file="interop/x509.PFX.MSFT" 
-			tofile="${class.dir}/x509.PFX.MSFT" overwrite="yes"/>
-		<!-- Copy interop.properties-->
-		<copy file="interop/interop.properties" 
-			tofile="${class.dir}/interop.properties" overwrite="yes"/>
-		<!-- Copy interop.jks -->
-		<copy file="interop/interop2.jks" 
-			tofile="${class.dir}/interop2.jks" overwrite="yes"/>
-		
-	<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
+        <!-- copy axis2.crypto.properties -->
+        <copy file="interop/axis2.crypto.properties" 
+            tofile="${class.dir}/axis2.crypto.properties" overwrite="yes"/>
+        <!-- copy axis2.saml.properties -->
+        <copy file="interop/axis2.saml.properties" 
+            tofile="${class.dir}/axis2.saml.properties" overwrite="yes"/>
+        <!-- copy axis2.saml3.properties -->
+        <copy file="interop/axis2.saml3.properties" 
+            tofile="${class.dir}/axis2.saml3.properties" overwrite="yes"/>
+        <!-- copy axis2.saml4.properties -->
+        <copy file="interop/axis2.saml4.properties" 
+            tofile="${class.dir}/axis2.saml4.properties" overwrite="yes"/>
+        <!-- copy x509.PFX.MSFT -->
+        <copy file="interop/x509.PFX.MSFT" 
+            tofile="${class.dir}/x509.PFX.MSFT" overwrite="yes"/>
+        <!-- Copy interop.properties-->
+        <copy file="interop/interop.properties" 
+            tofile="${class.dir}/interop.properties" overwrite="yes"/>
+        <!-- Copy interop.jks -->
+        <copy file="interop/interop2.jks" 
+            tofile="${class.dir}/interop2.jks" overwrite="yes"/>
+        
+    <jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
             <include name="**/*"/>
         </jar>
      </j:if>

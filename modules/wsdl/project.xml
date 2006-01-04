@@ -17,88 +17,88 @@
  */
  -->
 <project>
-	<pomVersion>3</pomVersion>
-	<extend>../../etc/project.xml</extend>
-	<name>Apache Axis 2.0 - WSDL</name>
-	<id>axis2-wsdl</id>
-	<groupId>axis2</groupId>
-	<description>WSDL support for Axis 2.0. This includes WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</description>
-	<dependencies>
-		<dependency>
-			<groupId>axis2</groupId>
-			<artifactId>axis2-xml</artifactId>
-			<version>${pom.currentVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>axis2</groupId>
-			<artifactId>axis2-common</artifactId>
-			<version>${pom.currentVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>ws-commons</groupId>
-			<artifactId>XmlSchema</artifactId>
-			<version>${XmlSchema.version}</version>
-		</dependency>
-		<!-- external JARs -->
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons.logging.version}</version>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-			<properties>
-				<module>true</module>
-			</properties>
-			<url>http://dist.codehaus.org/stax/jars/</url>
-		</dependency>
-		<dependency>
+    <pomVersion>3</pomVersion>
+    <extend>../../etc/project.xml</extend>
+    <name>Apache Axis 2.0 - WSDL</name>
+    <id>axis2-wsdl</id>
+    <groupId>axis2</groupId>
+    <description>WSDL support for Axis 2.0. This includes WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</description>
+    <dependencies>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-xml</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-common</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>${XmlSchema.version}</version>
+        </dependency>
+        <!-- external JARs -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons.logging.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>http://dist.codehaus.org/stax/jars/</url>
+        </dependency>
+        <dependency>
             <groupId>${stax.impl.groupid}</groupId>
             <artifactId>${stax.impl.artifactid}</artifactId>
             <version>${stax.impl.version}</version>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>stax</groupId>
-			<artifactId>stax-api</artifactId>
-			<version>${stax.api.version}</version>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-wsdl4j</artifactId>
-			<version>${axis.wsdl4j.version}</version>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>xmlbeans</groupId>
-			<artifactId>xbean</artifactId>
-			<version>${xbean.version}</version>
-			<type>jar</type>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant</artifactId>
-			<version>${ant.version}</version>
-			<type>jar</type>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>${stax.api.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-wsdl4j</artifactId>
+            <version>${axis.wsdl4j.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>${xbean.version}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>${ant.version}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
@@ -128,8 +128,8 @@
             </properties>
         </dependency>
     </dependencies>
-	<!-- add the build properties-->
-	<build>
+    <!-- add the build properties-->
+    <build>
 
         <unitTest>
             <excludes>
@@ -141,16 +141,16 @@
         </unitTest>
 
     <resources>
-		<resource>
-			<directory>src</directory>
-			<includes>
-				<include>**/*.properties</include>
-				<include>**/*.xml</include>
-				<include>**/*.xsl</include>
-				<include>**/*.xsd</include>
-			</includes>
-		</resource>
-	</resources>
-	</build>
-	<reports/>
+        <resource>
+            <directory>src</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+                <include>**/*.xsl</include>
+                <include>**/*.xsd</include>
+            </includes>
+        </resource>
+    </resources>
+    </build>
+    <reports/>
 </project>

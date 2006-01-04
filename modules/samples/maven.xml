@@ -17,7 +17,7 @@
     </postGoal>
     
     <goal name="mail-tests">
-      <!--   	 TODO call the Mail tests if the mail jar is presents
+      <!--       TODO call the Mail tests if the mail jar is presents
         <j:if test="${maven.repo.local}/j2ee/jars/mail.jar"> 
             <ant:ant antfile="script/mail-test.xml" inheritall="true" inheritrefs="true" dir="."/>
          </j:if> 
@@ -40,7 +40,7 @@
         <attainGoal name="mtomSample"/>
         <attainGoal name="groovy"/>
         <attainGoal name="securitySample"/>
-	  <attainGoal name="sgccalculator"/>
+      <attainGoal name="sgccalculator"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -118,7 +118,7 @@
                 <include name="userguide/loggingmodule/**/*.class"/>
             </fileset>
         </jar>
-	<ant:copy file="script/userguide/build.xml" tofile="target/samples/userguide/build.xml"/>
+    <ant:copy file="script/userguide/build.xml" tofile="target/samples/userguide/build.xml"/>
 
     </goal>
     <!-- ================================================================ -->
@@ -262,53 +262,53 @@
     <!-- ================================================================ -->
     <goal name="securitySample">
 
-	<mkdir dir="target/security"/>
-	<mkdir dir="target/security/META-INF"/>
-	
+    <mkdir dir="target/security"/>
+    <mkdir dir="target/security/META-INF"/>
+    
         <!-- Create the service archive -->
-    	<ant:move todir="target/security">
-	     <ant:fileset dir="target/classes">
+        <ant:move todir="target/security">
+         <ant:fileset dir="target/classes">
                 <ant:include name="sample/security/*.class"/>
             </ant:fileset>
-	</ant:move>
-	<ant:copy file="src/sample/security/META-INF/services.xml" tofile="target/security/META-INF/services.xml"/>
-	<ant:copy file="resources/security/sec.jks" tofile="target/security/sec.jks"/>
-	<ant:copy file="resources/security/sec.properties" tofile="target/security/sec.properties"/>
+    </ant:move>
+    <ant:copy file="src/sample/security/META-INF/services.xml" tofile="target/security/META-INF/services.xml"/>
+    <ant:copy file="resources/security/sec.jks" tofile="target/security/sec.jks"/>
+    <ant:copy file="resources/security/sec.properties" tofile="target/security/sec.properties"/>
         <jar destfile="target/security/SecureService.aar">
             <fileset dir="target/security"></fileset>
         </jar>
         
-	<!-- Create a jar to hold the password callback class-->
-	<mkdir dir="target/security/secUtil/sample/security/" />
-	<ant:copy file="target/security/sample/security/PWCallback.class" toFile="target/security/secUtil/sample/security/PWCallback.class" />
-	<ant:copy file="target/security/sample/security/Client.class" toFile="target/security/secUtil/sample/security/Client.class" />
-	<ant:copy file="resources/security/sec.jks" tofile="target/security/secUtil/sec.jks"/>
-	<ant:copy file="resources/security/sec.properties" tofile="target/security/secUtil/sec.properties"/>
+    <!-- Create a jar to hold the password callback class-->
+    <mkdir dir="target/security/secUtil/sample/security/" />
+    <ant:copy file="target/security/sample/security/PWCallback.class" toFile="target/security/secUtil/sample/security/PWCallback.class" />
+    <ant:copy file="target/security/sample/security/Client.class" toFile="target/security/secUtil/sample/security/Client.class" />
+    <ant:copy file="resources/security/sec.jks" tofile="target/security/secUtil/sec.jks"/>
+    <ant:copy file="resources/security/sec.properties" tofile="target/security/secUtil/sec.properties"/>
         <jar destfile="target/security/secUtil.jar">
             <fileset dir="target/security/secUtil"></fileset>
         </jar>
 
-	<mkdir dir="target/security/client_repo"/>
-	<mkdir dir="target/security/client_repo/modules"/>
+    <mkdir dir="target/security/client_repo"/>
+    <mkdir dir="target/security/client_repo/modules"/>
 
-	<ant:copy file="../security/target/modules/security.mar" tofile="target/toWar/modules/security.mar"/>
-	<ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/toWar/modules/addressing.mar"/>
+    <ant:copy file="../security/target/modules/security.mar" tofile="target/toWar/modules/security.mar"/>
+    <ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/toWar/modules/addressing.mar"/>
 
-	<!-- Copy the sources and others orver to the target/samples/security-->
-	<mkdir dir="target/samples/security/src/sample/security/"/>
-    	<ant:copy todir="target/samples/security/src/sample/security/">
-	     <ant:fileset dir="src/sample/security" />
-	</ant:copy>
-	<mkdir dir="target/security/client_repo/modules"/>
-	<ant:copy file="../security/target/modules/security.mar" tofile="target/samples/security/client_repo/modules/security.mar"/>
-	<ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/samples/security/client_repo/modules/addressing.mar"/>
-	<ant:copy file="resources/security/client.axis2.xml" tofile="target/samples/security/client_repo/axis2.xml"/>
-	<ant:copy file="target/security/SecureService.aar" tofile="target/samples/security/SecureService.aar"/>
-	<ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/secUtil.jar"/>
-	<ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
-	<ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>
+    <!-- Copy the sources and others orver to the target/samples/security-->
+    <mkdir dir="target/samples/security/src/sample/security/"/>
+        <ant:copy todir="target/samples/security/src/sample/security/">
+         <ant:fileset dir="src/sample/security" />
+    </ant:copy>
+    <mkdir dir="target/security/client_repo/modules"/>
+    <ant:copy file="../security/target/modules/security.mar" tofile="target/samples/security/client_repo/modules/security.mar"/>
+    <ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/samples/security/client_repo/modules/addressing.mar"/>
+    <ant:copy file="resources/security/client.axis2.xml" tofile="target/samples/security/client_repo/axis2.xml"/>
+    <ant:copy file="target/security/SecureService.aar" tofile="target/samples/security/SecureService.aar"/>
+    <ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/secUtil.jar"/>
+    <ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
+    <ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>
 
-	<delete dir="target/security/"/>
+    <delete dir="target/security/"/>
 
     </goal>
 
@@ -332,7 +332,7 @@
                 <include name="META-INF/**"/>
             </fileset>
         </jar>
-	  <copy toDir="${samples.dir}/SGCCalculator"
+      <copy toDir="${samples.dir}/SGCCalculator"
             file="script/SGCCalculator/run.bat"/>
         <copy toDir="${samples.dir}/SGCCalculator"
             file="script/SGCCalculator/run.sh"/>

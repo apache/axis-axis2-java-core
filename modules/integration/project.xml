@@ -358,7 +358,7 @@
                     <include>**/*.jpg</include>
                 </includes>
             </resource>
- 	    <resource>
+        <resource>
                 <directory>test</directory>
                 <includes>
                     <include>**/*.bin</include>

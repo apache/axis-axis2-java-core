@@ -73,12 +73,12 @@ public class GroupbEcho2DStringArrayUtil implements SunRound2ClientUtil{
 }
 /**
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:m0="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Body>
-		<m:echo2DStringArray xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<input2DStringArray xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="m0:string[1]">
-				<m0:item0 xsi:type="m0:string" id="" href=""/>
-			</input2DStringArray>
-		</m:echo2DStringArray>
-	</SOAP-ENV:Body>
+    <SOAP-ENV:Body>
+        <m:echo2DStringArray xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+            <input2DStringArray xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="m0:string[1]">
+                <m0:item0 xsi:type="m0:string" id="" href=""/>
+            </input2DStringArray>
+        </m:echo2DStringArray>
+    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 */

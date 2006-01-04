@@ -160,7 +160,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-	<dependency>
+    <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>ws-policy</artifactId>
             <version>${ws_policy.version}</version>

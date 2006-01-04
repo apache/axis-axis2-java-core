@@ -80,10 +80,10 @@ public class GroupcHexBinaryUtil implements SunRound2ClientUtil {
 
 /**
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<SOAP-ENV:Body>
-		<m:echoHexBinary xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<inputHexBinary xsi:type="xsd:hexBinary">41394644363445313243</inputHexBinary>
-		</m:echoHexBinary>
-	</SOAP-ENV:Body>
+    <SOAP-ENV:Body>
+        <m:echoHexBinary xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+            <inputHexBinary xsi:type="xsd:hexBinary">41394644363445313243</inputHexBinary>
+        </m:echoHexBinary>
+    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 */
