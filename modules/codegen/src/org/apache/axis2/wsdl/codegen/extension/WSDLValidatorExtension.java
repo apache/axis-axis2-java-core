@@ -17,6 +17,7 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
@@ -67,7 +68,8 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
                 }
                 if (!targetnamespaceFound)
                     throw new CodeGenerationException(
-                            "Invalid WSDL: The WSDL Types Schema does not define a targetNamespace in " + schema.getName());
+                            CodegenMessages.getMessage("extension.invalidWSDL",schema.getName().toString()));
+
             }
 
         }

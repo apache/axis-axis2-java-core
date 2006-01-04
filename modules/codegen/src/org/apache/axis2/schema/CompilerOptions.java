@@ -1,5 +1,7 @@
 package org.apache.axis2.schema;
 
+import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
+
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,7 +73,7 @@ public class CompilerOptions {
         if (packageName != null && testValue(packageName)) {
             this.packageName = packageName;
         } else {
-            throw new RuntimeException("Unsupported value!");
+            throw new RuntimeException(SchemaCompilerMessages.getMessage("schema.unsupportedvalue"));
         }
         return this;
     }

@@ -32,6 +32,7 @@ import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.MessageReference;
@@ -125,7 +126,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             } else if (codegenStyle == XSLTConstants.CodegenStyle.AUTOMATIC) {
                 emitSkeletonAutomatic(wom);
             } else {
-                throw new Exception("Unknown code generation style!!! " + codegenStyle);
+                throw new Exception(
+                         CodegenMessages.getMessage("emitter.unknownStyle", codegenStyle+"")) ;
             }
 
             // Call the emit stub method to generate the client side too
@@ -154,7 +156,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             } else if (codegenStyle == XSLTConstants.CodegenStyle.AUTOMATIC) {
                 emitStubAutomatic(wom);
             } else {
-                throw new Exception("Unknown code generation style!!! " + codegenStyle);
+                throw new Exception( CodegenMessages.getMessage("emitter.unknownStyle", codegenStyle+""));
             }
 
         } catch (Exception e) {
@@ -183,8 +185,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
 
 
-        log.info("Interface mode is selected.The following items will not be generated");
-        log.info("1. Message Receiver");
+        log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
+        log.info(CodegenMessages.getMessage("emitter.logEntryInterface2"));
     }
 
     /**
@@ -197,7 +199,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         if (bindings == null || bindings.isEmpty()) {
             //asking for a code generation with a binding when a binding is
             //not present should be the cause of an Exception !
-            throw new Exception("Cannot find a binding!!");
+            throw new Exception(CodegenMessages.getMessage("emitter.cannotFindBinding"));
 
         } else {
             WSDLBinding axisBinding;
@@ -262,11 +264,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
 
         //log the message stating that the binding dependent parts are not generated
-        log.info("Interface code generation was selected! The following items are not generated");
-        log.info("1. Stub");
-        log.info("2. CallbackHandler");
-        log.info("3. Test Classes");
-        log.info("4. Databinding Supporters");
+         log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
+         log.info(CodegenMessages.getMessage("emitter.logEntryInterface3"));
+         log.info(CodegenMessages.getMessage("emitter.logEntryInterface4"));
+         log.info(CodegenMessages.getMessage("emitter.logEntryInterface5"));
+         log.info(CodegenMessages.getMessage("emitter.logEntryInterface6"));
+
     }
 
     /**
@@ -280,7 +283,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         if (bindings == null || bindings.isEmpty()) {
             //asking for a code generation with a binding when a binding is
             //not present should be the cause of an Exception !
-            throw new Exception("Cannot find a binding!!");
+            throw new Exception(CodegenMessages.getMessage("emitter.cannotFindBinding"));
         } else {
             WSDLBinding axisBinding;
             WSDLService axisService = null;
@@ -382,7 +385,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 axisService = (WSDLService) services.values().toArray()[0];
             } else {
                 throw new UnsupportedOperationException(
-                        "Single service WSDL files only");
+                       CodegenMessages.getMessage("emitter.SingleServiceMessage"));
             }
         }
         return axisService;

@@ -21,6 +21,7 @@ import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLInterface;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import javax.xml.namespace.QName;
 import java.util.Collection;
@@ -31,7 +32,7 @@ import java.util.Vector;
 /**
  * The purpose of this extension is to build the bindings. Bindings, however, may not be present.
  */
-public class AxisBindingBuilder extends AbstractCodeGenerationExtension implements CodeGenExtension {
+public class AxisBindingBuilder extends AbstractCodeGenerationExtension{
 
     public static final String AXIS_NAMESPACE = "http://ws.apache.org/axis2/";
 
@@ -50,7 +51,7 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
         Vector bindingVector = new Vector();
 
         if (bindingMap == null || bindingMap.isEmpty()) {
-            log.info(" bindings are not present in the original document");
+            log.info(CodegenMessages.getMessage("extension.bindingMissing"));
             //just fall through
         } else {
             Collection bindingCollection = bindingMap.values();

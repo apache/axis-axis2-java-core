@@ -19,6 +19,8 @@ package org.apache.axis2.wsdl;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 public class WSDL2Code {
 
@@ -32,26 +34,18 @@ public class WSDL2Code {
     }
 
     private static void printUsage() {
-        System.out.println(
-                "Usage WSDL2Code -uri <Location of WSDL> : WSDL file location ");
-        System.out.println(
-                "-o <output Location> : output file location ");
-        System.out.println(
-                "-a : Generate async style code only. Default is off");
-        System.out.println(
-                "-s : Generate sync style code only. Default is off. takes precedence over -a");
-        System.out.println(
-                "-p <package name> : set custom package name");
-        System.out.println(
-                "-l <language> : valid languages are java and csharp. Default is java");
-        System.out.println(
-                "-t : Generate TestCase to test the generated code");
-        System.out.println(
-                "-ss : Generate server side code (i.e. skeletons). Default is off");
-        System.out.println(
-                "-sd : Generate service descriptor (i.e. axis2.xml). Default is off. Valid with -ss ");
-        System.out.println(
-                "-d <databinding> : valid databinding(s) are adb and xmlbeans. Default is adb");
+        
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg1"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg2"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg3"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg4"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg5"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg6"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg7"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg8"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg9"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg10"));
+
         System.exit(0);
     }
 

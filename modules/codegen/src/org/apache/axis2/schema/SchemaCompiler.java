@@ -3,6 +3,7 @@ package org.apache.axis2.schema;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -432,7 +433,7 @@ public class SchemaCompiler {
 
         if (complexType.getContentModel()!=null){
             //for the time being we cannot deal with these content. so throw an exception
-            throw new RuntimeException("Unsupported content! ");
+            throw new RuntimeException(SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror"));
         }
 
         // Process the other types - Say the complex content, extensions and so on

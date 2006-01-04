@@ -249,10 +249,10 @@ public class HTTPTransportUtils {
             }
 
             String charsetEncoding = builder.getDocument().getCharsetEncoding();
-
+        
             if ((charsetEncoding != null) && !"".equals(charsetEncoding)
-                    && !((String) msgContext.getProperty(
-                    MessageContext.CHARACTER_SET_ENCODING)).equalsIgnoreCase(charsetEncoding)) {
+                    && ! charsetEncoding.equalsIgnoreCase((String) msgContext.getProperty(
+                    MessageContext.CHARACTER_SET_ENCODING))) {
                 String faultCode;
 
                 if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(

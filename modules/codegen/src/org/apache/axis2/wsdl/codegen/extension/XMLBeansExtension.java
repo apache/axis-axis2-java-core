@@ -21,6 +21,7 @@ import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingMessageReference;
@@ -299,7 +300,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
             }
         } catch (Exception e) {
-            throw new RuntimeException("Additional schema loading failed!!", e);
+            throw new RuntimeException(CodegenMessages.getMessage("extension.additionalSchemaFailure"), e);
         }
 
         return schemaElements;
@@ -343,7 +344,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
                     if (WSDLConstants.WSDL_USE_ENCODED.equals(
                             ((SOAPBody) element).getUse())) {
                         throw new RuntimeException(
-                                "The use 'encoded' is not supported!");
+                                CodegenMessages.getMessage("extension.encodedNotSupported"));
                     }
                 }
             }

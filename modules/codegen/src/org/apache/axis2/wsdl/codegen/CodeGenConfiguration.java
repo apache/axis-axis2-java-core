@@ -18,6 +18,7 @@ package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
@@ -222,7 +223,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         //check and create the directories
         if (this.outputLocation.exists()) {
             if (this.outputLocation.isFile()) {
-                throw new RuntimeException("The specified output location is not a directory!");
+                throw new RuntimeException(CodegenMessages.getMessage("options.notADirectoryException"));
             }
         } else {
             this.outputLocation.mkdirs();

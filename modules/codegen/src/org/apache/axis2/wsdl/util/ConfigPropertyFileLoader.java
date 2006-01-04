@@ -1,5 +1,7 @@
 package org.apache.axis2.wsdl.util;
 
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,7 +89,7 @@ public class ConfigPropertyFileLoader {
                         databindingFrameworkNameToExtensionMap.put(databindingFrameworkNames[i], frameworkExtensionNames[i]);
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new Exception("Number of frameworks and extension names do not match!");
+                    throw new Exception(CodegenMessages.getMessage("propfileload.frameworkMismatch"));
                 }
 
             }
@@ -96,7 +98,7 @@ public class ConfigPropertyFileLoader {
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY);
 
             if (tempString == null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
-                throw new Exception("Unknown framework specified for default!");
+                throw new Exception(CodegenMessages.getMessage("propfileload.unknownFramework"));
             }
             defaultDBFrameworkName = tempString;
             //load the third party schema names
@@ -120,7 +122,7 @@ public class ConfigPropertyFileLoader {
                 //load the language emitter map
                 tempString = props.getProperty(EMITTER_CLASS_KEY);
                 if (tempString == null) {
-                    throw new Exception("No emitters found");
+                    throw new Exception(CodegenMessages.getMessage("propfileload.emitterMissing"));
                 } else {
                     String[] tempClassNames = tempString.split(SEPARATOR_CHAR);
                     //populate the map
@@ -135,7 +137,7 @@ public class ConfigPropertyFileLoader {
             // load the default language
             tempString = props.getProperty(DEFAULT_LANGUAGE_TYPE_KEY);
             if (null == tempString || !languageEmitterMap.containsKey(tempString)) {
-                throw new Exception("Unknown Language specified for default!");
+                throw new Exception(CodegenMessages.getMessage("propfileload.unknownDefaultLang"));
             }
             defaultLanguage = tempString;
 
@@ -163,7 +165,7 @@ public class ConfigPropertyFileLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException("Exception while loading the property file", e);
+            throw new RuntimeException(CodegenMessages.getMessage("propfileload.generalException"), e);
         }
 
     }

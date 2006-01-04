@@ -32,7 +32,7 @@ public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
             if (mappper == null) {
                 //this shouldn't happen
-                throw new CodeGenerationException("No proper databinding has taken place");
+                throw new CodeGenerationException("extension.noProperDatabinding");
             }
             return;
         }

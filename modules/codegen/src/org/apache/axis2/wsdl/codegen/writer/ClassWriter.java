@@ -22,6 +22,7 @@ import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.XSLTIncludeResolver;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -70,14 +71,14 @@ public abstract class ClassWriter {
         Class clazz = this.getClass();
         Map languageSpecificPropertyMap = (Map) ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
         if (languageSpecificPropertyMap == null) {
-            throw new CodeGenerationException("No language specific properties!!!");
+            throw new CodeGenerationException(CodegenMessages.getMessage("writer.noLangPropertiesExtension"));
         }
 
         String templateName = findTemplate(languageSpecificPropertyMap);
         if (templateName != null) {
             this.xsltStream = clazz.getResourceAsStream(templateName);
         } else {
-            throw new CodeGenerationException("template for this writer is not found");
+            throw new CodeGenerationException(CodegenMessages.getMessage("writer.templateMissing"));
         }
 
 

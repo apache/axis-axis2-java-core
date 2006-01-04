@@ -1,6 +1,7 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.Source;
@@ -68,7 +69,7 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
             supporterTemplateStream = getClass().getResourceAsStream(templateName);
             return new StreamSource(supporterTemplateStream);
         } else{
-            throw new TransformerException(templateName + " template not found!");
+            throw new TransformerException(CodegenMessages.getMessage("reslover.templateNotFound",templateName));
         }
     }
 

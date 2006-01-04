@@ -3,6 +3,7 @@ package org.apache.axis2.schema.writer;
 import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
+import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.URLProcessor;
@@ -193,7 +194,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
-        throw new SchemaCompilationException("Not implemented yet");
+        throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.notimplementedxception"));
     }
 
     /**
@@ -205,7 +206,7 @@ public class JavaBeanWriter implements BeanWriter {
         if (rootDir == null) {
             this.rootDir = new File(".");
         } else if (!rootDir.isDirectory()) {
-            throw new IOException("Root location needs to be a directory!");
+            throw new IOException(SchemaCompilerMessages.getMessage("schema.rootnotfolderexception"));
         } else {
             this.rootDir = rootDir;
         }
@@ -449,10 +450,10 @@ public class JavaBeanWriter implements BeanWriter {
                 templateCache = TransformerFactory.newInstance().newTemplates(new StreamSource(xslStream));
                 templateLoaded = true;
             } catch (TransformerConfigurationException e) {
-                throw new SchemaCompilationException("Error loading the template", e);
+                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.templateLoadException"), e);
             }
         } else {
-            throw new SchemaCompilationException("template for this writer is not found");
+            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.templateNotFoundException"));
         }
     }
 

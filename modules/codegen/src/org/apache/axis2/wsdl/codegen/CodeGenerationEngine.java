@@ -21,10 +21,10 @@ import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +45,7 @@ public class CodeGenerationEngine {
         try {
             wom = this.getWOM(parser);
         } catch (WSDLException e) {
-            throw new CodeGenerationException("Error parsing WSDL", e);
-        } catch (IOException e1) {
-            throw new CodeGenerationException("Invalid WSDL Location ", e1);
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
 
         configuration = new CodeGenConfiguration(wom, parser);
@@ -83,9 +81,9 @@ public class CodeGenerationEngine {
             if (mapper == null) {
                 // this check is redundant here. The default databinding extension should
                 // have already figured this out and thrown an error message. However in case the
-                // users mess with the config it is safe to keep this check in order to throw
+                // users decides to mess with the config it is safe to keep this check in order to throw
                 // a meaningful error message
-                throw new CodeGenerationException("No proper databinding has taken place");
+                throw new CodeGenerationException(CodegenMessages.getMessage("engine.noProperDatabindingException"));
             }
 
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
@@ -95,7 +93,7 @@ public class CodeGenerationEngine {
                 emitter.setCodeGenConfiguration(configuration);
                 emitter.setMapper(mapper);
             } else {
-                throw new Exception("Emitter class not found!");
+                throw new Exception(CodegenMessages.getMessage("engine.emitterMissing"));
             }
 
 
@@ -108,7 +106,7 @@ public class CodeGenerationEngine {
             }
 
         } catch (ClassCastException e) {
-            throw new CodeGenerationException("Non emitter class found!", e);
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wrongEmitter"), e);
 
         } catch (Exception e) {
             throw new CodeGenerationException(e);
@@ -118,11 +116,9 @@ public class CodeGenerationEngine {
     }
 
 
-    private WSDLDescription getWOM(CommandLineOptionParser parser) throws WSDLException,
-            IOException {
+    private WSDLDescription getWOM(CommandLineOptionParser parser) throws WSDLException{
         String uri = ((CommandLineOption) parser.getAllOptions().get(
                 CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
-        //todo check the wsdl URI here
         return WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(uri)
                 .getDescription();
     }
@@ -139,11 +135,11 @@ public class CodeGenerationEngine {
             Class extensionClass = getClass().getClassLoader().loadClass(className);
             return extensionClass.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new CodeGenerationException("Extension class loading problem", e);
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
         } catch (InstantiationException e) {
-            throw new CodeGenerationException("Extension class instantiation problem", e);
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.extensionInstantiationProblem"), e);
         } catch (IllegalAccessException e) {
-            throw new CodeGenerationException("Illegal extension!", e);
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.illegalExtension"), e);
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }

@@ -2,6 +2,7 @@ package org.apache.axis2.schema;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -35,8 +36,8 @@ public class XSD2Java {
     public static void main(String[] args) {
         if (args.length != 2) {
             // printout the options
-            System.out.println("Argument1 - Source schema file name");
-            System.out.println("Argument2 - Output folder name");
+            System.out.println(SchemaCompilerMessages.getMessage("schema.xsdarg1"));
+            System.out.println(SchemaCompilerMessages.getMessage("schema.xsdarg2"));
         } else {
             compile(args[0], args[1]);
         }
@@ -64,7 +65,7 @@ public class XSD2Java {
             File outputFolder = new File(outputLocation);
             if (outputFolder.exists()) {
                 if (outputFolder.isFile()) {
-                    throw new IOException("specified location is not a folder!");
+                    throw new IOException(SchemaCompilerMessages.getMessage("schema.locationNotFolder"));
                 }
             } else {
                 outputFolder.mkdirs();
@@ -83,7 +84,7 @@ public class XSD2Java {
             compiler.compile(currentSchema);
 
         } catch (Exception e) {
-            throw new RuntimeException("Compiler caused an exception", e);
+            throw new RuntimeException(SchemaCompilerMessages.getMessage("schema.compilerexception"), e);
         }
     }
 }
