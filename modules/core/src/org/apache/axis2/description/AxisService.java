@@ -42,7 +42,6 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -308,40 +307,39 @@ public class AxisService
         operationsAliasesMap.put(action, axisOperation);
     }
 
-    public void printWSDL(Writer out, String PortURL) throws AxisFault {
+    public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
+        if(getWSDLDefinition() != null) {
+            printUsingWSDLDefinition(out, serviceURL);    
+        } else {
+            printUsingWOM(out, serviceURL);    
+        }
+    }
+    
+    public void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
         try {
-            Definition wsdlDefinition = this.getWSDLDefinition();
+            Definition wsdlDefinition = getWSDLDefinition();
+            Collection services = wsdlDefinition.getServices().values();
 
-            if (wsdlDefinition != null) {
-                Collection services = wsdlDefinition.getServices().values();
+            for (Iterator iterator = services.iterator(); iterator.hasNext();) {
+                Service service = (Service) iterator.next();
+                Collection ports = service.getPorts().values();
 
-                for (Iterator iterator = services.iterator(); iterator.hasNext();) {
-                    Service service = (Service) iterator.next();
-                    Collection ports = service.getPorts().values();
+                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
+                    Port port = (Port) iterator1.next();
 
-                    for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
-                        Port port = (Port) iterator1.next();
+                    service.setQName(new QName(this.getName()));
 
-                        service.setQName(new QName(this.getName()));
+                    SOAPAddress soapAddress = new SOAPAddressImpl();
 
-                        SOAPAddress soapAddress = new SOAPAddressImpl();
-
-                        soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
-                        soapAddress.setLocationURI(PortURL);
-                        port.getExtensibilityElements().clear();
-                        port.addExtensibilityElement(soapAddress);
-                    }
+                    soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
+                    soapAddress.setLocationURI(serviceURL);
+                    port.getExtensibilityElements().clear();
+                    port.addExtensibilityElement(soapAddress);
                 }
-
-                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
-                out.flush();
-
-
-            } else {
-                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
-                out.write("<wsdl>This service does not have a WSDL</wsdl>");
-                out.flush();
             }
+
+            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
+            out.flush();
         } catch (WSDLException e) {
             throw new AxisFault(e);
         } catch (IOException e) {
@@ -349,7 +347,7 @@ public class AxisService
         }
     }
 
-    public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
+    public void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
         //todo : This is a tempory hack pls imporve me : Deepal
         AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null, serviceURL);
         try {

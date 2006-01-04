@@ -140,11 +140,12 @@ public class AxisServiceBuilder {
         return getAxisService(wsdlDefinition);
     }
 
-    public AxisService getAxisService(Definition wsdl4jDefinitions)
+    public AxisService getAxisService(Definition wsdlDefinition)
             throws WSDLProcessingException {
 
         AxisService axisService = new AxisService();
-        Map services = wsdl4jDefinitions.getServices();
+        axisService.setWSDLDefinition(wsdlDefinition);
+        Map services = wsdlDefinition.getServices();
 
         if (services.isEmpty()) {
             throw new WSDLProcessingException("no Service element is found");
@@ -160,7 +161,7 @@ public class AxisServiceBuilder {
 
         PolicyInclude policyInclude = new PolicyInclude();
 
-        List wsdlPolicies = getPoliciesAsExtElements(wsdl4jDefinitions
+        List wsdlPolicies = getPoliciesAsExtElements(wsdlDefinition
                 .getExtensibilityElements());
         Iterator wsdlPolicyIterator = wsdlPolicies.iterator();
 
@@ -177,7 +178,7 @@ public class AxisServiceBuilder {
         //////////////////////////////////////////////////////////////////
 
         // setting the schema
-        Types types = wsdl4jDefinitions.getTypes();
+        Types types = wsdlDefinition.getTypes();
 
         if (types != null) {
             Iterator extElements = types.getExtensibilityElements().iterator();
@@ -195,7 +196,7 @@ public class AxisServiceBuilder {
 
         HashMap resolvedRPCWrapperElements = new HashMap();
         XmlSchema xmlSchemaForWrappedElements = generateWrapperSchema(
-                wsdl4jDefinitions, resolvedRPCWrapperElements);
+                wsdlDefinition, resolvedRPCWrapperElements);
 
         if (xmlSchemaForWrappedElements != null) {
             axisService.setSchema(xmlSchemaForWrappedElements);

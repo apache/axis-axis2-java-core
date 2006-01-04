@@ -25,6 +25,7 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAttribute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,19 +46,23 @@ public class ArchiveReader implements DeploymentConstants {
                                         AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
                                         AxisConfiguration axisConfig)
             throws XMLStreamException, DeploymentException {
-        DescriptionBuilder builder;
-        String rootelementName;
 
-        builder = new DescriptionBuilder(zin, axisConfig);
+        DescriptionBuilder builder = new DescriptionBuilder(zin, axisConfig);
+        OMElement rootElement = builder.buildOM();
+        String elementName = rootElement.getLocalName();
 
-        OMElement services = builder.buildOM();
-
-        rootelementName = services.getLocalName();
-
-        if (TAG_SERVICE.equals(rootelementName)) {
-            AxisService axisService = (AxisService) wsdlServices.get(
-                    DescriptionBuilder.getShortFileName(
-                            engine.getCurrentFileItem().getName()));
+        if (TAG_SERVICE.equals(elementName)) {
+            AxisService axisService = null;
+            OMAttribute serviceNameatt = rootElement.getAttribute(new QName(ATTRIBUTE_NAME));
+            String serviceName = serviceNameatt.getAttributeValue();
+            if(serviceName != null) {
+                axisService = (AxisService) wsdlServices.get(serviceName);
+            }
+            if (axisService == null) {
+                axisService = (AxisService) wsdlServices.get(
+                        DescriptionBuilder.getShortFileName(
+                                engine.getCurrentFileItem().getName()));
+            }
             if (axisService == null) {
                 axisService = new AxisService(
                         DescriptionBuilder.getShortFileName(engine.getCurrentFileItem().getName()));
@@ -69,7 +74,7 @@ public class ArchiveReader implements DeploymentConstants {
             axisService.setClassLoader(engine.getCurrentFileItem().getClassLoader());
 
             ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
-            AxisService service = serviceBuilder.populateService(services);
+            AxisService service = serviceBuilder.populateService(rootElement);
 
             ArrayList serviceList = new ArrayList();
 
@@ -83,8 +88,8 @@ public class ArchiveReader implements DeploymentConstants {
             }
             serviceList.add(service);
             return serviceList;
-        } else if (TAG_SERVICE_GROUP.equals(rootelementName)) {
-            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services, wsdlServices,
+        } else if (TAG_SERVICE_GROUP.equals(elementName)) {
+            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, wsdlServices,
                     axisConfig);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
