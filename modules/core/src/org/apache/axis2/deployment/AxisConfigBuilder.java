@@ -182,7 +182,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To get the list og modules that is requird to be engage globally
+     * Gets the list of modules that is required to be engaged globally.
      *
      * @param moduleRefs <code>java.util.Iterator</code>
      */
@@ -197,7 +197,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To process AxisObservers
+     * Processes AxisObservers.
      *
      * @param oservers
      */
@@ -282,7 +282,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To process all the phase orders which are defined in axis2.xml
+     * Processes all the phase orders which are defined in axis2.xml.
      *
      * @param phaserders
      */

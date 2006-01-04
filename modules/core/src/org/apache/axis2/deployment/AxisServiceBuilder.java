@@ -76,7 +76,7 @@ import org.xml.sax.SAXException;
 import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /**
- * AxisServiceBuilder builds an AxisService using a WSDL document which is feed
+ * AxisServiceBuilder builds an AxisService using a WSDL document which is input
  * as a javax.wsdl.Definition or as an InputStream. If there are multiple
  * javax.wsdl.Service elements in the WSDL, the first is picked.
  */

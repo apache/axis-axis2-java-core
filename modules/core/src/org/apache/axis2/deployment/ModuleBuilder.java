@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * This class is to convert OM->ServiceDescrption , where first create OM from services.xml and
- * then populate service description by using OM
+ * Builds a module description from OM
  */
 public class ModuleBuilder extends DescriptionBuilder {
     private AxisConfiguration axisConfig;

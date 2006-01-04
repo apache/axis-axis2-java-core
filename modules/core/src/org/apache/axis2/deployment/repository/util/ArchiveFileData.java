@@ -28,8 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * ArchiveFileData = Hot Deployment File Item, stores infromation about the module or service
- * item to be deployed
+ * ArchiveFileData stores information about the module or service item to be deployed.
  */
 public class ArchiveFileData {
     private File file = null;
@@ -91,10 +90,10 @@ public class ArchiveFileData {
     }
 
     /**
-     * to check whthere a given file is  a  jar file
+     * Checks whether a given file is a jar or aar file.
      *
      * @param filename
-     * @return boolean
+     * @return Returns boolean.
      */
     public static boolean isServiceArchiveFile(String filename) {
         return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));

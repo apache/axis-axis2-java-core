@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * To do the common tasks for all *Builder class
+ * This class does the common tasks for all *Builder class.
  */
 public class DescriptionBuilder implements DeploymentConstants {
 
@@ -64,10 +64,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * This will creat OMElemnt for a given descrition document (axis2.xml , services.xml and
-     * module.xml)
+     * Creates OMElement for a given description document (axis2.xml , services.xml and
+     * module.xml).
      *
-     * @return OMElement <code>OMElement</code>
+     * @return Returns <code>OMElement</code> .
      * @throws javax.xml.stream.XMLStreamException
      *
      */
@@ -84,8 +84,8 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * to load default message receivers , in this case first try to search in Axiservice for the
-     * given mepURL , if it not found will search in AixsConfiguration for the given mepURL
+     * Loads default message receivers. First searches in Axiservice for the
+     * given mepURL, if not found searches in AxisConfiguration with the given mepURL.
      *
      * @param mepURL  : can be null
      * @param service :  This can be null <code>AxisService</code>
@@ -104,7 +104,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * To process default message recivers specify either in axis2.xml or services.xml
+     * Processes default message receivers specified either in axis2.xml or services.xml.
      *
      * @param messageReceivers
      */
@@ -152,10 +152,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * To process Flow elements in services.xml
+     * Processes flow elements in services.xml .
      *
      * @param flowelement <code>OMElement</code>
-     * @return
+     * @return Returns Flow.
      * @throws DeploymentException <code>DeploymentException</code>
      */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
@@ -178,10 +178,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * To process Handler element
+     * Processes Handler element.
      *
      * @param handler_element <code>OMElement</code>
-     * @return
+     * @return Returns HandlerDescription.
      * @throws DeploymentException <code>DeploymentException</code>
      */
     protected HandlerDescription processHandler(OMElement handler_element, ParameterInclude parent)
@@ -282,13 +282,12 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * To get the Parameter object out from the OM
+     * Gets the Parameter object from the OM.
      *
      * @param parameters       <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
      * @param parent           <code>ParameterInclude</code>
-     *                         return : will return parameters , wchih name is WSA-Mapping , since we need to treat them
-     *                         separately
+     * @return  list of WSA action parameters
      */
     protected ArrayList processParameters(Iterator parameters, ParameterInclude parameterInclude,
                                           ParameterInclude parent)
@@ -403,11 +402,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     
 
     /**
-     * This method is used to retrive service name form the arechive file name
-     * if the archive file name is service1.aar , then axis service name would be service1
+     * Gets the short file name. Short file name is the name before the dot.
      *
      * @param fileName
-     * @return String
+     * @return Returns String.
      */
     public static String getShortFileName(String fileName) {
         char seperator = SEPARATOR_DOT;
@@ -424,10 +422,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * this method is to get the value of attribue
+     * Gets the value of an attribute.
      * eg xsd:anyVal --> anyVal
      *
-     * @return String
+     * @return Returns String.
      */
     protected String getValue(String in) {
         char seperator = SEPARATOR_COLON;

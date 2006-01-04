@@ -18,7 +18,7 @@
 package org.apache.axis2.deployment;
 
 /**
- * Constants used during service/module deployment
+ * Constants used during service/module deployment.
  */
 public interface DeploymentConstants {
     public static String META_INF = "META-INF";
@@ -83,7 +83,7 @@ public interface DeploymentConstants {
     String SUFFIX_JAR = ".jar";
     String SUFFIX_WSDL = ".wsdl";
     /**
-     * Resource that contains the configuration
+     * Resource that contains the configuration.
      */
     String AXIS2_CONFIGURATION_RESOURCE =
             "org/apache/axis2/deployment/axis2.xml";

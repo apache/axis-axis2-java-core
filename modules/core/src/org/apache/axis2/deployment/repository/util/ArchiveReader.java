@@ -92,12 +92,13 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     /**
-     * This method first check whether the given module is there in the user home dirctory if so return
-     * that , else try to read the given module form classpath (from resources ) if found first get the module.mar
-     * file from the resourceStream and write that into user home/axis2home/nodule directory
-     *
+     * Creates the module file archive file. Checks whether the module exists in home 
+     * directory. If yes, returns that else reads the given module from classpath (from resources).
+     * If found, gets the module.mar file from the resource stream and writes into 
+     * the userhome/axis2home/module directory.
+     *      
      * @param moduleName
-     * @return
+     * @return  Returns File.
      * @throws DeploymentException
      */
     public File creatModuleArchivefromResource(String moduleName, String axis2repository)
@@ -176,11 +177,16 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     /**
-     * This method will readServiceArchive the given jar or aar.
-     * it take two arguments filename and refereance to DeployEngine
-     *
+     * Extract Service XML files and builds the service groups
+     * 
      * @param filename
      * @param engine
+     * @param axisServiceGroup
+     * @param extractService
+     * @param wsdls
+     * @param axisConfig
+     * @return
+     * @throws DeploymentException
      */
     public ArrayList processServiceGroup(String filename, DeploymentEngine engine,
                                          AxisServiceGroup axisServiceGroup,
@@ -238,10 +244,10 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     /**
-     * Craeting AxisService using
+     * Creats AxisService.
      *
      * @param in
-     * @return
+     * @return Returns AxisService.
      * @throws DeploymentException
      */
     private AxisService processWSDLFile(InputStream in) throws DeploymentException {
@@ -254,7 +260,7 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     /**
-     * To create service objects out form wsdls file inside a service archive file
+     * Creates service objects from wsdl file inside a service archive file.
      *
      * @param file      <code>ArchiveFileData</code>
      * @param depengine <code>DeploymentEngine</code>

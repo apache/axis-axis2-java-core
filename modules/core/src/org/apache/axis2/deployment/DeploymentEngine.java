@@ -50,18 +50,18 @@ public class DeploymentEngine implements DeploymentConstants {
     public String axis2repository = null;
 
     /**
-     * This will store all the web Services to deploy
+     * Stores all the web Services to deploy.
      */
     private List wsToDeploy = new ArrayList();
 
     /**
-     * this will store all the web Services to undeploy
+     * Stores all the web Services to undeploy.
      */
     private List wsToUnDeploy = new ArrayList();
     private PhasesInfo phasesinfo = new PhasesInfo();    // to store phases list in axis2.xml
 
     /**
-     * To store the module specified in the server.xml at the document parsing time
+     * Stores the module specified in the server.xml at the document parsing time.
      */
     private ArrayList modulelist = new ArrayList();
 
@@ -76,16 +76,15 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     /**
-     * Default constructor is need to deploy module and service programatically
+     * Default constructor is needed to deploy module and service programatically.
      */
     public DeploymentEngine() {
     }
 
     /**
-     * This the constructor which is used by Engine in order to start
-     * Deployment module,
+     * This constructor is used by Engine to start the deployment module.
      *
-     * @param repositoryName is the path to which Repositary Listener should
+     * @param repositoryName is the path to which Repository Listener should
      *                       listen to.
      */
     public DeploymentEngine(String repositoryName) throws DeploymentException {
@@ -104,7 +103,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * while parsing the axis2.xml the module refferences have to be store some where , since at that
+     * Adds module references to the list while parsing the axis2.xml file.
      * time none of module availble (they load after parsing the document)
      *
      * @param moduleName <code>QName</code>
@@ -239,10 +238,10 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This method can be used to build ModuleDescription for a given module archiev file
+     * Builds ModuleDescription for a given module archive file.
      *
      * @param modulearchive
-     * @return
+     * @return Returns ModuleDescription.
      * @throws DeploymentException
      */
     public ModuleDescription buildModule(File modulearchive, AxisConfiguration config)
@@ -303,15 +302,15 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This method is used to fill a axisservice object using services.xml , first it should create
-     * an axisservice object using WSDL and then fill that using given servic.xml and load all the requed
-     * class and build the chains , finally add the  servicecontext to EngineContext and axisservice into
-     * EngineConfiguration
+     * Fills an axisservice object using services.xml. First creates
+     * an axisservice object using WSDL and then fills it using the given services.xml. 
+     * Loads all the required class and builds the chains, finally adds the  
+     * servicecontext to EngineContext and axisservice into EngineConfiguration.
      *
      * @param axisService
      * @param serviceInputStream
      * @param classLoader
-     * @return
+     * @return Returns AxisService.
      * @throws DeploymentException
      */
     public AxisService buildService(AxisService axisService, InputStream serviceInputStream,
@@ -477,8 +476,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This methode used to check the modules referd by server.xml
-     * are exist , or they have deployed
+     * Checks if the modules, referred by server.xml, exist or that they are deployed.
      */
     private void engageModules() throws AxisFault {
         for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {
@@ -601,8 +599,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * this method use to start the Deployment engine
-     * inorder to perform Hot deployment and so on..
+     * Starts the Deployment engine to perform Hot deployment and so on..
      */
     private void startSearch(RepositoryListener listener) {
         Scheduler scheduler = new Scheduler();
@@ -637,8 +634,8 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This method is to check wether some one has change the system pre defined phases for all the
-     * flows if some one has done so will throw a DeploymentException
+     * Checks whether some one has changed the system pre-defined phases
+     * for all the flows. If they have been changed,throws a DeploymentException.
      *
      * @throws DeploymentException
      */
@@ -666,7 +663,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * tio get ER
+     * Gets AxisConfiguration.
      *
      * @return AxisConfiguration <code>AxisConfiguration</code>
      */
@@ -675,11 +672,11 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * This method is used to retrive service name form the arechive file name
-     * if the archive file name is service1.aar , then axis service name would be service1
+     * Retrieves service name from the archive file name.
+     * If the archive file name is service1.aar , then axis service name would be service1
      *
      * @param fileName
-     * @return String
+     * @return Returns String.
      */
     private String getAxisServiceName(String fileName) {
         char seperator = '.';
@@ -757,7 +754,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * To set hotDeployment and hot update
+     * Sets hotDeployment and hot update.
      */
     private void setDeploymentFeatures() {
         String value;
@@ -786,7 +783,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Create directories for modules/services, copy configuration xml from class loader if necessary
+     * Creates directories for modules/services, copies configuration xml from class loader if necessary
      *
      * @param repositoryName
      * @param xmlFile

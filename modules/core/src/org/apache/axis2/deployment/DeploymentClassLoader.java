@@ -39,9 +39,9 @@ public class DeploymentClassLoader extends URLClassLoader {
     private URL[] urls;
 
     /**
-     * DeploymentClassLoader is exetend form URLClassLoader , and the constructor
-     * has not overide the super constroctor , but has done some stuff to find out
-     * jar fils inside /lib director
+     * DeploymentClassLoader is extended from URLClassLoader. The constructor
+     * does not override the super constructor, but does additional steps like find out
+     * jar fils inside /lib directory.
      *
      * @param urls   <code>URL</code>
      * @param parent parent classloader <code>ClassLoader</code>
@@ -56,17 +56,18 @@ public class DeploymentClassLoader extends URLClassLoader {
 
     /**
      * @param name <code>String</code>  Name of the file to be loaded
-     * @return <code>Class</code> return a class object if it found else
-     *         will return null or classNotfoun exeption
+     * @return Returns a  <code>Class</code> object if it found else
+     *         returns null or ClassNotFoundException.
      *         <p/>
-     *         The method has ovride in the following way
-     *         1. called the super class and check to see wether the class is there
-     *         if the class is found then return that , else if super returns ClassNotfoundExeption
-     *         2. Check wether the entry corresponding to the class name exsit in one of jar files
-     *         in /lib director
-     *         3. If it is there get the byte array out of that and creat a Class object out of that
-     *         by calling "defineClass()" , if it sucssed then return that else
-     *         4. Throw classNotfound exeption
+     *         The method finds the class in the following way:
+     *         <br>     
+     *         1. Calls the super class to check to see whether the class is there.
+     *         If the class is found then return that , else go to step 2 </br>
+     *         <br>     
+     *         2. Check wether the class name exist in one of jar files
+     *         in /lib directory. If it is found, get the byte array and create a Class 
+     *         object from it by calling "defineClass()", else throws ClassNotFoundException.
+     *         </br>     
      * @throws ClassNotFoundException
      */
     protected Class findClass(final String name) throws ClassNotFoundException {
@@ -122,8 +123,8 @@ public class DeploymentClassLoader extends URLClassLoader {
     }
 
     /**
-     * This just search for jar files inside /lib dirctory and if there are any then those
-     * will be added to the arraylit (only the name of the jar file)
+     * Searches for jar files in /lib directory. If they exist, they are 
+     * will be added to the arraylist (only the name of the jar file).
      */
     private void findLibJars() {
         /**
@@ -156,12 +157,12 @@ public class DeploymentClassLoader extends URLClassLoader {
     }
 
     /**
-     * Read jar file (/lib) one by one , then for each file craete <code>ZipInputStream</code>
-     * that and check to see wether there is any entry eith given name if it found then
-     * Creat ByteArrayOutPutStream and get return that
+     * Reads jar file (/lib) one by one , then for each file creates <code>ZipInputStream</code>
+     * and checks to see wether there is any entry with the given name. If it found then
+     * creates ByteArrayOutPutStream and returns that.
      *
      * @param resourceName : Name of the resource that your are going to use
-     * @return <code>byte[]</code>
+     * @return Returns <code>byte[]</code> .
      */
     private byte[] getBytes(String resourceName) {
         byte raw[];
@@ -206,14 +207,13 @@ public class DeploymentClassLoader extends URLClassLoader {
     }
 
     /**
-     * Read jar file (/lib) one by one , then for each file craete <code>ZipInputStream</code>
-     * that and check to see wether there is any entry eith given name if it found then
-     * Creat ByteArrayOutPutStream and get the class bytes to that .
-     * after goning throgh each and evry jar file if there is no entry with given name
-     * will throug a ClassNotFound execption
+     * Reads the jar file (/lib) one by one. For each file creates <code>ZipInputStream</code>
+     * and checks to see wether there is any entry with the name. If it is found then
+     * creates ByteArrayOutPutStream and gets the byte code for that. After going through
+     * each and every jar file if there is no entry with the name, throws a ClassNotFound exception.
      *
      * @param filename <code>String</code>  Name of the file to be loaded (Class Name)
-     * @return bytt[]
+     * @return Returns byte[].
      * @throws java.io.IOException <code>Exception</code>
      */
     private byte[] getClassByteCodes(String filename) throws Exception {
@@ -233,9 +233,9 @@ public class DeploymentClassLoader extends URLClassLoader {
     }
 
     /*
-     * This override locates resources similar to the way that getClassByteCodes() locates classes.
-     * We do not store the bytes from resources in memory, as
-     * the size of resources is generally unpredictable
+     * Locates resources similar to the way that getClassByteCodes() locates classes.
+     * The bytes from resources are not stored in memory, as the size of resources is 
+     * generally unpredictable.
      *
      * @param name
      * @return inputstream

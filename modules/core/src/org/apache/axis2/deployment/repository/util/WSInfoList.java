@@ -39,7 +39,7 @@ public class WSInfoList implements DeploymentConstants {
     public List currentJars = new ArrayList();
 
     /**
-     * Referance to DeploymentEngine to make update
+     * Reference to DeploymentEngine to make update
      */
     private DeploymentEngine deployer;
 
@@ -48,16 +48,15 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * First it check whether the file is already available in the
-     * system call isFileExist , if it is not deployed yet then it will add
-     * that to jarList and to the deployment engine as new service or module
-     * in adding new item to jarList it first create optimice and requird object to
-     * keep those infor call WSInfo and that will be added to jarist and actual
-     * jar file will be added to DeploymentEngine
+     * First checks whether the file is already available by the
+     * system call isFileExist. If it is not deployed yet then adds to the jarList
+     * and to the deployment engine as a new service or module. 
+     * While adding new item to jarList, first creates the WSInfo object and 
+     * then adds to the jarlist and actual jar file is added to DeploymentEngine.
      * <p/>
-     * If it is already exists then it check whether it has been updated
-     * then change the last update date of the wsInfo and added two entries to DeploymentEngine
-     * one for New Deployment and other for undeployment
+     * If the files already exists, then checks whether it has been updated
+     * then changes the last update date of the wsInfo and adds two entries to 
+     * DeploymentEngine - one for New Deployment and other for undeployment.
      *
      * @param file actual jar files for either Module or service
      * @param type indicate either Service or Module
@@ -117,11 +116,10 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * this is to check , undeploye WS
-     * what this relly does is it caheck older jars files and
-     * current jars if name of the old jar file does not exit in the currecntjar
+     * Checks undeployed Services. Checks old jars files and current jars.
+     * If name of the old jar file does not exist in the current jar
      * list then it is assumed that the jar file has been removed
-     * that is hot undeployment
+     * and that is hot undeployment.
      */
     public void checkForUndeployedServices() {
         if (!check) {
@@ -178,7 +176,7 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * This method is used to initialize the vector
+     * Clears the jarlist.
      */
     public void init() {
         jarList.clear();
@@ -200,8 +198,7 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * This method is to use to check the file exist and if so
-     * it will return related wsinfo object to the file else return null;
+     * Gets the WSInfo object related to a file if it exists, null otherwise. 
      *
      * @param filename
      */
@@ -220,7 +217,7 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * to check whether the file is already in the list
+     * Checks whether the file already exists in the list.
      *
      * @param filename
      */
@@ -229,8 +226,9 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * comapre the last update dates of both files and if those are differ
-     * that will assume as the file is been modified
+     * Checks if a file has been modified by comparing the last update date of 
+     * both files and WSInfo. If they are different, the file is assumed to have 
+     * been modified.
      *
      * @param file
      * @param wsInfo

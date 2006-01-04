@@ -37,8 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * This class is to convert OM->ServiceDescrption , where first create OM from services.xml and
- * then populate service description by using OM
+ * Builds a service description from OM
  */
 public class ServiceBuilder extends DescriptionBuilder {
     private AxisConfiguration axisConfig;
@@ -57,7 +56,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     }
 
     /**
-     * top most method that used to populate service from corresponding OM
+     * Populates service from corresponding OM.
      */
     public AxisService populateService(OMElement service_element) throws DeploymentException {
         try {
@@ -202,7 +201,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To get the list og modules that is requird to be engage globally
+     * Gets the list of modules that is required to be engaged globally.
      *
      * @param moduleRefs <code>java.util.Iterator</code>
      * @throws DeploymentException <code>DeploymentException</code>

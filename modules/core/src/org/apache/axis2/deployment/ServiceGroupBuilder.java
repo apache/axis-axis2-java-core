@@ -111,7 +111,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To get the list of modules that is required to be engaged globally
+     * Gets the list of modules that is required to be engaged globally.
      *
      * @param moduleRefs <code>java.util.Iterator</code>
      * @throws DeploymentException <code>DeploymentException</code>

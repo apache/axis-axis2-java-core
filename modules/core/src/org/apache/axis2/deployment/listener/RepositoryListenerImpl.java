@@ -42,8 +42,8 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
 
     /**
      * This constructor takes two arguments, a folder name and a reference to Deployment Engine
-     * Fisrt it initilize the system, by loading all the modules in the /modules directory
-     * and also creates a WSInfoList to store information about available modules and services
+     * First, it initializes the system, by loading all the modules in the /modules directory
+     * and then creates a WSInfoList to store information about available modules and services.
      *
      * @param folderName    path to parent directory that the listener should listen to
      * @param deploymentEngine reference to engine registry for updates
@@ -56,7 +56,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * Find a list of modules in this folder and add to wsInfoList
+     * Finds a list of modules in the folder and adds to wsInfoList.
      */
     public void checkModules() {
         String modulepath = folderName + MODULE_PATH;
@@ -81,7 +81,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * Find a list of services in this folder and add to wsInfoList
+     * Finds a list of services in the folder and adds to wsInfoList.
      */
     public void checkServices() {
         String modulepath = folderName + SERVICE_PATH;
@@ -91,10 +91,8 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * First it call to initalize method of WSInfoList to initilizat that
-     * then it call to checkModules to load all the module.jar s
-     * and then it call to update() method inorder to update the Deployment engine and
-     * engine regsitry
+     * First initializes the WSInfoList, then calls checkModule to load all the modules
+     * and calls update() to update the Deployment engine and engine registry.
      */
     public void init() {
         wsInfoList.init();
@@ -103,8 +101,8 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * This method is to search a given folder  for jar files
-     * and added them to a list wich is in the WSInfolist class
+     * Searches a given folder for jar files and adds them to a list in the 
+     * WSInfolist class.
      */
     private void findServicesInDirectory(String folderName) {
         File root = new File(folderName);
@@ -128,7 +126,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * this is the actual method that is invoked from the scheduler
+     * Method invoked from the scheduler to start the listener.
      */
     public void startListener() {
         checkServices();
@@ -136,7 +134,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * call to update method of WSInfoList object
+     * Updates WSInfoList object.
      */
     public void update() {
         wsInfoList.update();
