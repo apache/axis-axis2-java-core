@@ -72,7 +72,7 @@ public class AxisServiceGroup implements ParameterInclude {
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
         this();
-        this.parent = axisDescription;
+        setParent(axisDescription);
     }
 
     /**
