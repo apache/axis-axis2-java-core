@@ -19,14 +19,15 @@ package test.interop.whitemesa.round2;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.wsdl.WSDLConstants;
 import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 
 import java.net.URL;
@@ -35,15 +36,12 @@ public class SunRound2Client {
 
     public static SOAPEnvelope sendMsg(SunRound2ClientUtil util, String epUrl, String soapAction) throws AxisFault {
 
-        SOAPEnvelope resEnv = null;
-        Call call = null;
-        URL url = null;
+        SOAPEnvelope resEnv;
+        URL url;
         try {
-            call = new Call("target/test-resources/integrationRepo");
             url = new URL(epUrl);
 
             Options options = new Options();
-            call.setClientOptions(options);
             options.setTo(new EndpointReference(url.toString()));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapAction(soapAction);
@@ -51,10 +49,19 @@ public class SunRound2Client {
             AxisConfiguration axisConfig = new AxisConfiguration();
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
             MessageContext msgCtx = new MessageContext(configCtx);
-            AxisOperation opDesc = new OutInAxisOperation();
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
             msgCtx.setEnvelope(requestEnvilope);
-            MessageContext responseMCtx = call.invokeBlocking(opDesc, msgCtx);
+
+            ConfigurationContext configContext =
+                    new ConfigurationContextFactory().buildConfigurationContext(
+                            "target/test-resources/integrationRepo");
+            ServiceClient serviceClient = new ServiceClient(configContext, null);
+            serviceClient.setOptions(options);
+            OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+            opClient.addMessageContext(msgCtx);
+            opClient.setOptions(options);
+            MessageContext responseMCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
             resEnv = responseMCtx.getEnvelope();
 
         } catch (Exception e) {

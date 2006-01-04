@@ -19,8 +19,9 @@ package sample.amazon.search;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -136,7 +137,7 @@ public class AsynchronousClient {
      */
     public static void sendMsg() throws AxisFault {
         prevSearch = search;
-        Call call = new Call();
+        //Call call = new Call();
         URL url = null;
         try {
             url =
@@ -153,7 +154,6 @@ public class AsynchronousClient {
         }
 
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(
                 new EndpointReference(url.toString()));
         MessageContext requestContext = ClientUtil.getMessageContext();
@@ -167,10 +167,14 @@ public class AsynchronousClient {
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             AxisOperation opdesc = new OutInAxisOperation();
             opdesc.setName(opName);
-            call.invokeNonBlocking(opdesc,
-                    requestContext,
-                    new ClientCallbackHandler());
 
+
+            ServiceClient serviceClient = new ServiceClient();
+            serviceClient.setOptions(options);
+            OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+            opClient.addMessageContext(requestContext);
+            opClient.setCallback(new ClientCallbackHandler());
+            opClient.execute(false);
         } catch (AxisFault e1) {
             e1.printStackTrace();
         } catch (XMLStreamException e) {

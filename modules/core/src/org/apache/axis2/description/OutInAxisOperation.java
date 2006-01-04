@@ -242,7 +242,7 @@ class OutInAxisOperationClient implements OperationClient {
         else
 
         {
-            if (!block) {
+            if (block) {
                 // Send the SOAP Message and receive a response
                 MessageContext response = send(mc, options
                         .getTransportInDescription());
@@ -328,7 +328,6 @@ class OutInAxisOperationClient implements OperationClient {
             throw new AxisFault(Messages
                     .getMessage("blockingInvocationExpectsResponse"));
         }
-
         return responseMessageContext;
     }
 

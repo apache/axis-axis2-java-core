@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
+    
     private Log log = LogFactory.getLog(getClass());
 
     /**

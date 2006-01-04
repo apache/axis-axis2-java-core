@@ -18,14 +18,17 @@ package sample.sgccalculator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -48,10 +51,8 @@ public class CalcClient {
 
         System.out.println("\nTHIS IS A SAMPLE APPLICATION TO DEMONSTRATE THE FUNCTIONALITY OF SERVICE GROUPS");
         System.out.println("===============================================================================");
-        Call call = new Call();
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        call.setClientOptions(options);
 
         boolean exit = false;
         String serviceGroupContextId = null;
@@ -101,8 +102,22 @@ public class CalcClient {
                     opStr = "multiply";
                 }
                 System.out.println("Invoking...");
-                SOAPEnvelope result = call.invokeBlocking(opStr, getRequestEnvelope(opStr, param1, param2,
+
+                ServiceClient serviceClient = new ServiceClient();
+                serviceClient.setOptions(options);
+                MessageContext requetMessageContext = new MessageContext();
+                requetMessageContext.setEnvelope(getRequestEnvelope(opStr, param1, param2,
                         serviceGroupContextId));
+
+                OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+                opClient.addMessageContext(requetMessageContext);
+                opClient.setOptions(options);
+
+                opClient.execute(true);
+
+                SOAPEnvelope result = opClient.getMessageContext(
+                        WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
+
                 printResult(result);
 
                 if (serviceGroupContextId == null)
@@ -128,8 +143,23 @@ public class CalcClient {
                 }
 
                 System.out.println("Invoking...");
-                SOAPEnvelope result = call.invokeBlocking(opStr, getPreviousRequestEnvelope(opStr, param,
+
+
+                ServiceClient serviceClient = new ServiceClient();
+                serviceClient.setOptions(options);
+                MessageContext requetMessageContext = new MessageContext();
+                requetMessageContext.setEnvelope(getPreviousRequestEnvelope(opStr, param,
                         serviceGroupContextId));
+
+                OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+                opClient.addMessageContext(requetMessageContext);
+                opClient.setOptions(options);
+
+                opClient.execute(true);
+
+                SOAPEnvelope result = opClient.getMessageContext(
+                        WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
+
                 printResult(result);
 
             }

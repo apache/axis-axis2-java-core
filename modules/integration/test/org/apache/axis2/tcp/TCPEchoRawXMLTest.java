@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
@@ -43,6 +44,7 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -190,9 +192,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         ConfigurationContext configContext = confac.buildConfigurationContext(Constants.TESTING_REPOSITORY);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
         Options options = new Options();
-        call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
@@ -209,21 +209,23 @@ public class TCPEchoRawXMLTest extends TestCase {
         envelope.getBody().addChild(method);
 
         MessageContext requestContext = new MessageContext(configContext);
-        AxisService srevice = new AxisService(serviceName.getLocalPart());
-        srevice.addOperation(opdesc);
-        configContext.getAxisConfiguration().addService(srevice);
-        requestContext.setAxisService(service);
+        requestContext.setAxisService(clientService);
         requestContext.setAxisOperation(opdesc);
-
-        //  requestContext.setTo(targetEPR);
-
         requestContext.setEnvelope(envelope);
-        call.invokeBlocking(opdesc, requestContext);
 
-        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
-//        SOAPEnvelope env=  res.getEnvelope();
+        ServiceClient sender = new ServiceClient(configContext, clientService);
+        sender.setOptions(options);
+        OperationClient opClient = sender.createClient(new QName("echoOMElement"));
+        opClient.addMessageContext(requestContext);
+        opClient.setOptions(options);
+        opClient.execute(true);
+
+        MessageContext response = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        SOAPEnvelope env = response.getEnvelope();
+        assertNotNull(env);
         env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
+        sender.finalizeInvoke();
     }
 
 

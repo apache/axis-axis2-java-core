@@ -1,4 +1,3 @@
-
 package userguide.clients;
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -15,7 +14,10 @@ package userguide.clients;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.axis2.client.Call;
+
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -23,23 +25,26 @@ import java.io.FileNotFoundException;
 
 /**
  * Sample for engaged modules in Client side.
- * Logging module has been used. 
+ * Logging module has been used.
  */
 public class ClientSideModuleEngagement {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         String home = System.getProperty("user.home");
         // create this folder at your home. This folder could be anything
         //then create the "modules" folder
 
-        File repository = new File(home+File.separator+"client-repository");
+        File repository = new File(home + File.separator + "client-repository");
         if (!repository.exists()) {
             throw new FileNotFoundException("Repository Doesnot Exist");
         }
         //copy the LoggingModule.mar to "modules" folder.
         //then modify the axis2.xml that is generating there according to
         //phases that being included in the "module.xml"
-        Call call = new Call(repository.getAbsolutePath());
-        call.engageModule(new QName("LoggingModule"));
+        ConfigurationContext configContext = new ConfigurationContextFactory().
+                buildConfigurationContext(repository.getAbsolutePath());
+        ServiceClient serviceClient = new ServiceClient(configContext, null);
+        serviceClient.engageModule(new QName("LoggingModule"));
+//        call.engageModule(new QName("LoggingModule"));
     }
 }
 
