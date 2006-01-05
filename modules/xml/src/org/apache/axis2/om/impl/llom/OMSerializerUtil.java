@@ -32,7 +32,7 @@ import java.util.Iterator;
 public class OMSerializerUtil {
 
     /**
-     * Method serializeEndpart
+     * Method serializeEndpart.
      *
      * @param omOutput
      * @throws javax.xml.stream.XMLStreamException
@@ -44,7 +44,7 @@ public class OMSerializerUtil {
     }
 
     /**
-     * Method serializeAttribute
+     * Method serializeAttribute.
      *
      * @param attr
      * @param omOutput
@@ -76,7 +76,7 @@ public class OMSerializerUtil {
     }
 
     /**
-     * Method serializeNamespace
+     * Method serializeNamespace.
      *
      * @param namespace
      * @param omOutput
@@ -98,7 +98,7 @@ public class OMSerializerUtil {
 
 
     /**
-     * Method serializeStartpart
+     * Method serializeStartpart.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -167,7 +167,7 @@ public class OMSerializerUtil {
 
 
     /**
-     * Method serializeNormal
+     * Method serializeNormal.
      *
      * @param omOutput
      * @param cache

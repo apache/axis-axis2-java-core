@@ -31,8 +31,9 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
- * or just an XML model. This class will give some common functionality of OM Building from StAX.
+ * OM should be able to be built from any data source. And the model it builds 
+ * may be a SOAP specific one or just an XML model. This class will give 
+ * some common functionality of OM Building from StAX.
  */
 public abstract class StAXBuilder implements OMXMLParserWrapper {
 
@@ -77,7 +78,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
 
 
     /**
-     * Constructor StAXBuilder
+     * Constructor StAXBuilder.
      *
      * @param ombuilderFactory
      * @param parser
@@ -88,7 +89,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Constructor StAXBuilder
+     * Constructor StAXBuilder.
      *
      * @param parser
      */
@@ -97,7 +98,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method setOmbuilderFactory
+     * Method setOmbuilderFactory.
      *
      * @param ombuilderFactory
      */
@@ -106,7 +107,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method processNamespaceData
+     * Method processNamespaceData.
      *
      * @param node
      * @param isSOAPElement
@@ -118,7 +119,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     // this must be implemented differently
 
     /**
-     * Method processAttributes
+     * Method processAttributes.
      *
      * @param node
      */
@@ -139,9 +140,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method createOMText
+     * Method createOMText.
      *
-     * @return
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected OMNode createOMText(int textType) throws OMException {
@@ -157,7 +158,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method reset
+     * Method reset.
      *
      * @param node
      * @throws OMException
@@ -167,7 +168,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method discard
+     * Method discard.
      *
      * @param el
      * @throws OMException
@@ -205,9 +206,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getText
+     * Method getText.
      *
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getText() throws OMException {
@@ -215,9 +216,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getNamespace
+     * Method getNamespace. 
      *
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getNamespace() throws OMException {
@@ -225,9 +226,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getNamespaceCount
+     * Method getNamespaceCount.
      *
-     * @return
+     * @return Returns int.
      * @throws OMException
      */
     public int getNamespaceCount() throws OMException {
@@ -239,10 +240,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getNamespacePrefix
+     * Method getNamespacePrefix.
      *
      * @param index
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getNamespacePrefix(int index) throws OMException {
@@ -254,10 +255,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getNamespaceUri
+     * Method getNamespaceUri.
      *
      * @param index
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getNamespaceUri(int index) throws OMException {
@@ -269,7 +270,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method setCache
+     * Method setCache.
      *
      * @param b
      */
@@ -282,9 +283,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getName() throws OMException {
@@ -292,9 +293,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getPrefix
+     * Method getPrefix.
      *
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getPrefix() throws OMException {
@@ -302,9 +303,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getAttributeCount
+     * Method getAttributeCount.
      *
-     * @return
+     * @return Returns int.
      * @throws OMException
      */
     public int getAttributeCount() throws OMException {
@@ -312,10 +313,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getAttributeNamespace
+     * Method getAttributeNamespace.
      *
      * @param arg
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getAttributeNamespace(int arg) throws OMException {
@@ -323,10 +324,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getAttributeName
+     * Method getAttributeName.
      *
      * @param arg
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getAttributeName(int arg) throws OMException {
@@ -334,10 +335,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getAttributePrefix
+     * Method getAttributePrefix.
      *
      * @param arg
-     * @return
+     * @return Returns String.
      * @throws OMException
      */
     public String getAttributePrefix(int arg) throws OMException {
@@ -345,9 +346,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getParser
+     * Method getParser.
      *
-     * @return
+     * @return Returns Object.
      */
     public Object getParser() {
         if (parserAccessed){
@@ -364,43 +365,43 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method isCompleted
+     * Method isCompleted.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isCompleted() {
         return done;
     }
 
     /**
-     * This method will be called with the XMLStreamConstants.START_ELEMENT event
+     * This method is called with the XMLStreamConstants.START_ELEMENT event.
      *
-     * @return
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected abstract OMNode createOMElement() throws OMException;
 
     /**
-     * This should proceed the parser one step further, if parser is not completed yet.
-     * If this has been called whist parser is done, then throw an OMException.
-     * If the cache is set to false, then should be return the event, *without* building the OM tree.
-     * If the cache is set to true, then this should handle all the events within this, and should build
-     * the object structure appropriately and return the event.
+     * Forwards the parser one step further, if parser is not completed yet.
+     * If this is called after parser is done, then throw an OMException.
+     * If the cache is set to false, then returns the event, *without* building the OM tree.
+     * If the cache is set to true, then handles all the events within this, and 
+     * builds the object structure appropriately and returns the event.
      *
-     * @return
+     * @return Returns int.
      * @throws OMException
      */
     public abstract int next() throws OMException;
 
     /**
-     * @return
-     */
+     * @return Returns short.
+     */ 
     public short getBuilderType() {
         return OMConstants.PULL_TYPE_BUILDER;
     }
 
     /**
-     * Method registerExternalContentHandler
+     * Method registerExternalContentHandler.
      *
      * @param obj
      */
@@ -409,9 +410,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
     }
 
     /**
-     * Method getRegisteredContentHandler
-     *
-     * @return
+     * Method getRegisteredContentHandler.
+     * 
+     * @return Returns Object.
      */
     public Object getRegisteredContentHandler() {
         throw new UnsupportedOperationException();

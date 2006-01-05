@@ -42,11 +42,11 @@ public class OMNamespaceImpl implements OMNamespace {
     }
 
     /**
-     * Method equals
+     * Method equals.
      *
      * @param uri
      * @param prefix
-     * @return
+     * @return Returns boolean.
      */
     public boolean equals(String uri, String prefix) {
         return (((prefix == null) && (this.prefix == null)) ||
@@ -55,18 +55,18 @@ public class OMNamespaceImpl implements OMNamespace {
     }
 
     /**
-     * Method getPrefix
+     * Method getPrefix.
      *
-     * @return
+     * @return Returns String.
      */
     public String getPrefix() {
         return prefix;
     }
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return
+     * @return Returns String.
      */
     public String getName() {
         return uri;

@@ -41,7 +41,7 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
     private boolean isMatchingNodeFound = false;
 
     /**
-     * Constructor OMChildrenQNameIterator
+     * Constructor OMChildrenQNameIterator.
      *
      * @param currentChild
      * @param givenQName
@@ -56,7 +56,7 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
      * words, returns <tt>true</tt> if <tt>next</tt> would return an element
      * rather than throwing an exception.)
      *
-     * @return <tt>true</tt> if the iterator has more elements.
+     * @return Returns <tt>true</tt> if the iterator has more elements.
      */
     public boolean hasNext() {
         while (needToMoveForward) {
@@ -86,7 +86,7 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
     /**
      * Returns the next element in the iteration.
      *
-     * @return the next element in the iteration.
+     * @return Returns the next element in the iteration.
      * @throws java.util.NoSuchElementException
      *          iteration has no more elements.
      */
@@ -103,13 +103,14 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
     }
 
     /**
-     * Here I can not use the overriden equals method of QName, as one might want to get
-     * some element just by giving the localname, even though a matching element has a namespace uri as well.
-     * This will not be supported in the equals method of the QName
+     * Cannot use the overridden equals method of QName, as one might want to get
+     * some element just by giving the localname, even though a matching element 
+     * has a namespace uri as well.
+     * This is not supported in the equals method of the QName.
      *
      * @param elementQName
      * @param qNameToBeMatched
-     * @return
+     * @return Returns boolean.
      */
     private boolean isQNamesMatch(QName elementQName, QName qNameToBeMatched) {
 

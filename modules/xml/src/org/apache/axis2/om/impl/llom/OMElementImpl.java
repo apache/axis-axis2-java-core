@@ -80,7 +80,7 @@ public class OMElementImpl extends OMNodeImpl
     private OMNode lastChild;
 
     /**
-     * Constructor OMElementImpl
+     * Constructor OMElementImpl.
      */
     public OMElementImpl(String localName, OMNamespace ns, OMContainer parent,
                          OMXMLParserWrapper builder) {
@@ -95,15 +95,15 @@ public class OMElementImpl extends OMNodeImpl
 
 
     /**
-     * Constructor OMElementImpl
+     * Constructor OMElementImpl.
      */
     public OMElementImpl(String localName, OMNamespace ns) {
         this(localName, ns, null);
     }
 
     /**
-     * This is the basic constructor for OMElement. All the other constructors within this class
-     * will depend on this.
+     * This is the basic constructor for OMElement. All the other constructors 
+     * depends on this.
      *
      * @param localName - this MUST always be not null
      * @param ns        - can be null
@@ -122,7 +122,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Here it is assumed that this QName passed, at least contains the localName for this element
+     * It is assumed that the QName passed contains, at least, the localName for this element.
      *
      * @param qname - this should be valid qname according to javax.xml.namespace.QName
      * @throws OMException
@@ -133,7 +133,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method handleNamespace
+     * Method handleNamespace.
      */
     private OMNamespace handleNamespace(QName qname) {
         OMNamespace ns = null;
@@ -168,9 +168,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method handleNamespace
+     * Method handleNamespace.
      *
-     * @return namespace
+     * @return Returns namespace.
      */
     private OMNamespace handleNamespace(OMNamespace ns) {
         OMNamespace namespace = findNamespace(ns.getName(),
@@ -182,19 +182,17 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will add child to the element. One can decide whether he append the child or he adds to the
-     * front of the children list
+     * Adds child to the element. One can decide whether to append the child or to add to the
+     * front of the children list.
      */
     public void addChild(OMNode child) {
         addChild((OMNodeImpl) child);
     }
 
     /**
-     * This will search for children with a given QName and will return an iterator to traverse through
+     * Searches for children with a given QName and returns an iterator to traverse through
      * the OMNodes.
-     * This QName can contain any combination of prefix, localname and URI
-     *
-     * @throws OMException
+     * This QName can contain any combination of prefix, localname and URI.
      *
      * @throws OMException
      */
@@ -204,7 +202,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method getFirstChildWithName
+     * Method getFirstChildWithName.
      *
      * @throws OMException
      */
@@ -223,7 +221,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method addChild
+     * Method addChild.
      */
     private void addChild(OMNodeImpl child) {
         //the order of these statements is VERY important
@@ -247,9 +245,8 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
-     *
-     * @throws OMException
+     * Gets the next sibling. This can be an OMAttribute or OMText or 
+     * OMELement for others.
      *
      * @throws OMException
      */
@@ -264,10 +261,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This returns a collection of this element.
-     * Children can be of types OMElement, OMText.
+     * Returns a collection of this element. Children can be of types OMElement, OMText.
      *
-     * @return children
+     * @return Returns children.
      */
     public Iterator getChildren() {
         return new OMChildrenIterator(getFirstOMChild());
@@ -276,16 +272,16 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Returns a filtered list of children - just the elements.
      *
-     * @return an iterator over the child elements
+     * @return Returns an iterator of the child elements.
      */
     public Iterator getChildElements() {
         return new OMChildElementIterator(getFirstElement());
     }
 
     /**
-     * THis will create a namespace in the current element scope
+     * Creates a namespace in the current element scope.
      *
-     * @return namespace
+     * @return Returns namespace.
      */
     public OMNamespace declareNamespace(String uri, String prefix) {
         OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
@@ -293,7 +289,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * @return namespace
+     * @return Returns namespace.
      */
     public OMNamespace declareNamespace(OMNamespace namespace) {
         if (namespaces == null) {
@@ -304,9 +300,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will find a namespace with the given uri and prefix, in the scope of the docuemnt.
-     * This will start to find from the current element and goes up in the hiararchy until this finds one.
-     * If none is found, return null
+     * Finds a namespace with the given uri and prefix, in the scope of the document.
+     * Starts to find from the current element and goes up in the hiararchy until one is found.
+     * If none is found, returns null.
      */
     public OMNamespace findNamespace(String uri, String prefix) {
 
@@ -339,9 +335,8 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will ckeck for the namespace <B>only</B> in the current Element.
-     * <p/>
-     * This can also be used to retrieve the prefix of a known namespace URI
+     * Checks for the namespace <B>only</B> in the current Element.
+     * This is also used to retrieve the prefix of a known namespace URI.
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
 
@@ -382,9 +377,9 @@ public class OMElementImpl extends OMNodeImpl
 
 
     /**
-     * Method getAllDeclaredNamespaces
+     * Method getAllDeclaredNamespaces.
      *
-     * @return iterator
+     * @return Returns Iterator.
      */
     public Iterator getAllDeclaredNamespaces() {
         if (namespaces == null) {
@@ -406,9 +401,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will return a List of OMAttributes
+     * Returns a List of OMAttributes.
      *
-     * @return iterator
+     * @return Returns iterator.
      */
     public Iterator getAllAttributes() {
         if (attributes == null) {
@@ -418,20 +413,20 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Return a named attribute if present
+     * Returns a named attribute if present.
      *
      * @param qname the qualified name to search for
-     * @return an OMAttribute with the given name if found, or null
+     * @return Returns an OMAttribute with the given name if found, or null
      */
     public OMAttribute getAttribute(QName qname) {
         return attributes == null ? null : (OMAttribute) attributes.get(qname);
     }
 
     /**
-     * Return a named attribute's value, if present.
+     * Returns a named attribute's value, if present.
      *
      * @param qname the qualified name to search for
-     * @return a String containing the attribute value, or null
+     * @return Returns a String containing the attribute value, or null.
      */
     public String getAttributeValue(QName qname) {
         OMAttribute attr = getAttribute(qname);
@@ -439,10 +434,10 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will insert attribute to this element. Implementor can decide as to insert this
-     * in the front or at the end of set of attributes
+     * Inserts an attribute to this element. Implementor can decide as to insert this
+     * in the front or at the end of set of attributes.
      *
-     * @return attribute
+     * @return Returns attribute.
      */
     public OMAttribute addAttribute(OMAttribute attr) {
         if (attributes == null) {
@@ -458,7 +453,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method removeAttribute
+     * Method removeAttribute.
      */
     public void removeAttribute(OMAttribute attr) {
         if (attributes != null) {
@@ -467,9 +462,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method addAttribute
+     * Method addAttribute.
      *
-     * @return attribute
+     * @return Returns OMAttribute.
      */
     public OMAttribute addAttribute(String attributeName, String value,
                                     OMNamespace ns) {
@@ -489,32 +484,32 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method setBuilder
+     * Method setBuilder.
      */
     public void setBuilder(OMXMLParserWrapper wrapper) {
         this.builder = wrapper;
     }
 
     /**
-     * Method getBuilder
+     * Method getBuilder.
      *
-     * @return builder
+     * @return Returns OMXMLParserWrapper.
      */
     public OMXMLParserWrapper getBuilder() {
         return builder;
     }
 
     /**
-     * This will force the parser to proceed, if parser has not yet finished with the XML input
+     * Forces the parser to proceed, if parser has not yet finished with the XML input.
      */
     public void buildNext() {
         builder.next();
     }
 
     /**
-     * Method getFirstOMChild
+     * Method getFirstOMChild.
      *
-     * @return child
+     * @return Returns child.
      */
     public OMNode getFirstOMChild() {
         while ((firstChild == null) && !done) {
@@ -524,7 +519,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method setFirstChild
+     * Method setFirstChild.
      */
     public void setFirstChild(OMNode firstChild) {
         if (firstChild != null) {
@@ -534,9 +529,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will remove this information item and its children, from the model completely
-     *
-     * @throws OMException
+     * Removes this information item and its children, from the model completely.
      *
      * @throws OMException
      */
@@ -550,23 +543,23 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method isComplete
+     * Method isComplete.
      *
-     * @return boolean
+     * @return Returns boolean.
      */
     public boolean isComplete() {
         return done;
     }
 
     /**
-     * This is to get the type of node, as this is the super class of all the nodes
+     * Gets the type of node, as this is the super class of all the nodes.
      */
     public int getType() {
         return OMNode.ELEMENT_NODE;
     }
 
     /**
-     * getXMLStreamReader
+     * Method getXMLStreamReader.
      *
      * @see OMElement#getXMLStreamReader()
      */
@@ -575,7 +568,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * getXMLStreamReaderWithoutCaching
+     * Method getXMLStreamReaderWithoutCaching.
      *
      * @see OMElement#getXMLStreamReaderWithoutCaching()
      */
@@ -584,9 +577,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * getXMLStreamReader
+     * Method getXMLStreamReader.
      *
-     * @return reader
+     * @return Returns reader.
      */
     private XMLStreamReader getXMLStreamReader(boolean cache) {
         if ((builder == null) && !cache) {
@@ -603,7 +596,7 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Sets the text of the given element.
      * caution - This method will wipe out all the text elements (and hence any
-     * moxed content) before setting the text
+     * mixed content) before setting the text.
      */
     public void setText(String text) {
 
@@ -619,9 +612,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * select all the text children and concat them to a single string
+     * Selects all the text children and concatinates them to a single string.
      *
-     * @return text
+     * @return Returns String.
      */
     public String getText() {
         String childText = "";
@@ -643,9 +636,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Returns the concatanation of TRIMMED values of all
-     * OMText  child nodes of this element
-     * This is incuded purely to improve usability
+     * Returns the concatination string of TRIMMED values of all
+     * OMText  child nodes of this element.
+     * This is included purely to improve usability.
      */
     public String getTrimmedText() {
         String childText = "";
@@ -667,7 +660,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method serializeAndConsume
+     * Method serialize.
      *
      * @throws XMLStreamException
      */
@@ -719,10 +712,10 @@ public class OMElementImpl extends OMNodeImpl
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * This was requested during the second Axis2 summit. When one call this method, this will
-     * serializeAndConsume without building the object structure in the memory. Misuse of this method will
-     * cause loss of data.So its advised to use populateYourSelf() method, before this,
-     * if you want to preserve data in the stream.
+     * This method serializes and consumes without building the object structure in memory. 
+     * Misuse of this method will cause loss of data. So it is advised to use 
+     * populateYourSelf() method, before calling this method, if one wants to 
+     * preserve data in the stream. This was requested during the second Axis2 summit. 
      *
      * @throws XMLStreamException
      */
@@ -731,9 +724,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Get first element
+     * Gets first element.
      *
-     * @return element
+     * @return Returns element.
      */
     public OMElement getFirstElement() {
         OMNode node = getFirstOMChild();
@@ -748,23 +741,23 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method getLocalName
+     * Method getLocalName.
      *
-     * @return local name
+     * @return Returns local name.
      */
     public String getLocalName() {
         return localName;
     }
 
     /**
-     * Method setLocalName
+     * Method setLocalName.
      */
     public void setLocalName(String localName) {
         this.localName = localName;
     }
 
     /**
-     * Method getNamespace
+     * Method getNamespace.
      *
      * @throws OMException
      */
@@ -773,7 +766,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method setNamespace
+     * Method setNamespace.
      */
     public void setNamespace(OMNamespace namespace) {
         OMNamespace nsObject = null;
@@ -784,9 +777,9 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method getQName
+     * Method getQName.
      *
-     * @return qname
+     * @return Returns QName.
      */
     public QName getQName() {
         QName qName;
@@ -819,7 +812,7 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Discard implementation
+     * Method discard.
      *
      * @throws OMException
      */
@@ -832,11 +825,11 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
-     * unprefixed qnames resolve to the local namespace
+     * Converts a prefix:local qname string into a proper QName, evaluating it 
+     * in the OMElement context. Unprefixed qnames resolve to the local namespace.
      *
      * @param qname prefixed qname string to resolve
-     * @return null for any failure to extract a qname.
+     * @return Returns null for any failure to extract a qname.
      */
     public QName resolveQName(String qname) {
         ElementHelper helper = new ElementHelper(this);

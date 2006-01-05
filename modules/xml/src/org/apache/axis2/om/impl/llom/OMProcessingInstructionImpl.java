@@ -30,7 +30,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     protected String value;
 
     /**
-     * Constructor OMProcessingInstructionImpl
+     * Constructor OMProcessingInstructionImpl.
      *
      * @param parentNode
      * @param target
@@ -44,7 +44,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * Constructor OMProcessingInstructionImpl
+     * Constructor OMProcessingInstructionImpl.
      *
      * @param parentNode
      */
@@ -53,7 +53,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -65,7 +65,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -76,7 +76,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * get the value of this PI
+     * Gets the value of this Processing Instruction.
      *
      * @return string
      */
@@ -85,7 +85,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * set the target of this PI
+     * Sets the target of this Processing Instruction.
      *
      * @param target
      */
@@ -94,16 +94,16 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * get the target of this PI
+     * Gets the target of this Processing Instruction.
      *
-     * @return string
+     * @return Returns String.
      */
     public String getTarget() {
         return target;
     }
 
     /**
-     * set the value of this PI
+     * Sets the value of this Processing Instruction.
      *
      * @param text
      */
@@ -112,7 +112,7 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     }
 
     /**
-     * discard this node
+     * Discards this node.
      *
      * @throws OMException
      */

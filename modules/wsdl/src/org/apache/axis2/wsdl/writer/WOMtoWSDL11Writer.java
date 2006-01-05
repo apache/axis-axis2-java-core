@@ -619,10 +619,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
         if (extElement instanceof Schema) {
             Element element = ((Schema) extElement).getElement();
-//            if (element.getNodeValue() != null) {
             writeSchemas(element);
-//            rawWriter.write(element.toString()); //quick hack for crimson
-//            }
         } else if (extElement instanceof SOAPAddress) {
             writeSOAPAddressExtensibilityElement((SOAPAddress) extElement);
         } else if (extElement instanceof SOAPBinding) {

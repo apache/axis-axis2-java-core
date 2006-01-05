@@ -22,7 +22,7 @@ import org.apache.axis2.om.OMNode;
 
 /**
  * Refer to the testClass to find out how to use
- * features like isNavigable, isComplete and step
+ * features like isNavigable, isComplete and step.
  */
 public class OMNavigator {
     /**
@@ -66,13 +66,13 @@ public class OMNavigator {
     private boolean start = true;
 
     /**
-     * Constructor OMNavigator
+     * Constructor OMNavigator.
      */
     public OMNavigator() {
     }
 
     /**
-     * Constructor OMNavigator
+     * Constructor OMNavigator.
      *
      * @param node
      */
@@ -81,7 +81,7 @@ public class OMNavigator {
     }
 
     /**
-     * Method init
+     * Method init.
      *
      * @param node
      */
@@ -92,11 +92,11 @@ public class OMNavigator {
     }
 
     /**
-     * get the next node
+     * Gets the next node.
      *
-     * @return OMnode in the sequence of preorder traversal. Note however that an element node is
-     *         treated slightly differently. Once the element is passed it returns the same element in the
-     *         next encounter as well
+     * @return Returns OMnode in the sequence of preorder traversal. Note however 
+     *         that an element node is treated slightly differently. Once the 
+     *         element is passed it returns the same element in the next encounter as well.
      */
     public OMNode next() {
         if (next == null) {
@@ -119,7 +119,7 @@ public class OMNavigator {
     }
 
     /**
-     * Private method to encapsulate the searching logic
+     * Private method to encapsulate the searching logic.
      */
     private void updateNextNode() {
         if ((next instanceof OMElement) && !visited) {
@@ -147,9 +147,9 @@ public class OMNavigator {
     }
 
     /**
-     * Method visited
+     * Method visited.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean visited() {
         return visited;
@@ -157,10 +157,10 @@ public class OMNavigator {
 
     /**
      * This is a very special method. This allows the navigator to step
-     * once it has reached the existing om. At this point the isNavigable
+     * once it has reached the existing OM. At this point the isNavigable
      * method will return false but the isComplete method may return false
-     * which means that the navigating the given element is not complete but
-     * the navigator cannot proceed
+     * which means that the navigating the given element is not complete and
+     * the navigator cannot proceed.
      */
     public void step() {
         if (!end) {
@@ -170,9 +170,9 @@ public class OMNavigator {
     }
 
     /**
-     * the navigable status
+     * Returns the navigable status.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isNavigable() {
         if (end) {
@@ -183,9 +183,9 @@ public class OMNavigator {
     }
 
     /**
-     * The completed status
+     * Returns the completed status.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isCompleted() {
         return end;

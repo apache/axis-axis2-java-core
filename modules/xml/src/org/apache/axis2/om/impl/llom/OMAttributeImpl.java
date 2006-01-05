@@ -41,7 +41,7 @@ public class OMAttributeImpl implements OMAttribute {
     private OMNamespace namespace;
 
     /**
-     * Constructor OMAttributeImpl
+     * Constructor OMAttributeImpl.
      *
      * @param localName
      * @param ns
@@ -55,7 +55,7 @@ public class OMAttributeImpl implements OMAttribute {
 
     /**
      *
-     * @return qname
+     * @return Returns QName.
      */
     public QName getQName() {
         if(namespace != null){
@@ -68,16 +68,16 @@ public class OMAttributeImpl implements OMAttribute {
     // -------- Getters and Setters
 
     /**
-     * Method getLocalName
+     * Method getLocalName.
      *
-     * @return local name
+     * @return Returns local name.
      */
     public String getLocalName() {
         return localName;
     }
 
     /**
-     * Method setLocalName
+     * Method setLocalName.
      *
      * @param localName
      */
@@ -86,16 +86,16 @@ public class OMAttributeImpl implements OMAttribute {
     }
 
     /**
-     * Method getValue
+     * Method getAttributeValue.
      *
-     * @return value
+     * @return Returns value.
      */
     public String getAttributeValue() {
         return value;
     }
 
     /**
-     * Method setValue
+     * Method setAttributeValue.
      *
      * @param value
      */
@@ -104,7 +104,7 @@ public class OMAttributeImpl implements OMAttribute {
     }
 
     /**
-     * Method setOMNamespace
+     * Method setOMNamespace.
      *
      * @param omNamespace
      */
@@ -113,9 +113,9 @@ public class OMAttributeImpl implements OMAttribute {
     }
 
     /**
-     * Method getNamespace
+     * Method getNamespace.
      *
-     * @return namespace
+     * @return Returns namespace.
      */
     public OMNamespace getNamespace() {
         return namespace;

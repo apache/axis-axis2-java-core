@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**
- * helper class to provide extra utility stuff against elements.
+ * Helper class to provide extra utility stuff against elements.
  * The code is designed to work with any element implementation.
  */
 
@@ -32,7 +32,7 @@ public class ElementHelper {
     private OMElement element;
 
     /**
-     * construct and bind to an element
+     * Constructs and binds to an element.
      * @param element element to work with
      */
     public ElementHelper(OMElement element) {
@@ -40,11 +40,11 @@ public class ElementHelper {
     }
 
     /**
-     * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
+     * Turns a prefix:local qname string into a proper QName, evaluating it in the OMElement context.
      *
      * @param qname                    qname to resolve
      * @param defaultToParentNameSpace flag that controls behaviour when there is no namespace.
-     * @return null for any failure to extract a qname.
+     * @return Returns null for any failure to extract a qname.
      */
     public QName resolveQName(String qname, boolean defaultToParentNameSpace) {
         int colon = qname.indexOf(':');
@@ -73,11 +73,11 @@ public class ElementHelper {
     }
 
     /**
-     * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
-     * unprefixed qnames resolve to the local namespace
+     * Turns a prefix:local qname string into a proper QName, evaluating it in the OMElement context.
+     * Unprefixed qnames resolve to the local namespace.
      *
      * @param qname prefixed qname string to resolve
-     * @return null for any failure to extract a qname.
+     * @return Returns null for any failure to extract a qname.
      */
     public QName resolveQName(String qname) {
         return resolveQName(qname, true);

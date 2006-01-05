@@ -59,8 +59,8 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Configure this factory to use the given document
-	 * Use with care :-)
+	 * Configure this factory to use the given document.
+	 * Use with care.
 	 * @param document
 	 */
 	public void setDocument(DocumentImpl document) {
@@ -94,7 +94,7 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Creating an OMElement with the builder
+	 * Creates an OMElement with the builder.
 	 */
 	public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent, OMXMLParserWrapper builder) {
 		switch(((ParentNode)parent).getNodeType()) {
@@ -123,7 +123,7 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create an OMElement
+	 * Creates an OMElement.
 	 * @see org.apache.axis2.om.OMFactory#createOMElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public OMElement createOMElement(String localName, String namespaceURI, String namespacePrefix) {
@@ -132,7 +132,7 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create a new OMDOM Element node and add it to the given parent
+	 * Creates a new OMDOM Element node and adds it to the given parent.
 	 * @see #createOMElement(String, OMNamespace, OMContainer)
 	 * @see org.apache.axis2.om.OMFactory#createOMElement(javax.xml.namespace.QName, org.apache.axis2.om.OMContainer)
 	 */
@@ -147,7 +147,7 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create a new OMNamespace
+	 * Creates a new OMNamespace.
 	 * @see org.apache.axis2.om.OMFactory#createOMNamespace(java.lang.String, java.lang.String)
 	 */
 	public OMNamespace createOMNamespace(String uri, String prefix) {
@@ -155,8 +155,8 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create a new OMDOM Text node with the given value and append it to the 
-	 * given parent element
+	 * Creates a new OMDOM Text node with the given value and appends it to the 
+	 * given parent element.
 	 * @see org.apache.axis2.om.OMFactory#createText(org.apache.axis2.om.OMElement, java.lang.String)
 	 */
 	public OMText createText(OMElement parent, String text) {
@@ -173,7 +173,7 @@ public class OMDOMFactory implements OMFactory {
     }
 
     /**
-     * Create a OMDOM Text node carrying the given value
+     * Creates a OMDOM Text node carrying the given value.
      *
      * @see org.apache.axis2.om.OMFactory#createText(java.lang.String)
      */
@@ -182,7 +182,7 @@ public class OMDOMFactory implements OMFactory {
     }
 
 	/**
-	 * Create a Character node of the given type
+	 * Creates a Character node of the given type.
 	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.String, int)
 	 */
 	public OMText createText(String text, int type) {
@@ -195,8 +195,8 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create a new OMDOM Text node with that has the value of the given text
-	 * value along with the MTOM optimization parameters and return it
+	 * Creates a new OMDOM Text node with the value of the given text
+	 * value along with the MTOM optimization parameters and returns it.
 	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.String, java.lang.String, boolean)
 	 */
 	public OMText createText(String text, String mimeType, boolean optimize) {
@@ -204,8 +204,8 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create a new OMDOM Text node with the given datahandler and the give 
-	 * MTOM optimization configuration and return it
+	 * Creates a new OMDOM Text node with the given datahandler and the given
+	 * MTOM optimization configuration and returns it.
 	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.Object, boolean)
 	 */
 	public OMText createText(Object dataHandler, boolean optimize) {
@@ -213,7 +213,7 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	/**
-	 * Create an OMDOM Text node, add it to the give parent element and return it 
+	 * Creates an OMDOM Text node, adds it to the give parent element and returns it. 
 	 * @see org.apache.axis2.om.OMFactory#createText(org.apache.axis2.om.OMElement, java.lang.String, java.lang.String, boolean)
 	 */
 	public OMText createText(OMElement parent, String s, String mimeType, boolean optimize) {

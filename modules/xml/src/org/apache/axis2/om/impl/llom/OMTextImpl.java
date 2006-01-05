@@ -44,36 +44,36 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     protected boolean isBinary = false;
 
     /**
-     * Field contentID for the mime part used when serialising Binary stuff as
-     * MTOM optimised
+     * Field contentID for the mime part used when serializing Binary stuff as
+     * MTOM optimized.
      */
     private String contentID = null;
 
     /**
      * Field dataHandler contains the DataHandler
-     * Declaring as Object to remove the depedency on 
+     * Declaring as Object to remove the dependency on 
      * Javax.activation.DataHandler
      */
     private Object dataHandlerObject = null;
 
     /**
-     * Field nameSpace used when serialising Binary stuff as MTOM optimised
+     * Field nameSpace used when serializing Binary stuff as MTOM optimized.
      */
     protected OMNamespace ns = new OMNamespaceImpl(
             "http://www.w3.org/2004/08/xop/include", "xop");
 
     /**
-     * Field localName used when serialising Binary stuff as MTOM optimised
+     * Field localName used when serializing Binary stuff as MTOM optimized.
      */
     protected String localName = "Include";
 
     /**
-     * Field attributes used when serialising Binary stuff as MTOM optimised
+     * Field attributes used when serializing Binary stuff as MTOM optimized.
      */
     protected OMAttribute attribute;
 
     /**
-     * Constructor OMTextImpl
+     * Constructor OMTextImpl.
      *
      * @param s
      */
@@ -84,7 +84,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * @param s
-     * @param nodeType - OMText can handler CHARACTERS, SPACES, CDATA and ENTITY REFERENCES.
+     * @param nodeType - OMText can handle CHARACTERS, SPACES, CDATA and ENTITY REFERENCES.
      *                 Constants for this can be found in OMNode.
      */
     public OMTextImpl(String s, int nodeType) {
@@ -93,7 +93,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * Constructor OMTextImpl
+     * Constructor OMTextImpl.
      *
      * @param parent
      * @param text
@@ -113,8 +113,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * @param s        -
-     *                 base64 encoded String representation of Binary
+     * @param s        - base64 encoded String representation of Binary
      * @param mimeType of the Binary
      */
     public OMTextImpl(String s, String mimeType, boolean optimize) {
@@ -161,7 +160,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param parent
      * @param builder   Used when the builder is encountered with a XOP:Include tag
      *                  Stores a reference to the builder and the content-id. Supports
-     *                  deffered parsing of MIME messages
+     *                  deferred parsing of MIME messages.
      */
     public OMTextImpl(String contentID, OMElement parent,
                       OMXMLParserWrapper builder) {
@@ -183,7 +182,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * Writes the relevant output
+     * Writes the relevant output.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -201,7 +200,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * Returns the value
+     * Returns the value.
      */
     public String getText() throws OMException {
         if (this.value != null) {
@@ -244,8 +243,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     
     /**
-     * To get the datahandler
-     * @return javax.activation.DataHandler
+     * Gets the datahandler.
+     * @return Returns javax.activation.DataHandler
      */
     public Object getDataHandler() {
         /*
@@ -372,7 +371,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * Method serializeAttribute
+     * Method serializeAttribute.
      *
      * @param attr
      * @param omOutput
@@ -402,7 +401,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * Method serializeNamespace
+     * Method serializeNamespace.
      *
      * @param namespace
      * @param omOutput
@@ -420,7 +419,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * Slightly different implementation of the discard method
+     * A slightly different implementation of the discard method.
      *
      * @throws OMException
      */

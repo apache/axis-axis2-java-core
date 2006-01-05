@@ -33,7 +33,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * The behavior of the serializer is such that it returns when it encounters the
      * starting element for the second time. The depth variable tracks the depth of the
      * serilizer and tells it when to return.
-     * Note that it is assumed that this serilization starts on an Element
+     * Note that it is assumed that this serialization starts on an Element.
      */
 
     /**
@@ -42,7 +42,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     private int depth = 0;
 
     /**
-     * Method serializeAndConsume
+     * Method serialize.
      *
      * @param node
      * @param writer
@@ -54,7 +54,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeAndConsume
+     * Method serialize.
      *
      * @param obj
      * @param omOutput
@@ -67,7 +67,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeNode
+     * Method serializeNode.
      *
      * @param reader
      * @param omOutput
@@ -155,7 +155,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeEndElement
+     * Method serializeEndElement.
      *
      * @param writer
      * @throws XMLStreamException
@@ -177,7 +177,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeCData
+     * Method serializeCData.
      *
      * @param reader
      * @param writer
@@ -190,7 +190,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeComment
+     * Method serializeComment.
      *
      * @param reader
      * @param writer
@@ -228,7 +228,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeNamespace
+     * Method serializeNamespace.
      *
      * @param prefix
      * @param URI

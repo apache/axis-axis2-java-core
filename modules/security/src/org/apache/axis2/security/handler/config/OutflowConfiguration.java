@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 /**
  * This is the representation of the outflow configurations of the security
- * module
+ * module.
  */
 public class OutflowConfiguration {
 
@@ -39,7 +39,7 @@ public class OutflowConfiguration {
 	private int currentAction = 0;
 
 	/**
-	 * Create a default outflow configuration instance with 1 action
+	 * Creates a default outflow configuration instance with an action.
 	 */
 	public OutflowConfiguration() {
 		this.actionList = new HashMap[1];
@@ -47,8 +47,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Create a new outflow configuration instance with the given number of
-	 * actions
+	 * Creates a new outflow configuration instance with the given number of
+	 * actions.
 	 * 
 	 * @param actionCount
 	 */
@@ -62,7 +62,7 @@ public class OutflowConfiguration {
 	/**
 	 * Returns the configuration as an Parameter
 	 * 
-	 * @return
+	 * @return Returns Parameter.
 	 */
 	public Parameter getProperty() {
 		
@@ -102,8 +102,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Move to the next action If this is called when the current action is the
-	 * last action then the current action will not change
+	 * Moves to the next action. If this is called when the current action is the
+	 * last action then the current action will not change.
 	 * 
 	 * @throws Exception
 	 */
@@ -114,8 +114,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Move to previous action If this is called when the current action is the
-	 * first option then then the current action will not change
+	 * Moves to previous action. If this is called when the current action is the
+	 * first option then then the current action will not change.
 	 * 
 	 * @throws Exception
 	 */
@@ -126,7 +126,7 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Sets the action items
+	 * Sets the action items.
 	 * 
 	 * @param actionItems
 	 */
@@ -136,8 +136,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the action items
-	 * @return
+	 * Returns the action items.
+	 * @return Returns String.
 	 */
 	public String getActionItems() {
 		return (String) this.actionList[this.currentAction]
@@ -145,7 +145,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the user of the current action
+	 * Sets the user of the current action.
 	 * 
 	 * @param user
 	 */
@@ -154,8 +154,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the user of the current action
-	 * @return
+	 * Returns the user of the current action.
+	 * @return Returns String.
 	 */
 	public String getUser() {
 		return (String) this.actionList[this.currentAction]
@@ -163,9 +163,9 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the name of the password callback class of the current action
+	 * Sets the name of the password callback class of the current action.
 	 * 
-	 * @param pwCallbackClass
+	 * @param passwordCallbackClass
 	 */
 	public void setPasswordCallbackClass(String passwordCallbackClass) {
 		this.actionList[this.currentAction].put(
@@ -173,8 +173,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the name of the password callback class of the current action
-	 * @return
+	 * Returns the name of the password callback class of the current action.
+	 * @return Returns String.
 	 */
 	public String getPasswordCallbackClass() {
 		return (String) this.actionList[this.currentAction]
@@ -182,7 +182,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the signature property file of the current action
+	 * Sets the signature property file of the current action.
 	 * 
 	 * @param signaturePropFile
 	 */
@@ -192,8 +192,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the signature property file of the current action
-	 * @return
+	 * Returns the signature property file of the current action.
+	 * @return Returns String.
 	 */
 	public String getSignaturePropFile() {
 		return (String) this.actionList[this.currentAction]
@@ -201,7 +201,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the signatue key identifier of the current action
+	 * Sets the signatue key identifier of the current action.
 	 * 
 	 * @param signatureKeyIdentifier
 	 */
@@ -211,8 +211,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the signatue key identifier of the current action
-	 * @return
+	 * Returns the signatue key identifier of the current action.
+	 * @return Returns String.
 	 */
 	public String getSignatureKeyIdentifier() {
 		return (String) this.actionList[this.currentAction]
@@ -220,7 +220,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * sets the encrypted key identifier of the current action
+	 * Sets the encrypted key identifier of the current action.
 	 * 
 	 * @param encryptionKeyIdentifier
 	 */
@@ -230,8 +230,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the encrypted key identifier of the current action
-	 * @return
+	 * Returns the encrypted key identifier of the current action.
+	 * @return Returns String.
 	 */
 	public String getEncryptionKeyIdentifier() {
 		return (String) this.actionList[this.currentAction]
@@ -239,7 +239,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the encryption user of the current action
+	 * Sets the encryption user of the current action.
 	 * 
 	 * @param encryptionUser
 	 */
@@ -249,8 +249,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the encryption user of the current action
-	 * @return
+	 * Returns the encryption user of the current action.
+	 * @return Returns String.
 	 */
 	public String getEncryptionUser() {
 		return (String) this.actionList[this.currentAction]
@@ -258,7 +258,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the signature parts of the current action
+	 * Sets the signature parts of the current action.
 	 * 
 	 * @param signatureParts
 	 */
@@ -268,8 +268,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns the signature parts of the current action
-	 * @return
+	 * Returns the signature parts of the current action.
+	 * @return Returns String.
 	 */
 	public String getSignatureParts() {
 		return (String) this.actionList[this.currentAction]
@@ -277,9 +277,9 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Sets the encryption parts of the current action
+	 * Sets the encryption parts of the current action.
 	 * 
-	 * @param signatureParts
+	 * @param encryptionParts
 	 */
 	public void setEncryptionParts(String encryptionParts) {
 		this.actionList[this.currentAction].put(
@@ -287,8 +287,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns the encryption parts of the current action
-	 * @return
+	 * Returns the encryption parts of the current action.
+	 * @return Returns String.
 	 */
 	public String getEncryptionParts() {
 		return (String) this.actionList[this.currentAction]
@@ -306,8 +306,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the password type of the current action
-	 * @return
+	 * Returns the password type of the current action.
+	 * @return Returns String.
 	 */
 	public String getPasswordType() {
 		return (String) this.actionList[this.currentAction]
@@ -325,8 +325,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the encryption symmetric algorithm of the current action
-	 * @return
+	 * Returns the encryption symmetric algorithm of the current action.
+	 * @return Returns String.
 	 */
 	public String getEncryptionSymAlgorithm() {
 		return (String) this.actionList[this.currentAction]
@@ -346,8 +346,8 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * Returns the encryption key transport algorithm of the current action
-	 * @return
+	 * Returns the encryption key transport algorithm of the current action.
+	 * @return Returns String.
 	 */
 	public String getEncryptionKeyTransportAlgorithm() {
 		return (String) this.actionList[this.currentAction]
@@ -366,9 +366,9 @@ public class OutflowConfiguration {
 	}
 
 	/**
-	 * returns the embedded key callback class of the current action
+	 * Returns the embedded key callback class of the current action.
 	 * 
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getEmbeddedKeyCallbackClass() {
 		return (String) this.actionList[this.currentAction]
@@ -377,7 +377,7 @@ public class OutflowConfiguration {
 
 	/**
 	 * Sets the XPath expression to selecte the elements with content of the
-	 * current action to be MTOM optimized
+	 * current action to be MTOM optimized.
 	 * 
 	 * @param optimizePartsXPathExpr
 	 */
@@ -388,9 +388,9 @@ public class OutflowConfiguration {
 
 	/**
 	 * Returns the Path expression to selecte the elements with content of the
-	 * current action to be MTOM optimized
+	 * current action to be MTOM optimized.
 	 * 
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getOptimizeParts() {
 		return (String) this.actionList[this.currentAction]
@@ -398,7 +398,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the SAML property file of the current action
+	 * Sets the SAML property file of the current action.
 	 * @param samlPropFile
 	 */
 	public void setSamlPropFile(String samlPropFile) {
@@ -407,8 +407,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns the SAML property file of the current action
-	 * @return
+	 * Returns the SAML property file of the current action.
+	 * @return Returns String.
 	 */
 	public String getSamlPropFile() {
 		return (String) this.actionList[this.currentAction]
@@ -416,7 +416,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the encryption property file
+	 * Sets the encryption property file.
 	 * @param encPropFile
 	 */
 	public void setEncryptionPropFile(String encPropFile) {
@@ -425,8 +425,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns the encryption property file
-	 * @return
+	 * Returns the encryption property file. 
+	 * @return Returns String.
 	 */
 	public String getEncryptionPropFile() {
 		return (String) this.actionList[this.currentAction]
@@ -434,7 +434,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Option to add additional elements in the username token element
+	 * Option to add additional elements in the username token element.
 	 * Example: Nonce and Create elements
 	 * @param addUTElements
 	 */
@@ -444,9 +444,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns the additional elements to be 
-	 * added to the username token element
-	 * @param addUTElements
+	 * Returns the additional elements to be added to the username token element.
 	 */
 	public String getAddUTElements() {
 		return (String) this.actionList[this.currentAction]
@@ -454,7 +452,7 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets the text of the key name that needs to be sent
+	 * Sets the text of the key name that needs to be sent.
 	 * @param embeddedKeyName
 	 */
 	public void setEmbeddedKeyName(String embeddedKeyName) {
@@ -463,8 +461,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns the text of the key name that needs to be sent
-	 * @return
+	 * Returns the text of the key name that needs to be sent.
+	 * @return Returns String.
 	 */
 	public String getEmbeddedKeyName() {
 		return (String) this.actionList[this.currentAction]
@@ -472,8 +470,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Sets whether signature confirmation should be enabled or not
-	 * @param embeddedKeyName
+	 * Sets whether signature confirmation should be enabled or not.
+	 * @param value
 	 */
 	public void setEnableSignatureConfirmation(boolean value) {
 		this.actionList[this.currentAction].put(
@@ -482,7 +480,7 @@ public class OutflowConfiguration {
 	
 	/**
 	 * Returns whether signature confirmation should be enabled or not
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getEnableSignatureConfirmation() {
 		return (String) this.actionList[this.currentAction]
@@ -491,7 +489,7 @@ public class OutflowConfiguration {
 	
 	/**
 	 * Sets whether signature confirmation should be enabled or not
-	 * @param embeddedKeyName
+	 * @param value
 	 */
 	public void setPreserveOriginalEnvelope(boolean value) {
 		this.actionList[this.currentAction].put(
@@ -499,8 +497,8 @@ public class OutflowConfiguration {
 	}
 	
 	/**
-	 * Returns whether signature confirmation should be enabled or not
-	 * @return
+	 * Returns whether signature confirmation should be enabled or not.
+	 * @return Returns String.
 	 */
 	public String getPreserveOriginalEnvelope() {
 		return (String) this.actionList[this.currentAction]

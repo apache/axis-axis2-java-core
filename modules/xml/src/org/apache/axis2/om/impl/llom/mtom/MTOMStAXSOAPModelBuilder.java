@@ -34,8 +34,8 @@ import java.net.URLDecoder;
 public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MTOMConstants {
 	
     /**
-     * <code>mimeHelper</code> handles deffered parsing of incoming MIME
-     * Messages
+     * <code>mimeHelper</code> handles deferred parsing of incoming MIME
+     * Messages.
      */
     MIMEHelper mimeHelper;
 

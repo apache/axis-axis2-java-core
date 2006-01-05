@@ -30,7 +30,7 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
     protected String value;
 
     /**
-     * Constructor OMDocTypeImpl
+     * Constructor OMDocTypeImpl.
      *
      * @param parentNode
      * @param contentText
@@ -42,7 +42,7 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
     }
 
     /**
-     * Constructor OMDocTypeImpl
+     * Constructor OMDocTypeImpl.
      *
      * @param parentNode
      */
@@ -51,7 +51,7 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
     }
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -63,7 +63,7 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
     }
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -74,16 +74,16 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
     }
 
     /**
-     * get the value of this DocType
+     * Gets the value of this DocType.
      *
-     * @return string
+     * @return Returns String.
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * set the value of this DocType
+     * Sets the value of this DocType.
      *
      * @param text
      */
@@ -92,7 +92,7 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
     }
 
     /**
-     * discard this node
+     * Discards this node.
      *
      * @throws OMException
      */

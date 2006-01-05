@@ -49,16 +49,16 @@ public class OMLinkedListImplFactory implements OMFactory {
     private static final String uriAndPrefixSeparator = ";";
     /**
      * This is a map of namespaces with the namespace URI as the key and
-     * Namespace object itself as the value
+     * Namespace object itself as the value.
      */
     protected Map namespaceTable = new HashMap(5);
 
     /**
-     * Method createOMElement
+     * Method createOMElement.
      *
      * @param localName
      * @param ns
-     * @return element
+     * @return Returns OMElement.
      */
     public OMElement createOMElement(String localName, OMNamespace ns) {
         return new OMElementImpl(localName, ns);
@@ -69,13 +69,13 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * Method createOMElement
+     * Method createOMElement.
      *
      * @param localName
      * @param ns
      * @param parent
      * @param builder
-     * @return element
+     * @return Returns OMElement.
      */
     public OMElement createOMElement(String localName, OMNamespace ns,
                                      OMContainer parent,
@@ -85,12 +85,12 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * Method createOMElement
+     * Method createOMElement.
      *
      * @param localName
      * @param namespaceURI
      * @param namespacePrefix
-     * @return element
+     * @return Returns OMElement.
      */
     public OMElement createOMElement(String localName, String namespaceURI,
                                      String namespacePrefix) {
@@ -100,11 +100,11 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * Method createOMElement
+     * Method createOMElement.
      *
      * @param qname
      * @param parent
-     * @return
+     * @return Returns OMElement.
      * @throws OMException
      */
     public OMElement createOMElement(QName qname, OMContainer parent)
@@ -113,11 +113,11 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * Method createOMNamespace
+     * Method createOMNamespace.
      *
      * @param uri
      * @param prefix
-     * @return namespace
+     * @return Returns OMNamespace.
      */
     public OMNamespace createOMNamespace(String uri, String prefix) {
         String key = uri + uriAndPrefixSeparator + prefix;
@@ -130,11 +130,11 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * Method createText
+     * Method createText.
      *
      * @param parent
      * @param text
-     * @return text
+     * @return Returns OMText.
      */
     public OMText createText(OMElement parent, String text) {
         return new OMTextImpl(parent, text);
@@ -145,10 +145,10 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * Method createText
+     * Method createText.
      *
      * @param s
-     * @return text
+     * @return Returns OMText.
      */
     public OMText createText(String s) {
         return new OMTextImpl(s);
@@ -159,23 +159,23 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * create Text
+     * Creates text.
      *
      * @param s
      * @param mimeType
      * @param optimize
-     * @return text
+     * @return Returns OMText.
      */
     public OMText createText(String s, String mimeType, boolean optimize) {
         return new OMTextImpl(s, mimeType, optimize);
     }
 
     /**
-     * create text
+     * Creates text.
      *
      * @param dataHandler
      * @param optimize
-     * @return text
+     * @return Returns OMText.
      */
     public OMText createText(Object dataHandler, boolean optimize) {
         return new OMTextImpl(dataHandler, optimize);
@@ -187,13 +187,13 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * create text
+     * Creates text.
      *
      * @param parent
      * @param s
      * @param mimeType
      * @param optimize
-     * @return text
+     * @return Returns OMText.
      */
     public OMText createText(OMElement parent,
                              String s,
@@ -203,12 +203,12 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * create attribute
+     * Creates attribute.
      *
      * @param localName
      * @param ns
      * @param value
-     * @return attribute
+     * @return Returns OMAttribute.
      */
     public OMAttribute createOMAttribute(String localName,
                                          OMNamespace ns,
@@ -217,34 +217,34 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     /**
-     * create DocType/DTD
+     * Creates DocType/DTD.
      *
      * @param parent
      * @param content
-     * @return doctype
+     * @return Returns doctype.
      */
     public OMDocType createOMDocType(OMContainer parent, String content) {
         return new OMDocTypeImpl(parent, content);
     }
 
     /**
-     * create a PI
+     * Creates a PI.
      *
      * @param parent
      * @param piTarget
      * @param piData
-     * @return pi
+     * @return Returns OMProcessingInstruction.
      */
     public OMProcessingInstruction createOMProcessingInstruction(OMContainer parent, String piTarget, String piData) {
         return new OMProcessingInstructionImpl(parent, piTarget, piData);
     }
 
     /**
-     * create a comment
+     * Creates a comment.
      *
      * @param parent
      * @param content
-     * @return comment
+     * @return Returns OMComment.
      */
     public OMComment createOMComment(OMContainer parent, String content) {
         return new OMCommentImpl(parent, content);

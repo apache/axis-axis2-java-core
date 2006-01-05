@@ -48,11 +48,11 @@ public class OMXMLBuilderFactory {
     public static final String MODEL_OM = "OM_ONLY";
 
     /**
-     * Method createStAXSOAPModelBuilder
+     * Method createStAXSOAPModelBuilder.
      *
      * @param soapFactory
      * @param parser
-     * @return
+     * @return Returns StAXSOAPModelBuilder.
      */
     public static StAXSOAPModelBuilder createStAXSOAPModelBuilder(
             SOAPFactory soapFactory, XMLStreamReader parser) {
@@ -60,11 +60,11 @@ public class OMXMLBuilderFactory {
     }
 
     /**
-     * Method createStAXOMBuilder
+     * Method createStAXOMBuilder.
      *
      * @param ombuilderFactory
      * @param parser
-     * @return
+     * @return Returns StAXOMBuilder.
      */
     public static StAXOMBuilder createStAXOMBuilder(OMFactory ombuilderFactory,
                                                     XMLStreamReader parser) {

@@ -71,7 +71,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * For a node to exist there must be a parent
+     * For a node to exist there must be a parent.
      *
      * @param parent
      */
@@ -83,10 +83,9 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * This method should return the immediate parent of the node.
-     * Parent is always an Element
+     * Returns the immediate parent of the node. Parent is always an Element.
      *
-     * @return
+     * @return Returns OMContainer.
      *
      * @throws OMException
      */
@@ -95,7 +94,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method setParent
+     * Method setParent.
      *
      * @param element
      */
@@ -115,12 +114,11 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
+     * Returns the next sibling. This can be an OMAttribute or 
+     * OMText or OMElement for others.
      *
-     * @return
+     * @return Returns OMNode.
      * @throws org.apache.axis2.om.OMException
-     *
-     * @throws OMException
      */
     public OMNode getNextOMSibling() throws OMException {
         if ((nextSibling == null) && (parent != null) && !parent.isComplete()) {
@@ -130,7 +128,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method setNextOMSibling
+     * Method setNextOMSibling.
      *
      * @param node
      */
@@ -140,18 +138,18 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
 
 
     /**
-     * this will indicate whether parser has parsed this information item completely or not.
-     * If somethings info are not available in the item, one has to check this attribute to make sure that, this
-     * item has been parsed completely or not.
+     * Indicates whether parser has parsed this information item completely or not.
+     * If some information is not available in the item, one has to check this 
+     * attribute to make sure that, this item has been parsed completely or not.
      *
-     * @return boolean
+     * @return Returns boolean.
      */
     public boolean isComplete() {
         return done;
     }
 
     /**
-     * Method setComplete
+     * Method setComplete.
      *
      * @param state
      */
@@ -160,9 +158,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * This will remove this information item and its children, from the model completely
-     *
-     * @throws org.apache.axis2.om.OMException
+     * Removes this information item and its children, from the model completely.
      *
      * @throws OMException
      */
@@ -185,11 +181,9 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * This will insert a sibling just after the current information item.
+     * Inserts a sibling just after the current information item.
      *
      * @param sibling
-     * @throws org.apache.axis2.om.OMException
-     *
      * @throws OMException
      */
     public void insertSiblingAfter(OMNode sibling) throws OMException {
@@ -212,11 +206,9 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * This will insert a sibling just before the current information item
+     * Inserts a sibling just before the current information item.
      *
      * @param sibling
-     * @throws org.apache.axis2.om.OMException
-     *
      * @throws OMException
      */
     public void insertSiblingBefore(OMNode sibling) throws OMException {
@@ -240,7 +232,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * This is to get the type of node, as this is the super class of all the nodes
+     * Gets the type of node, as this is the super class of all the nodes.
      *
      * @return Returns the type of node as indicated by {@link #setType}
      *
@@ -251,7 +243,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method setType
+     * Method setType.
      *
      * @param nodeType
      * @throws OMException
@@ -261,7 +253,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method getPreviousOMSibling
+     * Gets the previous sibling.
      *
      * @return boolean
      */
@@ -270,7 +262,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method setPreviousOMSibling
+     * Method setPreviousOMSibling.
      *
      * @param previousSibling
      */
@@ -280,9 +272,9 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
 
 
     /**
-     * This will completely parse this node and build the object structure in the memory.
-     * However a programmatically created node will have done set to true by default and will cause
-     * populateyourself not to work properly!
+     * Parses this node and builds the object structure in memory.
+     * However a node, created programmatically, will have done set to true by 
+     * default and this will cause populateyourself not to work properly!
      *
      * @throws OMException
      */
@@ -293,7 +285,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param xmlWriter
      * @throws javax.xml.stream.XMLStreamException
@@ -307,7 +299,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param xmlWriter
      * @throws javax.xml.stream.XMLStreamException
@@ -321,7 +313,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -332,7 +324,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param omOutput
      * @throws XMLStreamException

@@ -50,7 +50,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method endDocument
+     * Method endDocument.
      *
      * @throws SAXException
      */
@@ -60,7 +60,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method startDocument
+     * Method startDocument.
      *
      * @throws SAXException
      */
@@ -70,7 +70,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method characters
+     * Method characters.
      *
      * @param ch
      * @param start
@@ -87,7 +87,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method ignorableWhitespace
+     * Method ignorableWhitespace.
      *
      * @param ch
      * @param start
@@ -101,7 +101,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method endPrefixMapping
+     * Method endPrefixMapping.
      *
      * @param prefix
      * @throws SAXException
@@ -112,7 +112,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method skippedEntity
+     * Method skippedEntity.
      *
      * @param name
      * @throws SAXException
@@ -123,7 +123,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method setDocumentLocator
+     * Method setDocumentLocator.
      *
      * @param locator
      */
@@ -133,7 +133,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method processingInstruction
+     * Method processingInstruction.
      *
      * @param target
      * @param data
@@ -146,7 +146,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method startPrefixMapping
+     * Method startPrefixMapping.
      *
      * @param prefix
      * @param uri
@@ -163,7 +163,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method endElement
+     * Method endElement.
      *
      * @param namespaceURI
      * @param localName
@@ -182,10 +182,10 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method getPrefix
+     * Method getPrefix.
      *
      * @param qName
-     * @return
+     * @return Returns String.
      */
     private String getPrefix(String qName) {
         if (qName != null) {
@@ -195,7 +195,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     }
 
     /**
-     * Method startElement
+     * Method startElement.
      *
      * @param namespaceURI
      * @param localName

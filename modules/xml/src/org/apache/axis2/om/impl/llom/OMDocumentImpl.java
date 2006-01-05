@@ -64,7 +64,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
 
     /**
      * Field charSetEncoding
-     * Dafult : UTF-8
+     * Default : UTF-8
      */
     protected String charSetEncoding = "UTF-8";
 
@@ -100,9 +100,9 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method getDocumentElement
+     * Method getDocumentElement.
      *
-     * @return om element
+     * @return Returns OMElement.
      */
     public OMElement getOMDocumentElement() {
         while (documentElement == null) {
@@ -112,7 +112,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method setDocumentElement
+     * Method setDocumentElement.
      *
      * @param documentElement
      */
@@ -121,18 +121,18 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * this will indicate whether parser has parsed this information item completely or not.
-     * If somethings info are not available in the item, one has to check this attribute to make sure that, this
-     * item has been parsed completely or not.
+     * Indicates whether parser has parsed this information item completely or not.
+     * If some information is not available in the item, one has to check this 
+     * attribute to make sure that, this item has been parsed completely or not.
      *
-     * @return boolean
+     * @return Returns boolean.
      */
     public boolean isComplete() {
         return done;
     }
 
     /**
-     * Method setComplete
+     * Method setComplete.
      *
      * @param state
      */
@@ -141,7 +141,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * This will force the parser to proceed, if parser has not yet finished with the XML input
+     * Forces the parser to proceed, if parser has not yet finished with the XML input.
      */
     public void buildNext() {
         if (!parserWrapper.isCompleted())
@@ -149,8 +149,8 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * This will add child to the element. One can decide whether he append the child or he adds to the
-     * front of the children list
+     * Adds child to the element. One can decide whether to append the child or to add to the
+     * front of the children list.
      *
      * @param child
      */
@@ -168,7 +168,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method addChild
+     * Method addChild.
      *
      * @param child
      */
@@ -187,22 +187,22 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * This returns a collection of this element.
+     * Returns a collection of this element.
      * Children can be of types OMElement, OMText.
      *
-     * @return iterator
+     * @return Returns iterator.
      */
     public Iterator getChildren() {
         return new OMChildrenIterator(getFirstOMChild());
     }
 
     /**
-     * This will search for children with a given QName and will return an iterator to traverse through
+     * Searches for children with a given QName and returns an iterator to traverse through
      * the OMNodes.
-     * This QName can contain any combination of prefix, localname and URI
+     * The QName can contain any combination of prefix, localname and URI.
      *
      * @param elementQName
-     * @return
+     * @return Returns Iterator.
      * @throws org.apache.axis2.om.OMException
      */
     public Iterator getChildrenWithName(QName elementQName) {
@@ -211,9 +211,9 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method getFirstOMChild
+     * Method getFirstOMChild.
      *
-     * @return first om child
+     * @return Returns first om child.
      */
     public OMNode getFirstOMChild() {
         while ((firstChild == null) && !done) {
@@ -223,10 +223,10 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method getFirstChildWithName
+     * Method getFirstChildWithName.
      *
      * @param elementQName
-     * @return
+     * @return Returns OMElement.
      * @throws OMException
      */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
@@ -244,7 +244,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method setFirstChild
+     * Method setFirstChild.
      *
      * @param firstChild
      */
@@ -254,16 +254,16 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
 
 
     /**
-     * Returns the character set encoding scheme to be used
+     * Returns the character set encoding scheme to be used.
      *
-     * @return charset
+     * @return Returns charset.
      */
     public String getCharsetEncoding() {
         return charSetEncoding;
     }
 
     /**
-     * Set the character set encoding scheme
+     * Sets the character set encoding scheme.
      *
      * @param charEncoding
      */
@@ -295,7 +295,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Serialize the document with the XML declaration
+     * Serializes the document with the XML declaration.
      */
     public void serializeAndConsume(OMOutputImpl omOutput)
             throws XMLStreamException {
@@ -304,7 +304,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
 
 
     /**
-     * Serialize the document with cache
+     * Serializes the document with cache.
      */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serialize(omOutput, true, !omOutput.isIgnoreXMLDeclaration());
@@ -312,7 +312,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Serialize the document directly to the outputstream with Caching disabled
+     * Serializes the document directly to the output stream with caching disabled.
      * 
      * @param output
      * @throws XMLStreamException
@@ -324,7 +324,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Serialize the document directly to the outputstream with Caching enabled
+     * Serializes the document directly to the output stream with caching enabled.
      * 
      * @param output
      * @throws XMLStreamException
@@ -336,7 +336,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Serialize the document directly to the outputstream with Caching disabled
+     * Serializes the document directly to the output stream with caching disabled.
      * 
      * @param output
      * @param format
@@ -349,7 +349,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Serialize the document directly to the outputstream with Caching enabled
+     * Serializes the document directly to the output stream with caching enabled.
      * 
      * @param output
      * @param format
@@ -362,7 +362,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Serialize the document with cache
+     * Serializes the document with cache.
      */
     public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
         serialize(omOutput, true, includeXMLDeclaration);

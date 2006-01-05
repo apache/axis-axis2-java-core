@@ -43,7 +43,7 @@ public class OMChildrenWithSpecificAttributeIterator
     private boolean detach;
 
     /**
-     * Constructor OMChildrenWithSpecificAttributeIterator
+     * Constructor OMChildrenWithSpecificAttributeIterator.
      *
      * @param currentChild
      * @param attributeName
@@ -61,9 +61,9 @@ public class OMChildrenWithSpecificAttributeIterator
     }
 
     /**
-     * Method hasNext
+     * Method hasNext.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean hasNext() {
 
@@ -101,9 +101,9 @@ public class OMChildrenWithSpecificAttributeIterator
     }
 
     /**
-     * Method next
+     * Method next.
      *
-     * @return
+     * @return Returns Object.
      */
     public Object next() {
         nextCalled = true;

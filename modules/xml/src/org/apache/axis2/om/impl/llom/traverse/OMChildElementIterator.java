@@ -45,7 +45,7 @@ public class OMChildElementIterator implements Iterator {
     protected boolean removeCalled = false;
 
     /**
-     * Constructor OMChildrenIterator
+     * Constructor OMChildrenIterator.
      *
      * @param currentChild
      */
@@ -54,8 +54,8 @@ public class OMChildElementIterator implements Iterator {
     }
 
     /**
-     * Removes from the underlying collection the last element returned by the
-     * iterator (optional operation).  This method can be called only once per
+     * Removes the last element returned by the iterator (optional operation) 
+     * from the underlying collection. This method can be called only once per
      * call to <tt>next</tt>.  The behavior of an iterator is unspecified if
      * the underlying collection is modified while the iteration is in
      * progress in any way other than by calling this method.
@@ -89,7 +89,7 @@ public class OMChildElementIterator implements Iterator {
      * words, returns <tt>true</tt> if <tt>next</tt> would return an element
      * rather than throwing an exception.)
      *
-     * @return <tt>true</tt> if the iterator has more elements.
+     * @return Returns <tt>true</tt> if the iterator has more elements.
      */
     public boolean hasNext() {
         return (currentChild != null);
@@ -98,7 +98,7 @@ public class OMChildElementIterator implements Iterator {
     /**
      * Returns the next element in the iteration.
      *
-     * @return the next element in the iteration.
+     * @return Returns the next element in the iteration.
      * @throws java.util.NoSuchElementException
      *          iteration has no more elements.
      */

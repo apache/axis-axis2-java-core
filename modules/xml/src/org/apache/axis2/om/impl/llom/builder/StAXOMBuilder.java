@@ -37,8 +37,8 @@ import java.io.InputStream;
 
 
 /**
- * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.
- * And this will habe the Document concept also.
+ * Constructs an OM without using SOAP specific classes like SOAPEnvelope, 
+ * SOAPHeader, SOAPHeaderBlock and SOAPBody. This has the document concept also.
  */
 public class StAXOMBuilder extends StAXBuilder {
     /**
@@ -49,7 +49,7 @@ public class StAXOMBuilder extends StAXBuilder {
     private static int nsCount = 0;
 
     /**
-     * Constructor StAXOMBuilder
+     * Constructor StAXOMBuilder.
      *
      * @param ombuilderFactory
      * @param parser
@@ -79,7 +79,7 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     * Constructor StAXOMBuilder
+     * Constructor StAXOMBuilder.
      *
      * @param parser
      */
@@ -90,9 +90,9 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     * Method createOMElement
+     * Method createOMElement. 
      *
-     * @return
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected OMNode createOMElement() throws OMException {
@@ -119,9 +119,9 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     * Method createOMText
+     * Method createOMText.
      *
-     * @return
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected OMNode createComment() throws OMException {
@@ -137,9 +137,9 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     * Method createDTD
+     * Method createDTD.
      *
-     * @return
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected OMNode createDTD() throws OMException {
@@ -149,8 +149,8 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     * Method createPI
-     * @return
+     * Method createPI.
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected OMNode createPI() throws OMException {
@@ -183,9 +183,9 @@ public class StAXOMBuilder extends StAXBuilder {
     }
     
     /**
-     * Method next
+     * Method next. 
      *
-     * @return
+     * @return Returns int.
      * @throws OMException
      */
     public int next() throws OMException {
@@ -281,16 +281,16 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
    /**
-     * Method getDocumentElement
+     * Method getDocumentElement.
      *
-     * @return root element
+     * @return Returns root element.
      */
     public OMElement getDocumentElement() {
         return document.getOMDocumentElement();
     }
 
     /**
-     * Method processNamespaceData
+     * Method processNamespaceData.
      *
      * @param node
      * @param isSOAPElement

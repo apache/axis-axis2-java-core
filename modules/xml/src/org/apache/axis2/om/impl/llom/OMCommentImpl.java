@@ -30,7 +30,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     protected String value;
 
     /**
-     * Constructor OMCommentImpl
+     * Constructor OMCommentImpl.
      *
      * @param parentNode
      * @param contentText
@@ -43,7 +43,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     }
 
     /**
-     * Constructor OMCommentImpl
+     * Constructor OMCommentImpl.
      *
      * @param parentNode
      */
@@ -52,7 +52,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     }
 
     /**
-     * Serialize the node with caching
+     * Serializes the node with caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -64,7 +64,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     }
 
     /**
-     * Serialize the node without caching
+     * Serializes the node without caching.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -75,16 +75,16 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     }
 
     /**
-     * get the value of this comment
+     * Gets the value of this comment.
      *
-     * @return string
+     * @return Returns String.
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * set the value of this comment
+     * Sets the value of this comment.
      *
      * @param text
      */
@@ -93,7 +93,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     }
 
     /**
-     * discard this node
+     * Discards this node.
      *
      * @throws OMException
      */

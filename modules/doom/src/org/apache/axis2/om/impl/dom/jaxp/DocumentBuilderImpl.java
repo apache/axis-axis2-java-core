@@ -43,9 +43,9 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 	}
 
 	/**
-	 * Returns whether the parser is configured to understand namespaces or not
+	 * Returns whether the parser is configured to understand namespaces or not.
 	 * The StAX parser used by this DOM impl is namespace aware
-	 * therefore this will always return true
+	 * therefore this will always return true.
 	 * @see javax.xml.parsers.DocumentBuilder#isNamespaceAware()
 	 */
 	public boolean isNamespaceAware() {
@@ -54,7 +54,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 
 	/**
 	 * The StAX builder used is the org.apache.axis2.om.impl.llom.StAXOMBuilder
-	 * is a validating builder
+	 * is a validating builder.
 	 * @see javax.xml.parsers.DocumentBuilder#isValidating()
 	 */
 	public boolean isValidating() {
@@ -66,7 +66,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 	}
 
 	/**
-	 * Returns a new document impl 
+	 * Returns a new document impl.
 	 * @see javax.xml.parsers.DocumentBuilder#newDocument()
 	 */
 	public Document newDocument() {
