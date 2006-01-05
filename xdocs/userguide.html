@@ -256,7 +256,7 @@ sure to prefix the subject of the mail with [Axis2].</p>
 Features List</h3>
 This release includes the following features:
 <ul>
-  <li>AXIOM, an XML object model working on StAX
+  <li><style="margin-bottom: 0in">AXIOM, an XML object model working on StAX
     (Streaming API for XML) parsing optimized for SOAP 1.1/1.2 Messages. This
     has complete XML infoset support.</li>
   <li><p style="margin-bottom: 0in">Support for One-Way Messaging (In-Only)
@@ -303,7 +303,7 @@ This release includes the following features:
 
 <h4><a name="experimental">Experimental Features List</a></h4>
 <ul>
-  <li>Sessions scoping for Application, SOAP,
+  <li><style="margin-bottom: 0in">Sessions scoping for Application, SOAP,
     Transport and Request levels</li>
   <li><p style="margin-bottom: 0in">Web Service Policy Support</p>
   </li>
@@ -316,11 +316,14 @@ This release includes the following features:
 
 <h3><a name="toolsinrelease">Tools included in this Release</a></h3>
 <ol>
-  <li>Axis2 Web Appplication (Web App)</li>
-  <li>WSDL2WS, eclipse Plugin/Command line
-  version</li>
-  <li>Service Archive Wizard, eclipse Plugin</li>
-  <li>Module Archive Wizard, eclipse Plugin</li>
+  <li><style="margin-bottom: 0in">Axis2 Web Appplication (Web App)</li>
+  <li><p style="margin-bottom: 0in">WSDL2WS, eclipse Plugin/Command line
+    version</p>
+  </li>
+  <li><p style="margin-bottom: 0in">Service Archive Wizard, eclipse Plugin</p>
+  </li>
+  <li><p style="margin-bottom: 0in">Module Archive Wizard, eclipse Plugin</p>
+  </li>
 
   <p>Axis2 is shipped with two standard tools. Both the tools are Eclipse
   plug-ins, the Codegen tool even has the accompanying Ant task and the
@@ -370,7 +373,7 @@ href="installationguide.html" target="_blank">Installation Guide</a>). User
 can select any of the  following two ways of writing web services using
 Axis2. </p>
 <ol>
-  <li><a href="#WSapi">Use Axis2's primary
+  <li><a href="#WSapi"><style="margin-bottom: 0in">Use Axis2's primary
     interfaces (APIs) and implement the business logic.</a></li>
   <li><p><a href="#generateskl">Start from the WSDL -&gt;Code generate the
     Skeleton -&gt;Implement the Business Logic.</a></p>
@@ -429,7 +432,7 @@ one parameter of type OMElement.</p>
 <p>Axis2 uses "services.xml" to keep configurations for a Web Service. Each
 Web Service deployed in Axis2 needs a "services.xml" containing the
 configurations. "services.xml" for MyService will be as follows.</p>
-<pre>&lt;service name="MyService"&gt;
+<pre>&lt;service &gt;
     &lt;description&gt;
         This is a sample Web Service with two operations, echo and ping.
     &lt;/description&gt;
@@ -444,8 +447,7 @@ configurations. "services.xml" for MyService will be as follows.</p>
 
 <p><em>The above XML tags can be explained as follows:</em></p>
 
-<p>As it can be seen, first line of the "services.xml" gives the name of the
-Web Service. This is used in the URL to the service as the service name.</p>
+<p> Name of the service will be the name of the archive file , if and only if the services.xml contains only one service element.</p>
 
 <p>Next comes the description and the service class.</p>
 
@@ -454,7 +456,7 @@ service with respective message receivers. For the "echo" operation we have
 used a <strong>RawXMLINOutMessageReceiver</strong> since it is an IN-OUT
 operation. For IN-ONLY operation "ping", we have used
 <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver.</p>
-<p>MessageReceivers will be the destination point that Axis2 engine will hand over the message, depending on the operation the message is destined to. The message receiver must work according to the rules defined in the operation to process the message and it will hand over the message to the service implementation class.</p>
+
 <p>You can write a services.xml file to include a group of services instead
 of a single service. This makes management and deployment of a set of related
 services very easy. At runtime you can share information between these
@@ -471,6 +473,8 @@ format.</p>
   &lt;module ref="ModuleName" /&gt;
   &lt;parameter name="serviceGroupParam1" locked="false"&gt;value 1&lt;/parameter&gt;
 &lt;/serviceGroup&gt;</pre>
+
+<p>Note : name of the service is a compulsory attribute</p>
 
 <h4><a name="step3">Step3 :Create the Web Service Archive</a></h4>
 
@@ -843,15 +847,15 @@ channel invocations. Let's first see how we can write a client to invoke
 client code you need to write is as follows.</p>
 <pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-<font color="#33cc00">                          Options options = new Options();
-                           options.setTo(targetEPR);
+<font color="#33cc00">            Options options = new Options();
+            options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(false);
 
-            Call call = new Call();
-            call.setClientOptions(options);</font>
+            ServiceClient serviceClient = new ServiceClient();
+            serviceClient.setOptions(options);</font>
 
-<font color="#33cc00">            OMElement result = (OMElement) call.invokeBlocking("echo", payload);</font>
+<font color="#33cc00">            OMElement result = sender.sendReceive(payload);</font>
 
             StringWriter writer = new StringWriter();
             result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
@@ -881,12 +885,11 @@ have successfully tested the client. </p>
 to invoke this operation. The client code is as follows:</p>
 <pre> try {
        OMElement payload = ClientUtil.getPingOMElement();
-
-       MessageSender msgSender = new MessageSender();
-       
-       Options options = new Options();<br>       msgSender.setClientOptions(options);<br>       options.setTo(targetEPR);
-
-       msgSender.send("ping", payload);
+       Options options = new Options();
+       options.setTo(targetEPR);
+       ServiceClient serviceClient = new ServiceClient();
+       serviceClient.setOptions(options);
+       serviceClient.fireAndForget(payload);
 
      } 
 catch (AxisFault axisFault) {
@@ -894,7 +897,7 @@ catch (AxisFault axisFault) {
      }</pre>
 
 <p>Since we are accessing a IN-ONLY operation we can directly use the
-"MessageSender" to invoke this operation. MessageSender will not block the
+"fireAndForget()" in ServiceClient to invoke this operation , and that will not block the
 invocation, hence it will return the control immediately back to the client.
 You can test this client by running the target "testPingClient" of the ant
 build file at "Axis2Home/samples".</p>
@@ -905,7 +908,7 @@ operations...</p>
 
 <h4><a name="echononblocking">EchoNonBlockingClient</a></h4>
 
-<p>In the EchoBlockingClient once the "call.invokeBlocking("echo", payload);"
+<p>In the EchoBlockingClient once the "serviceCleint.sendReceive(payload);"
 is called, the client is blocked till the operation is completed. This
 behavior is not desirable when there are many Web Service invocations to be
 done in a single client application. A solution would be to use a
@@ -917,7 +920,7 @@ non-blocking API for users.</p>
 EchoNonBlockingClient. If we consider the changes that user may have to do
 with respect to the "EchoBlockingClient" that we have already seen, it will
 be as follows:</p>
-<pre style="margin-bottom: 0.2in">call.invokeNonBlocking("echo", payload, callback);</pre>
+<pre style="margin-bottom: 0.2in">serviceClient.sendReceiveNonblocking(payload, callback);</pre>
 
 <p>The invocation accepts a callback object as a parameter. Axis2 client API
 provides an abstract Callback with the following methods:</p>
@@ -928,7 +931,7 @@ public boolean isComplete() {}</pre>
 <p>The user is expected to implement the "onComplete " and "reportError "
 methods of their extended call back class. Axis2 engine calls the onComplete
 method once the Web Service response is received by the Axis2 Client API
-(Call). This will eliminate the blocking nature of the Web Service
+(ServiceClient). This will eliminate the blocking nature of the Web Service
 invocations and provides the user with the flexibility to use Non Blocking
 API for Web Service Clients.</p>
 
@@ -973,9 +976,11 @@ asynchrony!!</strong></p>
             Options options = new Options();<br>            options.setTo(targetEPR);<br>            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
-            //to retrieve the response.<br>            options.setUseSeparateListener(true); 
+            //to retrieve the response.
+<br>            options.setUseSeparateListener(true); 
             
-            Call call = new Call();<br>            call.setClientOptions(options);</pre>
+            ServiceClient serviceClinet = new ServiceClinet();
+<br>            serviceClinet.setOptions(options);</pre>
 <pre>                  
             //Callback to handle the response
             Callback callback = new Callback() {
@@ -999,13 +1004,13 @@ asynchrony!!</strong></p>
             };
 
             //Non-Blocking Invocation
-            call.invokeNonBlocking("echo", payload, callback);
+            serviceClinet.sendReceiveNonblocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
-          <font color="#33cc00">call.close();</font>
+          <font color="#33cc00">serviceClinet.finalizeInvoke();</font>
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
@@ -1014,9 +1019,9 @@ asynchrony!!</strong></p>
         }</pre>
 
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
-in the "<b>call.setUseSeparateListener(...)</b>" method informs the Axis2
+in the "<b>options.setUseSeparateListener(...)</b>" method informs the Axis2
 engine to use separate transport connections for request and response.
-Finally "<b>call.close()</b>" informs the Axis2 engine to stop the client
+Finally "<b>serviceClinet.finalizeInvoke()</b>" informs the Axis2 engine to stop the client
 side listener started to retrieve the response.</font></font></p>
 
 <p>Before we run the sample client we have one more step to perform. As
@@ -1292,7 +1297,7 @@ follows:</p>
 
 <p>As it can be seen there are four phases defined in this "module.xml"</p>
 <ol>
-  <li>inflow               - Represents the
+  <li><style="margin-bottom: 0in">inflow               - Represents the
     handler chain that will run when a message is coming in. </li>
   <li><p style="margin-bottom: 0in">outflow             - Represents the
     handler chain that will run when the message is going out. </p>
@@ -1433,7 +1438,7 @@ services and prove the capabilities of the Axis2 system.</p>
 
 <p>The included samples are</p>
 <ul>
-  <li>Google spell checker sample</li>
+  <li><style="margin-bottom: 0in">Google spell checker sample</li>
   <li><p style="margin-bottom: 0in">Google search sample</p>
   </li>
   <li><p style="margin-bottom: 0in">Amazon queuing sample</p>
@@ -1479,7 +1484,7 @@ batch/shell scripts required to run sample.</p>
 
 <h2><a name="Advanced_Topics"></a>Advanced Topics</h2>
 <ul>
-  <li><a href="rest-ws.html"
+  <li><style="margin-bottom: 0in"><a href="rest-ws.html"
     target="_blank">RESTful Web Services</a></li>
   <li><p style="margin-bottom: 0in"><a href="tcp-transport.html"
     target="_blank">TCP transport</a></p>
