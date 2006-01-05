@@ -19,6 +19,7 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean generateDeployementDescriptor = true;
     private boolean writeTestCase = false;
     private boolean writeMessageReceiver = true;
-    private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
+    private String packageName = URLProcessor.DEFAULT_PACKAGE;
 
     // Default packClasses is true, which means the classes generated
     // by default are wrapped. The effect of this setting will be controlled

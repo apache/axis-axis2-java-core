@@ -24,7 +24,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
 
     public void engage() {
         String packageName = this.configuration.getPackageName();
-        if (packageName == null) {
+        if (packageName == null || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
             WSDLBinding binding = configuration.getWom().getBinding(
                     AxisBindingBuilder.AXIS_BINDING_QNAME);
             String temp = binding.getBoundInterface().getName()
