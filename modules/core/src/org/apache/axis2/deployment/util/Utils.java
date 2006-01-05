@@ -4,7 +4,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.*;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
 import org.apache.axis2.wsdl.java2wsdl.TypeTable;
 import org.apache.wsdl.WSDLConstants;
@@ -79,7 +81,7 @@ public class Utils {
             throws DeploymentException {
         return getClassLoader(parent, new File(path));
     }
-    
+
     public static ClassLoader getClassLoader(ClassLoader parent, File file)
             throws DeploymentException {
         URLClassLoader classLoader;
@@ -154,7 +156,7 @@ public class Utils {
     }
 
     /**
-     * Creates an AxisService using java reflection.
+     * This guy will create a AxisService using java replection
      */
     public static void fillAxisService(AxisService axisService) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
@@ -187,5 +189,92 @@ public class Utils {
             }
 
         }
+    }
+
+    /**
+     * To create an AxisService using given service impl class name
+     * fisrt generate schema corresponding to the given java class , next for each methods AxisOperation
+     * will be created.
+     * <p/>
+     * Note : Inorder to work this properly RPCMessageReceiver should be availble in the class path
+     * otherewise operation can not continue
+     *
+     * @param implClass
+     * @param axisConfig
+     * @return return created AxisSrevice
+     */
+    public static AxisService createService(String implClass,
+                                            AxisConfiguration axisConfig) throws AxisFault {
+        Parameter parameter = new ParameterImpl(Constants.SERVICE_CLASS, implClass);
+        AxisService axisService = new AxisService();
+        axisService.addParameter(parameter);
+
+        int index = implClass.lastIndexOf(".");
+        String serviceName;
+        if (index > 0) {
+            serviceName = implClass.substring(index + 1, implClass.length());
+        } else {
+            serviceName = implClass;
+        }
+
+        axisService.setName(serviceName);
+        axisService.setClassLoader(axisConfig.getServiceClassLoader());
+
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
+        SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
+                implClass, null, null);
+        try {
+            axisService.setSchema(schemaGenerator.generateSchema());
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+
+        JMethod [] method = schemaGenerator.getMethods();
+        TypeTable table = schemaGenerator.getTypeTable();
+
+        PhasesInfo pinfo = axisConfig.getPhasesInfo();
+
+        for (int i = 0; i < method.length; i++) {
+            JMethod jmethod = method[i];
+            String opName = jmethod.getSimpleName();
+            AxisOperation operation;
+            if (jmethod.getReturnType().isVoidType()) {
+                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+            } else {
+                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
+                AxisMessage outMessage = operation.getMessage(
+                        WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
+                        SchemaGenerator.METHOD_RESPONSE_WRAPPER));
+            }
+
+            operation.setName(new QName(opName));
+            AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (inMessage != null) {
+                inMessage.setElementQName(table.getComplexScheamType(jmethod.getSimpleName() +
+                        SchemaGenerator.METHOD_REQUEST_WRAPPER));
+            }
+
+            // loading message recivers
+            try {
+                Class clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+                MessageReceiver messageReceiver = (MessageReceiver) clazz.newInstance();
+                operation.setMessageReceiver(messageReceiver);
+            } catch (ClassNotFoundException e) {
+                throw new AxisFault("ClassNotFoundException occurd during message receiver loading"
+                        + e.getMessage());
+            } catch (IllegalAccessException e) {
+                throw new AxisFault("IllegalAccessException occurd during message receiver loading"
+                        + e.getMessage());
+            } catch (InstantiationException e) {
+                throw new AxisFault("InstantiationException occurd during message receiver loading"
+                        + e.getMessage());
+            }
+
+            pinfo.setOperationPhases(operation);
+            axisService.addOperation(operation);
+        }
+        return axisService;
+
     }
 }

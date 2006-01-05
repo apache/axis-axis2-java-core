@@ -18,20 +18,17 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
 import org.apache.axis2.databinding.serializers.CollectionSerializer;
 import org.apache.axis2.databinding.serializers.SimpleSerializer;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -39,6 +36,7 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -47,7 +45,6 @@ import java.lang.reflect.Method;
  * SimpleTest
  */
 public class SimpleTest extends TestCase {
-    private AxisService service;
 
     /**
      * Here's our test service which we'll be calling with the local transport
@@ -96,11 +93,12 @@ public class SimpleTest extends TestCase {
 
     /**
      * Get everything (metadata, engine) set up
+     *
      * @throws Exception
      */
     protected void setUp() throws Exception {
         // Set up method/param metadata
-
+        AxisService service;
         String methodName = "echoArray";
         method = new RPCMethod(new QName(methodName));
         method.setResponseQName(new QName(methodName + "Response"));
@@ -121,7 +119,7 @@ public class SimpleTest extends TestCase {
 
         param.setQName(new QName("string"));
         param.setDeserializerFactory(new SimpleDeserializerFactory(String.class,
-                                                                   new QName("xsd", "string")));
+                new QName("xsd", "string")));
         param.setSerializer(new CollectionSerializer(new QName("string"), false, new SimpleSerializer()));
         param.setMaxOccurs(-1);
         param.setDestClass(String [].class);
@@ -130,10 +128,10 @@ public class SimpleTest extends TestCase {
         param = new RPCParameter();
         param.setQName(new QName("return"));
         param.setDeserializerFactory(new SimpleDeserializerFactory(String.class,
-                                                                   new QName("xsd", "string")));
+                new QName("xsd", "string")));
         param.setSerializer(new CollectionSerializer(new QName("return"),
-                                                     false,
-                                                     new SimpleSerializer()));
+                false,
+                new SimpleSerializer()));
         param.setMode(RPCParameter.MODE_OUT);
         param.setMaxOccurs(-1);
         param.setDestClass(String [].class);
@@ -156,6 +154,7 @@ public class SimpleTest extends TestCase {
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         Test.class.getName()));
         AxisOperation axisOperation = new InOutAxisOperation(new QName(methodName));
+        axisOperation.setMessageExchangePattern(WSDLConstants.MEP_URI_IN_OUT);
         axisOperation.setMessageReceiver(new RPCInOutMessageReceiver());
         service.addOperation(axisOperation);
         Parameter parameter = new ParameterImpl();
@@ -168,7 +167,10 @@ public class SimpleTest extends TestCase {
     }
 
     public void testRPC() throws Exception {
-        Call call = new Call("test-resources/xmls");
+//        Call call = new Call("test-resources/xmls");
+        ConfigurationContext configcontext = new ConfigurationContextFactory()
+                .createConfigurationContextFromFileSystem("test-resources/xmls");
+        ServiceClient client = new ServiceClient(configcontext, null);
 //        Call call = new Call(".");
 
         // Make the SOAP envelope
@@ -180,16 +182,24 @@ public class SimpleTest extends TestCase {
         // Now set up an RPCRequestElement containing the metadat for our
         // method and an actual set of instance values to serialize.
         RPCValues values = new RPCValues();
-        String [] array = new String [] { "one", "two" };
+        String [] array = new String []{"one", "two"};
         values.setValue(new QName("string"), array);
         new RPCRequestElement(method, values, body);
 
         // Ready to go - set the To address and make the call
         Options options = new Options();
-        call.setClientOptions(options);
+        client.setOptions(options);
+        OperationClient opClient = client.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClient.setOptions(options);
+        MessageContext msgConetxt = new MessageContext(configcontext);
         options.setTo(new EndpointReference("local://services/testService"));
-        
-        SOAPEnvelope respEnv = call.invokeBlocking("echoArray", env);
+
+        msgConetxt.setEnvelope(env);
+        opClient.addMessageContext(msgConetxt);
+        opClient.execute(true);
+        MessageContext resMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+        SOAPEnvelope respEnv = resMsgCtx.getEnvelope();
         assertNotNull("No response envelope!", respEnv);
 
         RPCInOutMessageReceiver receiver = new RPCInOutMessageReceiver();
@@ -200,7 +210,7 @@ public class SimpleTest extends TestCase {
         Object ret = method.getResponseParameter().getValue(values);
         assertNotNull("No return parameter value", ret);
         assertTrue("Return wasn't a String []", ret instanceof String []);
-        String [] retArray = (String[])ret;
+        String [] retArray = (String[]) ret;
         assertEquals("Array was wrong size", 2, retArray.length);
         for (int i = 0; i < 2; i++) {
             assertEquals("Value #" + i + " not correct!", array[i], retArray[i]);

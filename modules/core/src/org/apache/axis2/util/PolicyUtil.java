@@ -16,52 +16,36 @@
 
 package org.apache.axis2.util;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.description.AxisDescWSDLComponentFactory;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
-import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
-import org.apache.wsdl.Component;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Sanka Samaranayake (sanka@apache.org)
  */
 public class PolicyUtil {
     public static void populatePolicy(WSDLDescription description,
-            AxisService axisService) {
+                                      AxisService axisService) {
         WSDLService wsdlService = description.getService(new QName(axisService
                 .getName()));
         populatePolicy(description, wsdlService, axisService);
     }
 
     private static void populatePolicy(WSDLDescription description,
-            WSDLService wsdlService, AxisService axisService) {
+                                       WSDLService wsdlService, AxisService axisService) {
 
         AxisServiceGroup axisServiceGroup = axisService.getParent();
+        //TODO : Sanka please be carefull , your code given NPEs all over the places
         AxisConfiguration axisConfiguration = axisServiceGroup.getParent();
 
         PolicyInclude servicePolicyInclude = axisService.getPolicyInclude();
@@ -90,7 +74,7 @@ public class PolicyUtil {
     }
 
     private static void populatePolicy(WSDLDescription description,
-            WSDLEndpoint wsdlEndpoint, AxisService axisService) {
+                                       WSDLEndpoint wsdlEndpoint, AxisService axisService) {
         PolicyInclude policyInclude = axisService.getPolicyInclude();
         List policyList = policyInclude
                 .getPolicyElements(PolicyInclude.PORT_POLICY);
@@ -105,7 +89,7 @@ public class PolicyUtil {
     }
 
     private static void populatePolicy(WSDLDescription description,
-            WSDLInterface wsdlInterface, AxisService axisService) {
+                                       WSDLInterface wsdlInterface, AxisService axisService) {
         PolicyInclude policyInclude = axisService.getPolicyInclude();
         List policyList = policyInclude
                 .getPolicyElements(PolicyInclude.PORT_TYPE_POLICY);
@@ -125,7 +109,7 @@ public class PolicyUtil {
     }
 
     private static void populatePolicy(WSDLDescription description,
-            WSDLOperation wsdlOperation, AxisOperation axisOperation) {
+                                       WSDLOperation wsdlOperation, AxisOperation axisOperation) {
 
         PolicyInclude policyInclude = axisOperation.getPolicyInclude();
 
@@ -175,7 +159,7 @@ public class PolicyUtil {
     }
 
     private static void populatePolicy(WSDLDescription description,
-            WSDLBinding wsdlBinding, AxisService axisService) {
+                                       WSDLBinding wsdlBinding, AxisService axisService) {
         PolicyInclude policyInclude = axisService.getPolicyInclude();
 
         List policyList = policyInclude
@@ -200,8 +184,8 @@ public class PolicyUtil {
     }
 
     private static void populatePolicy(WSDLDescription description,
-            WSDLBindingOperation wsdlBindingOperation,
-            AxisOperation axisOperation) {
+                                       WSDLBindingOperation wsdlBindingOperation,
+                                       AxisOperation axisOperation) {
 
         PolicyInclude policyInclude = axisOperation.getPolicyInclude();
         List policyList = policyInclude
@@ -295,7 +279,7 @@ public class PolicyUtil {
     }
 
     private static void addPolicyAsExtElements(WSDLDescription description,
-            List policyList, Component component, PolicyInclude policyInclude) {
+                                               List policyList, Component component, PolicyInclude policyInclude) {
         Iterator policyElementIterator = policyList.iterator();
         Object policyElement;
 
@@ -316,7 +300,7 @@ public class PolicyUtil {
     }
 
     private static void addPolicyAsExtAttributes(WSDLDescription description,
-            List policyList, Component component, PolicyInclude policyInclude) {
+                                                 List policyList, Component component, PolicyInclude policyInclude) {
         Iterator policyElementIterator = policyList.iterator();
         Object policyElement;
 

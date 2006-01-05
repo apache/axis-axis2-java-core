@@ -16,15 +16,12 @@
 
 package org.apache.axis2.description;
 
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
-import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.util.PolicyRegistry;
-import org.apache.ws.policy.util.PolicyWriter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Sanka Samaranayake (sanka@apache.org)
@@ -36,9 +33,9 @@ public class PolicyInclude {
     public static final int AXIS_POLICY = 1;
 
     public static final int AXIS_SERVICE_POLICY = 2;
-    
+
     public static final int AXIS_OPERATION_POLICY = 14;
-    
+
     public static final int AXIS_MESSAGE_POLICY = 15;
 
     public static final int MODULE_POLICY = 3;
@@ -83,7 +80,7 @@ public class PolicyInclude {
         reg = new PolicyRegistry();
         setParent(parent);
     }
-    
+
     public void setParent(PolicyInclude parent) {
         this.parent = parent;
         reg.setParent(parent.getPolicyRegistry());
@@ -105,7 +102,7 @@ public class PolicyInclude {
 
         if (policy == null) {
             Iterator iterator = policyElements.iterator();
-            
+
             while (iterator.hasNext()) {
 
                 Object policyElement = ((PolicyElement) iterator.next()).value;
@@ -136,7 +133,7 @@ public class PolicyInclude {
         }
 
         Policy parentEffectivePolicy = parent.getEffectivePolicy();
-        
+
         if (parent == null || parentEffectivePolicy == null) {
             return getPolicy();
         }
@@ -163,31 +160,31 @@ public class PolicyInclude {
         }
         return policyElementsList;
     }
-    
-    
-    public ArrayList getPolicyElements(int type) { 
+
+
+    public ArrayList getPolicyElements(int type) {
         ArrayList policyElementList = new ArrayList();
         Iterator policyElementIterator = policyElements.iterator();
-        
+
         PolicyElement policyElement;
-        
+
         while (policyElementIterator.hasNext()) {
             policyElement = (PolicyElement) policyElementIterator.next();
-        
+
             if (policyElement.type == type) {
                 policyElementList.add(policyElement.value);
             }
         }
-        
+
         return policyElementList;
-        
+
     }
 
     public void registerPolicy(Policy policy) {
         reg.register(policy.getPolicyURI(), policy);
     }
-    
-    public Policy getPolicy(String policyURI){
+
+    public Policy getPolicy(String policyURI) {
         return reg.lookup(policyURI);
     }
 

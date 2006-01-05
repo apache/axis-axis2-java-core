@@ -25,13 +25,11 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.ws.policy.util.PolicyRegistry;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.security.cert.PolicyNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,7 +50,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     public ServiceBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig,
                           AxisService service) {
         super(serviceInputStream, axisConfig);
-        this.service = service;       
+        this.service = service;
     }
 
     /**
@@ -90,20 +88,20 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setServiceDescription(serviceNameatt.getAttributeValue());
                 }
             }
-            
+
             // setting the PolicyInclude
-            PolicyInclude policyInclude = service.getPolicyInclude();
-            
+//            PolicyInclude policyInclude = service.getPolicyInclude();
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
-            
+
             if (policyElements != null) {
                 processPolicyElements(PolicyInclude.AXIS_SERVICE_POLICY, policyElements, service.getPolicyInclude());
             }
-            
+
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
-            
+
             if (policyRefElements != null) {
                 processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY, policyRefElements, service.getPolicyInclude());
             }
@@ -150,10 +148,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
             processServiceModuleConfig(moduleConfigs, service, service);
-            
-            
-            
-            
+
+
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
@@ -177,26 +173,26 @@ public class ServiceBuilder extends DescriptionBuilder {
             AxisMessage message = operation.getMessage(lable.getAttributeValue());
 
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
-            
+
             // setting the PolicyInclude
-            PolicyInclude policyInclude = message.getPolicyInclude();
-            
+//            PolicyInclude policyInclude = message.getPolicyInclude();
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
-            
+
             if (policyElements != null) {
                 processPolicyElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyElements, message.getPolicyInclude());
             }
-            
+
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
-            
+
             if (policyRefElements != null) {
                 processPolicyRefElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyRefElements, message.getPolicyInclude());
             }
 
             processParameters(parameters, message, operation);
-            
+
         }
     }
 
@@ -282,30 +278,30 @@ public class ServiceBuilder extends DescriptionBuilder {
                     // assumed MEP is in-out
                     op_descrip = new InOutAxisOperation();
                     op_descrip.setParent(service);
-                    
+
                 } else {
                     op_descrip = AxisOperationFactory.getOperationDescription(mepurl);
                 }
                 op_descrip.setName(new QName(opname));
             }
-            
+
             // setting the PolicyInclude
-            PolicyInclude policyInclude = op_descrip.getPolicyInclude();
-        
+//            PolicyInclude policyInclude = op_descrip.getPolicyInclude();
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
-            
+
             if (policyElements != null) {
                 processPolicyElements(PolicyInclude.AXIS_OPERATION_POLICY, policyElements, op_descrip.getPolicyInclude());
             }
-            
+
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
-            
+
             if (policyRefElements != null) {
                 processPolicyRefElements(PolicyInclude.AXIS_OPERATION_POLICY, policyRefElements, op_descrip.getPolicyInclude());
             }
-            
+
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             ArrayList wsamappings = processParameters(parameters, op_descrip, service);
@@ -346,7 +342,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator moduleConfigs = operation.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processOperationModuleConfig(moduleConfigs, op_descrip, op_descrip);
-            
+
             // adding the operation
             operations.add(op_descrip);
         }
@@ -374,6 +370,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                 service.addModuleConfig(moduleConfiguration);
             }
         }
-    }    
-  
+    }
+
 }

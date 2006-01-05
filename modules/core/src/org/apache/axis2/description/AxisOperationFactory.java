@@ -29,63 +29,53 @@ public class AxisOperationFactory implements WSDLConstants {
         switch (mepURI) {
             case MEP_CONSTANT_IN_ONLY : {
                 abOpdesc = new InOnlyAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_IN_ONLY);
                 break;
             }
-
             case MEP_CONSTANT_OUT_ONLY : {
                 abOpdesc = new OutOnlyAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_OUT_ONLY);
                 break;
             }
-
             case MEP_CONSTANT_IN_OUT : {
                 abOpdesc = new InOutAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_IN_OUT);
                 break;
             }
-
             case MEP_CONSTANT_IN_OPTIONAL_OUT : {
                 abOpdesc = new InOutAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_IN_OPTIONAL_OUT);
                 break;
             }
-
             case MEP_CONSTANT_ROBUST_IN_ONLY : {
                 abOpdesc = new InOutAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_ROBUST_IN_ONLY);
                 break;
             }
-
             case MEP_CONSTANT_OUT_IN : {
                 abOpdesc = new OutInAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_OUT_IN);
                 break;
             }
-
             case MEP_CONSTANT_OUT_OPTIONAL_IN : {
                 abOpdesc = new OutInAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_OUT_OPTIONAL_IN);
                 break;
             }
-
             case MEP_CONSTANT_ROBUST_OUT_ONLY : {
                 abOpdesc = new RobustOutOnlyAxisOperation();
-
+                abOpdesc.setMessageExchangePattern(MEP_URI_ROBUST_OUT_ONLY);
                 break;
             }
-
             default : {
                 throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
             }
         }
-
         return abOpdesc;
     }
 
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
-
         if (MEP_URI_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
         } else if (MEP_URI_OUT_ONLY.equals(mepURI)) {
@@ -103,7 +93,7 @@ public class AxisOperationFactory implements WSDLConstants {
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }
-
+        abOpdesc.setMessageExchangePattern(mepURI);
         return abOpdesc;
     }
 }

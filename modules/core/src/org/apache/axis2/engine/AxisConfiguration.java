@@ -112,6 +112,8 @@ public class AxisConfiguration implements ParameterInclude {
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
 
+        this.phasesinfo = new PhasesInfo();
+
         // setting the default flow , if some one creating AxisConfig programatically
         // most required handles will be there in the flow.
 
@@ -318,6 +320,8 @@ public class AxisConfiguration implements ParameterInclude {
         ModuleDescription module = getModule(moduleQName);
         if (module == null) {
             module = loadModulefromResources(moduleQName.getLocalPart());
+            engageModule(module, moduleQName);
+        } else {
             engageModule(module, moduleQName);
         }
 
@@ -669,5 +673,14 @@ public class AxisConfiguration implements ParameterInclude {
 
     public String getDefaultModuleVersion(String moduleName) {
         return (String) nameToverionMap.get(moduleName);
+    }
+
+    public ModuleDescription getDefaultModule(String moduleName) {
+        String defualtModuleVersion = getDefaultModuleVersion(moduleName);
+        if (defualtModuleVersion == null) {
+            return (ModuleDescription) allModules.get(new QName(moduleName));
+        } else {
+            return (ModuleDescription) allModules.get(new QName(moduleName + "-" + defualtModuleVersion));
+        }
     }
 }

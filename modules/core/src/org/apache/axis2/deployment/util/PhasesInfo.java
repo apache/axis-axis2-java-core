@@ -37,6 +37,13 @@ public class PhasesInfo {
     private ArrayList OUTPhases;
     private ArrayList OUT_FaultPhases;
 
+    public PhasesInfo() {
+        INPhases = new ArrayList();
+        IN_FaultPhases = new ArrayList();
+        OUTPhases = new ArrayList();
+        OUT_FaultPhases = new ArrayList();
+    }
+
     /**
      * To copy phase informatoin from one to another
      *

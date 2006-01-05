@@ -275,7 +275,7 @@ public class Utils {
         return new QName(name + "-" + versionID);
     }
 
-    public static void calculateDefaultModuleVersion(HashMap modules) {
+    public static void calculateDefaultModuleVersion(HashMap modules, AxisConfiguration axisConfig) {
         Iterator allModules = modules.values().iterator();
         HashMap defaultModules = new HashMap();
         while (allModules.hasNext()) {
@@ -283,7 +283,26 @@ public class Utils {
             QName moduleName = moduleDescription.getName();
             String moduleNameString = getModuleName(moduleName.getLocalPart());
             String moduleVersionString = getModuleVersion(moduleName.getLocalPart());
-            
+            String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
+            if (currentDefaultVerison != null) {
+                if (isLatest(moduleVersionString, currentDefaultVerison)) {
+                    defaultModules.put(moduleNameString, moduleVersionString);
+                }
+            } else {
+                defaultModules.put(moduleNameString, moduleVersionString);
+            }
+
         }
+        Iterator def_mod_itr = defaultModules.keySet().iterator();
+        while (def_mod_itr.hasNext()) {
+            String moduleName = (String) def_mod_itr.next();
+            axisConfig.addDefaultModuleVersion(moduleName, (String) defaultModules.get(moduleName));
+        }
+    }
+
+    public static boolean isLatest(String moduleVersion, String currentDefaultVersion) {
+        float m_version = Float.parseFloat(moduleVersion);
+        float m_c_vresion = Float.parseFloat(currentDefaultVersion);
+        return m_version > m_c_vresion;
     }
 }

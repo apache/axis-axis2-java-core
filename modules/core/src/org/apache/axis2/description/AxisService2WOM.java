@@ -133,12 +133,16 @@ public class AxisService2WOM {
                 wsdlOperation.setInputMessage(messageRefinput);
             }
 
-            AxisMessage outaxisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (outaxisMessage != null && outaxisMessage.getElementQName() != null) {
-                MessageReference messageRefout = wsdlComponentFactory.createMessageReference();
-                messageRefout.setElementQName(outaxisMessage.getElementQName());
-                messageRefout.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-                wsdlOperation.setOutputMessage(messageRefout);
+            try {
+                AxisMessage outaxisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (outaxisMessage != null && outaxisMessage.getElementQName() != null) {
+                    MessageReference messageRefout = wsdlComponentFactory.createMessageReference();
+                    messageRefout.setElementQName(outaxisMessage.getElementQName());
+                    messageRefout.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                    wsdlOperation.setOutputMessage(messageRefout);
+                }
+            } catch (UnsupportedOperationException e) {
+                // operation does not have an out message so , no need to do anything here
             }
             portType.setOperation(wsdlOperation);
 

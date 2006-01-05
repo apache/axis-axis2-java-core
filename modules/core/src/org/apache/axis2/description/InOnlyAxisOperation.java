@@ -53,13 +53,13 @@ public class InOnlyAxisOperation extends AxisOperation {
         inMessage = new AxisMessage();
         inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         inMessage.setParent(this);
-        
+
         inFaultMessage = new AxisMessage();
         inFaultMessage.setParent(this);
-        
+
         outFaultMessage = new AxisMessage();
         outFaultMessage.setParent(this);
-        
+
         outPhase = new ArrayList();
     }
 
@@ -67,7 +67,7 @@ public class InOnlyAxisOperation extends AxisOperation {
         if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
             return inMessage;
         } else {
-            throw new UnsupportedOperationException("Not yet implemented");
+            throw new UnsupportedOperationException("In valid acess");
         }
     }
 
