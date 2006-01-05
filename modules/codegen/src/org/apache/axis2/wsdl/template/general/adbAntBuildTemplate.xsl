@@ -7,6 +7,10 @@
 
         <project basedir="." default="jar.all">
             <xsl:comment>Auto generated ant build file</xsl:comment>
+            <property environment="env"/>
+            <property name="axis2.home">
+                <xsl:attribute name="value"></xsl:attribute>
+            </property>
             <property name="name">
                 <xsl:attribute name="value">myservice</xsl:attribute>
             </property>
@@ -31,6 +35,24 @@
 
             <property name="jars.ok" value=""></property>
 
+            <path id="axis2.class.path">
+                <fileset>
+                    <xsl:attribute name="dir">${env.AXIS2_HOME}</xsl:attribute>
+                    <include>
+                        <xsl:attribute name="name">lib/*.jar</xsl:attribute>
+                    </include>
+                </fileset>
+                <fileset>
+                    <xsl:attribute name="dir">${axis2.home}</xsl:attribute>
+                    <include>
+                        <xsl:attribute name="name">lib/*.jar</xsl:attribute>
+                    </include>
+                </fileset>
+                <pathelement>
+                    <xsl:attribute name="path">${java.class.path}</xsl:attribute>
+                </pathelement>
+            </path>
+            
             <target name="init">
                 <mkdir>
                     <xsl:attribute name="dir">${build}</xsl:attribute>
@@ -46,8 +68,8 @@
             <target name="pre.compile.test" depends="init">
                 <xsl:comment>Test the classpath for the availability of necesary classes</xsl:comment>
 
-                <available classname="javax.xml.stream.XMLStreamReader" property="stax.available"/>
-                <available classname="org.apache.axis2.engine.AxisEngine" property="axis2.available"/>
+                <available classname="javax.xml.stream.XMLStreamReader" property="stax.available" classpathref="axis2.class.path"/>
+                <available classname="org.apache.axis2.engine.AxisEngine" property="axis2.available" classpathref="axis2.class.path"/>
                 <condition property="jars.ok">
                     <and>
                         <isset property="stax.available"/>
@@ -71,7 +93,7 @@
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
-                        <xsl:attribute name="location">${java.class.path}</xsl:attribute>
+                        <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
                 </javac>
             </target>
@@ -86,7 +108,7 @@
                         <xsl:attribute name="path">${test}</xsl:attribute>
                     </src>
                     <classpath>
-                        <xsl:attribute name="location">${java.class.path}</xsl:attribute>
+                        <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
                 </javac>
             </target>
@@ -135,20 +157,27 @@
                     <arg>
                         <xsl:attribute name="value">${build}/repo</xsl:attribute>
                     </arg>
+                    <classpath>
+                        <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
+                    </classpath>
                 </java>
             </target>
             <target if="jars.ok" name="run.test" depends="compile.test">
+                <property name="axis2.class.path" refid="axis2.class.path"/>
+                <path id="test.class.path">
+                    <pathelement>
+                        <xsl:attribute name="location">${classes}</xsl:attribute>
+                    </pathelement>
+                    <pathelement>
+                        <xsl:attribute name="path">${axis2.class.path}</xsl:attribute>
+                    </pathelement>
+                </path>
                 <mkdir>
                     <xsl:attribute name="dir">${build}/test-reports/</xsl:attribute>
                 </mkdir>
                 <junit printsummary="yes" haltonfailure="yes">
                     <classpath>
-                        <pathelement>
-                            <xsl:attribute name="location">${classes}</xsl:attribute>
-                        </pathelement>
-                        <pathelement>
-                            <xsl:attribute name="path">${java.class.path}</xsl:attribute>
-                        </pathelement>
+                        <xsl:attribute name="refid">test.class.path</xsl:attribute>
                     </classpath>
                     <formatter type="plain"/>
                     <batchtest fork="yes">
