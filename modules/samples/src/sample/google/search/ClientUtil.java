@@ -119,7 +119,8 @@ public class ClientUtil {
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = fac.createConfigurationContextFromFileSystem(
                 "doGoogleSearch");
-        msgContext = new MessageContext(configContext);
+        msgContext = new MessageContext();
+        msgContext.setConfigurationContext(configContext);
         msgContext.setEnvelope(envelope);
         return msgContext;
     }

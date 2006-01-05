@@ -45,12 +45,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 /**
  * SimpleJMSWorker is a worker thread that processes messages that are
@@ -241,7 +236,10 @@ public class SimpleJMSWorker implements Runnable {
                     configurationContext.getAxisConfiguration().getTransportOut(
                             new QName(Constants.TRANSPORT_JMS));
 
-            msgContext = new MessageContext(configurationContext, transportIn, transportOut);
+            msgContext = new MessageContext();
+            msgContext.setConfigurationContext(configurationContext);
+            msgContext.setTransportIn(transportIn);
+            msgContext.setTransportOut(transportOut);
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                     new JMSOutTransportInfo(message.getJMSReplyTo(),
                             listener.getProperties()));

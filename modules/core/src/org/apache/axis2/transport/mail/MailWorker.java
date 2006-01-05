@@ -48,7 +48,7 @@ import java.util.Properties;
 public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
     private String contentType = "text/xml";
-    private ConfigurationContext reg = null;
+    private ConfigurationContext configContext = null;
     private Properties prop = new Properties();
     private Session session = Session.getDefaultInstance(prop, null);
     private MimeMessage mimeMessage;
@@ -61,27 +61,30 @@ public class MailWorker implements Runnable {
      */
     public MailWorker(MimeMessage mimeMessage, ConfigurationContext reg) {
         this.mimeMessage = mimeMessage;
-        this.reg = reg;
+        this.configContext = reg;
     }
 
     /**
      * The main workhorse method.
      */
     public void run() {
-        AxisEngine engine = new AxisEngine(reg);
+        AxisEngine engine = new AxisEngine(configContext);
         MessageContext msgContext = null;
 
         // create and initialize a message context
         try {
             TransportInDescription transportIn =
-                    reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
+                    configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
             TransportOutDescription transportOut =
-                    reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
+                    configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
 
             if ((transportIn != null) && (transportOut != null)) {
 
                 // create Message Context
-                msgContext = new MessageContext(reg, transportIn, transportOut);
+                msgContext = new MessageContext();
+                msgContext.setConfigurationContext(configContext);
+                msgContext.setTransportIn(transportIn);
+                msgContext.setTransportOut(transportOut);
                 msgContext.setServerSide(true);
                 msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
                 msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,

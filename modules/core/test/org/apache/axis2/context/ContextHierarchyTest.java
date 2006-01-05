@@ -52,7 +52,8 @@ public class ContextHierarchyTest extends TestCase {
                 configurationContext, axisService.getParent());
         ServiceContext serviceContext = serviceGroupContext
                 .getServiceContext(axisService);
-        MessageContext msgctx = new MessageContext(configurationContext);
+        MessageContext msgctx = new MessageContext();
+        msgctx.setConfigurationContext(configurationContext);
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
                 serviceContext);
         msgctx.setServiceContext(serviceContext);
@@ -84,7 +85,8 @@ public class ContextHierarchyTest extends TestCase {
         ConfigurationContext configurationContext = new ConfigurationContext(
                 axisConfiguration);
 
-        MessageContext msgctx = new MessageContext(configurationContext);
+        MessageContext msgctx = new MessageContext();
+        msgctx.setConfigurationContext(configurationContext);
 
         // test the complete Hierarchy built
         assertEquals(msgctx.getParent(), null);

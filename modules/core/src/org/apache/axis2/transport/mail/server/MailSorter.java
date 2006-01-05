@@ -59,13 +59,15 @@ public class MailSorter {
 
         // create and initialize a message context
         try {
-            msgContext =
-                    new MessageContext(confContext,
-                            confContext.getAxisConfiguration()
-                                    .getTransportIn(new QName(Constants
-                                    .TRANSPORT_MAIL)), confContext.getAxisConfiguration()
-                            .getTransportOut(new QName(Constants
-                            .TRANSPORT_MAIL)));
+            msgContext = new MessageContext();
+            msgContext.setConfigurationContext(confContext);
+            msgContext.setTransportIn(confContext.getAxisConfiguration()
+                    .getTransportIn(new QName(Constants
+                    .TRANSPORT_MAIL)));
+            msgContext.setTransportOut(confContext.getAxisConfiguration()
+                    .getTransportOut(new QName(Constants
+                    .TRANSPORT_MAIL)));
+
             msgContext.setServerSide(true);
             msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
             msgContext.setWSAAction(getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION,

@@ -208,7 +208,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         SOAPEnvelope envelope = factory.getDefaultEnvelope();
         envelope.getBody().addChild(method);
 
-        MessageContext requestContext = new MessageContext(configContext);
+        MessageContext requestContext = new MessageContext();
+        requestContext.setConfigurationContext(configContext);
         requestContext.setAxisService(clientService);
         requestContext.setAxisOperation(opdesc);
         requestContext.setEnvelope(envelope);

@@ -74,7 +74,8 @@ public class MyInOutMEPClient extends Call {
     }
 
     protected MessageContext getMessageContext(SOAPEnvelope envelope) throws AxisFault {
-        MessageContext msgctx = new MessageContext(getServiceContext().getConfigurationContext());
+        MessageContext msgctx = new MessageContext();
+        msgctx.setConfigurationContext(getServiceContext().getConfigurationContext());
         msgctx.setEnvelope(envelope);
         return msgctx;
     }

@@ -68,7 +68,10 @@ public class TCPWorker implements Runnable {
             if ((transportOut != null) && (transportIn != null)) {
 
                 // create the Message Context and fill in the values
-                msgContext = new MessageContext(configurationContext, transportIn, transportOut);
+                msgContext = new MessageContext();
+                msgContext.setConfigurationContext(configurationContext);
+                msgContext.setTransportIn(transportIn);
+                msgContext.setTransportOut(transportOut);
                 msgContext.setServerSide(true);
 
                 OutputStream out = socket.getOutputStream();

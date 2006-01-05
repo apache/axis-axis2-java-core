@@ -380,7 +380,8 @@ public class ServiceClient {
             }
             // process the resule of the invocation
             if (callback.envelope != null) {
-                MessageContext resMsgctx = new MessageContext(serviceContext
+                MessageContext resMsgctx = new MessageContext();
+                resMsgctx.setConfigurationContext(serviceContext
                         .getConfigurationContext());
 
                 resMsgctx.setEnvelope(callback.envelope);

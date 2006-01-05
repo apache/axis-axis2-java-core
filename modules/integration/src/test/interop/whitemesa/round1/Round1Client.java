@@ -63,7 +63,8 @@ public class Round1Client {
 
         AxisConfiguration axisConfig = new AxisConfiguration();
         ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
-        MessageContext msgCtx = new MessageContext(configCtx);
+        MessageContext msgCtx = new MessageContext();
+        msgCtx.setConfigurationContext(configCtx);
         msgCtx.setEnvelope(reqEnv);
 
 

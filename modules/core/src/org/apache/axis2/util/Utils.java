@@ -22,22 +22,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -63,10 +49,13 @@ public class Utils {
     }
 
     public static MessageContext createOutMessageContext(MessageContext inMessageContext) {
-        MessageContext newmsgCtx = new MessageContext(inMessageContext.getConfigurationContext(),
-                inMessageContext.getSessionContext(),
-                inMessageContext.getTransportIn(),
-                inMessageContext.getTransportOut());
+        MessageContext newmsgCtx = new MessageContext();
+
+        newmsgCtx.setConfigurationContext(inMessageContext.getConfigurationContext());
+        newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
+        newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
+        newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
+
         Options oldOptions =
                 inMessageContext.getOptions();
 

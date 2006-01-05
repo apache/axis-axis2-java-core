@@ -67,7 +67,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         defaultEnvelope.getHeader().declareNamespace(Submission.WSA_NAMESPACE,
                 "wsa");
-        MessageContext msgCtxt = new MessageContext(null);
+        MessageContext msgCtxt = new MessageContext();
         msgCtxt.setTo(epr);
         msgCtxt.setReplyTo(replyTo);
         msgCtxt.setEnvelope(defaultEnvelope);
@@ -81,7 +81,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
-        msgCtxt = new MessageContext(null);
+        msgCtxt = new MessageContext();
 
         EndpointReference epr = new EndpointReference("http://www.from.org/service/");
         epr.addReferenceParameter(new QName("Reference2"),
@@ -129,7 +129,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         EndpointReference duplicateEpr = new EndpointReference("http://whatever.duplicate.org");
-        msgCtxt = new MessageContext(null);
+        msgCtxt = new MessageContext();
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         msgCtxt.setEnvelope(defaultEnvelope);

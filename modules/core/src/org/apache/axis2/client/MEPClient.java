@@ -347,7 +347,8 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
-        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+        MessageContext msgctx = new MessageContext();
+        msgctx.setConfigurationContext(serviceContext.getConfigurationContext());
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
 
         if (toSend != null) {

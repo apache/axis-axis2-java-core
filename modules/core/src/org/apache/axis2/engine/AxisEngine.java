@@ -26,15 +26,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,10 +122,11 @@ public class AxisEngine {
             throw new AxisFault(Messages.getMessage("errorwhileProcessingFault"));
         }
 
-        MessageContext faultContext = new MessageContext(engineContext,
-                processingContext.getSessionContext(),
-                processingContext.getTransportIn(),
-                processingContext.getTransportOut());
+        MessageContext faultContext = new MessageContext();
+        faultContext.setConfigurationContext(engineContext);
+        faultContext.setSessionContext(processingContext.getSessionContext());
+        faultContext.setTransportIn(processingContext.getTransportIn());
+        faultContext.setTransportOut(processingContext.getTransportOut());
 
         faultContext.setProcessingFault(true);
 

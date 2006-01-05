@@ -77,9 +77,6 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         imglbl = new LogoPage();
         getContentPane().add(imglbl);
         setVisible(true);
-//        setBackground(Color.white);
-//        getContentPane().setBackground(Color.white);
-        // setSize(getPreferredSize());
     }
 
 
@@ -90,9 +87,6 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
     public static void main(String args[]) {
         Axi2PluginPage window = new Axi2PluginPage();
         window.showUI();
-//        window.setTitle("Axi2PluginPage");
-//        window.pack();
-//        window.show();
     }
 
     public void actionPerformed(ActionEvent e) {

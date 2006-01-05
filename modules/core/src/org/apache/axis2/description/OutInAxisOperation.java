@@ -137,6 +137,7 @@ class OutInAxisOperationClient implements OperationClient {
     public void addMessageContext(MessageContext mc) throws AxisFault {
         axisOp.registerOperationContext(mc, oc);
         mc.setServiceContext(sc);
+        mc.setConfigurationContext(sc.getConfigurationContext());
     }
 
     /**
@@ -291,9 +292,12 @@ class OutInAxisOperationClient implements OperationClient {
         engine.send(msgctx);
 
         // create the responseMessageContext
-        MessageContext responseMessageContext = new MessageContext(msgctx
-                .getConfigurationContext(), msgctx.getSessionContext(), msgctx
-                .getTransportIn(), msgctx.getTransportOut());
+        MessageContext responseMessageContext = new MessageContext();
+
+        responseMessageContext.setConfigurationContext(msgctx.getConfigurationContext());
+        responseMessageContext.setSessionContext(msgctx.getSessionContext());
+        responseMessageContext.setTransportIn(msgctx.getTransportIn());
+        responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
                 .getProperty(MessageContext.TRANSPORT_IN));

@@ -23,6 +23,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 
 import javax.servlet.ServletConfig;
@@ -46,18 +47,20 @@ public class AxisServlet extends HttpServlet {
     private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
     private ConfigurationContext configContext;
+    private AxisConfiguration axisConfiguration;
     private ListingAgent lister;
 
     private MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                               MessageContext msgContext, HttpServletResponse httpServletResponse,
                                                               HttpServletRequest httpServletRequest)
             throws AxisFault {
-        msgContext =
-                new MessageContext(configContext, (SessionContext) sessionContext,
-                        configContext.getAxisConfiguration()
-                                .getTransportIn(new QName(Constants
-                                .TRANSPORT_HTTP)), configContext.getAxisConfiguration()
-                        .getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+        msgContext = new MessageContext();
+        msgContext.setConfigurationContext(configContext);
+        msgContext.setSessionContext((SessionContext) sessionContext);
+        msgContext.setTransportIn(axisConfiguration.getTransportIn(new QName(Constants
+                .TRANSPORT_HTTP)));
+        msgContext.setTransportOut(axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(httpServletResponse));
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
@@ -185,6 +188,7 @@ public class AxisServlet extends HttpServlet {
         try {
             configContext = initConfigContext(config);
             lister = new ListingAgent(configContext);
+            axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
         } catch (Exception e) {
             throw new ServletException(e);

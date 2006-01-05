@@ -39,7 +39,7 @@ public class EnginePausingTest extends TestCase {
 
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
-    private ConfigurationContext engineContext;
+    private ConfigurationContext configConetxt;
 
     private TransportOutDescription transportOut;
     private TransportInDescription transportIn;
@@ -50,7 +50,7 @@ public class EnginePausingTest extends TestCase {
         super(arg0);
         executedHandlers = new ArrayList();
         AxisConfiguration engineRegistry = new AxisConfiguration();
-        engineContext = new ConfigurationContext(engineRegistry);
+        configConetxt = new ConfigurationContext(engineRegistry);
         transportOut = new TransportOutDescription(new QName("null"));
         transportOut.setSender(new CommonsHTTPTransportSender());
         transportIn = new TransportInDescription(new QName("null"));
@@ -60,7 +60,7 @@ public class EnginePausingTest extends TestCase {
     protected void setUp() throws Exception {
 
         AxisService service = new AxisService(serviceName.getLocalPart());
-        engineContext.getAxisConfiguration().addService(service);
+        configConetxt.getAxisConfiguration().addService(service);
 
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
@@ -71,7 +71,10 @@ public class EnginePausingTest extends TestCase {
         service.addOperation(axisOp);
         service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
-        mc = new MessageContext(engineContext, transportIn, transportOut);
+        mc = new MessageContext();
+        mc.setConfigurationContext(configConetxt);
+        mc.setTransportIn(transportIn);
+        mc.setTransportOut(transportOut);
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
@@ -127,7 +130,7 @@ public class EnginePausingTest extends TestCase {
         mc.setTo(
                 new EndpointReference("axis2/services/NullService"));
         mc.setWSAAction("DummyOp");
-        AxisEngine engine = new AxisEngine(engineContext);
+        AxisEngine engine = new AxisEngine(configConetxt);
         engine.receive(mc);
         assertEquals(14, executedHandlers.size());
         for (int i = 0; i < 14; i++) {

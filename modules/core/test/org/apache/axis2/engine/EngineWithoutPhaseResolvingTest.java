@@ -38,7 +38,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private QName serviceName = new QName("axis/services/NullService");
     private QName operationName = new QName("NullOperation");
     private AxisService service;
-    private ConfigurationContext engineContext;
+    private ConfigurationContext configContext;
     private AxisOperation axisOp;
 
     public EngineWithoutPhaseResolvingTest() {
@@ -51,7 +51,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     protected void setUp() throws Exception {
 
         engineRegistry = new AxisConfiguration();
-        engineContext = new ConfigurationContext(engineRegistry);
+        configContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription(
                 new QName("null"));
@@ -71,10 +71,10 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         engineRegistry.addService(service);
         service.addOperation(axisOp);
 
-        mc =
-                new MessageContext(engineContext,
-                        transportIn,
-                        transport);
+        mc = new MessageContext();
+        mc.setConfigurationContext(configContext);
+        mc.setTransportIn(transportIn);
+        mc.setTransportOut(transport);
 
         OperationContext opCOntext = new OperationContext(axisOp);
 
@@ -94,7 +94,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     public void testServerReceive() throws Exception {
         mc.setTo(
                 new EndpointReference("axis/services/NullService"));
-        AxisEngine engine = new AxisEngine(engineContext);
+        AxisEngine engine = new AxisEngine(configContext);
         mc.setServerSide(true);
         engine.receive(mc);
     }

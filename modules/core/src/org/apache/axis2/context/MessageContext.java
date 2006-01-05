@@ -20,15 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
@@ -182,52 +174,13 @@ public class MessageContext extends AbstractContext {
     /**
      * Field sessionContext
      */
-    private final SessionContext sessionContext;
+    private SessionContext sessionContext;
 
     private transient TransportOutDescription transportOut;
 
     public MessageContext() {
-        this(null, null, null, null);
-    }
-
-    public MessageContext(ConfigurationContext configContext) {
-        this(configContext, null, null, null);
-    }
-
-    public MessageContext(ConfigurationContext configContext,
-            TransportInDescription transportIn,
-            TransportOutDescription transportOut) {
-        this(configContext, null, transportIn, transportOut);
-        this.options.setTransportIn(transportIn);
-        this.transportOutname = transportOut.getName();
-    }
-
-    /**
-     * @param sessionContext
-     * @param transportIn
-     * @param transportOut
-     */
-    public MessageContext(ConfigurationContext configContext,
-            SessionContext sessionContext, TransportInDescription transportIn,
-            TransportOutDescription transportOut) {
         super(null);
-
         options = new Options();
-
-        if (sessionContext == null) {
-            this.sessionContext = new SessionContext(null);
-        } else {
-            this.sessionContext = sessionContext;
-        }
-
-        setTransportIn(transportIn);
-        this.transportOut = transportOut;
-        this.configurationContext = configContext;
-
-        if (transportOut != null) {
-            this.transportOutname = transportOut.getName();
-        }
-
     }
 
     /**
@@ -312,17 +265,16 @@ public class MessageContext extends AbstractContext {
      * <p/> and the way of specifing module configuration is as follows
      * <moduleConfig name="addressing"> <parameter name="addressingPara"
      * locked="false">N/A</parameter> </moduleConfig>
-     * 
-     * @param key :
-     *            Parameter Name
+     *
+     * @param key        :
+     *                   Parameter Name
      * @param moduleName :
-     *            Name of the module
-     * @param handler
-     *            <code>HandlerDescription</code>
+     *                   Name of the module
+     * @param handler    <code>HandlerDescription</code>
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getModuleParameter(String key, String moduleName,
-            HandlerDescription handler) {
+                                        HandlerDescription handler) {
         Parameter param;
         ModuleConfiguration moduleConfig;
 
@@ -435,7 +387,7 @@ public class MessageContext extends AbstractContext {
      * <li> If parameter is not found or if axisService is null, search in
      * AxisConfiguration </li>
      * </ol>
-     * 
+     *
      * @param key
      * @return Parameter <code>Parameter</code>
      */
@@ -485,10 +437,8 @@ public class MessageContext extends AbstractContext {
     /**
      * Set a property for this message context.
      *
-     * @param name
-     *            name of the property
-     * @param value
-     *            the value to set
+     * @param name  name of the property
+     * @param value the value to set
      */
     public void setProperty(String name, Object value) {
         // we override this method here to make sure the properties are set on
@@ -502,8 +452,7 @@ public class MessageContext extends AbstractContext {
      * that the entire hierarchy is not present, I will start at whatever level
      * has been set and start there.
      *
-     * @param name
-     *            name of the property to search for
+     * @param name name of the property to search for
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
@@ -574,6 +523,11 @@ public class MessageContext extends AbstractContext {
     public SessionContext getSessionContext() {
         return sessionContext;
     }
+
+    public void setSessionContext(SessionContext sessionContext) {
+        this.sessionContext = sessionContext;
+    }
+
 
     /**
      * @return Returns soap action.
@@ -747,7 +701,7 @@ public class MessageContext extends AbstractContext {
      * causes the current handler/phase indexes to reset to 0, since we have new
      * Handlers to execute (this usually only happens at initialization and when
      * a fault occurs).
-     * 
+     *
      * @param executionChain
      */
     public void setExecutionChain(ArrayList executionChain) {
@@ -866,7 +820,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Sets the service context id.
-     * 
+     *
      * @param serviceContextID
      */
     public void setServiceContextID(String serviceContextID) {
@@ -947,9 +901,8 @@ public class MessageContext extends AbstractContext {
      * parent so that that becomes the default. That allows the user to override
      * specific options on a given message context and not affect the overall
      * options.
-     * 
-     * @param options
-     *            the options to set
+     *
+     * @param options the options to set
      */
     public void setOptions(Options options) {
         this.options.setParent(options);

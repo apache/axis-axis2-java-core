@@ -19,11 +19,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.UUIDGenerator;
 
@@ -63,10 +59,14 @@ public class OperationContextTest extends AbstractTestCase {
     }
 
     public MessageContext getBasicMessageContext() throws AxisFault {
-
-        return new MessageContext(configContext, new TransportInDescription(
-                new QName("axis")), new TransportOutDescription(new QName(
+        MessageContext messageContext = new MessageContext();
+        messageContext.setConfigurationContext(configContext);
+        messageContext.setTransportIn(new TransportInDescription(
+                new QName("axis")));
+        messageContext.setTransportOut(new TransportOutDescription(new QName(
                 "axis")));
+
+        return messageContext;
 
     }
 

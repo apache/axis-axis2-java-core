@@ -197,7 +197,8 @@ public class SimpleTest extends TestCase {
         client.setOptions(options);
         OperationClient opClient = client.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClient.setOptions(options);
-        MessageContext msgConetxt = new MessageContext(configcontext);
+        MessageContext msgConetxt = new MessageContext();
+        msgConetxt.setConfigurationContext(configcontext);
         options.setTo(new EndpointReference("local://services/testService"));
 
         msgConetxt.setEnvelope(env);

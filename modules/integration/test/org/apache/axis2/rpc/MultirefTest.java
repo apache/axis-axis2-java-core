@@ -131,7 +131,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+        reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -183,7 +184,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+         reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -230,7 +232,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+         reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -281,7 +284,8 @@ public class MultirefTest extends TestCase {
                     .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
             RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
             rpcClient.setOptions(options);
-            MessageContext reqMessageContext = new MessageContext(configConetxt);
+            MessageContext reqMessageContext = new MessageContext();
+             reqMessageContext.setConfigurationContext(configConetxt);
             OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
             opClinet.setOptions(options);
             reqMessageContext.setEnvelope(envelope);
@@ -340,7 +344,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+         reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -400,7 +405,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+         reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -461,7 +467,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+         reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -536,7 +543,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+         reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -602,7 +610,8 @@ public class MultirefTest extends TestCase {
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = new MessageContext(configConetxt);
+        MessageContext reqMessageContext = new MessageContext();
+        reqMessageContext.setConfigurationContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);

@@ -61,7 +61,10 @@ public class LocalTransportReceiver {
 
             tOut.setSender(new LocalResponder(sender));
 
-            MessageContext msgCtx = new MessageContext(confContext, tIn, tOut);
+            MessageContext msgCtx = new MessageContext();
+            msgCtx.setConfigurationContext(confContext);
+            msgCtx.setTransportIn(tIn);
+            msgCtx.setTransportOut(tOut);
 
             msgCtx.setTo(to);
             msgCtx.setServerSide(true);

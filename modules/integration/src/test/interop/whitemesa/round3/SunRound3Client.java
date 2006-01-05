@@ -48,7 +48,8 @@ public class SunRound3Client {
 
             AxisConfiguration axisConfig = new AxisConfiguration();
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
-            MessageContext msgCtx = new MessageContext(configCtx);
+            MessageContext msgCtx = new MessageContext();
+            msgCtx.setConfigurationContext(configCtx);
 
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
             msgCtx.setEnvelope(requestEnvilope);

@@ -122,7 +122,8 @@ public class ClientUtil {
         } catch (DeploymentException e) {
             e.printStackTrace();
         }
-        msgContext = new MessageContext(configContext);
+        msgContext = new MessageContext();
+        msgContext.setConfigurationContext(configContext);
         msgContext.setEnvelope(reqEnv);
         return msgContext;
     }

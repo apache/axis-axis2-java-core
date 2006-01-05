@@ -216,8 +216,8 @@ public class InOutMEPClient extends MEPClient {
 
             // process the resule of the invocation
             if (callback.envelope != null) {
-                MessageContext resMsgctx =
-                        new MessageContext(serviceContext.getConfigurationContext());
+                MessageContext resMsgctx =new MessageContext();
+                resMsgctx.setConfigurationContext(serviceContext.getConfigurationContext());
 
                 resMsgctx.setEnvelope(callback.envelope);
 
@@ -372,9 +372,11 @@ public class InOutMEPClient extends MEPClient {
         engine.send(msgctx);
 
         // create the responseMessageContext
-        MessageContext responseMessageContext = new MessageContext(msgctx.getConfigurationContext(),
-                msgctx.getSessionContext(), msgctx.getTransportIn(),
-                msgctx.getTransportOut());
+        MessageContext responseMessageContext = new MessageContext();
+        responseMessageContext.setConfigurationContext(msgctx.getConfigurationContext());
+        responseMessageContext.setSessionContext(msgctx.getSessionContext());
+        responseMessageContext.setTransportIn(msgctx.getTransportIn());
+        responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN,
                 msgctx.getProperty(MessageContext.TRANSPORT_IN));

@@ -39,8 +39,8 @@ public class BeforeTest extends TestCase {
         Phase p2 = new Phase("PhaseB");
         phases.add(p2);
 
-        MessageContext msg = new MessageContext(
-                new ConfigurationContext(new AxisConfiguration()));
+        MessageContext msg = new MessageContext();
+        msg.setConfigurationContext(new ConfigurationContext(new AxisConfiguration()));
 
         PhaseHolder ph = new PhaseHolder(phases);
         HandlerDescription hm = new HandlerDescription();

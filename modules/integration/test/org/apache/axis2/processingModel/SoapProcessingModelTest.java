@@ -85,7 +85,8 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
                     .getServiceContext(clientService);
             serviceClient = new ServiceClient(configContext, clientService);
 
-            MessageContext msgctx = new MessageContext(serviceContext .getConfigurationContext());
+            MessageContext msgctx = new MessageContext();
+            msgctx.setConfigurationContext(serviceContext.getConfigurationContext());
 
             msgctx.setEnvelope(envelope);
 
