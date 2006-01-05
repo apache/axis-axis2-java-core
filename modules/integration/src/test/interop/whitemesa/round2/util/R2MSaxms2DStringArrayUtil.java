@@ -28,20 +28,16 @@ public class R2MSaxms2DStringArrayUtil implements SunRound2ClientUtil{
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        OMNamespace namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        OMNamespace namespace0 = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "xmlns");
-        OMNamespace namespace1 = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
-        OMNamespace namespace2 = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        OMNamespace namespace3 = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        OMNamespace namespace4 = reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-        OMNamespace namespace5 = reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        OMNamespace namespace6 = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
+
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        reqEnv.declareNamespace("http://soapinterop.org/", "tns");
+        reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
 
         OMElement operation = omfactory.createOMElement("echo2DStringArray", "http://soapinterop.org/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
+        reqEnv.getBody().addChild(operation);
         operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
 
         OMElement part = omfactory.createOMElement("input2DStringArray", "", null);

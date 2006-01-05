@@ -29,21 +29,15 @@ public class Round2EchoStringclientUtil implements SunRound2ClientUtil {
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "xmlns");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
+        
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-        reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
 
-        OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
+        OMElement operation = omfactory.createOMElement("Server.echoString", "http://soapinterop.org/", null);
+        reqEnv.getBody().addChild(operation);
         operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
 
         OMElement part = omfactory.createOMElement("inputString", "", null);
@@ -51,7 +45,6 @@ public class Round2EchoStringclientUtil implements SunRound2ClientUtil {
         part.addChild(omfactory.createText("String Argument"));
 
         operation.addChild(part);
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }

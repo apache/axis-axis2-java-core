@@ -40,19 +40,18 @@ import java.io.File;
 /**
  * class FrtrRound2InteropTest
  * To test Interoperability in Axis2 clients vs Frontier Server, Round 2
- * todo - all test failled!!!
  * WSDLs:-
  * "base"  	http://www.whitemesa.com/interop/InteropTest.wsdl
+ *
+ * All Tests failed, since the service tag is missing in the given WSDL
  */
 
 public class FrtrRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     File file = null;
     String url = "";
     String soapAction = "";
-    String FS = System.getProperty("file.separator");
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
@@ -60,7 +59,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
     public void testChack(){
             //just addding a test case , since all the tase casea are fail
         }
-    
+
 
     /**
      * Round2
@@ -74,8 +73,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStringRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -90,8 +88,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunBaseStringArrayRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -106,8 +103,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseIntegerRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -122,8 +118,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseIntegerArrayRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -138,8 +133,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseFloatRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -154,8 +148,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseFloatArrayRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -170,8 +163,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStructRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -186,8 +178,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStructArrayRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+       compareXML(retEnv, tempPath);
     }
 
     /**
@@ -202,8 +193,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoVoidClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseVoidRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -218,8 +208,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBase64Res.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -234,8 +223,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseDateRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 
@@ -251,8 +239,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseHexBinaryRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -267,8 +254,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseDecimalRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -283,8 +269,7 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBooleanRes.xml";
-        boolean results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 }
