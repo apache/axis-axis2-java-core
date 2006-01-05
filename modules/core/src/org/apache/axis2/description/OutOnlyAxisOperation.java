@@ -104,7 +104,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
     }
 
     /**
-     * Return a MEP client for an Out-only operation. This client can be used to
+     * Returns a MEP client for an Out-only operation. This client can be used to
      * interact with a server which is offering an In-only operation. To use the
      * client, you must call addMessageContext() with a message context and then
      * call execute() to execute the client. Note that the execute method's
@@ -163,18 +163,18 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Return the options used by this client. If you want to set a single
+     * Returns the options used by this client. If you want to set a single
      * option, then the right way is to do getOptions() and set specific
      * options.
      *
-     * @return the options, which will never be null.
+     * @return Returns the options, which will never be null.
      */
     public Options getOptions() {
         return options;
     }
 
     /**
-     * Add a message context to the client for processing. This method must not
+     * Adds a message context to the client for processing. This method must not
      * process the message - it only records it in the MEP client. Processing
      * only occurs when execute() is called.
      *
@@ -193,12 +193,12 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Return a message from the client - will return null if the requested
+     * Returns a message from the client - will return null if the requested
      * message is not available.
      *
      * @param messageLabel
      *            the message label of the desired message context
-     * @return the desired message context or null if its not available.
+     * @return Returns the desired message context or null if its not available.
      * @throws AxisFault
      *             if the message label is invalid
      */
@@ -211,7 +211,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Set the message receiver to be executed when a message comes into the MEP
+     * Sets the message receiver to be executed when a message comes into the MEP
      * and the MEP is executed. This is the way the MEP client provides
      * notification that a message has been received by it. Exactly when its
      * executed and under what conditions is a function of the specific MEP
@@ -223,7 +223,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Execute the MEP. What this does depends on the specific MEP client. The
+     * Executes the MEP. What this does depends on the specific MEP client. The
      * basic idea is to have the MEP client execute and do something with the
      * messages that have been added to it so far. For example, if its an Out-In
      * MEP, then if the Out message has been set, then executing the client asks
@@ -272,7 +272,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Reset the MEP client to a clean status after the MEP has completed. This
+     * Resets the MEP client to a clean status after the MEP has completed. This
      * is how you can reuse a MEP client. NOTE: this does not reset the options;
      * only the internal state so the client can be used again.
      *

@@ -92,7 +92,7 @@ public class AxisService
     private PolicyInclude policyInclude;
 
     /**
-     * Constructor AxisService
+     * Constructor AxisService.
      */
     public AxisService() {
         this.parameterInclude = new ParameterIncludeImpl();
@@ -105,7 +105,7 @@ public class AxisService
     }
 
     /**
-     * Constructor AxisService
+     * Constructor AxisService.
      */
     public AxisService(String name) {
         this();
@@ -121,7 +121,7 @@ public class AxisService
     }
 
     /**
-     * Adding module configuration , if there is moduleConfig tag in service
+     * Adds module configuration , if there is moduleConfig tag in service.
      *
      * @param moduleConfiguration
      */
@@ -130,7 +130,7 @@ public class AxisService
     }
 
     /**
-     * To add a operation to a service if a module requird to do so
+     * Adds an operation to a service if a module is required to do so.
      *
      * @param module
      */
@@ -166,7 +166,7 @@ public class AxisService
      */
 
     /**
-     * Method addOperation
+     * Method addOperation.
      *
      * @param axisOperation
      */
@@ -197,7 +197,7 @@ public class AxisService
     }
 
     /**
-     * Method addParameter
+     * Method addParameter.
      *
      * @param param
      */
@@ -214,10 +214,10 @@ public class AxisService
     }
 
     /**
-     * To get a copy from module operation
+     * Gets a copy from module operation.
      *
      * @param axisOperation
-     * @return
+     * @return Returns AxisOperation.
      * @throws AxisFault
      */
     private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
@@ -255,7 +255,7 @@ public class AxisService
      */
 
     /**
-     * To ebgage a module it is reuired to use this method
+     * Engages a module. It is required to use this method.
      *
      * @param moduleref
      */
@@ -296,7 +296,7 @@ public class AxisService
     }
 
     /**
-     * Map an action (ala WSA action) to the given operation. This is used by
+     * Maps an action (aka WSA action) to the given operation. This is used by
      * addressing based dispatching to figure out which operation it is that a
      * given message is for.
      *
@@ -367,9 +367,9 @@ public class AxisService
     }
 
     /**
-     * To get the description about the service which is sepcified in services.xml
+     * Gets the description about the service which is specified in services.xml.
      *
-     * @return String
+     * @return Returns String.
      */
     public String getServiceDescription() {
         return serviceDescription;
@@ -382,16 +382,16 @@ public class AxisService
      */
 
     /**
-     * Method getClassLoader
+     * Method getClassLoader.
      *
-     * @return ClassLoader
+     * @return Returns ClassLoader.
      */
     public ClassLoader getClassLoader() {
         return this.serviceClassLoader;
     }
 
     /**
-     * To get the control operation which are added by module like RM
+     * Gets the control operation which are added by module like RM.
      */
     public ArrayList getControlOperations() {
         Iterator op_itr = getOperations().values().iterator();
@@ -409,9 +409,9 @@ public class AxisService
     }
 
     /**
-     * Method getEngadgedModules
+     * Method getEngagedModules.
      *
-     * @return Collection
+     * @return Returns Collection.
      */
     public Collection getEngagedModules() {
         return engagedModules;
@@ -438,10 +438,10 @@ public class AxisService
     }
 
     /**
-     * Method getOperation
+     * Method getOperation.
      *
      * @param operationName
-     * @return AxisOperation
+     * @return Returns AxisOperation.
      */
     public AxisOperation getOperation(QName operationName) {
         AxisOperation axisOperation = (AxisOperation) operations.get(operationName);
@@ -454,25 +454,25 @@ public class AxisService
     }
 
     /**
-     * Return the AxisOperation which has been mapped to the given action.
+     * Returns the AxisOperation which has been mapped to the given action.
      *
      * @param action the action key
-     * @return the corresponding AxisOperation or null if it isn't found
+     * @return Returns the corresponding AxisOperation or null if it isn't found.
      */
     public AxisOperation getOperationByAction(String action) {
         return (AxisOperation) operationsAliasesMap.get(action);
     }
 
     /**
-     * This method will return the operation given particular SOAP Action. This
-     * method should only be called if there is only one Endpoint is defined for
-     * this Service. If more than one Endpoint exists one of them will be
+     * Returns the operation given a SOAP Action. This
+     * method should be called if only one Endpoint is defined for
+     * this Service. If more than one Endpoint exists, one of them will be
      * picked. If more than one Operation is found with the given SOAP Action;
-     * null will be ruturned. If no particular Operation is found with the given
+     * null will be returned. If no particular Operation is found with the given
      * SOAP Action; null will be returned.
      *
      * @param soapAction SOAP Action defined for the particular Operation
-     * @return A AxisOperation if a unque Operation can be found with the given
+     * @return Returns an AxisOperation if a unique Operation can be found with the given
      *         SOAP Action otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
@@ -492,9 +492,9 @@ public class AxisService
     }
 
     /**
-     * Method getOperations
+     * Method getOperations.
      *
-     * @return HashMap
+     * @return Returns HashMap
      */
     public HashMap getOperations() {
         return operations;
@@ -507,10 +507,10 @@ public class AxisService
      */
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return Parameter
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return parameterInclude.getParameter(name);
@@ -521,16 +521,16 @@ public class AxisService
     }
 
     /**
-     * To get the parent (which is AxisConfiguration in this case)
+     * Gets the parent. (AxisConfiguration in this case)
      *
-     * @return <code>AxisConfiguration</code>
+     * @return Returns <code>AxisConfiguration</code>
      */
     public AxisServiceGroup getParent() {
         return parent;
     }
 
     /**
-     * To get only the publish operations
+     * Gets only the published operations.
      */
     public ArrayList getPublishedOperations() {
         Iterator op_itr = getOperations().values().iterator();
@@ -571,7 +571,7 @@ public class AxisService
     }
 
     /**
-     * Set the description about the service wchih is specified in services.xml
+     * Sets the description about the service whish is specified in services.xml
      *
      * @param serviceDescription
      */
@@ -586,7 +586,7 @@ public class AxisService
      */
 
     /**
-     * Method setClassLoader
+     * Method setClassLoader.
      *
      * @param classLoader
      */
@@ -599,7 +599,7 @@ public class AxisService
     }
 
     /**
-     * This method will set the current time as last update time of the service
+     * Sets the current time as last update time of the service.
      */
     public void setLastupdate() {
         lastupdate = new Date().getTime();

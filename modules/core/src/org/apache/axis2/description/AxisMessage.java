@@ -26,8 +26,8 @@ import java.util.ArrayList;
 */
 
 /**
- * This class represent the messages in WSDL , and there can be message element in services.xml
- * those will be representd by this class
+ * This class represents the messages in WSDL. There can be message element in services.xml
+ * which are representd by this class.
  */
 public class AxisMessage implements ParameterInclude {
     private ArrayList handlerChain;

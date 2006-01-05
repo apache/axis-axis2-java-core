@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public interface ParameterInclude {
 
     /**
-     * Method addParameter
+     * Method addParameter.
      *
      * @param param
      */
@@ -37,22 +37,22 @@ public interface ParameterInclude {
     public void deserializeParameters(OMElement parameterElement) throws AxisFault;
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name);
 
     /**
-     * To get all the parameters in a given description
+     * Gets all the parameters in a given description.
      *
-     * @return
+     * @return Returns ArrayList.
      */
     ArrayList getParameters();
 
     /**
-     * to check whether the parameter is locked at any level
+     * Checks whether the parameter is locked at any level.
      */
     boolean isParameterLocked(String parameterName);
 }

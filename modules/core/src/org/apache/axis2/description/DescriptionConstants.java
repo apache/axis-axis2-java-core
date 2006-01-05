@@ -45,7 +45,7 @@ public interface DescriptionConstants {
     public static final String OPERATION_KEY = "OPERATION_KEY";
 
     /**
-     * Field PROVIDER_KEY
+     * Field MESSAGE_RECEIVER_KEY
      */
     public static final String MESSAGE_RECEIVER_KEY = "PROVIDER_KEY";
 
@@ -91,7 +91,7 @@ public interface DescriptionConstants {
     public static final String OUTFLOW_KEY = "OUTFLOW_KEY";
 
     /**
-     * Field FAULTFLOW_KEY
+     * Field IN_FAULTFLOW_KEY
      */
     public static final String IN_FAULTFLOW_KEY = "IN_FAULTFLOW_KEY";
 

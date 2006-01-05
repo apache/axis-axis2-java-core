@@ -76,7 +76,7 @@ public class AxisServiceGroup implements ParameterInclude {
     }
 
     /**
-     * Adding module configuration , if there is moduleConfig tag in service
+     * Adds module configuration , if there is moduleConfig tag in service.
      *
      * @param moduleConfiguration
      */

@@ -72,12 +72,12 @@ public abstract class AxisOperation
     public abstract void addMessage(AxisMessage message, String label);
 
     /**
-     * To add a message Context into a operation context depending on MEPs this method has to
-     * be overided.
-     * Depending on the mep operation description know how to fill the message conetxt map
+     * Adds a message context into an operation context. Depending on MEPs, this
+     * method has to be overridden.
+     * Depending on the mep operation description know how to fill the message context map
      * in operationContext.
-     * As an exmple if the MEP is IN-OUT then depending on messagelbl operation description
-     * should know how to keep them in corret locations
+     * As an example, if the MEP is IN-OUT then depending on messagable operation description
+     * should know how to keep them in correct locations.
      *
      * @param msgContext <code>MessageContext</code>
      * @param opContext  <code>OperationContext</code>
@@ -91,7 +91,7 @@ public abstract class AxisOperation
     }
 
     /**
-     * Adding module configuration , if there is moduleConfig tag in operation
+     * Adds module configuration, if there is moduleConfig tag in operation.
      *
      * @param moduleConfiguration
      */
@@ -100,9 +100,9 @@ public abstract class AxisOperation
     }
 
     /**
-     * Method addParameter
+     * Method addParameter.
      *
-     * @param param Parameter that will be added
+     * @param param Parameter that is added
      */
     public void addParameter(Parameter param) throws AxisFault {
         if (param == null) {
@@ -121,7 +121,7 @@ public abstract class AxisOperation
     }
 
     /**
-     * To ebgage a module it is reuired to use this method
+     * Engages a module. It is required to use this method.
      *
      * @param moduleref
      * @throws AxisFault
@@ -154,10 +154,10 @@ public abstract class AxisOperation
     }
 
     /**
-     * This will not create a new operation context if there is no one already.
+     * Creates a new operation context if there is not one already.
      *
      * @param msgContext
-     * @return
+     * @return Returns OperationContext.
      * @throws AxisFault
      */
     public OperationContext findForExistingOperationContext(MessageContext msgContext)
@@ -188,8 +188,8 @@ public abstract class AxisOperation
     }
 
     /**
-     * This method is responsible for finding a MEPContext for an incomming
-     * messages. An incomming message can be of two states.
+     * Finds a MEPContext for an incoming message. An incoming message can be 
+     * of two states.
      * <p/>
      * 1)This is a new incomming message of a given MEP. 2)This message is a
      * part of an MEP which has already begun.
@@ -251,9 +251,9 @@ public abstract class AxisOperation
     }
 
     /**
-     * This method will simply map the String URI of the Message exchange
-     * pattern to a integer. Further in the first lookup it will cash the looked
-     * up value so that the subsequent method calls will be extremely efficient.
+     * Maps the String URI of the Message exchange pattern to a integer. 
+     * Further, in the first lookup, it will cache the looked
+     * up value so that the subsequent method calls are extremely efficient.
      */
     public int getAxisSpecifMEPConstant() {
         if (this.mep != MEP_CONSTANT_INVALID) {
@@ -296,7 +296,7 @@ public abstract class AxisOperation
      */
 
     /**
-     * Method getEngadgedModules
+     * Method getEngagedModules.
      */
     public Collection getEngagedModules() {
         return engagedModules;
@@ -325,7 +325,7 @@ public abstract class AxisOperation
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name Name of the parameter
      */
@@ -365,13 +365,13 @@ public abstract class AxisOperation
     public boolean isParameterLocked(String parameterName) {
 
         // checking the locked value of parent
-        boolean loscked = false;
+        boolean locked = false;
 
         if (getParent() != null) {
-            loscked = getParent().isParameterLocked(parameterName);
+            locked = getParent().isParameterLocked(parameterName);
         }
 
-        if (loscked) {
+        if (locked) {
             return true;
         } else {
             Parameter parameter = getParameter(parameterName);

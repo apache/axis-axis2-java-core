@@ -32,7 +32,7 @@ import java.util.HashMap;
  * <li>parameters<li>
  * <li>handlers<li>
  * <ol>
- * <p>Handler are registered once they are avlible but they avalibe to all services if axis2.xml
+ * <p>Handler are registered once they are available. They are available to all services if axis2.xml
  * has a module ref="." or avalible to a single service if services.xml have module ref=".."</p>
  */
 public class ModuleDescription implements FlowInclude, ParameterInclude {
@@ -64,7 +64,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     private PolicyInclude policyInclude;
 
     /**
-     * Constructor ModuleDescription
+     * Constructor ModuleDescription.
      */
     public ModuleDescription() {
         operations = new HashMap();
@@ -72,7 +72,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * Constructor ModuleDescription
+     * Constructor ModuleDescription.
      *
      * @param name
      */
@@ -101,7 +101,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns Flow.
      */
     public Flow getFaultInFlow() {
         return flowInclude.getFaultInFlow();
@@ -112,14 +112,14 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns Flow.
      */
     public Flow getInFlow() {
         return flowInclude.getInFlow();
     }
 
     /**
-     * @return
+     * @return Returns Module.
      */
     public Module getModule() {
         return module;
@@ -130,7 +130,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns QName.
      */
     public QName getName() {
         return name;
@@ -141,7 +141,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns Flow.
      */
     public Flow getOutFlow() {
         return flowInclude.getOutFlow();
@@ -149,7 +149,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
 
     /**
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return parameters.getParameter(name);

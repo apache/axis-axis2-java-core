@@ -35,60 +35,60 @@ public interface Parameter {
     public static int OM_PARAMETER = 1;
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return int
+     * @return Returns int.
      */
     public String getName();
 
     /**
-     * To get the whole parameter element
+     * Gets the whole parameter element.
      *
-     * @return <code>OMElement<code>
+     * @return Returns <code>OMElement<code>.
      */
     public OMElement getParameterElement();
 
     /**
-     * Method getParameterType
+     * Method getParameterType.
      *
-     * @return int
+     * @return Returns int.
      */
     public int getParameterType();
 
     /**
-     * Method getValue
+     * Method getValue.
      *
-     * @return Object
+     * @return Returns Object.
      */
     public Object getValue();
 
     /**
-     * Method isLocked
+     * Method isLocked.
      *
-     * @return boolean
+     * @return Returns boolean.
      */
     public boolean isLocked();
 
     /**
-     * Method setLocked
+     * Method setLocked.
      *
      * @param value
      */
     public void setLocked(boolean value);
 
     /**
-     * Method setName
+     * Method setName.
      *
      * @param name
      */
     public void setName(String name);
 
     /**
-     * Parameter can be any thing it can be XML element with number of child elements , so if some
-     * one wants to access the XML elemet we need to store that , at the deployment time , to store
-     * the XMLelment of the parameter can use this method it will store whole
+     * Parameter can be any thing - it can be XML element with number of child elements. So if some
+     * one wants to access the XML element we need to store that. At the deployment time , to store
+     * the XMLelement of the parameter, use this method to store whole
      * <parameter name="ServiceClass1" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
-     * element
+     * element.
      *
      * @param element <code>OMElement<code>
      */
@@ -97,7 +97,7 @@ public interface Parameter {
     public void setParameterType(int type);
 
     /**
-     * Method setValue
+     * Method setValue.
      *
      * @param value
      */

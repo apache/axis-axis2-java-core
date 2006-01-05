@@ -39,9 +39,9 @@ public class FlowIncludeImpl implements FlowInclude {
     private Flow out;
 
     /**
-     * Method getFaultInFlow
+     * Method getFaultInFlow.
      *
-     * @return
+     * @return Returns Flow.
      */
     public Flow getFaultInFlow() {
         return In_fault;
@@ -52,25 +52,25 @@ public class FlowIncludeImpl implements FlowInclude {
     }
 
     /**
-     * Method getInFlow
+     * Method getInFlow.
      *
-     * @return
+     * @return Returns Flow.
      */
     public Flow getInFlow() {
         return in;
     }
 
     /**
-     * Method getOutFlow
+     * Method getOutFlow. 
      *
-     * @return
+     * @return Returns Flow.
      */
     public Flow getOutFlow() {
         return out;
     }
 
     /**
-     * Method setFaultInFlow
+     * Method setFaultInFlow.
      *
      * @param flow
      */
@@ -83,7 +83,7 @@ public class FlowIncludeImpl implements FlowInclude {
     }
 
     /**
-     * Method setInFlow
+     * Method setInFlow.
      *
      * @param flow
      */
@@ -92,7 +92,7 @@ public class FlowIncludeImpl implements FlowInclude {
     }
 
     /**
-     * Method setOutFlow
+     * Method setOutFlow.
      *
      * @param flow
      */

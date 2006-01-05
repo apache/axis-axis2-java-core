@@ -29,8 +29,7 @@ import java.util.ArrayList;
  * <parameter> ....</parameter>
  * </moduleConfig>
  * <p/>
- * for the initilal stage this just keep set of parameters , but when the time
- * bean will be store more
+ * Right now this just keeps stores the set of parameters 
  */
 public class ModuleConfiguration implements ParameterInclude {
     private QName moduleName;

@@ -38,7 +38,7 @@ public class FlowImpl implements Flow {
     }
 
     /**
-     * Method addHandler
+     * Method addHandler.
      *
      * @param handler
      */
@@ -47,19 +47,19 @@ public class FlowImpl implements Flow {
     }
 
     /**
-     * Method getHandler
+     * Method getHandler.
      *
      * @param index
-     * @return
+     * @return Returns HandlerDescription.
      */
     public HandlerDescription getHandler(int index) {
         return (HandlerDescription) list.get(index);
     }
 
     /**
-     * Method getHandlerCount
+     * Method getHandlerCount.
      *
-     * @return
+     * @return Returns int.
      */
     public int getHandlerCount() {
         return list.size();

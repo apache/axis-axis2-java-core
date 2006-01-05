@@ -24,24 +24,24 @@ package org.apache.axis2.description;
 public interface Flow {
 
     /**
-     * Method addHandler
+     * Method addHandler.
      *
      * @param handler
      */
     public void addHandler(HandlerDescription handler);
 
     /**
-     * Method getHandler
+     * Method getHandler.
      *
      * @param index
-     * @return
+     * @return Returns HandlerDescription.
      */
     public HandlerDescription getHandler(int index);
 
     /**
      * Method getHandlerCount
      *
-     * @return
+     * @return Returns int.
      */
     public int getHandlerCount();
 }

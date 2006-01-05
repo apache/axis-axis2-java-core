@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
- * represent the deployment information about the handler
+ * Represents the deployment information about the handler
  */
 public class HandlerDescription implements ParameterInclude {
 
@@ -56,7 +56,7 @@ public class HandlerDescription implements ParameterInclude {
     private PhaseRule rules;
 
     /**
-     * Constructor HandlerDescription
+     * Constructor HandlerDescription.
      */
     public HandlerDescription() {
         this.parameterInclude = new ParameterIncludeImpl();
@@ -64,7 +64,7 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * Constructor HandlerDescription
+     * Constructor HandlerDescription.
      *
      * @param name
      */
@@ -89,23 +89,23 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * Method getClassName
+     * Method getClassName.
      *
-     * @return
+     * @return Returns String.
      */
     public String getClassName() {
         return className;
     }
 
     /**
-     * @return
+     * @return Returns Handler.
      */
     public Handler getHandler() {
         return handler;
     }
 
     /**
-     * @return
+     * @return Returns QName.
      */
     public QName getName() {
         return name;
@@ -113,7 +113,7 @@ public class HandlerDescription implements ParameterInclude {
 
     /**
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return parameterInclude.getParameter(name);
@@ -128,9 +128,9 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * Method getRules
+     * Method getRules.
      *
-     * @return
+     * @return Returns PhaseRule.
      */
     public PhaseRule getRules() {
         return rules;
@@ -148,7 +148,7 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * Method setClassName
+     * Method setClassName.
      *
      * @param className
      */
@@ -175,7 +175,7 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * Method setRules
+     * Method setRules.
      *
      * @param rules
      */

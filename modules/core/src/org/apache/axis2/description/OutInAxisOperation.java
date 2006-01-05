@@ -57,7 +57,7 @@ public class OutInAxisOperation extends InOutAxisOperation {
     }
 
     /**
-     * Return a MEP client for an Out-IN operation. This client can be used to
+     * Returns a MEP client for an Out-IN operation. This client can be used to
      * interact with a server which is offering an In-Out operation. To use the
      * client, you must call addMessageContext() with a message context and then
      * call execute() to execute the client.
@@ -116,20 +116,20 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Return the options used by this client. If you want to set a single
-     * option, then the right way is to do getOptions() and set specific
+     * Returns the options used by this client. If you want to set a single
+     * option, then the right way is to call getOptions() and set specific
      * options.
      *
-     * @return the options, which will never be null.
+     * @return Returns the options, which will never be null.
      */
     public Options getOptions() {
         return options;
     }
 
     /**
-     * Adding message context to operation context , so that it will handle the
+     * Adds message context to operation context , so that it will handle the
      * logic correctly if the OperationContext is null then new one will be
-     * created , and oc will become null when some one call reset()
+     * created , and Operation Context will become null when some one calls reset().
      *
      * @param mc
      * @throws AxisFault
@@ -141,12 +141,12 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Retun the message context for a given message lebel
+     * Returns the message context for a given message label.
      *
      * @param messageLabel :
      *                     label of the message and that can be either "Out" or "In" and
      *                     nothing else
-     * @return
+     * @return Returns MessageContext.
      * @throws AxisFault
      */
     public MessageContext getMessageContext(String messageLabel)
@@ -159,7 +159,7 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Execute the MEP. What this does depends on the specific MEP client. The
+     * Executes the MEP. What this does depends on the specific MEP client. The
      * basic idea is to have the MEP client execute and do something with the
      * messages that have been added to it so far. For example, if its an Out-In
      * MEP, then if the Out message has been set, then executing the client asks
@@ -282,7 +282,7 @@ class OutInAxisOperationClient implements OperationClient {
      *
      * @param msgctx
      * @param transportIn
-     * @return
+     * @return Returns MessageContext.
      * @throws AxisFault
      */
     public MessageContext send(MessageContext msgctx,
@@ -327,7 +327,7 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
-     * Reset the MEP client to a clean status after the MEP has completed. This
+     * Resets the MEP client to a clean status after the MEP has completed. This
      * is how you can reuse a MEP client. NOTE: this does not reset the options;
      * only the internal state so the client can be used again.
      *

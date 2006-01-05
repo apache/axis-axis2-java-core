@@ -23,51 +23,51 @@ package org.apache.axis2.description;
 public interface FlowInclude {
 
     /**
-     * Method getFaultInFlow
+     * Method getFaultInFlow.
      *
-     * @return
+     * @return Returns Flow.
      */
     public Flow getFaultInFlow();
 
     public Flow getFaultOutFlow();
 
     /**
-     * Method getInFlow
+     * Method getInFlow.
      *
-     * @return
+     * @return Returns Flow.
      */
     public Flow getInFlow();
 
     /**
-     * Method getOutFlow
+     * Method getOutFlow.
      *
-     * @return
+     * @return Returns Flow.
      */
     public Flow getOutFlow();
 
     /**
-     * Method setFaultInFlow
+     * Method setFaultInFlow.
      *
      * @param faultFlow
      */
     public void setFaultInFlow(Flow faultFlow);
 
     /**
-     * Method setFaultInFlow
+     * Method setFaultOutFlow.
      *
      * @param faultFlow
      */
     public void setFaultOutFlow(Flow faultFlow);
 
     /**
-     * Method setInFlow
+     * Method setInFlow.
      *
      * @param inFlow
      */
     public void setInFlow(Flow inFlow);
 
     /**
-     * Method setOutFlow
+     * Method setOutFlow.
      *
      * @param outFlow
      */
