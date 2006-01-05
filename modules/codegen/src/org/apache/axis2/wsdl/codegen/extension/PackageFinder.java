@@ -27,9 +27,14 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
         if (packageName == null || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
             WSDLBinding binding = configuration.getWom().getBinding(
                     AxisBindingBuilder.AXIS_BINDING_QNAME);
-            String temp = binding.getBoundInterface().getName()
-                    .getNamespaceURI();
-            packageName = URLProcessor.makePackageName(temp);
+            if (binding != null &&
+                    binding.getBoundInterface() != null &&
+                    binding.getBoundInterface().getName() != null &&
+                    binding.getBoundInterface().getName().getNamespaceURI() != null) {
+                String temp = binding.getBoundInterface().getName()
+                        .getNamespaceURI();
+                packageName = URLProcessor.makePackageName(temp);
+            }
         }
 
         if (null == packageName || "".equals(packageName))
