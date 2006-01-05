@@ -55,7 +55,7 @@ public class NodeListImpl implements NodeList  {
     }
 
 	/**
-	 * Returns the numbre of nodes
+	 * Returns the number of nodes.
 	 * @see org.w3c.dom.NodeList#getLength()
 	 */
 	public int getLength() {
@@ -81,7 +81,7 @@ public class NodeListImpl implements NodeList  {
 
 	/**
 	 * Returns the node at the given index.
-	 * returns null if the index is invalid. 
+	 * Returns null if the index is invalid. 
 	 * @see org.w3c.dom.NodeList#item(int)
 	 */
 	public Node item(int index) {

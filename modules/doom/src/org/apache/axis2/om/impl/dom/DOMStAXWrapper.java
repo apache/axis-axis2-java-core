@@ -38,11 +38,11 @@ import java.util.Iterator;
 import java.util.Stack;
 
 /**
- * This is Exactly the same as org.apache.axis2.om.impl.llom.OMStAXWrapper
- * BUT this uses the org.apache.axis2.om.impl.dom.DOMNavigator
+ * This is exactly the same as org.apache.axis2.om.impl.llom.OMStAXWrapper.
+ * BUT this uses the org.apache.axis2.om.impl.dom.DOMNavigator.
  * 
  * Note  - This class also implements the streaming constants interface
- * to get access to the StAX constants
+ * to get access to the StAX constants.
  */
 public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
@@ -70,10 +70,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
     private boolean isFirst = true;
 
-    // navigable means the output should be taken from the navigator
+    // Navigable means the output should be taken from the navigator
     // as soon as the navigator returns a null navigable will be reset
     // to false and the subsequent events will be taken from the builder
-    // or the parser directly
+    // or the parser directly.
 
     /**
      * Field NAVIGABLE
@@ -137,7 +137,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     private boolean needToThrowEndDocument = false;
 
     /**
-     * Method setAllowSwitching
+     * Method setAllowSwitching.
      *
      * @param b
      */
@@ -146,9 +146,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method isAllowSwitching
+     * Method isAllowSwitching.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isAllowSwitching() {
         return switchingAllowed;
@@ -157,9 +157,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
      * When constructing the OMStaxWrapper, the creator must produce the
      * builder (an instance of the OMXMLparserWrapper of the input) and the
-     * Element Node to start parsing. The wrapper wil parse(proceed) until
-     * the end of the given element. hence care should be taken to pass the
-     * root element if the entire document is needed
+     * Element Node to start parsing. The wrapper parses(proceed) until
+     * the end of the given element. Hence care must be taken to pass the
+     * root element if the entire document is needed.
      *
      * @param builder
      * @param startNode
@@ -195,7 +195,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getPrefix()
      */
     public String getPrefix() {
@@ -215,7 +215,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getNamespaceURI()
      */
     public String getNamespaceURI() {
@@ -236,7 +236,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#hasName()
      */
     public boolean hasName() {
@@ -249,7 +249,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getLocalName()
      */
     public String getLocalName() {
@@ -267,7 +267,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns QName.
      * @see javax.xml.stream.XMLStreamReader#getName()
      */
     public QName getName() {
@@ -284,7 +284,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      * @see javax.xml.stream.XMLStreamReader#hasText()
      */
     public boolean hasText() {
@@ -294,7 +294,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns int.
      * @see javax.xml.stream.XMLStreamReader#getTextLength()
      */
     public int getTextLength() {
@@ -309,7 +309,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns int.
      * @see javax.xml.stream.XMLStreamReader#getTextStart()
      */
     public int getTextStart() {
@@ -327,7 +327,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @param chars
      * @param i1
      * @param i2
-     * @return
+     * @return Returns int.
      * @throws XMLStreamException
      * @see javax.xml.stream.XMLStreamReader#getTextCharacters(int, char[], int, int)
      */
@@ -349,7 +349,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns char[].
      * @see javax.xml.stream.XMLStreamReader#getTextCharacters()
      */
     public char[] getTextCharacters() {
@@ -367,7 +367,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getText()
      */
     public String getText() {
@@ -387,7 +387,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns int.
      * @see javax.xml.stream.XMLStreamReader#getEventType()
      */
 
@@ -398,7 +398,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getNamespaceURI
      */
     public String getNamespaceURI(int i) {
@@ -420,7 +420,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getNamespacePrefix
      */
     public String getNamespacePrefix(int i) {
@@ -441,7 +441,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns int.
      * @see javax.xml.stream.XMLStreamReader#getNamespaceCount()
      */
     public int getNamespaceCount() {
@@ -461,7 +461,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns boolean.
      * @see javax.xml.stream.XMLStreamReader#isAttributeSpecified
      */
     public boolean isAttributeSpecified(int i) {
@@ -482,7 +482,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getAttributeValue
      */
     public String getAttributeValue(int i) {
@@ -505,7 +505,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getAttributeType
      */
     public String getAttributeType(int i) {
@@ -526,7 +526,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getAttributePrefix
      */
     public String getAttributePrefix(int i) {
@@ -552,7 +552,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getAttributeLocalName
      */
     public String getAttributeLocalName(int i) {
@@ -579,7 +579,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns String.
      * @see javax.xml.stream.XMLStreamReader#getAttributeNamespace
      */
     public String getAttributeNamespace(int i) {
@@ -605,7 +605,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
     /**
      * @param i
-     * @return
+     * @return Returns QName.
      * @see javax.xml.stream.XMLStreamReader#getAttributeName
      */
     public QName getAttributeName(int i) {
@@ -624,7 +624,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns int.
      * @see javax.xml.stream.XMLStreamReader#getAttributeCount
      */
     public int getAttributeCount() {
@@ -647,11 +647,11 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     // todo
 
     /**
-     * Method getAttributeValue
+     * Method getAttributeValue.
      *
      * @param s
      * @param s1
-     * @return
+     * @return Returns String.
      */
     public String getAttributeValue(String s, String s1) {
         String returnString = null;
@@ -673,9 +673,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method isWhiteSpace
+     * Method isWhiteSpace.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isWhiteSpace() {
         boolean b;
@@ -688,9 +688,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method isCharacters
+     * Method isCharacters.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isCharacters() {
         boolean b;
@@ -703,9 +703,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method isEndElement
+     * Method isEndElement.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isEndElement() {
         boolean b;
@@ -729,9 +729,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method isStartElement
+     * Method isStartElement.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isStartElement() {
         boolean b;
@@ -744,10 +744,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method getNamespaceURI
+     * Method getNamespaceURI.
      *
      * @param s
-     * @return
+     * @return Returns String.
      */
     public String getNamespaceURI(String s) {
         String returnString = null;
@@ -764,7 +764,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method close
+     * Method close.
      *
      * @throws XMLStreamException
      */
@@ -777,9 +777,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method hasNext
+     * Method hasNext.
      *
-     * @return
+     * @return Returns boolean.
      * @throws XMLStreamException
      */
     public boolean hasNext() throws XMLStreamException {
@@ -793,7 +793,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
      * Not implemented yet
      *
-     * @return
+     * @return Returns int.
      * @throws org.apache.axis2.om.impl.llom.exception.OMStreamingException
      *
      * @throws XMLStreamException
@@ -803,7 +803,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * @return
+     * @return Returns String.
      * @throws XMLStreamException
      * @see javax.xml.stream.XMLStreamReader#getElementText()
      */
@@ -826,9 +826,9 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method next
+     * Method next.
      *
-     * @return
+     * @return Returns int.
      * @throws XMLStreamException
      */
     public int next() throws XMLStreamException {
@@ -873,10 +873,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method getProperty
+     * Method getProperty.
      *
      * @param s
-     * @return
+     * @return Returns Object.
      * @throws IllegalArgumentException
      */
     public Object getProperty(String s) throws IllegalArgumentException {
@@ -884,11 +884,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * This is a very important method. this keeps the
-     * navigator one step ahead and pushes the navigator
-     * one event ahead. If the nextNode is null then navigable is set to false;
-     * At the same time the parser and builder are set up for the upcoming event
-     * generation
+     * This is a very important method. This keeps the navigator one step 
+     * ahead and pushes the navigator one event ahead. If the nextNode is null
+     * then navigable is set to false; At the same time the parser and builder 
+     * are set up for the upcoming event generation
      *
      * @throws XMLStreamException
      */
@@ -903,7 +902,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method updateNextNode
+     * Method updateNextNode.
      */
     private void updateNextNode() {
         if (navigator.isNavigable()) {
@@ -929,7 +928,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method updateCompleteStatus
+     * Method updateCompleteStatus.
      */
     private void updateCompleteStatus() {
         if (state == NAVIGABLE) {
@@ -948,36 +947,36 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method getNamespaceContext
+     * Method getNamespaceContext.
      *
-     * @return
+     * @return Returns NamespaceContext.
      */
     public NamespaceContext getNamespaceContext() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Method getEncoding
+     * Method getEncoding.
      *
-     * @return
+     * @return Returns String.
      */
     public String getEncoding() {
         return null;
     }
 
     /**
-     * Method getLocation
+     * Method getLocation.
      *
-     * @return
+     * @return Returns Location.
      */
     public Location getLocation() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Method getVersion
+     * Method getVersion.
      *
-     * @return
+     * @return Returns String.
      */
     public String getVersion() {
         return "1.0"; //todo put the constant
@@ -985,45 +984,45 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
 
     /**
-     * Method isStandalone
+     * Method isStandalone.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isStandalone() {
         return true;
     }
 
     /**
-     * Method standaloneSet
+     * Method standaloneSet.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean standaloneSet() {
         return false;
     }
 
     /**
-     * Method getCharacterEncodingScheme
+     * Method getCharacterEncodingScheme.
      *
-     * @return
+     * @return Returns String.
      */
     public String getCharacterEncodingScheme() {
         return "utf-8";
     }
 
     /**
-     * Method getPITarget
+     * Method getPITarget.
      *
-     * @return
+     * @return Returns String.
      */
     public String getPITarget() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Method getPIData
+     * Method getPIData.
      *
-     * @return
+     * @return Returns String.
      */
     public String getPIData() {
         throw new UnsupportedOperationException();
@@ -1041,7 +1040,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * Method generateEvents
      *
      * @param node
-     * @return
+     * @return Returns int.
      */
     private int generateEvents(OMNode node) {
         int returnEvent = 0;
@@ -1067,10 +1066,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method generateElementEvents
+     * Method generateElementEvents.
      *
      * @param elt
-     * @return
+     * @return Returns int.
      */
     private int generateElementEvents(OMElement elt) {
         int returnValue = START_ELEMENT;
@@ -1084,27 +1083,27 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Method generateTextEvents
+     * Method generateTextEvents.
      *
-     * @return
+     * @return Returns int.
      */
     private int generateTextEvents() {
         return CHARACTERS;
     }
 
     /**
-     * Method generateCommentEvents
+     * Method generateCommentEvents.
      *
-     * @return
+     * @return Returns int.
      */
     private int generateCommentEvents() {
         return COMMENT;
     }
 
     /**
-     * Method generateCdataEvents
+     * Method generateCdataEvents.
      *
-     * @return
+     * @return Returns int.
      */
     private int generateCdataEvents() {
         return CDATA;
@@ -1117,10 +1116,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
 
     /**
-     * helper method
+     * helper method.
      *
      * @param it
-     * @return
+     * @return Returns int.
      */
     private int getCount(Iterator it) {
         int count = 0;
@@ -1134,11 +1133,11 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Helper method
+     * Helper method.
      *
      * @param it
      * @param index
-     * @return
+     * @return Returns Object.
      */
     private Object getItemFromIterator(Iterator it, int index) {
         int count = 0;
@@ -1161,10 +1160,10 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Helper method
+     * Helper method.
      *
      * @param element
-     * @return
+     * @return Returns QName.
      */
     private QName getQName(OMElement element) {
         QName returnName;
@@ -1187,7 +1186,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
      * @param elt
      * @param index
-     * @return
+     * @return Returns OMAttribute.
      */
     private OMAttribute getAttribute(OMElement elt, int index) {
         OMAttribute returnAttrib = null;

@@ -69,7 +69,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	/**
-	 * Returns an iterator of child nodes having a given qname
+	 * Returns an iterator of child nodes having a given qname.
 	 * @see org.apache.axis2.om.OMContainer#getChildrenWithName(javax.xml.namespace.QName)
 	 */
 	public Iterator getChildrenWithName(QName elementQName) throws OMException {
@@ -78,7 +78,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	/**
-	 * Return the first OMElement child node
+	 * Returns the first OMElement child node.
 	 * @see org.apache.axis2.om.OMContainer#getFirstChildWithName(javax.xml.namespace.QName)
 	 */
 	public OMElement getFirstChildWithName(QName elementQName)
@@ -141,8 +141,8 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	/**
-	 * Inserts newChild before the refChild
-	 * If the refChild is null then the newChild is nade the last child  
+	 * Inserts newChild before the refChild.
+	 * If the refChild is null then the newChild is made the last child.  
 	 */
 	public Node insertBefore(Node newChild, Node refChild) throws DOMException {
 	
@@ -276,7 +276,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	/**
-	 * Replaces the oldChild with the newChild
+	 * Replaces the oldChild with the newChild.
 	 */
 	public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
 		ChildNode newDomChild = (ChildNode)newChild;
@@ -356,7 +356,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	
 	
 	/**
-	 * Removes the given child from the DOM Tree
+	 * Removes the given child from the DOM Tree.
 	 */
 	public Node removeChild(Node oldChild) throws DOMException {
 		//Check if this node is readonly

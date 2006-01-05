@@ -119,7 +119,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
 
     /*
-      * Overidden in ElementImpl and AttrImpl
+      * Overidden in ElementImpl and AttrImpl.
       */
     public String getPrefix() {
         return null;
@@ -137,7 +137,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /**
-     * Find the Document that this Node belongs to (the document in
+     * Finds the document that this Node belongs to (the document in
      * whose context the Node was created). The Node may or may not
      */
     public Document getOwnerDocument() {
@@ -145,7 +145,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /**
-     * Return the collection of attributes associated with this node,
+     * Returns the collection of attributes associated with this node,
      * or null if none. At this writing, Element is the only type of node
      * which will ever have attributes.
      *
@@ -155,7 +155,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         return null; // overridden in ElementImpl
     }
 
-    /** The first child of this Node, or null if none.
+    /** Gets the first child of this Node, or null if none.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
      * @see ParentNode
@@ -165,7 +165,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
 
-    /** The first child of this Node, or null if none.
+    /** Gets the last child of this Node, or null if none.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
      * @see ParentNode
@@ -174,7 +174,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         return null;
     }
 
-    /** The next child of this node's parent, or null if none */
+    /** Returns the next child of this node's parent, or null if none. */
     public Node getNextSibling() {
         return null;            // default behavior, overriden in ChildNode
     }
@@ -186,13 +186,13 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /*
-     * same as above but returns internal type
+     * Same as getParentNode but returns internal type NodeImpl.
      */
     NodeImpl parentNode() {
         return null;
     }
 
-    /** The previous child of this node's parent, or null if none */
+    /** Returns the previous child of this node's parent, or null if none. */
     public Node getPreviousSibling() {
         return null;            // default behavior, overriden in ChildNode
     }
@@ -293,25 +293,25 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     //
 
     /**
-     * NodeList method: Count the immediate children of this node
+     * NodeList method: Returns the number of immediate children of this node.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
      * @see ParentNode
      *
-     * @return int
+     * @return Returns int.
      */
     public int getLength() {
         return 0;
     }
 
     /**
-     * NodeList method: Return the Nth immediate child of this node, or
+     * NodeList method: Returns the Nth immediate child of this node, or
      * null if the index is out of bounds.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
      * @see ParentNode
      *
-     * @return org.w3c.dom.Node
+     * @return Returns org.w3c.dom.Node
      * @param index
      */
     public Node item(int index) {
@@ -395,7 +395,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /**
-     * There no concept of caching in this OM-DOM implementation
+     * There no concept of caching in this OM-DOM implementation.
      */
     public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
         this.serialize(omOutput);
@@ -428,14 +428,14 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
 
     /**
-     * default behavior, overriden in ChildNode
+     * Default behavior returns null, overriden in ChildNode.
      */
     public OMNode getPreviousOMSibling() {
         return null;
     }
 
     /**
-     * default behavior, overriden in ChildNode
+     * Default behavior returns null, overriden in ChildNode.
      */
     public OMNode getNextOMSibling() {
         return null;
@@ -456,7 +456,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /**
-     * Build next element
+     * Builds next element.
      */
     public void build() {
         while (!done)
@@ -464,7 +464,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /**
-     * sets the owner document
+     * Sets the owner document.
      * @param document
      */
     protected void setOwnerDocument(DocumentImpl document) {

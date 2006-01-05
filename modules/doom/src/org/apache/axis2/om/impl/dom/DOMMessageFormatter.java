@@ -51,7 +51,7 @@ public class DOMMessageFormatter {
      *                  of the arguments must match that of the placeholders
      *                  in the actual message.
      *
-     * @return          the formatted message.
+     * @return          Returns the formatted message.
      *
      * @throws MissingResourceException Thrown if the message with the
      *                                  specified key cannot be found.
@@ -113,7 +113,7 @@ public class DOMMessageFormatter {
         return null;
     }
     /**
-     * Initialize Message Formatter.
+     * Initializes Message Formatter.
      */
     public static void init(){
         if (locale != null) {
@@ -128,7 +128,7 @@ public class DOMMessageFormatter {
     }
     
     /**
-     * setLocale to be used by the formatter.
+     * Sets Locale to be used by the formatter.
      * @param locale
      */
     public static void setLocale(Locale dlocale){

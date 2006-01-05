@@ -88,7 +88,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}	
 
 	///
-	///Override ChildNode specific methods
+	///Overrides ChildNode specific methods.
 	///
 	public OMNode getNextOMSibling() throws OMException {
 		throw new UnsupportedOperationException("This is the document node");
@@ -374,7 +374,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
     }
 	
 	/**
-	 * Returns the document element
+	 * Returns the document element.
 	 * @see org.apache.axis2.om.OMDocument#getOMDocumentElement()
 	 */
 	public OMElement getOMDocumentElement() {
@@ -389,7 +389,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 	
 	/**
-	 * Returns the document element
+	 * Returns the document element.
 	 * @see org.w3c.dom.Document#getDocumentElement()
 	 */
 	public Element getDocumentElement() {
@@ -398,8 +398,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 	
     /**
-     * Borrowed from the Xerces impl
-     * 
+     * Borrowed from the Xerces impl.
      * Checks if the given qualified name is legal with respect
      * to the version of XML to which this document must conform.
      *

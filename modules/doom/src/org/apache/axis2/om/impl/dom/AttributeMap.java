@@ -43,7 +43,7 @@ public class AttributeMap extends NamedNodeMapImpl {
 	}
 	
 	/**
-	 * This is mostly a copy of the Xerces impl
+	 * Almost a copy of the Xerces impl.
 	 */
 	public Node setNamedItem(Node attribute) throws DOMException {
         
@@ -108,7 +108,7 @@ public class AttributeMap extends NamedNodeMapImpl {
 	}
 	
 	/**
-	 * This is mostly a copy of the Xerces impl
+	 * Almost a copy of the Xerces impl.
 	 */
 	public Node setNamedItemNS(Node attribute) throws DOMException {
 		if (isReadOnly()) {
@@ -174,7 +174,7 @@ public class AttributeMap extends NamedNodeMapImpl {
 	
 
     /**
-     * BORROWED from Xerces impl
+     * BORROWED from Xerces impl.
      * Cloning a NamedNodeMap is a DEEP OPERATION; it always clones
      * all the nodes contained in the map.
      */
@@ -188,7 +188,7 @@ public class AttributeMap extends NamedNodeMapImpl {
     } // cloneMap():AttributeMap
 
     /**
-     * BORROWED from Xerces impl
+     * BORROWED from Xerces impl.
      */
     protected void cloneContent(NamedNodeMapImpl srcmap) {
         Vector srcnodes = srcmap.nodes;

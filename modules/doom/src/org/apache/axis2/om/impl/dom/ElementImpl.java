@@ -73,7 +73,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 	
 	/**
-	 * Create a  new element with the namespace
+	 * Creates a  new element with the namespace.
 	 * @param ownerDocument
 	 * @param tagName
 	 * @param ns
@@ -152,7 +152,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Returns the value of the namespace URI
+	 * Returns the value of the namespace URI.
 	 */
 	public String getNamespaceURI() {
 		return (this.namespace != null)?this.namespace.getName(): null;
@@ -227,7 +227,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Removes the specified attribute node
+	 * Removes the specified attribute node.
 	 * @see org.w3c.dom.Element#removeAttributeNode(org.w3c.dom.Attr)
 	 */
 	public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
@@ -251,7 +251,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Returns whether the  given attr is available or not
+	 * Returns whether the given attribute is available or not.
 	 * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
 	 */
 	public boolean hasAttributeNS(String namespaceURI, String localName) {
@@ -259,8 +259,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 	
 	/**
-	 * Look in the local list of attributes and return if found
-	 * if the local list is null return null
+	 * Looks in the local list of attributes and returns if found.
+	 * If the local list is null, returns "".
 	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
 	 */
 	public String getAttribute(String name) {
@@ -293,7 +293,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Retrieves an Attr node by local name and namespace URI. 
+	 * Retrieves an attribute node by local name and namespace URI. 
 	 * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
 	 */
 	public Attr getAttributeNodeNS(String namespaceURI, String localName) {
@@ -412,7 +412,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 	
 	/**
-	 * Adds a new attribute
+	 * Adds a new attribute.
 	 * @see org.w3c.dom.Element#setAttributeNS(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
@@ -485,7 +485,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Returns whether this element contains any attr or not
+	 * Returns whether this element contains any attribute or not.
 	 */
     public boolean hasAttributes() {
     	
@@ -557,8 +557,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * This will allow overriding an existing declaration if the same 
-	 * prefix was used 
+	 * Allows overriding an existing declaration if the same prefix was used.
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(org.apache.axis2.om.OMNamespace)
 	 */
 	public OMNamespace declareNamespace(OMNamespace namespace) {
@@ -574,8 +573,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * This will allow overriding an existing declaration
-	 * if the same prefix was used 
+	 * Allows overriding an existing declaration if the same prefix was used.
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(java.lang.String, java.lang.String)
 	 */
 	public OMNamespace declareNamespace(String uri, String prefix) {
@@ -623,9 +621,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
 
     /**
-     * This will ckeck for the namespace <B>only</B> in the current Element.
-     * <p/>
-     * This can also be used to retrieve the prefix of a known namespace URI
+     * Checks for the namespace <B>only</B> in the current Element.
+     * This can also be used to retrieve the prefix of a known namespace URI.
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
     	
@@ -679,10 +676,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
    /**
-    * Return a named attribute's value, if present.
+    * Returns a named attribute's value, if present.
     *
     * @param qname the qualified name to search for
-    * @return a String containing the attribute value, or null
+    * @return Returns a String containing the attribute value, or null.
     */
    public String getAttributeValue(QName qname) {
        OMAttribute attr = getAttribute(qname);
@@ -696,7 +693,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Returns the first Element node
+	 * Returns the first Element node.
 	 * @see org.apache.axis2.om.OMElement#getFirstElement()
 	 */
 	public OMElement getFirstElement() {
@@ -712,7 +709,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Returns the namespace of this element
+	 * Returns the namespace of this element.
 	 * @see org.apache.axis2.om.OMElement#getNamespace()
 	 */
 	public OMNamespace getNamespace() throws OMException {
@@ -720,7 +717,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Returns the QName of this element
+	 * Returns the QName of this element.
 	 * @see org.apache.axis2.om.OMElement#getQName()
 	 */
 	public QName getQName() {
@@ -740,7 +737,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 
 
     /**
-	 * select all the text children and concat them to a single string
+	 * Gets all the text children and concatinates them to a single string.
 	 * @see org.apache.axis2.om.OMElement#getText()
 	 */
 	public String getText() {
@@ -763,7 +760,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Removes an attribute fron the element
+	 * Removes an attribute from the element.
 	 * 
 	 * @see org.apache.axis2.om.OMElement#removeAttribute(org.apache.axis2.om.OMAttribute)
 	 */
@@ -772,7 +769,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Sets the OM builder
+	 * Sets the OM builder.
 	 * @see org.apache.axis2.om.OMElement#setBuilder(org.apache.axis2.om.OMXMLParserWrapper)
 	 */
 	public void setBuilder(OMXMLParserWrapper wrapper) {
@@ -780,7 +777,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Set the local name
+	 * Sets the local name.
 	 * @see org.apache.axis2.om.OMElement#setLocalName(java.lang.String)
 	 */
 	public void setLocalName(String localName) {
@@ -788,7 +785,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Set the namespace
+	 * Sets the namespace.
 	 * @see org.apache.axis2.om.OMElement#setNamespace(org.apache.axis2.om.OMNamespace)
 	 */
 	public void setNamespace(OMNamespace namespace) {
@@ -796,8 +793,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Creates a text node with the given value and adds it to the 
-	 * element
+	 * Creates a text node with the given value and adds it to the element.
 	 * @see org.apache.axis2.om.OMElement#setText(java.lang.String)
 	 */
 	public void setText(String text) {
@@ -889,7 +885,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     /**
      * getXMLStreamReader
      *
-     * @return reader
+     * @return Returns reader.
      */
     private XMLStreamReader getXMLStreamReader(boolean cache) {
         if ((builder == null) && !cache) {
@@ -911,7 +907,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
     
     /**
-     * Overridden toString() for ease of debuging
+     * Overridden toString() for ease of debugging.
      * @see java.lang.Object#toString()
      */
     public String toString() {
@@ -959,7 +955,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
     
     /**
-     * returns the namespace prefix of this element node
+     * Returns the namespace prefix of this element node
      * @see org.w3c.dom.Node#getPrefix()
      */
     public String getPrefix()
@@ -983,7 +979,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
      * unprefixed qnames resolve to the local namespace
      *
      * @param qname prefixed qname string to resolve
-     * @return null for any failure to extract a qname.
+     * @return Returns null for any failure to extract a qname.
      */
     public QName resolveQName(String qname) {
         ElementHelper helper = new ElementHelper(this);
@@ -991,7 +987,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
 
     /**
-     * This will create a clone which belongs to a new document 
+     * Creates a clone which belongs to a new document.
      * @see org.apache.axis2.om.OMElement#cloneOMElement()
      */
     public OMElement cloneOMElement() {
@@ -1011,8 +1007,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
     
     /**
-     * This will return the set of attributes of this node and the 
-     * namespace declarations available
+     * Returns the set of attributes of this node and the namespace 
+     * declarations available.
      */
     public NamedNodeMap getAttributes() {
     	AttributeMap attributeMap =  new AttributeMap(this);
@@ -1058,11 +1054,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
     
     /**
-     * return the namespace uri, given the prefix
-     * if its not found at the this element it will 
-     * search the parent
+     * Returns the namespace uri, given the prefix. If it is not found at this 
+     * element, searches the parent.
      * @param prefix
-     * @return namespace
+     * @return Returns namespace.
      */
     public String getNamespaceURI(String prefix) {
     	OMNamespace ns = this.findNamespaceURI(prefix);
@@ -1070,9 +1065,9 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     }
     
     /**
-     * Remove a declared namespace give its prefix
+     * Removes a declared namespace given its prefix.
      * @param prefix
-     * @return whether the namespace relevant to the 
+     * @return Returns whether the namespace relevant to the 
      * given prefix was removed or not
      */
     public boolean removeNamespace(String prefix) {

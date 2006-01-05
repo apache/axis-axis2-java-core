@@ -19,8 +19,8 @@ import org.w3c.dom.CharacterData;
 import org.w3c.dom.DOMException;
 
 /**
- * This implements the OMText operations which are to be
- * inherited by TextImpl, CommentImpl, CDATASectionImpl
+ * This implements the OMText operations which are to be inherited by 
+ * TextImpl, CommentImpl, CDATASectionImpl.
  */
 public abstract class CharacterImpl extends ChildNode implements CharacterData {
 
@@ -65,7 +65,7 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	}
 	
 	/**
-	 * If the given data is null the content will be deleted
+	 * If the given data is null the content will be deleted.
 	 */
 	public void replaceData(int offset, int count, String data) throws DOMException {
 		
@@ -98,14 +98,14 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	
 	
 	/**
-	 * Returns the value of the data
+	 * Returns the value of the data.
 	 */
 	public String getData() throws DOMException {
 		return (this.textValue != null) ? this.textValue.toString() : "";
 	}
 	
 	/**
-	 * Inserts a sting at the specified offset
+	 * Inserts a string at the specified offset.
 	 */
 	public void insertData(int offset, String data) throws DOMException {
 		int length = this.textValue.length();
@@ -129,7 +129,7 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	}
 
 	/**
-	 * Sets the text value of data
+	 * Sets the text value of data.
 	 */
 	public void setData(String data) throws DOMException {
 		if (!this.isReadonly()) {
@@ -144,7 +144,7 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	
 	/**
 	 * Extracts a range of data from the node.
-	 * @return The specified substring. If the sum of offset and count exceeds
+	 * @return Returns the specified substring. If the sum of offset and count exceeds
 	 * the length, then all 16-bit units to the end of the data are returned.
 	 */
 	public String substringData(int offset, int count) throws DOMException {
@@ -160,7 +160,7 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	}
 	
 	/**
-	 * returns the length of the sting value 
+	 * Returns the length of the string value.
 	 */
 	public int getLength() {
 		return this.textValue.length();

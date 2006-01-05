@@ -120,7 +120,7 @@ public abstract class ChildNode extends NodeImpl {
     }
 
     /**
-     * Insert the given sibling next to this item
+     * Inserts the given sibling next to this item.
      */
     public void insertSiblingAfter(OMNode sibling) throws OMException {
 
@@ -143,7 +143,7 @@ public abstract class ChildNode extends NodeImpl {
     }
 
     /**
-     * Insert the given sibling before this item
+     * Inserts the given sibling before this item.
      */
     public void insertSiblingBefore(OMNode sibling) throws OMException {
 //		((OMNodeEx)sibling).setParent(this.parentNode);

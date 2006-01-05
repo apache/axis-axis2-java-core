@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 /**
  * 
  * Most of the implementation is taken from 
- * From org.apache.xerces.dom.NamedNodeMapImpl
+ * org.apache.xerces.dom.NamedNodeMapImpl
  */
 public class NamedNodeMapImpl implements NamedNodeMap {
 
@@ -72,7 +72,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
     /**
      * Removes a node specified by name.
      * @param name The name of a node to remove.
-     * @return The node removed from the map if a node with such a name exists.
+     * @return Returns the node removed from the map if a node with such a name exists.
      */
     /***/
     public Node removeNamedItem(String name)
@@ -99,14 +99,14 @@ public class NamedNodeMapImpl implements NamedNodeMap {
     
     
     /**
-     * Introduced in DOM Level 2. <p>
+     * Introduced in DOM Level 2. 
      * Retrieves a node specified by local name and namespace URI.
      *
      * @param namespaceURI  The namespace URI of the node to retrieve.
      *                      When it is null or an empty string, this
      *                      method behaves like getNamedItem.
      * @param localName     The local name of the node to retrieve.
-     * @return Node         A Node (of any type) with the specified name, or null if the specified
+     * @return          Returns s Node (of any type) with the specified name, or null if the specified
      *                      name did not identify any node in the map.
      */
     public Node getNamedItemNS(String namespaceURI, String localName) {
@@ -119,8 +119,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
     /**
      * Adds a node using its namespaceURI and localName.
      * @see org.w3c.dom.NamedNodeMap#setNamedItem
-     * @return If the new Node replaces an existing node the replaced Node is returned,
-     *      otherwise null is returned. 
+     * @return Returns the replaced Node if the new Node replaces an existing node else returns null.
      * @param arg A node to store in a named node map. The node will later be
      *      accessible using the value of the namespaceURI and localName
      *      attribute of the node. If a node with those namespace URI and
@@ -169,14 +168,14 @@ public class NamedNodeMapImpl implements NamedNodeMap {
     } // setNamedItemNS(Node):Node
 
     /**
-     * Introduced in DOM Level 2. <p>
+     * Introduced in DOM Level 2. 
      * Removes a node specified by local name and namespace URI.
      * @param namespaceURI
      *                      The namespace URI of the node to remove.
      *                      When it is null or an empty string, this
      *                      method behaves like removeNamedItem.
      * @param               The local name of the node to remove.
-     * @return Node         The node removed from the map if a node with such
+     * @return          Returns the node removed from the map if a node with such
      *                      a local name and namespace URI exists.
      * @throws              NOT_FOUND_ERR: Raised if there is no node named
      *                      name in the map.
@@ -212,8 +211,8 @@ public class NamedNodeMapImpl implements NamedNodeMap {
       * value) cannot be stored as the names would clash. This is seen as preferable to
       * allowing nodes to be aliased.
       * @see org.w3c.dom.NamedNodeMap#setNamedItem
-      * @return If the new Node replaces an existing node the replaced Node is returned,
-      *      otherwise null is returned. 
+      * @return Returns the replaced Node if the new Node replaces an existing node, 
+      *         otherwise returns null.
       * @param arg 
       *      A node to store in a named node map. The node will later be
       *      accessible using the value of the namespaceURI and localName
@@ -285,7 +284,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
      * 
      * From org.apache.xerces.dom.NamedNodeMapImpl
      * 
-     * Subroutine: Locate the named item, or the point at which said item
+     * Subroutine: Locates the named item, or the point at which said item
      * should be added. 
      *
      * @param name Name of a node to look up.
@@ -362,7 +361,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
         return -1;
     }
     
-    // compare 2 nodes in the map.  If a precedes b, return true, otherwise 
+    // Compare 2 nodes in the map.  If a precedes b, return true, otherwise 
     // return false
     protected boolean precedes(Node a, Node b) {
 
@@ -379,7 +378,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
 
 
     /**
-      * NON-DOM: Remove attribute at specified index
+      * NON-DOM: Remove attribute at specified index.
       */
     protected void removeItem(int index) {
        if (nodes != null && index < nodes.size()){
@@ -422,7 +421,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
      * NON-DOM: copy content of this map into the specified vector
      * 
      * @param list   Vector to copy information into.
-     * @return A copy of this node named map
+     * @return Returns a copy of this node named map.
      */
     protected Vector cloneMap(Vector list){
         if (list == null) {
@@ -443,7 +442,7 @@ public class NamedNodeMapImpl implements NamedNodeMap {
      }
 
     /**
-      * NON-DOM remove all elements from this map
+      * NON-DOM remove all elements from this map.
       */
     public void removeAll (){
         if (nodes != null) {

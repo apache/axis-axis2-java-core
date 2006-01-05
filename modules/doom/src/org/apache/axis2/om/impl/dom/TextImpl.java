@@ -46,42 +46,38 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 	private boolean isBinary;
 
     /**
-     * Field dataHandler contains the DataHandler
-     * Declaring as Object to remove the depedency on 
-     * Javax.activation.DataHandler
+     *
      */
     private String contentID = null;
 
     /**
-     * Field dataHandler contains the DataHandler
-     * Declaring as Object to remove the depedency on 
+     * Field dataHandler contains the DataHandler.
+     * Declaring as Object to remove the dependency on 
      * Javax.activation.DataHandler
      */
     private Object dataHandlerObject = null;
 
     
     /**
-     * Field nameSpace used when serialising Binary stuff as MTOM optimised
+     * Field nameSpace is used when serializing Binary stuff as MTOM optimized.
      */
     protected OMNamespace ns = new NamespaceImpl(
             "http://www.w3.org/2004/08/xop/include", "xop");
 
     /**
-     * Field localName used when serialising Binary stuff as MTOM optimised
+     * Field localName is used when serializing Binary stuff as MTOM optimized.
      */
     protected String localName = "Include";
 
     /**
-     * Field attributes used when serialising Binary stuff as MTOM optimised
+     * Field attribute is used when serializing Binary stuff as MTOM optimized.
      */
     protected OMAttribute attribute;
     
     
 	/**
-	 * Create a text node with the given text
-	 * required by the OMDOMFactory
-	 * The owner document should be set properly when
-	 * appending this to a DOM tree
+	 * Creates a text node with the given text required by the OMDOMFactory.
+	 * The owner document should be set properly when appending this to a DOM tree.
 	 * @param text
 	 */
 	public TextImpl(String text) {
@@ -257,7 +253,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     }
     
     /**
-     * Writes the relevant output
+     * Writes the relevant output.
      *
      * @param omOutput
      * @throws XMLStreamException
@@ -376,7 +372,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     
 
     /*
-     * Methods to copy from OMSerialize utils
+     * Methods to copy from OMSerialize utils.
      */
     private void serializeStartpart(OMOutputImpl omOutput)
             throws XMLStreamException {
@@ -420,7 +416,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     }
 
     /**
-     * Method serializeAttribute
+     * Method serializeAttribute.
      *
      * @param attr
      * @param omOutput
@@ -450,7 +446,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     }
 
     /**
-     * Method serializeNamespace
+     * Method serializeNamespace.
      *
      * @param namespace
      * @param omOutput
