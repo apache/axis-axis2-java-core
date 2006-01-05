@@ -100,7 +100,7 @@ public class OMChildrenWithSpecificAttributeIteratorTest extends TestCase {
     private int getChidrenCount(Iterator childrenIter) {
         int childCount = 0;
         while (childrenIter.hasNext()) {
-            OMElement omElement = (OMElement) childrenIter.next();
+        	childrenIter.next();
             childCount++;
         }
 

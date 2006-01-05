@@ -36,7 +36,9 @@ import org.apache.axis2.handlers.AbstractHandler;
  */
 public class InstanceDispatcher extends AbstractHandler {
 
-    /**
+	private static final long serialVersionUID = -1928612412157492489L;
+
+	/**
      * Post Condition : All the Contexts must be populated.
      *
      * @param msgContext

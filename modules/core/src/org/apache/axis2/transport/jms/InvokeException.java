@@ -22,7 +22,10 @@ package org.apache.axis2.transport.jms;
  * general exception in the course of processing.
  */
 public class InvokeException extends RuntimeException {
-    public InvokeException(String message) {
+	
+    private static final long serialVersionUID = -9143832230352429639L;
+
+	public InvokeException(String message) {
         super(message);
     }
 }

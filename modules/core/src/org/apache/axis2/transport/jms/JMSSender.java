@@ -47,7 +47,10 @@ import java.util.Map;
  * This is meant to be used on a SOAP Client to call a SOAP server.
  */
 public class JMSSender extends AbstractHandler implements TransportSender {
-    protected static Log log = LogFactory.getLog(JMSSender.class.getName());
+	
+    private static final long serialVersionUID = -3883554138407525394L;
+    
+	protected static Log log = LogFactory.getLog(JMSSender.class.getName());
 
     static {
 

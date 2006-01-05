@@ -76,7 +76,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
     public void testConstructors(){
 
         try {
-            OMElement elementWithNoLocalName = factory.createOMElement("", null);
+            factory.createOMElement("", null);
             fail("This should fail as OMElement should not be allowed to create without a local name ");
         } catch (Exception e) {
             assertTrue(true);
@@ -114,7 +114,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
         Iterator children = firstElement.getChildren();
         int childCount = 0;
         while (children.hasNext()) {
-            Object o = children.next();
+        	children.next();
             childCount++;
         }
         assertEquals("Children count should be two", childCount, 2);

@@ -36,7 +36,9 @@ import javax.xml.namespace.QName;
  */
 public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
 
-    /**
+	private static final long serialVersionUID = 487519840603427717L;
+	
+	/**
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",

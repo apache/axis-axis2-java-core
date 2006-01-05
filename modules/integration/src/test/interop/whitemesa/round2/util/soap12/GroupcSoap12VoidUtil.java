@@ -42,7 +42,7 @@ public class GroupcSoap12VoidUtil implements SunRound2ClientUtil {
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap12/","soap12");
 
         SOAPHeader header = omfactory.createSOAPHeader(reqEnv);
-        OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns"); //xmlns:m0="http://soapinterop.org/echoheader/
+        reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns"); //xmlns:m0="http://soapinterop.org/echoheader/
 
         SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest", ns1);
         block2.addAttribute("xsi:type", "hns:echoMeStructRequest", null);

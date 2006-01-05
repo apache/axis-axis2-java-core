@@ -21,7 +21,9 @@ package org.apache.axis2.schema;
  */
 public class SchemaCompilationException extends Exception {
 
-    public SchemaCompilationException() {
+    private static final long serialVersionUID = 2520939560060608157L;
+
+	public SchemaCompilationException() {
     }
 
     public SchemaCompilationException(String message) {

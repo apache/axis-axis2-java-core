@@ -32,7 +32,9 @@ import java.util.Map;
  */
 public class EndpointReference implements Serializable {
 
-    // Commons properties
+	private static final long serialVersionUID = 5278892171162372439L;
+
+	// Commons properties
     private String address;
 
     // Properties from WS-A Final

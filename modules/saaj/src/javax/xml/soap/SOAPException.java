@@ -33,7 +33,9 @@ package javax.xml.soap;
  */
 public class SOAPException extends Exception {
 
-    /**
+    private static final long serialVersionUID = 5083961510786058130L;
+
+	/**
      * Constructs a <CODE>SOAPException</CODE> object with no
      * reason or embedded <CODE>Throwable</CODE> object.
      */

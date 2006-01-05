@@ -148,7 +148,8 @@ public class EnginePausingTest extends TestCase {
     }
 
     public class TempHandler extends AbstractHandler {
-        private Integer index;
+        private static final long serialVersionUID = 6201231320871883424L;
+		private Integer index;
         private boolean pause = false;
 
         public TempHandler(int index, boolean pause) {

@@ -25,7 +25,10 @@ import java.util.ArrayList;
 */
 
 public class DispatchPhase extends Phase {
-    public DispatchPhase() {
+
+	private static final long serialVersionUID = -6596799621473224363L;
+
+	public DispatchPhase() {
     }
 
     public DispatchPhase(String phaseName) {

@@ -24,7 +24,8 @@ import java.util.StringTokenizer;
  * Custom class for supporting XSD data type NMTokens
  */
 public class NMTokens extends NCName {
-    private NMToken[] tokens;
+    private static final long serialVersionUID = -2435854824216181165L;
+	private NMToken[] tokens;
 
     public NMTokens() {
         super();

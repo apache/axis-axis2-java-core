@@ -29,7 +29,9 @@ package org.apache.axis2.databinding.types;
  */
 public class Language extends Token {
 
-    public Language() {
+    private static final long serialVersionUID = -4105320293090087959L;
+
+	public Language() {
         super();
     }
 

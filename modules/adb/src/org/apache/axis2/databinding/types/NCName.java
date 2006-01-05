@@ -28,7 +28,9 @@ import org.apache.axis2.util.XMLChar;
  */
 public class NCName extends Name {
 
-    public NCName() {
+    private static final long serialVersionUID = 8573451628276898297L;
+
+	public NCName() {
         super();
     }
 

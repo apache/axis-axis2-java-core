@@ -32,7 +32,7 @@ public class DOMImplementationImpl implements DOMImplementation {
 		//TODO Handle docType stuff
 		DocumentImpl doc = new DocumentImpl();
 		
-		ElementImpl elem = new ElementImpl(doc,DOMUtil.getLocalName(qualifiedName),new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName)));
+		new ElementImpl(doc,DOMUtil.getLocalName(qualifiedName),new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName)));
 		
 		return doc;
 	}

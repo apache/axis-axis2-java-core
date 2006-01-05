@@ -59,7 +59,7 @@ public class AttachmentSerializationTest extends TestCase {
         SOAPElement el = header.addHeaderElement(envelope.createName("field4", NS_PREFIX, NS_URI));
 
         SOAPElement el2 = el.addChildElement("field4b", NS_PREFIX);
-        SOAPElement el3 = el2.addTextNode("field4value");
+        el2.addTextNode("field4value");
 
         el = body.addBodyElement(envelope.createName("bodyfield3", NS_PREFIX, NS_URI));
         el2 = el.addChildElement("bodyfield3a", NS_PREFIX);
@@ -94,9 +94,9 @@ public class AttachmentSerializationTest extends TestCase {
             if (content instanceof String) {
                 assertEquals(testText, (String) content);
             } else if (content instanceof FileInputStream) {
-
+            	//TODO : Complete this
                 // try to write to a File and check whether it is ok
-                final FileInputStream fis = (FileInputStream) content;
+                // final FileInputStream fis = (FileInputStream) content;
                 /*File file = new File("output-file.jpg");
                 file.createNewFile();
 

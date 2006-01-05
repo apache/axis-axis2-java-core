@@ -18,7 +18,10 @@
 package org.apache.axis2.transport.http.server;
 
 public class AdminAppException extends Exception {
-    public AdminAppException() {
+
+	private static final long serialVersionUID = -968033744797396457L;
+
+	public AdminAppException() {
     }
 
     public AdminAppException(String message) {

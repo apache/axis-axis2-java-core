@@ -78,7 +78,6 @@ public abstract class JMSVendorAdapter {
      * or connection factory
      */
     public void setupMessageContext(MessageContext context, JMSURLHelper jmsurl) {
-        Object tmp = null;
         String jmsurlDestination = null;
 
         if (jmsurl != null) {

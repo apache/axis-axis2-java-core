@@ -336,7 +336,6 @@ public class AxisEngine {
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
-        int currentHandlerIndex;
         while (msgContext.getCurrentHandlerIndex() < msgContext.getExecutionChain().size()) {
             //todo : This might cause for performance drawback
             Handler currentHandler = (Handler) msgContext.getExecutionChain().

@@ -16,21 +16,21 @@
 
 package org.apache.axis2.databinding;
 
-import org.apache.axis2.databinding.deserializers.BeanDeserializer;
-import org.apache.axis2.databinding.metadata.BeanManager;
-import org.apache.axis2.databinding.metadata.TypeDesc;
-import org.apache.axis2.databinding.typemapping.TypeMappingRegistry;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis2.databinding.deserializers.BeanDeserializer;
+import org.apache.axis2.databinding.metadata.BeanManager;
+import org.apache.axis2.databinding.metadata.TypeDesc;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNode;
 
 /**
  * DeserializationContext
@@ -40,7 +40,6 @@ public class DeserializationContext {
     public static final String SOAP11_REF_ATTR = "href";
 
     private Map idToElementMap = new HashMap();
-    private TypeMappingRegistry tmr = new TypeMappingRegistry();
 
     Map waitingDescs = new HashMap();
     String refAttr = SOAP12_REF_ATTR;

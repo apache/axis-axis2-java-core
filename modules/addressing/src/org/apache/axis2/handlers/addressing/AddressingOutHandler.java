@@ -39,7 +39,9 @@ import java.util.Map;
 
 public class AddressingOutHandler extends AddressingHandler {
 
-    private Log log = LogFactory.getLog(getClass());
+    private static final long serialVersionUID = -2623986992336863995L;
+    
+	private Log log = LogFactory.getLog(getClass());
 
 
     public void invoke(MessageContext msgContext) throws AxisFault {

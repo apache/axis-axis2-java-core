@@ -24,7 +24,9 @@ import java.io.Serializable;
  */
 public class HexBinary implements Serializable {
 
-    byte[] m_value;
+    private static final long serialVersionUID = -5082403899986720767L;
+    
+	byte[] m_value;
 
     public HexBinary() {
     }

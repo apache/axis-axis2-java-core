@@ -34,9 +34,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class AddressingInHandler extends AddressingHandler {
-    // this parameter has to be set by the module deployer.
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    private static final long serialVersionUID = 3907988439637261572L;
+
+	public void invoke(MessageContext msgContext) throws AxisFault {
         logger.debug("Starting Addressing IN Handler .........");
         SOAPHeader header = msgContext.getEnvelope().getHeader();
         if (header == null) {

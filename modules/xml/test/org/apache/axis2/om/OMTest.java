@@ -16,22 +16,21 @@
 
 package org.apache.axis2.om;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 /**
  * This test case tests the basic expectations of the engine from the OM.
  */
 public class OMTest extends AbstractTestCase {
     private SOAPEnvelope envelope;
-    private SOAPFactory fac;
 
     /**
      * Constructor.
@@ -44,7 +43,6 @@ public class OMTest extends AbstractTestCase {
         File file = getTestResourceFile(TestConstants.SAMPLE1);
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new FileReader(file));
-        fac = OMAbstractFactory.getSOAP11Factory();
         OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
     }

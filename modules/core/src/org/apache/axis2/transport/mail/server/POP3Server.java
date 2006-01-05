@@ -11,7 +11,6 @@ import java.net.Socket;
 public class POP3Server extends Thread {
     protected static Log log = LogFactory.getLog(POP3Server.class.getName());
     private Storage st = null;
-    private boolean running = false;
     private ServerSocket serverSocket;
 
     public POP3Server(Storage st, int port) throws AxisFault {
@@ -19,7 +18,6 @@ public class POP3Server extends Thread {
 
         try {
             synchronized (this) {
-                running = true;
                 serverSocket = new ServerSocket(port);
                 log.info("Server started on port " + port);
             }
@@ -44,7 +42,6 @@ public class POP3Server extends Thread {
     public void stopServer() throws AxisFault {
         try {
             synchronized (this) {
-                running = false;
                 serverSocket.close();
             }
         } catch (IOException e) {

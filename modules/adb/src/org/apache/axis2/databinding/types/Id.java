@@ -24,7 +24,9 @@ package org.apache.axis2.databinding.types;
  */
 public class Id extends NCName {
 
-    public Id() {
+    private static final long serialVersionUID = -8442438083214211437L;
+
+	public Id() {
         super();
     }
 

@@ -17,9 +17,11 @@
 package org.apache.axis2.om.impl.llom.exception;
 
 public class XMLComparisonException extends Exception {
-    /**
+	/**
      * Eran Chinthaka (chinthaka@apache.org)
      */
+	
+    private static final long serialVersionUID = -7918497983548520994L;
 
     public XMLComparisonException(String message) {
         super(message);

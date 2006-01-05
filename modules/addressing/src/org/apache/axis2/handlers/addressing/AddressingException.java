@@ -17,7 +17,10 @@
 package org.apache.axis2.handlers.addressing;
 
 public class AddressingException extends Exception {
-    public AddressingException() {
+	
+    private static final long serialVersionUID = 1163341356606465465L;
+
+	public AddressingException() {
     }
 
     public AddressingException(String message) {

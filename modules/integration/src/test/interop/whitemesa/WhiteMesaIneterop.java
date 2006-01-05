@@ -16,44 +16,79 @@
 
 package test.interop.whitemesa;
 
-import junit.framework.TestCase;
+import java.io.InputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.custommonkey.xmlunit.XMLTestCase;
+
 import test.interop.util.XMLComparatorInterop;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
-public class WhiteMesaIneterop extends TestCase {
+public class WhiteMesaIneterop extends XMLTestCase {
 
-    protected boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-        boolean ok;
-        try {
-            if (retEnv != null) {
-                SOAPBody body = retEnv.getBody();
-                if (!body.hasFault()) {
-                    //OMElement firstChild = (OMElement) body.getFirstElement();
+	protected void compareXML(SOAPEnvelope retEnv, String filePath)
+			throws AxisFault {
 
-                    InputStream stream = Thread.currentThread().getContextClassLoader()
-                            .getResourceAsStream(filePath);
+		try {
+			if (retEnv != null) {
+				SOAPBody body = retEnv.getBody();
+				if (!body.hasFault()) {
+					InputStream stream = Thread.currentThread()
+							.getContextClassLoader().getResourceAsStream(
+									filePath);
 
-                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-                    XMLComparatorInterop comparator = new XMLComparatorInterop();
-                    ok = comparator.compare(retEnv, refEnv);
-                } else
-                    return false;
-            } else
-                return false;
+					XMLStreamReader parser = XMLInputFactory.newInstance()
+							.createXMLStreamReader(stream);
+					OMXMLParserWrapper builder = new StAXSOAPModelBuilder(
+							parser, null);
+					SOAPEnvelope refEnv = (SOAPEnvelope) builder
+							.getDocumentElement();
+					String refXML = refEnv.toString();
+					String retXML = retEnv.toString();
+					assertXMLEqual(refXML, retXML);
+				}
+			}
+		} catch (Exception e) {
+			throw new AxisFault(e);
+		}
 
-        } catch (Exception e) {
-            throw new AxisFault(e);
-        }
-        return ok;
-    }
+	}
+
+	protected boolean compare(SOAPEnvelope retEnv, String filePath)
+			throws AxisFault {
+		boolean ok;
+		try {
+			if (retEnv != null) {
+				SOAPBody body = retEnv.getBody();
+				if (!body.hasFault()) {
+
+					InputStream stream = Thread.currentThread()
+							.getContextClassLoader().getResourceAsStream(
+									filePath);
+
+					XMLStreamReader parser = XMLInputFactory.newInstance()
+							.createXMLStreamReader(stream);
+					OMXMLParserWrapper builder = new StAXSOAPModelBuilder(
+							parser, null);
+					SOAPEnvelope refEnv = (SOAPEnvelope) builder
+							.getDocumentElement();
+					XMLComparatorInterop comparator = new XMLComparatorInterop();
+					ok = comparator.compare(retEnv, refEnv);
+				} else
+					return false;
+			} else
+				return false;
+
+		} catch (Exception e) {
+			throw new AxisFault(e);
+		}
+		return ok;
+	}
+
 }

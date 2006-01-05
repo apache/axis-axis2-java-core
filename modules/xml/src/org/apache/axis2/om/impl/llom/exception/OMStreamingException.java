@@ -22,7 +22,10 @@ import org.apache.axis2.om.OMException;
  * Class OMStreamingException
  */
 public class OMStreamingException extends OMException {
-    /**
+	
+    private static final long serialVersionUID = 8108888406034145092L;
+
+	/**
      * Constructor OMStreamingException
      */
     public OMStreamingException() {

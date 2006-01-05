@@ -45,7 +45,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
-    protected static final String PROXY_HOST_NAME = "proxy_host";
+
+	private static final long serialVersionUID = 7929963795196215199L;
+	protected static final String PROXY_HOST_NAME = "proxy_host";
     protected static final String PROXY_PORT = "proxy_port";
     public static final String HTTP_METHOD = "HTTP_METHOD";
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;

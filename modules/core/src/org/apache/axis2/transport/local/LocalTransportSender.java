@@ -29,7 +29,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class LocalTransportSender extends AbstractTransportSender {
-    private ByteArrayOutputStream out;
+	
+    private static final long serialVersionUID = -5245866514826025561L;
+	private ByteArrayOutputStream out;
     private ByteArrayOutputStream response;
 
     public LocalTransportSender() {

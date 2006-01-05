@@ -62,7 +62,9 @@ import java.util.ListIterator;
  */
 public class AxisFault extends RemoteException {
 
-    /**
+	private static final long serialVersionUID = -374933082062124907L;
+
+	/**
      * Contains the faultcode
      */
     private FaultCode faultCode = new FaultCode();

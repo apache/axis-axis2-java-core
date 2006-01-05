@@ -25,8 +25,10 @@ import java.util.TimeZone;
  * Class that represents the xsd:time XML Schema type
  */
 public class Time implements java.io.Serializable {
-    private Calendar _value;
+	
+    private static final long serialVersionUID = -9022201555535589908L;
 
+	private Calendar _value;
 
     /**
      * a shared java.text.SimpleDateFormat instance used for parsing the basic
@@ -166,16 +168,6 @@ public class Time implements java.io.Serializable {
         calendar.set(0,0,0);    // ignore year, month, date
 
         return calendar;
-    }
-
-    private int getTimezoneNumberValue(char c) {
-        int n=c-'0';
-        if(n<0 || n>9) {
-            //oops, out of range
-            throw new NumberFormatException();
-                    //Messages.getMessage("badTimezone00"));
-        }
-        return n;
     }
 
     /**

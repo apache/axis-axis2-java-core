@@ -23,7 +23,10 @@ import java.util.StringTokenizer;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ENTITIES">XML Schema 3.3.12 ENTITIES</a>
  */
 public class Entities extends NCName {
-    private Entity[] entities;
+	
+    private static final long serialVersionUID = -4511368195143560809L;
+    
+	private Entity[] entities;
     
     public Entities() {
         super();

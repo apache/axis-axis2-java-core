@@ -24,7 +24,10 @@ import java.text.NumberFormat;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gMonth">XML Schema 3.2.14</a>
  */
 public class Month implements java.io.Serializable {
-    int month;
+	
+    private static final long serialVersionUID = -7469265802807262347L;
+    
+	int month;
     String timezone;
 
     /**

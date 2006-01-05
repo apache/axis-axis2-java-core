@@ -17,6 +17,10 @@
 
 package org.apache.axis2.transport;
 
+import java.io.OutputStream;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -31,11 +35,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.io.OutputStream;
 
 /**
  * By the time this Class is invoked either the To EPR on the MessageContext
@@ -49,11 +48,6 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/", "TransportSender");
-
-    /**
-     * Field log
-     */
-    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Constructor AbstractTransportSender

@@ -22,11 +22,6 @@ import java.util.Iterator;
 
 public class HeadersTest extends TestCase {
 
-    private final String actor = "ACTOR#1";
-    private final String localName = "Local1";
-    private final String namespace = "http://ws.apache.org";
-    private final String prefix = "P1";
-
     public HeadersTest(String name) {
         super(name);
     }

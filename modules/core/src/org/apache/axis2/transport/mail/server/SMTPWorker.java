@@ -93,7 +93,6 @@ public class SMTPWorker extends Thread {
     }
 
     private String processInput(String input) {
-        byte[] CR_LF = new byte[]{0x0D, 0x0A};
 
         if (input == null) {
             return MailSrvConstants.COMMAND_UNKNOWN;
@@ -143,7 +142,6 @@ public class SMTPWorker extends Thread {
         if (input.startsWith("HELO")) {
             return MailSrvConstants.HELO_REPLY;
         } else if (input.startsWith("RCPT")) {
-            String domain = MailSrvConstants.SERVER_DOMAIN;
 
             int start = input.indexOf("<") + 1;
             int end;

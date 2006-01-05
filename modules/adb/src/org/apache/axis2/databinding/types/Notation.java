@@ -23,7 +23,10 @@ package org.apache.axis2.databinding.types;
  */
 
 public class Notation implements java.io.Serializable {
-    NCName name;
+	
+    private static final long serialVersionUID = 2393074651972192536L;
+    
+	NCName name;
     URI publicURI;
     URI systemURI;
 

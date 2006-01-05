@@ -87,7 +87,7 @@ public class MailServer {
         }
 
         try {
-            MailServer ms = new MailServer(popPort, smtpPost);
+            new MailServer(popPort, smtpPost);
         } catch (AxisFault e) {
             log.info(e.getMessage());
         }

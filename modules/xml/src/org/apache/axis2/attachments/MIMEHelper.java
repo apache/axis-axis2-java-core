@@ -272,7 +272,6 @@ public class MIMEHelper {
      */
     public Part getPart(String blobContentID) {
         Part bodyPart;
-        boolean attachmentFound = false;
         if (bodyPartsMap.containsKey(blobContentID)) {
             bodyPart = (Part) bodyPartsMap.get(blobContentID);
             return bodyPart;

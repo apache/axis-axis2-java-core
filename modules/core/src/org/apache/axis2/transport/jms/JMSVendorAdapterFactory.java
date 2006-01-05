@@ -28,7 +28,6 @@ import java.util.HashMap;
  */
 public class JMSVendorAdapterFactory {
     private static HashMap s_adapters = new HashMap();
-    private static Loader loader = new Loader();
     private final static String VENDOR_PKG = "org.apache.axis2.transport.jms";
 
     public static final JMSVendorAdapter getJMSVendorAdapter() throws Exception {

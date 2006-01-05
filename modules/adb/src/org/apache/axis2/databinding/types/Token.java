@@ -24,7 +24,9 @@ package org.apache.axis2.databinding.types;
  */
 public class Token extends NormalizedString {
 
-    public Token() {
+    private static final long serialVersionUID = -7370524740514465467L;
+
+	public Token() {
         super();
     }
 

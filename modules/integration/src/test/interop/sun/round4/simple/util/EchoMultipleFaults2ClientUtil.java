@@ -35,8 +35,8 @@ public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
                 SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
 
-        OMNamespace xsiNs = method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        OMNamespace ns2 = method.declareNamespace("http://soapinterop.org/types","ns2");
+        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        method.declareNamespace("http://soapinterop.org/types","ns2");
         method.declareNamespace("http://schemas.xmlsoap.org/wsdl/","wsdl");
 
         OMElement value = fac.createOMElement("whichFault", null);

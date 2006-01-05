@@ -17,7 +17,9 @@ package org.apache.axis2.wsdl.writer;
 
 public class WriterException extends Exception{
     
-    public WriterException() {
+    private static final long serialVersionUID = -2818699850289804197L;
+
+	public WriterException() {
     }
 
     public WriterException(String message) {

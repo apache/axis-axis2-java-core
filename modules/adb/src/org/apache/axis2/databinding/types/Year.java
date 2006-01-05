@@ -16,6 +16,7 @@
 package org.apache.axis2.databinding.types;
 
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 
 /**
@@ -23,8 +24,11 @@ import java.text.NumberFormat;
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gYear">XML Schema 3.2.11</a>
  */
-public class Year implements java.io.Serializable {
-    int year;
+public class Year implements Serializable {
+	
+    private static final long serialVersionUID = 7498876120334857019L;
+    
+	int year;
     String timezone = null;
 
     /**

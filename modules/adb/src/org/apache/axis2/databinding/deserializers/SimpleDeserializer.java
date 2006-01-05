@@ -78,7 +78,6 @@ public class SimpleDeserializer implements Deserializer {
         String text = new String();
         while ((eventType = reader.next()) != XMLStreamConstants.END_DOCUMENT) {
             if (eventType == XMLStreamConstants.START_ELEMENT) {
-                int numAttrs = reader.getAttributeCount();
                 eventType = reader.next();
             }
             if (eventType == XMLStreamConstants.CHARACTERS) {

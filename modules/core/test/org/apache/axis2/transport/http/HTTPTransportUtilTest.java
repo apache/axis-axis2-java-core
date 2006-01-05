@@ -26,12 +26,10 @@ import org.apache.axis2.soap.SOAPFactory;
 import javax.xml.namespace.QName;
 
 public class HTTPTransportUtilTest extends TestCase {
-    private HTTPTransportUtils httpTransportUtils;
     private SOAPFactory factory;
 
     protected void setUp() throws Exception {
         super.setUp();
-        httpTransportUtils = new HTTPTransportUtils();
         factory = OMAbstractFactory.getSOAP11Factory();
     }
 

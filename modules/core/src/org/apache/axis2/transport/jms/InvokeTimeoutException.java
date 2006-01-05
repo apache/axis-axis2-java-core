@@ -27,7 +27,10 @@ package org.apache.axis2.transport.jms;
  * The key in the table is <code>JMSConstants.INTERACT_TIMEOUT_TIME</code>
  */
 public class InvokeTimeoutException extends InvokeException {
-    public InvokeTimeoutException(String message) {
+	
+    private static final long serialVersionUID = -7542703412906905731L;
+
+	public InvokeTimeoutException(String message) {
         super(message);
     }
 }

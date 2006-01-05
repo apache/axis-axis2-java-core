@@ -22,7 +22,10 @@ package org.apache.axis2.databinding.types;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ENTITY">XML Schema 3.3.11 ENTITY</a>
  */
 public class Entity extends NCName {
-    public Entity() {
+	
+    private static final long serialVersionUID = -4868410883856961942L;
+    
+	public Entity() {
         super();
     }
     /**

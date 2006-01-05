@@ -95,7 +95,7 @@ public class HTTPTransportHeaderParsingTest extends AbstractTestCase {
             InputStream reader = new ByteArrayInputStream(message.getBytes());
             HTTPTransportReceiver receiver = new HTTPTransportReceiver();
             BufferedInputStream br = new BufferedInputStream(reader);
-            Map map = receiver.parseTheHeaders(br, false);
+            receiver.parseTheHeaders(br, false);
             fail("test must failed as \n\n is missing");
         } catch (AxisFault e) {
         }

@@ -16,6 +16,7 @@
 
 package org.apache.axis2.databinding.types;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -24,8 +25,11 @@ import java.util.Calendar;
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#duration">XML Schema 3.2.6</a>
  */
-public class Duration implements java.io.Serializable {
-    boolean isNegative;
+public class Duration implements Serializable {
+
+	private static final long serialVersionUID = -3736760992541369098L;
+	
+	boolean isNegative;
     int years;
     int months;
     int days;
@@ -431,7 +435,6 @@ public class Duration implements java.io.Serializable {
             return false;
         }
 
-        Calendar thisCalendar = this.getAsCalendar();
         Duration duration = (Duration) object;
 
         return this.isNegative == duration.isNegative &&

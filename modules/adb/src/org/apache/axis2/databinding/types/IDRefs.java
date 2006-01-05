@@ -26,7 +26,10 @@ import java.util.StringTokenizer;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#IDREFS">XML Schema 3.3.10 IDREFS</a>
  */
 public class IDRefs extends NCName {
-    private IDRef[] idrefs;
+	
+    private static final long serialVersionUID = 5394097798361075902L;
+    
+	private IDRef[] idrefs;
 
     public IDRefs() {
         super();

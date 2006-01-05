@@ -28,7 +28,9 @@ import java.io.OutputStream;
  * LocalResponder
  */
 public class LocalResponder extends AbstractTransportSender {
-    LocalTransportSender sender;
+	
+    private static final long serialVersionUID = 4383137590664240383L;
+	LocalTransportSender sender;
 
     public LocalResponder(LocalTransportSender sender) {
         this.sender = sender;

@@ -31,7 +31,9 @@ import org.apache.axis2.util.XMLChar;
  */
 public class NMToken extends Token {
 
-    public NMToken() {
+    private static final long serialVersionUID = -1319741002733174329L;
+
+	public NMToken() {
         super();
     }
 

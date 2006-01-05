@@ -28,7 +28,9 @@ import org.apache.axis2.util.XMLChar;
  */
 public class Name extends Token {
 
-    public Name() {
+    private static final long serialVersionUID = -8354594301737358441L;
+
+	public Name() {
         super();
     }
 

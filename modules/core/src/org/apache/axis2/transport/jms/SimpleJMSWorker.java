@@ -83,7 +83,6 @@ public class SimpleJMSWorker implements Runnable {
                     builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {
-                    Reader reader = new InputStreamReader(in);
                     XMLStreamReader xmlreader;
 
                     // Figure out the char set encoding and create the reader

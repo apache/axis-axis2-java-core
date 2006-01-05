@@ -25,7 +25,9 @@ package org.apache.axis2.databinding.types;
  */
 public class UnsignedInt extends java.lang.Number {
 
-    protected Long lValue = new Long(0);
+    private static final long serialVersionUID = -8915204168154746305L;
+    
+	protected Long lValue = new Long(0);
 
     public UnsignedInt() {
     }

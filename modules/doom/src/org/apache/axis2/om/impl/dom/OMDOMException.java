@@ -21,6 +21,8 @@ import org.apache.axis2.om.OMException;
  */
 public class OMDOMException extends OMException {
 
+	private static final long serialVersionUID = 8763119035210190906L;
+
 	public OMDOMException() {
 		super();
 	}

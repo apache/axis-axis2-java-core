@@ -7,7 +7,10 @@ import javax.mail.Address;
  * of the Addresses.
  */
 public class MailAddress extends Address {
-    String mailAddy = null;
+	
+    private static final long serialVersionUID = 3033256355495000819L;
+    
+	String mailAddy = null;
 
     public MailAddress(String mAddy) {
         this.mailAddy = mAddy;

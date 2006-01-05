@@ -33,7 +33,6 @@ public class OMElementQNameTest extends OMTestCase {
 
     private static final String WSA= "http://schemas.xmlsoap.org/ws/2004/03/addressing";
     private static final String SOAPENV = "http://schemas.xmlsoap.org/soap/envelope/";
-    private static final String XSD = "http://www.w3.org/2001/XMLSchema";
 
     public OMElementQNameTest(String testName) {
         super(testName);

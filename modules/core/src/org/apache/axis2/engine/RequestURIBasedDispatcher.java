@@ -34,7 +34,9 @@ import javax.xml.namespace.QName;
  */
 public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
-    /**
+	private static final long serialVersionUID = 6212111158265910316L;
+	
+	/**
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",

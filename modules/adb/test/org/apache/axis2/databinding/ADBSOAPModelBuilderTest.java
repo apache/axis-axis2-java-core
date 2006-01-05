@@ -16,22 +16,22 @@
 
 package org.apache.axis2.databinding;
 
-import org.apache.axis2.databinding.utils.ADBPullParser;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+
+import org.apache.axis2.databinding.utils.ADBPullParser;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class ADBSOAPModelBuilderTest extends XMLTestCase {
     public void testSimpleArrayList() throws Exception {
@@ -79,11 +79,6 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         public XMLStreamReader getPullParser(QName adbBeanQName) {
             return ADBPullParser.createPullParser(adbBeanQName, propertyList.toArray(), null);
         }
-    }
-
-    private String getStringXML(XMLStreamReader reader) {
-        OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
-        return omelement.toString();
     }
 
     public Document newDocument(String xml)

@@ -23,7 +23,10 @@ package org.apache.axis2.databinding.types;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#IDREF">XML Schema 3.3.10 IDREFS</a>
  */
 public class IDRef extends NCName {
-    public IDRef() {
+	
+    private static final long serialVersionUID = 6821835065939868576L;
+    
+	public IDRef() {
         super();
     }
     /**

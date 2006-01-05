@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class MailTransportSender extends AbstractTransportSender {
-    private String smtpPort = "25";
+	
+    private static final long serialVersionUID = -2858556361961169381L;
+	private String smtpPort = "25";
     private ByteArrayOutputStream byteArrayOutputStream;
     private String host;
     private String password;

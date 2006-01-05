@@ -30,7 +30,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.util.Iterator;
 
 public class OMSerializerUtil {
-    private static int namespaceCounter = 0;
 
     /**
      * Method serializeEndpart

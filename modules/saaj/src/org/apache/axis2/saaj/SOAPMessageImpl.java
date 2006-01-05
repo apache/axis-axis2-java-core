@@ -15,16 +15,6 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMOutputFormat;
-import org.apache.axis2.transport.http.HTTPConstants;
-
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +23,16 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+
+import org.apache.axis2.om.OMOutputFormat;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 public class SOAPMessageImpl extends SOAPMessage {
 
@@ -361,20 +361,6 @@ public class SOAPMessageImpl extends SOAPMessage {
      */
     public SOAPBody getSOAPBody() throws SOAPException {
         return this.soapPart.getEnvelope().getBody();
-    }
-
-    /**
-     * Retrieve the MIME Header names by providing the {@link javax.xml.soap.MimeHeaders} Object
-     *
-     * @param headers The {@link javax.xml.soap.MimeHeaders} Object
-     * @return MIME Header names corresponding to the <code>headers</code>
-     */
-    private String[] getMimeHeaderNames(final javax.xml.soap.MimeHeaders headers) {
-        Collection mimeHeaderNames = new ArrayList();
-        for (Iterator iterator = headers.getAllHeaders(); iterator.hasNext();) {
-            mimeHeaderNames.add(((MimeHeader) iterator.next()).getName());
-        }
-        return (String[]) mimeHeaderNames.toArray(new String[0]);
     }
 
     /**

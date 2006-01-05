@@ -25,7 +25,9 @@ package org.apache.axis2.databinding.types;
 public class UnsignedByte extends UnsignedShort {
 
 
-    public UnsignedByte() {
+    private static final long serialVersionUID = 4631754787145526759L;
+
+	public UnsignedByte() {
 
     }
 

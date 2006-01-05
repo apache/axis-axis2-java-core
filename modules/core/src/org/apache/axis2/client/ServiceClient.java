@@ -275,7 +275,7 @@ public class ServiceClient {
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
-        OperationClient mepClient = createClient(operation);
+        // OperationClient mepClient = createClient(operation);
 
         // create a message context with elem as the payload
         /*

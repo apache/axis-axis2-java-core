@@ -25,7 +25,9 @@ package org.apache.axis2.databinding.types;
  */
 public class NormalizedString implements java.io.Serializable {
 
-    String m_value;   // JAX-RPC maps xsd:string to java.lang.String
+    private static final long serialVersionUID = -290878151870399401L;
+    
+	String m_value;   // JAX-RPC maps xsd:string to java.lang.String
 
     public NormalizedString() {
         super();

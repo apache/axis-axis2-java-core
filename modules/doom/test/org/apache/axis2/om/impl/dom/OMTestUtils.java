@@ -85,8 +85,6 @@ public class OMTestUtils {
             NamedNodeMap map = ele.getAttributes();
             Iterator attIterator = omele.getAllAttributes();
             OMAttribute omattribute;
-            Attr domAttribute;
-            String DOMAttrName;
             while (attIterator != null && attIterator.hasNext() && map == null) {
                 omattribute = (OMAttribute) attIterator.next();
                 Node node = map.getNamedItemNS(

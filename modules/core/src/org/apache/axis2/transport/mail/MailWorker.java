@@ -47,10 +47,8 @@ import java.util.Properties;
 
 public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
-    private String contentType = "text/xml";
     private ConfigurationContext configContext = null;
     private Properties prop = new Properties();
-    private Session session = Session.getDefaultInstance(prop, null);
     private MimeMessage mimeMessage;
 
     /**
@@ -107,6 +105,7 @@ public class MailWorker implements Runnable {
                             + ((emailSubject != null)
                             ? emailSubject
                             : ""));
+                    //TODO: FixME: There's nothing happening here ??? 
                 } else {
                     throw new AxisFault(Messages.getMessage("noRecep4Email"));
                 }

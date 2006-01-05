@@ -19,4 +19,6 @@ package org.apache.axis2.handlers.addressing;
 
 public class AddressingSubmissionOutHandler extends AddressingOutHandler {
 
+	private static final long serialVersionUID = -1150872100363734011L;
+
 }

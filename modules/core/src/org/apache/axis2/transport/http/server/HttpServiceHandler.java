@@ -63,7 +63,6 @@ public class HttpServiceHandler implements HttpRequestHandler {
             throw new IllegalArgumentException("Request may not be null");
         }
 
-        boolean complete = false;
         SimpleResponse response = new SimpleResponse();
 
         this.service.process(request, response);

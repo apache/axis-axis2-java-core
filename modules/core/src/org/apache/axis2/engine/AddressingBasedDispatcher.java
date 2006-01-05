@@ -38,7 +38,9 @@ import javax.xml.namespace.QName;
  */
 public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
 
-    /**
+	private static final long serialVersionUID = 8294130617631587374L;
+	
+	/**
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",

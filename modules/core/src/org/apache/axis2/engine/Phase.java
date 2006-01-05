@@ -35,7 +35,9 @@ import java.util.Iterator;
  */
 public class Phase implements Handler {
 
-    /**
+	private static final long serialVersionUID = -3352439587370050957L;
+
+	/**
      * Field BOTH_BEFORE_AFTER
      */
     private static final int BOTH_BEFORE_AFTER = 0;

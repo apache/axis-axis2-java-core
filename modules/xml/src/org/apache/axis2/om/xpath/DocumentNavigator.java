@@ -31,7 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DocumentNavigator extends DefaultNavigator {
-    /**
+	
+    private static final long serialVersionUID = 7325116153349780805L;
+
+	/**
      * Returns a parsed form of the given xpath string, which will be suitable
      * for queries on documents that use the same navigator as this one.
      *

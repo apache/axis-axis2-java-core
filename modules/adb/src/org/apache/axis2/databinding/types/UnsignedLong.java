@@ -24,7 +24,9 @@ import java.math.BigInteger;
  */
 public class UnsignedLong extends java.lang.Number {
 
-    protected BigInteger lValue = BigInteger.ZERO;
+    private static final long serialVersionUID = -5919942584284897583L;
+    
+	protected BigInteger lValue = BigInteger.ZERO;
     private static BigInteger MAX = new BigInteger("18446744073709551615"); // max unsigned long
 
     public UnsignedLong() {

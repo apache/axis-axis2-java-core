@@ -45,8 +45,6 @@ public class POP3Worker extends Thread {
     }
 
     private void processInput(String input, PrintWriter printWriter) {
-        int listLen = (MailSrvConstants.LIST + " ").length();
-        byte[] CR_LF = new byte[]{0x0D, 0x0A};
         byte[] CR_LF_DOT_CR_LF = new byte[]{0x0D, 0x0A, '.', 0x0D, 0x0A};
         String user = "";
 

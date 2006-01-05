@@ -1,8 +1,8 @@
 package org.apache.axis2.saaj.integration;
 
-import junit.framework.TestCase;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.description.AxisService;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -19,13 +19,12 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+
+import junit.framework.TestCase;
+
+import org.apache.axis2.addressing.EndpointReference;
 
 public class IntegrationTest extends TestCase {
-
-    private AxisService service;
 
     public static final EndpointReference TARGET_EPR =
             new EndpointReference("http://127.0.0.1:" +

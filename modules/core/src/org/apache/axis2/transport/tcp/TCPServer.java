@@ -80,7 +80,7 @@ public class TCPServer extends TransportListener implements Runnable {
         Parameter param = transprtIn.getParameter(PARAM_PORT);
 
         if (param != null) {
-            int port = Integer.parseInt((String) param.getValue());
+            this.port = Integer.parseInt((String) param.getValue());
         }
     }
 

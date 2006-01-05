@@ -103,7 +103,9 @@ public class RegistryTest extends AbstractTestCase {
 
     public void testHandlers() throws AxisFault {
         Handler handler = new AbstractHandler() {
-            public void invoke(MessageContext msgContext)  {
+            private static final long serialVersionUID = 196289132377245632L;
+
+			public void invoke(MessageContext msgContext)  {
             }
         };
         handler.init(new HandlerDescription());

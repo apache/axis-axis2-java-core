@@ -78,12 +78,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
     private static final String SERVICE_CLASS_SUFFIX = "Skeleton";
-    private static final String TEST_PACKAGE_NAME_SUFFIX = ".test";
     private static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
     private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
-    private static final String TEST_SERVICE_CLASS_NAME_SUFFIX = "SkeletonTest";
     private static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
-    private static final String SERVICE_XML_OUTPUT_FOLDER_NAME = "resources.";
 
 
     protected CodeGenConfiguration configuration;

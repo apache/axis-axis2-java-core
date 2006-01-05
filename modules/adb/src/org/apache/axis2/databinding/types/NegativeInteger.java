@@ -33,7 +33,9 @@ import java.util.Random;
  */
 public class NegativeInteger extends NonPositiveInteger {
 
-    public NegativeInteger(byte[] val) {
+    private static final long serialVersionUID = -2295928715693639427L;
+    
+	public NegativeInteger(byte[] val) {
         super(val);
         checkValidity();
     } // ctor
@@ -85,7 +87,8 @@ public class NegativeInteger extends NonPositiveInteger {
     }
     
     protected static class BigIntegerRep implements java.io.Serializable {
-        private byte[] array;
+        private static final long serialVersionUID = 1209618487031404110L;
+		private byte[] array;
         protected BigIntegerRep(byte[] array) {
             this.array = array;
         }

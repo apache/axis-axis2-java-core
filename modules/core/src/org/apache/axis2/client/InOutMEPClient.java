@@ -407,14 +407,12 @@ public class InOutMEPClient extends MEPClient {
      * two way transport.
      */
     private class NonBlockingInvocationWorker implements Runnable {
-        private AxisOperation axisop;
         private Callback callback;
         private MessageContext msgctx;
 
         public NonBlockingInvocationWorker(Callback callback, AxisOperation axisop,
                                            MessageContext msgctx) {
             this.callback = callback;
-            this.axisop = axisop;
             this.msgctx = msgctx;
         }
 

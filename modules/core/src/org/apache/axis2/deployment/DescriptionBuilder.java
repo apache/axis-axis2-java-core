@@ -405,7 +405,6 @@ public class DescriptionBuilder implements DeploymentConstants {
             PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
-        OMElement policyElement;
 
         while (policyElements.hasNext()) {
             Policy p = reader.readPolicy((OMElement) policyElements.next());
@@ -417,7 +416,6 @@ public class DescriptionBuilder implements DeploymentConstants {
             PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
-        OMElement policyRefElement;
 
         while (policyRefElements.hasNext()) {
             PolicyReference policyReference = reader

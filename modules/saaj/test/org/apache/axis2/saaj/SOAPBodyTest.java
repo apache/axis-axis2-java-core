@@ -86,9 +86,8 @@ public class SOAPBodyTest extends TestCase {
         int count = 0;
 
         while (it.hasNext()) {
-            SOAPElement el = (SOAPElement) it.next();
+        	it.next();
             count++;
-//            Name name = el.getElementName();
         }
         assertEquals(2,count);
     }

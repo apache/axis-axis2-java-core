@@ -22,7 +22,10 @@ import org.apache.axis2.om.OMException;
  * Class OMBuilderException
  */
 public class OMBuilderException extends OMException {
-    /**
+	
+    private static final long serialVersionUID = -7447667411291193889L;
+
+	/**
      * Constructor OMBuilderException
      *
      * @param s

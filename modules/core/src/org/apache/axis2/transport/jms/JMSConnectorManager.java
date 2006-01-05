@@ -294,7 +294,6 @@ public class JMSConnectorManager {
      * Todo: max size, cleanup stale connections
      */
     public class ShareableObjectPool {
-        private int m_numElements = 0;
 
         // maps object to ref count wrapper
         private java.util.HashMap m_elements;

@@ -107,7 +107,6 @@ public class EmailReceiver {
             inbox.open(Folder.READ_WRITE);
 
             Message[] msgs = inbox.getMessages();
-            int numMessages = msgs.length;
 
             if (msgs.length == 0) {
                 return null;

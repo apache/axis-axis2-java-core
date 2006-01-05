@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class Storage {
-    private ArrayList mails = new ArrayList();
     private Hashtable users = new Hashtable();
 
     public Storage() {

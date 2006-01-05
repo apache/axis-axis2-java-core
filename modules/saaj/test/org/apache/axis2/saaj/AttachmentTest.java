@@ -1,18 +1,17 @@
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
+import junit.framework.TestCase;
 
 public class AttachmentTest extends TestCase {
 
@@ -21,8 +20,6 @@ public class AttachmentTest extends TestCase {
     }
     
     public void testStringAttachment() throws Exception {
-    	SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
-    	SOAPConnection con = scFactory.createConnection();
     	
     	MessageFactory factory = MessageFactory.newInstance();
     	SOAPMessage message = factory.createMessage();
@@ -52,8 +49,6 @@ public class AttachmentTest extends TestCase {
     }
     
     public void testMultipleAttachments() throws Exception {
-        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
-        SOAPConnection con = scFactory.createConnection();
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();

@@ -50,7 +50,6 @@ public class OMOutputTest extends AbstractTestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        Object object;
         DataHandler dataHandler;
 
         outFileName = "OMSerializeMTOMOut.txt";

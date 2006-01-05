@@ -40,11 +40,6 @@ public class SessionUtils2 {
     protected static String randomClass = "java.security.SecureRandom";
 
     /**
-     * Host name/ip.
-     */
-    private static String thisHost = null;
-
-    /**
      * Generate and return a new session identifier.
      *
      * @return a new session id

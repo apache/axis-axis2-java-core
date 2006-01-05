@@ -134,7 +134,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
     public void testCreateSOAPEnvelope() {
         try {
-            OMNamespace soapNamespace = omFactory.createOMNamespace(
+            omFactory.createOMNamespace(
                     SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                     SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX);
             SOAPEnvelope soapEnvelopeTwo = omFactory.createSOAPEnvelope();

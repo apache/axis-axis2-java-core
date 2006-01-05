@@ -16,6 +16,7 @@
 package org.apache.axis2.databinding.types;
 
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 
 /**
@@ -23,8 +24,11 @@ import java.text.NumberFormat;
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gDay">XML Schema 3.2.13</a>
  */
-public class Day implements java.io.Serializable {
-    int day;
+public class Day implements Serializable {
+	
+    private static final long serialVersionUID = -9024662553918598132L;
+    
+	int day;
     String timezone;
 
     /**

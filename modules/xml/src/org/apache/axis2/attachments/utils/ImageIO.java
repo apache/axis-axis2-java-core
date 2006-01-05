@@ -17,8 +17,6 @@
 package org.apache.axis2.attachments.utils;
 
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageWriter;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -28,11 +26,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageWriter;
+
 /**
  * JDK1.4 based Image I/O
  */
 public class ImageIO extends Component {
-    /**
+	
+    private static final long serialVersionUID = 4697911685739683266L;
+
+	/**
      * Saves an image.
      *
      * @param mimeType the mime-type of the format to save the image

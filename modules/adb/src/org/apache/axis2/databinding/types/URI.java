@@ -56,7 +56,10 @@ import java.io.Serializable;
 **********************************************************************/
  public class URI implements Serializable {
 
-  /*******************************************************************
+  private static final long serialVersionUID = 2172306044361227627L;
+
+
+/*******************************************************************
   * MalformedURIExceptions are thrown in the process of building a URI
   * or setting fields on a URI when an operation would result in an
   * invalid URI specification.
@@ -64,7 +67,9 @@ import java.io.Serializable;
   ********************************************************************/
   public static class MalformedURIException extends IOException {
 
-   /******************************************************************
+   private static final long serialVersionUID = -8488692760975768757L;
+
+/******************************************************************
     * Constructs a <code>MalformedURIException</code> with no specified
     * detail message.
     ******************************************************************/
@@ -227,8 +232,6 @@ import java.io.Serializable;
 
   /** If specified, stores the fragment for this URI; otherwise null */
   private String m_fragment;
-
-  private static boolean DEBUG;
 
   /**
   * Construct a new and uninitialized URI.
@@ -1873,25 +1876,6 @@ import java.io.Serializable;
   */
   private static boolean isAlphanum(char p_char) {
      return (p_char <= 'z' && (fgLookupTable[p_char] & MASK_ALPHA_NUMERIC) != 0);
-  }
-
- /**
-  * Determine whether a character is a reserved character:
-  * ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '[', or ']'
-  *
-  * @return true if the string contains any reserved characters
-  */
-  private static boolean isReservedCharacter(char p_char) {
-     return (p_char <= ']' && (fgLookupTable[p_char] & RESERVED_CHARACTERS) != 0);
-  }
-
- /**
-  * Determine whether a char is an unreserved character.
-  *
-  * @return true if the char is unreserved, false otherwise
-  */
-  private static boolean isUnreservedCharacter(char p_char) {
-     return (p_char <= '~' && (fgLookupTable[p_char] & MASK_UNRESERVED_MASK) != 0);
   }
 
  /**

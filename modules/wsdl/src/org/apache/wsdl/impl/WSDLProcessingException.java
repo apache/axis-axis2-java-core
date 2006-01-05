@@ -17,7 +17,10 @@
 package org.apache.wsdl.impl;
 
 public class WSDLProcessingException extends RuntimeException {
-    /**
+	
+    private static final long serialVersionUID = -1781504826722368464L;
+
+	/**
      * Constructor WSDLProcessingException
      *
      * @param message

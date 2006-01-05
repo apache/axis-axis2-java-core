@@ -28,13 +28,10 @@ import javax.xml.namespace.QName;
 
 public class PhaseRuleHandlers extends AbstractHandler implements Handler {
 
-    private Log log = LogFactory.getLog(getClass());
-    private String message;
+    private static final long serialVersionUID = 2941436920684525811L;
+    
+	private Log log = LogFactory.getLog(getClass());
     private QName name;
-
-    public PhaseRuleHandlers() {
-        this.message = "inside service 2";
-    }
   
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + name + " Handler Running :)");

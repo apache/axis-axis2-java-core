@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
 public class ThreadPool implements ThreadFactory {
     protected static Log log = LogFactory.getLog(ThreadPool.class.getName());
     protected static long SLEEP_INTERVAL = 1000;
-    private static int MAX_THREAD_COUNT = 10;
     private static boolean shutDown;
     protected ThreadPoolExecutor executor;
 

@@ -18,7 +18,9 @@ package org.apache.axis2.wsdl.codegen;
 
 public class CodeGenerationException extends Exception {
 
-    public CodeGenerationException(String message) {
+    private static final long serialVersionUID = 7763140075166886795L;
+
+	public CodeGenerationException(String message) {
         super(message);
     }
 

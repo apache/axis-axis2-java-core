@@ -24,7 +24,9 @@ import java.io.Serializable;
  */
 public class RelatesTo implements Serializable {
 
-    /**
+	private static final long serialVersionUID = 978799688901329012L;
+
+	/**
      * Field relationshipType
      */
     private String relationshipType;

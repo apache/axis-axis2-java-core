@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 
 public class SpeakingProvider implements MessageReceiver {
     private Log log = LogFactory.getLog(getClass());
-    private String message;
 
     public SpeakingProvider() {
     }

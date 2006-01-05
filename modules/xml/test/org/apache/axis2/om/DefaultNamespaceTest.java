@@ -29,8 +29,8 @@ public class DefaultNamespaceTest extends XMLTestCase {
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement foo = factory.createOMElement(new QName("http://defaultNsUri.org", "Foo"), null);
-        OMElement bar = factory.createOMElement("Bar", null, foo);
-        OMElement baz = factory.createOMElement(new QName("http://defaultNsUri.org", "Baz"), foo);
+        factory.createOMElement("Bar", null, foo);
+        factory.createOMElement(new QName("http://defaultNsUri.org", "Baz"), foo);
         assertXMLEqual(expectedXML, foo.toString());
     }
 
@@ -42,10 +42,10 @@ public class DefaultNamespaceTest extends XMLTestCase {
         OMElement element = factory.createOMElement("DocElement", null);
 
         OMElement foo = factory.createOMElement(new QName(nsURI, "Foo", nsPrefix), element);
-        OMElement bar = factory.createOMElement(new QName(nsURI+1, "Bar", nsPrefix), element);
+        factory.createOMElement(new QName(nsURI+1, "Bar", nsPrefix), element);
 
-        OMElement baz = factory.createOMElement(new QName(nsURI+2, "Baz", nsPrefix), foo);
-        OMElement baz2 = factory.createOMElement(new QName(nsURI, "Baz", nsPrefix), foo);
+        factory.createOMElement(new QName(nsURI+2, "Baz", nsPrefix), foo);
+        factory.createOMElement(new QName(nsURI, "Baz", nsPrefix), foo);
 
     }
 

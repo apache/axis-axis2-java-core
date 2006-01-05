@@ -33,7 +33,9 @@ import java.io.Serializable;
  */
 public class QName implements Serializable {
 
-    /**
+    private static final long serialVersionUID = -6756054858541526837L;
+
+	/**
      * Comment/shared empty <code>String</code>.
      */
     private static final String emptyString = "".intern();
