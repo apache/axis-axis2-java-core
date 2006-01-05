@@ -56,7 +56,9 @@ public abstract class AbstractHTTPSender {
      * @param config
      */
     protected void configProxyAuthentication(HttpClient client,
-                                             TransportOutDescription proxySetting, HostConfiguration config, MessageContext msgCtx)
+                                             TransportOutDescription proxySetting,
+                                             HostConfiguration config,
+                                             MessageContext msgCtx)
             throws AxisFault {
         Parameter proxyParam = proxySetting.getParameter(HTTPConstants.PROXY);
         String usrName;
@@ -94,15 +96,18 @@ public abstract class AbstractHTTPSender {
                 if (usrName.equals(ANONYMOUS) && passwd.equals(ANONYMOUS)) {
                     proxyCred = new UsernamePasswordCredentials("", "");
                 } else {
-                    proxyCred = new UsernamePasswordCredentials(usrName, passwd);    // proxy
+                    proxyCred = new UsernamePasswordCredentials(usrName,
+                            passwd);    // proxy
                 }
             } else {
-                proxyCred = new NTCredentials(usrName, passwd, proxyHostName, domain);    // NTLM authentication with additionals prams
+                proxyCred = new NTCredentials(usrName, passwd, proxyHostName,
+                        domain);    // NTLM authentication with additionals prams
             }
         }
 
         HttpTransportProperties.ProxyProperties proxyProperties =
-                (HttpTransportProperties.ProxyProperties) msgCtx.getProperty(HTTPConstants.PROXY);
+                (HttpTransportProperties.ProxyProperties) msgCtx
+                        .getProperty(HTTPConstants.PROXY);
 
         if (proxyProperties != null) {
             if (proxyProperties.getProxyPort() != -1) {
@@ -120,6 +125,25 @@ public abstract class AbstractHTTPSender {
                     || proxyProperties.getPassWord().equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials("", "");
             }
+            if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
+                    !proxyProperties.getPassWord().equals(ANONYMOUS)) {
+                proxyCred = new UsernamePasswordCredentials(
+                        proxyProperties.getUserName().trim(),
+                        proxyProperties
+                                .getPassWord().trim()); // Basic Authentication
+            }
+            if (!proxyProperties.getDomain().equals(ANONYMOUS)) {
+                if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
+                        !proxyProperties.getPassWord().equals(ANONYMOUS) &&
+                        !proxyProperties.getDomain().equals(ANONYMOUS) &&
+                        proxyHostName != null) {
+                    proxyCred = new NTCredentials(
+                            proxyProperties.getUserName().trim(),
+                            proxyProperties.getPassWord().trim(), proxyHostName,
+                            proxyProperties
+                                    .getDomain().trim()); // NTLM Authentication
+                }
+            }
         }
 
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
@@ -132,21 +156,25 @@ public abstract class AbstractHTTPSender {
      * @param method
      * @param msgContext
      */
-    protected void obatainHTTPHeaderInformation(HttpMethodBase method, MessageContext msgContext) {
-        Header header = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+    protected void obatainHTTPHeaderInformation(HttpMethodBase method,
+                                                MessageContext msgContext) {
+        Header header =
+                method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {
             HeaderElement[] headers = header.getElements();
 
             for (int i = 0; i < headers.length; i++) {
                 NameValuePair charsetEnc =
-                        headers[i].getParameterByName(HTTPConstants.CHAR_SET_ENCODING);
+                        headers[i].getParameterByName(
+                                HTTPConstants.CHAR_SET_ENCODING);
                 OperationContext opContext = msgContext.getOperationContext();
                 String name = headers[i].getName();
                 if (name.equalsIgnoreCase(
                         HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
                     if (opContext != null) {
-                        opContext.setProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
+                        opContext.setProperty(
+                                HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
                                 header.getValue());
                     }
                 } else if (charsetEnc != null) {
@@ -155,9 +183,11 @@ public abstract class AbstractHTTPSender {
                 }
             }
         }
-        Header cookieHeader = method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE);
+        Header cookieHeader =
+                method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE);
         if (cookieHeader == null) {
-            cookieHeader = method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE2);
+            cookieHeader =
+                    method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE2);
         }
         if (cookieHeader != null) {
             msgContext.getServiceContext().setProperty(Constants.COOKIE_STRING,
@@ -165,27 +195,32 @@ public abstract class AbstractHTTPSender {
         }
     }
 
-    protected void processResponse(HttpMethodBase httpMethod, MessageContext msgContext)
+    protected void processResponse(HttpMethodBase httpMethod,
+                                   MessageContext msgContext)
             throws IOException {
         obatainHTTPHeaderInformation(httpMethod, msgContext);
 
         InputStream in = httpMethod.getResponseBodyAsStream();
 
         if (in == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "InputStream"));
+            throw new AxisFault(
+                    Messages.getMessage("canNotBeNull", "InputStream"));
         }
 
-        msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
+        msgContext.getOperationContext()
+                .setProperty(MessageContext.TRANSPORT_IN, in);
     }
 
-    public abstract void send(MessageContext msgContext, OMElement dataout, URL url,
+    public abstract void send(MessageContext msgContext, OMElement dataout,
+                              URL url,
                               String soapActionString)
             throws MalformedURLException, AxisFault, IOException;
 
     /**
      * getting host configuration to support standard http/s, proxy and NTLM support
      */
-    protected HostConfiguration getHostConfiguration(HttpClient client, MessageContext msgCtx,
+    protected HostConfiguration getHostConfiguration(HttpClient client,
+                                                     MessageContext msgCtx,
                                                      URL targetURL)
             throws AxisFault {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
@@ -203,7 +238,8 @@ public abstract class AbstractHTTPSender {
         } else {
 
             // proxy and NTLM configuration
-            this.configProxyAuthentication(client, proxyOutSetting, config, msgCtx);
+            this.configProxyAuthentication(client, proxyOutSetting, config,
+                    msgCtx);
         }
 
         return config;
@@ -224,7 +260,8 @@ public abstract class AbstractHTTPSender {
             Integer tempSoTimeoutProperty =
                     (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
             Integer tempConnTimeoutProperty =
-                    (Integer) msgContext.getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+                    (Integer) msgContext
+                            .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
 
             if (tempSoTimeoutProperty != null) {
                 soTimeout = tempSoTimeoutProperty.intValue();
@@ -244,7 +281,8 @@ public abstract class AbstractHTTPSender {
         boolean returnValue = false;
         Parameter par = null;
 
-        proxyOutSetting = msgCtx.getConfigurationContext().getAxisConfiguration().getTransportOut(
+        proxyOutSetting = msgCtx.getConfigurationContext()
+                .getAxisConfiguration().getTransportOut(
                 new QName(Constants.TRANSPORT_HTTP));
 
         if (proxyOutSetting != null) {
@@ -263,7 +301,8 @@ public abstract class AbstractHTTPSender {
             while (ite.hasNext()) {
                 OMAttribute attribute = (OMAttribute) ite.next();
 
-                if (attribute.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)) {
+                if (attribute.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME))
+                {
                     returnValue = true;
                 }
             }
@@ -271,8 +310,9 @@ public abstract class AbstractHTTPSender {
 
         HttpTransportProperties.ProxyProperties proxyProperties;
 
-        if ((proxyProperties = (HttpTransportProperties.ProxyProperties) msgCtx.getProperty(
-                HTTPConstants.PROXY)) != null) {
+        if ((proxyProperties =
+                (HttpTransportProperties.ProxyProperties) msgCtx.getProperty(
+                        HTTPConstants.PROXY)) != null) {
             if (proxyProperties.getProxyHostName() != null) {
                 returnValue = true;
             }
@@ -294,8 +334,10 @@ public abstract class AbstractHTTPSender {
         private MessageContext msgCtxt;
         private String soapActionString;
 
-        public AxisRequestEntity(OMElement element, boolean chunked, MessageContext msgCtxt,
-                                 String charSetEncoding, String soapActionString) {
+        public AxisRequestEntity(OMElement element, boolean chunked,
+                                 MessageContext msgCtxt,
+                                 String charSetEncoding,
+                                 String soapActionString) {
             this.element = element;
             this.chunked = chunked;
             this.msgCtxt = msgCtxt;
@@ -304,7 +346,8 @@ public abstract class AbstractHTTPSender {
             this.soapActionString = soapActionString;
         }
 
-        private void handleOMOutput(OutputStream out, boolean doingMTOM) throws XMLStreamException {
+        private void handleOMOutput(OutputStream out, boolean doingMTOM)
+                throws XMLStreamException {
             format.setDoOptimize(doingMTOM);
             element.serializeAndConsume(out, format);
         }
@@ -387,7 +430,8 @@ public abstract class AbstractHTTPSender {
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if (!msgCtxt.isSOAP11() && (soapActionString != null)
                     && !"".equals(soapActionString.trim())) {
-                contentType = contentType + ";action=\"" + soapActionString + "\";";
+                contentType =
+                        contentType + ";action=\"" + soapActionString + "\";";
             }
 
             return contentType;
