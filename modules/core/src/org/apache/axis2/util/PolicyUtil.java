@@ -55,19 +55,26 @@ public class PolicyUtil {
     private static void populatePolicy(WSDLDescription description,
                                        WSDLService wsdlService, AxisService axisService) {
 
-        AxisServiceGroup axisServiceGroup = axisService.getParent();
-        //TODO : Sanka please be carefull , your code given NPEs all over the places
-        AxisConfiguration axisConfiguration = axisServiceGroup.getParent();
+        AxisServiceGroup axisServiceGroup = null;
+        AxisConfiguration axisConfiguration = null;
+        
+        axisServiceGroup = axisService.getParent();
+        
+        if (axisServiceGroup == null) {
+            axisConfiguration = axisServiceGroup.getParent();
+        }
 
         PolicyInclude servicePolicyInclude = axisService.getPolicyInclude();
 
         List policyList;
 
         // Policies defined in Axis2.xml
+        if (axisConfiguration != null) {
         policyList = axisConfiguration.getPolicyInclude().getPolicyElements(
                 PolicyInclude.AXIS_POLICY);
         addPolicyAsExtElements(description, policyList, wsdlService,
                 servicePolicyInclude);
+        }
 
         // Policies defined in wsdl:Service
         policyList = servicePolicyInclude

@@ -272,12 +272,8 @@ public class ArchiveReader implements DeploymentConstants {
      * @throws DeploymentException
      */
     private AxisService processWSDLFile(InputStream in) throws DeploymentException {
-        try {
             AxisServiceBuilder axisServiceBuilder = new AxisServiceBuilder();
             return axisServiceBuilder.getAxisService(in);
-        } catch (WSDLException e) {
-            throw new DeploymentException(e);
-        }
     }
 
     /**
