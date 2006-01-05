@@ -468,7 +468,7 @@ public class ServiceClient {
     public void finalizeInvoke() throws AxisFault {
         if (options.isUseSeparateListener()) {
             ListenerManager.stop(serviceContext.getConfigurationContext(),
-                    options.getTransportInDescription().getName()
+                    options.getTransportIn().getName()
                             .getLocalPart());
         }
     }

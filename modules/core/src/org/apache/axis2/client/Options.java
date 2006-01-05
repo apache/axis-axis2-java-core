@@ -53,18 +53,16 @@ public class Options {
     // Parameters that can be set via Options
     // ==========================================================================
     private String soapVersionURI; // defaults to
-                                    // SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+    // SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
     private String soapAction;
 
     private Boolean isExceptionToBeThrownOnSOAPFault; // defaults to true;
 
     private long timeOutInMilliSeconds = -1; // =
-                                                // DEFAULT_TIMEOUT_MILLISECONDS;
+    // DEFAULT_TIMEOUT_MILLISECONDS;
 
     private Boolean useSeparateListener; // defaults to false
-
-    private String soapFactory;
 
     // Addressing specific properties
     private String action;
@@ -75,7 +73,7 @@ public class Options {
 
     private TransportListener listener;
 
-    private TransportInDescription transportInDescription;
+    private TransportInDescription transportIn;
 
     private String transportInProtocol;
 
@@ -90,7 +88,7 @@ public class Options {
     /**
      * This is used for sending and receiving messages.
      */
-    protected TransportOutDescription senderTransport;
+    protected TransportOutDescription transportOut;
 
     private String senderTransportProtocol;
 
@@ -106,7 +104,7 @@ public class Options {
      * In normal mode operation, this options will try to fullfil the request
      * from its values. If that is not possible, this options will request those
      * information from its parent.
-     * 
+     *
      * @param parent
      */
     public Options(Options parent) {
@@ -141,11 +139,11 @@ public class Options {
         return listener;
     }
 
-    public TransportInDescription getTransportInDescription() {
-        if (transportInDescription == null && parent != null) {
-            transportInDescription = parent.getTransportInDescription();
+    public TransportInDescription getTransportIn() {
+        if (transportIn == null && parent != null) {
+            transportIn = parent.getTransportIn();
         }
-        return transportInDescription;
+        return transportIn;
     }
 
     public String getTransportInProtocol() {
@@ -202,12 +200,12 @@ public class Options {
         return replyTo;
     }
 
-    public TransportOutDescription getSenderTransport() {
-        if (senderTransport == null && parent != null) {
-            senderTransport = parent.getSenderTransport();
+    public TransportOutDescription getTranportOut() {
+        if (transportOut == null && parent != null) {
+            transportOut = parent.getTranportOut();
         }
 
-        return senderTransport;
+        return transportOut;
     }
 
     public String getSenderTransportProtocol() {
@@ -238,7 +236,7 @@ public class Options {
     /**
      * Gets the wait time after which a client times out in a blocking scenario.
      * The default is Options#DEFAULT_TIMEOUT_MILLISECONDS
-     * 
+     *
      * @return timeOutInMilliSeconds
      */
     public long getTimeOutInMilliSeconds() {
@@ -303,7 +301,7 @@ public class Options {
      * that facility. If this is false, the response message will just be
      * returned to the application, irrespective of whether it has a Fault or
      * not.
-     * 
+     *
      * @param exceptionToBeThrownOnSOAPFault
      */
     public void setExceptionToBeThrownOnSOAPFault(
@@ -324,9 +322,8 @@ public class Options {
         this.listener = listener;
     }
 
-    public void setTransportInDescription(
-            TransportInDescription transportInDescription) {
-        this.transportInDescription = transportInDescription;
+    public void setTransportIn(TransportInDescription transportIn) {
+        this.transportIn = transportIn;
     }
 
     public void setTransportInProtocol(String transportInProtocol) {
@@ -344,7 +341,7 @@ public class Options {
      * (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to
      * Boolean(true), this code will copy the whole thing, without just
      * referencing to the source.
-     * 
+     *
      * @param properties
      */
     public void setProperties(Map properties) {
@@ -356,7 +353,7 @@ public class Options {
      * this. If there is a method to the set this property, within this class,
      * its encouraged to use that method, without duplicating stuff or making
      * room for bugs.
-     * 
+     *
      * @param propertyKey
      * @param property
      */
@@ -372,20 +369,19 @@ public class Options {
         this.replyTo = replyTo;
     }
 
-    public void setSenderTransport(TransportOutDescription senderTransport) {
-        this.senderTransport = senderTransport;
+    public void setTranportOut(TransportOutDescription transportOut) {
+        this.transportOut = transportOut;
     }
 
     /**
      * Sets the transport to be used for sending the SOAP Message
-     * 
+     *
      * @param senderTransport
-     * @throws AxisFault
-     *             if the transport is not found
+     * @throws AxisFault if the transport is not found
      */
     public void setSenderTransport(String senderTransport,
-            AxisConfiguration axisConfiguration) throws AxisFault {
-        this.senderTransport = axisConfiguration.getTransportOut(new QName(
+                                   AxisConfiguration axisConfiguration) throws AxisFault {
+        this.transportOut = axisConfiguration.getTransportOut(new QName(
                 senderTransport));
 
         if (senderTransport == null) {
@@ -406,7 +402,7 @@ public class Options {
      * This is used in blocking scenario. Client will time out after waiting
      * this amount of time. The default is 2000 and must be provided in
      * multiples of 100.
-     * 
+     *
      * @param timeOutInMilliSeconds
      */
     public void setTimeOutInMilliSeconds(long timeOutInMilliSeconds) {
@@ -420,18 +416,18 @@ public class Options {
     /**
      * Sets transport information to the call. The senarios supported are as
      * follows: <blockquote>
-     * 
+     * <p/>
      * <pre>
-     *  [senderTransport, transportInDescription, useSeparateListener]
+     *  [transportOut, transportIn, useSeparateListener]
      *  http, http, true
      *  http, http, false
      *  http,smtp,true
      *  smtp,http,true
      *  smtp,smtp,true
      * </pre>
-     * 
+     * <p/>
      * </blockquote>
-     * 
+     *
      * @param senderTransport
      * @param listenerTransport
      * @param useSeparateListener
@@ -440,10 +436,10 @@ public class Options {
      *             useSeparateListener(boolean) instead. You do not need to
      *             setSenderTransportProtocol(String) as sender transport can be
      *             inferred from the to EPR. But still you can
-     *             setSenderTransport(TransportOutDescription).
+     *             setTranportOut(TransportOutDescription).
      */
     public void setTransportInfo(String senderTransport,
-            String listenerTransport, boolean useSeparateListener)
+                                 String listenerTransport, boolean useSeparateListener)
             throws AxisFault {
 
         // here we check for a legal combination, for and example if the
@@ -474,7 +470,7 @@ public class Options {
      * the transport specified. For e.g., if the transports are different this
      * is true by default. HTTP transport supports both cases while SMTP
      * transport supports only two channel case.
-     * 
+     *
      * @param useSeparateListener
      */
     public void setUseSeparateListener(boolean useSeparateListener) {

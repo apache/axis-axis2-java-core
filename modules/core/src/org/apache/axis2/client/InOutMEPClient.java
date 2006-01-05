@@ -90,24 +90,24 @@ public class InOutMEPClient extends MEPClient {
      * @throws AxisFault
      */
     private void checkTransport(MessageContext msgctx) throws AxisFault {
-        if (clientOptions.getSenderTransport() == null) {
-            clientOptions.setSenderTransport(inferTransport(msgctx.getTo()));
+        if (clientOptions.getTranportOut() == null) {
+            clientOptions.setTranportOut(inferTransport(msgctx.getTo()));
         }
 
         if (clientOptions.isUseSeparateListener()) {
-            if (clientOptions.getTransportInDescription() == null) {
-                clientOptions.setTransportInDescription(
+            if (clientOptions.getTransportIn() == null) {
+                clientOptions.setTransportIn(
                         serviceContext.getConfigurationContext().getAxisConfiguration().getTransportIn(
-                                clientOptions.getSenderTransport().getName()));
+                                clientOptions.getTranportOut().getName()));
             }
         }
 
         if (msgctx.getTransportIn() == null) {
-            msgctx.setTransportIn(clientOptions.getTransportInDescription());
+            msgctx.setTransportIn(clientOptions.getTransportIn());
         }
 
         if (msgctx.getTransportOut() == null) {
-            msgctx.setTransportOut(clientOptions.getSenderTransport());
+            msgctx.setTransportOut(clientOptions.getTranportOut());
         }
     }
 
@@ -118,7 +118,7 @@ public class InOutMEPClient extends MEPClient {
     public void close() throws AxisFault {
         if (clientOptions.isUseSeparateListener()) {
             ListenerManager.stop(serviceContext.getConfigurationContext(),
-                    clientOptions.getTransportInDescription().getName().getLocalPart());
+                    clientOptions.getTransportIn().getName().getLocalPart());
         }
     }
 
@@ -138,7 +138,7 @@ public class InOutMEPClient extends MEPClient {
                                 listenerTransportProtocol));
                     }
 
-                    clientOptions.setTransportInDescription(transportIn);
+                    clientOptions.setTransportIn(transportIn);
                 }
             }
 
@@ -245,7 +245,7 @@ public class InOutMEPClient extends MEPClient {
             operationContext.setProperties(clientOptions.getProperties());
 
             // Send the SOAP Message and receive a response
-            MessageContext response = send(msgctx, clientOptions.getTransportInDescription());
+            MessageContext response = send(msgctx, clientOptions.getTransportIn());
 
             // check for a fault and return the result
             SOAPEnvelope resenvelope = response.getEnvelope();
@@ -323,7 +323,7 @@ public class InOutMEPClient extends MEPClient {
                                 .replyToEPR(serviceContext.getConfigurationContext(),
                                         serviceContext.getAxisService().getName() + "/"
                                                 + axisop.getName().getLocalPart(), clientOptions
-                                        .getTransportInDescription().getName().getLocalPart());
+                                        .getTransportIn().getName().getLocalPart());
 
                 if (msgctx.getReplyTo() == null) {
                     msgctx.setReplyTo(replyToFromTransport);
@@ -420,7 +420,7 @@ public class InOutMEPClient extends MEPClient {
             try {
 
                 // send the request and wait for reponse
-                MessageContext response = send(msgctx, clientOptions.getTransportInDescription());
+                MessageContext response = send(msgctx, clientOptions.getTransportIn());
 
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();

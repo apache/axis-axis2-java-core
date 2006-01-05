@@ -249,7 +249,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
 
         // if the transport to use for sending is not specified, try to find it
         // from the URL
-        TransportOutDescription senderTransport = options.getSenderTransport();
+        TransportOutDescription senderTransport = options.getTranportOut();
         if (senderTransport == null) {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();

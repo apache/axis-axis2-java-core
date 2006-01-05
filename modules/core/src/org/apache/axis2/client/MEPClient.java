@@ -258,7 +258,7 @@ public abstract class MEPClient {
         // user can set the transport by giving a TransportOutDescription or we
         // will deduce that from the "to" epr information, if user has not set the
         // TransportOutDescription, lets infer that
-        if (clientOptions.getSenderTransport() == null) {
+        if (clientOptions.getTranportOut() == null) {
             AxisConfiguration axisConfig =
                     this.serviceContext.getConfigurationContext().getAxisConfiguration();
 
@@ -271,17 +271,17 @@ public abstract class MEPClient {
 
                     // by this time we have passed all the information we
                     // collected via Options to the message context
-                    clientOptions.setSenderTransport(inferTransport(msgCtx.getTo()));
+                    clientOptions.setTranportOut(inferTransport(msgCtx.getTo()));
                 } else {
 
                     // if he has not set the transport information, we gonna
                     // infer that from the to EPR
-                    clientOptions.setSenderTransport(
+                    clientOptions.setTranportOut(
                             axisConfig.getTransportOut(new QName(senderTrasportProtocol)));
                 }
             }
 
-            if (this.clientOptions.getSenderTransport() == null) {
+            if (this.clientOptions.getTranportOut() == null) {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
                                                         senderTrasportProtocol));
             }

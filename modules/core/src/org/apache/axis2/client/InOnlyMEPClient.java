@@ -59,7 +59,7 @@ public class InOnlyMEPClient extends MEPClient {
         msgctx.setServiceContext(serviceContext);
 
         // if the transport to use for sending is not specified, try to find it from the URL
-        TransportOutDescription senderTransport = clientOptions.getSenderTransport();
+        TransportOutDescription senderTransport = clientOptions.getTranportOut();
 
         if (senderTransport == null) {
             senderTransport = inferTransport(msgctx.getTo());

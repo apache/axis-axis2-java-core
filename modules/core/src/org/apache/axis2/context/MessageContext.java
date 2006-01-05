@@ -198,7 +198,7 @@ public class MessageContext extends AbstractContext {
             TransportInDescription transportIn,
             TransportOutDescription transportOut) {
         this(configContext, null, transportIn, transportOut);
-        this.options.setTransportInDescription(transportIn);
+        this.options.setTransportIn(transportIn);
         this.transportOutname = transportOut.getName();
     }
 
@@ -593,7 +593,7 @@ public class MessageContext extends AbstractContext {
      * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
-        return options.getTransportInDescription();
+        return options.getTransportIn();
     }
 
     /**
@@ -900,7 +900,7 @@ public class MessageContext extends AbstractContext {
      * @param in
      */
     public void setTransportIn(TransportInDescription in) {
-        options.setTransportInDescription(in);
+        options.setTransportIn(in);
 
         if (in != null) {
             this.options.setTransportInProtocol(in.getName().getLocalPart());

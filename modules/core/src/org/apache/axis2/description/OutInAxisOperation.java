@@ -36,7 +36,7 @@ public class OutInAxisOperation extends InOutAxisOperation {
     }
 
     public void addMessageContext(MessageContext msgContext,
-            OperationContext opContext) throws AxisFault {
+                                  OperationContext opContext) throws AxisFault {
         HashMap mep = opContext.getMessageContexts();
         MessageContext immsgContext = (MessageContext) mep
                 .get(MESSAGE_LABEL_IN_VALUE);
@@ -61,14 +61,12 @@ public class OutInAxisOperation extends InOutAxisOperation {
      * interact with a server which is offering an In-Out operation. To use the
      * client, you must call addMessageContext() with a message context and then
      * call execute() to execute the client.
-     * 
-     * @param sc
-     *            The service context for this client to live within. Cannot be
-     *            null.
-     * @param options
-     *            Options to use as defaults for this client. If any options are
-     *            set specifically on the client then those override options
-     *            here.
+     *
+     * @param sc      The service context for this client to live within. Cannot be
+     *                null.
+     * @param options Options to use as defaults for this client. If any options are
+     *                set specifically on the client then those override options
+     *                here.
      */
     public OperationClient createClient(ServiceContext sc, Options options) {
         return new OutInAxisOperationClient(this, sc, options);
@@ -97,7 +95,7 @@ class OutInAxisOperationClient implements OperationClient {
     boolean completed;
 
     OutInAxisOperationClient(OutInAxisOperation axisOp, ServiceContext sc,
-            Options options) {
+                             Options options) {
         this.axisOp = axisOp;
         this.sc = sc;
         this.options = new Options(options);
@@ -110,9 +108,8 @@ class OutInAxisOperationClient implements OperationClient {
      * Sets the options that should be used for this particular client. This
      * resets the entire set of options to use the new options - so you'd lose
      * any option cascading that may have been set up.
-     * 
-     * @param options
-     *            the options
+     *
+     * @param options the options
      */
     public void setOptions(Options options) {
         this.options = options;
@@ -122,7 +119,7 @@ class OutInAxisOperationClient implements OperationClient {
      * Return the options used by this client. If you want to set a single
      * option, then the right way is to do getOptions() and set specific
      * options.
-     * 
+     *
      * @return the options, which will never be null.
      */
     public Options getOptions() {
@@ -133,7 +130,7 @@ class OutInAxisOperationClient implements OperationClient {
      * Adding message context to operation context , so that it will handle the
      * logic correctly if the OperationContext is null then new one will be
      * created , and oc will become null when some one call reset()
-     * 
+     *
      * @param mc
      * @throws AxisFault
      */
@@ -144,10 +141,10 @@ class OutInAxisOperationClient implements OperationClient {
 
     /**
      * Retun the message context for a given message lebel
-     * 
+     *
      * @param messageLabel :
-     *            label of the message and that can be either "Out" or "In" and
-     *            nothing else
+     *                     label of the message and that can be either "Out" or "In" and
+     *                     nothing else
      * @return
      * @throws AxisFault
      */
@@ -167,13 +164,11 @@ class OutInAxisOperationClient implements OperationClient {
      * MEP, then if the Out message has been set, then executing the client asks
      * it to send the message and get the In message, possibly using a different
      * thread.
-     * 
-     * @param block
-     *            Indicates whether execution should block or return ASAP. What
-     *            block means is of course a function of the specific MEP
-     *            client. IGNORED BY THIS MEP CLIENT.
-     * @throws AxisFault
-     *             if something goes wrong during the execution of the MEP.
+     *
+     * @param block Indicates whether execution should block or return ASAP. What
+     *              block means is of course a function of the specific MEP
+     *              client. IGNORED BY THIS MEP CLIENT.
+     * @throws AxisFault if something goes wrong during the execution of the MEP.
      */
     public void execute(boolean block) throws AxisFault {
         if (completed) {
@@ -197,36 +192,33 @@ class OutInAxisOperationClient implements OperationClient {
 
         // if the transport to use for sending is not specified, try to find it
         // from the URL
-        TransportOutDescription senderTransport = options.getSenderTransport();
-        if (senderTransport == null) {
+        TransportOutDescription transportOut = options.getTranportOut();
+        if (transportOut == null) {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();
-            senderTransport = ClientUtils.inferOutTransport(cc
+            transportOut = ClientUtils.inferOutTransport(cc
                     .getAxisConfiguration(), toEPR);
         }
-        mc.setTransportOut(senderTransport);
+        mc.setTransportOut(transportOut);
         if (mc.getTransportIn() == null) {
-            TransportInDescription transportInDescription = options
-                    .getTransportInDescription();
-            if (transportInDescription == null) {
+            TransportInDescription transportIn = options.getTransportIn();
+            if (transportIn == null) {
                 mc.setTransportIn(ClientUtils.inferInTransport(cc
                         .getAxisConfiguration(), options, mc
                         .getServiceContext()));
             } else {
-                mc.setTransportIn(transportInDescription);
+                mc.setTransportIn(transportIn);
             }
         }
 
-        if (options.isUseSeparateListener())
-
-        {
+        if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
             callbackReceiver.addCallback(mc.getMessageID(), callback);
             EndpointReference replyToFromTransport = ListenerManager
                     .replyToEPR(cc, sc.getAxisService().getName() + "/"
                             + axisOp.getName().getLocalPart(), options
-                            .getTransportInDescription().getName()
+                            .getTransportIn().getName()
                             .getLocalPart());
 
             if (mc.getReplyTo() == null) {
@@ -244,7 +236,7 @@ class OutInAxisOperationClient implements OperationClient {
             if (block) {
                 // Send the SOAP Message and receive a response
                 MessageContext response = send(mc, options
-                        .getTransportInDescription());
+                        .getTransportIn());
                 // check for a fault and return the result
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 if (resenvelope.getBody().hasFault()) {
@@ -264,13 +256,13 @@ class OutInAxisOperationClient implements OperationClient {
 
                             message = (message + "Code =" + soapFault.getCode() == null) ? ""
                                     : (soapFault.getCode().getValue() == null) ? ""
-                                            : soapFault.getCode().getValue()
-                                                    .getText();
+                                    : soapFault.getCode().getValue()
+                                    .getText();
                             message = (message + "Reason ="
                                     + soapFault.getReason() == null) ? ""
                                     : (soapFault.getReason().getSOAPText() == null) ? ""
-                                            : soapFault.getReason()
-                                                    .getSOAPText().getText();
+                                    : soapFault.getReason()
+                                    .getSOAPText().getText();
 
                             throw new AxisFault(message);
                         }
@@ -293,7 +285,7 @@ class OutInAxisOperationClient implements OperationClient {
      * @throws AxisFault
      */
     public MessageContext send(MessageContext msgctx,
-            TransportInDescription transportIn) throws AxisFault {
+                               TransportInDescription transportIn) throws AxisFault {
         AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
         engine.send(msgctx);
@@ -317,7 +309,7 @@ class OutInAxisOperationClient implements OperationClient {
 
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                 responseMessageContext, msgctx.getEnvelope().getNamespace()
-                        .getName());
+                .getName());
 
         if (resenvelope != null) {
             responseMessageContext.setEnvelope(resenvelope);
@@ -334,10 +326,9 @@ class OutInAxisOperationClient implements OperationClient {
      * Reset the MEP client to a clean status after the MEP has completed. This
      * is how you can reuse a MEP client. NOTE: this does not reset the options;
      * only the internal state so the client can be used again.
-     * 
-     * @throws AxisFault
-     *             if reset is called before the MEP client has completed an
-     *             interaction.
+     *
+     * @throws AxisFault if reset is called before the MEP client has completed an
+     *                   interaction.
      */
     public void reset() throws AxisFault {
         if (!completed) {
@@ -357,7 +348,7 @@ class OutInAxisOperationClient implements OperationClient {
         private MessageContext msgctx;
 
         public NonBlockingInvocationWorker(Callback callback,
-                MessageContext msgctx) {
+                                           MessageContext msgctx) {
             this.callback = callback;
             this.msgctx = msgctx;
         }
@@ -367,7 +358,7 @@ class OutInAxisOperationClient implements OperationClient {
 
                 // send the request and wait for reponse
                 MessageContext response = send(msgctx, options
-                        .getTransportInDescription());
+                        .getTransportIn());
 
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();

@@ -44,7 +44,7 @@ public class ClientUtils {
                     throw new AxisFault(Messages.getMessage("unknownTransport",
                             listenerTransportProtocol));
                 }
-                options.setTransportInDescription(transportIn);
+                options.setTransportIn(transportIn);
             }
             // if separate transport is used, start the required listeners
             if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
