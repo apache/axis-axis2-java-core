@@ -151,6 +151,11 @@ org.apache.ws.security.crypto.provider defines the implementation of the org.apa
 interface to provide the crypto information required by WSS4J. The other properties defined are the configuration
  properties used by the implementation class (org.apache.ws.security.components.crypto.Merlin).
  
+<h2>JDK 1.5</h2>
+<p>If you are using JDK1.5 make sure you add bouncycastle as a JCE provider of the JRE</p> 
+<p>Simply add <b>security.provider.X=org.bouncycastle.jce.provider.BouncyCastleProvider</b> entry in 
+<b>JDK_HOME/jre/lib/security/java.security</b> file.</p>
+
 <p><b>References</b></p>
 <p>1. <a href="http://ws.apache.org/wss4j">Apache WSS4J</a></p>
 <br>
