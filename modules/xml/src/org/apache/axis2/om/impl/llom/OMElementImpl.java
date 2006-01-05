@@ -356,15 +356,24 @@ public class OMElementImpl extends OMNodeImpl
 
         if (prefix == null || "".equals(prefix)) {
             Iterator namespaceListIterator = namespaces.values().iterator();
+
+            OMNamespace ns = null;
+
             while (namespaceListIterator.hasNext()) {
                 OMNamespace omNamespace =
                         (OMNamespace) namespaceListIterator.next();
                 if (omNamespace.getName() != null &&
                         omNamespace.getName().equals(uri)) {
-                    return omNamespace;
+                       if(ns == null){
+                        ns = omNamespace;
+                       }else{
+                               if(omNamespace.getPrefix() == null || omNamespace.getPrefix().length() == 0){
+                                       ns = omNamespace;
+                               }
+                       }
                 }
             }
-            return null;
+            return ns;
         } else {
             OMNamespace namespace = (OMNamespace) namespaces.get(prefix);
             if (namespace != null && uri.equalsIgnoreCase(namespace.getName())) {
