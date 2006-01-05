@@ -97,7 +97,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                         try {
                             Utils.fillAxisService(as);
                         } catch (Exception e) {
-                            log.info("Error in scheam generating :" + e.getMessage());
+                            log.info("Error in schema generating :" + e.getMessage());
                         }
                     }
                     serviceList.add(as);

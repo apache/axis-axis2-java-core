@@ -41,6 +41,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Builds a service description from OM
@@ -98,7 +99,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             // setting the PolicyInclude
-            
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
@@ -151,6 +152,16 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
 
                 service.addOperation(operationDesc);
+            }
+
+            // Set the default message receiver for the operations that were 
+            // not listed in the services.xml
+            Iterator operations = service.getPublishedOperations().iterator();
+            while(operations.hasNext()){
+                AxisOperation operation = (AxisOperation) operations.next();
+                if(operation.getMessageReceiver()==null){
+                    operation.setMessageReceiver(loadDefaultMessageReceiver(null, service));    
+                }
             }
 
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
