@@ -16,10 +16,9 @@
 
 package org.apache.axis2.security.handler.config;
 
+import junit.framework.TestCase;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
-
-import junit.framework.TestCase;
 
 public class InflowConfigurationTest extends TestCase {
 

@@ -1,8 +1,8 @@
 package org.apache.ideaplugin.bean;
 
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.Project;
 
 import java.io.File;
 /*

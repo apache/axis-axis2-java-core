@@ -34,18 +34,17 @@ import org.apache.commons.httpclient.ChunkedOutputStream;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpParser;
 import org.apache.commons.httpclient.StatusLine;
-import org.apache.axis2.AxisFault;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.NetworkInterface;
-import java.net.InetAddress;
-import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * A connection to the SimpleHttpServer.

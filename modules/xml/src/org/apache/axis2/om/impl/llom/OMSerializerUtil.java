@@ -20,8 +20,8 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.serialize.StreamingOMSerializer;
 
 import javax.xml.stream.XMLStreamException;

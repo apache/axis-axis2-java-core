@@ -42,7 +42,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Arrays;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

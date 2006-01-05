@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axis2.saaj.util.SessionUtils2;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.saaj.util.SessionUtils2;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;

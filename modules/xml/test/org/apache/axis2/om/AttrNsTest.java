@@ -16,13 +16,12 @@
 
 package org.apache.axis2.om;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.custommonkey.xmlunit.Diff;
 import org.w3c.dom.Document;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
 
 public class AttrNsTest extends AbstractOMSerializationTest {
 

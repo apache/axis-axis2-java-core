@@ -27,7 +27,11 @@ import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This contains all the configuration information for Axis2.

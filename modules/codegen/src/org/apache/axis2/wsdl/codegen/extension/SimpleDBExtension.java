@@ -19,9 +19,9 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.axis2.schema.SchemaConstants;
+import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.wsdl.WSDLExtensibilityElement;
@@ -31,12 +31,12 @@ import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
-import java.io.File;
 
 /**
  * Extension for simple data binding.

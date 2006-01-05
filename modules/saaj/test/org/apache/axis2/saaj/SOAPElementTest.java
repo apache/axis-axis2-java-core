@@ -16,12 +16,10 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
+import org.apache.axis2.om.impl.dom.NodeImpl;
 
 import javax.xml.soap.SOAPElement;
 import java.util.List;
-
-import org.apache.axis2.saaj.TextImplEx;
-import org.apache.axis2.om.impl.dom.NodeImpl;
 
 public class SOAPElementTest extends TestCase {
 

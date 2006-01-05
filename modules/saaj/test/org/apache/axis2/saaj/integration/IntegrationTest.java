@@ -1,10 +1,8 @@
 package org.apache.axis2.saaj.integration;
 
 import junit.framework.TestCase;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;

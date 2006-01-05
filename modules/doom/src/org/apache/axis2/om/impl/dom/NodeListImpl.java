@@ -19,10 +19,9 @@ import org.apache.axis2.om.impl.OMContainerEx;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.Vector;
-
-import javax.xml.namespace.QName;
 
 /**
  * Implementation of org.w3c.dom.NodeList

@@ -16,17 +16,9 @@
 
 package org.apache.axis2.security;
 
-import java.security.cert.X509Certificate;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.security.auth.callback.CallbackHandler;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
@@ -34,10 +26,8 @@ import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.security.util.HandlerParameterDecoder;
-import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.SOAPConstants;
@@ -51,6 +41,12 @@ import org.apache.ws.security.message.token.Timestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
+
+import javax.security.auth.callback.CallbackHandler;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.security.cert.X509Certificate;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class WSDoAllReceiver extends WSDoAllHandler {
 

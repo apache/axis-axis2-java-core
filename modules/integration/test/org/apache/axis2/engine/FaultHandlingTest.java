@@ -24,7 +24,11 @@ import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPFault;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;

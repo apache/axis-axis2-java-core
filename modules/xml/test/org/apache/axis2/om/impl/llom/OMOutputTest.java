@@ -21,7 +21,6 @@ import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
-import org.apache.axis2.om.impl.OMNodeEx;
 
 import javax.activation.DataHandler;
 import java.io.File;

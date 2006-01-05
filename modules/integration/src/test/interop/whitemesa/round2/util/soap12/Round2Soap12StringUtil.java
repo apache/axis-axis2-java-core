@@ -16,12 +16,12 @@
 
 package test.interop.whitemesa.round2.util.soap12;
        //test.interop.whitemesa.round2.util
-import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 
 public class Round2Soap12StringUtil implements SunRound2ClientUtil{
 

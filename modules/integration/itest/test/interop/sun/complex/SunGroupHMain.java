@@ -17,6 +17,12 @@
 package test.interop.sun.complex;
 
 import junit.framework.TestCase;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
+import org.apache.axis2.om.impl.llom.util.XMLComparator;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import test.interop.sun.round4.complex.EchoBaseStructFaultClientutil;
 import test.interop.sun.round4.complex.EchoBlockingClient;
 import test.interop.sun.round4.complex.EchoExtendedStructFaultClientUtil;
@@ -24,12 +30,6 @@ import test.interop.sun.round4.complex.EchoMultipleFaults1ClientUtil;
 import test.interop.sun.round4.complex.EchoMultipleFaults2ClientUtil;
 import test.interop.sun.round4.complex.EchoSOAPStructFaultClientUtil;
 import test.interop.sun.round4.complex.SunGroupHClientUtil;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

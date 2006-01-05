@@ -17,10 +17,10 @@
 package test.soap12testing.server;
 
 import org.apache.axis2.AxisFault;
-import test.soap12testing.client.MessageComparator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import test.soap12testing.client.MessageComparator;
 
 import java.io.File;
 

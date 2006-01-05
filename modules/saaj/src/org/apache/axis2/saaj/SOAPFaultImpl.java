@@ -9,8 +9,8 @@ import org.apache.axis2.soap.SOAPFaultText;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;

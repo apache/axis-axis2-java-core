@@ -21,12 +21,12 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.ParentNode;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPConstants;
@@ -38,12 +38,11 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultRole;
 import org.apache.axis2.soap.SOAPProcessingException;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 		OMConstants {

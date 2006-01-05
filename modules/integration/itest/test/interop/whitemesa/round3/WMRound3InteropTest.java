@@ -17,6 +17,7 @@
 package test.interop.whitemesa.round3;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round3.util.GDImport1EchoStringUtil;
 import test.interop.whitemesa.round3.util.GDImport2EchoStructUtil;
@@ -26,7 +27,6 @@ import test.interop.whitemesa.round3.util.GDRpcStringUtil;
 import test.interop.whitemesa.round3.util.GDRpcStructUtil;
 import test.interop.whitemesa.round3.util.GDRpcVoidUtil;
 import test.interop.whitemesa.round3.util.SunRound3ClientUtil;
-import org.apache.axis2.soap.SOAPEnvelope;
 
 /**
  * class MsAsmxRound3InteropTest

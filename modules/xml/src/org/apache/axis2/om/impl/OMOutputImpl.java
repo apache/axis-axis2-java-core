@@ -16,8 +16,8 @@
 
 package org.apache.axis2.om.impl;
 
-import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMOutputFormat;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 
@@ -25,7 +25,6 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.LinkedList;

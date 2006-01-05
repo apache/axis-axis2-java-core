@@ -21,9 +21,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSSecurityException;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * This is used to process the security parameters from the configuration files

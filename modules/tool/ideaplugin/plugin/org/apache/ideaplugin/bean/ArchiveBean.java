@@ -1,10 +1,9 @@
 package org.apache.ideaplugin.bean;
 
-import java.io.*;
-import java.net.URLClassLoader;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.lang.reflect.Method;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

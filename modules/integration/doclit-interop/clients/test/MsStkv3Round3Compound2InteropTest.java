@@ -2,10 +2,10 @@ package test;
 
 import junit.framework.TestCase;
 import test.stub.SoapInteropCompound2PortTypeStub;
-import test.stub.databinding.org.soapinterop.XEmployeeDocument;
 import test.stub.databinding.org.soapinterop.Employee;
 import test.stub.databinding.org.soapinterop.Person;
 import test.stub.databinding.org.soapinterop.ResultEmployeeDocument;
+import test.stub.databinding.org.soapinterop.XEmployeeDocument;
 
 public class MsStkv3Round3Compound2InteropTest extends TestCase{
 

@@ -1,13 +1,18 @@
 package org.apache.ideaplugin.frames;
 
-import org.apache.ideaplugin.bean.ObjectKeeper;
-import org.apache.ideaplugin.bean.ArchiveBean;
-import org.apache.ideaplugin.ParameterDialog;
 import org.apache.ideaplugin.ModuleDialog;
+import org.apache.ideaplugin.ParameterDialog;
+import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

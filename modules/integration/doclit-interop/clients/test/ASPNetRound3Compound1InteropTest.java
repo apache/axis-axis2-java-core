@@ -1,11 +1,10 @@
  package test;
 
-    import junit.framework.TestCase;
+ import junit.framework.TestCase;
+ import test.stub.Compound1SoapStub;
+ import test.stub.databinding.org.soapinterop.*;
 
-    import java.rmi.RemoteException;
-
-    import test.stub.Compound1SoapStub;
-    import test.stub.databinding.org.soapinterop.*;
+ import java.rmi.RemoteException;
 
 public class ASPNetRound3Compound1InteropTest extends TestCase{
 

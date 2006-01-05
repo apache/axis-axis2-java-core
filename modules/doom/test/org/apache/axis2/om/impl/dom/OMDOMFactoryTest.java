@@ -15,12 +15,11 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import junit.framework.TestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 
 import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
 
 public class OMDOMFactoryTest extends TestCase{
 

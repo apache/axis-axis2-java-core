@@ -1,8 +1,8 @@
 package org.apache.axis2.schema;
 
+import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;

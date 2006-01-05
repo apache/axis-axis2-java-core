@@ -16,16 +16,14 @@
 
 package org.apache.axis2.soap;
 
+import junit.framework.TestCase;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-
-import junit.framework.TestCase;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class WrongEnvelopeNamespaceTester extends TestCase {
     public void testCode() {

@@ -27,9 +27,8 @@ import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPHeaderImpl;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 public class SOAP12HeaderImpl extends SOAPHeaderImpl {
     /**

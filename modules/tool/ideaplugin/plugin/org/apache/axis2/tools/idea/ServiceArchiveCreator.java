@@ -1,13 +1,11 @@
 package org.apache.axis2.tools.idea;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 
-import javax.swing.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.File;
+import javax.swing.ImageIcon;
 
 public class ServiceArchiveCreator extends AnAction {
     private ImageIcon myIcon;

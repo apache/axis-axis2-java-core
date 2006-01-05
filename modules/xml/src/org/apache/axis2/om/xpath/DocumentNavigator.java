@@ -1,16 +1,5 @@
 package org.apache.axis2.om.xpath;
 
-import java.io.FileInputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMComment;
 import org.apache.axis2.om.OMContainer;
@@ -30,6 +19,16 @@ import org.jaxen.UnsupportedAxisException;
 import org.jaxen.XPath;
 import org.jaxen.saxpath.SAXPathException;
 import org.jaxen.util.SingleObjectIterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.FileInputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 public class DocumentNavigator extends DefaultNavigator {
     /**

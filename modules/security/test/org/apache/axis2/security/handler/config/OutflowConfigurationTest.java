@@ -16,11 +16,10 @@
 
 package org.apache.axis2.security.handler.config;
 
+import junit.framework.TestCase;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
-
-import junit.framework.TestCase;
 
 /**
  * Tests the org.apache.axis2.security.handler.config.OutflowConfiguration

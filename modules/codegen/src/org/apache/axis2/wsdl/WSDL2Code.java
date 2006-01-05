@@ -19,7 +19,6 @@ package org.apache.axis2.wsdl;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 public class WSDL2Code {

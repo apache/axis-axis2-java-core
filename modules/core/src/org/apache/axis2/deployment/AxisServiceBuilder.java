@@ -16,15 +16,28 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis2.util.XMLUtils;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.policy.Policy;
+import org.apache.ws.policy.PolicyConstants;
+import org.apache.ws.policy.PolicyReference;
+import org.apache.ws.policy.util.OMPolicyReader;
+import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.impl.WSDLProcessingException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -50,30 +63,15 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.util.XMLUtils;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PolicyConstants;
-import org.apache.ws.policy.PolicyReference;
-import org.apache.ws.policy.util.OMPolicyReader;
-import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.impl.WSDLProcessingException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * AxisServiceBuilder builds an AxisService using a WSDL document which is input

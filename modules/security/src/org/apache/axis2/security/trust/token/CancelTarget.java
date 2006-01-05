@@ -15,8 +15,6 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
@@ -24,6 +22,8 @@ import org.apache.axis2.security.util.Axis2Util;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.message.token.SecurityTokenReference;
+
+import javax.xml.namespace.QName;
 
 public class CancelTarget extends CompositeToken {
 

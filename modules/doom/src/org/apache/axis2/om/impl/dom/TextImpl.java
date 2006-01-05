@@ -19,7 +19,6 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -30,11 +29,10 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TextImpl extends CharacterImpl implements Text, OMText {
 

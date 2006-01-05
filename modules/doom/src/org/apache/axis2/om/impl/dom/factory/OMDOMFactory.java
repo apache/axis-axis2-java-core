@@ -15,9 +15,28 @@
  */
 package org.apache.axis2.om.impl.dom.factory;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMComment;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMDocType;
+import org.apache.axis2.om.OMDocument;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMProcessingInstruction;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.om.impl.dom.*;
+import org.apache.axis2.om.impl.dom.AttrImpl;
+import org.apache.axis2.om.impl.dom.CommentImpl;
+import org.apache.axis2.om.impl.dom.DocumentFragmentimpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.om.impl.dom.OMDOMException;
+import org.apache.axis2.om.impl.dom.ParentNode;
+import org.apache.axis2.om.impl.dom.TextImpl;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;

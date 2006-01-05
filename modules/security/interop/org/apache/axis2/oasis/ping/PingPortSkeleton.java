@@ -1,13 +1,13 @@
 package org.apache.axis2.oasis.ping;
 
 import org.apache.axis2.context.MessageContext;
-import org.xmlsoap.ping.PingDocument;
-import org.xmlsoap.ping.PingResponse;
-import org.xmlsoap.ping.PingResponseDocument;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
+import org.xmlsoap.ping.PingDocument;
+import org.xmlsoap.ping.PingResponse;
+import org.xmlsoap.ping.PingResponseDocument;
 
 import java.util.Vector;
 

@@ -1,9 +1,10 @@
 package test;
 
 import junit.framework.TestCase;
-import java.rmi.RemoteException;
-import test.stub.databinding.org.soapinterop.*;
 import test.stub.WSDLInteropTestDocLitPortTypeStub;
+import test.stub.databinding.org.soapinterop.*;
+
+import java.rmi.RemoteException;
 
 public class SunRound3DoclitparamInteropTest extends TestCase{
 

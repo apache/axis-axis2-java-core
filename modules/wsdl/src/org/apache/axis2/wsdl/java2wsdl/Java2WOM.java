@@ -2,7 +2,16 @@ package org.apache.axis2.wsdl.java2wsdl;
 
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.wsdl.*;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingMessageReference;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.extensions.impl.SOAPAddressImpl;

@@ -23,16 +23,13 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPMessage;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MTOMConstants {
 	

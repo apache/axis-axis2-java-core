@@ -15,15 +15,14 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.TimeZone;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
+
+import javax.xml.namespace.QName;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class Lifetime extends CompositeToken {
 

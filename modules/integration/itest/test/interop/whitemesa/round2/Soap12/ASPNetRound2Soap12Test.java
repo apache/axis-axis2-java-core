@@ -17,11 +17,30 @@
 package test.interop.whitemesa.round2.Soap12;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.SunRound2Client;
 import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
-import test.interop.whitemesa.round2.util.soap12.*;
-import org.apache.axis2.soap.SOAPEnvelope;
+import test.interop.whitemesa.round2.util.soap12.GroupbSoap12Echo2DStringArrayUtil;
+import test.interop.whitemesa.round2.util.soap12.GroupbSoap12EchoNestedArrayUtil;
+import test.interop.whitemesa.round2.util.soap12.GroupbSoap12EchoNestedStructUtil;
+import test.interop.whitemesa.round2.util.soap12.GroupbSoap12EchoSimpleTypesAsStructUtil;
+import test.interop.whitemesa.round2.util.soap12.GroupbSoap12EchoStructAsSimpleTypesUtil;
+import test.interop.whitemesa.round2.util.soap12.GroupcSoap12VoidUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2SOAP12EchoIntegerArrayclientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoBase64ClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoBooleanClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoDateClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoDecimalClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoFloatArrayClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoFloatClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoHexBinaryUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoStructArrayClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoStructClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoVoidClientUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12IntegerUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12StringArrayUtil;
+import test.interop.whitemesa.round2.util.soap12.Round2Soap12StringUtil;
 
 import java.io.File;
 

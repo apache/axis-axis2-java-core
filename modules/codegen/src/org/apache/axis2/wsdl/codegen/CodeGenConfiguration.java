@@ -16,16 +16,16 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 

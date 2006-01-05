@@ -26,8 +26,6 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import java.util.Iterator;
 
-import org.apache.axis2.saaj.SOAPEnvelopeImpl;
-
 public class SOAPBodyTest extends TestCase {
 
     /**

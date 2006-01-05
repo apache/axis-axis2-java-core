@@ -8,7 +8,11 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 

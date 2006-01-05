@@ -16,14 +16,13 @@
 
 package org.apache.axis2.om.impl.dom;
 
+import junit.framework.TestCase;
 import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.framework.TestCase;
 
 public class DOMImplementationTest extends TestCase {
 

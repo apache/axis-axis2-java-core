@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 public class SOAP11SerializerTest extends OMTestCase {
 

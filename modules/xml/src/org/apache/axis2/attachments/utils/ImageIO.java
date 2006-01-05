@@ -19,7 +19,10 @@ package org.apache.axis2.attachments.utils;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -16,14 +16,14 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis2.om.OMComment;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 public class CommentImpl extends CharacterImpl implements Comment, OMComment {
 

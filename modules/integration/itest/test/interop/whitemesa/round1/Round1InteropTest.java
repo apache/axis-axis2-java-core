@@ -17,9 +17,18 @@
 package test.interop.whitemesa.round1;
 
 import org.apache.axis2.AxisFault;
-import test.interop.whitemesa.WhiteMesaIneterop;
-import test.interop.whitemesa.round1.util.*;
 import org.apache.axis2.soap.SOAPEnvelope;
+import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.round1.util.Round1ClientUtil;
+import test.interop.whitemesa.round1.util.Round1FloatArrayUtil;
+import test.interop.whitemesa.round1.util.Round1FloatUtil;
+import test.interop.whitemesa.round1.util.Round1IntArrayUtil;
+import test.interop.whitemesa.round1.util.Round1IntegerUtil;
+import test.interop.whitemesa.round1.util.Round1StringArrayUtil;
+import test.interop.whitemesa.round1.util.Round1StringUtil;
+import test.interop.whitemesa.round1.util.Round1StructArrayUtil;
+import test.interop.whitemesa.round1.util.Round1StructUtil;
+import test.interop.whitemesa.round1.util.Round1VoidUtil;
 
 public class Round1InteropTest extends WhiteMesaIneterop {
 

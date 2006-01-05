@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
+
+import javax.xml.namespace.QName;
 
 public class RequestType extends ValueToken {
 

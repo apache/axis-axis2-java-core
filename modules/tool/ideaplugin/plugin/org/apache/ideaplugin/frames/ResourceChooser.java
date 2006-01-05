@@ -1,18 +1,30 @@
 package org.apache.ideaplugin.frames;
 
-import org.apache.ideaplugin.bean.ObjectKeeper;
 import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Enumeration;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

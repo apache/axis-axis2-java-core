@@ -17,6 +17,11 @@
 package test.interop.whitemesa.round4.complex;
 
 import junit.framework.TestCase;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import test.interop.util.XMLComparatorInterop;
 import test.interop.whitemesa.round4.complex.utils.EchoBaseStructFaultClientutil;
 import test.interop.whitemesa.round4.complex.utils.EchoExtendedStructFaultClientUtil;
@@ -24,11 +29,6 @@ import test.interop.whitemesa.round4.complex.utils.EchoMultipleFaults1ClientUtil
 import test.interop.whitemesa.round4.complex.utils.EchoMultipleFaults2ClientUtil;
 import test.interop.whitemesa.round4.complex.utils.EchoSOAPStructFaultClientUtil;
 import test.interop.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

@@ -1,6 +1,6 @@
 package org.apache.ideaplugin.bean;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

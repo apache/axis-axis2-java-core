@@ -1,12 +1,17 @@
 package org.apache.ideaplugin.frames;
 
-import org.apache.ideaplugin.bean.ObjectKeeper;
 import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

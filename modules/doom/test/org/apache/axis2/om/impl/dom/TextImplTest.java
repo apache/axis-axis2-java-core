@@ -15,12 +15,11 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import junit.framework.TestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.w3c.dom.Text;
-
-import junit.framework.TestCase;
 
 public class TextImplTest extends TestCase {
 

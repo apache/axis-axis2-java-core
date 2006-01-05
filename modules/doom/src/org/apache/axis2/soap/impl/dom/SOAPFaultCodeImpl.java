@@ -17,17 +17,16 @@
 package org.apache.axis2.soap.impl.dom;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPElement;
 
 import javax.xml.stream.XMLStreamException;
 

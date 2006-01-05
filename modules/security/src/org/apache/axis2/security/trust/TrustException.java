@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.security.trust;
 
+import org.apache.ws.sandbox.security.trust.TrustConstants;
+
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import org.apache.ws.sandbox.security.trust.TrustConstants;
 
 public class TrustException extends Exception {
 	

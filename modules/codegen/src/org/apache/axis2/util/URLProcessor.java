@@ -16,10 +16,8 @@
 
 package org.apache.axis2.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.StringTokenizer;
 import java.net.MalformedURLException;
+import java.util.StringTokenizer;
 
 public class URLProcessor {
     public static final String DEFAULT_PACKAGE = "org.apache.axis2";

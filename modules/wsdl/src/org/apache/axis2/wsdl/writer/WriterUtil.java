@@ -1,7 +1,7 @@
 package org.apache.axis2.wsdl.writer;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

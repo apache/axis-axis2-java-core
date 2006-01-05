@@ -1,9 +1,5 @@
 package org.apache.axis2.description;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
@@ -15,6 +11,9 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 public class OutOnlyAxisOperation extends AxisOperation {
     private AxisMessage inFaultMessage;

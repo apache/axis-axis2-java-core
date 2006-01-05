@@ -15,17 +15,11 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
-
 import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.OMOutputFormat;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
@@ -35,6 +29,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.UserDataHandler;
 
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.Writer;
 

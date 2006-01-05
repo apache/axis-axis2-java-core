@@ -1,9 +1,8 @@
 package test;
 
+import junit.framework.TestCase;
 import test.stub.RetHeaderPortTypeStub;
 import test.stub.databinding.org.soapinterop.*;
-import org.apache.axis2.AxisFault;
-import junit.framework.TestCase;
 
 public class Round3DoclitHeadersInteropTest extends TestCase{
 

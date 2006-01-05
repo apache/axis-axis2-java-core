@@ -16,8 +16,6 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -30,6 +28,8 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultRole;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPFaultImpl;
+
+import javax.xml.stream.XMLStreamException;
 
 public class SOAP11FaultImpl extends SOAPFaultImpl {
 

@@ -20,8 +20,8 @@ import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;

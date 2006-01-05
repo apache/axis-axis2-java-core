@@ -1,9 +1,9 @@
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisServiceGroup,
-                                                                             java.util.Collection,
-                                                                             java.util.HashMap" errorPage="" %>
+                                                                             org.apache.axis2.description.ModuleDescription,
+                                                                             java.util.Collection" errorPage="" %>
+<%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
-<%@ page import="org.apache.axis2.description.ModuleDescription"%>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);

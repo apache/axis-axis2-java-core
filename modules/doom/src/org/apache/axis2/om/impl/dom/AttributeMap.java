@@ -15,11 +15,10 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import java.util.Vector;
-
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
+
+import java.util.Vector;
 
 public class AttributeMap extends NamedNodeMapImpl {
 

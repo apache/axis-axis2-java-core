@@ -17,7 +17,6 @@
 package org.apache.axis2.phaserule;
 
 import junit.framework.TestCase;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.Handler;

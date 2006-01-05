@@ -32,7 +32,11 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -41,7 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
-import java.awt.*;
+import java.awt.Image;
 import java.io.InputStream;
 
 public class EchoRawMTOMTest extends TestCase implements TestConstants {

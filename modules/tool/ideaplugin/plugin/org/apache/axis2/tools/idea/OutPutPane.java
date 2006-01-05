@@ -2,13 +2,19 @@ package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-
-import org.apache.axis2.tools.bean.CodegenBean;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

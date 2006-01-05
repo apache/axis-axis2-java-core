@@ -18,9 +18,6 @@ package org.apache.wsdl.extensions;
 
 import org.apache.wsdl.WSDLExtensibilityElement;
 
-/**
- * @author Sanka Samaranayake (sanka@apache.org)
- */
 public interface PolicyExtensibilityElement extends WSDLExtensibilityElement {
     
     public void setPolicyElement(Object policyElement);

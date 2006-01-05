@@ -18,8 +18,8 @@ package org.apache.axis2.om.impl.dom;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 /**
  * Used to format DOM error messages, using the system locale.

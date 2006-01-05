@@ -15,7 +15,6 @@
  */
 package test.interop.whitemesa.round2.util.soap12;
 
-import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -24,6 +23,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 
 public class WMRound2Soap12GroupcBooleanUtil implements SunRound2ClientUtil {
 

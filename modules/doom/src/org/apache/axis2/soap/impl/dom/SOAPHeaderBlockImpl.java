@@ -21,7 +21,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.AttrImpl;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.ParentNode;

@@ -1,9 +1,14 @@
 package org.apache.ideaplugin;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.*;
+import java.awt.event.ActionListener;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

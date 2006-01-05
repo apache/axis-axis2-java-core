@@ -1,14 +1,14 @@
 package org.apache.axis2.wsdl.codegen;
 
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

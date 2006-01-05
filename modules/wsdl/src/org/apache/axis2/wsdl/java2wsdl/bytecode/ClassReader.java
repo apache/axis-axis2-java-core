@@ -2,8 +2,16 @@ package org.apache.axis2.wsdl.java2wsdl.bytecode;
 
 import org.apache.axis2.i18n.Messages;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 

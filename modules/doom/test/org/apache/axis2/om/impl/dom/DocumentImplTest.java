@@ -15,11 +15,10 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import junit.framework.TestCase;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
-import junit.framework.TestCase;
 
 public class DocumentImplTest extends TestCase {
 

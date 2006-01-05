@@ -15,16 +15,6 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMElement;
@@ -48,6 +38,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Implementation of the org.w3c.dom.Element and org.apache.axis2.om.Element

@@ -30,8 +30,8 @@ import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;

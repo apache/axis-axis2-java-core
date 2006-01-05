@@ -28,9 +28,8 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPProcessingException;
 
-import java.util.Vector;
-
 import javax.xml.stream.XMLStreamReader;
+import java.util.Vector;
 
 public class SOAP12BuilderHelper extends SOAPBuilderHelper {
 

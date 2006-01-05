@@ -16,6 +16,7 @@
 
 package org.apache.axis2.om.impl.dom;
 
+import junit.framework.TestCase;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
@@ -30,14 +31,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
-import junit.framework.TestCase;
 
 public class OMTestUtils {
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {

@@ -1,10 +1,8 @@
 package org.apache.axis2.om;
 
-import junit.framework.TestCase;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 import javax.xml.namespace.QName;
-
-import org.custommonkey.xmlunit.XMLTestCase;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.

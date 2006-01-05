@@ -16,10 +16,15 @@
 
 package sample.amazon.search;
 
-import javax.swing.*;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.IOException;
 
 /**

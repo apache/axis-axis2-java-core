@@ -1,16 +1,15 @@
 package org.apache.ideaplugin;
 
-import org.apache.ideaplugin.bean.ArchiveBean;
-import org.apache.ideaplugin.frames.ImagePanel;
-import org.apache.ideaplugin.frames.FirstFrame;
-import org.apache.ideaplugin.frames.BottomPanel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

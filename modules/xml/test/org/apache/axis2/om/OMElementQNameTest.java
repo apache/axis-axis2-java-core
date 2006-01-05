@@ -19,8 +19,6 @@
  */
 package org.apache.axis2.om;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.util.ElementHelper;
 
 import javax.xml.namespace.QName;

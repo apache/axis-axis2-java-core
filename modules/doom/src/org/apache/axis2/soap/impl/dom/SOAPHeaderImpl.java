@@ -26,8 +26,6 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPElement;
-import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
 
 import java.util.ArrayList;
 import java.util.Iterator;

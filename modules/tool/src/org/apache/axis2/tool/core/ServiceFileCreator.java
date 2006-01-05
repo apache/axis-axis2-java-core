@@ -2,19 +2,18 @@ package org.apache.axis2.tool.core;
 
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

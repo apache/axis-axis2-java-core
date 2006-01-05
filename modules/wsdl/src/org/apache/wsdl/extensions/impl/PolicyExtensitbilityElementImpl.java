@@ -16,13 +16,9 @@
 
 package org.apache.wsdl.extensions.impl;
 
-import org.apache.ws.policy.Policy;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
-/**
- * @author Sanka Samaranayake (sanka@apache.org)
- */
 public class PolicyExtensitbilityElementImpl extends WSDLExtensibilityElementImpl implements PolicyExtensibilityElement {
     private Object policyElement;
     

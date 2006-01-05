@@ -31,7 +31,14 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.wsdl.*;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.extensions.SOAPAddress;
 import org.apache.wsdl.extensions.SOAPOperation;
 

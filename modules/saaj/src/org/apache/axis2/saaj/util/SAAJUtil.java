@@ -18,7 +18,6 @@ package org.apache.axis2.saaj.util;
 
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -28,9 +27,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 

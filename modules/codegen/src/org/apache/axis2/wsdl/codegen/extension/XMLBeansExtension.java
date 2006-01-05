@@ -17,12 +17,12 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;

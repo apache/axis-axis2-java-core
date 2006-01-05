@@ -17,7 +17,6 @@
 package org.apache.axis2.mtom;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;

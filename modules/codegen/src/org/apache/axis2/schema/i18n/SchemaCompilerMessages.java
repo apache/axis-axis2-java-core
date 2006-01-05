@@ -1,12 +1,12 @@
 package org.apache.axis2.schema.i18n;
 
+import org.apache.axis2.i18n.MessageBundle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.i18n.MessagesConstants;
-import org.apache.axis2.i18n.MessageBundle;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

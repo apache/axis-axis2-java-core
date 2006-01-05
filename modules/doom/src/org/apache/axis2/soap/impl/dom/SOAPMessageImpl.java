@@ -16,16 +16,15 @@
 
 package org.apache.axis2.soap.impl.dom;
 
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPMessage;
 import org.apache.axis2.soap.SOAPProcessingException;
+
+import javax.xml.stream.XMLStreamException;
 
 public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
 

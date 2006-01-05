@@ -24,7 +24,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 
 import javax.activation.DataHandler;
-import java.awt.*;
+import java.awt.Image;
 import java.io.FileOutputStream;
 
 public class MTOMService {

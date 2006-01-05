@@ -23,9 +23,6 @@ import org.apache.ws.policy.util.PolicyRegistry;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * @author Sanka Samaranayake (sanka@apache.org)
- */
 public class PolicyInclude {
 
     public static final String ANON_POLICY = "anonymous";

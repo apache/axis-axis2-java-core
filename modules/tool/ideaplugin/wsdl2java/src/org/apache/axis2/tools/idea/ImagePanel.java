@@ -1,7 +1,15 @@
 package org.apache.axis2.tools.idea;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

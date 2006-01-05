@@ -17,7 +17,7 @@
 package org.apache.axis2.attachments.utils;
 
 import javax.activation.DataSource;
-import java.awt.*;
+import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

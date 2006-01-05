@@ -2,15 +2,21 @@
 package test.interop.sun.simple;
 
 import junit.framework.TestCase;
-import test.interop.sun.round4.simple.EchoBlockingClient;
-import test.interop.sun.round4.simple.util.*;
-import test.interop.util.XMLComparatorInterop;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-//import org.apache.axis2.om.impl.llom.util.XMLComparator;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import test.interop.sun.round4.simple.EchoBlockingClient;
+import test.interop.sun.round4.simple.util.EchoEmptyFaultClientUtil;
+import test.interop.sun.round4.simple.util.EchoIntArrayFaultClientUtil;
+import test.interop.sun.round4.simple.util.EchoMultipleFaults1ClientUtil;
+import test.interop.sun.round4.simple.util.EchoMultipleFaults2ClientUtil;
+import test.interop.sun.round4.simple.util.EchoMultipleFaults3Clientutil;
+import test.interop.sun.round4.simple.util.EchoMultipleFaults4ClientUtil;
+import test.interop.sun.round4.simple.util.EchoStringFaultClientUtil;
+import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
+import test.interop.util.XMLComparatorInterop;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

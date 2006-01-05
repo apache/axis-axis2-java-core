@@ -16,7 +16,18 @@
 
 package org.apache.axis2.om.impl.llom.factory;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMComment;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMDocType;
+import org.apache.axis2.om.OMDocument;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMProcessingInstruction;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMAttributeImpl;
 import org.apache.axis2.om.impl.llom.OMCommentImpl;
 import org.apache.axis2.om.impl.llom.OMDocTypeImpl;

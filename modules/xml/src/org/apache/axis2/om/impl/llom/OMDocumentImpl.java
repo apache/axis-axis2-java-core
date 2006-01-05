@@ -16,12 +16,6 @@
 
 package org.apache.axis2.om.impl.llom;
 
-import java.io.OutputStream;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
@@ -33,6 +27,11 @@ import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 /**
  * Class OMDocumentImpl

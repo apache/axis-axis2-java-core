@@ -15,10 +15,6 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
@@ -30,6 +26,9 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 public abstract class ParentNode extends ChildNode implements OMContainerEx {
 

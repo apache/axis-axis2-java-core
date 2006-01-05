@@ -17,6 +17,7 @@
 package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
@@ -33,7 +34,6 @@ import test.interop.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoStructClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoVoidClientUtil;
 import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
-import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;
 

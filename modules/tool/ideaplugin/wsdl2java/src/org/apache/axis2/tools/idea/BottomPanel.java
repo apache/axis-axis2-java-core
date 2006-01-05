@@ -1,16 +1,18 @@
 package org.apache.axis2.tools.idea;
 
-import com.intellij.openapi.ui.Messages;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
-import java.io.StringWriter;
+import java.awt.event.ActionListener;
 import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.net.URL;
+import java.io.StringWriter;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

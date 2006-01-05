@@ -20,7 +20,11 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.activation.DataHandler;

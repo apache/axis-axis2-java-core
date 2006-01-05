@@ -17,9 +17,9 @@
 package org.apache.axis2.soap12testing.handlers;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.SOAPHeaderBlock;
 
 import java.util.Iterator;
 

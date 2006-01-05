@@ -15,9 +15,6 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMContainer;
@@ -30,6 +27,9 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.TypeInfo;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Implementation of <code>org.w3c.dom.Attr</code> and 

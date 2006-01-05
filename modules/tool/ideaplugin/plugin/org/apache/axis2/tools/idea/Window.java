@@ -2,11 +2,14 @@ package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
-import org.apache.axis2.tools.idea.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

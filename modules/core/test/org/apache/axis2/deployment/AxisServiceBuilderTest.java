@@ -1,15 +1,13 @@
 package org.apache.axis2.deployment;
 
-import java.io.FileInputStream;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
+import java.io.FileInputStream;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

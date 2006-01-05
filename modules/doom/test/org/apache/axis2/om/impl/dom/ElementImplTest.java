@@ -15,13 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
@@ -30,6 +24,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 public class ElementImplTest extends TestCase {
 

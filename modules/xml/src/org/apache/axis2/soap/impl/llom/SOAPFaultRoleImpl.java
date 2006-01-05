@@ -17,8 +17,8 @@
 package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.soap.SOAP12Constants;

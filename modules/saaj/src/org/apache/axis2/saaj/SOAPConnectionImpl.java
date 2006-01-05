@@ -36,7 +36,6 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.net.MalformedURLException;

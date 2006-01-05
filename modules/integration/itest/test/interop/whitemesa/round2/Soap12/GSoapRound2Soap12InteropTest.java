@@ -17,6 +17,7 @@
 package test.interop.whitemesa.round2.Soap12;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.SunRound2Client;
 import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
@@ -39,7 +40,6 @@ import test.interop.whitemesa.round2.util.soap12.Round2Soap12EchoVoidClientUtil;
 import test.interop.whitemesa.round2.util.soap12.Round2Soap12IntegerUtil;
 import test.interop.whitemesa.round2.util.soap12.Round2Soap12StringArrayUtil;
 import test.interop.whitemesa.round2.util.soap12.Round2Soap12StringUtil;
-import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;
 

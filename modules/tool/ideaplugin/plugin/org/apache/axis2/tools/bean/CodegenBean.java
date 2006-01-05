@@ -1,17 +1,20 @@
 package org.apache.axis2.tools.bean;
 
-import org.apache.axis2.wsdl.codegen.*;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CommandLineOption;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
-import java.util.Map;
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /*
