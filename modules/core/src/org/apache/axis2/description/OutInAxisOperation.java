@@ -135,9 +135,9 @@ class OutInAxisOperationClient implements OperationClient {
      * @throws AxisFault
      */
     public void addMessageContext(MessageContext mc) throws AxisFault {
-        axisOp.registerOperationContext(mc, oc);
         mc.setServiceContext(sc);
         mc.setConfigurationContext(sc.getConfigurationContext());
+        axisOp.registerOperationContext(mc, oc);
     }
 
     /**

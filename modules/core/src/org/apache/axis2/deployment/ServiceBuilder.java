@@ -19,15 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -41,7 +33,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Builds a service description from OM
@@ -157,17 +148,15 @@ public class ServiceBuilder extends DescriptionBuilder {
             // Set the default message receiver for the operations that were 
             // not listed in the services.xml
             Iterator operations = service.getPublishedOperations().iterator();
-            while(operations.hasNext()){
+            while (operations.hasNext()) {
                 AxisOperation operation = (AxisOperation) operations.next();
-                if(operation.getMessageReceiver()==null){
-                    operation.setMessageReceiver(loadDefaultMessageReceiver(null, service));    
+                if (operation.getMessageReceiver() == null) {
+                    operation.setMessageReceiver(loadDefaultMessageReceiver(
+                            operation.getMessageExchangePattern(), service));
                 }
             }
-
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
             processServiceModuleConfig(moduleConfigs, service, service);
-
-
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {

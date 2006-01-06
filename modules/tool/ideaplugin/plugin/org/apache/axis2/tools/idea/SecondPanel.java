@@ -1,20 +1,9 @@
 package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -100,23 +89,25 @@ public class SecondPanel extends JPanel {
 
     }
 
-    public void fillBean(){
-        int index =comlanguage.getSelectedIndex();
-        switch(index ){
+    public void fillBean() {
+        int index = comlanguage.getSelectedIndex();
+        switch (index) {
             case 0: {
-                codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.JAVA);
+                codegenBean.setLanguage(TestConstants.);
                 break;
-            } case 1: {
-            codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.C_SHARP);
-            break;
-        } case 2 : {
-            codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS);
-            break;
+            }
+            case 1: {
+                codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.C_SHARP);
+                break;
+            }
+            case 2 : {
+                codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS);
+                break;
+            }
         }
-        }
-        if(rdasync.isSelected()) {
+        if (rdasync.isSelected()) {
             codegenBean.setAsyncOnly(true);
-        } else if (rdsyn.isSelected()){
+        } else if (rdsyn.isSelected()) {
             codegenBean.setSyncOnly(true);
         } else {
             codegenBean.setSyncOnly(false);
@@ -157,23 +148,41 @@ class SecondPanelLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+5,200,20);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 0, insets.top + 5, 200, 20);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+210,insets.top+5,160,20);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 210, insets.top + 5, 160, 20);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+30,250,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 30, 250, 24);
+        }
         c = parent.getComponent(3);
-        if (c.isVisible()) {c.setBounds(insets.left+280,insets.top+30,150,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 280, insets.top + 30, 150, 24);
+        }
         c = parent.getComponent(4);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+55,150,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 55, 150, 24);
+        }
         c = parent.getComponent(5);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+80,200,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 80, 200, 24);
+        }
         c = parent.getComponent(6);
-        if (c.isVisible()) {c.setBounds(insets.left+210,insets.top+80,160,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 210, insets.top + 80, 160, 24);
+        }
         c = parent.getComponent(7);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+110,200,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 110, 200, 24);
+        }
         c = parent.getComponent(8);
-        if (c.isVisible()) {c.setBounds(insets.left+210,insets.top+110,200,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 210, insets.top + 110, 200, 24);
+        }
     }
 }
 

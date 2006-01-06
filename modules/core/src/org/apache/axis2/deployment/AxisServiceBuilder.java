@@ -16,42 +16,8 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
-import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,6 +32,18 @@ import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.wsdl.*;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * AxisServiceBuilder builds an AxisService using a WSDL document which is input
@@ -419,7 +397,7 @@ public class AxisServiceBuilder {
     }
 
     private XmlSchema generateWrapperSchema(Definition wsdl4jDefinition,
-            Map resolvedRpcWrappedElementMap) throws DeploymentException {
+                                            Map resolvedRpcWrappedElementMap) throws DeploymentException {
         logger.debug("AxisServiceBuilder.generateWrapperSchema");
 
         //TODO check me
@@ -521,12 +499,12 @@ public class AxisServiceBuilder {
                 String name = wsdl4jMessage.getQName().getLocalPart();
                 Element newComplexType = document.createElementNS(
                         XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
+                        + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
                 newComplexType.setAttribute(XSD_NAME, name);
 
                 Element cmplxContentSequence = document.createElementNS(
                         XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
+                        + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
                 Element child;
                 Iterator iterator = parts.keySet().iterator();
                 while (iterator.hasNext()) {
@@ -561,7 +539,7 @@ public class AxisServiceBuilder {
                             //create Element for namespace import
                             Element namespaceImport = document.createElementNS(
                                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                            + XML_SCHEMA_IMPORT_LOCAL_NAME);
+                                    + XML_SCHEMA_IMPORT_LOCAL_NAME);
                             namespaceImport.setAttribute("namespace", uri);
                             //add this to the map
                             namespaceImportsMap.put(uri, namespaceImport);
@@ -610,7 +588,7 @@ public class AxisServiceBuilder {
             String inputOpName = inputOperationtNames[j];
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, inputOpName);
 
             String typeValue = ((Message) inputOperationsMap.get(inputOpName))
@@ -631,7 +609,7 @@ public class AxisServiceBuilder {
             String outputOpName = baseoutputOpName + "Response";
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, outputOpName);
             String typeValue = ((Message) outputOperationsMap
                     .get(baseoutputOpName)).getQName().getLocalPart();
@@ -651,7 +629,7 @@ public class AxisServiceBuilder {
 
         Element schemaElement = document.createElementNS(
                 XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                        + XML_SCHEMA_LOCAL_NAME);
+                + XML_SCHEMA_LOCAL_NAME);
 
         //loop through the namespace declarations first
         String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
@@ -702,11 +680,6 @@ public class AxisServiceBuilder {
         return schemaCollection.read(schemaElement);
     }
 
-    /**
-     * 
-     * 
-     * @return
-     */
     private boolean findWrapppable(Message message) {
 
         //********************************************************************************************
@@ -757,16 +730,14 @@ public class AxisServiceBuilder {
         return xsdPrefix;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Generates a referenceQName
-     * 
+     *
      * @param wsdl4jMessage
-     * @return
      */
     private QName generateReferenceQname(QName outerName,
-            Message wsdl4jMessage, boolean isWrappable,
-            Map resolvedRpcWrappedElementMap) {
+                                         Message wsdl4jMessage, boolean isWrappable,
+                                         Map resolvedRpcWrappedElementMap) {
         QName referenceQName = null;
         if (isWrappable) {
             //The schema for this should be already made ! Find the QName from
@@ -797,7 +768,7 @@ public class AxisServiceBuilder {
 
     private List getPoliciesAsExtElements(List extElementsList)
             throws DeploymentException {
-        
+
         ArrayList policies = new ArrayList();
 
         Iterator extElements = extElementsList.iterator();
@@ -814,13 +785,13 @@ public class AxisServiceBuilder {
                 if (PolicyConstants.WS_POLICY_NAMESPACE_URI.equals(element
                         .getNamespaceURI())
                         && PolicyConstants.WS_POLICY.equals(element
-                                .getLocalName())) {
+                        .getLocalName())) {
                     policies.add(reader.readPolicy(element));
 
                 } else if (PolicyConstants.WS_POLICY_NAMESPACE_URI
                         .equals(element.getNamespaceURI())
                         && PolicyConstants.WS_POLICY_REFERENCE.equals(element
-                                .getLocalName())) {
+                        .getLocalName())) {
 
                     try {
                         policies.add(reader.readPolicyReference(element));
@@ -857,7 +828,7 @@ public class AxisServiceBuilder {
     }
 
     private void addPolicyElements(int type, List policyElements,
-            PolicyInclude policyInclude) {
+                                   PolicyInclude policyInclude) {
         Iterator policyElementIterator = policyElements.iterator();
         Object policyElement;
 

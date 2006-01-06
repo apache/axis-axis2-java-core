@@ -3,14 +3,7 @@ package org.apache.axis2.deployment.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -165,7 +158,8 @@ public class Utils {
     /**
      * This guy will create a AxisService using java replection
      */
-    public static void fillAxisService(AxisService axisService) throws Exception {
+    public static void fillAxisService(AxisService axisService,
+                                       AxisConfiguration axisConfig) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         String serviceClass = (String) implInfoParam.getValue();
         ClassLoader serviceClassLoader = axisService.getClassLoader();
@@ -175,11 +169,13 @@ public class Utils {
 
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
+        PhasesInfo pinfo = axisConfig.getPhasesInfo();
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
+            // if the opeartion there in services.xml then try to set it schema element name
             if (operation != null) {
                 AxisMessage inMessage = operation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -193,6 +189,18 @@ public class Utils {
                     outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
                             SchemaGenerator.METHOD_RESPONSE_WRAPPER));
                 }
+            } else {
+                operation = getAxisOperationforJmethod(jmethod, table);
+                MessageReceiver mr = axisService.getMessageReceiver(
+                        operation.getMessageExchangePattern());
+                if (mr != null) {
+                    operation.setMessageReceiver(mr);
+                } else {
+                    mr = axisConfig.getMessageReceiver(operation.getMessageExchangePattern());
+                    operation.setMessageReceiver(mr);
+                }
+                pinfo.setOperationPhases(operation);
+                axisService.addOperation(operation);
             }
 
         }
@@ -243,24 +251,7 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            String opName = jmethod.getSimpleName();
-            AxisOperation operation;
-            if (jmethod.getReturnType().isVoidType()) {
-                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
-            } else {
-                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
-                AxisMessage outMessage = operation.getMessage(
-                        WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
-                        SchemaGenerator.METHOD_RESPONSE_WRAPPER));
-            }
-
-            operation.setName(new QName(opName));
-            AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (inMessage != null) {
-                inMessage.setElementQName(table.getComplexScheamType(jmethod.getSimpleName() +
-                        SchemaGenerator.METHOD_REQUEST_WRAPPER));
-            }
+            AxisOperation operation = getAxisOperationforJmethod(jmethod, table);
 
             // loading message recivers
             try {
@@ -283,5 +274,28 @@ public class Utils {
         }
         return axisService;
 
+    }
+
+    private static AxisOperation getAxisOperationforJmethod(JMethod jmethod,
+                                                            TypeTable table) throws AxisFault {
+        AxisOperation operation;
+        String opName = jmethod.getSimpleName();
+        if (jmethod.getReturnType().isVoidType()) {
+            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+        } else {
+            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
+            AxisMessage outMessage = operation.getMessage(
+                    WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
+                    SchemaGenerator.METHOD_RESPONSE_WRAPPER));
+        }
+
+        operation.setName(new QName(opName));
+        AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        if (inMessage != null) {
+            inMessage.setElementQName(table.getComplexScheamType(jmethod.getSimpleName() +
+                    SchemaGenerator.METHOD_REQUEST_WRAPPER));
+        }
+        return operation;
     }
 }

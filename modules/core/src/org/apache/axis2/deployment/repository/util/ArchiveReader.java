@@ -17,15 +17,7 @@
 
 package org.apache.axis2.deployment.repository.util;
 
-import org.apache.axis2.deployment.AxisServiceBuilder;
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DescriptionBuilder;
-import org.apache.axis2.deployment.ModuleBuilder;
-import org.apache.axis2.deployment.ServiceBuilder;
-import org.apache.axis2.deployment.ServiceGroupBuilder;
+import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -39,15 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -70,7 +54,7 @@ public class ArchiveReader implements DeploymentConstants {
             AxisService axisService = null;
             OMAttribute serviceNameatt = rootElement.getAttribute(new QName(ATTRIBUTE_NAME));
             String serviceName = serviceNameatt.getAttributeValue();
-            if(serviceName != null) {
+            if (serviceName != null) {
                 axisService = (AxisService) wsdlServices.get(serviceName);
             }
             if (axisService == null) {
@@ -96,7 +80,7 @@ public class ArchiveReader implements DeploymentConstants {
             if (!axisService.isWsdlfound()) {
                 //trying to generate WSDL for the service using JAM  and Java refelection
                 try {
-                    Utils.fillAxisService(service);
+                    Utils.fillAxisService(service,axisConfig);
                 } catch (Exception e) {
                     log.info("Error in scheam generating :" + e.getMessage());
                 }
@@ -112,13 +96,13 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     /**
-     * Creates the module file archive file. Checks whether the module exists in home 
+     * Creates the module file archive file. Checks whether the module exists in home
      * directory. If yes, returns that else reads the given module from classpath (from resources).
-     * If found, gets the module.mar file from the resource stream and writes into 
+     * If found, gets the module.mar file from the resource stream and writes into
      * the userhome/axis2home/module directory.
-     *      
+     *
      * @param moduleName
-     * @return  Returns File.
+     * @return Returns File.
      * @throws DeploymentException
      */
     public File creatModuleArchivefromResource(String moduleName, String axis2repository)
@@ -198,7 +182,7 @@ public class ArchiveReader implements DeploymentConstants {
 
     /**
      * Extract Service XML files and builds the service groups
-     * 
+     *
      * @param filename
      * @param engine
      * @param axisServiceGroup
@@ -214,22 +198,17 @@ public class ArchiveReader implements DeploymentConstants {
                                          HashMap wsdls,
                                          AxisConfiguration axisConfig)
             throws DeploymentException {
-
         // get attribute values
         if (!extractService) {
             ZipInputStream zin;
-
             try {
                 zin = new ZipInputStream(new FileInputStream(filename));
-
                 ZipEntry entry;
-
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(
                                         engine.getCurrentFileItem().getName()));
-
                         return buildServiceGroup(zin, engine, axisServiceGroup, wsdls, axisConfig);
                     }
                 }
@@ -240,14 +219,11 @@ public class ArchiveReader implements DeploymentConstants {
             }
         } else {
             File file = new File(filename, SERVICES_XML);
-
             if (file.exists()) {
                 InputStream in;
-
                 try {
                     in = new FileInputStream(file);
                     axisServiceGroup.setServiceGroupName(engine.getCurrentFileItem().getName());
-
                     return buildServiceGroup(in, engine, axisServiceGroup, wsdls, axisConfig);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
@@ -271,8 +247,8 @@ public class ArchiveReader implements DeploymentConstants {
      * @throws DeploymentException
      */
     private AxisService processWSDLFile(InputStream in) throws DeploymentException {
-            AxisServiceBuilder axisServiceBuilder = new AxisServiceBuilder();
-            return axisServiceBuilder.getAxisService(in);
+        AxisServiceBuilder axisServiceBuilder = new AxisServiceBuilder();
+        return axisServiceBuilder.getAxisService(in);
     }
 
     /**
@@ -285,11 +261,9 @@ public class ArchiveReader implements DeploymentConstants {
     public HashMap processWSDLs(ArchiveFileData file, DeploymentEngine depengine)
             throws DeploymentException {
         File serviceFile = file.getFile();
-
         // to store service come from wsdl files
         HashMap servicesMap = new HashMap();
         boolean isDirectory = serviceFile.isDirectory();
-
         if (isDirectory) {
             try {
                 File meta_inf = new File(serviceFile, META_INF);
@@ -299,9 +273,7 @@ public class ArchiveReader implements DeploymentConstants {
                             Messages.getMessage(
                                     DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
                 }
-
                 File files[] = meta_inf.listFiles();
-
                 for (int i = 0; i < files.length; i++) {
                     File file1 = files[i];
                     if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
@@ -309,7 +281,6 @@ public class ArchiveReader implements DeploymentConstants {
                         AxisService service = processWSDLFile(in);
 
                         servicesMap.put(service.getName(), service);
-
                         try {
                             in.close();
                         } catch (IOException e) {
@@ -332,10 +303,8 @@ public class ArchiveReader implements DeploymentConstants {
                 byte[]                buf = new byte[1024];
                 int read;
                 ByteArrayOutputStream out;
-
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
-
                     if (entryName.startsWith(META_INF.toLowerCase())
                             && entryName.endsWith(SUFFIX_WSDL)) {
                         out = new ByteArrayOutputStream();
@@ -346,11 +315,9 @@ public class ArchiveReader implements DeploymentConstants {
 
                         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                         AxisService service = processWSDLFile(in);
-
                         servicesMap.put(service.getName(), service);
                     }
                 }
-
                 try {
                     zin.close();
                 } catch (IOException e) {
@@ -362,7 +329,6 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException(e);
             }
         }
-
         return servicesMap;
     }
 
@@ -373,34 +339,25 @@ public class ArchiveReader implements DeploymentConstants {
 
         // get attribute values
         boolean foundmoduleXML = false;
-
         if (!explodedDir) {
             ZipInputStream zin;
-
             try {
                 zin = new ZipInputStream(new FileInputStream(filename));
-
                 ZipEntry entry;
-
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(MODULE_XML)) {
                         foundmoduleXML = true;
-
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
-
                         // setting module name
                         module.setName(
                                 new QName(
                                         DescriptionBuilder.getShortFileName(
                                                 engine.getCurrentFileItem().getServiceName())));
                         builder.populateModule();
-
                         break;
                     }
                 }
-
                 zin.close();
-
                 if (!foundmoduleXML) {
                     throw new DeploymentException(
                             Messages.getMessage(
@@ -411,15 +368,11 @@ public class ArchiveReader implements DeploymentConstants {
             }
         } else {
             File file = new File(filename, MODULE_XML);
-
             if (file.exists()) {
                 InputStream in;
-
                 try {
                     in = new FileInputStream(file);
-
                     ModuleBuilder builder = new ModuleBuilder(in, module, axisConfig);
-
                     // setting module name
                     module.setName(
                             new QName(
