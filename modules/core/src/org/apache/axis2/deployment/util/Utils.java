@@ -222,6 +222,7 @@ public class Utils {
                                             AxisConfiguration axisConfig) throws AxisFault {
         Parameter parameter = new ParameterImpl(Constants.SERVICE_CLASS, implClass);
         AxisService axisService = new AxisService();
+        axisService.setUseDefaultChains(false);
         axisService.addParameter(parameter);
 
         int index = implClass.lastIndexOf(".");

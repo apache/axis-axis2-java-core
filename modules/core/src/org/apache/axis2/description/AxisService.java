@@ -42,11 +42,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -87,9 +83,12 @@ public class AxisService
 
     //to store default message receivers
     private HashMap messageReceivers;
-    
+
     // to store policies which are valid for the entire service
     private PolicyInclude policyInclude;
+
+// to set the handler chain available in phase info
+    private boolean useDefaultChains = true;
 
     /**
      * Constructor AxisService.
@@ -308,13 +307,13 @@ public class AxisService
     }
 
     public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
-        if(getWSDLDefinition() != null) {
-            printUsingWSDLDefinition(out, serviceURL);    
+        if (getWSDLDefinition() != null) {
+            printUsingWSDLDefinition(out, serviceURL);
         } else {
-            printUsingWOM(out, serviceURL);    
+            printUsingWOM(out, serviceURL);
         }
     }
-    
+
     public void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
         try {
             Definition wsdlDefinition = getWSDLDefinition();
@@ -352,11 +351,11 @@ public class AxisService
         AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null, serviceURL);
         try {
             WSDLDescription desc = axisService2WOM.generateWOM();
-            
+
             // populate it with policy information ..
             //TODO : This gives an NPE , Sanka pls fix that
             PolicyUtil.populatePolicy(desc, this);
-            
+
             WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
             womWriter.setdefaultWSDLPrefix("wsdl");
             womWriter.writeWOM(desc, out);
@@ -649,12 +648,20 @@ public class AxisService
             this.scope = scope;
         }
     }
-    
+
     public void setPolicyInclude(PolicyInclude policyInclude) {
         this.policyInclude = policyInclude;
     }
-    
+
     public PolicyInclude getPolicyInclude() {
         return policyInclude;
+    }
+
+    public boolean isUseDefaultChains() {
+        return useDefaultChains;
+    }
+
+    public void setUseDefaultChains(boolean useDefaultChains) {
+        this.useDefaultChains = useDefaultChains;
     }
 }

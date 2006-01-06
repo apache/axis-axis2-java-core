@@ -2,8 +2,8 @@
 <%@ page import="org.apache.axis2.AxisFault,
                  org.apache.axis2.Constants,
                  org.apache.axis2.addressing.EndpointReference,
-                 org.apache.axis2.client.Call,
                  org.apache.axis2.client.Options,
+                 org.apache.axis2.client.ServiceClient,
                  org.apache.axis2.om.OMAbstractFactory,
                  org.apache.axis2.om.OMElement,
                  org.apache.axis2.om.OMFactory,
@@ -12,16 +12,15 @@
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
                  javax.servlet.jsp.JspWriter,
-                 javax.xml.namespace.QName"
+                 javax.xml.parsers.SAXParser"
          session="false" %>
-<%@ page import="javax.xml.parsers.SAXParser" %>
 <%@ page import="javax.xml.parsers.SAXParserFactory" %>
 <%@ page import="javax.xml.stream.XMLOutputFactory" %>
 <%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
-
 <%@ page import="java.io.InputStream" %>
-<%@ page import="java.io.StringWriter"%>
+
+<%@ page import="java.io.StringWriter" %>
 
 <%
     /*
@@ -328,7 +327,6 @@
     }
 
     private String value;
-    private QName operationName = new QName("getVersion");
 
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -342,14 +340,13 @@
     public boolean inVokeTheService() {
         try {
             OMElement payload = createEnvelope();
-            Call call = new Call();
+            ServiceClient client = new ServiceClient();
             Options options = new Options();
-            call.setClientOptions(options);
+            client.setOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            OMElement result =
-                    call.invokeBlocking(operationName.getLocalPart(), payload);
+            OMElement result = client.sendReceive(payload);
             StringWriter writer = new StringWriter();
             result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();

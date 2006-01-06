@@ -28,12 +28,7 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
@@ -44,19 +39,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class DeploymentEngine implements DeploymentConstants {
 
@@ -193,6 +177,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
+            axisService.setUseDefaultChains(false);
 
             axisService.setFileName(currentArchiveFile.getFile().getAbsolutePath());
             serviceGroup.addService(axisService);
@@ -319,8 +304,8 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Fills an axisservice object using services.xml. First creates
-     * an axisservice object using WSDL and then fills it using the given services.xml. 
-     * Loads all the required class and builds the chains, finally adds the  
+     * an axisservice object using WSDL and then fills it using the given services.xml.
+     * Loads all the required class and builds the chains, finally adds the
      * servicecontext to EngineContext and axisservice into EngineConfiguration.
      *
      * @param axisService
