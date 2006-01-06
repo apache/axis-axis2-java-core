@@ -500,6 +500,7 @@
             destdir="target/apidocs"
             author="true"
             version="true"
+            breakiterator="yes"
             use="true"
             windowtitle="Axis2 API">
             <ant:sourcepath>
