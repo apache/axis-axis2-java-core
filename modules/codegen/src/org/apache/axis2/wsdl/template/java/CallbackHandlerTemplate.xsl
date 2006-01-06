@@ -13,7 +13,7 @@
      *  <xsl:value-of select="@name"/> Callback class 
      */
 
-    public class <xsl:value-of select="@name"/>{
+    public abstract class <xsl:value-of select="@name"/>{
 
 
 

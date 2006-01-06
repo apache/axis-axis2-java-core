@@ -16,7 +16,7 @@
 
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
-                public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                private  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                 org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
                 (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
@@ -29,7 +29,7 @@
                   return documentElement;
                 }
 
-                public org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                private org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                     org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     envelope.getBody().addChild(toOM(param));
                     return envelope;
@@ -93,7 +93,7 @@
 
             <xsl:for-each select="param">
                 <xsl:if test="@type!=''">
-                    public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                    private  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
                             (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
@@ -107,7 +107,7 @@
                         }
                     }
 
-                    public  org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                    private  org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
                                     org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(param.MY_QNAME),
@@ -122,7 +122,7 @@
                 </xsl:if>
             </xsl:for-each>
 
-            public  java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
+            private  java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
             java.lang.Class type){
                  Object obj;
                 try {
@@ -144,15 +144,15 @@
        <!-- #################################################################################  -->
        <!-- ############################   none template!!!   ##############################  -->
        <xsl:template match="databinders[@dbtype='none']">
-           public  org.apache.axis2.om.OMElement fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type){
+           private  org.apache.axis2.om.OMElement fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type){
               return param;
            }
 
-           public  org.apache.axis2.om.OMElement  toOM(org.apache.axis2.om.OMElement param){
+           private  org.apache.axis2.om.OMElement  toOM(org.apache.axis2.om.OMElement param){
                return param;
            }
 
-           public org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, org.apache.axis2.om.OMElement param){
+           private org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, org.apache.axis2.om.OMElement param){
                 org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                 envelope.getBody().addChild(param));
                 return envelope;

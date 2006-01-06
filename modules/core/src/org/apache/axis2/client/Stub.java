@@ -18,9 +18,6 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -42,80 +39,26 @@ public abstract class Stub {
      * ServiceContext. The user can share information through this
      * ServiceContext across operations.
      */
-    protected boolean _maintainSession;
-    protected String _currentSessionId;
-    protected Options _clientOptions = new Options();
-    protected ConfigurationContext _configurationContext;
-    protected ServiceContext _serviceContext;
+    protected Options _options = new Options();
+    protected ServiceClient _serviceClient;
 
-    protected Stub() {
+    public Options _getOptions() {
+        return _options;
     }
 
-    public void _endSession() {
-        _maintainSession = false;
-    }
-
-    public Options _getClientOptions() {
-        return _clientOptions;
-    }
-
-    protected String _getServiceContextID() {
-        if (_maintainSession) {
-            return _currentSessionId;
-        } else {
-            return getID();
-        }
-    }
-
-    public Object _getSessionInfo(String key) throws Exception {
-        if (!_maintainSession) {
-
-            // TODO Comeup with a Exception
-            throw new Exception(
-                    "Client is running the session OFF mode: Start session before saving to a session ");
-        }
-        return null;
-//        return _configurationContext.getServiceContext(_currentSessionId).getProperty(key);
-    }
-
-    public void _setClientOptions(Options _clientOptions) {
-        this._clientOptions = _clientOptions;
-    }
-
-    public void _setSessionInfo(String key, Object value) throws Exception {
-        if (!_maintainSession) {
-
-            // TODO Comeup with a Exception
-            throw new Exception(
-                    "Client is running the session OFF mode: Start session before saving to a session ");
-        }
-//        _configurationContext.getServiceContext(_currentSessionId).setProperty(key, value);
-    }
-
-    public void _startSession() {
-        _maintainSession = true;
-        _currentSessionId = getID();
+    public void _setOptions(Options _clientOptions) {
+        this._options = _clientOptions;
     }
 
     protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
-        return getFactory(this._clientOptions.getSoapVersionURI()).getDefaultEnvelope();
+        return getFactory(this._options.getSoapVersionURI()).getDefaultEnvelope();
     }
 
-    public void engageModule(String moduleName) {
-        this.modules.add(moduleName);
+    public void engageModule(QName moduleName) throws AxisFault {
+        _serviceClient.engageModule(moduleName);
     }
 
-    protected void populateModules(Call call) throws AxisFault {
-        for (int i = 0; i < modules.size(); i++) {
-            call.engageModule(new QName((String) this.modules.get(i)));
-        }
-    }
 
-    protected void populateModules(MessageSender sender) throws AxisFault {
-        for (int i = 0; i < modules.size(); i++) {
-            sender.engageModule(new QName((String) this.modules.get(i)));
-        }
-    }
 
     /**
      * A util method that extracts the correct element.
@@ -145,7 +88,7 @@ public abstract class Stub {
     }
 
     protected SOAPFactory getFactory(String soapNamespaceURI) {
-        String soapVersionURI = _clientOptions.getSoapVersionURI();
+        String soapVersionURI = _options.getSoapVersionURI();
 
         if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP11Factory();
@@ -156,18 +99,6 @@ public abstract class Stub {
         }
     }
 
-    private String getID() {
 
-        // TODO Get the UUID generator to generate values
-        return Long.toString(System.currentTimeMillis());
-    }
 
-    /**
-     * Gets the message context.
-     */
-    protected MessageContext getMessageContext() throws AxisFault {
-        MessageContext messageContext = new MessageContext();
-        messageContext.setConfigurationContext(_configurationContext);
-        return messageContext;
-    }
 }

@@ -28,7 +28,7 @@ import org.xmlsoap.ping.PingDocument;
 import org.xmlsoap.ping.PingResponse;
 import org.xmlsoap.ping.PingResponseDocument;
 import org.xmlsoap.ping.TicketType;
-
+import org.apache.axis2.context.ConfigurationContextFactory;
 
 /**
  * Client for the interop service
@@ -36,14 +36,14 @@ import org.xmlsoap.ping.TicketType;
  */
 public class InteropScenarioClient {
 
-	String soapNsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-	
+String soapNsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+
 	public InteropScenarioClient(boolean useSOAP12InStaticConfigTest) {
 		if(useSOAP12InStaticConfigTest) {
 			soapNsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 		}
 	}
-	
+
     public void invokeWithStaticConfig(String clientRepo, String url) throws Exception {
         TicketType ticket = TicketType.Factory.newInstance();
         ticket.setId("My ticket Id");
@@ -55,13 +55,14 @@ public class InteropScenarioClient {
         PingDocument pingDoc = PingDocument.Factory.newInstance();
         pingDoc.setPing(ping);
 
-        PingPortStub stub = new PingPortStub(clientRepo,url);
+        PingPortStub stub = new PingPortStub(
+                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientRepo),url);
 
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
-        stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        stub._getClientOptions().setSoapVersionURI(soapNsURI);
-        
+        stub._getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        stub._getOptions().setSoapVersionURI(soapNsURI);
+
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 
         PingResponse pingRes = pingResDoc.getPingResponse();
@@ -76,24 +77,26 @@ public class InteropScenarioClient {
         Ping ping = Ping.Factory.newInstance();
         ping.setText("Testing axis2-wss4j module");
         ping.setTicket(ticket);
-        
+
         PingDocument pingDoc = PingDocument.Factory.newInstance();
         pingDoc.setPing(ping);
 
-        PingPortStub stub = new PingPortStub(clientRepo,url);
-        
+        PingPortStub stub = new PingPortStub(
+                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientRepo),url);
+
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
-        stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        
+        stub._getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+
         //Engage the security module
-        stub.engageModule("security");
+        
+        stub.engageModule(new javax.xml.namespace.QName("security"));
 
         if(outflowConfig !=null){
-        	stub._getClientOptions().setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
+        	stub._getOptions().setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
         }
         if(inflowConfig != null) {
-        	stub._getClientOptions().setProperty(WSSHandlerConstants.INFLOW_SECURITY, inflowConfig.getProperty());
+        	stub._getOptions().setProperty(WSSHandlerConstants.INFLOW_SECURITY, inflowConfig.getProperty());
         }
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 

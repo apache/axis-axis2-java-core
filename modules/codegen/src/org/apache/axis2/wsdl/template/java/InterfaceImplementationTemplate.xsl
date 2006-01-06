@@ -53,46 +53,47 @@
         </xsl:for-each>
         }
 
-        /**
-        * Constructor
-        */
-        public <xsl:value-of select="@name"/>(String axis2Home,String targetEndpoint) throws java.lang.Exception {
-        //creating the configuration
-        _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().createConfigurationContextFromFileSystem(axis2Home);
-        _configurationContext.getAxisConfiguration().addService(_service);
-        _serviceContext =new org.apache.axis2.context.ServiceGroupContext(_configurationContext, _service.getParent()).getServiceContext(_service);
-        _clientOptions.setTo(new org.apache.axis2.addressing.EndpointReference(targetEndpoint));
 
-        <!--  Set the soap version depending on the binding. Default is 1.1 so don't set anything for that case-->
+
+     public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext, String targetEndpoint)
+        throws java.lang.Exception {
+
+        _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
+        _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
+                targetEndpoint));
         <xsl:if test="$soapVersion='1.2'">
             //Set the soap version
-            _clientOptions.setSoapVersionURI(org.apache.axis2.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            _options.setSoapVersionURI(org.apache.axis2.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
 
+    }
 
-
-        }
-
-        /**
-        * Default Constructor
-        */
-        public <xsl:value-of select="@name"/>() throws java.lang.Exception {
-        <!-- change this -->
+    /**
+     * Default Constructor
+     */
+    public <xsl:value-of select="@name"/>() throws java.lang.Exception {
         <xsl:for-each select="endpoint">
             <xsl:choose>
                 <xsl:when test="position()=1">
-                    this(AXIS2_HOME,"<xsl:value-of select="."/>" );
+                    this("<xsl:value-of select="."/>" );
                 </xsl:when>
                 <xsl:otherwise>
-                    //this(AXIS2_HOME,"<xsl:value-of select="."/>" );
+                    //this("<xsl:value-of select="."/>" );
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:if test="@policyRef">
-                //this has a policy ! The policy is written to the follwing file<xsl:value-of select="@policyRef"></xsl:value-of>
+                //this has a policy ! The policy is written to the following file<xsl:value-of select="@policyRef"></xsl:value-of>
             </xsl:if>
         </xsl:for-each>
+    }
 
-        }
+    /**
+     * Constructor taking the traget endpoint
+     */
+    public <xsl:value-of select="@name"/>(String targetEndpoint) throws java.lang.Exception {
+        this(new org.apache.axis2.context.ConfigurationContextFactory().createConfigurationContextFromFileSystem(AXIS2_HOME),
+                targetEndpoint);
+    }
 
 
 
@@ -119,20 +120,14 @@
                         <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                     </xsl:for-each>) throws java.rmi.RemoteException{
 
-                    org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-                    org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options(_clientOptions);
-                    _call.setClientOptions(_options);
+               org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
+              _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
-                    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-                    _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
-                    <!-- see whether this makes sense
-             this is not implemented in the emitter properly-->
-                    <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+              <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
-                    //set the properties
-                    populateModules(_call);
-
-                    org.apache.axis2.soap.SOAPEnvelope env;
+              // create SOAP envelope with that payload
+              org.apache.axis2.soap.SOAPEnvelope env;
                     <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -148,7 +143,7 @@
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc.
                                     <xsl:for-each select="input/param[@location='body']">
-                                        env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                        env = toEnvelope(getFactory(_options.getSoapVersionURI()), <xsl:value-of select="@name"/>);
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
                                         env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
@@ -179,25 +174,36 @@
                         </xsl:otherwise>
                     </xsl:choose>
 
-                    _messageContext.setEnvelope(env);
-                    <xsl:choose>
+        // create message context with that soap envelope
+        org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+        _messageContext.setEnvelope(env);
+
+        // add the message contxt to the operation client
+        _operationClient.addMessageContext(_messageContext);
+        //set the options hierarchy
+        _options.setParent (_operationClient.getOptions());
+        _operationClient.setOptions (_options);
+
+        //execute the operation client
+        _operationClient.execute(true);
+
+                     <xsl:choose>
                         <xsl:when test="$outputtype=''">
-                            _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
                             return;
                         </xsl:when>
                         <xsl:otherwise>
-                            //set the exception throwing status
-                            _call.getClientOptions().setExceptionToBeThrownOnSOAPFault(true);
-                            org.apache.axis2.context.MessageContext  _returnMessageContext = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
+                           org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(
+                                                       org.apache.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                             org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+                            <!-- todo need to change this to cater for unwrapped messgaes (multiple parts) -->
                             java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
                             return (<xsl:value-of select="$outputtype"/>)object;
                         </xsl:otherwise>
                     </xsl:choose>
 
-                    <!-- this needs to be changed -->
                     }
                 </xsl:if>
+                <!-- Async method generation -->
                 <xsl:if test="$isAsync='1'">
                     /**
                     * Auto generated method signature for Asynchronous Invocations
@@ -212,49 +218,48 @@
                         <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
                     <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
-                    org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-                    org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options(_clientOptions);
-                    _call.setClientOptions(_options);
-                    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-                    _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
+                    org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
+              _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
-                    <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+              <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
-                    org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
+              // create SOAP envelope with that payload
+              org.apache.axis2.soap.SOAPEnvelope env;
+                    <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
-                        <!-- There are more than 1 parameter in the input-->
-                        <xsl:when test="$paramCount>0">
+                        <!-- test the number of input parameters
+                        If the number of parameter is more then just run the normal test-->
+                        <xsl:when test="$count>0">
                             <xsl:choose>
                                 <xsl:when test="$style='rpc'">
                                     // Style is RPC
-                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,
-                                    "<xsl:value-of select="@namespace"/>",
-                                    "<xsl:value-of select="@name"/>",
+                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
                                     new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
                                     new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                                 </xsl:when>
-
                                 <xsl:when test="$style='doc'">
-                                    //Style is Doc
-                                    env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>);
+                                    //Style is Doc.
+                                    <xsl:for-each select="input/param[@location='body']">
+                                        env = toEnvelope(getFactory(_options.getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                    </xsl:for-each>
+                                    <xsl:for-each select="input/param[@location='header']">
+                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                    </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
-                                    throw UnsupportedOperationException("Unknown Style");
+                                    throw java.lang.UnsupportedOperationException("Unknown Style");
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
+                        <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
                                 <xsl:when test="$style='rpc'">
                                     //Style is RPC. No input parameters
-                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,
-                                    "<xsl:value-of select="@namespace"/>",
-                                    "<xsl:value-of select="@name"/>",
-                                    null,
-                                    null);
+                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                                 </xsl:when>
-                                <!-- The follwing code is specific to XML beans-->
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc. No input parameters
                                     <!-- setValueDoc(env,null); -->
@@ -266,26 +271,40 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-                    _messageContext.setEnvelope(env);
+
+        // create message context with that soap envelope
+        org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+        _messageContext.setEnvelope(env);
+
+        // add the message contxt to the operation client
+        _operationClient.addMessageContext(_messageContext);
+        //set the options hierarchy
+        _options.setParent (_operationClient.getOptions());
+        _operationClient.setOptions (_options);
+
                     <xsl:choose>
                         <xsl:when test="$outputtype=''">
                             //Nothing to pass as the callback!!!
-                            _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext,null);
                         </xsl:when>
                         <xsl:otherwise>
-                            _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis2.client.async.Callback(){
-                            public void onComplete(org.apache.axis2.client.async.AsyncResult result){
+                           _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
+                    public void onComplete(
+                            org.apache.axis2.client.async.AsyncResult result) {
+                        java.lang.Object object = fromOM(getElement(
+                                result.getResponseEnvelope(), "doc"),
+                               <xsl:value-of select="$outputtype"/>.class);
+                        callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>) object);
+                    }
 
-                            java.lang.Object object = fromOM(getElement(result.getResponseEnvelope(),"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
-                            callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);
-                            }
-                            public void onError(java.lang.Exception e){
-                            callback.receiveError<xsl:value-of select="@name"/>(e);
-                            }
-                            }
-                            );
+                    public void onError(java.lang.Exception e) {
+                        callback.receiveError<xsl:value-of select="@name"/>(e);
+                    }
+                });
                         </xsl:otherwise>
                     </xsl:choose>
+           //execute the operation client
+           _operationClient.execute(true);
+
                     }
                 </xsl:if>
                 <!-- End of in-out mep -->
@@ -297,17 +316,14 @@
                 <xsl:for-each select="input/param[@type!='']">
                     <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                 </xsl:for-each>) throws java.rmi.RemoteException{
-                org.apache.axis2.client.MessageSender _msgSender = new org.apache.axis2.client.MessageSender(_serviceContext);
 
-                org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-                org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options(_clientOptions);
-                _msgSender.setClientOptions(_options);
-
-                _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
+                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
+                _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+                _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
                 <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axis2.soap.SOAPEnvelope env;
-                env = createEnvelope();
+
                 <xsl:choose>
                     <!-- test the number of input parameters
                        If the number of parameter is more then just run the normal generation-->
@@ -315,6 +331,7 @@
                         <xsl:choose>
                             <xsl:when test="$style='rpc'">
                                 // Style is RPC
+                                env = createEnvelope();
                                 org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
                                 new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
                                 new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
@@ -322,7 +339,7 @@
                             <xsl:when test="$style='doc'">
                                 <!-- for the doc lit case there can be only one element. So take the first element -->
                                 //Style is Doc.
-                                env = toEnvelope(getFactory(this._clientOptions.getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>);
+                                env = toEnvelope(getFactory(_options.getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>);
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
@@ -349,13 +366,19 @@
                     </xsl:otherwise>
                 </xsl:choose>
 
-                //set the properties
-                populateModules(_msgSender);
+                // create message context with that soap envelope
+            org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+            _messageContext.setEnvelope(env);
 
-                _messageContext.setEnvelope(env);
-                _msgSender.send(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
-                return;
-                }
+            // add the message contxt to the operation client
+            _operationClient.addMessageContext(_messageContext);
+            //set the options hierarchy
+            _options.setParent (_operationClient.getOptions());
+            _operationClient.setOptions (_options);
+
+             _operationClient.execute(true);
+             return;
+           }
             </xsl:if>
         </xsl:for-each>
 

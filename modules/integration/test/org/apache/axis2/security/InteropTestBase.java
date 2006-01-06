@@ -139,7 +139,7 @@ public abstract class InteropTestBase extends TestCase {
                     OutflowConfiguration.class,
                     InflowConfiguration.class
             });
-            m.invoke(clientObj,new Object[]{Constants.TESTING_PATH + getClientRepo(),targetEpr,getOutflowConfiguration(), getInflowConfiguration()});
+            m.invoke(clientObj,new Object[]{Constants.TESTING_PATH + DEFAULT_CLIENT_REPOSITORY,targetEpr,getOutflowConfiguration(), getInflowConfiguration()});
 
         } catch (Exception e) {
             e.printStackTrace();
