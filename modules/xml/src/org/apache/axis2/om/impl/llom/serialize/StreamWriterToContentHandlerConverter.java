@@ -41,9 +41,9 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
     private XMLStreamWriter writer;
 
     /**
-     * Constructor StreamWriterToContentHandlerConverter
+     * Constructor StreamWriterToContentHandlerConverter.
      *
-     * @param writer
+     * @param omOutput
      */
     public StreamWriterToContentHandlerConverter(org.apache.axis2.om.impl.OMOutputImpl omOutput) {
         this.writer = omOutput.getXmlStreamWriter();

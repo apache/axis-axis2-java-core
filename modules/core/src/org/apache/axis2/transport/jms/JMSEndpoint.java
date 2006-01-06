@@ -23,7 +23,7 @@ import javax.jms.Session;
 import java.util.HashMap;
 
 /**
- * JMSEndpoint encapsulates interactions w/ a JMS destination.
+ * JMSEndpoint encapsulates interactions with a JMS destination.
  */
 public abstract class JMSEndpoint {
     private JMSConnector m_connector;
@@ -33,11 +33,11 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Send a message and wait for a response.
+     * Sends a message and waits for a response.
      *
      * @param message
      * @param timeout
-     * @return
+     * @return Returns byte[].
      * @throws javax.jms.JMSException
      */
     public byte[] call(byte[] message, long timeout) throws Exception {
@@ -50,7 +50,7 @@ public abstract class JMSEndpoint {
      * @param message
      * @param timeout
      * @param properties
-     * @return
+     * @return Returns byte[].
      * @throws javax.jms.JMSException
      */
     public byte[] call(byte[] message, long timeout, HashMap properties) throws Exception {
@@ -78,7 +78,7 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Register a MessageListener.
+     * Registers a MessageListener.
      *
      * @param listener
      * @throws javax.jms.JMSException
@@ -88,7 +88,7 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Register a MessageListener.
+     * Registers a MessageListener.
      *
      * @param listener
      * @param properties
@@ -103,7 +103,7 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Send a message w/o waiting for a response.
+     * Sends a message without waiting for a response.
      *
      * @param message
      * @throws javax.jms.JMSException
@@ -113,7 +113,7 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Send a message w/o waiting for a response.
+     * Sends a message without waiting for a response.
      *
      * @param message
      * @param properties
@@ -128,7 +128,7 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Unregister a message listener.
+     * Unregisters a message listener.
      *
      * @param listener
      */
@@ -137,7 +137,7 @@ public abstract class JMSEndpoint {
     }
 
     /**
-     * Unregister a message listener.
+     * Unregisters a message listener.
      *
      * @param listener
      * @param properties

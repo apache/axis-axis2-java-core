@@ -25,13 +25,13 @@ public class ConfigurationContextFactory {
     private Log log = LogFactory.getLog(getClass());
 
     /**
-     * To create a AxisConfiguration depending on the user requiremnt , this method can be used.
-     * First create a AxisConfigurator object giving necessary parameters into it.
-     * Depending on the implementation getAxisConfiguration(); will give the AxisConfiguration and
-     * using the ConfigurationContext will be created and return that.
+     * Creates a AxisConfiguration depending on the user requirment. 
+     * First creates an AxisConfigurator object with appropriate parameters.
+     * Depending on the implementation getAxisConfiguration(), gets
+     * the AxisConfiguration and uses it to create the ConfigurationContext.
      *
      * @param axisConfigurator
-     * @return
+     * @return Returns ConfigurationContext.
      * @throws AxisFault
      */
     public ConfigurationContext createConfigurationContext(
@@ -43,7 +43,7 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Builds the configuration 
+     * Builds the configuration. 
      *
      * @param path
      * @return Returns the built ConfigurationContext.
@@ -54,7 +54,7 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * To initilizae modules and , create Tranpsorts, this method is bean used
+     * Initializes modules and creates Transports.
      */
     
     private void init(ConfigurationContext configContext) throws AxisFault {
@@ -143,10 +143,9 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * To get the default configuration context  , this will return a AxisConfiguration
-     * which is created by fileSystem based AxisConfiguration creator
+     * Gets the default configuration context by using the file system based AxisConfiguration.
      *
-     * @return ConfigurationContext
+     * @return Returns ConfigurationContext.
      */
     public ConfigurationContext createEmptyConfigurationContext() {
         return new ConfigurationContext(new AxisConfiguration());

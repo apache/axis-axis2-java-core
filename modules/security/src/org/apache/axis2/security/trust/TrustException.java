@@ -83,7 +83,7 @@ public class TrustException extends Exception {
     }
     
     /**
-     * This can be used to set a custom message in the exception
+     * This is used to set a custom message in the exception.
      * @param faultCode
      * @param msg
      */
@@ -98,7 +98,7 @@ public class TrustException extends Exception {
      * @param faultCode
      * @param msgId
      * @param args
-     * @return
+     * @return Returns String.
      */
     private static String getMessage(String faultCode, String msgId, Object[] args) {
         String msg = null;
@@ -132,16 +132,16 @@ public class TrustException extends Exception {
     
     
     /**
-     * Return the fault code
-     * @return
+     * Returns the fault code.
+     * @return Returns String.
      */
 	public String getFaultCode() {
 		return TrustConstants.WST_PREFIX + faultCode;
 	}
 	
 	/**
-	 * Return the fault string
-	 * @return
+	 * Returns the fault string.
+	 * @return Returns String.
 	 */
 	public String getFaultString() {
 		return faultString;

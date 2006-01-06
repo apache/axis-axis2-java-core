@@ -45,9 +45,9 @@ import java.io.ByteArrayOutputStream;
 public class Axis2Util {
 
 	/**
-	 * Create a DOM Document using the SOAP Envelope
+	 * Creates a DOM Document using the SOAP Envelope.
 	 * @param env An org.apache.axis2.soap.SOAPEnvelope instance 
-	 * @return the DOM Document of the given SOAP Envelope
+	 * @return Returns the DOM Document of the given SOAP Envelope.
 	 * @throws Exception
 	 */
 	public static Document getDocumentFromSOAPEnvelope(SOAPEnvelope env)
@@ -87,15 +87,14 @@ public class Axis2Util {
 	
 	
 	/**
-	 * This is used to provide the appropriate key to pickup 
-	 * config params from the message context.
+	 * Provides the appropriate key to pickup config params from the message context.
 	 * This is acutally used when the outflow handler (WSDoAllSender)
-	 * is repeated n number of times
+	 * is repeated n number of times.
 	 * @param originalKey The default key
 	 * @param inHandler Whether the handler is the inflow handler or not
 	 * @param repetition The current repetition number
-	 * @return The key to be used internally in the security module to pick
-	 * up the config params
+	 * @return Returns the key to be used internally in the security module to pick
+	 * up the config params.
 	 */
 	public static String getKey(String originalKey, boolean inHandler, int repetition) {
 		
@@ -109,9 +108,9 @@ public class Axis2Util {
 	}
 	
 	/**
-	 * Convert a given DOM Element to an OMElement
+	 * Converts a given DOM Element to an OMElement.
 	 * @param element
-	 * @return
+	 * @return Returns OMElement.
 	 * @throws TrustException
 	 */
 	public static OMElement toOM(Element element) throws TrustException {
@@ -135,9 +134,9 @@ public class Axis2Util {
 	
 
 	/**
-	 * Convert a given OMElement to a DOM Element
+	 * Converts a given OMElement to a DOM Element.
 	 * @param element
-	 * @return
+	 * @return Returns Element.
 	 * @throws TrustException
 	 */
 	public static Element toDOM(OMElement element) throws TrustException {

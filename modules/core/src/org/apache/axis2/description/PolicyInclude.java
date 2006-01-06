@@ -47,7 +47,7 @@ public class PolicyInclude {
 
     public static final int OPERATION_POLICY = 7;
 
-    public static final int BINDING_OPERATOIN_POLICY = 8;
+    public static final int BINDING_OPERATION_POLICY = 8;
 
     public static final int INPUT_POLICY = 9;
 

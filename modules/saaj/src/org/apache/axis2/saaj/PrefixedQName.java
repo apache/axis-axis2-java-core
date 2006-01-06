@@ -39,7 +39,7 @@ public class PrefixedQName implements Name {
     private QName qName;
 
     /**
-     * Constructor PrefixedQName
+     * Constructor PrefixedQName.
      *
      * @param uri
      * @param localName
@@ -53,10 +53,9 @@ public class PrefixedQName implements Name {
     }
 
     /**
-     * Constructor qname
+     * Constructor PrefixedQName
      *
      * @param qname
-     * @return
      */
     public PrefixedQName(QName qname) {
         this.qName = qname;
@@ -67,7 +66,7 @@ public class PrefixedQName implements Name {
      * Gets the local name part of the XML name that this <code>Name</code>
      * object represents.
      *
-     * @return a string giving the local name
+     * @return Returns the local name.
      */
     public String getLocalName() {
         return qName.getLocalPart();
@@ -77,7 +76,7 @@ public class PrefixedQName implements Name {
      * Gets the namespace-qualified name of the XML name that this
      * <code>Name</code> object represents.
      *
-     * @return the namespace-qualified name as a string
+     * @return Returns the namespace-qualified name.
      */
     public String getQualifiedName() {
         StringBuffer buf = new StringBuffer(prefix);
@@ -91,7 +90,7 @@ public class PrefixedQName implements Name {
      * Returns the URI of the namespace for the XML
      * name that this <code>Name</code> object represents.
      *
-     * @return the URI as a string
+     * @return Returns the URI as a string.
      */
     public String getURI() {
         return qName.getNamespaceURI();
@@ -101,7 +100,7 @@ public class PrefixedQName implements Name {
      * Returns the prefix associated with the namespace for the XML
      * name that this <code>Name</code> object represents.
      *
-     * @return the prefix as a string
+     * @return  Returns the prefix as a string.
      */
     public String getPrefix() {
         return prefix;

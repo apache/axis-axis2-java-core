@@ -30,14 +30,14 @@ import java.util.Iterator;
 
 /**
  * This is the representation of the inflow configurations of the security
- * module
+ * module.
  */
 public class InflowConfiguration {
 	
 	private HashMap action = new HashMap();
 	
 	/**
-	 * Returns the configuration as an OMElement 
+	 * Returns the configuration as an OMElement.
 	 * @return Returns Parameter.
 	 */
 	public Parameter getProperty() {
@@ -79,7 +79,7 @@ public class InflowConfiguration {
 	}
 
 	/**
-	 * Sets the action items
+	 * Sets the action items.
 	 * @param actionItems
 	 */
 	public void setActionItems(String actionItems) {
@@ -87,15 +87,15 @@ public class InflowConfiguration {
 	}
 
 	/**
-	 * Returns the decryption property file
-	 * @return
+	 * Returns the decryption property file.
+	 * @return Returns String.
 	 */
 	public String getDecryptionPropFile() {
 		return (String)this.action.get(WSHandlerConstants.DEC_PROP_FILE);
 	}
 
 	/**
-	 * Sets the decryption property file
+	 * Sets the decryption property file.
 	 * @param decryptionPropFile
 	 */
 	public void setDecryptionPropFile(String decryptionPropFile) {
@@ -103,15 +103,15 @@ public class InflowConfiguration {
 	}
 
 	/**
-	 * Returns the password callback class name
-	 * @return
+	 * Returns the password callback class name.
+	 * @return Returns String.
 	 */
 	public String getPasswordCallbackClass() {
 		return (String)this.action.get(WSHandlerConstants.PW_CALLBACK_CLASS);
 	}
 
 	/**
-	 * Sets the password callback class name
+	 * Sets the password callback class name.
 	 * @param passwordCallbackClass
 	 */
 	public void setPasswordCallbackClass(String passwordCallbackClass) {
@@ -119,7 +119,7 @@ public class InflowConfiguration {
 	}
 
 	/**
-	 * Returns the signature property file
+	 * Returns the signature property file.
 	 * @return Returns String.
 	 */
 	public String getSignaturePropFile() {
@@ -127,7 +127,7 @@ public class InflowConfiguration {
 	}
 
 	/**
-	 * Sets the signature property file
+	 * Sets the signature property file.
 	 * @param signaturePropFile
 	 */
 	public void setSignaturePropFile(String signaturePropFile) {
@@ -135,7 +135,7 @@ public class InflowConfiguration {
 	}
 	
 	/**
-	 * Sets whether signature confirmation should be enabled or not
+	 * Sets whether signature confirmation should be enabled or not.
 	 * @param value
 	 */
 	public void setEnableSignatureConfirmation(boolean value) {
@@ -144,7 +144,7 @@ public class InflowConfiguration {
 	}
 	
 	/**
-	 * Returns whether signature confirmation should be enabled or not
+	 * Returns whether signature confirmation should be enabled or not.
 	 * @return Returns String.
 	 */
 	public String getEnableSignatureConfirmation() {

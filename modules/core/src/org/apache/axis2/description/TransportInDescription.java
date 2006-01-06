@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
- * Represents a incoming transport deployed in AXis2
+ * Represents an incoming transport deployed in Axis2.
  */
 public class TransportInDescription implements ParameterInclude {
 
@@ -36,14 +36,10 @@ public class TransportInDescription implements ParameterInclude {
      */
     private Flow faultFlow;
 
-    // to store handler Fault in inFlow
+    // Stores handler Fault in inFlow
     private Phase faultPhase;
 
-    /**
-     * Field phasesInclude
-     */
-
-    /**
+     /**
      * Field flowInclude
      */
     private Flow inFlow;
@@ -63,7 +59,7 @@ public class TransportInDescription implements ParameterInclude {
     protected TransportListener receiver;
 
     /**
-     * Constructor AxisTransport
+     * Constructor AxisTransport.
      *
      * @param name
      */
@@ -75,7 +71,7 @@ public class TransportInDescription implements ParameterInclude {
     }
 
     /**
-     * Method addParameter
+     * Method addParameter.
      *
      * @param param
      */
@@ -104,17 +100,17 @@ public class TransportInDescription implements ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns QName.
      */
     public QName getName() {
         return name;
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -125,7 +121,7 @@ public class TransportInDescription implements ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns TransportListener.
      */
     public TransportListener getReceiver() {
         return receiver;

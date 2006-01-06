@@ -41,7 +41,7 @@ public class AppliesTo extends CompositeToken {
 	}
 
 	/**
-	 * Add a token as a child
+	 * Adds a token as a child.
 	 * This is provided as an extensibility mechanism to add any
 	 * child element to the <code>wsp:AppliesTo</code> element
 	 * @param token
@@ -51,8 +51,8 @@ public class AppliesTo extends CompositeToken {
 	}
 	
 	/**
-	 * Retuns an interator of child elements
-	 * @return
+	 * Retuns an iterator of child elements.
+	 * @return Returns Iterator.
 	 */
 	public Iterator getChildTokens() {
 		return this.tokenElement.getChildElements();

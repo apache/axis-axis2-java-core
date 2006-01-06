@@ -207,7 +207,7 @@ public class PolicyUtil {
 
         PolicyInclude policyInclude = axisOperation.getPolicyInclude();
         List policyList = policyInclude
-                .getPolicyElements(PolicyInclude.BINDING_OPERATOIN_POLICY);
+                .getPolicyElements(PolicyInclude.BINDING_OPERATION_POLICY);
         addPolicyAsExtElements(description, policyList, wsdlBindingOperation,
                 policyInclude);
 

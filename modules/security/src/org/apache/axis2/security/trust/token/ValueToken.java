@@ -21,7 +21,7 @@ import org.apache.axis2.security.trust.TrustException;
 
 /**
  * This is the base class for the elements that carries a
- * value in the element
+ * value in the element.
  * Example:
  * 	<wsu:Created>...</wsu:Created>
  */
@@ -59,8 +59,8 @@ public abstract class ValueToken extends AbstractToken {
 	}
 	
 	/**
-	 * Returns the value of the token
-	 * @return
+	 * Returns the value of the token.
+	 * @return Returns String.
 	 */
 	public String getValue() {
 		if(this.valueText != null) 
@@ -70,7 +70,7 @@ public abstract class ValueToken extends AbstractToken {
 	}
 	
 	/**
-	 * Sets the value of the token
+	 * Sets the value of the token.
 	 * @param value
 	 */
 	public void setValue(String value) {

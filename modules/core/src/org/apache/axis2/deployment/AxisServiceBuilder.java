@@ -250,7 +250,7 @@ public class AxisServiceBuilder {
                 // wsdl:Binding -> wsdl:Operation
                 operationPolicies = getPoliciesAsExtElements(wsdl4jBindingOperation
                         .getExtensibilityElements());
-                addPolicyElements(PolicyInclude.BINDING_OPERATOIN_POLICY,
+                addPolicyElements(PolicyInclude.BINDING_OPERATION_POLICY,
                         operationPolicies, operationPolicyInclude);
 
                 axisOperation.setPolicyInclude(operationPolicyInclude);

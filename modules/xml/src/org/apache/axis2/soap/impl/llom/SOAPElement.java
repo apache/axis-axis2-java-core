@@ -27,7 +27,8 @@ public abstract class SOAPElement extends OMElementImpl {
 
     /**
      * @param parent
-     * @param parent
+     * @param localName
+     * @param extractNamespaceFromParent     
      */
     protected SOAPElement(OMElement parent,
                           String localName,

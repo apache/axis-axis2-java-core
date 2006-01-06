@@ -42,8 +42,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
 
     /**
-     * Behavior of this method is such that when the type mapping is not found
-     * it returns the  default type mapping from the constant
+     * Gets the type mapping name. If type mapping is not found, returns default. 
      *
      * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
@@ -80,7 +79,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
     /**
      * @param qname
-     * @return object represneting a specific form of the XSD compilation
+     * @return Returns object representing a specific form of the XSD compilation.
      * @see TypeMapper#getTypeMappingObject(javax.xml.namespace.QName)
      */
     public Object getTypeMappingObject(QName qname) {
@@ -99,7 +98,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
     /**
      * @see org.apache.axis2.wsdl.databinding.TypeMapper#isObjectMappingPresent()
-     * @return
+     * @return Returns boolean.
      */
     public boolean isObjectMappingPresent() {
         return isObject;

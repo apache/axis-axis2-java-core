@@ -82,7 +82,7 @@ public class ArchiveReader implements DeploymentConstants {
                 try {
                     Utils.fillAxisService(service,axisConfig);
                 } catch (Exception e) {
-                    log.info("Error in scheam generating :" + e.getMessage());
+                    log.info("Error in schema generating :" + e.getMessage());
                 }
             }
             serviceList.add(service);
@@ -181,7 +181,7 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     /**
-     * Extract Service XML files and builds the service groups
+     * Extracts Service XML files and builds the service groups.
      *
      * @param filename
      * @param engine
@@ -189,7 +189,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @param extractService
      * @param wsdls
      * @param axisConfig
-     * @return
+     * @return Returns ArrayList.
      * @throws DeploymentException
      */
     public ArrayList processServiceGroup(String filename, DeploymentEngine engine,

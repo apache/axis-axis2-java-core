@@ -42,14 +42,14 @@ public abstract class AbstractHandler implements Handler {
     protected HandlerDescription handlerDesc;
 
     /**
-     * Constructor AbstractHandler
+     * Constructor AbstractHandler.
      */
     public AbstractHandler() {
         handlerDesc = EMPTY_HANDLER_METADATA;
     }
 
     /**
-     * Method cleanup
+     * Method cleanup.
      *
      * @throws AxisFault
      */
@@ -57,7 +57,7 @@ public abstract class AbstractHandler implements Handler {
     }
 
     /**
-     * Method init
+     * Method init.
      *
      * @param handlerdesc
      */
@@ -66,7 +66,7 @@ public abstract class AbstractHandler implements Handler {
     }
 
     /**
-     * Method revoke
+     * Method revoke.
      *
      * @param msgContext
      */
@@ -86,29 +86,28 @@ public abstract class AbstractHandler implements Handler {
     }
 
     /**
-     * To get the phaseRule of a handler it is required to get the HnadlerDescription of the handler
-     * so the argumnet pass when it call return as HnadlerDescription
+     * Gets the phaseRule of a handler.
      *
-     * @return
+     * @return Returns HandlerDescription.
      */
     public HandlerDescription getHandlerDesc() {
         return handlerDesc;
     }
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return
+     * @return Returns QName.
      */
     public QName getName() {
         return handlerDesc.getName();
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return handlerDesc.getParameter(name);

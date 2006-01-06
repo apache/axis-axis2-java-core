@@ -88,7 +88,7 @@ public interface SOAPFault extends OMElement {
     public SOAPFaultDetail getDetail();
 
     /**
-     * This will return if there is an exception in the SOAP fault.
+     * Returns Exception if there is one in the SOAP fault.
      * <p/>
      * If the exception is like;
      * <SOAPFault>
@@ -97,7 +97,7 @@ public interface SOAPFault extends OMElement {
      * </Detail>
      * </SOAPFault>
      *
-     * @return
+     * @return Returns Exception.
      * @throws org.apache.axis2.om.OMException
      *
      */

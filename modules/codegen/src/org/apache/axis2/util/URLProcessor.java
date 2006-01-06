@@ -23,10 +23,10 @@ public class URLProcessor {
     public static final String DEFAULT_PACKAGE = "org.apache.axis2";
 
     /**
-     * Method makePackageName
+     * Method makePackageName.
      *
      * @param namespace
-     * @return
+     * @return Returns String.
      */
     public static String makePackageName(String namespace) {
 
@@ -91,8 +91,8 @@ public class URLProcessor {
 
 
     /**
-     * Massage <tt>word</tt> into a form suitable for use in a Java package name.
-     * Append it to the target string buffer with a <tt>.</tt> delimiter iff
+     * Massages <tt>word</tt> into a form suitable for use in a Java package name.
+     * Appends it to the target string buffer with a <tt>.</tt> delimiter if
      * <tt>word</tt> is not the first word in the package name.
      *
      * @param sb        the buffer to append to

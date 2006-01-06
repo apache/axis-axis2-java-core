@@ -41,6 +41,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
     /**
      * @param localName
      * @param ns
+     * @param parent     
      */
     public SOAPHeaderBlockImpl(String localName,
                                OMNamespace ns,
@@ -50,7 +51,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
     }
 
     /**
-     * Constructor SOAPHeaderBlockImpl
+     * Constructor SOAPHeaderBlockImpl.
      *
      * @param localName
      * @param ns
@@ -66,6 +67,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
     /**
      * @param attributeName
      * @param attrValue
+     * @param soapEnvelopeNamespaceURI     
      */
     protected void setAttribute(String attributeName,
                                 String attrValue,
@@ -84,10 +86,11 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
     }
 
     /**
-     * Method getAttribute
+     * Method getAttribute.
      *
      * @param attrName
-     * @return
+     * @param soapEnvelopeNamespaceURI     
+     * @return Returns String.
      */
     protected String getAttribute(String attrName,
                                   String soapEnvelopeNamespaceURI) {

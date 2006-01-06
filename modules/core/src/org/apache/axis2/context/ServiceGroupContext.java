@@ -46,12 +46,12 @@ public class ServiceGroupContext extends AbstractContext {
     }
 
     /**
-     * At each time you ask for a service context this will create a new one by
-     * passing AxisService into it , and no need to store service context inside serviceGroup
-     * context as well
+     * Gets a service context. Creates a new one from AxisService.
+     * There is no need to store service context inside serviceGroup
+     * context as well.
      *
      * @param service
-     * @return
+     * @return Returns ServiceContext.
      * @throws AxisFault
      */
     public ServiceContext getServiceContext(AxisService service) throws AxisFault {

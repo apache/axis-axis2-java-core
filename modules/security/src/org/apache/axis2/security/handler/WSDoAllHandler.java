@@ -55,32 +55,32 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     protected RequestData reqData;
     
     /**
-     * In Axis2 the user cannot set inflow and outflow parameters
-     * Therefore we need to map the Axis2 specific inflow and outflow 
-     * parameters to WSS4J params
+     * In Axis2, the user cannot set inflow and outflow parameters.
+     * Therefore, we need to map the Axis2 specific inflow and outflow 
+     * parameters to WSS4J params,
      * 
-     * Knowledge of inhandler and out handler is used to get the mapped value
+     * Knowledge of inhandler and out handler is used to get the mapped value.
      */
     protected boolean inHandler;
     
     /**
-     * Constructor AbstractHandler
+     * Constructor AbstractHandler.
      */
     public WSDoAllHandler() {
         handlerDesc = EMPTY_HANDLER_METADATA;
     }
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return name
+     * @return Returns name.
      */
     public QName getName() {
         return handlerDesc.getName();
     }
 
     /**
-     * Method revoke
+     * Method revoke.
      *
      * @param msgContext
      */
@@ -88,7 +88,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
     /**
-     * Method cleanup
+     * Method cleanup.
      *
      * @throws org.apache.axis2.AxisFault
      */
@@ -96,17 +96,17 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return parameter
+     * @return Returns parameter.
      */
     public Parameter getParameter(String name) {
         return handlerDesc.getParameter(name);
     }
 
     /**
-     * Method init
+     * Method init.
      *
      * @param handlerdesc
      */
@@ -115,10 +115,9 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
     /**
-     * To get the phaseRule of a handler it is required to get the HnadlerDescription of the handler
-     * so the argumnet pass when it call return as HnadlerDescription
+     * Gets the handler description.
      *
-     * @return handler description
+     * @return Returns handler description.
      */
     public HandlerDescription getHandlerDesc() {
         return handlerDesc;
@@ -145,7 +144,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     /**
      * Returns the repetition number from the message context
      * @param msgContext
-     * @return
+     * @return Returns int.
      */
 	protected int getCurrentRepetition(Object msgContext) {
 		//get the repetition from the message context
@@ -176,10 +175,9 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
     
 	/**
-	 * Get optoin should extract the configuration 
-	 * values from the service.xml and/or axis2.xml
-	 * Values set in the service.xml takes prority over values of the
-	 * axis2.xml
+	 * Gets optoin. Extracts the configuration values from the service.xml 
+	 * and/or axis2.xml. Values set in the service.xml takes prority over 
+	 * values of the axis2.xml
 	 */
     public Object getOption(String axisKey) {
     	
@@ -212,8 +210,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 	}
 
     /**
-     * override the class loader used to load the PW callback class
-     * @return class loader
+     * Overrides the class loader used to load the PW callback class.
+     * @return Returns class loader.
      */
     public java.lang.ClassLoader getClassLoader() {
         try {

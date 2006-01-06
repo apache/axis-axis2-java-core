@@ -29,40 +29,40 @@ public interface TypeMapper {
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
 
     /**
-     * returns whether the mapping is the object type or the normal class name type
-     * @return
+     * Returns whether the mapping is the object type or the normal class name type
+     * @return Returns boolean.
      */
     public boolean isObjectMappingPresent();
 
     /**
-     * Get the type mapping class name
+     * Gets the type mapping class name.
      *
      * @param qname name of the XML element to be mapped
-     * @return a string that represents the particular type
+     * @return Returns a string that represents the particular type.
      */
     public String getTypeMappingName(QName qname);
 
     /**
-     * Get the type mapping Object
+     * Gets the type mapping Object.
      *
      * @param qname name of the XML element to be mapped
-     * @return an Object that represents the particular class in a pre specified form.
-     *         it can be a specific format to the databinding framework used
+     * @return Returns an Object that represents the particular class in a pre specified form.
+     *         It can be a specific format to the databinding framework used.
      *         This allows tight integrations with the databinding framework, allowing the emitter
-     *         to write the databinding classes in his own way
+     *         to write the databinding classes in its own way.
      */
     public Object getTypeMappingObject(QName qname);
 
     /**
-     * Get the parameter name
+     * Gets the parameter name.
      *
      * @param qname name of the XML element to get a parameter
-     * @return a unique parameter name
+     * @return Returns a unique parameter name.
      */
     public String getParameterName(QName qname);
 
     /**
-     * Adds a type mapping name to the type mapper
+     * Adds a type mapping name to the type mapper.
      *
      * @param qname
      * @param value
@@ -71,7 +71,7 @@ public interface TypeMapper {
     public void addTypeMappingName(QName qname, String value);
 
     /**
-     * Adds a type mapping object to the type mapper
+     * Adds a type mapping object to the type mapper.
      *
      * @param qname the xml Qname that this type refers to
      * @param value the type mapping object
@@ -80,13 +80,13 @@ public interface TypeMapper {
     public void addTypeMappingObject(QName qname, Object value);
 
     /**
-     * @return a map containing all type mapping names
+     * @return Returns a map containing all type mapping names
      * i.e. Qname to  classname
      */
     public Map getAllMappedNames();
 
     /**
-     * @return a map containing all type mapping model objects
+     * @return Returns a map containing all type mapping model objects
      * i.e. Qname to model objects
      */
     public Map getAllMappedObjects();

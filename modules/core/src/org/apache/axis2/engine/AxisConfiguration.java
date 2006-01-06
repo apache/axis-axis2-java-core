@@ -91,7 +91,7 @@ public class AxisConfiguration implements ParameterInclude {
     private ClassLoader systemClassLoader;
 
     /**
-     * Constructor AxisConfigurationImpl
+     * Constructor AxisConfigurationImpl.
      */
     public AxisConfiguration() {
         moduleConfigmap = new HashMap();
@@ -290,9 +290,9 @@ public class AxisConfiguration implements ParameterInclude {
     }
 
     /**
-     * This will engage the default module version corresponding to given module name , or if the module
-     * name contains version numbre init then it will engage the corret module ,therefore both of the
-     * following two cases are valid
+     * Engages the default module version corresponding to given module name , or if the module
+     * name contains version number in it then it will engage the correct module. 
+     * Both of the below two cases are valid
      * 1. engageModule("addressing");
      * 2. engageModule("addressing-1.23");
      *
@@ -316,7 +316,7 @@ public class AxisConfiguration implements ParameterInclude {
     }
 
     /**
-     * Engagging a module using give name and its version ID
+     * Engages a module using give name and its version ID.
      *
      * @param moduleName
      * @param versionID
@@ -356,11 +356,11 @@ public class AxisConfiguration implements ParameterInclude {
     }
 
     /**
-     * This method is used to load module from class path , the mar files in a jar file inside
+     * Loads module from class path - the mar files in a jar file inside
      * modules/    directory
      *
      * @param moduleName
-     * @return
+     * @return Returns ModuleDescription.
      * @throws AxisFault
      */
     public ModuleDescription loadModulefromResources(String moduleName) throws AxisFault {
@@ -427,7 +427,7 @@ public class AxisConfiguration implements ParameterInclude {
     }
 
     /**
-     * @return Returns ArrayList
+     * @return Returns ArrayList.
      */
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
@@ -490,7 +490,7 @@ public class AxisConfiguration implements ParameterInclude {
     }
 
     /**
-     * @return Returns ArrayList
+     * @return Returns ArrayList.
      */
     public ArrayList getOutFaultFlow() {
         return outFaultPhases;
@@ -500,7 +500,7 @@ public class AxisConfiguration implements ParameterInclude {
      * Method getParameter.
      *
      * @param name
-     * @return Returns Parameter
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -588,7 +588,7 @@ public class AxisConfiguration implements ParameterInclude {
      * Checks whether a given parameter is locked.
      *
      * @param parameterName
-     * @return Returns boolean
+     * @return Returns boolean.
      */
     public boolean isParameterLocked(String parameterName) {
         Parameter parameter = getParameter(parameterName);
@@ -665,9 +665,9 @@ public class AxisConfiguration implements ParameterInclude {
     }
 
     /**
-     * To add a dafault module version , which can either done by programatically or using
-     * axis2.xml , and the dafault module version is important if user ask to engage a module without
-     * given version ID , in that case we will engage the dafault version
+     * Adds a dafault module version , which can be done either programatically or by using
+     * axis2.xml . The default module version is important if user asks to engage 
+     * a module without given version ID, in which case, we will engage the default version.
      *
      * @param moduleName
      * @param moduleVersion

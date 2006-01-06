@@ -24,15 +24,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 /**
- * Load resources (or images) from various sources.
- * <p/>
+ * Loads resources (or images) from various sources.
  */
 public class Loader {
     private static Log log = LogFactory.getLog(Loader.class.getName());
 
     /**
-     * This method will search for <code>resource</code> in different
-     * places. The rearch order is as follows:
+     * Searches for <code>resource</code> in different
+     * places. The search order is as follows:
      * <ol>
      * <p><li>Search for <code>resource</code> using the thread context
      * class loader under Java2. If that fails, search for
@@ -46,7 +45,7 @@ public class Loader {
      * <p/>
      *
      * @param resource
-     * @return TODO
+     * @return Returns URL
      */
     static public URL getResource(String resource) {
         ClassLoader classLoader = null;
@@ -76,12 +75,11 @@ public class Loader {
     
 
     /**
-     * Try to get the resource with the specified class loader
-     * <p/>
+     * Gets the resource with the specified class loader.
      *
      * @param loader
      * @param resource
-     * @return Class
+     * @return Returns URL.
      * @throws ClassNotFoundException
      */
     static public URL getResource(ClassLoader loader, String resource) throws ClassNotFoundException {
@@ -101,10 +99,9 @@ public class Loader {
     }
 
     /**
-     * Get the Thread context class loader.
-     * <p/>
+     * Gets the thread context class loader.
      *
-     * @return
+     * @return Returns ClassLoader.
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
@@ -113,12 +110,11 @@ public class Loader {
     }
 
     /**
-     * Try the specified classloader and then fall back to the loadClass
-     * <p/>
+     * Loads the specified classloader and then falls back to the loadClass.
      *
      * @param loader
      * @param clazz
-     * @return Class
+     * @return Returns Class.
      * @throws ClassNotFoundException
      */
     static public Class loadClass(ClassLoader loader, String clazz) throws ClassNotFoundException {
@@ -134,13 +130,13 @@ public class Loader {
     }
 
     /**
-     * If running under JDK 1.2 load the specified class using the
-     * <code>Thread</code> <code>contextClassLoader</code> if that
-     * fails try Class.forname.
+     * If running under JDK 1.2, loads the specified class using the
+     * <code>Thread</code> <code>contextClassLoader</code> . If that
+     * fails, try Class.forname.
      * <p/>
      *
      * @param clazz
-     * @return TODO
+     * @return Returns Class.
      * @throws ClassNotFoundException
      */
     static public Class loadClass(String clazz) throws ClassNotFoundException {

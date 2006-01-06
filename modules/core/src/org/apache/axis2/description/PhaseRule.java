@@ -48,7 +48,7 @@ public class PhaseRule {
     private String phaseName;
 
     /**
-     * Constructor PhaseRule
+     * Constructor PhaseRule.
      */
     public PhaseRule() {
         this.before = "";
@@ -63,52 +63,52 @@ public class PhaseRule {
     }
 
     /**
-     * Method getAfter
+     * Method getAfter.
      *
-     * @return
+     * @return Returns String.
      */
     public String getAfter() {
         return after;
     }
 
     /**
-     * Method getBefore
+     * Method getBefore.
      *
-     * @return
+     * @return Returns String.
      */
     public String getBefore() {
         return before;
     }
 
     /**
-     * Method getPhaseName
+     * Method getPhaseName.
      *
-     * @return
+     * @return Returns String.
      */
     public String getPhaseName() {
         return phaseName;
     }
 
     /**
-     * Method isPhaseFirst
+     * Method isPhaseFirst.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isPhaseFirst() {
         return phaseFirst;
     }
 
     /**
-     * Method isPhaseLast
+     * Method isPhaseLast.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isPhaseLast() {
         return phaseLast;
     }
 
     /**
-     * Method setAfter
+     * Method setAfter.
      *
      * @param after
      */
@@ -117,7 +117,7 @@ public class PhaseRule {
     }
 
     /**
-     * Method setBefore
+     * Method setBefore.
      *
      * @param before
      */
@@ -126,7 +126,7 @@ public class PhaseRule {
     }
 
     /**
-     * Method setPhaseFirst
+     * Method setPhaseFirst.
      *
      * @param phaseFirst
      */
@@ -135,7 +135,7 @@ public class PhaseRule {
     }
 
     /**
-     * Method setPhaseLast
+     * Method setPhaseLast.
      *
      * @param phaseLast
      */
@@ -144,7 +144,7 @@ public class PhaseRule {
     }
 
     /**
-     * Method setPhaseName
+     * Method setPhaseName.
      *
      * @param phaseName
      */

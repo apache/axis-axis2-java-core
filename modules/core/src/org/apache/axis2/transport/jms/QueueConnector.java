@@ -55,10 +55,10 @@ public class QueueConnector extends JMSConnector {
     }
 
     /**
-     * Create an endpoint for a queue destination.
+     * Creates an endpoint for a queue destination.
      *
      * @param destination
-     * @return
+     * @return Returns JMSEndPoint.
      * @throws JMSException
      */
     public JMSEndpoint createEndpoint(Destination destination) throws JMSException {

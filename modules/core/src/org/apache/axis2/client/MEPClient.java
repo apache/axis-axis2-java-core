@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the super class for all the MEPClients.
+ * This is the super class for all MEPClients.
  */
 public abstract class MEPClient {
     private static final String ANONYMOUS_SERVICE = "AnonymousService";
@@ -149,9 +149,9 @@ public abstract class MEPClient {
     }
 
     /**
-     * This will give chance to the derived class to configure his transport
-     * from the information injected by the user via options. This will be
-     * called within the prepare invocation method, so user should not bother to
+     * This gives chance to the derived class to configure its transport
+     * from the information injected by the user via options. This is
+     * called within the prepare invocation method, so user does not need to
      * call this explicitly.
      */
     protected abstract void configureTransportInformation(MessageContext msgCtxt) throws AxisFault;
@@ -159,7 +159,7 @@ public abstract class MEPClient {
     /**
      * Creates SOAPEvelope(in terms of version) from the values set.
      *
-     * @return
+     * @return Returns SOAPEnvelope.
      * @throws AxisFault
      */
     protected SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
@@ -223,7 +223,7 @@ public abstract class MEPClient {
      * mail:// local://.
      *
      * @param epr
-     * @return
+     * @return Returns TransportOutDescription.
      * @throws AxisFault
      */
     protected TransportOutDescription inferTransport(EndpointReference epr) throws AxisFault {
@@ -343,7 +343,7 @@ public abstract class MEPClient {
      * Prepares the SOAPEnvelope using the payload.
      *
      * @param toSend
-     * @return
+     * @return Returns MessageContext.
      * @throws AxisFault
      */
     protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
@@ -379,8 +379,7 @@ public abstract class MEPClient {
     }
 
     /**
-     * User will set all the options and parameters for this invocation using
-     * this.
+     * Sets all client options and parameters for this invocation.
      *
      * @param clientOptions
      * @see Options for more details.

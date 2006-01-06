@@ -65,12 +65,12 @@ public class XMLUtils {
         initSAXFactory(null, true, false);
     }
 
-    /** Encode a string appropriately for XML.
-     *
+    /** 
+     * Encodes a string appropriately for XML.
      * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
      *
      * @param orig the String to encode
-     * @return a String in which XML special chars are repalced by entities
+     * @return Returns a String in which XML special chars are repalced by entities.
      */
     public static String xmlEncodeString(String orig)
     {
@@ -127,7 +127,8 @@ public class XMLUtils {
         return strBuf.toString();
     }
 
-    /** Initialize the SAX parser factory.
+    /** 
+     * Initializes the SAX parser factory.
      *
      * @param factoryClassName The (optional) class name of the desired
      *                         SAXParserFactory implementation. Will be
@@ -185,7 +186,8 @@ public class XMLUtils {
     
     private static boolean tryReset= true;
 
-    /** Return a SAX parser for reuse.
+    /** 
+     * Returns a SAX parser for reuse.
      * @param parser A SAX parser that is available for reuse
      */
     public static void releaseSAXParser(SAXParser parser) {
@@ -207,8 +209,8 @@ public class XMLUtils {
         }
     }
     /**
-     * Get an empty new Document
-     * @return Document
+     * Gets an empty new Document.
+     * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      */
     public static Document newDocument() 
@@ -220,8 +222,8 @@ public class XMLUtils {
     }
 
     /**
-     * Get a new Document read from the input source
-     * @return Document
+     * Gets a new Document read from the input source.
+     * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
@@ -239,8 +241,8 @@ public class XMLUtils {
     }
 
     /**
-     * Get a new Document read from the input stream
-     * @return Document
+     * Gets a new Document read from the input stream
+     * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
@@ -252,8 +254,8 @@ public class XMLUtils {
     } 
 
     /**
-     * Get a new Document read from the indicated uri
-     * @return Document
+     * Gets a new Document read from the indicated uri
+     * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
@@ -267,7 +269,7 @@ public class XMLUtils {
     }
     
     /**
-     * Create a new document from the given URI, use the username and password
+     * Creates a new document from the given URI. Uses the username and password
      * if the URI requires authentication.
      * @param uri the resource to get
      * @param username basic auth username
@@ -319,10 +321,10 @@ public class XMLUtils {
     }
 
     /**
-     * Return a QName when passed a string like "foo:bar" by mapping
+     * Returns a QName when passed a string like "foo:bar" by mapping
      * the "foo" prefix to a namespace in the context of the given Node.
      *
-     * @return a QName generated from the given string representation
+     * @return Returns a QName generated from the given string representation.
      */
     public static QName getQNameFromString(String str, Node e) {
         if (str == null || e == null)
@@ -341,7 +343,7 @@ public class XMLUtils {
     }
 
     /**
-     * Return a string for a particular QName, mapping a new prefix
+     * Returns a string for a particular QName, mapping a new prefix
      * if necessary.
      */
     public static String getStringForQName(QName qname, Element e)
@@ -362,13 +364,13 @@ public class XMLUtils {
     }
 
   /**
-   * Concat all the text and cdata node children of this elem and return
+   * Concatinates all the text and cdata node children of this elem and returns
    * the resulting text.
    * (by Matt Duftler)
    *
    * @param parentEl the element whose cdata/text node values are to
    *                 be combined.
-   * @return the concatanated string.
+   * @return Returns the concatinated string.
    */
   public static String getChildCharacterData (Element parentEl) {
     if (parentEl == null) {
@@ -429,7 +431,6 @@ public class XMLUtils {
      * use getInputSourceFromURI(uri, username, password)
      *
      * @param uri the resource to get
-     * @see #getInputSourceFromURI(String uri, String username, String password)
      */
     public static InputSource getInputSourceFromURI(String uri) {
         return new InputSource(uri);
@@ -440,12 +441,12 @@ public class XMLUtils {
     /**
      * Utility to get the bytes at a protected uri
      * 
-     * This will retrieve the URL if a username and password are provided.
+     * Retrieves the URL if a username and password are provided.
      * The java.net.URL class does not do Basic Authentication, so we have to
      * do it manually in this routine.
      * 
-     * If no username is provided, we create an InputSource from the uri
-     * and let the InputSource go fetch the contents.
+     * If no username is provided, creates an InputSource from the uri
+     * and lets the InputSource go fetch the contents.
      * 
      * @param uri the resource to get
      * @param username basic auth username
@@ -519,11 +520,11 @@ public class XMLUtils {
     }
     
     /**
-     * Find a Node with a given QNameb
+     * Finds a Node with a given QNameb.
      * 
      * @param node parent node
      * @param name QName of the child we need to find
-     * @return child node
+     * @return Returns child node.
      */ 
     public static Node findNode(Node node, QName name){
         if(name.getNamespaceURI().equals(node.getNamespaceURI()) && 

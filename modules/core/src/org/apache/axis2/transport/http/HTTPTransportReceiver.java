@@ -38,14 +38,14 @@ import java.util.Map;
 public class HTTPTransportReceiver {
 
     /**
-     * Field BEFORE_SEPERATOR
+     * Field BEFORE_SEPARATOR
      */
-    private static final int BEFORE_SEPERATOR = 3;
+    private static final int BEFORE_SEPARATOR = 3;
 
     /**
-     * Field AFTER_SEPERATOR
+     * Field AFTER_SEPARATOR
      */
-    private static final int AFTER_SEPERATOR = 4;
+    private static final int AFTER_SEPARATOR = 4;
 
     /**
      * Field lastRead
@@ -73,7 +73,7 @@ public class HTTPTransportReceiver {
     private boolean done = false;
 
     /**
-     * parses following two styles of HTTP stuff
+     * Parses following two styles of HTTP stuff
      * Server Side
      * POST /axis2/services/echo HTTP/1.0
      * Content-Type: text/xml; charset=utf-8
@@ -92,7 +92,7 @@ public class HTTPTransportReceiver {
      *
      * @param in
      * @param serverSide
-     * @return
+     * @return Returns HashMap.
      * @throws AxisFault
      */
     public HashMap parseTheHeaders(InputStream in, boolean serverSide) throws AxisFault {
@@ -100,7 +100,7 @@ public class HTTPTransportReceiver {
 
         try {
             StringBuffer str = new StringBuffer();
-            int state = BEFORE_SEPERATOR;
+            int state = BEFORE_SEPARATOR;
             String key = null;
             String value = null;
 
@@ -138,7 +138,7 @@ public class HTTPTransportReceiver {
                 map.put(HTTPConstants.RESPONSE_WORD, value);
             }
 
-            state = BEFORE_SEPERATOR;
+            state = BEFORE_SEPARATOR;
 
             while (!done) {
                 length = readLine(in, buf);
@@ -149,11 +149,11 @@ public class HTTPTransportReceiver {
 
                 for (int i = 0; i < length; i++) {
                     switch (state) {
-                        case BEFORE_SEPERATOR :
+                        case BEFORE_SEPARATOR :
                             if (buf[i] == ':') {
                                 key = str.toString();
                                 str = new StringBuffer();
-                                state = AFTER_SEPERATOR;
+                                state = AFTER_SEPARATOR;
 
                                 if (buf[i + 1] == ' ') {
                                     i++;    // ignore next space
@@ -164,7 +164,7 @@ public class HTTPTransportReceiver {
 
                             break;
 
-                        case AFTER_SEPERATOR :
+                        case AFTER_SEPARATOR :
                             if (buf[i] == '\n') {
                                 value = str.toString();
                                 map.put(key, value);
@@ -181,7 +181,7 @@ public class HTTPTransportReceiver {
                     }
                 }
 
-                state = BEFORE_SEPERATOR;
+                state = BEFORE_SEPARATOR;
             }
         } catch (IOException e) {
             throw new AxisFault(e.getMessage(), e);
@@ -191,10 +191,10 @@ public class HTTPTransportReceiver {
     }
 
     /**
-     * Method readFirstLineArg
+     * Method readFirstLineArg.
      *
      * @param terminal
-     * @return
+     * @return Returns String.
      * @throws org.apache.axis2.AxisFault
      */
     private String readFirstLineArg(char terminal) throws AxisFault {
@@ -215,11 +215,11 @@ public class HTTPTransportReceiver {
     }
 
     /**
-     * Read a single line from the input stream
+     * Reads a single line from the input stream.
      *
      * @param is inputstream to read from
      * @param b  byte array to read into
-     * @return
+     * @return Returns int.
      * @throws java.io.IOException
      */
     protected int readLine(InputStream is, byte[] b) throws java.io.IOException {
@@ -314,11 +314,11 @@ public class HTTPTransportReceiver {
     }
 
     /**
-     * Returns the HTML text for the list of services deployed
+     * Returns the HTML text for the list of services deployed.
      * This can be delegated to another Class as well
-     * where it will handle more options of GET messages :-?
+     * where it will handle more options of GET messages. 
      *
-     * @return
+     * @return Returns String.
      */
     public static String getServicesHTML(ConfigurationContext configurationContext) {
         String temp = "";

@@ -96,7 +96,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     /**
      * Gets the policy map.
      *
-     * @return
+     * @return Returns Map.
      */
     public Map getPolicyMap() {
         return policyMap;

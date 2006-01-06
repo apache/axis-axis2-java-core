@@ -57,7 +57,7 @@ public class BinarySecret extends ValueToken {
 	
 	/**
 	 * Retuns the value of the .../wst:BinarySecret/@Type attribute
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getTypeAttribute() {
 		return this.tokenElement.getAttribute(
@@ -66,7 +66,7 @@ public class BinarySecret extends ValueToken {
 	}
 	
 	/**
-	 * Adds the given attribute
+	 * Adds the given attribute.
 	 * @param attribute
 	 * @param value
 	 * @param namespace
@@ -77,9 +77,9 @@ public class BinarySecret extends ValueToken {
 	}
 	
 	/**
-	 * Returns the value of the requested attribute
+	 * Returns the value of the requested attribute.
 	 * @param attribute
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getAttributeValue(QName attribute) {
 		return this.tokenElement.getAttribute(attribute).getAttributeValue();

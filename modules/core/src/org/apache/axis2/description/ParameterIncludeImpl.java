@@ -39,7 +39,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
     protected final HashMap parameters;
 
     /**
-     * Constructor ParameterIncludeImpl
+     * Constructor ParameterIncludeImpl.
      */
     public ParameterIncludeImpl() {
         parameters = new HashMap();
@@ -57,7 +57,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
     }
 
     /**
-     * At the run time it can be able to change parameters , and system can save at any time and
+     * Since at runtime it parameters may be modified
      * to get the original state this method can be used
      *
      * @param parameters <code>OMElement</code>
@@ -114,10 +114,10 @@ public class ParameterIncludeImpl implements ParameterInclude {
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return parameter
+     * @return Returns parameter.
      */
     public Parameter getParameter(String name) {
         return (Parameter) parameters.get(name);

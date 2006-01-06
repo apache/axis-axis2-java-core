@@ -205,7 +205,7 @@ public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implement
     /**
      * Method getDefaultEnvelope
      *
-     * @return
+     * @return Returns SOAPEnvelope.
      */
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         throw new UnsupportedOperationException();

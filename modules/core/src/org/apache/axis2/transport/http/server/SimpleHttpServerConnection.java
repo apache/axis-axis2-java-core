@@ -261,7 +261,7 @@ public class SimpleHttpServerConnection {
     /**
      * Returns the ResponseWriter used to write the output to the socket.
      *
-     * @return This connection's ResponseWriter
+     * @return Returns this connection's ResponseWriter.
      */
     public ResponseWriter getWriter() throws UnsupportedEncodingException {
         return new ResponseWriter(out);
@@ -302,7 +302,7 @@ public class SimpleHttpServerConnection {
      * - Improve this logic to genaralize it a bit more
      * - Obtain the ip to be used here from the Call API
      *
-     * @return
+     * @return Returns String.
      * @throws SocketException
      */
     public static String getIpAddress() throws SocketException {

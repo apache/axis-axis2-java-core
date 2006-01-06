@@ -591,17 +591,17 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     }
 
-    //to write scheam types into output straem
+    //to write schema types into output straem
     private void writeSchemas(Element element) throws XMLStreamException {
         writer.flush();
-        String scheamTypes = DOM2Writer.nodeToString(element);
+        String schemaTypes = DOM2Writer.nodeToString(element);
         XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
-                ByteArrayInputStream(scheamTypes.getBytes()));
+                ByteArrayInputStream(schemaTypes.getBytes()));
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        OMElement scheamElement = staxOMBuilder.getDocumentElement();
-        scheamElement.serialize(writer);
+        OMElement schemaElement = staxOMBuilder.getDocumentElement();
+        schemaElement.serialize(writer);
     }
     
     protected void writeExtensibilityAttribute(WSDLExtensibilityAttribute extAttribute) throws XMLStreamException {

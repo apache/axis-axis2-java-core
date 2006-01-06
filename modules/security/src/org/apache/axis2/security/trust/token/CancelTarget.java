@@ -39,8 +39,8 @@ public class CancelTarget extends CompositeToken {
 	}
     
     /**
-     * This can be used when we are creating a new CancelTaget which will
-     * refer to a targetToken rather than a SecurityTokenReference 
+     * Class is used while creating a new CancelTaget which will
+     * refer to a targetToken rather than a SecurityTokenReference .
      */
     public CancelTarget() {
     	super();
@@ -55,7 +55,7 @@ public class CancelTarget extends CompositeToken {
 	}
 	
 	/**
-	 * Sets the cancel target element 
+	 * Sets the cancel target element. 
 	 * @param targetToken
 	 */
 	public void setCancelTarget(OMElement targetToken) {
@@ -74,7 +74,7 @@ public class CancelTarget extends CompositeToken {
 	}
 	
 	/**
-	 * Sets the cancel target security token reference
+	 * Sets the cancel target security token reference.
 	 * @param securityTokenReference
 	 * @throws TrustException
 	 */
@@ -94,16 +94,16 @@ public class CancelTarget extends CompositeToken {
 	}
 	
 	/**
-	 * Returns the security token reference to the token to be cancelled
-	 * @return
+	 * Returns the security token reference to the token to be cancelled.
+	 * @return Returns SecurityTokenReference.
 	 */
 	public SecurityTokenReference getSecurityTokenReference() {
 		return securityTokenReference;
 	}
 	
 	/**
-	 * Returns the target token to be cancelled
-	 * @return
+	 * Returns the target token to be cancelled.
+	 * @return Returns OMElement.
 	 */
 	public OMElement getTargetToken() {
 		return targetToken;

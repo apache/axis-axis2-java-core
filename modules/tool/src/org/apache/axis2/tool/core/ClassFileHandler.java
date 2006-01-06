@@ -29,9 +29,9 @@ public class ClassFileHandler {
 
     /**
      * @deprecated
-     * This needs to be written in a functional manner
+     * This needs to be written in a functional manner.
      * @param location
-     * @return
+     * @return Returns ArrayList.
      * @throws IOException
      */
     //todo see whether this is possible

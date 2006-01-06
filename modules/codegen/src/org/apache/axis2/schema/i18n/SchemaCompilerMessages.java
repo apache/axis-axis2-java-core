@@ -25,7 +25,8 @@ import java.util.ResourceBundle;
  */
 
 /**
- * @see Messages. The implementation is the same but just the thisClass static reference
+ * @see org.apache.axis2.i18n.Messages
+ * The implementation is the same but just thisClass static reference
  * has SchemaCompilerMessages.class
  */
 public class SchemaCompilerMessages {
@@ -55,10 +56,10 @@ public class SchemaCompilerMessages {
                     locale, classLoader, parent);
 
     /**
-     * Get a message from resource.properties from the package of the given object.
+     * Gets a message from resource.properties from the package of the given object.
      *
      * @param key The resource key
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key)
             throws MissingResourceException {
@@ -70,7 +71,7 @@ public class SchemaCompilerMessages {
      *
      * @param key  The resource key
      * @param arg0 The argument to place in variable {0}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key, String arg0)
             throws MissingResourceException {
@@ -78,12 +79,12 @@ public class SchemaCompilerMessages {
     }
 
     /**
-     * Get a message from resource.properties from the package of the given object.
+     * Gets a message from resource.properties from the package of the given object.
      *
      * @param key  The resource key
      * @param arg0 The argument to place in variable {0}
      * @param arg1 The argument to place in variable {1}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key, String arg0, String arg1)
             throws MissingResourceException {
@@ -91,13 +92,13 @@ public class SchemaCompilerMessages {
     }
 
     /**
-     * Get a message from resource.properties from the package of the given object.
+     * Gets a message from resource.properties from the package of the given object.
      *
      * @param key  The resource key
      * @param arg0 The argument to place in variable {0}
      * @param arg1 The argument to place in variable {1}
      * @param arg2 The argument to place in variable {2}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key, String arg0, String arg1, String arg2)
             throws MissingResourceException {
@@ -112,7 +113,7 @@ public class SchemaCompilerMessages {
      * @param arg1 The argument to place in variable {1}
      * @param arg2 The argument to place in variable {2}
      * @param arg3 The argument to place in variable {3}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3)
             throws MissingResourceException {
@@ -120,7 +121,7 @@ public class SchemaCompilerMessages {
     }
 
     /**
-     * Get a message from resource.properties from the package of the given object.
+     * Gets a message from resource.properties from the package of the given object.
      *
      * @param key  The resource key
      * @param arg0 The argument to place in variable {0}
@@ -128,7 +129,7 @@ public class SchemaCompilerMessages {
      * @param arg2 The argument to place in variable {2}
      * @param arg3 The argument to place in variable {3}
      * @param arg4 The argument to place in variable {4}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4)
             throws MissingResourceException {
@@ -136,11 +137,11 @@ public class SchemaCompilerMessages {
     }
 
     /**
-     * Get a message from resource.properties from the package of the given object.
+     * Gets a message from resource.properties from the package of the given object.
      *
      * @param key  The resource key
      * @param args An array of objects to place in corresponding variables
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getMessage(String key, String[] args)
             throws MissingResourceException {

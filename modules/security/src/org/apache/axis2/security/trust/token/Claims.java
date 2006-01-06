@@ -42,7 +42,7 @@ public class Claims extends CompositeToken {
 	
 	/**
 	 * Sets the value of the wst:Claims/@Dialect
-	 * Dialect attribute specifies a URI to indicate the syntax of the claims
+	 * Dialect attribute specifies a URI to indicate the syntax of the claims.
 	 * @param value
 	 */
 	public void setDialectAttribute(String value) {
@@ -52,7 +52,7 @@ public class Claims extends CompositeToken {
 	
 	/**
 	 * Returns the value of the wst:Claims/@Dialect
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getDialectAttribute() {
 		return this.tokenElement.getAttribute(
@@ -60,7 +60,7 @@ public class Claims extends CompositeToken {
 	}
 	
 	/**
-	 * Add a token as a child
+	 * Adds a token as a child.
 	 * This is provided as an extensibility mechanism to add any
 	 * child element to the <code>wst:Claims</code> element
 	 * @param token
@@ -70,8 +70,8 @@ public class Claims extends CompositeToken {
 	}
 	
 	/**
-	 * Retuns an interator of child elements
-	 * @return
+	 * Returns an interator of child elements.
+	 * @return Returns Iterator.
 	 */
 	public Iterator getChildTokens() {
 		return this.tokenElement.getChildElements();

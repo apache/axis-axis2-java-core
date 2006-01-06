@@ -63,10 +63,10 @@ public class TopicConnector extends JMSConnector {
     }
 
     /**
-     * Create an endpoint for a queue destination.
+     * Creates an endpoint for a queue destination.
      *
      * @param destination
-     * @return
+     * @return Returns JMSEndpoint.
      * @throws JMSException
      */
     public JMSEndpoint createEndpoint(Destination destination) throws JMSException {

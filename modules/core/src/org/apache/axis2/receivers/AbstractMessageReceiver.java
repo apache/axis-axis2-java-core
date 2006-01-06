@@ -34,10 +34,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SCOPE = "scope";
 
     /**
-     * Method makeNewServiceObject
+     * Method makeNewServiceObject.
      *
      * @param msgContext
-     * @return
+     * @return Returns Object.
      * @throws AxisFault
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
@@ -72,10 +72,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     }
 
     /**
-     * Method getTheImplementationObject
+     * Method getTheImplementationObject.
      *
      * @param msgContext
-     * @return
+     * @return Returns Object.
      * @throws AxisFault
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {

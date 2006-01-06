@@ -54,7 +54,7 @@ public interface SOAPHeader extends OMElement {
      * @param role
      *            a <CODE>String</CODE> giving the URI of the role for which
      *            to search
-     * @return an <CODE>Iterator</CODE> object over all the <CODE>
+     * @return Returns an <CODE>Iterator</CODE> object over all the <CODE>
      *         SOAPHeaderBlock</CODE> objects that contain the specified role
      * @see #extractHeaderBlocks(java.lang.String)
      *      extractHeaderBlocks(java.lang.String)
@@ -73,7 +73,7 @@ public interface SOAPHeader extends OMElement {
      * @param role
      *            a <CODE>String</CODE> giving the URI of the role for which
      *            to search
-     * @return an <CODE>Iterator</CODE> object over all the <CODE>
+     * @return Returns an <CODE>Iterator</CODE> object over all the <CODE>
      *         SOAPHeaderBlock</CODE> objects that contain the specified role
      * @see #examineHeaderBlocks(java.lang.String)
      *      examineHeaderBlocks(java.lang.String)
@@ -89,9 +89,9 @@ public interface SOAPHeader extends OMElement {
      * @param role
      *            a <code>String</code> giving the URI of the role for which
      *            to search
-     * @return an <code>Iterator</code> object over all the
+     * @return Returns an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects that contain the specified
-     *         role and are marked as MustUnderstand
+     *         role and are marked as MustUnderstand.
      */
     public abstract Iterator examineMustUnderstandHeaderBlocks(String role);
 
@@ -112,17 +112,17 @@ public interface SOAPHeader extends OMElement {
      * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader </code>
      * object and detaches them from this <code>SOAPHeader</code> object.
      *
-     * @return an <code>Iterator</code> object over all the
+     * @return Returns an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects contained by this
      *         <code>SOAPHeader</code>
      */
     public abstract Iterator extractAllHeaderBlocks();
 
     /**
-     * Return all the Headers that has the Namespace URI to given NS URI
+     * Return all the Headers that has the Namespace URI to given NS URI.
      *
      * @param nsURI
-     * @return
+     * @return Returns ArrayList.
      */
     public ArrayList getHeaderBlocksWithNSURI(String nsURI);
 }

@@ -29,7 +29,7 @@ public interface SOAPFaultCode extends OMElement {
     public void setValue(SOAPFaultValue value) throws SOAPProcessingException;
 
     /**
-     * @return
+     * @return Returns SOAPFaultValue.
      */
     public SOAPFaultValue getValue();
 
@@ -39,7 +39,7 @@ public interface SOAPFaultCode extends OMElement {
     public void setSubCode(SOAPFaultSubCode value) throws SOAPProcessingException;
 
     /**
-     * @return
+     * @return Returns SOAPFaultSubCode.
      */
     public SOAPFaultSubCode getSubCode();
 

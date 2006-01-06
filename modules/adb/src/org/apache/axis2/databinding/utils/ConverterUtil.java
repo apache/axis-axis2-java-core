@@ -285,7 +285,7 @@ public class ConverterUtil {
      * Converts a given string into a date.
      * Code from Axis1 DateDeserializer.
      *
-     * @param s
+     * @param source
      * @return Returns Date.
      */
     public static Date convertTodate(String source) {
@@ -438,7 +438,7 @@ public class ConverterUtil {
     /**
      * Code from Axis1 code base
      * Note - We only follow the convention in the latest schema spec
-     * @param s
+     * @param source
      * @return Returns Calendar.
      * @throws Exception
      */

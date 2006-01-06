@@ -44,7 +44,7 @@ public class Time implements java.io.Serializable {
 
 
     /**
-     * Initialize with a Calender, year month and date are ignored
+     * Initializes with a Calender. Year, month and date are ignored.
      */
     public Time(Calendar value) {
         this._value = value;
@@ -59,15 +59,15 @@ public class Time implements java.io.Serializable {
     }
 
     /**
-     * return the time as a calendar: ignore the year, month and date fields
-     * @return calendar value; may be null
+     * Returns the time as a calendar. Ignores the year, month and date fields.
+     * @return Returns calendar value; may be null.
      */
     public Calendar getAsCalendar() {
         return _value;
     }
 
     /**
-     * set the time; ignore year, month, date
+     * Sets the time; ignores year, month, date
      * @param date
      */
     public void setTime(Calendar date) {
@@ -76,7 +76,7 @@ public class Time implements java.io.Serializable {
     }
 
     /**
-     * set the time from a date instance
+     * Sets the time from a date instance.
      * @param date
      */
     public void setTime(Date date) {
@@ -171,12 +171,12 @@ public class Time implements java.io.Serializable {
     }
 
     /**
-     * parse the hours, minutes and seconds of a string, by handing it off to
+     * Parses the hours, minutes and seconds of a string, by handing it off to
      * the java runtime.
-     * The relevant code will return null if a null string is passed in, so this
-     * code may return a null date in response
+     * The relevant code returns null if a null string is passed in, so this
+     * code may return a null date in response.
      * @param source
-     * @return
+     * @return Returns Date.
      * @throws NumberFormatException in the event of trouble
      */
     private static Date ParseHoursMinutesSeconds(String source) {
@@ -194,7 +194,7 @@ public class Time implements java.io.Serializable {
     }
 
     /**
-     * validate the source
+     * Validates the source.
      * @param source
      */
     private void validateSource(String source) {
@@ -212,9 +212,9 @@ public class Time implements java.io.Serializable {
     }
 
     /**
-     * stringify method returns the time as it would be in GMT, only accurate to the
-     * second...millis probably get lost.
-     * @return
+     * Returns the time as it would be in GMT. This is accurate to the
+     * seconds. Milliseconds probably gets lost.
+     * @return Returns String.
      */
     public String toString() {
         if(_value==null) {
@@ -244,7 +244,7 @@ public class Time implements java.io.Serializable {
     /**
      * Returns the hashcode of the underlying calendar.
      *
-     * @return an <code>int</code> value
+     * @return Returns an <code>int</code> value.
      */
     public int hashCode() {
         return _value == null ? 0 : _value.hashCode();

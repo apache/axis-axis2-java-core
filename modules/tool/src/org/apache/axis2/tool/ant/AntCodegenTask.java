@@ -60,8 +60,8 @@ public class AntCodegenTask extends Task {
 
 
     /**
-     * set the classpath
-     * @return
+     * Sets the classpath.
+     * @return Returns Path.
      */
     public Path createClasspath() {
         if (classpath == null) {
@@ -71,8 +71,8 @@ public class AntCodegenTask extends Task {
     }
 
     /**
-     * Fill the option map. This map is passed onto
-     * the code generation API to generate the code
+     * Fills the option map. This map is passed onto
+     * the code generation API to generate the code.
      */
     private Map fillOptionMap() {
         Map optionMap = new HashMap();
@@ -185,7 +185,7 @@ public class AntCodegenTask extends Task {
     /**
      * Utility method to convert a string into a single item string[]
      * @param value
-     * @return
+     * @return Returns String[].
      */
     private String[] getStringArray(String value) {
         String[] values = new String[1];
@@ -267,7 +267,7 @@ public class AntCodegenTask extends Task {
 //    }
 
     /**
-     * @return
+     * @return Returns Path.
      */
     public Path getClasspath() {
         return classpath;

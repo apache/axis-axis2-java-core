@@ -55,28 +55,28 @@ public class URL {
     }
 
     /**
-     * @return
+     * @return Returns String.
      */
     public String getFileName() {
         return fileName;
     }
 
     /**
-     * @return
+     * @return Returns String.
      */
     public String getHost() {
         return host;
     }
 
     /**
-     * @return
+     * @return Returns int.
      */
     public int getPort() {
         return port;
     }
 
     /**
-     * @return
+     * @return Returns String.
      */
     public String getProtocol() {
         return protocol;

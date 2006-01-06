@@ -76,8 +76,8 @@ public class Lifetime extends CompositeToken {
 	}
 	
     /**
-     * Retuns the value of the <code>wsu:Created</code> child element 
-     * @return
+     * Retuns the value of the <code>wsu:Created</code> child element. 
+     * @return Returns String.
      */
     public String getCreated() {
     	if(this.created != null)
@@ -87,8 +87,8 @@ public class Lifetime extends CompositeToken {
     }
 
     /**
-     * Returns the value of the <code>wsu:Expires</code> element
-     * @return
+     * Returns the value of the <code>wsu:Expires</code> element.
+     * @return Returns String.
      */
     public String getExpires() {
     	if(this.expires != null)
@@ -99,7 +99,7 @@ public class Lifetime extends CompositeToken {
 
     
     /**
-     * Sets the value of the <code>wsu:Created</code>element
+     * Sets the value of the <code>wsu:Created</code>element.
      * @param value
      */
     public void setCreated(String value) {
@@ -113,7 +113,7 @@ public class Lifetime extends CompositeToken {
     }
     
     /**
-     * Sets the value of the <code>wsu:Expires</code> element
+     * Sets the value of the <code>wsu:Expires</code> element.
      * @param value
      */
     public void setExpires(String value) {

@@ -31,7 +31,7 @@ public abstract class ChildNode extends NodeImpl {
 
 
     /**
-     * @param ownerNode
+     * @param ownerDocument
      */
     protected ChildNode(DocumentImpl ownerDocument) {
         super(ownerDocument);

@@ -23,12 +23,12 @@ import org.apache.commons.logging.LogFactory;
 import java.util.HashMap;
 
 /**
- * JMSConnectorFactory is a factory class for creating JMSConnectors. It can
- * create both client connectors and server connectors.  A server connector
+ * JMSConnectorFactory is a factory class for creating JMSConnectors. It creates
+ * both client connectors and server connectors.  A server connector
  * is configured to allow asynchronous message receipt, while a client
  * connector is not.
  * <p/>
- * JMSConnectorFactory can also be used to select an appropriately configured
+ * JMSConnectorFactory is also used to select an appropriately configured
  * JMSConnector from an existing pool of connectors.
  */
 public abstract class JMSConnectorFactory {
@@ -42,7 +42,7 @@ public abstract class JMSConnectorFactory {
      * @param cfConfig
      * @param username
      * @param password
-     * @return
+     * @return Returns JMSConnector.
      * @throws Exception
      */
     public static JMSConnector createClientConnector(HashMap connectorConfig, HashMap cfConfig,
@@ -104,7 +104,7 @@ public abstract class JMSConnectorFactory {
      * @param cfConfig
      * @param username
      * @param password
-     * @return
+     * @return Returns JMSConnector.
      * @throws Exception
      */
     public static JMSConnector createServerConnector(HashMap connectorConfig, HashMap cfConfig,
@@ -123,7 +123,7 @@ public abstract class JMSConnectorFactory {
      * @param username       the user requesting the connector
      * @param password       the password associated with the requesting user
      * @param adapter        the vendor adapter specified in the JMS URL
-     * @return a JMSConnector that matches the specified properties
+     * @return Returns a JMSConnector that matches the specified properties.
      */
     public static JMSConnector matchConnector(java.util.Set connectors, HashMap connectorProps,
                                               HashMap cfProps, String username, String password, JMSVendorAdapter adapter) {

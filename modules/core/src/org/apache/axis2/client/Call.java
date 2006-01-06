@@ -58,7 +58,7 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * This is used to create call object with client home.
+     * Creates call object with client home.
      *
      * @param clientHome
      * @throws AxisFault
@@ -116,11 +116,11 @@ public class Call extends InOutMEPClient {
 
     /**
      * Invokes the blocking/synchronous call.
-     * s
+     * 
      *
      * @param axisop - this is used to identify the operation on the client side explicitly.
      * @param toSend - data to be sent (OMElement).
-     * @return
+     * @return Returns OMElement.
      * @throws AxisFault
      */
     public OMElement invokeBlocking(String axisop, OMElement toSend) throws AxisFault {
@@ -140,11 +140,11 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Invokes the blocking/synchronous call
+     * Invokes the blocking/synchronous call.
      *
      * @param axisop   - this is used to identify the operation on the client side explicitly.
      * @param envelope - data to be sent (SOAPEnvelope).
-     * @return
+     * @return Returns SOAPEnvelope.
      * @throws AxisFault
      */
     public SOAPEnvelope invokeBlocking(String axisop, SOAPEnvelope envelope) throws AxisFault {
@@ -167,7 +167,7 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Invokes the nonblocking/asynchronous call
+     * Invokes the nonblocking/asynchronous call.
      *
      * @param axisop
      * @param toSend   -  data to be sent (OMElement).
@@ -188,7 +188,7 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Invokes the nonblocking/asynchronous call
+     * Invokes the nonblocking/asynchronous call.
      *
      * @param axisop
      * @param envelope -  data to be sent (SOAPEnvelope).
@@ -216,9 +216,9 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Get the MessageContext of the response
+     * Get the MessageContext of the response.
      *
-     * @return message context
+     * @return Returns message context.
      */
     public MessageContext getResponseMessageContext() {
         return lastResponseMsgCtx;

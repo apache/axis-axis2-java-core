@@ -141,7 +141,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	
 	/**
 	 * Sets the binary secret of the Entropy element when the its of type <code>Nonce</code>
-	 * @see BinarySecret#NONCE_VAL
+	 * @see org.apache.axis2.security.trust.Constants.BINARY_SECRET_TYPE#NONCE_VAL
 	 * @param nonceValue The nonce value
 	 */
 	public void setEntropyNonce(String nonceValue) {

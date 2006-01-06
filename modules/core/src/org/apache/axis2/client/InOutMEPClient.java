@@ -358,11 +358,11 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * Sends the message using a two way transport and waits for a response
+     * Sends the message using a two way transport and waits for a response.
      *
      * @param msgctx
      * @param transportIn
-     * @return
+     * @return Returns MessageContext.
      * @throws AxisFault
      */
     public MessageContext send(MessageContext msgctx, TransportInDescription transportIn)

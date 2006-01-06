@@ -39,13 +39,13 @@ public class FaultSubcode extends AbstractFaultCode {
     private QName value;
 
     /**
-     * simple constructor
+     * Simple constructor.
      */
     public FaultSubcode() {
     }
 
     /**
-     * Recursively construct from fault information
+     * Recursively construct from fault information.
      *
      * @param source
      */
@@ -70,7 +70,7 @@ public class FaultSubcode extends AbstractFaultCode {
     }
 
     /**
-     * Constructor to fill in subcodes
+     * Constructor to fill in subcodes.
      *
      * @param value   fault value (may be null)
      * @param subcode fault subcode (may be null)
@@ -81,10 +81,9 @@ public class FaultSubcode extends AbstractFaultCode {
     }
 
     /**
-     * Returns a string representation of the object.
-     * This only stringifies the base fault
+     * Returns a string representation of the object (base fault).
      *
-     * @return a string representation of the object.
+     * @return Returns a string representation of the object.
      */
     public String toString() {
         return (value != null)
@@ -93,16 +92,16 @@ public class FaultSubcode extends AbstractFaultCode {
     }
 
     /**
-     * Get the current failt code value
+     * Gets the current failt code value.
      *
-     * @return
+     * @return Returns QName.
      */
     public QName getValue() {
         return value;
     }
 
     /**
-     * set the value of the fault code
+     * Sets the value of the fault code.
      *
      * @param value new value
      */

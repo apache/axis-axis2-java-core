@@ -119,22 +119,22 @@ public class HTTPConstants {
     public static final byte NOCONTENT[] = ("202 OK\n\n").getBytes();
 
     /**
-     * String
+     * Field MC_HTTP_STATUS_MESSAGE
      */
     public static String MC_HTTP_STATUS_MESSAGE = "transport.http.statusMessage";
 
     /**
-     * Integer
+     * Field MC_HTTP_STATUS_CODE
      */
     public static String MC_HTTP_STATUS_CODE = "transport.http.statusCode";
 
     /**
-     * HttpServletResponse
+     * Field MC_HTTP_SERVLETRESPONSE
      */
     public static String MC_HTTP_SERVLETRESPONSE = "transport.http.servletResponse";
 
     /**
-     * HttpServletRequest
+     * Field MC_HTTP_SERVLETREQUEST
      */
     public static String MC_HTTP_SERVLETREQUEST = "transport.http.servletRequest";
 
@@ -149,7 +149,7 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLETLOCATION = "transport.http.servletLocation";
 
     /**
-     * HttpServlet
+     * Field MC_HTTP_SERVLET
      */
     public static String MC_HTTP_SERVLET = "transport.http.servlet";
 
@@ -246,7 +246,7 @@ public class HTTPConstants {
     public static final String HEADER_EXPECT = "Expect";
 
     /**
-     * HTTP header field values
+     * Field HEADER_DEFAULT_CHAR_ENCODING
      */
     public static final String HEADER_DEFAULT_CHAR_ENCODING = "iso-8859-1";
 
@@ -256,7 +256,7 @@ public class HTTPConstants {
     public static final String HEADER_COOKIE2 = "Cookie2";
 
     /**
-     * Cookie headers
+     * Field HEADER_COOKIE
      */
     public static final String HEADER_COOKIE = "Cookie";
 
@@ -408,10 +408,10 @@ public class HTTPConstants {
     public static final String CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
 
     /**
-     * Method getBytes
+     * Method getBytes.
      *
      * @param data
-     * @return
+     * @return Returns byte[].
      */
     public static byte[] getBytes(final String data) {
         if (data == null) {

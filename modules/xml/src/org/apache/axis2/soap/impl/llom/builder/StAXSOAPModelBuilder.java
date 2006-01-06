@@ -95,11 +95,12 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     /**
      * Constructor StAXSOAPModelBuilder
      * soapVersion parameter is to give the soap version from the transport. For example, in HTTP case
-     * you can identify the version of the soap message u have recd by looking at the HTTP headers. By passing that
-     * here is to check whether actually the soap message contained also of that version.
-     * If one is not creating the builder from the transport he can just pass null for this.
+     * you can identify the version of the soap message u have recd by looking at the HTTP headers. 
+     * It is used to check whether the actual soap message contained is of that version.
+     * If one is creates the builder from the transport, then can just pass null for version.
      *
      * @param parser
+     * @param soapVersion   parameter is to give the soap version for the transport.  
      */
     public StAXSOAPModelBuilder(XMLStreamReader parser, String soapVersion) {
         super(parser);
@@ -119,9 +120,9 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      * @param factory
      * @param soapVersion parameter is to give the soap version from the transport. For example, in
      *                    HTTP case you can identify the version of the soap message u have recd by looking at
-     *                    the HTTP headers. By passing that here is to check whether actually the soap message
-     *                    contained also of that version. If one is not creating the builder from the transport
-     *                    he can just pass null for this.
+     *                    the HTTP headers. It is used to check whether the actual soap message 
+     *                    contained is of that version.If one is creates the builder from the transport, 
+     *                    then can just pass null for version.
      */
     public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory, String soapVersion) {
         super(factory, parser);
@@ -179,9 +180,9 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 
 
     /**
-     * Method getSOAPEnvelope
+     * Method getSOAPEnvelope.
      *
-     * @return
+     * @return Returns SOAPEnvelope.
      * @throws OMException
      */
     public SOAPEnvelope getSOAPEnvelope() throws OMException {
@@ -192,9 +193,9 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     }
 
     /**
-     * Method createOMElement
+     * Method createOMElement.
      *
-     * @return
+     * @return Returns OMNode.
      * @throws OMException
      */
     protected OMNode createOMElement() throws OMException {
@@ -359,36 +360,32 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     }
 
     /**
-     * Method createDTD
-     * <p/>
-     * Overriding the default behaviour as a SOAPMessage
-     * should not have a DTD
+     * Method createDTD.
+     * Overriding the default behaviour as a SOAPMessage should not have a DTD.
      */
     protected OMNode createDTD() throws OMException {
         throw new OMException("SOAP message MUST NOT contain a Document Type Declaration(DTD)");
     }
 
     /**
-     * Method createPI
-     * <p/>
-     * Overriding the default behaviour as a SOAP Message
-     * should not have a PI
+     * Method createPI.
+     * Overriding the default behaviour as a SOAP Message should not have a PI.
      */
     protected OMNode createPI() throws OMException {
         throw new OMException("SOAP message MUST NOT contain Processing Instructions(PI)");
     }
 
     /**
-     * Method getDocumentElement
+     * Method getDocumentElement.
      *
-     * @return
+     * @return Returns OMElement.
      */
     public OMElement getDocumentElement() {
         return getSOAPEnvelope();
     }
 
     /**
-     * Method processNamespaceData
+     * Method processNamespaceData.
      *
      * @param node
      * @param isSOAPElement

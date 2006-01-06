@@ -52,13 +52,13 @@ public class ParameterImpl implements Parameter {
     private Object value;
 
     /**
-     * Constructor ParameterImpl
+     * Constructor ParameterImpl.
      */
     public ParameterImpl() {
     }
 
     /**
-     * Constructor ParameterImpl
+     * Constructor ParameterImpl.
      *
      * @param name
      * @param value
@@ -69,9 +69,9 @@ public class ParameterImpl implements Parameter {
     }
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return
+     * @return Returns String.
      */
     public String getName() {
         return name;
@@ -82,34 +82,34 @@ public class ParameterImpl implements Parameter {
     }
 
     /**
-     * Method getParameterType
+     * Method getParameterType.
      *
-     * @return
+     * @return Returns int.
      */
     public int getParameterType() {
         return type;
     }
 
     /**
-     * Method getValue
+     * Method getValue.
      *
-     * @return
+     * @return Returns Object.
      */
     public Object getValue() {
         return value;
     }
 
     /**
-     * Method isLocked
+     * Method isLocked.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isLocked() {
         return locked;
     }
 
     /**
-     * Method setLocked
+     * Method setLocked.
      *
      * @param value
      */
@@ -118,7 +118,7 @@ public class ParameterImpl implements Parameter {
     }
 
     /**
-     * Method setName
+     * Method setName.
      *
      * @param name
      */
@@ -135,7 +135,7 @@ public class ParameterImpl implements Parameter {
     }
 
     /**
-     * Method setValue
+     * Method setValue.
      *
      * @param value
      */

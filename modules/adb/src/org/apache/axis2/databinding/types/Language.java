@@ -53,12 +53,13 @@ public class Language extends Token {
 
    /**
     *
-    * validate the value against the xsd definition
-    * TODO
-    * @see <a href="http://www.ietf.org/rfc/rfc1766.txt">RFC1766</a>
+    * Validates the value against the xsd definition.
     * Language-Tag = Primary-tag *( "-" Subtag )
     * Primary-tag = 1*8ALPHA
-    * Subtag = 1*8ALPHA
+    * Subtag = 1*8ALPHA    
+    * TODO
+    * @see <a href="http://www.ietf.org/rfc/rfc1766.txt">RFC1766</a>
+    *     
     */
     public static boolean isValid(String stValue) {
         return true;

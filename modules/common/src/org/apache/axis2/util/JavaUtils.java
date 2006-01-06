@@ -66,15 +66,15 @@ public class JavaUtils {
     } // isPunctuation
 
     /**
-     * checks if the input string is a valid java keyword.
-     * @return boolean true/false
+     * Checks if the input string is a valid java keyword.
+     * @return Returns boolean.
      */
     public static boolean isJavaKeyword(String keyword) {
         return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
     }
 
     /**
-     * Turn a java keyword string into a non-Java keyword string.  (Right now
+     * Turns a java keyword string into a non-Java keyword string.  (Right now
      * this simply means appending an underscore.)
      */
     public static String makeNonJavaKeyword(String keyword){
@@ -158,10 +158,10 @@ public class JavaUtils {
     } // xmlNameToJava
 
     /**
-     * Capitalize the first character of the name.
+     * Capitalizes the first character of the name.
      *
      * @param name
-     * @return
+     * @return Returns String.
      */
     public static String capitalizeFirstChar(String name) {
 

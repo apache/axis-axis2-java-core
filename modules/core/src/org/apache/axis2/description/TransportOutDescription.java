@@ -43,7 +43,7 @@ public class TransportOutDescription implements ParameterInclude {
     protected QName name;
 
     /**
-     * Field flowInclude
+     * Field outFlow
      */
     private Flow outFlow;
     private Phase outPhase;
@@ -55,7 +55,7 @@ public class TransportOutDescription implements ParameterInclude {
     protected TransportSender sender;
 
     /**
-     * Constructor AxisTransport
+     * Constructor AxisTransport.
      *
      * @param name
      */
@@ -67,7 +67,7 @@ public class TransportOutDescription implements ParameterInclude {
     }
 
     /**
-     * Method addParameter
+     * Method addParameter.
      *
      * @param param
      */
@@ -88,7 +88,7 @@ public class TransportOutDescription implements ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns QName.
      */
     public QName getName() {
         return name;
@@ -103,10 +103,10 @@ public class TransportOutDescription implements ParameterInclude {
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -117,7 +117,7 @@ public class TransportOutDescription implements ParameterInclude {
     }
 
     /**
-     * @return
+     * @return Returns TransportSender.
      */
     public TransportSender getSender() {
         return sender;

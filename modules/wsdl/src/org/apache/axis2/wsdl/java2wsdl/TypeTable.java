@@ -105,8 +105,8 @@ public class TypeTable {
         return false;
     }
 
-    public void addComplexScheam(String name, QName scheamType) {
-        complecTypeMap.put(name, scheamType);
+    public void addComplexScheam(String name, QName schemaType) {
+        complecTypeMap.put(name, schemaType);
     }
 
     public QName getComplexScheamType(String name) {

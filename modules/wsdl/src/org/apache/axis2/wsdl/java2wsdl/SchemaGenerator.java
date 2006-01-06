@@ -55,31 +55,31 @@ public class SchemaGenerator {
     public static String SCHEMA_TARGET_NAMESPACE = "http://org.apache.axis2/xsd";
     public static String SCHEMA_NAMESPACE_PRFIX = "ns1";
     public static String TARGET_NAMESPACE_PREFIX = "tns";
-    private String scheamTargetNameSpace;
-    private String scheam_namespace_prefix;
+    private String schemaTargetNameSpace;
+    private String schema_namespace_prefix;
 
     public SchemaGenerator(ClassLoader loader, String className,
-                           String scheamtargetNamespace,
-                           String scheamtargetNamespacePrefix) {
+                           String schematargetNamespace,
+                           String schematargetNamespacePrefix) {
         this.classLoader = loader;
         this.className = className;
 //        TARGET_NAMESPACE = "http://" + className;
-        if (scheamtargetNamespace != null && !scheamtargetNamespace.trim().equals("")) {
-            this.scheamTargetNameSpace = scheamtargetNamespace;
+        if (schematargetNamespace != null && !schematargetNamespace.trim().equals("")) {
+            this.schemaTargetNameSpace = schematargetNamespace;
         } else {
-            this.scheamTargetNameSpace = SCHEMA_TARGET_NAMESPACE;
+            this.schemaTargetNameSpace = SCHEMA_TARGET_NAMESPACE;
         }
-        if (scheamtargetNamespacePrefix != null && !scheamtargetNamespacePrefix.trim().equals("")) {
-            this.scheam_namespace_prefix = scheamtargetNamespacePrefix;
+        if (schematargetNamespacePrefix != null && !schematargetNamespacePrefix.trim().equals("")) {
+            this.schema_namespace_prefix = schematargetNamespacePrefix;
         } else {
-            this.scheam_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
+            this.schema_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
         }
         Hashtable prefixmap = new Hashtable();
-        prefixmap.put(this.scheam_namespace_prefix, this.scheamTargetNameSpace);
+        prefixmap.put(this.schema_namespace_prefix, this.schemaTargetNameSpace);
 
         XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 
-        schema = new XmlSchema(this.scheamTargetNameSpace, schemaCollection);
+        schema = new XmlSchema(this.schemaTargetNameSpace, schemaCollection);
         schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
         schema.setPrefixToNamespaceMap(prefixmap);
         this.typeTable = new TypeTable();
@@ -93,10 +93,10 @@ public class SchemaGenerator {
     }
 
     /**
-     * To generate schema for all the parameters in method , first generate schema for all different
-     * parameter type and later refer to them
+     * Generates schema for all the parameters in method. First generates schema
+     * for all different parameter type and later refers to them.
      *
-     * @return
+     * @return Returns XmlSchema.
      * @throws Exception
      */
     public XmlSchema generateSchema() throws Exception {
@@ -181,9 +181,8 @@ public class SchemaGenerator {
     }
 
     /**
-     * To generate wrapper element , if a method take more than one parameter
-     * if the method look like foo(Type1 para1, Type2 para2){}
-     * will creat e Wrapper element like
+     * Generates wrapper element. If a method takes more than one parameter
+     * e.g. foo(Type1 para1, Type2 para2){} creates a Wrapper element like
      * <element name="fooInParameter type="tns:fooInParameterElement"">
      * <complexType name="fooInParameterElement">
      * <sequnce>
@@ -216,8 +215,8 @@ public class SchemaGenerator {
 //        eltOuter.setSchemaTypeName(complexType.getQName());
         eltOuter.setSchemaType(complexType);
         // adding this type to the table
-        QName elementName = new QName(this.scheamTargetNameSpace,
-                eltOuter.getName(), this.scheam_namespace_prefix);
+        QName elementName = new QName(this.schemaTargetNameSpace,
+                eltOuter.getName(), this.schema_namespace_prefix);
         typeTable.addComplexScheam(methodName + METHOD_REQUEST_WRAPPER, elementName);
 
         JParameter [] paras = method.getParameters();
@@ -273,8 +272,8 @@ public class SchemaGenerator {
             ret_eltOuter.setName(methodName + METHOD_RESPONSE_WRAPPER);
             schema.getItems().add(ret_eltOuter);
             ret_eltOuter.setSchemaType(retuen_com_type);
-            QName ret_comTypeName = new QName(this.scheamTargetNameSpace,
-                    ret_eltOuter.getName(), this.scheam_namespace_prefix);
+            QName ret_comTypeName = new QName(this.schemaTargetNameSpace,
+                    ret_eltOuter.getName(), this.schema_namespace_prefix);
             typeTable.addComplexScheam(methodName + METHOD_RESPONSE_WRAPPER, ret_comTypeName);
             String classTypeName = retuenType.getQualifiedName();
             boolean isArryType = retuenType.isArrayType();
@@ -313,7 +312,7 @@ public class SchemaGenerator {
             XmlSchemaSequence sequence = new XmlSchemaSequence();
 
             XmlSchemaElement eltOuter = new XmlSchemaElement();
-            QName elemntName = new QName(this.scheamTargetNameSpace, simpleName, this.scheam_namespace_prefix);
+            QName elemntName = new QName(this.schemaTargetNameSpace, simpleName, this.schema_namespace_prefix);
             eltOuter.setName(simpleName);
             eltOuter.setQName(elemntName);
             complexType.setParticle(sequence);

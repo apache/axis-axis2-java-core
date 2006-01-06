@@ -120,7 +120,7 @@ public class OperationContext extends AbstractContext {
     /**
      * Returns the EngineContext in which the parent ServiceContext lives.
      *
-     * @return parent ServiceContext's parent EngineContext
+     * @return Returns parent ServiceContext's parent EngineContext.
      */
     public ConfigurationContext getEngineContext() {
         return ((ServiceContext) parent).getConfigurationContext();
@@ -128,7 +128,7 @@ public class OperationContext extends AbstractContext {
 
     /**
      * @param messageLabel
-     * @return
+     * @return Returns MessageContext.
      * @throws AxisFault
      */
     public MessageContext getMessageContext(String messageLabel) throws AxisFault {
@@ -142,7 +142,7 @@ public class OperationContext extends AbstractContext {
     /**
      * Returns the ServiceContext in which this OperationContext lives.
      *
-     * @return parent ServiceContext
+     * @return Returns parent ServiceContext.
      */
     public ServiceContext getServiceContext() {
         return (ServiceContext) parent;

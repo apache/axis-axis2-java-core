@@ -23,8 +23,8 @@ import java.util.Set;
  */
 
 /**
- * This is a class used as a holder to pass on the meta information to the bean writer
- * This meta information will be used by the writer to write the databinding conversion code
+ * This class is used as a holder to pass on the meta information to the bean writer.
+ * This meta information is used by the writer to write the databinding conversion code.
  * Note - Metainfholders are not meant to be reused!!!. They are per-class basis and are strictly
  * not thread safe!!!!
  */
@@ -43,16 +43,16 @@ public class BeanWriterMetaInfoHolder {
     private Map qNameOrderMap = new HashMap();
 
     /**
-     * get the anon status
+     * Gets the anonymous status.
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isAnonymous() {
         return anonymous;
     }
 
     /**
-     * Set the anonymous flag
+     * Sets the anonymous flag.
      *
      * @param anonymous
      */
@@ -61,8 +61,8 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * set the extensions base class name. Valid only when the isExtension
-     * retruns true
+     * Sets the extensions base class name. Valid only when the isExtension
+     * returns true.
      *
      * @return Returns String.
      */
@@ -71,8 +71,8 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * set the extensions base class name. Valid only when the isExtension
-     * retruns true
+     * Sets the extensions base class name. Valid only when the isExtension
+     * returns true.
      *
      * @param extensionClassName
      */
@@ -81,7 +81,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * get the extension status
+     * Gets the extension status.
      *
      * @return Returns boolean.
      */
@@ -90,7 +90,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * set the extension status
+     * Sets the extension status.
      *
      * @param extension
      */
@@ -99,7 +99,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * ge the ordered statu
+     * Gets the ordered status.
      *
      * @return Returns boolean.
      */
@@ -108,8 +108,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * set the ordered flag. this marks whether the
-     * items are ordered or not
+     * Sets the ordered flag. 
      *
      * @param ordered
      */
@@ -118,7 +117,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Register a mapping
+     * Registers a mapping.
      *
      * @param qName
      * @param schemaName
@@ -129,7 +128,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Register a mapping
+     * Registers a mapping.
      *
      * @param qName
      * @param schemaName
@@ -144,7 +143,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Get the schema name for the given QName
+     * Gets the schema name for the given QName.
      *
      * @param eltQName
      * @return Returns QName.
@@ -154,7 +153,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * get the class name for the QName
+     * Gets the class name for the QName.
      *
      * @param eltQName
      * @return Returns String.
@@ -164,7 +163,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Get whether a given QName is an attribute
+     * Gets whether a given QName is an attribute
      *
      * @param qName
      * @return Returns boolean.
@@ -175,7 +174,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Get whether a given QName represents a anyType
+     * Gets whether a given QName represents a anyType
      *
      * @param qName
      * @return Returns boolean.
@@ -186,7 +185,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Get whether a given QName refers to an array
+     * Gets whether a given QName refers to an array.
      *
      * @param qName
      * @return Returns boolean.
@@ -197,7 +196,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Get whether a given QName has the any attribute status
+     * Gets whether a given QName has the any attribute status.
      *
      * @param qName
      * @return Returns boolean.
@@ -222,7 +221,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * add the maxOccurs associated with a QName
+     * Adds the minOccurs associated with a QName.
      *
      * @param qName
      * @param minOccurs
@@ -232,7 +231,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * register a QName for the order
+     * Registers a QName for the order.
      *
      * @param qName
      * @param index
@@ -242,10 +241,10 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Add the minOccurs associated with a QName
+     * Adds the minOccurs associated with a QName.
      *
      * @param qName
-     * @return
+     * @return Returns long.
      */
     public long getMinOccurs(QName qName) {
         Long l = (Long) this.qNameMinOccursCountMap.get(qName);
@@ -253,7 +252,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * get the maxOccurs associated with a QName
+     * Gets the maxOccurs associated with a QName.
      *
      * @param qName
      * @return Returns long.
@@ -264,7 +263,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Add the maxOccurs associated with a QName
+     * Adds the maxOccurs associated with a QName.
      *
      * @param qName
      * @param maxOccurs
@@ -282,7 +281,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * get the QName array - may not be ordered
+     * Gets the QName array - may not be ordered.
      *
      * @return Returns QName[].
      */
@@ -292,7 +291,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Get the ordered QName array - useful in sequences where the order needs to be preserved
+     * Gets the ordered QName array - useful in sequences where the order needs to be preserved
      * Note - #registerQNameIndex needs to be called if this is to work properly!
      *
      * @return Returns QName[].

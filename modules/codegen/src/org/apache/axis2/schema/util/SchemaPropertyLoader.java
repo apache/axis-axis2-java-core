@@ -23,7 +23,7 @@ import java.util.Properties;
  */
 
 /**
- * Loads the properties  for the schema compiler
+ * Loads the properties  for the schema compiler.
  */
 public class SchemaPropertyLoader {
     private static String beanTemplate = null;
@@ -60,7 +60,7 @@ public class SchemaPropertyLoader {
 
     /**
      * Exposes the whole property set
-     * @return
+     * @return Returns Properties.
      */
     public static Properties getPropertyMap() {
         return propertyMap;
