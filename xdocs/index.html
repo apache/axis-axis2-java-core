@@ -4,7 +4,7 @@
   <title>Apache Axis2 - Next Generation Web Services</title>
 </head>
 
-<body>
+<body lang="en">
 <h2>Welcome to Apache Axis2</h2>
 
 <p>Apache Axis2 is an implementation of the <a
@@ -23,11 +23,11 @@ expressing instances of application-defined datatypes, and a convention for
 representing remote procedure calls and responses."</div>
 
 <p>Apache Axis2 is an effort to re-implement both Axis/Java and Axis/C++ on a
-new architecture.  Building upon the "handler chain" model developed in
-Axis1, Axis2 introduces a more flexible pipeline architecture which lends
-itself to greater modularity and extensibility.  This extensibility will
-allow Axis2 to act as a foundation for a growing constellation of associated
-Web Services protocols including:</p>
+new architecture. Building upon the "handler chain" model developed in Axis1,
+Axis2 introduces a more flexible pipeline architecture which leads itself to
+greater modularity and extensibility. This extensibility will allow Axis2 to
+act as a foundation for a growing constellation of associated Web Services
+protocols including:</p>
 <ul>
   <li><a
     href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsrm">WS-ReliableMessaging</a></li>
@@ -38,140 +38,190 @@ Web Services protocols including:</p>
 </ul>
 
 <h2>Latest Release</h2>
-<p><b>xx xxxx 2006 - Apache Axis2 Version 0.94 Released!</b> <a
-href="http://ws.apache.org/axis2/download.cgi">(Download 0.94)</a></p>
-<h3 id="head-2ce2fd289831e05f56fa336a249bf40422ff688c">Axis2 New Features List</h3>
-<ol type="1">
-  <li>    DOOM </li>
-  <li>Wrap/Unwrap capability for the generated code </li>
-  <li>More convenient Client API </li>
-  <li>Deploying a web service by just putting a java class </li>
+
+<p><b>02 December  2005 - Apache Axis2 Version 0.94 Released! (<a
+href="">Download 0.94</a>)</b></p>
+This release includes the following features:
+<ul>
+  <li>AXIOM, an XML object model working on StAX (Streaming API for XML)
+    parsing optimized for SOAP 1.1/1.2 Messages. This has complete XML
+    infoset support.</li>
+  <li>Support for One-Way Messaging (In-Only) and Request Response Messaging
+    (In-Out)</li>
+  <li>Module Architecture, mechanism to extend the SOAP Processing Model</li>
+  <li>Content hierarchy</li>
+  <li>Archive based deployment Model</li>
+  <li>WSDL Code Generation Tool for Stub and skeletons</li>
+  <li>WS-Addressing, both the submission (2004/08) and final (2005/08)
+    versions</li>
+  <li>WSS4J module for security</li>
+  <li>Improved and user friendly Client API</li>
+  <li>WSDL2Java and Java2WSDL</li>
+  <li>REST Web Service Support</li>
+  <li>Transports supports: HTTP, SMTP, TCP, JMS</li>
+  <li>Raw XML providers</li>
+  <li>Support for MTOM/ MIME/ SwA</li>
+  <li>SAAJ implementation</li>
+  <li>DOOM <sup><span
+    style="color: #FF0000; background-color: #FFFFFF">new</span></sup></li>
+  <li>Wrap/Unwrap capability for the generated code <sup><span
+    style="color: #FF0000; background-color: #FFFFFF">new</span></sup></li>
+</ul>
+<b><a name="experimental" id="experimental">Experimental Features List</a></b>
+<ul>
+  <li>Sessions scoping for Application, SOAP, Transport and Request
+  levels</li>
+  <li>Web Service Policy Support</li>
+</ul>
+<b><a name="majorchanges" id="majorchanges">Major Changes Since Last
+Release</a></b>
+<ul>
+  <li>Fixing of memory leaks</li>
+</ul>
+<b><a name="toolsinrelease" id="toolsinrelease">Tools included in this
+Release</a></b>
+<ol>
+  <li>Axis2 Web Application (Web App)</li>
+  <li>WSDL2WS- <a href="CodegenTools-EclipsePlugin.html" target="_blank">eclipse Plugin</a>/ <a href="CodegenToolReference.html"
+    target="_blank">Command line version</a>/ Intellij IDEA Plugin</li>
+  <li>Service Archive Wizard- <a href="ServiceArchiveToolReference.html"
+    target="_blank">eclipse Plugin</a>/ Intellij IDEA Plugin</li>
+  <li>Module Archive Wizard- eclipse Plugin</li>
 </ol>
-<h3 id="head-5bb5aa099717d1d49642f7ae2d63ce5cf94487ad">Axis2 Experimental Features List</h3>
-<ol type="1">
-  <li>
-    <p>Sessions scoping </p>
-  </li>
-</ol>
-<h3 id="head-7dd8e783bb9e22fb00f88748855bb6e500111e12">Major changes since last release</h3>
-<ol type="1">
-  <li>    Fixing of memory leaks </li>
-  <li>New client API with Service Clients. So Call, <a class="nonexistent" href="http://wiki.apache.org/ws/MessageSender">MessageSender</a>, InOutMEPClient, InOnlyMEPClient are deprecated. </li>
-  <li>Configuration system abstraction so that configuration loading can be done using database, file, etc., </li>
-</ol>
-<h3 id="head-c801dc47aa5a8e1f63b02db0f1a09c745fa4b40b">Axis2 Features List</h3>
-<ol type="1">
-  <li>    SOAP 1.1/SOAP 1.2 support </li>
-  <li>WSDL 1.1 </li>
-  <li>WSA Submission and Final </li>
-  <li>Module Architecture </li>
-  <li>Context Hierachy </li>
-  <li>Transports : HTTP, SMTP, TCP, JMS </li>
-  <li>Raw XML Providers </li>
-  <li>Support for MTOM/MIME/SwA </li>
-  <li>Deployment </li>
-  <li>Client API modules </li>
-  <li>WSD<a class="nonexistent" href="http://wiki.apache.org/ws/L2Java">L2Java</a> and Java2WSDL </li>
-  <li>REST support </li>
-  <li>XML Beans based data binding implemntation </li>
-  <li>WSS4J Module </li>
-</ol>
-<p>We are getting closer to a 1.0 release, the remaining tasks to be
-completed before a 1.0 release include: SOAP 1.1 and 1.2 validation.</p>
+<b><a name="_Toc96698079" id="_Toc96698079"></a><a name="WhatsStillToDo"
+id="WhatsStillToDo"></a>What's still to do?</b>
+
+<p>See list of what we think needs to be done, and consider helping out if
+you're interested &amp; able!</p>
+<ul>
+  <li>JAX-RPC 1.1 and/or JAX-WS compliance</li>
+  <li>SOAP Encoding</li>
+  <li>Binary serialization and de-serialization support</li>
+  <li>Management Interface for Axis2</li>
+  <li>Implementation of other Transports.</li>
+  <li>Resource framework implementation (WS-RF) and Enterprise web services
+    such as JSR 109 support</li>
+  <li>Interop tests</li>
+</ul>
 
 <h2>Axis2 Background and Motivation</h2>
 
 <p>Axis1 was built under the assumption that other protocols such as
 WS-ReliableMessaging would be integrated into Axis1's handler chain.  Axis1
-had the concept of a MessageContext and a chain of transport, service, and
-global message handlers, but Axis1 lacked a clear extension architecture to
-enable clean composition of such layers. One of the key motivations for Axis2
-is to provide a clean and simple environment for implementations of
-associated WS standards such as <a
+had the concept of a <a
+href="http://ws.apache.org/axis/java/apiDocs/org/apache/axis/MessageContext.html">MessageContext</a>
+and a chain of transport, service, and global message handlers, but Axis1
+lacked a clear extension architecture to enable clean composition of such
+layers. One of the key motivations for Axis2 is to provide a clean and simple
+environment for implementations of associated WS standards such as <a
 href="http://ws.apache.org/sandesha/">Apache Sandesha</a> and <a
-href="http://ws.apache.org/wss4j/">Apache WSS4J</a>.  Implementations of
+href="http://ws.apache.org/wss4j/">Apache WSS4J</a>. Implementations of
 associated standards should be able to easily interface with the base SOAP
-Message handling system.   In summary, Axis2 has a more modular and flexible
-message handling pipeline, it focuses on the details of message handling and
+Message handling system. In summary, Axis2 has a more modular and flexible
+message handling pipeline. It focuses on the details of message handling and
 provides clear hooks for implementations of associated Web Services standards
-and protocols.  This evolution will allow Axis to be a foundational
-technology for next generation Web Services.</p>
+and protocols. This evolution will allow Axis to be a foundational technology
+for next generation Web Services.</p>
 
 <p>Axis2 introduces a representation for SOAP messages called <b>AXIOM (AXIs
 Object Model)</b>. AXIOM consists of two parts: a complete XML Infoset
 representation and a SOAP Infoset representation. The XML Infoset
-representation provides a JDOM-esque API built atop a deferred model via a
+representation provides a JDOM-esque API built on top a deferred model via a
 StAX-based (Streaming API for XML) pull parsing API. A key feature of AXIOM
 is that it allows one to stop building the XML tree and just access the pull
-stream directly; thus enabling both maximum flexibility and maximum
-performance. This approach allows Axis2 to support multiple levels of
-abstraction for consuming and offering Web services: using plain AXIOM, using
-generated code and statically data-bound data types and so on.  Developers
-with demanding performance requirements will be able to use AXIOM to create
-highly scaleable Web Services.</p>
+stream directly, enabling both maximum flexibility and maximum performance.
+This approach allows Axis2 to support multiple levels of abstraction for
+consuming and offering Web services using plain AXIOM, or using generated
+code and statically data-bound data types and so on. Developers with
+demanding performance requirements will be able to use AXIOM to create highly
+scalable Web Services.</p>
 
 <p>A third shift in Axis 2 is the de-emphasis of RPC-oriented Web Services
-and a shift towards more document-oriented, message style asynchronous
-service interactions.  With Axis2, clients can interact with servers in a
-number of ways, and the client API provides both a blocking and non-blocking
-API.  At the time of Axis1's design, RPC-style, synchronous, request-response
+and a shift towards more document-oriented message style asynchronous service
+interactions. With Axis2 clients can interact with servers in a number of
+ways, and the client API provides both a blocking and non-blocking API. At
+the time of Axis1's design, RPC-style, synchronous, request-response
 interactions were the order of the day for Web services. Today service
 interactions are much more message-oriented and exploit many different
-message exchange patterns. The Axis2 engine architecture is careful to not
+message exchange patterns. The Axis2 engine architecture is careful not to
 build in any assumptions of request-response patterns to ensure that it can
-be used easily to support arbitrary message exchange patterns. Don't
-worry,you'll still be able to use Axis2 like you used Axis1, you'll just have
-a richer set of options for client-server interaction.</p>
+be used easily to support arbitrary message exchange patterns. Don't worry,
+you'll still be able to use Axis2 like you used Axis1. One just have a richer
+set of options for client-server interaction.</p>
 
 <h2>Archived News</h2>
-<p><b>02 December 2005 - Apache Axis2 Version 0.93 Released!</b> <a
-href="http://ws.apache.org/axis2/download.cgi">(Download 0.93)</a></p>
-<p>Axis2 is becoming more and more stable. <a href="http://ws.apache.org/axis2/download.cgi">Download it!. </a>This 0.93 release contains the following additional features:</p>
+
+<p><b>02 December  2005 - Apache Axis2 Version 0.93 Released! (</b> <a
+href="http://ws.apache.org/axis2/download.cgi">Download 0.93</a>)</p>
+
+<p>Axis2 is becoming more and more stable. <a
+href="http://ws.apache.org/axis2/download.cgi">Download it!. </a>This 0.93
+release contains the following additional features:</p>
 <ul>
-  <li>JDK 1.5 compatibility </li>
-  <li> Configurable handler chains using axis2.xml </li>
-  <li> Improved class loader hierarchy </li>
-  <li> Improved security module with dynamic configurability </li>
-  <li> ADB (Axis Data Binding) with complete simple types support and limited complex type support </li>
-  <li> Jalopy based code formatting of generated code </li>
-  <li>Proxy support and NTLM authentication </li>
-  <li>support for rpc/literal </li>
-  <li>And numerous bug fixes after 0.92 release </li>
+  <li>JDK 1.5 compatibility</li>
+  <li>Configurable handler chains using axis2.xml</li>
+  <li>Improved class loader hierarchy</li>
+  <li>Improved security module with dynamic configurability</li>
+  <li>ADB (Axis Data Binding) with complete simple types support and limited
+    complex type support</li>
+  <li>Jalopy based code formatting of generated code</li>
+  <li>Proxy support and NTLM authentication</li>
+  <li>support for rpc/literal</li>
+  <li>And numerous bug fixes after 0.92 release</li>
 </ul>
-<h3 id="head-4804f145dbcf856d6cfef8fc5fff555e5590931b">Experimental features list</h3>
+<b><id="head-4804f145dbcf856d6cfef8fc5fff555e5590931b">Experimental features
+list</b>
 <ol type="1">
-  <li> DOOM - DOM implementation over OM </li>
-  <li> Java2WSDL </li>
-  <li> RPC Support </li>
+  <li>DOOM - DOM implementation over OM</li>
+  <li>Java2WSDL</li>
+  <li>RPC Support</li>
 </ol>
-<h3>Major changes since last release </h3>
+<b>Major changes since last release</b>
 <ol>
-  <li> Refactored org.apache.axis2.clientapi to org.apache.axis2.client </li>
-  <li> Introduction of Options to configure clients </li>
-  <li>Renaming of descriptors. OperationDescription -&gt; AxisOperation, ServiceDescription -&gt; AxisService, ServiceGroupDescription -&gt; AxisServiceGroup</li>
+  <li>Refactored org.apache.axis2.clientapi to org.apache.axis2.client</li>
+  <li>Introduction of Options to configure clients</li>
+  <li>Renaming of descriptors. OperationDescription -&gt; AxisOperation,
+    ServiceDescription -&gt; AxisService, ServiceGroupDescription -&gt;
+    AxisServiceGroup</li>
 </ol>
+We are getting closer to a 1.0 release, the remaining tasks to be completed
+before a 1.0 release include: SOAP 1.1 and 1.2 validation, Our own data
+binding implementation, WSDL Generation.
+
 <p><b>26 September 2005 - Apache Axis2 Version 0.92 Released!</b> <a
 href="http://ws.apache.org/axis2/download.cgi">(Download 0.92)</a></p>
-<p>Axis2 is becoming more and more stable. <a href="releases.html#0.9">Download it!</a> This 0.92 release is a glimpse of 1.0 that should be comming soon. This 0.92 release contains the following additional features:</p>
+
+<p>Axis2 is becoming more and more stable. <a
+href="releases.html#0.9">Download it!</a> This 0.92 release is a glimpse of
+1.0 that should be coming soon. This 0.92 release contains the following
+additional features:</p>
 <ul>
   <li>WS-Security support using WSS4J</li>
   <li>Support for context hierarchy serialization</li>
   <li>Service Groups</li>
   <li>and numerous bug fixes after 0.91 release</li>
-  <p>The release includes following tools</p>
+</ul>
+
+<p><b>The release includes following tools</b></p>
+<ul>
   <li>Admin Web App</li>
   <li>WSDL2Java, eclipse Plugin/Command line version</li>
   <li>Service Archive Wizard, eclipse Plugin</li>
   <li>Module Archive Wizard, eclipse Plugin</li>
   <li>Service Archive Wizard, IntelliJ IDEA Plugin</li>
 </ul>
-<p>We are getting closer to a 1.0 release, the remaining tasks to be completed before a 1.0 release include: SOAP 1.1 and 1.2 validation, Our own data binding implementation, WSDL Generation.</p>
+
+<p><em>We are getting closer to a 1.0 release, the remaining tasks to be
+completed before a 1.0 release include: SOAP 1.1 and 1.2 validation, Our own
+data binding implementation, WSDL Generation.</em></p>
+
 <p><b>12 August 2005 - Apache Axis2 Version 0.91 Released!</b> <a
 href="http://ws.apache.org/axis2/download.cgi">(Download 0.91)</a></p>
 
-<p>Axis2 is becoming more and more stable. <a href="http://ws.apache.org/axis2/download.cgi">Download
-it!</a>  This 0.91 release is a glimpse of 1.0 that should be comming soon.
-This 0.91 release contains the following additional features:</p>
+<p>Axis2 is becoming more and more stable. <a
+href="http://ws.apache.org/axis2/download.cgi">Download it!</a> This 0.91
+release is a glimpse of 1.0 that should be coming soon. This 0.91 release
+contains the following additional features:</p>
 <ul>
   <li>File Caching for MTOM</li>
   <li>SOAP Faults based on the SOAP version and better fault handling</li>
@@ -181,13 +231,11 @@ This 0.91 release contains the following additional features:</p>
   <li>Numerous bug fixes</li>
 </ul>
 
-<p></p>
-
 <p><b>02 July 2005 - Apache Axis2 Version 0.9 Released!</b> <a
 href="releases.html#0.9">(Download 0.9)</a></p>
 
 <p>Axis2 is taking shape. <a href="releases.html#0.9">Download it!</a> This
-0.9 release is a glimpse of 1.0 that should be comming soon. This 0.9 release
+0.9 release is a glimpse of 1.0 that should be coming soon. This 0.9 release
 contains the following additional features:</p>
 <ul>
   <li>XML Beans based data binding support</li>
@@ -209,9 +257,13 @@ second milestone release are:</p>
   <li>WSDL Code Generation Tool.</li>
   <li>HTTP, SMTP, and TCP transport Support</li>
 </ul>
-This release also includes tools such as an administraion web application,
-and three Eclipse plug-ins: WSDL2WS, Service Archive Wizard, and Module
-Archive Wizard.
+<b>This release also includes following tools:</b>
+<ul>
+  <li>Administration web application,</li>
+  <li>WSDL2WS-Eclipse plug-in</li>
+  <li>Service Archive Wizard- Eclipse plug-in</li>
+  <li>Module Archive Wizard-Eclipse plug-in</li>
+</ul>
 
 <p><b>24 February 2005 - Apache Axis2 Milestone 1 (M1) Released</b></p>
 

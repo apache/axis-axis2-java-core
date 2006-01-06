@@ -316,28 +316,24 @@ This release includes the following features:
 
 <h3><a name="toolsinrelease">Tools included in this Release</a></h3>
 <ol>
-  <li><style="margin-bottom: 0in">Axis2 Web Appplication (Web App)</li>
-  <li><p style="margin-bottom: 0in">WSDL2WS, eclipse Plugin/Command line
-    version</p>
+  <li><style="margin-bottom: 0in">Axis2 Web Application (Web App)</li>
+  <li><p style="margin-bottom: 0in">WSDL2WS- <a href="CodegenTools-EclipsePlugin.html" target="_blank">eclipse Plugin</a>/ <a
+    href="CodegenToolReference.html" target="_blank">Command line
+    version</a>/ Intellij IDEA Plugin</p>
   </li>
-  <li><p style="margin-bottom: 0in">Service Archive Wizard, eclipse Plugin</p>
+  <li><p style="margin-bottom: 0in">Service Archive Wizard- <a
+    href="ServiceArchiveToolReference.html" target="_blank">eclipse
+    Plugin</a>/ Intellij IDEA Plugin</p>
   </li>
-  <li><p style="margin-bottom: 0in">Module Archive Wizard, eclipse Plugin</p>
+  <li><p style="margin-bottom: 0in">Module Archive Wizard- eclipse Plugin</p>
   </li>
-
-  <p>Axis2 is shipped with two standard tools. Both the tools are Eclipse
-  plug-ins, the Codegen tool even has the accompanying Ant task and the
-  command line tool.Documentation for the code generator tool is available
-  for the <a href="CodegenToolReference.html" target="_blank">Codegen
-  wizard</a> and the <a href="ServiceArchiveToolReference.html"
-  target="_blank">Service Archiver</a>.</p>
 </ol>
 
 <h3><a name="_Toc96698079"></a><a name="WhatsStillToDo"></a>What's still to
 do?</h3>
 
-<p>Please see a list of what we think needs doing - and please consider
-helping out if you're interested &amp; able!</p>
+<p>See list of what we think needs to be done, and consider helping out if
+you're interested &amp; able!</p>
 <ul>
   <li><p style="margin-bottom: 0in">JAX-RPC 1.1 and/or JAX-WS compliance</p>
   </li>
@@ -447,7 +443,8 @@ configurations. "services.xml" for MyService will be as follows.</p>
 
 <p><em>The above XML tags can be explained as follows:</em></p>
 
-<p> Name of the service will be the name of the archive file , if and only if the services.xml contains only one service element.</p>
+<p>Name of the service will be the name of the archive file , if and only if
+the services.xml contains only one service element.</p>
 
 <p>Next comes the description and the service class.</p>
 
@@ -897,10 +894,10 @@ catch (AxisFault axisFault) {
      }</pre>
 
 <p>Since we are accessing a IN-ONLY operation we can directly use the
-"fireAndForget()" in ServiceClient to invoke this operation , and that will not block the
-invocation, hence it will return the control immediately back to the client.
-You can test this client by running the target "testPingClient" of the ant
-build file at "Axis2Home/samples".</p>
+"fireAndForget()" in ServiceClient to invoke this operation , and that will
+not block the invocation, hence it will return the control immediately back
+to the client. You can test this client by running the target
+"testPingClient" of the ant build file at "Axis2Home/samples".</p>
 
 <p>We have invoked the two operations in our service. Are we done? No! There
 are lot more to explore. Let's see some other ways to invoke the same
@@ -1021,8 +1018,9 @@ asynchrony!!</strong></p>
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
 in the "<b>options.setUseSeparateListener(...)</b>" method informs the Axis2
 engine to use separate transport connections for request and response.
-Finally "<b>serviceClinet.finalizeInvoke()</b>" informs the Axis2 engine to stop the client
-side listener started to retrieve the response.</font></font></p>
+Finally "<b>serviceClinet.finalizeInvoke()</b>" informs the Axis2 engine to
+stop the client side listener started to retrieve the
+response.</font></font></p>
 
 <p>Before we run the sample client we have one more step to perform. As
 mentioned earlier Axis2 uses addressing based correlation mechanism, hence we
