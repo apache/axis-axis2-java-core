@@ -83,7 +83,7 @@ public class JavaBeanWriter implements BeanWriter {
      * This has no meaning when the classes are supposed to be wrapped  so the
      *
      * @see org.apache.axis2.schema.writer.BeanWriter#getModelMap()
-     * @return
+     * @return Returns Map.
      * @throws SchemaCompilationException
      */
     public Map getModelMap(){
@@ -129,7 +129,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @param element
      * @param typeMap
      * @param metainf
-     * @return
+     * @return Returns String.
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
@@ -189,7 +189,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @param simpleType
      * @param typeMap
      * @param metainf
-     * @return
+     * @return Returns String.
      * @throws SchemaCompilationException
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
@@ -225,7 +225,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @param metainf
      * @param typeMap
      * @param isElement
-     * @return
+     * @return Returns String.
      * @throws Exception
      */
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
@@ -298,7 +298,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @param metainf
      * @param propertyNames
      * @param typeMap
-     * @return
+     * @return Returns Element.
      * @throws SchemaCompilationException
      */
     private Element getBeanElement(
@@ -414,7 +414,7 @@ public class JavaBeanWriter implements BeanWriter {
      *
      * @param listOfNames
      * @param xmlName
-     * @return
+     * @return Returns String.
      */
     private String makeUniqueJavaClassName(List listOfNames, String xmlName) {
         String javaName;
@@ -498,7 +498,7 @@ public class JavaBeanWriter implements BeanWriter {
      * "ns<num>".
      *
      * @param uri is the namespace uri
-     * @return prefix
+     * @return Returns prefix.
      */
     public String getPrefixForURI(String uri) {
         return getPrefixForURI(uri, null);

@@ -30,7 +30,6 @@ public abstract class SOAPElement extends ElementImpl {
 
     /**
      * @param parent
-     * @param parent
      */
     protected SOAPElement(OMElement parent,
                           String localName,

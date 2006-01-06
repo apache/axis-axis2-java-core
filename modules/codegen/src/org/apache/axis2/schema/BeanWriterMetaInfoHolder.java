@@ -64,8 +64,7 @@ public class BeanWriterMetaInfoHolder {
      * set the extensions base class name. Valid only when the isExtension
      * retruns true
      *
-     * @param extensionClassName
-     * @return
+     * @return Returns String.
      */
     public String getExtensionClassName() {
         return extensionClassName;
@@ -84,7 +83,7 @@ public class BeanWriterMetaInfoHolder {
     /**
      * get the extension status
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isExtension() {
         return extension;
@@ -102,7 +101,7 @@ public class BeanWriterMetaInfoHolder {
     /**
      * ge the ordered statu
      *
-     * @return
+     * @return Returns boolean.
      */
     public boolean isOrdered() {
         return ordered;
@@ -148,7 +147,7 @@ public class BeanWriterMetaInfoHolder {
      * Get the schema name for the given QName
      *
      * @param eltQName
-     * @return
+     * @return Returns QName.
      */
     public QName getSchemaQNameForQName(QName eltQName) {
         return (QName) this.elementToSchemaQNameMap.get(eltQName);
@@ -158,7 +157,7 @@ public class BeanWriterMetaInfoHolder {
      * get the class name for the QName
      *
      * @param eltQName
-     * @return
+     * @return Returns String.
      */
     public String getClassNameForQName(QName eltQName) {
         return (String) this.elementToJavaClassMap.get(eltQName);
@@ -168,7 +167,7 @@ public class BeanWriterMetaInfoHolder {
      * Get whether a given QName is an attribute
      *
      * @param qName
-     * @return
+     * @return Returns boolean.
      */
     public boolean getAttributeStatusForQName(QName qName) {
         Integer attribState = (Integer) specialTypeFlagMap.get(qName);
@@ -179,7 +178,7 @@ public class BeanWriterMetaInfoHolder {
      * Get whether a given QName represents a anyType
      *
      * @param qName
-     * @return
+     * @return Returns boolean.
      */
     public boolean getAnyStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
@@ -190,7 +189,7 @@ public class BeanWriterMetaInfoHolder {
      * Get whether a given QName refers to an array
      *
      * @param qName
-     * @return
+     * @return Returns boolean.
      */
     public boolean getArrayStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
@@ -201,7 +200,7 @@ public class BeanWriterMetaInfoHolder {
      * Get whether a given QName has the any attribute status
      *
      * @param qName
-     * @return
+     * @return Returns boolean.
      */
     public boolean getAnyAttributeStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
@@ -257,7 +256,7 @@ public class BeanWriterMetaInfoHolder {
      * get the maxOccurs associated with a QName
      *
      * @param qName
-     * @return
+     * @return Returns long.
      */
     public long getMaxOccurs(QName qName) {
         Long l = (Long) this.qNameMaxOccursCountMap.get(qName);
@@ -275,7 +274,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * @return
+     * @return Returns Iterator.
      * @deprecated Use #getQNameArray
      */
     public Iterator getElementQNameIterator() {
@@ -285,7 +284,7 @@ public class BeanWriterMetaInfoHolder {
     /**
      * get the QName array - may not be ordered
      *
-     * @return
+     * @return Returns QName[].
      */
     public QName[] getQNameArray() {
         Set keySet = elementToJavaClassMap.keySet();
@@ -296,7 +295,7 @@ public class BeanWriterMetaInfoHolder {
      * Get the ordered QName array - useful in sequences where the order needs to be preserved
      * Note - #registerQNameIndex needs to be called if this is to work properly!
      *
-     * @return
+     * @return Returns QName[].
      */
     public QName[] getOrderedQNameArray() {
         //get the keys of the order map

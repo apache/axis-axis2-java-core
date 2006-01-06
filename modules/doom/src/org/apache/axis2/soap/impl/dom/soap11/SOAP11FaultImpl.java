@@ -45,7 +45,6 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
      * This is a convenience method for the SOAP Fault Impl.
      *
      * @param parent
-     * @param e
      */
     public SOAP11FaultImpl(SOAPBody parent) throws SOAPProcessingException {
         super(parent);

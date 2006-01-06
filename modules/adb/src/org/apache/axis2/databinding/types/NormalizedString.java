@@ -76,7 +76,7 @@ public class NormalizedString implements java.io.Serializable {
      * nor tab (#x9) characters.
      *
      * @param stValue the String to test
-     * @returns true if valid normalizedString
+     * @return Returns true if valid normalizedString.
      */
     public static boolean isValid(String stValue)  {
         int scan;

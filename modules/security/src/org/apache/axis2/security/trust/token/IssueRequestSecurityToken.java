@@ -45,7 +45,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	}
 	
 	/**
-	 * Sets the value of the <code>AppliesTo</code> element
+	 * Sets the value of the <code>AppliesTo</code> element.
 	 * @param value
 	 */
 	public void setAppliesTo(OMElement value) {
@@ -58,8 +58,8 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	}
 	
 	/**
-	 * Returns the first child of the <code>AppliesTo</code> element
-	 * @return
+	 * Returns the first child of the <code>AppliesTo</code> element.
+	 * @return Returns OMElement.
 	 */
 	public OMElement getAppliesTo() {
 		if(this.appliesTo != null) {
@@ -115,8 +115,8 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	}
 	
 	/**
-	 * Retuns the <code>Claims</code> element
-	 * @return
+	 * Returns the <code>Claims</code> element.
+	 * @return Returns Claims.
 	 */
 	public Claims getClaims() {
 		return this.claims;
@@ -142,7 +142,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	/**
 	 * Sets the binary secret of the Entropy element when the its of type <code>Nonce</code>
 	 * @see BinarySecret#NONCE_VAL
-	 * @param entropyValue The nonce value
+	 * @param nonceValue The nonce value
 	 */
 	public void setEntropyNonce(String nonceValue) {
 		this.setEntropy(Constants.BINARY_SECRET_TYPE.NONCE_VAL, nonceValue);
@@ -150,7 +150,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	
 	/**
 	 * Returns the <code>Entropy</code> element
-	 * @return
+	 * @return Returns Entropy.
 	 */
 	public Entropy getEntropy() {
 		return this.entropy;
@@ -160,7 +160,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	/**
 	 * Adds a <code>wst:Lifetime</code> element with the given duration to the 
 	 * <code>wst:RequestSecurityToken</code>
-	 * @param duration
+	 * @param lifetimeInMillis
 	 */
 	public void setLifetime(long lifetimeInMillis) {
 		if(this.lifetime != null) {
@@ -173,7 +173,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	
 	/**
 	 * Retuns the <code>Lifetime</code> element
-	 * @return
+	 * @return Returns Lifetime.
 	 */
 	public Lifetime getLifetime() {
 		return this.lifetime;
@@ -193,7 +193,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	
 	/**
 	 * Retuns the <code>KeySize</code> element
-	 * @return
+	 * @return Returns KeySize.
 	 */
 	public KeySize getKeySize() {
 		return this.keySize;
@@ -216,7 +216,7 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	
 	/**
 	 * Returns the <code>Renewing</code> element
-	 * @return
+	 * @return Returns Renewing.
 	 */
 	public Renewing getRenewing() {
 		return this.renewing;

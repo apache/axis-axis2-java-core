@@ -59,9 +59,8 @@ public class XSLTUtils {
      * Utility method to add an attribute to a given element
      *
      * @param document
-     * @param attribName
-     * @param attribValue
-     * @param element
+     * @param elementName
+     * @param parentNode
      */
     public static Element addChildElement(Document document,
                                           String elementName,

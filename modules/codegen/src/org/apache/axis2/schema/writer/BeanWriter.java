@@ -33,7 +33,7 @@ public interface BeanWriter {
 
 
     /**
-     * Init the write with compiler options
+     * Initializes the writer with compiler options.
      *
      * @param options
      * @throws IOException
@@ -42,12 +42,12 @@ public interface BeanWriter {
 
     /**
      * Writes a wrapped class. This will have effect only if the CompilerOptions wrapclassses
-     * returns true
+     * returns true.
      */
     public void writeBatch() throws SchemaCompilationException;
 
     /**
-     * Gets a map of models. this is useful for tight integrations where the internal workings
+     * Gets a map of models. This is useful for tight integrations where the internal workings
      * of the schema compiler may be exposed.
      */
     public Map getModelMap();
@@ -58,7 +58,7 @@ public interface BeanWriter {
      * @param complexType
      * @param typeMap
      * @param metainf
-     * @return
+     * @return Returns String.
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
@@ -69,7 +69,7 @@ public interface BeanWriter {
      * @param element
      * @param typeMap
      * @param metainf
-     * @return
+     * @return Returns String.
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
@@ -81,7 +81,7 @@ public interface BeanWriter {
      * @param simpleType
      * @param typeMap
      * @param metainf
-     * @return
+     * @return Returns String.
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;

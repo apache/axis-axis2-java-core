@@ -104,7 +104,7 @@ public class RB {
      * @param caller The calling object. This is used to get the package name
      *               to further construct the basename as well as to get the proper ClassLoader
      * @param name   The name of the property file without the ".properties" extension
-     * @param local  The local
+     * @param locale  The locale
      */
     public RB(Object caller, String name, Locale locale) throws MissingResourceException {
         ClassLoader cl = null;
@@ -483,7 +483,7 @@ public class RB {
      * @param arg2   The argument to place in variable {2}
      * @param arg3   The argument to place in variable {3}
      * @param arg4   The argument to place in variable {4}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2, Object arg3, Object arg4)
             throws MissingResourceException {
@@ -502,8 +502,8 @@ public class RB {
      *
      * @param caller The calling object, used to get the package name and class loader
      * @param key    The resource key
-     * @param array  An array of objects to place in corresponding variables
-     * @return The formatted message
+     * @param args  An array of objects to place in corresponding variables
+     * @return Returns the formatted message.
      */
     public static String getString(Object caller, String key, Object[] args)
             throws MissingResourceException {
@@ -610,7 +610,7 @@ public class RB {
      * @param arg1   The argument to place in variable {1}
      * @param arg2   The argument to place in variable {2}
      * @param arg3   The argument to place in variable {3}
-     * @return The formatted message
+     * @return Returns the formatted message.
      */
     public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2, Object arg3, Object arg4)
             throws MissingResourceException {
@@ -629,8 +629,8 @@ public class RB {
      * @param caller The calling object, used to get the package name and class loader
      * @param locale The locale
      * @param key    The resource key
-     * @param array  An array of objects to place in corresponding variables
-     * @return The formatted message
+     * @param args  An array of objects to place in corresponding variables
+     * @return Returns the formatted message.
      */
     public static String getString(Object caller, Locale locale, String key, Object[] args)
             throws MissingResourceException {
@@ -710,7 +710,7 @@ public class RB {
     }
 
     /**
-     * Clears the internal cache
+     * Clears the internal cache.
      */
     public static void clearCache() {
         propertyCache.clear();

@@ -264,9 +264,11 @@ public abstract class JMSConnector {
 
         /**
          * @param subscription
-         * @todo add in security exception propagation
+         * 
          */
+          
         void subscribe(Subscription subscription) throws Exception {
+        	// TODO: add in security exception propagation
             long timeoutTime = System.currentTimeMillis() + m_timeoutTime;
 
             synchronized (m_subscriptionLock) {
@@ -464,10 +466,10 @@ public abstract class JMSConnector {
         protected abstract void onShutdown();
 
         /**
-         * @todo handle non-recoverable errors
+         * 
          */
         public void run() {
-
+            // TODO: handle non-recoverable errors
             // loop until a connection is made and when a connection is made (re)establish
             // any subscriptions
             while (m_isActive) {
@@ -690,10 +692,11 @@ public abstract class JMSConnector {
         }
 
         /**
-         * @todo add in handling for security exceptions
-         * @todo add support for timeouts
+         *
          */
         void send(JMSEndpoint endpoint, byte[] message, HashMap properties) throws Exception {
+        	// TODO add in handling for security exceptions
+            // TODO add support for timeouts
             long timeoutTime = System.currentTimeMillis() + m_timeoutTime;
 
             while (true) {

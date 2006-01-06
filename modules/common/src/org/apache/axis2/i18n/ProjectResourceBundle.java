@@ -115,9 +115,8 @@ public class ProjectResourceBundle extends ResourceBundle {
      *
      * @param projectName  The name of the project to which the class belongs.
      *                     It must be a proper prefix of the caller's package.
-     * @param caller       The calling class.
-     *                     This is used to get the package name to further construct
-     *                     the basename as well as to get the proper ClassLoader.
+     * @param packageName  The package name to further construct
+     *                     the basename.
      * @param resourceName The name of the resource without the
      *                     ".properties" extension
      * @throws MissingResourceException if projectName is not a prefix of
@@ -136,9 +135,8 @@ public class ProjectResourceBundle extends ResourceBundle {
      *
      * @param projectName  The name of the project to which the class belongs.
      *                     It must be a proper prefix of the caller's package.
-     * @param caller       The calling class.
-     *                     This is used to get the package name to further construct
-     *                     the basename as well as to get the proper ClassLoader.
+     * @param packageName  The package name to further construct
+     *                     the basename.
      * @param resourceName The name of the resource without the
      *                     ".properties" extension
      * @throws MissingResourceException if projectName is not a prefix of
@@ -217,9 +215,8 @@ public class ProjectResourceBundle extends ResourceBundle {
      *
      * @param projectName   The name of the project to which the class belongs.
      *                      It must be a proper prefix of the caller's package.
-     * @param caller        The calling class.
-     *                      This is used to get the package name to further construct
-     *                      the basename as well as to get the proper ClassLoader.
+     * @param packageName  The package name to further construct
+     *                     the basename.
      * @param resourceName  The name of the resource without the
      *                      ".properties" extension
      * @param locale        The locale

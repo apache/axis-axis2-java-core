@@ -31,7 +31,7 @@ public class Id extends NCName {
     }
 
     /**
-     * ctor for Id
+     * Constructor for Id.
      * @exception IllegalArgumentException will be thrown if validation fails
      */
     public Id(String stValue) throws IllegalArgumentException {
@@ -48,8 +48,8 @@ public class Id extends NCName {
 
     /**
      *
-     * validates the data and sets the value for the object.
-     * @param Token String value
+     * Validates the data and sets the value for the object.
+     * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
@@ -62,7 +62,7 @@ public class Id extends NCName {
 
     /**
      *
-     * validate the value against the xsd definition
+     * Validates the value against the xsd definition.
      *
      * Same validation as NCName for the time being
      */

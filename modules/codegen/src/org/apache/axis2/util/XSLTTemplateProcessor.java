@@ -62,7 +62,8 @@ public class XSLTTemplateProcessor {
      * Parses an XML stream with an XSL stream
      *
      * @param out       Stream to write the output
-     * @param xmlStream Source XML stream
+     * @param doc
+     * @param transformer
      * @throws TransformerFactoryConfigurationError
      *
      * @throws TransformerException

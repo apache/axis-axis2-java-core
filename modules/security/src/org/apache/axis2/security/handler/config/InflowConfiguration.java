@@ -38,7 +38,7 @@ public class InflowConfiguration {
 	
 	/**
 	 * Returns the configuration as an OMElement 
-	 * @return
+	 * @return Returns Parameter.
 	 */
 	public Parameter getProperty() {
 		OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -71,8 +71,8 @@ public class InflowConfiguration {
 	}
 
 	/**
-	 * Returns the action items
-	 * @return
+	 * Returns the action items.
+	 * @return Returns String.
 	 */
 	public String getActionItems() {
 		return (String)this.action.get(WSSHandlerConstants.ACTION_ITEMS);
@@ -120,7 +120,7 @@ public class InflowConfiguration {
 
 	/**
 	 * Returns the signature property file
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getSignaturePropFile() {
 		return (String)this.action.get(WSHandlerConstants.SIG_PROP_FILE);
@@ -136,7 +136,7 @@ public class InflowConfiguration {
 	
 	/**
 	 * Sets whether signature confirmation should be enabled or not
-	 * @param embeddedKeyName
+	 * @param value
 	 */
 	public void setEnableSignatureConfirmation(boolean value) {
 		this.action.put(
@@ -145,7 +145,7 @@ public class InflowConfiguration {
 	
 	/**
 	 * Returns whether signature confirmation should be enabled or not
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getEnableSignatureConfirmation() {
 		return (String) this.action

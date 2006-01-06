@@ -35,8 +35,6 @@ public abstract class SOAPFaultCodeImpl  extends SOAPElement implements SOAPFaul
     /**
      * Constructor OMElementImpl
      *
-     * @param localName
-     * @param ns
      * @param parent
      * @param builder
      */
@@ -45,7 +43,6 @@ public abstract class SOAPFaultCodeImpl  extends SOAPElement implements SOAPFaul
     }
 
     /**
-     * @param parent
      * @param parent
      */
     public SOAPFaultCodeImpl(SOAPFault parent,

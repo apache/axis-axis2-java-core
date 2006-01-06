@@ -282,11 +282,11 @@ public class ConverterUtil {
     }
 
     /**
-     * Convert a given string into a date
-     * Code from Axis1 DateDeserializer
+     * Converts a given string into a date.
+     * Code from Axis1 DateDeserializer.
      *
      * @param s
-     * @return
+     * @return Returns Date.
      */
     public static Date convertTodate(String source) {
 
@@ -439,7 +439,7 @@ public class ConverterUtil {
      * Code from Axis1 code base
      * Note - We only follow the convention in the latest schema spec
      * @param s
-     * @return
+     * @return Returns Calendar.
      * @throws Exception
      */
     public static Calendar convertTodateTime(String source) throws Exception {
@@ -551,7 +551,7 @@ public class ConverterUtil {
     /**
      * Code from Axis1 code base
      * @param source
-     * @return
+     * @return Returns QName.
      */
     public static QName convertToQName(String source) {
         source = source.trim();
@@ -596,7 +596,7 @@ public class ConverterUtil {
      * @param baseArrayClass
      * @param objectList     -> for primitive type array conversion we assume the content to be
      *                       strings!
-     * @return
+     * @return Returns Object.
      */
     public static Object convertToArray(Class baseArrayClass, List objectList) {
         int listSize = objectList.size();

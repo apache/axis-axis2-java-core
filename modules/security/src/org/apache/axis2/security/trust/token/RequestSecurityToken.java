@@ -66,7 +66,7 @@ public abstract class RequestSecurityToken extends CompositeToken {
 	
 	/**
 	 * Returns the request type if it is set
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getRequestType() {
 		if(this.requestTypeElement != null) {
@@ -90,7 +90,7 @@ public abstract class RequestSecurityToken extends CompositeToken {
 	
 	/**
 	 * Returns the token type is set
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getTokenType() {
 		if(this.tokenTypeElement != null) {
@@ -125,8 +125,8 @@ public abstract class RequestSecurityToken extends CompositeToken {
 	
 	/**
 	 * Returns the requested token if available
-	 * @param token
-	 * @return
+	 * @param tokenQName
+	 * @return Returns OMElement.
 	 */
 	public OMElement getToken(QName tokenQName) {
 		return this.tokenElement.getFirstChildWithName(tokenQName);
@@ -165,7 +165,7 @@ public abstract class RequestSecurityToken extends CompositeToken {
 	 * custom attrbutes added to the 
 	 * <code>wst:RequestSecyrityToken</code>
 	 * @param attribute
-	 * @return
+	 * @return Returns String.
 	 */
 	public String getAttributeValue(QName attribute) {
 		return this.tokenElement.getAttribute(attribute).getAttributeValue();

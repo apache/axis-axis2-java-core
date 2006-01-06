@@ -41,7 +41,7 @@ import java.util.List;
  * Maintains a chain of {@link HttpRequestHandler}s where new request-handlers
  * can be prepended/appended.
  * <p/>
- * For each call to {@link #processRequest(ResponseWriter,SimpleHttpServerConnection,RequestLine,Header[])}
+ * For each call to {@link #processRequest(SimpleHttpServerConnection,SimpleRequest)}
  * we iterate over the chain from the start to the end, stopping as soon as a handler
  * has claimed the output.
  */

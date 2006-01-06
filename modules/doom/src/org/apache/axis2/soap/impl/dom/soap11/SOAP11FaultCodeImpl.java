@@ -34,8 +34,6 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
     /**
      * Constructor OMElementImpl
      *
-     * @param localName
-     * @param ns
      * @param parent
      * @param builder
      */
@@ -44,7 +42,6 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
     }
 
     /**
-     * @param parent
      * @param parent
      */
     public SOAP11FaultCodeImpl(SOAPFault parent) throws SOAPProcessingException {
