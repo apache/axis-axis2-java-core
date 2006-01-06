@@ -504,7 +504,7 @@ public class ServiceClient {
      *
      * @param mc the message context whose id is to be set
      */
-    private void setMessageID(MessageContext mc) {
+    public void setMessageID(MessageContext mc) {
         // now its the time to put the parameters set by the user in to the
         // correct places and to the
         // if there is no message id still, set a new one.

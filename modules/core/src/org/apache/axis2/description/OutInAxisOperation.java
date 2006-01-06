@@ -18,6 +18,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -159,6 +160,31 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
+     * Create a message ID for the given message context if needed. If user gives an option with
+     * MessageID then just copy that into MessageContext , and with that there can be mutiple
+     * message with same MessageID unless user call setOption for each invocation.
+     * <p/>
+     * If user want to give message ID then the better way is to set the message ID in the option and
+     * call setOption for each invocation then the right thing will happen.
+     * <p/>
+     * If user does not give a message ID then the new one will be created and set that into Message
+     * Context.
+     *
+     * @param mc the message context whose id is to be set
+     */
+    public void setMessageID(MessageContext mc) {
+        // now its the time to put the parameters set by the user in to the
+        // correct places and to the
+        // if there is no message id still, set a new one.
+        String messageId = options.getMessageId();
+        if (messageId == null || "".equals(messageId)) {
+            messageId = UUIDGenerator.getUUID();
+        }
+        mc.setMessageID(messageId);
+    }
+
+
+    /**
      * Executes the MEP. What this does depends on the specific MEP client. The
      * basic idea is to have the MEP client execute and do something with the
      * messages that have been added to it so far. For example, if its an Out-In
@@ -190,6 +216,10 @@ class OutInAxisOperationClient implements OperationClient {
         mc.setAxisOperation(axisOp);
         mc.setServiceContext(sc);
         mc.setOptions(options);
+        // setting messge ID if it null
+        if (mc.getMessageID() == null) {
+            setMessageID(mc);
+        }
 
         // if the transport to use for sending is not specified, try to find it
         // from the URL
