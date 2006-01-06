@@ -1075,7 +1075,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
-            String localPart = makeJavaClassName(operation.getName().getLocalPart());
+            String localPart = operation.getName().getLocalPart();
             addAttribute(doc, "name", localPart, methodElement);
             addAttribute(doc,
                     "namespace",
