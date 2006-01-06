@@ -25,8 +25,8 @@ public class Version {
 
     public OMElement getVersion() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement version = fac.createOMElement("Version", omNs);
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "ns1");
+        OMElement version = fac.createOMElement("getVersionResponse", omNs);
         version.addChild(
                 fac.createText(version,
                         "Hello I am Axis2 version service , My version is " + org.apache.axis2.Version.getVersionText()));
