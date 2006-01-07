@@ -17,27 +17,40 @@
     </preGoal>
     
     <postGoal name="test:compile">
-        <mkdir dir="target/classes/META-INF"/>
+        <!-- Temp dir to hold the contents of the mar -->
+        <mkdir dir="target/temp-mar/META-INF"/>
+        <mkdir dir="target/temp-mar/lib"/>
+        
         <copy file="src/META-INF/module.xml"
-            tofile="target/classes/META-INF/module.xml"/>
+            tofile="target/temp-mar/META-INF/module.xml"/>
         <copy file="./test-resources/axis2.xml"
             tofile="target/axis2.xml"/>
         <mkdir dir="target/modules"/>
-        <mkdir dir="target/modules/lib"/>
 
-    <copy file="${maven.repo.local}/xml-security/jars/xmlsec-1.2.1.jar" todir="target/classes/lib"/>
-    <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-jdk13-128.jar" todir="target/classes/lib"/>
-    <copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/classes/lib"/>
-    <copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/classes/lib"/>
-    <copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/classes/lib"/>
-    <copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/classes/lib"/>
-    <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/classes/lib"/>
+        <!-- Copy the required content for the mar into the temp dir-->
+        <copy todir="target/temp-mar">
+            <fileset dir="target/classes">
+                <include name="**/org/apache/axis2/*/**/*.class"/>
+                <exclude name="**/org/apache/axis2/security/trust/*/**"/>
+                <exclude name="**/org/apache/axis2/security/InteropScenarioClient.class"/>
+            </fileset>
+        </copy>
 
+        <copy file="${maven.repo.local}/xml-security/jars/xmlsec-1.2.1.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-jdk13-128.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 
-        <jar jarfile="target/security.mar" basedir="target/classes">
+        <jar jarfile="target/security.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
         <copy file="target/security.mar" tofile="target/modules/security.mar"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="target/temp-mar"/>
+        </delete>
     </postGoal>
 
     <preGoal name="java:compile">
