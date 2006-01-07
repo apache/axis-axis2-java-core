@@ -135,10 +135,12 @@ class OutOnlyAxisOperationClient implements OperationClient {
 
     MessageContext mc;
 
+    OperationContext oc;
+
     /*
-     * indicates whether the MEP execution has completed (and hence ready for
-     * resetting)
-     */
+    * indicates whether the MEP execution has completed (and hence ready for
+    * resetting)
+    */
     boolean completed;
 
     OutOnlyAxisOperationClient(OutOnlyAxisOperation axisOp, ServiceContext sc,
@@ -147,6 +149,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         this.sc = sc;
         this.options = new Options(options);
         this.completed = false;
+        oc = new OperationContext(axisOp, sc);
     }
 
     /**
@@ -185,6 +188,10 @@ class OutOnlyAxisOperationClient implements OperationClient {
                     "Can't add message context again until client has been executed");
         }
         this.mc = mc;
+        if (mc.getMessageID() == null) {
+            setMessageID(mc);
+        }
+        axisOp.registerOperationContext(mc, oc);
         this.completed = false;
     }
 
@@ -229,7 +236,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      *
      * @param mc the message context whose id is to be set
      */
-    public void setMessageID(MessageContext mc) {
+    private void setMessageID(MessageContext mc) {
         // now its the time to put the parameters set by the user in to the
         // correct places and to the
         // if there is no message id still, set a new one.
@@ -264,10 +271,6 @@ class OutOnlyAxisOperationClient implements OperationClient {
         // set options on the message context
         mc.setOptions(options);
         // setting messge ID if it null
-        if (mc.getMessageID() == null) {
-            setMessageID(mc);
-        }
-
         // if the transport to use for sending is not specified, try to find it
         // from the URL
         TransportOutDescription senderTransport = options.getTranportOut();
@@ -282,8 +285,6 @@ class OutOnlyAxisOperationClient implements OperationClient {
         // create the operation context for myself
         OperationContext oc = new OperationContext(axisOp, sc);
         oc.addMessageContext(mc);
-        mc.setOperationContext(oc);
-
         // ship it out
         AxisEngine engine = new AxisEngine(cc);
         engine.send(mc);

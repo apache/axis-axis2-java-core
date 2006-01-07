@@ -137,7 +137,9 @@ class OutInAxisOperationClient implements OperationClient {
      */
     public void addMessageContext(MessageContext mc) throws AxisFault {
         mc.setServiceContext(sc);
-        mc.setConfigurationContext(sc.getConfigurationContext());
+        if (mc.getMessageID() == null) {
+            setMessageID(mc);
+        }
         axisOp.registerOperationContext(mc, oc);
     }
 
@@ -172,7 +174,7 @@ class OutInAxisOperationClient implements OperationClient {
      *
      * @param mc the message context whose id is to be set
      */
-    public void setMessageID(MessageContext mc) {
+    private void setMessageID(MessageContext mc) {
         // now its the time to put the parameters set by the user in to the
         // correct places and to the
         // if there is no message id still, set a new one.
@@ -212,15 +214,8 @@ class OutInAxisOperationClient implements OperationClient {
                     "Out message context is null ,"
                             + " please set the out message context before calling this method");
         }
-        mc.setOperationContext(oc);
-        mc.setAxisOperation(axisOp);
-        mc.setServiceContext(sc);
-        mc.setOptions(options);
-        // setting messge ID if it null
-        if (mc.getMessageID() == null) {
-            setMessageID(mc);
-        }
 
+        mc.setOptions(options);
         // if the transport to use for sending is not specified, try to find it
         // from the URL
         TransportOutDescription transportOut = options.getTranportOut();
@@ -259,15 +254,10 @@ class OutInAxisOperationClient implements OperationClient {
             }
             AxisEngine engine = new AxisEngine(cc);
             engine.send(mc);
-        }
-
-        else
-
-        {
+        } else {
             if (block) {
                 // Send the SOAP Message and receive a response
-                MessageContext response = send(mc, options
-                        .getTransportIn());
+                MessageContext response = send(mc, options.getTransportIn());
                 // check for a fault and return the result
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 if (resenvelope.getBody().hasFault()) {
@@ -323,9 +313,6 @@ class OutInAxisOperationClient implements OperationClient {
 
         // create the responseMessageContext
         MessageContext responseMessageContext = new MessageContext();
-
-        responseMessageContext.setConfigurationContext(msgctx.getConfigurationContext());
-        responseMessageContext.setSessionContext(msgctx.getSessionContext());
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
         // This is a hack - Needs to change
@@ -334,15 +321,13 @@ class OutInAxisOperationClient implements OperationClient {
 
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
                 .getProperty(MessageContext.TRANSPORT_IN));
-        addMessageContext(responseMessageContext);
         responseMessageContext.setServerSide(false);
-        responseMessageContext.setServiceContext(msgctx.getServiceContext());
-        responseMessageContext.setServiceGroupContext(msgctx
-                .getServiceGroupContext());
+        responseMessageContext.setDoingREST(msgctx.isDoingREST());
+        addMessageContext(responseMessageContext);
 
         // If request is REST we assume the responseMessageContext is REST, so
         // set the variable
-        responseMessageContext.setDoingREST(msgctx.isDoingREST());
+
 
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                 responseMessageContext, msgctx.getEnvelope().getNamespace()
@@ -394,8 +379,7 @@ class OutInAxisOperationClient implements OperationClient {
             try {
 
                 // send the request and wait for reponse
-                MessageContext response = send(msgctx, options
-                        .getTransportIn());
+                MessageContext response = send(msgctx, options.getTransportIn());
 
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();

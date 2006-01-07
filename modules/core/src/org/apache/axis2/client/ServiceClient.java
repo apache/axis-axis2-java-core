@@ -3,17 +3,8 @@ package org.apache.axis2.client;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -23,7 +14,6 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.util.CallbackReceiver;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -73,7 +63,6 @@ public class ServiceClient {
      * If this service is already in the world that's handed in (in the form of
      * a ConfigurationContext) then I will happily work in it. If not I will
      * create a small little virtual world and live there.
-
      *
      * @param configContext The configuration context under which this service lives (may
      *                      be null, in which case a new local one will be created)
@@ -87,8 +76,7 @@ public class ServiceClient {
         this.configContext = (configContext != null) ? configContext
                 : new ConfigurationContextFactory()
 
-                        .createConfigurationContextFromFileSystem(null);
-
+                .createConfigurationContextFromFileSystem(null);
 
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
@@ -111,7 +99,6 @@ public class ServiceClient {
     /**
      * Create a service client for WSDL service identified by the QName of the
      * wsdl:service element in a WSDL document.
-
      *
      * @param configContext   The configuration context under which this service lives (may
      *                        be null, in which case a new local one will be created) *
@@ -122,7 +109,6 @@ public class ServiceClient {
      *                        null (if WSDL 2.0 is used or if only one port is there). .
      * @throws AxisFault if something goes wrong while creating a config context (if
      *                   needed)
-
      */
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
                          QName wsdlServiceName, String portName) throws AxisFault {
@@ -145,32 +131,23 @@ public class ServiceClient {
      * APIs.
      *
      * @return the minted anonymous service
-     * @throws AxisFault if smething goes wrong
      */
-    private AxisService createAnonymousService() throws AxisFault {
+    private AxisService createAnonymousService() {
         // now add anonymous operations to the axis service for use with the
         // shortcut client API. NOTE: We only add the ones we know we'll use
         // later in the convenience API; if you use
         // this constructor then you can't expect any magic!
         AxisService axisService = new AxisService(ANON_SERVICE);
-        PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
-
         RobustOutOnlyAxisOperation robustoutoonlyOperation = new RobustOutOnlyAxisOperation(
                 ANON_ROBUST_OUT_ONLY_OP);
-        // setting operation default chains
-        phasesInfo.setOperationPhases(robustoutoonlyOperation);
         axisService.addOperation(robustoutoonlyOperation);
 
         OutOnlyAxisOperation outOnlyOperation = new OutOnlyAxisOperation(
                 ANON_OUT_ONLY_OP);
-        // setting operation default chains
-        phasesInfo.setOperationPhases(outOnlyOperation);
         axisService.addOperation(outOnlyOperation);
 
         OutInAxisOperation outInOperation = new OutInAxisOperation(
                 ANON_OUT_IN_OP);
-        // setting operation default chains
-        phasesInfo.setOperationPhases(outInOperation);
         axisService.addOperation(outInOperation);
         return axisService;
     }
@@ -204,11 +181,9 @@ public class ServiceClient {
 
     /**
      * Engage a module for this service client.
-
      *
      * @param moduleName Name of the module to engage
      * @throws AxisFault if something goes wrong
-
      */
     public void engageModule(QName moduleName) throws AxisFault {
         axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);
@@ -220,7 +195,6 @@ public class ServiceClient {
      * simplified API. A header
      *
      * @param header The header to be added for interactions. Must not be null.
-
      */
     public void addHeader(OMElement header) {
         if (headers == null) {
@@ -253,7 +227,6 @@ public class ServiceClient {
      * @param elem The XML to send
      * @throws AxisFault if something goes wrong while sending it or if a fault is
      *                   received in response (per the Robust In-Only MEP).
-
      */
     public void sendRobust(OMElement elem) throws AxisFault {
         sendRobust(ANON_ROBUST_OUT_ONLY_OP, elem);
@@ -265,13 +238,11 @@ public class ServiceClient {
      * possibly receive a fault under the guise of a specific operation. If you
      * need more control over this interaction then you need to create a client
      * (@see createClient()) for the operation and use that instead.
-
      *
      * @param operation The name of the operation to use. Must NOT be null.
      * @param elem      The XML to send
      * @throws AxisFault if something goes wrong while sending it or if a fault is
      *                   received in response (per the Robust In-Only MEP).
-
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
@@ -309,12 +280,10 @@ public class ServiceClient {
      * MEP is In-Only. That is, there is no opportunity to get an error from the
      * service via this API; one may still get client-side errors, such as host
      * unknown etc.
-
      *
      * @param operation The operation to send fire the message under
      * @param elem      The XML element to send to the service
      * @throws AxisFault If something goes wrong trying to send the XML
-
      */
     public void fireAndForget(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
@@ -397,11 +366,7 @@ public class ServiceClient {
         } else {
             MessageContext mc = new MessageContext();
             fillSoapEnvelope(mc, elem);
-
-            setMessageID(mc);
-
             OperationClient mepClient = createClient(operation);
-            mepClient.setOptions(options);
             mepClient.addMessageContext(mc);
             mepClient.execute(true);
             MessageContext response = mepClient
@@ -419,15 +384,11 @@ public class ServiceClient {
                                        Callback callback) throws AxisFault {
         MessageContext mc = new MessageContext();
         fillSoapEnvelope(mc, elem);
-
-        setMessageID(mc);
-
         OperationClient mepClient = createClient(operation);
         // here a bloking invocation happens in a new thread, so the
         // progamming model is non blocking
         mepClient.setCallback(callback);
         mepClient.addMessageContext(mc);
-        mepClient.setOptions(options);
         if (options.isUseSeparateListener()) {
             if (callbackReceiver == null) {
                 callbackReceiver = new CallbackReceiver();
@@ -447,7 +408,6 @@ public class ServiceClient {
      * user.
      *
      * @param operation The QName of the operation to create a client for.
-
      * @return a MEP client configured to talk to the given operation or null if
      *         the operation name is not found.
      * @throws AxisFault if the operation is not found or something else goes wrong
@@ -468,9 +428,11 @@ public class ServiceClient {
      */
     public void finalizeInvoke() throws AxisFault {
         if (options.isUseSeparateListener()) {
-            ListenerManager.stop(serviceContext.getConfigurationContext(),
-                    options.getTransportIn().getName()
-                            .getLocalPart());
+            //TODO : need to improve this
+            if (options.getTransportInProtocol() != null) {
+                ListenerManager.stop(serviceContext.getConfigurationContext(),
+                        options.getTransportInProtocol());
+            }
         }
     }
 
@@ -488,31 +450,6 @@ public class ServiceClient {
             // if its not SOAP 1.2 just assume SOAP 1.1
             return OMAbstractFactory.getSOAP11Factory();
         }
-    }
-
-    /**
-
-     * Create a message ID for the given message context if needed. If user gives an option with
-     * MessageID then just copy that into MessageContext , and with that there can be mutiple
-     * message with same MessageID unless user call setOption for each invocation.
-     * <p/>
-     * If user want to give message ID then the better way is to set the message ID in the option and
-     * call setOption for each invocation then the right thing will happen.
-     * <p/>
-     * If user does not give a message ID then the new one will be created and set that into Message
-     * Context.
-     *
-     * @param mc the message context whose id is to be set
-     */
-    public void setMessageID(MessageContext mc) {
-        // now its the time to put the parameters set by the user in to the
-        // correct places and to the
-        // if there is no message id still, set a new one.
-        String messageId = options.getMessageId();
-        if (messageId == null || "".equals(messageId)) {
-            messageId = UUIDGenerator.getUUID();
-        }
-        mc.setMessageID(messageId);
     }
 
     /**
