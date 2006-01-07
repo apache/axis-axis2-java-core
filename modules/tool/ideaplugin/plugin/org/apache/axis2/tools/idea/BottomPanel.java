@@ -1,14 +1,7 @@
 package org.apache.axis2.tools.idea;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
@@ -37,15 +30,15 @@ import java.io.StringWriter;
  * Date: Jul 20, 2005
  * Time: 3:38:12 PM
  */
-public class BottomPanel extends JPanel implements ActionListener{
+public class BottomPanel extends JPanel implements ActionListener {
     public static JButton btnNext;
     public static JButton btnFinish;
     public static JButton btnCancel;
 
-    private Window  window;
+    private Java2CodeFrame java2CodeFrame;
 
-    public BottomPanel(Window window) {
-        this.window = window;
+    public BottomPanel(Java2CodeFrame java2CodeFrame) {
+        this.java2CodeFrame = java2CodeFrame;
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         BottomLayout customLayout = new BottomLayout();
 
@@ -67,7 +60,7 @@ public class BottomPanel extends JPanel implements ActionListener{
 
     }
 
-    public static void setEnable(boolean next , boolean finish , boolean cancel){
+    public static void setEnable(boolean next, boolean finish, boolean cancel) {
         btnNext.setEnabled(next);
         btnFinish.setEnabled(finish);
         btnCancel.setEnabled(cancel);
@@ -75,25 +68,25 @@ public class BottomPanel extends JPanel implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == btnCancel){
-            window.setVisible(false);
-            Thread.currentThread().setContextClassLoader(window.getClassLoader());
-        }   else if (obj == btnFinish){
+        if (obj == btnCancel) {
+            java2CodeFrame.setVisible(false);
+            Thread.currentThread().setContextClassLoader(java2CodeFrame.getClassLoader());
+        } else if (obj == btnFinish) {
             try {
-                window.generatecode();
-                JOptionPane.showMessageDialog(window, "Code genaration successful!",
+                java2CodeFrame.generatecode();
+                JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
                         "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
-                window.setVisible(false);
+                java2CodeFrame.setVisible(false);
             } catch (Exception e1) {
                 e1.printStackTrace();
                 StringWriter writer = new StringWriter();
                 e1.printStackTrace(new PrintWriter(writer));
-                JOptionPane.showMessageDialog(window, "Code genaration failed!" + writer.toString(),
+                JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
                         "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                window.setVisible(false);
+                java2CodeFrame.setVisible(false);
             }
-        }   else if (obj == btnNext){
-            window.setPane();
+        } else if (obj == btnNext) {
+            java2CodeFrame.setPane();
         }
     }
 }
@@ -120,8 +113,7 @@ class BottomLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
@@ -129,11 +121,17 @@ class BottomLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+232,insets.top+24,80,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 232, insets.top + 24, 80, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+312,insets.top+24,80,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 312, insets.top + 24, 80, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+392,insets.top+24,80,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 392, insets.top + 24, 80, 24);
+        }
     }
 }
 

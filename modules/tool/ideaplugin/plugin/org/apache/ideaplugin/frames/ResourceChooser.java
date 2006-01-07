@@ -68,9 +68,9 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
     private JPanel previous;
 
     public final JFileChooser fc = new JFileChooser();
-    MainFrame parent;
+    ServiceArciveFrame parent;
 
-    public ResourceChooser(MainFrame parent) {
+    public ResourceChooser(ServiceArciveFrame parent) {
         this.parent = parent;
         ResourceChooserLayout customLayout = new ResourceChooserLayout();
 

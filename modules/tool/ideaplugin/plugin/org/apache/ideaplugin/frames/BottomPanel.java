@@ -3,15 +3,8 @@ package org.apache.ideaplugin.frames;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*
@@ -42,12 +35,12 @@ public class BottomPanel extends JPanel implements ActionListener {
     JButton butNext;
     JButton btnFinsh;
     JButton btnCanclel;
-    MainFrame parent;
+    ServiceArciveFrame parent;
     private ArchiveBean bean;
 
     private JPanel currentPanel = null;
 
-    public BottomPanel(JPanel currPanel, MainFrame parent,ArchiveBean bean) {
+    public BottomPanel(JPanel currPanel, ServiceArciveFrame parent, ArchiveBean bean) {
         BottomPanelLayout customLayout = new BottomPanelLayout();
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));
@@ -94,22 +87,22 @@ public class BottomPanel extends JPanel implements ActionListener {
             parent.setVisible(false);
         }
         if (obj == butNext) {
-            ((ObjectKeeper)currentPanel).fillBean(bean);
-            currentPanel =((ObjectKeeper)currentPanel).getNext();
+            ((ObjectKeeper) currentPanel).fillBean(bean);
+            currentPanel = ((ObjectKeeper) currentPanel).getNext();
             parent.Next(currentPanel);
-            if(currentPanel instanceof DescriptorFile){
-                parent.setEnable(false,true,false,true);
+            if (currentPanel instanceof DescriptorFile) {
+                parent.setEnable(false, true, false, true);
             }
-        } else if (obj == btnFinsh){
-            ((ObjectKeeper)currentPanel).fillBean(bean);
+        } else if (obj == btnFinsh) {
+            ((ObjectKeeper) currentPanel).fillBean(bean);
             bean.finsh();
 
             JOptionPane.showMessageDialog(parent, "Service creation successful!",
                     "Axis2 Service creation", JOptionPane.INFORMATION_MESSAGE);
             parent.setVisible(false);
 
-        } else if(obj == butBack){
-            currentPanel =((ObjectKeeper)currentPanel).getPrivious();
+        } else if (obj == butBack) {
+            currentPanel = ((ObjectKeeper) currentPanel).getPrivious();
             parent.Back(currentPanel);
         }
     }
@@ -137,8 +130,7 @@ class BottomPanelLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {

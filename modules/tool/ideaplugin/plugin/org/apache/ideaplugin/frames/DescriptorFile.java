@@ -41,7 +41,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
     protected JTextArea desArea;
     protected JButton butaddpara;
     protected JButton addModuleRef;
-    protected MainFrame parent;
+    protected ServiceArciveFrame parent;
     protected Insets insets;
     protected JScrollPane sp;
 
@@ -49,7 +49,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
     protected ModuleDialog mdouledialog;
     private JPanel previous;
 
-    public DescriptorFile(MainFrame parent, String XML) {
+    public DescriptorFile(ServiceArciveFrame parent, String XML) {
         this.parent = parent;
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));

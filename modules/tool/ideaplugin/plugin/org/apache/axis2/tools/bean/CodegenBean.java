@@ -6,6 +6,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -41,28 +41,23 @@ import java.util.Map;
  * Time: 2:41:26 PM
  */
 public class CodegenBean {
+
     private String WSDLFileName = null;
-    private String output = "E:/CD";
+    private String output = ".";
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
-    private String language = CommandLineOptionConstants.LanguageNames.JAVA;
+    private String language = "java";
 
     private boolean asyncOnly = false;
     private boolean syncOnly = false;
-    private boolean serverSide = false;
-    private boolean testcase = false;
-    private boolean generateServerXml = false;
+    private boolean serverSide = true;
+    private boolean testcase = true;
+    private boolean generateServerXml = true;
+    private String dbType = "";
+
     /**
      *
      */
-    public Map fillOptionMap(boolean isAyncOnly,
-                             boolean isSyncOnly,
-                             boolean isServerSide,
-                             boolean isServerXML,
-                             boolean isTestCase,
-                             String WSDLFileName,
-                             String packageName,
-                             String selectedLanguage,
-                             String outputLocation) {
+    public Map fillOptionMap() {
         Map optionMap = new HashMap();
         //WSDL file name
         optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
@@ -71,27 +66,27 @@ public class CodegenBean {
                         getStringArray(WSDLFileName)));
 
         //Async only
-        if (isAyncOnly) {
+        if (asyncOnly) {
             optionMap.put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
                     new CommandLineOption(
                             CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
                             new String[0]));
         }
         //sync only
-        if (isSyncOnly) {
+        if (syncOnly) {
             optionMap.put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
                     new CommandLineOption(
                             CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
                             new String[0]));
         }
         //serverside
-        if (isServerSide) {
+        if (serverSide) {
             optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
                     new CommandLineOption(
                             CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
                             new String[0]));
             //server xml
-            if (isServerXML) {
+            if (generateServerXml) {
                 optionMap.put(
                         CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                         new CommandLineOption(
@@ -100,7 +95,7 @@ public class CodegenBean {
             }
         }
         //test case
-        if (isTestCase) {
+        if (testcase) {
             optionMap.put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
                     new CommandLineOption(
                             CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
@@ -115,16 +110,16 @@ public class CodegenBean {
         optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                        getStringArray(selectedLanguage)));
+                        getStringArray(language)));
         //output location
         optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                        getStringArray(outputLocation)));
+                        getStringArray(output)));
 
         // System.out.println(page3.getOutputLocation());
-       optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
-               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(0+"")));
+        optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(dbType)));
         return optionMap;
     }
 
@@ -138,20 +133,11 @@ public class CodegenBean {
     public WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
             IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
-        return WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1).build(in).getDescription();
+        return WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1).build(in).getDescription();
     }
 
     public void execute() throws Exception {
-        Map optionsMap = fillOptionMap(
-                isAsyncOnly(),
-                isSyncOnly(),
-                isServerSide(),
-                isGenerateServerXml(),
-                isTestcase(),
-                getWSDLFileName(),
-                getPackageName(),
-                getLanguage(),
-                getOutput());
+        Map optionsMap = fillOptionMap();
         CommandLineOptionParser parser = new CommandLineOptionParser(optionsMap);
         CodeGenerationEngine codegen = new CodeGenerationEngine(parser);
         codegen.generate();
@@ -227,6 +213,14 @@ public class CodegenBean {
 
     public void setTestcase(boolean testcase) {
         this.testcase = testcase;
+    }
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
     }
 
 }

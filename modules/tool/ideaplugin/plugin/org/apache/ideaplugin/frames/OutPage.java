@@ -3,17 +3,8 @@ package org.apache.ideaplugin.frames;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -48,11 +39,11 @@ public class OutPage extends JPanel implements ObjectKeeper, ActionListener {
     JTextField txtjarName;
 
     public final JFileChooser fc = new JFileChooser();
-    MainFrame parent;
+    ServiceArciveFrame parent;
     private JPanel previous;
 
 
-    public OutPage( MainFrame parent) {
+    public OutPage(ServiceArciveFrame parent) {
         this.parent = parent;
         OutPageLayout customLayout = new OutPageLayout();
 
@@ -98,31 +89,31 @@ public class OutPage extends JPanel implements ObjectKeeper, ActionListener {
     }
 
     public JPanel getPrivious() {
-        return this.previous; 
+        return this.previous;
     }
 
     public String getTopLable() {
-           return "Output location selection";
-       }
+        return "Output location selection";
+    }
 
-       public String getLable() {
-           return "Select output location and archive name";  
-       }
+    public String getLable() {
+        return "Select output location and archive name";
+    }
 
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == butselect){
+        if (obj == butselect) {
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 File newfile = fc.getSelectedFile();
                 txtoutput.setText(newfile.getAbsolutePath());
-            }  else {
+            } else {
                 txtoutput.setText("");
             }
-            parent.setEnable(false,false,true,true);
+            parent.setEnable(false, false, true, true);
         }
     }
 }
@@ -149,8 +140,7 @@ class OutPageLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
@@ -158,15 +148,25 @@ class OutPageLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+16,152,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 16, 152, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+168,insets.top+16,312,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 168, insets.top + 16, 312, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+488,insets.top+16,72,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 488, insets.top + 16, 72, 24);
+        }
         c = parent.getComponent(3);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+56,152,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 56, 152, 24);
+        }
         c = parent.getComponent(4);
-        if (c.isVisible()) {c.setBounds(insets.left+168,insets.top+56,312,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 168, insets.top + 56, 312, 24);
+        }
     }
 }
 

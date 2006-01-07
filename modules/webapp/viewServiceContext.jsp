@@ -5,6 +5,7 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.apache.axis2.description.AxisService"%>
 <%--
   Created by IntelliJ IDEA.
   User: Indika Deepal
@@ -23,9 +24,10 @@
     String sgID = request.getParameter("PID");
     String ID = request.getParameter("ID");
     ServiceGroupContext sgContext = (ServiceGroupContext) serviceGroupContextsMap.get(sgID);
+    AxisService service = sgContext.getDescription().getService(ID);
     ServiceContext serviceContext = null;
     if (sgContext != null) {
-        serviceContext = sgContext.getServiceContext(ID);
+        serviceContext = sgContext.getServiceContext(service);
     }
     if (sgID != null && serviceContext != null) {
         if (type != null) {

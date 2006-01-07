@@ -2,20 +2,13 @@ package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 
 /*
@@ -41,7 +34,7 @@ import java.io.File;
  * Date: Jul 20, 2005
  * Time: 3:35:47 PM
  */
-public class FirstPanel extends JPanel implements ActionListener {
+public class FirstPanel extends JPanel implements ActionListener, MouseListener {
 
     JLabel lblWSDL;
     JTextField txtWSDL;
@@ -59,6 +52,8 @@ public class FirstPanel extends JPanel implements ActionListener {
 
         txtWSDL = new JTextField("");
         add(txtWSDL);
+        txtWSDL.addActionListener(this);
+        txtWSDL.addMouseListener(this);
 
         btnBrowse = new JButton("Browse...");
         add(btnBrowse);
@@ -70,20 +65,68 @@ public class FirstPanel extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == btnBrowse){
+        if (obj == btnBrowse) {
             fc.setFileFilter(new WSDLFileFilter());
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
                 txtWSDL.setText(file.getAbsolutePath());
-                BottomPanel.setEnable(true , false , true);
+                BottomPanel.setEnable(true, false, true);
                 codegenBean.setWSDLFileName(file.getAbsolutePath());
             } else {
                 System.out.println("no file");
             }
+        } else if (obj == txtWSDL) {
+            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
+                BottomPanel.setEnable(true, false, true);
+                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+            }
 
         }
 
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        Object obj = e.getSource();
+        if (obj == txtWSDL) {
+            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
+                BottomPanel.setEnable(true, false, true);
+                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+            }
+        }
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+        Object obj = e.getSource();
+        if (obj == txtWSDL) {
+            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
+                BottomPanel.setEnable(true, false, true);
+                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+            }
+        }
+    }
+
+    public void mousePressed(MouseEvent e) {
+        Object obj = e.getSource();
+        if (obj == txtWSDL) {
+            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
+                BottomPanel.setEnable(true, false, true);
+                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+            }
+        }
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        Object obj = e.getSource();
+        if (obj == txtWSDL) {
+            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
+                BottomPanel.setEnable(true, false, true);
+                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+            }
+        }
     }
 }
 
@@ -95,11 +138,7 @@ class WSDLFileFilter extends FileFilter {
         }
         String extension = getExtension(f);
         if (extension != null) {
-            if (extension.equals("wsdl")) {
-                return true;
-            } else {
-                return false;
-            }
+            return extension.equals("wsdl");
         }
 
         return false;
@@ -115,8 +154,8 @@ class WSDLFileFilter extends FileFilter {
         String s = f.getName();
         int i = s.lastIndexOf('.');
 
-        if (i > 0 &&  i < s.length() - 1) {
-            ext = s.substring(i+1).toLowerCase();
+        if (i > 0 && i < s.length() - 1) {
+            ext = s.substring(i + 1).toLowerCase();
         }
         return ext;
     }
@@ -145,8 +184,7 @@ class FirstPanelLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
@@ -154,10 +192,16 @@ class FirstPanelLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+8,72,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 8, 72, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+88,insets.top+8,350,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 88, insets.top + 8, 350, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+448,insets.top+8,90,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 448, insets.top + 8, 90, 24);
+        }
     }
 }

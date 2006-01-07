@@ -62,7 +62,7 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
     private JPanel previous;
     protected File file;
     protected Insets insets;
-    protected MainFrame parent;
+    protected ServiceArciveFrame parent;
     protected String fileName;
     protected int count = 1;
     protected HashMap operations;
@@ -70,7 +70,7 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
     protected DescriptorFile disfile;
     protected String sgXMl;
 
-    public SelectPanel(MainFrame parent , File file ) {
+    public SelectPanel(ServiceArciveFrame parent , File file ) {
         this.parent = parent;
         this.file =file;
 

@@ -1,17 +1,9 @@
 package org.apache.ideaplugin.frames;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import org.apache.axis2.tools.idea.Java2CodeFrame;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*
@@ -49,8 +41,8 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         setBackground(Color.white);
         Dimension dim = getPreferredSize();
         setSize(dim);
-        setBounds(200,200,dim.width ,dim.height);
-        setBounds(200,200,dim.width ,dim.height);
+        setBounds(200, 200, dim.width, dim.height);
+        setBounds(200, 200, dim.width, dim.height);
         Axi2PluginPageLayout customLayout = new Axi2PluginPageLayout();
 
         getContentPane().setFont(new Font("Helvetica", Font.PLAIN, 12));
@@ -61,7 +53,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         cbg.add(service);
         getContentPane().add(service);
 
-        javawsdl = new JRadioButton("WSDL2Java codegenaration", false);
+        javawsdl = new JRadioButton("WSDL2Code codegenaration", false);
         cbg.add(javawsdl);
         getContentPane().add(javawsdl);
 
@@ -80,10 +72,11 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
     }
 
 
-    public void showUI(){
+    public void showUI() {
         pack();
         show();
     }
+
     public static void main(String args[]) {
         Axi2PluginPage window = new Axi2PluginPage();
         window.showUI();
@@ -91,17 +84,17 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == butCancle){
+        if (obj == butCancle) {
             this.hide();
             setVisible(false);
-        } else if(obj == butOK){
+        } else if (obj == butOK) {
             this.hide();
             setVisible(false);
-            if(javawsdl.isSelected()){
-                org.apache.axis2.tools.idea.Window win = new org.apache.axis2.tools.idea.Window();
+            if (javawsdl.isSelected()) {
+                Java2CodeFrame win = new Java2CodeFrame();
                 win.showUI();
-            }   else {
-                MainFrame window = new MainFrame();
+            } else {
+                ServiceArciveFrame window = new ServiceArciveFrame();
                 window.setTitle("Service Rchive creation");
                 window.show();
             }
@@ -132,21 +125,31 @@ class Axi2PluginPageLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        return  new Dimension(0, 0);
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
         Insets insets = parent.getInsets();
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+24,insets.top+104,208,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 24, insets.top + 104, 208, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+24,insets.top+136,208,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 24, insets.top + 136, 208, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+130,insets.top+200,80,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 130, insets.top + 200, 80, 24);
+        }
         c = parent.getComponent(3);
-        if (c.isVisible()) {c.setBounds(insets.left+215,insets.top+200,80,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 215, insets.top + 200, 80, 24);
+        }
         c = parent.getComponent(4);
-        if (c.isVisible()) {c.setBounds(insets.left,insets.top,320,80);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left, insets.top, 320, 80);
+        }
     }
 }

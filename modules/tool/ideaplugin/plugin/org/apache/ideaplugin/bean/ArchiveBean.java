@@ -32,7 +32,7 @@ public class ArchiveBean {
 
     private boolean singleService = false;
     private boolean generetServiceDesc = false;
-    private File classLocation ;
+    private File classLocation;
     private ClassLoader classLoader;
     private String ServiceXML;
 
@@ -59,6 +59,7 @@ public class ArchiveBean {
     public void setGeneretServiceDesc(boolean generetServiceDesc) {
         this.generetServiceDesc = generetServiceDesc;
     }
+
     public File getClassLocation() {
         return classLocation;
     }
@@ -107,22 +108,22 @@ public class ArchiveBean {
         this.archiveName = archiveName;
     }
 
-    public void finsh(){
+    public void finsh() {
         //Creating out File
         try {
             File outFile = new File(getOutPath());
-            File tempfile = new File(outFile,"temp");
-            if(!tempfile.exists()){
+            File tempfile = new File(outFile, "temp");
+            if (!tempfile.exists()) {
                 tempfile.mkdirs();
             }
             //creating META-INF
-            File metainf = new File(tempfile,"META-INF");
-            if(!metainf.exists()){
+            File metainf = new File(tempfile, "META-INF");
+            if (!metainf.exists()) {
                 metainf.mkdir();
             }
 
             // Writing services.xml
-            File servicexml = new File(metainf,"services.xml");
+            File servicexml = new File(metainf, "services.xml");
             FileWriter writer = new FileWriter(servicexml);
             writer.write(getServiceXML());
             writer.flush();
@@ -130,30 +131,30 @@ public class ArchiveBean {
 
             //Coping class files
             FileCopier fc = new FileCopier();
-            fc.copyFiles(getClassLocation(),tempfile,null);
+            fc.copyFiles(getClassLocation(), tempfile, null);
 
             // Coping wsdl files
-            File lib = new File(tempfile,"lib");
-            if(!lib.exists()){
+            File lib = new File(tempfile, "lib");
+            if (!lib.exists()) {
                 lib.mkdir();
             }
             for (int i = 0; i < libs.size(); i++) {
                 String libname = (String) libs.get(i);
-                fc.copyFiles(new File(libname),lib,null);
+                fc.copyFiles(new File(libname), lib, null);
             }
 
             //coping wsdl files
             for (int i = 0; i < wsdls.size(); i++) {
                 String libname = (String) wsdls.get(i);
-                fc.copyFiles(new File(libname),metainf,null);
+                fc.copyFiles(new File(libname), metainf, null);
             }
 
-            String arcivename =getArchiveName();
-            if(arcivename.indexOf(".jar") < 0){
-                 arcivename = arcivename + ".jar";
+            String arcivename = getArchiveName();
+            if (arcivename.indexOf(".aar") < 0) {
+                arcivename = arcivename + ".aar";
             }
             JarFileWriter jwriter = new JarFileWriter();
-            jwriter.writeJarFile(outFile,arcivename,tempfile);
+            jwriter.writeJarFile(outFile, arcivename, tempfile);
             //craeting the jar file
             deleteDir(tempfile);
 //
@@ -166,10 +167,10 @@ public class ArchiveBean {
         }
     }
 
-     private boolean deleteDir(File dir) {
+    private boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
+            for (int i = 0; i < children.length; i++) {
                 boolean success = deleteDir(new File(dir, children[i]));
                 if (!success) {
                     return false;

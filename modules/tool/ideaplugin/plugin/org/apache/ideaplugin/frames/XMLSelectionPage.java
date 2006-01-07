@@ -51,8 +51,8 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
     String value;
     private JPanel previous;
 
-    protected MainFrame parent;
-    public XMLSelectionPage(MainFrame parent) {
+    protected ServiceArciveFrame parent;
+    public XMLSelectionPage(ServiceArciveFrame parent) {
         Insets insets = parent.getInsets();
         this.parent = parent;
         setFont(new Font("Helvetica", Font.PLAIN, 12));

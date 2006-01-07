@@ -33,7 +33,7 @@ public class ServiceArchiveCreator extends AnAction {
 //        } catch (MalformedURLException e) {
 //
 //        }
-        Window win = new Window();
+        Java2CodeFrame win = new Java2CodeFrame();
     //    win.setClassLoader(contextClasLoader);
         win.showUI();
 //        System.gc();

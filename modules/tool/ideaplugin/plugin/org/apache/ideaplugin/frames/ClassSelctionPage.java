@@ -46,11 +46,11 @@ public class ClassSelctionPage extends JPanel implements ObjectKeeper, ActionLis
 
     File file;
     Insets insets;
-    MainFrame parent;
+    ServiceArciveFrame parent;
 //    protected SelectPanel selectPanel;
 
 
-    public ClassSelctionPage(MainFrame parent) {
+    public ClassSelctionPage(ServiceArciveFrame parent) {
         this.parent = parent;
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));

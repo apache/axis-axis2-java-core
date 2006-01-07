@@ -48,9 +48,9 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
 
     private JPanel previous;
     protected ClassSelctionPage classPage;
-    MainFrame parent;
+    ServiceArciveFrame parent;
 
-    public FirstFrame(MainFrame parent) {
+    public FirstFrame(ServiceArciveFrame parent) {
         this.parent = parent;
         FirstFrameLayout customLayout = new FirstFrameLayout();
         setFont(new Font("Helvetica", Font.PLAIN, 12));

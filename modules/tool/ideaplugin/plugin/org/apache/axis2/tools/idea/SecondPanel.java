@@ -54,7 +54,6 @@ public class SecondPanel extends JPanel {
         comlanguage = new JComboBox();
         comlanguage.addItem("Java");
         comlanguage.addItem("C#");
-        comlanguage.addItem("C++");
         add(comlanguage);
 
         cbg = new ButtonGroup();
@@ -73,10 +72,10 @@ public class SecondPanel extends JPanel {
         databiding = new JLabel("Select Databinding type");
         add(databiding);
         databindingType = new JComboBox();
-        databindingType.addItem("Default");
-        databindingType.addItem("XML_BEANS");
-        databindingType.addItem("JAXB");
-        databindingType.setEnabled(false);
+        databindingType.addItem("adb");
+        databindingType.addItem("xmlbeans");
+        databindingType.addItem("none");
+        databindingType.setEnabled(true);
         add(databindingType);
 
         lblpakage = new JLabel("Set the package name");
@@ -93,18 +92,31 @@ public class SecondPanel extends JPanel {
         int index = comlanguage.getSelectedIndex();
         switch (index) {
             case 0: {
-                codegenBean.setLanguage(TestConstants.);
+                codegenBean.setLanguage("java");
                 break;
             }
             case 1: {
-                codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.C_SHARP);
-                break;
-            }
-            case 2 : {
-                codegenBean.setLanguage(CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS);
+                codegenBean.setLanguage("c-sharp");
                 break;
             }
         }
+
+        index = databindingType.getSelectedIndex();
+        switch (index) {
+            case 0: {
+                codegenBean.setDbType("adb");
+                break;
+            }
+            case 1: {
+                codegenBean.setDbType("xmlbeans");
+                break;
+            }
+            case 2: {
+                codegenBean.setDbType("none");
+                break;
+            }
+        }
+
         if (rdasync.isSelected()) {
             codegenBean.setAsyncOnly(true);
         } else if (rdsyn.isSelected()) {
@@ -139,8 +151,7 @@ class SecondPanelLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
@@ -149,7 +160,7 @@ class SecondPanelLayout implements LayoutManager {
         Component c;
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 0, insets.top + 5, 200, 20);
+            c.setBounds(insets.left, insets.top + 5, 200, 20);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
