@@ -190,11 +190,11 @@ optimized at any case. They will be serialized and send as Base64 Strings.</p>
 
 <p>Set the "enableMTOM" property in the call to true, when sending
 messages.</p>
-<source><pre>        Call call = new Call();
+<source><pre>        ServiceClient serviceClient = new ServiceClient ();
         Options options = new Options();
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        call.setClientOptions(options);</pre>
+        serviceClient .setOptions(options);</pre>
 </source>
 <p>When this property is set to true any SOAP envelope which contains
 optimizable content (OMText nodes containing binary content with optimizable
@@ -204,11 +204,11 @@ though MTOM is enabled. But due considering the policy assertions, there may
 be a policy saying, all the request should be optimized eventhough there are
 any optimized contents. To support this phenomenon there is an entry called
 "forced mime" which has to be set as</p>
-<source><pre>        Call call = new Call();
+<source><pre>        ServiceClient serviceClient = new ServiceClient ();
         Options options = new Options();
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.FORCE_MIME, Constants.VALUE_TRUE);
-        call.setClientOptions(options);</pre>
+        serviceClient.setOptions(options);</pre>
 </source>
 <p></p>
 
