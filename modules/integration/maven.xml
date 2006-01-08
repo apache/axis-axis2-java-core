@@ -16,6 +16,22 @@
               tofile="target/itest-classes/modules/addressing.mar"/>
     </postGoal>
 
+    <preGoal name="test:compile">
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <classpath refid="maven.dependency.classpath"/>
+            <arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -t -ss -sd -uri test/samples/wsdl/perf/perf.wsdl"/>
+		</java>
+        <ant:copy overwrite="yes" todir="target/perf/test/samples/perf">
+            <ant:fileset dir="test/samples/wsdl/perf">
+                <ant:include name="*Skeleton.java"/>
+            </ant:fileset>
+        </ant:copy>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf" target="make.repo"/>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf" target="jar.client"/>
+		<ant:path id="samples.wsdl.perf.client.jar" location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
+        <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf.client.jar"/>
+    </preGoal>
+
     <postGoal name="test:compile">
       <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
         <mkdir dir="target/test-resources/samples/modules"/>
