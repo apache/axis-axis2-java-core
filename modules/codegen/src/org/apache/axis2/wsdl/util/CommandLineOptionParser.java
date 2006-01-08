@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.codegen;
+package org.apache.axis2.wsdl.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +67,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                     // new one but old one should be saved
                     commandLineOption =
                             new CommandLineOption(optionType, optionBundle);
-                    commandLineOptions.put(commandLineOption.getType(),
+                    commandLineOptions.put(commandLineOption.getOptionType(),
                             commandLineOption);
                     state = 1;
                     optionType = args[i];
@@ -80,7 +80,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                             new CommandLineOption(
                                     CommandLineOptionConstants.SOLE_INPUT,
                                     args);
-                    commandLineOptions.put(commandLineOption.getType(),
+                    commandLineOptions.put(commandLineOption.getOptionType(),
                             commandLineOption);
                     return commandLineOptions;
 
@@ -99,7 +99,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
         }
 
         commandLineOption = new CommandLineOption(optionType, optionBundle);
-        commandLineOptions.put(commandLineOption.getType(), commandLineOption);
+        commandLineOptions.put(commandLineOption.getOptionType(), commandLineOption);
         return commandLineOptions;
     }
 
@@ -113,7 +113,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
         while (iterator.hasNext()) {
             CommandLineOption commandLineOption = ((CommandLineOption) (iterator
                     .next()));
-            if (commandLineOption.isInvalid()) {
+            if (OptionValidator.isInvalid(commandLineOption)) {
                 faultList.add(commandLineOption);
             }
         }

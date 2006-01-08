@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.codegen;
+package org.apache.axis2.wsdl.util;
 
 public interface CommandLineOptionConstants {
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
 
     public static final String WSDL_LOCATION_URI_OPTION = "uri";
+
+     //short option constants
     public static final String OUTPUT_LOCATION_OPTION = "o";
     public static final String SERVER_SIDE_CODE_OPTION = "ss";
     public static final String GENERATE_SERVICE_DESCRIPTION_OPTION = "sd";
@@ -32,6 +34,20 @@ public interface CommandLineOptionConstants {
     public static final String DATA_BINDING_TYPE_OPTION = "d";
     public static final String UNPACK_CLASSES_OPTION = "u";
     public static final String GENERATE_ALL_OPTION = "g";
+
+     //long option constants
+    public static final String OUTPUT_LOCATION_OPTION_LONG = "output";
+    public static final String SERVER_SIDE_CODE_OPTION_LONG = "server-side";
+    public static final String GENERATE_SERVICE_DESCRIPTION_OPTION_LONG = "service-description";
+    public static final String CODEGEN_ASYNC_ONLY_OPTION_LONG = "async";
+    public static final String CODEGEN_SYNC_ONLY_OPTION_LONG = "sync";
+    public static final String PACKAGE_OPTION_LONG = "package";
+    public static final String STUB_LANGUAGE_OPTION_LONG = "language";
+    public static final String GENERATE_TEST_CASE_OPTION_LONG = "test-case";
+    public static final String DATA_BINDING_TYPE_OPTION_LONG = "databinding-method";
+    public static final String UNPACK_CLASSES_OPTION_LONG = "unpack-classes";
+    public static final String GENERATE_ALL_OPTION_LONG = "generate-all";
+
 
     public static final String INVALID_OPTION = "INVALID_OPTION";
 

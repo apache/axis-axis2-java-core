@@ -21,7 +21,10 @@ import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
@@ -42,13 +45,16 @@ public class CodeGenerationEngine {
 
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
         WSDLDescription wom;
+        Map allOptions = parser.getAllOptions();
         try {
-            wom = this.getWOM(parser);
+
+            CommandLineOption option = (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION);
+            wom = this.getWOM(option.getOptionValue());
         } catch (WSDLException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
 
-        configuration = new CodeGenConfiguration(wom, parser);
+        configuration = new CodeGenConfiguration(wom, allOptions);
         loadExtensions();
     }
 
@@ -99,9 +105,9 @@ public class CodeGenerationEngine {
 
             if (configuration.isServerSide()) {
                 emitter.emitSkeleton();
-            } 
-            
-            if(!configuration.isServerSide() || configuration.isWriteTestCase()){
+            }
+
+            if (!configuration.isServerSide() || configuration.isWriteTestCase()) {
                 emitter.emitStub();
             }
 
@@ -116,9 +122,9 @@ public class CodeGenerationEngine {
     }
 
 
-    private WSDLDescription getWOM(CommandLineOptionParser parser) throws WSDLException{
-        String uri = ((CommandLineOption) parser.getAllOptions().get(
-                CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
+    private WSDLDescription getWOM(String uri) throws WSDLException {
+        //assume that the builder is always WSDL 1.1 - later we'll have to edit this to allow
+        //WSDL ersion to be passed
         return WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(uri)
                 .getDescription();
     }

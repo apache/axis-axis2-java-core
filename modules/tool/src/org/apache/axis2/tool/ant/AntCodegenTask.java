@@ -18,9 +18,9 @@ package org.apache.axis2.tool.ant;
 
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.codegen.CommandLineOption;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;

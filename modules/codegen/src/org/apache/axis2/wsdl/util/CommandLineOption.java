@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.codegen;
+package org.apache.axis2.wsdl.util;
 
 import java.util.ArrayList;
 
@@ -22,10 +22,9 @@ public class CommandLineOption implements CommandLineOptionConstants {
 
     private String type;
     private ArrayList optionValues;
-    private boolean invalid = false;
 
     public CommandLineOption(String type, String[] values) {
-        updateType(type);
+        setOptionType(type);
         ArrayList arrayList = new ArrayList(values.length);
         for (int i = 0; i < values.length; i++) {
             arrayList.add(values[i]);
@@ -33,7 +32,9 @@ public class CommandLineOption implements CommandLineOptionConstants {
         this.optionValues = arrayList;
     }
 
-    private void updateType(String type) {
+    private void setOptionType(String type) {
+        //cater for the long options first
+        if (type.startsWith("--")) type = type.replaceFirst("--", "");
         if (type.startsWith("-")) type = type.replaceFirst("-", "");
 
         //for options that start with the extra prefix, don't do any change for the
@@ -48,8 +49,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
      * @param type
      */
     public CommandLineOption(String type, ArrayList values) {
-        updateType(type);
-        this.validate(this.type);
+        setOptionType(type);
 
         if (null != values) {
             this.optionValues = values;
@@ -61,7 +61,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
      * @return Returns the type.
      * @see <code>CommandLineOptionConstans</code>
      */
-    public String getType() {
+    public String getOptionType() {
         return type;
     }
 
@@ -76,12 +76,6 @@ public class CommandLineOption implements CommandLineOptionConstants {
             return null;
     }
 
-    /**
-     * @return Returns boolean.
-     */
-    public boolean isInvalid() {
-        return invalid;
-    }
 
 
     /**
@@ -91,25 +85,5 @@ public class CommandLineOption implements CommandLineOptionConstants {
         return optionValues;
     }
 
-    private void validate(String optionType) {
 
-        if (optionType.startsWith(EXTRA_OPTIONTYPE_PREFIX)){
-            invalid = false;
-        } else{
-            invalid = !((WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(optionType) ||
-                    (OUTPUT_LOCATION_OPTION).equalsIgnoreCase(optionType) ||
-                    (SERVER_SIDE_CODE_OPTION).equalsIgnoreCase(optionType) ||
-                    (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
-                    (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
-                    (PACKAGE_OPTION).equalsIgnoreCase(optionType) ||
-                    (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType) ||
-                    (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType) ||
-                    (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType) ||
-                    (DATA_BINDING_TYPE_OPTION).equalsIgnoreCase(optionType) ||
-                    (UNPACK_CLASSES_OPTION).equalsIgnoreCase(optionType) ||
-                    (GENERATE_ALL_OPTION).equalsIgnoreCase(optionType))
-                    ;
-        }
-
-    }
 }

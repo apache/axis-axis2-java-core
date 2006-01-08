@@ -136,6 +136,7 @@ public class JavaBeanWriter implements BeanWriter {
 
         try {
             QName qName = element.getQName();
+           
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);

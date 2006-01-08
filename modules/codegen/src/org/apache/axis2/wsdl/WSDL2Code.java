@@ -17,8 +17,8 @@
 package org.apache.axis2.wsdl;
 
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 public class WSDL2Code {
@@ -33,7 +33,7 @@ public class WSDL2Code {
     }
 
     private static void printUsage() {
-        
+
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg1"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg2"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg3"));

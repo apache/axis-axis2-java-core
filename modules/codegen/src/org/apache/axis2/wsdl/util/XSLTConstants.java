@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.codegen;
+package org.apache.axis2.wsdl.util;
 
 import javax.xml.namespace.QName;
  //todo rename this

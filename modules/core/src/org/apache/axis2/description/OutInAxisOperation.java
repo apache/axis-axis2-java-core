@@ -315,6 +315,7 @@ class OutInAxisOperationClient implements OperationClient {
         MessageContext responseMessageContext = new MessageContext();
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
+        
         // This is a hack - Needs to change
         responseMessageContext.setOptions(options);
 

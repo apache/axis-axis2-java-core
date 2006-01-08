@@ -19,7 +19,10 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
@@ -30,7 +33,6 @@ import java.util.Map;
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private WSDLDescription wom;
-    private CommandLineOptionParser parser;
     private File outputLocation;
 
     //get the defaults for these from the property file
@@ -194,16 +196,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
 
     /**
-     * @param wom
-     * @param parser
-     */
-    public CodeGenConfiguration(WSDLDescription wom,
-                                CommandLineOptionParser parser) {
-        this(wom, parser.getAllOptions());
-        this.parser = parser;
-    }
-
-    /**
      * Constructor for the configuration. It populates the values using the options map.
      *
      * @param wom
@@ -284,22 +276,15 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         Iterator keyIterator = optionMap.keySet().iterator();
         while (keyIterator.hasNext()) {
             Object key = keyIterator.next();
-            CommandLineOption option =  (CommandLineOption)optionMap.get(key);
-            if (key.toString().startsWith(EXTRA_OPTIONTYPE_PREFIX)){
+            CommandLineOption option = (CommandLineOption) optionMap.get(key);
+            if (key.toString().startsWith(EXTRA_OPTIONTYPE_PREFIX)) {
                 //add this to the property map
-                configurationProperties.put(key.toString().replaceFirst("E",""),option.getOptionValue());
+                configurationProperties.put(key.toString().replaceFirst(EXTRA_OPTIONTYPE_PREFIX, ""), option.getOptionValue());
             }
         }
 
     }
 
-
-    /**
-     * @return Returns the parser.
-     */
-    public CommandLineOptionParser getParser() {
-        return parser;
-    }
 
     /**
      * @return Returns the wom.

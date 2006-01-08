@@ -127,7 +127,7 @@
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
-              org.apache.axis2.soap.SOAPEnvelope env;
+              org.apache.axis2.soap.SOAPEnvelope env = null;
                     <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
                         <!-- test the number of input parameters
