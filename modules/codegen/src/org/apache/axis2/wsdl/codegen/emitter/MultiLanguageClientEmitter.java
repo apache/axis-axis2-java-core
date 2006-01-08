@@ -217,7 +217,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 writeMessageReceiver(axisBinding);
                 //write the ant build if not asked for all
                 if (!configuration.isGenerateAll()) {
-                    writeAntBuild(axisBinding.getBoundInterface(), axisBinding);
+                    writeAntBuild(axisBinding.getBoundInterface(), axisBinding, wom);
                 }
 
             }
@@ -315,7 +315,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //write a testservice.xml that will load the dummy skeleton impl for testing
                 //writeTestServiceXML(axisBinding);
                 //write an ant build file
-                writeAntBuild(axisBinding.getBoundInterface(), axisBinding);
+                writeAntBuild(axisBinding.getBoundInterface(), axisBinding, wom);
             }
         }
     }
@@ -469,10 +469,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param axisBinding
      * @throws Exception
      */
-    protected void writeAntBuild(WSDLInterface axisInterface, WSDLBinding axisBinding) throws Exception {
+    protected void writeAntBuild(WSDLInterface axisInterface, WSDLBinding axisBinding, WSDLDescription desc) throws Exception {
         //Write the service xml in a folder with the
         Document skeletonModel = createDOMDocumentForAntBuild(
-                axisInterface, axisBinding);
+                axisInterface, axisBinding, desc);
 
 
         AntBuildWriter antBuildWriter = new AntBuildWriter(
@@ -785,16 +785,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         Document doc = getEmptyDocument();
         String porttypeName = makeJavaClassName(boundInterface.getName().getLocalPart());
 
-        //find service that are attached to this binding
-        Map serviceMap  =  description.getServices();
-        Map relevantServicesMap = new HashMap();
-        Iterator serviceIterator = serviceMap.values().iterator();
-        while (serviceIterator.hasNext()) {
-            WSDLService service = (WSDLService)serviceIterator.next();
-            if (service.getServiceInterface().equals(boundInterface)){
-                relevantServicesMap.put(service.getName(),service);
-            }
-        }
+        Map relevantServicesMap = getServicesMap(description, boundInterface);
 
         Iterator relevantServicesIterator = relevantServicesMap.keySet().iterator();
         if (relevantServicesMap.isEmpty()){
@@ -838,6 +829,20 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
 
         return doc;
+    }
+
+    private Map getServicesMap(WSDLDescription description, WSDLInterface boundInterface) {
+        //find service that are attached to this binding
+        Map serviceMap  =  description.getServices();
+        Map relevantServicesMap = new HashMap();
+        Iterator serviceIterator = serviceMap.values().iterator();
+        while (serviceIterator.hasNext()) {
+            WSDLService service = (WSDLService)serviceIterator.next();
+            if (service.getServiceInterface().equals(boundInterface)){
+                relevantServicesMap.put(service.getName(),service);
+            }
+        }
+        return relevantServicesMap;
     }
 
     /**
@@ -939,7 +944,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param wsdlInterface
      * @param axisBinding
      */
-    protected Document createDOMDocumentForAntBuild(WSDLInterface wsdlInterface, WSDLBinding axisBinding) {
+    protected Document createDOMDocumentForAntBuild(WSDLInterface wsdlInterface, WSDLBinding axisBinding, 
+                                                    WSDLDescription desc) {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("ant");
@@ -955,6 +961,18 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "name",
                 localPart,
                 rootElement);
+        
+        String servicename = localPart;
+        Map relevantServicesMap = getServicesMap(desc, wsdlInterface);
+        if(relevantServicesMap.size()>0){
+            servicename = ((QName)relevantServicesMap.keySet().iterator().next()).getLocalPart();    
+        }
+        
+        addAttribute(doc, 
+                "servicename", 
+                servicename, 
+                rootElement);
+        
         doc.appendChild(rootElement);
         return doc;
 
