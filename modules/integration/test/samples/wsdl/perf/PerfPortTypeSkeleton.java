@@ -13,11 +13,11 @@ public class PerfPortTypeSkeleton {
      *
      * @param param0
      */
-    /*public OutputElementDocument handleStringArray(
+    public OutputElementDocument handleStringArray(
         InputElementDocument param0) {
 
         OutputElementDocument output = OutputElementDocument.Factory.newInstance();
         output.setOutputElement("The Array length is - " + param0.getInputElement().getItemArray().length);
         return output;
-    } */
+    } 
 }

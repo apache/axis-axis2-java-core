@@ -61,7 +61,7 @@ public class PerfPortTypeTest extends TestCase {
     /**
      * Auto generated test method
      */
-   /* public void testhandleStringArray() throws java.lang.Exception {
+   public void testhandleStringArray() throws java.lang.Exception {
         PerfPortTypeStub stub = new PerfPortTypeStub(null, targetEpr);
         //create a new databinder
         stub._getOptions().setSoapAction("handleStringArray");
@@ -93,5 +93,5 @@ public class PerfPortTypeTest extends TestCase {
     public static void main(String[] args) throws Exception {
         PerfPortTypeTest test = new PerfPortTypeTest();
         test.testhandleStringArray();
-    } */
+    }
 }
