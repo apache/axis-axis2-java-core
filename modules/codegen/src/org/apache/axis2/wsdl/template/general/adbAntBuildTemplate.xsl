@@ -48,6 +48,9 @@
                         <xsl:attribute name="name">.maven/repository/junit/jars/*.jar</xsl:attribute>
                     </include>
                     <include>
+                        <xsl:attribute name="name">.maven/repository/stax/jars/*.jar</xsl:attribute>
+                    </include>
+                    <include>
                         <xsl:attribute name="name">.maven/repository/axis2/jars/*.jar</xsl:attribute>
                     </include>
                 </fileset>
