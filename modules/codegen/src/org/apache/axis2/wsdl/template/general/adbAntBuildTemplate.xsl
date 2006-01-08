@@ -12,7 +12,7 @@
                 <xsl:attribute name="value">${env.AXIS2_HOME}</xsl:attribute>
             </property>
             <property name="name">
-                <xsl:attribute name="value">myservice</xsl:attribute>
+                <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
             </property>
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
