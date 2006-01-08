@@ -7,7 +7,7 @@
             <xsl:comment>Auto generated ant build file</xsl:comment>
             <property environment="env"/>
             <property name="axis2.home">
-                <xsl:attribute name="value"></xsl:attribute>
+                <xsl:attribute name="value">${env.AXIS2_HOME}</xsl:attribute>
             </property>
             <property name="name">
                 <xsl:attribute name="value">myservice</xsl:attribute>
@@ -37,15 +37,21 @@
 
             <path id="axis2.class.path">
                 <fileset>
-                    <xsl:attribute name="dir">${env.AXIS2_HOME}</xsl:attribute>
+                    <xsl:attribute name="dir">${axis2.home}</xsl:attribute>
                     <include>
                         <xsl:attribute name="name">lib/*.jar</xsl:attribute>
                     </include>
                 </fileset>
                 <fileset>
-                    <xsl:attribute name="dir">${axis2.home}</xsl:attribute>
+                    <xsl:attribute name="dir">${user.home}</xsl:attribute>
                     <include>
-                        <xsl:attribute name="name">lib/*.jar</xsl:attribute>
+                        <xsl:attribute name="name">.maven/repository/xmlbeans/jars/*.jar</xsl:attribute>
+                    </include>
+                    <include>
+                        <xsl:attribute name="name">.maven/repository/stax/jars/*.jar</xsl:attribute>
+                    </include>
+                    <include>
+                        <xsl:attribute name="name">.maven/repository/axis2/jars/*.jar</xsl:attribute>
                     </include>
                 </fileset>
                 <pathelement>
@@ -141,7 +147,9 @@
                                3. Axis2
                 "></echo>
             </target>
-            <target name="jar.all" depends="compile.all,echo.classpath.problem">
+            <target name="jar.all" depends="jar.server, jar.client">
+            </target>
+            <target name="jar.server" depends="compile.all,echo.classpath.problem">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <copy>
                     <xsl:attribute name="toDir">${classes}/META-INF</xsl:attribute>
@@ -164,7 +172,24 @@
                     </fileset>
                 </jar>
             </target>
-            <target depends="jar.all" name="make.repo" if="jars.ok">
+            <target depends="compile.test" name="jar.client" if="jars.ok">
+                <jar>
+                    <xsl:attribute name="destfile">${lib}/${name}-test-client.jar</xsl:attribute>
+                    <fileset>
+                        <xsl:attribute name="dir">${classes}</xsl:attribute>
+                        <exclude><xsl:attribute name="name">**/META-INF/*.*</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/lib/*.*</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*Skeleton.class</xsl:attribute></exclude>
+                    </fileset>
+                    <fileset>
+                        <xsl:attribute name="dir">${resources}</xsl:attribute>
+                        <exclude><xsl:attribute name="name">**/*.wsdl</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*.xml</xsl:attribute></exclude>
+                    </fileset>
+                </jar>
+            </target>
+            <target depends="jar.server" name="make.repo" if="jars.ok">
                 <mkdir>
                     <xsl:attribute name="dir">${build}/repo/</xsl:attribute>
                 </mkdir>
@@ -186,14 +211,11 @@
                     </classpath>
                 </java>
             </target>
-            <target if="jars.ok" name="run.test" depends="compile.test">
+            <target if="jars.ok" name="run.test" depends="jar.client">
                 <property name="axis2.class.path" refid="axis2.class.path"/>
                 <path id="test.class.path">
                     <pathelement>
-                        <xsl:attribute name="location">${classes}</xsl:attribute>
-                    </pathelement>
-                    <pathelement>
-                        <xsl:attribute name="location">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                        <xsl:attribute name="location">${lib}/${name}-test-client.jar</xsl:attribute>
                     </pathelement>
                     <pathelement>
                         <xsl:attribute name="path">${axis2.class.path}</xsl:attribute>
