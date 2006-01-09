@@ -310,8 +310,63 @@
         <modules:reactor goals="jar:install,test,itest"/>
     </goal>
 
-    <goal name="cleanse-sources">
-        <modules:reactor goals="cleanse-sources"/>
+    <!-- Cleanse source files -->
+    <goal name="cleanse-sources"
+        description="Cleanse source files, removing tabs and translating CRLF -> LF">
+
+        <j:scope xmlns="jelly:ant">
+
+            <!-- Cleanse sources -->
+            <j:set var="srcdir" value="${basedir}/src/java"/>
+            <u:available file="">
+                <fixcrlf srcdir="${srcdir}" eol="lf" eof="remove" tab="remove" tablength="4">
+                    <include name="**/*.java"/>
+                </fixcrlf>
+                <fixcrlf srcdir="${basedir}" eol="lf" eof="remove" tab="remove" tablength="4">
+                    <include name="**/*.xml"/>
+                    <include name="**/*.html"/>
+                </fixcrlf>
+            </u:available>
+
+            <!-- Cleanse test sources -->
+            <j:set var="srcdir" value="${basedir}/src/test"/>
+            <u:available file="${srcdir}">
+                <fixcrlf srcdir="${srcdir}" eol="lf" eof="remove" tab="remove" tablength="4">
+                    <include name="**/*.java"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.html"/>
+                </fixcrlf>
+                <fixcrlf srcdir="${srcdir}" eol="lf" eof="remove" tab="remove" tablength="4">
+                    <include name="**/*.xml"/>
+                    <include name="**/*.html"/>
+                </fixcrlf>
+            </u:available>
+
+            <!-- Cleanse xdocs -->
+            <j:set var="srcdir" value="${basedir}/src/xdocs"/>
+            <u:available file="${srcdir}">
+                <fixcrlf srcdir="${srcdir}" eol="lf" eof="remove" tab="remove" tablength="4">
+                    <include name="**/*.xml"/>
+                    <include name="**/*.html"/>
+                </fixcrlf>
+            </u:available>
+
+            <!-- Cleanse build files -->
+            <fixcrlf srcdir="." eol="lf" tab="remove" eof="remove" tablength="4">
+                <include name="project.xml"/>
+                <include name="maven.xml"/>
+            </fixcrlf>
+
+            <!-- Cleanse scripts -->
+            <j:set var="srcdir" value="${basedir}/src/bin"/>
+            <u:available file="${srcdir}">
+                <fixcrlf srcdir="${srcdir}" eol="lf" eof="remove" tab="remove" tablength="4">
+                    <include name="**/*"/>
+                </fixcrlf>
+            </u:available>
+
+        </j:scope>
+
     </goal>
 
     <goal name="clover">
@@ -569,5 +624,85 @@
         <ant:report format="frames" todir="${basedir}/target/test-reports" styledir="${basedir}/etc"/>
       </ant:junitreport>
     </goal>
+
+    <goal name="rebuild">
+        <attainGoal name="clean"/>
+        <attainGoal name="build"/>
+    </goal>
+
+    <!-- For testing -->
+    <goal name="hello">
+        <ant:echo>
+            H E L L O
+            ---------
+            Module Name ${pom.name} [${pom.currentVersion}]
+            Axis2: ${axis2_version}
+        </ant:echo>
+    </goal>
+
+    <postGoal name="java:prepare-filesystem">
+      <u:file var="file" name="${maven.home}/lib/jalopy.jar"/>
+      <j:if test="${file.exists()}">
+        <ant:path id="jalopy.library">
+          <ant:fileset dir="${maven.home}/lib">
+            <ant:include name="jalopy.jar"/>
+          </ant:fileset>
+        </ant:path>
+        <maven:addPath id="maven.dependency.classpath" refid="jalopy.library"/>
+      </j:if>
+    </postGoal>
+
+    <!-- Remove the log files -->
+    <goal name="clobber"
+        description="Removes all (non-repository installed) build generated files">
+
+        <!-- Let clean:clean do some work first -->
+        <attainGoal name="clean:clean"/>
+
+        <j:jelly xmlns="jelly:ant">
+            <delete quiet="false" failonerror="false">
+                <fileset dir="${basedir}">
+                    <include name="maven.log"/>
+                    <include name="velocity.log*"/>
+                    <include name="junit*.properties"/>
+                </fileset>
+            </delete>
+        </j:jelly>
+
+    </goal>
+    <goal name="java-src"
+        description="Creates an archive containing only java source.">
+
+        <u:available file="${basedir}/src/java">
+            <j:set var="javaSrcBuilt" value="true"/>
+            <ant:mkdir dir="${basedir}/target"/>
+            <ant:jar destfile="${basedir}/target/${pom.artifactId}-${pom.currentVersion}-java-src.jar">
+                <fileset dir="${basedir}/src/java"/>
+                <u:available file="${basedir}/target/xmlbeans">
+                    <fileset dir="${basedir}/target/xmlbeans"/>
+                </u:available>
+            </ant:jar>
+        </u:available>
+
+        <j:if test="${javaSrcBuilt != 'true'}">
+            <u:available file="${basedir}/target/xmlbeans">
+                <j:set var="java-src.built" value="true"/>
+                <ant:mkdir dir="${basedir}/target"/>
+                <ant:jar destfile="${basedir}/target/${pom.artifactId}-${pom.currentVersion}-java-src.jar">
+                    <fileset dir="${basedir}/target/xmlbeans"/>
+                </ant:jar>
+            </u:available>
+        </j:if>
+    </goal>
+
+    <!-- If there is no src/test directory you can
+    turn off clover in that module by overriding this goal to do nothing -->
+    <goal name="clover.wrapper">
+        <attainGoal name="clover"/>
+    </goal>
+
+    <preGoal name="clover:test">
+        <j:set var="cloveroverride" value="true"/>
+    </preGoal>
 </project>
 
