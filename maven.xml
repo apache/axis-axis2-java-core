@@ -714,6 +714,11 @@
             </ant:classpath>
             <ant:excludepackage name="org.apache.axis2.tool.codegen.*"/>
             <ant:excludepackage name="org.apache.axis2.tool.service.*"/>
+            <ant:link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+            <ant:link href="http://java.sun.com/webservices/docs/1.5/api/"/>
+            <ant:link href="http://xerces.apache.org/xerces-j/apiDocs/"/>
+            <ant:link href="http://xml.apache.org/xalan-j/apidocs/"/>
+            <ant:link href="http://xmlbeans.apache.org/docs/2.1.0/reference/"/>
         </ant:javadoc>
     </goal>
 
