@@ -152,6 +152,19 @@ public class HTTPWorker implements HttpRequestHandler {
                         return true;
                     }
                 }
+                if (uri.endsWith("?xsd")) {
+                    String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 4);
+                    HashMap services = configurationContext.getAxisConfiguration().getServices();
+                    AxisService service = (AxisService) services.get(serviceName);
+                    if (service != null) {
+                        response.addHeader(new Header("Content-Type", "text/xml"));
+                        service.printSchema(baos);
+                        byte[] buf = baos.toByteArray();
+                        response.setBody(new ByteArrayInputStream(buf));
+                        conn.writeResponse(response);
+                        return true;
+                    }
+                }
 
                 // It is GET handle the Get request
                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(

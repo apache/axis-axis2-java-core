@@ -460,21 +460,21 @@ public class ListingAgent {
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
         String wsdl = req.getParameter("wsdl");
-
+        String xsd = req.getParameter("xsd");
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
-
             if (serviceObj != null) {
                 if (wsdl != null) {
                     res.setContentType("text/xml");
                     ((AxisService) serviceObj).printWSDL(out, filePart);
-
-//                    PrintWriter out_writer = new PrintWriter(out);
-
-//                    ((AxisService) serviceObj).printWSDL(out_writer, filePart);
                     out.flush();
                     out.close();
-
+                    return;
+                } else if (xsd != null) {
+                    res.setContentType("text/xml");
+                    ((AxisService) serviceObj).printSchema(out);
+                    out.flush();
+                    out.close();
                     return;
                 } else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);

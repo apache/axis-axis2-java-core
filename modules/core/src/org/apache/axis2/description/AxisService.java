@@ -306,6 +306,11 @@ public class AxisService
         operationsAliasesMap.put(action, axisOperation);
     }
 
+
+    public void printSchema(OutputStream out) throws AxisFault {
+        schema.write(out);
+    }
+
     public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
         if (getWSDLDefinition() != null) {
             printUsingWSDLDefinition(out, serviceURL);
