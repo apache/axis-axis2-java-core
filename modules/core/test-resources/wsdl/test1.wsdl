@@ -12,19 +12,7 @@
     xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
     xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
     xmlns:intf="http://ws-policy.tests">
-    
-  <wsp:Policy wsu:Id="Message1-2">
-    <intf:MessagePolicyTestAssertion2 marker="6" />
-  </wsp:Policy>
-    
-  <wsp:Policy wsu:Id="Operation1-2">
-	<intf:OperationPolicyTestAssertion2 marker="6" />
-  </wsp:Policy>
-	
-  <wsp:Policy wsu:Id="Endpoint1-2">
-    <intf:EndpointPolicyTestAssertion2 marker="7" />
-  </wsp:Policy>
-	  
+    	  
   <types>
     <schema targetNamespace="http://xmlsoap.org/Echo"
          xmlns="http://www.w3.org/2001/XMLSchema">
@@ -51,48 +39,29 @@
     <part name="echoResponse" element="tns:EchoResponse"/>
   </message>
 
-  <portType name="EchoPort" wsp:PolicyURIs="#Endpoint1-2">
+  <portType name="EchoPort">
     <operation name="Echo">
-      <wsp:PolicyReference URI="#Operation1-2"/>
-      <input  message="tns:EchoRequest" wsp:PolicyURIs="#Message1-2" wsa:Action="http://tests.org/echo/in"/>
-      <output message="tns:EchoResponse" wsp:PolicyURIs="#Message1-2" wsa:Action="http://tests.org/echo/out" />
+      <input  message="tns:EchoRequest" wsa:Action="http://tests.org/echo/in" />
+      <output message="tns:EchoResponse" wsa:Action="http://tests.org/echo/out" />
     </operation>
   </portType>
 
   <binding name="EchoBinding" type="tns:EchoPort">
-    <wsp:Policy wsu:Id="Endpoint2">
-	  <intf:EndpointPolicyTestAssertion1 marker="6" />
-    </wsp:Policy>
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
 style="document"/>
     <operation name="Echo">
-      <wsp:Policy>
-        <intf:OperationPolicyTestAssertion2 marker="3" />
-      </wsp:Policy> 
       <soap:operation soapAction="http://ws.apache.org/axis2/tests/echo"/>
       <input> 
-        <wsp:Policy>
-          <intf:MessagePolicyTestAssertion1 marker="2" />
-		</wsp:Policy>
         <soap:body use="literal"/>
       </input>
       <output>
         <soap:body use="literal"/>
-        <wsp:Policy>
-          <intf:MessagePolicyTestAssertion1 marker="1" />
-		</wsp:Policy>
       </output>
     </operation>
   </binding>
    
   <service name="EchoService">
-    <wsp:Policy>
-	  <intf:ServicePolicyTestAssertion1 marker="5" />
-	</wsp:Policy>
     <port name="EchoPort" binding="tns:EchoBinding">
-      <wsp:Policy>
-	    <intf:EndpointPolicyTestAssertion1 marker="4" />
-	  </wsp:Policy>
       <soap:address location="http://localhost:8080/axis2/services/EchoService"/>
     </port>
   </service>

@@ -45,7 +45,36 @@ public class AxisServiceBuilderTest extends TestCase {
 	public void test1() throws Exception {
 
 		AxisService service = builder.getAxisService(new FileInputStream(
-				"./test-resources/wsdl/echo.wsdl"));
+				"./test-resources/wsdl/test1.wsdl"));
+
+		assertNotNull(service);
+		assertEquals("EchoService", service.getName());
+
+		AxisOperation axisOperation = service.getOperation(new QName("Echo"));
+		assertNotNull(axisOperation);
+
+		assertEquals(WSDLConstants.MEP_URI_IN_OUT, axisOperation
+				.getMessageExchangePattern());
+
+		AxisMessage input = axisOperation
+				.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+		assertNotNull(input);
+		assertEquals(input.getParent(), axisOperation);
+		assertEquals(input.getElementQName(), new QName(
+				"http://ws.apache.org/axis2/tests", "Echo"));
+
+		AxisMessage output = axisOperation
+				.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+		assertNotNull(output);
+		assertEquals(output.getParent(), axisOperation);
+		assertEquals(output.getElementQName(), new QName(
+				"http://ws.apache.org/axis2/tests", "EchoResponse"));
+	}
+	
+	public void test2() throws Exception {
+
+		AxisService service = builder.getAxisService(new FileInputStream(
+				"./test-resources/wsdl/test2.wsdl"));
 
 		assertNotNull(service);
 		assertEquals("EchoService", service.getName());
