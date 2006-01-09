@@ -12,7 +12,7 @@
     Iterator servicesGroups = (Iterator)request.getSession().getAttribute(Constants.SERVICE_GROUP_MAP);
 %>
 <h1>Engage Module for a Service Group</h1>
-<p>To engage a module for a set of services grouped a axisService group, first select the module you want to engage and then select the axisService group you like the module to be engaged on and click "Engage".</p>
+<p>To engage a module for a set of services grouped as a axisService group, first select the module you want to engage and then select the axisService group you like the module to be engaged on and click "Engage".</p>
 <%
 	if (!moduleCol.iterator().hasNext()) {%>
 		<p>No modules are present to be engaged.</p>
