@@ -53,6 +53,8 @@
     <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
     <j:set var="dist.dir" value="target/dist"/>
 
+    <j:set var="modules" value="*"/>
+
     <preGoal name="modules:reactor:init">
         <j:set var="groupId" value="maven-itest-plugin"/>
         <j:set var="artifactId" value="maven-itest-plugin"/>
@@ -91,7 +93,7 @@
 
         <j:if test="${context.getVariable('modules') == null}">
             <!-- The default is to build everything -->
-            <j:set var="modules" value="*"/>
+            <j:set var="modules" value="${modules}"/>
         </j:if>
 
         <j:if test="${context.getVariable('module.includes') == null}">
@@ -137,6 +139,9 @@
                 </j:forEach>
             </ant:fileset>
         </ant:fileScanner>
+
+        <!-- Init/Reinit this variable -->
+        <j:set var="modules.reactor.includes" value=""/>
 
         <!-- Setup the includes which will be used by the reactor -->
         <j:forEach var="file" items="${scanner.iterator()}">
@@ -352,7 +357,7 @@
     </goal>
 
     <goal name="create-lib">
-        <macros:copy-deps copyToDir="${target/lib}"/>
+        <macros:copy-deps copyToDir="${target/lib}" mods="*"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -423,8 +428,8 @@
             <ant:fileset file="modules/security/target/security.mar"/>
         </ant:copy>
 
-        <ant:delete dir="target/temp" />
-        <ant:delete dir="target/apidocs" />
+        <ant:delete dir="target/temp"/>
+        <ant:delete dir="target/apidocs"/>
     </goal>
 
     <goal name="dist-min-bin" prereqs="init-dist,cache-min-deps">
@@ -516,62 +521,59 @@
         <ant:echo>| Creating: Axis2 Standard Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:mkdir dir="target/temp/std/bin/lib"/>
-        <ant:mkdir dir="target/temp/std/bin/mar"/>
-        <ant:mkdir dir="target/temp/std/bin/samples"/>
-        <ant:mkdir dir="target/temp/std/bin/webapp"/>
+        <ant:property name="std.bin.temp.dir" value="target/temp/std/bin" />
+
+        <ant:mkdir dir="${std.bin.temp.dir}/lib"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/bin"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/modules"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/samples"/>
+
+        <!-- Copy bin scripts -->
+        <ant:copy todir="${std.bin.temp.dir}/bin">
+            <ant:fileset dir="modules/tool/script"/>
+        </ant:copy>
 
         <!-- Copy the 3rd party libs -->
-        <ant:copy toDir="target/temp/std/bin/lib">
+        <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset dir="${min_dep_cache}"/>
             <ant:fileset dir="${std_dep_cache}"/>
         </ant:copy>
 
         <!-- Create axis2-core.jar -->
-        <jar destfile="target/temp/std/bin/lib/axis2-core-${pom.currentVersion}.jar">
+        <jar destfile="${std.bin.temp.dir}/lib/axis2-core-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/xml/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
         </jar>
 
-        <ant:copy toDir="target/temp/std/bin/lib">
+        <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-        <!-- Webapp -->
-        <ant:copy toDir="target/temp/std/bin/webapp">
-            <ant:fileset dir="modules/webapp">
-                <ant:exclude name="**/.svn/**"/>
-                <ant:exclude name="**/.*/**"/>
-            </ant:fileset>
-        </ant:copy>
-
         <!-- Copy addressing mar -->
-        <ant:copy toDir="target/temp/std/bin/mar">
+        <ant:copy toDir="${std.bin.temp.dir}/modules">
             <ant:fileset file="modules/addressing/target/addressing.mar"/>
         </ant:copy>
 
         <!-- Copy the samples -->
-        <ant:copy toDir="target/temp/std/bin/samples">
-            <ant:fileset dir="modules/samples">
-                <ant:exclude name="**/.svn/**"/>
-                <ant:exclude name="**/classes/**"/>
-                <ant:exclude name="**/target/**"/>
-                <ant:exclude name="**/xdocs/**"/>
-                <ant:exclude name="**/.*/**"/>
-            </ant:fileset>
+        <ant:copy todir="${std.bin.temp.dir}/samples">
+            <ant:fileset dir="modules/samples/target/samples"/>
         </ant:copy>
+        <ant:copy todir="${std.bin.temp.dir}/samples/userguide">
+            <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
+        </ant:copy>
+        <ant:delete file="${std.bin.temp.dir}/samples/groovyService.aar" />
 
         <!-- Copy the release documents -->
-        <macros:copy-release-docs toDir="target/temp/std/bin"
+        <macros:copy-release-docs toDir="${std.bin.temp.dir}"
                                   readmeFile="release-docs/readme-files/README-std-bin.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-std-${pom.currentVersion}-bin.zip"
-                 basedir="target/temp/std/bin"/>
-        <ant:delete dir="target/temp/std/bin"/>
+                 basedir="${std.bin.temp.dir}"/>
+        <ant:delete dir="${std.bin.temp.dir}"/>
     </goal>
 
     <goal name="dist-std-src" prereqs="init-dist">
@@ -642,7 +644,7 @@
         <ant:mkdir dir="target/temp/docs/javadocs"/>
 
         <ant:copy toDir="target/temp/docs/xdocs">
-            <ant:fileset dir="xdocs" />
+            <ant:fileset dir="xdocs"/>
         </ant:copy>
 
         <ant:copy toDir="target/temp/docs/javadocs">
@@ -657,23 +659,23 @@
         </ant:zip>
         <ant:delete dir="target/temp/docs"/>
 
-        <ant:echo message="***** IMPORTANT: Please manually copy the Eclipse &amp; IDEA plugins" />
+        <ant:echo message="***** IMPORTANT: Please manually copy the Eclipse &amp; IDEA plugins"/>
     </goal>
 
     <goal name="cache-min-deps" prereqs="init-dist">
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
-                              modules="core,common,xml,wsdl,adb"/>
+                              mods="core,common,xml,wsdl,adb"/>
             <property name="minDeps.uptodate" value="yes"/>
         </j:if>
     </goal>
 
-    <goal name="cache-std-deps" prereqs="cache-min-deps">
+    <goal name="cache-std-deps" prereqs="init-dist,cache-min-deps">
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              modules="codegen,doom,webapp"/>
+                              mods="codegen,doom"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
     </goal>
@@ -761,10 +763,80 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
-            <j:if test="${context.getVariable('modules') != null}">
-                <property name="modules" value="${modules}"/>
+
+            <ant:echo message="######## MODULES=${mods}"/>
+            <ant:echo message="######## Copy2Dir=${copyToDir}"/>
+
+            <j:set var="modules" value="${mods}"/>
+
+            <!-- ######################### REACTOR INIT ##########################################-->
+
+            <j:if test="${context.getVariable('module.types') == null}">
+                <j:set var="module.types" value="modules,applications,plugins"/>
             </j:if>
-            <attainGoal name="modules:reactor:init"/>
+
+            <j:set var="module.includes" value="${modules}"/>
+
+            <j:if test="${context.getVariable('module.excludes') == null}">
+                <j:set var="module.excludes" value=""/>
+            </j:if>
+
+            <u:tokenize var="types" delim=",">${module.types}</u:tokenize>
+
+            <ant:fileScanner var="scanner">
+                <ant:fileset dir="${basedir}">
+                    <j:forEach var="type" items="${types}">
+                        <j:choose>
+                            <j:when test="${context.getVariable('module.includes') == '*'}">
+                                <ant:include name="${type}/*/project.xml"/>
+                            </j:when>
+                            <j:otherwise>
+                                <u:tokenize var="includes" delim=",">${module.includes}</u:tokenize>
+                                <j:forEach var="include" items="${includes}">
+                                    <u:available file="${basedir}/${type}/${include}/project.xml">
+                                        <ant:include name="${type}/${include}/project.xml"/>
+                                    </u:available>
+                                </j:forEach>
+                            </j:otherwise>
+                        </j:choose>
+
+                        <j:choose>
+                            <j:when test="${context.getVariable('module.excludes') == '*'}">
+                                <ant:exclude name="${type}/*/project.xml"/>
+                            </j:when>
+                            <j:otherwise>
+                                <u:tokenize var="excludes" delim=",">${module.excludes}</u:tokenize>
+                                <j:forEach var="exclude" items="${excludes}">
+                                    <u:available file="${basedir}/${type}/${exclude}/project.xml">
+                                        <ant:exclude name="${type}/${exclude}/project.xml"/>
+                                    </u:available>
+                                </j:forEach>
+                            </j:otherwise>
+                        </j:choose>
+                    </j:forEach>
+                </ant:fileset>
+            </ant:fileScanner>
+
+            <!-- Setup the includes which will be used by the reactor -->
+            <j:forEach var="file" items="${scanner.iterator()}">
+                <j:set var="directory"
+                       value="${file.parentFile.parentFile.name}/${file.parentFile.name}"/>
+                <j:set var="filename" value="${directory}/${file.name}"/>
+                <j:choose>
+                    <j:when test="${context.getVariable('modules.reactor.includes') == null}">
+                        <j:set var="modules.directories" value="${directory}"/>
+                        <j:set var="modules.reactor.includes" value="${filename}"/>
+                    </j:when>
+                    <j:otherwise>
+                        <j:set var="modules.directories"
+                               value="${modules.directories},${directory}"/>
+                        <j:set var="modules.reactor.includes"
+                               value="${modules.reactor.includes},${filename}"/>
+                    </j:otherwise>
+                </j:choose>
+            </j:forEach>
+            <!-- #################### END OF REACTOR INIT #######################################-->
+
             <ant:echo message="Fetching Dependencies for modules: ${modules.reactor.includes}"/>
             <maven:reactor
                     basedir="${basedir}"
@@ -785,6 +857,9 @@
             </ant:copy>
             <ant:copy toFile="${toDir}/release-notes.html" filtering="on">
                 <ant:fileset file="release-notes.html"/>
+            </ant:copy>
+            <ant:copy toFile="${toDir}/LICENSE.txt" filtering="on">
+                <ant:fileset file="LICENSE.txt"/>
             </ant:copy>
         </define:tag>
     </define:taglib>
