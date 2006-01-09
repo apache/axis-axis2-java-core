@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  <meta content="text/html; charset=iso-8859-1">
+  <title>How to use IDEA plug-in</title>
+  <meta name="generator" content="amaya 9.3, see http://www.w3.org/Amaya/">
+</head>
+
+<body>
+<h2>Code generation IDEA plug-in</h2>
+
+<h3>Introduction</h3>
+
+<p>This document explains installation and usage of IDEA code generation
+plug-in.</p>
+
+<h3>Installation</h3>
+
+<p>First download the plug-in link which is a zipped file, and extract that
+into plugins directory in IDEA installation directory or plugins directory in
+user directory (usre/idea/conf/plugins), if you have correctly extracted the
+file you would see a directory called Axis2 and inside there should be only
+one directory called lib and bunch of .jar files can be seen inside that.</p>
+
+<p>Next step is to restart IDEA to changes to be taken place , when you
+restart IDEA you would see following icons in IDEA if the plug-in has been
+installed correctly.</p>
+
+<p><img alt="Figure 1" src="images/idea-icons.jpg"></p>
+
+<p>As well as if you right-click on editor page you would see a link for the
+same plug-inform that too.</p>
+
+<p><img alt="Figure2" src="images/idea-popup.jpg"></p>
+
+<p>When you click one of them a window will appear by asking to select one
+from two options.</p>
+
+<p><img alt="Figure3" src="images/fig1.jpg"></p>
+
+<p>Click on WSDL2Java codegenaration and click OK to generate code from a
+WSDL file.Then the following window will appear.</p>
+
+<p><img alt="Figure4" src="images/fig2.jpg"></p>
+
+<p>To move on to the next page the WSDL file location must be given. The
+browse buttoncan be used to easily browse for a file rather than typing the
+whole path.</p>
+
+<p>Once the WSDL file is selected, codegen options are to be selected. By far
+this is themost important page in this wizard, which determines the
+characteristics of the code being generated. Novices need not worry about
+these options since the most common options are defaulted, But advanced users
+will find it very easy to "turn the knobs" using these options.</p>
+
+<p><img alt="Figure5" src="images/fig18.jpg"></p>
+
+<p></p>
+
+<p>Output language can be Java, C# but we not fully tested C# odegenration
+there for it is better to select Java as output language.</p>
+
+<p>Since Axis2 support both synchronous and asynchronous client programming
+model , the tool has provide a way to select the options.</p>
+
+<p>Data binding type , the default data binding type is adb (Axis2 data
+binding), though the tool is capable of providing XML beans due to class
+loading issues in XML beans current implementation only generate code with OM
+and adb.</p>
+
+<p>Package name : The package name of the generated code , you can set the
+package name that you want.</p>
+
+<p><img alt="Figure6" src="images/fig3.jpg"></p>
+
+<p>To select the output location or the location that the to be generated ,
+you do not need to type the output location you can brows and select the
+location.</p>
+
+<p><img alt="Fig4" src="images/fig4.jpg"></p>
+
+<p>If everything has gone well you will see output like above.</p>
+
+<h2>IDEA service archive generation plug-in</h2>
+
+<p>First step is to click on Axis2 IDEA plug-in icon and select service
+archive creation on that.</p>
+
+<p><img alt="Fig5" src="images/fig5.jpg"></p>
+
+<p>Then a wizard will appear by asking to select archive type</p>
+
+<p><img alt="fig6" src="images/fig6.jpg"></p>
+
+<p>Select archive type : In Axis2 user can deploy single service or service
+group so you canselect the service type you want to create.</p>
+
+<p>If you already have services.xml you can skip some of the steps in the
+wizard so if youhave services.xml with you click on &ldquo;I already have
+services.xml&rdquo; and click on next , ifyou do not have the tool will
+create services.xml for you.depending on the option you select there can be
+three sub wizards,</p>
+<ol>
+  <li>Sub wizard 1(create single service and its services.xml)</li>
+  <li>Sub wizard 2 (create service group and its services.xml)</li>
+  <li>Sub wizard 3 (create service/service group using give services.xml)</li>
+</ol>
+
+<p>Option 1 and option 2 follow the same set of steps except some looping
+mechanism inthe middle of the wizard.</p>
+
+<h3>Sub wizard 1 &amp; Sub wizard 3</h3>
+
+<p>From the following page you have to select the location of classes
+directory , where youcompile output location , you do not need to type it,
+you can easily browse and select.</p>
+
+<p><img alt="fig7" src="images/fig7.jpg"></p>
+
+<p>When you click on next button , the page is to select service specific
+external librariesand service WSDL file(if you want to add multiple WSDL
+files you can do that too , inthe case of service group you can add any
+number of WSDL files depending on the services in service group).</p>
+
+<p><img alt="fig8" src="images/fig8.jpg"></p>
+
+<p>Adding libraries first click on small button to browse library file and
+then click on Add then the selected file will be appear in the list box.</p>
+
+<p>To add WSDLs first click on small button to select WSDL file and then
+click Add button to add the file to the list.</p>
+
+<p><img alt="fig9" src="images/fig9.jpg"></p>
+
+<p>Next page is to select service implementation class (in the case of
+service group samepage will be looped to select multiple service
+implementation classes).</p>
+
+<p>Step 1:</p>
+
+<p>Select a service implementation class by browsing and the press Load
+button to load all the public methods in that class and you can select the
+methods that you want to publish.</p>
+
+<p><img alt="fig10" src="images/fig10.jpg"></p>
+
+<p>In service name textbox you can type the name of the service you want ,
+but rememberservice name should be across the system.</p>
+
+<p>When you have complete on this particular service press Done (in the first
+place if you have selected service group when you press the button then the
+following dialog will appear to add some more service to service group).</p>
+
+<p><img alt="fig11" src="images/fig11.jpg"></p>
+
+<p>If you press yes , you have to follow the same procedure to add some other
+service toservice group.</p>
+
+<p>If you press No you can , Next button will be enabled and you can go to
+next page.</p>
+
+<p>Note from this onward the steps are similar to all the sub wizards.</p>
+
+<p><img alt="fig12" src="images/fig12.jpg"></p>
+
+<p>This page displays the servics.xml file (either you given one in the case
+of &ldquo;I already haveservices.xml&rdquo; or the system generated one for
+you.)</p>
+
+<p>This page can editable and provide a way to add parameters and module
+references to any level.</p>
+
+<p>Note : When you click on one of those button remember corresponding texts
+will beadded to the current mouse position. Therefor click on the location
+you want to add the parameter and then press the button . If you click on the
+parameter button a window willappear asking to give parameter name and
+parameter value.</p>
+
+<p><img alt="fig13" src="images/fig13.jpg"></p>
+
+<p>Or you can manually add parameters to any where in the document as you
+wish.</p>
+
+<p>Adding module references can be done by clicking on +ModuleRef button in
+the windowyou have to type the name of the module to be engaged.</p>
+
+<p><img alt="fig14" src="images/fig14.jpg"></p>
+
+<p>When you complete press the Next button to go to final stage.</p>
+
+<p><img alt="fig15" src="images/fig15.jpg"></p>
+
+<p>Next step is to select output location , the location output archive file
+should be created.</p>
+
+<p>In the Archive Name just type the name of the archive file you want to put
+and that willfinally become the service group name.</p>
+
+<p>Note : Do not include file extension name when you write archive name we
+will createthat for you.</p>
+
+<p>When you are done click the Finish button , if everything has gone well
+you will see following message.</p>
+
+<p><img alt="fig16" src="images/fig16.jpg"></p>
+
+<h3>Sub wizard 2</h3>
+
+<p>In the case of services.xml is already available , the steps look like as
+follows,</p>
+
+<p><img alt="fig17" src="images/fig17.jpg"></p>
+
+<p>This page is to select both location of services.xml and the location of
+classes directory,you can press select button and browse the file system to
+find required document andlocation.</p>
+
+<p>If we click on Next button then the procedure is same as above, in next
+page provide a way to edit services.xml as mentioned earlier.</p>
+</body>
+</html>
