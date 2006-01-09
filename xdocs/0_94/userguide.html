@@ -1,11 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<head>  
   <title>Axis2 User's Guide</title>
-  <meta name="CREATED" content="20050918;20224042">
-  <meta name="CHANGEDBY" content="Chamikara Jayalath">
-  <meta name="CHANGED" content="20050919;1140420">
 </head>
 
 <body lang="en-US" dir="ltr">
@@ -922,7 +918,7 @@ be as follows:</p>
 <p>The invocation accepts a callback object as a parameter. Axis2 client API
 provides an abstract Callback with the following methods:</p>
 <pre>public abstract void onComplete(AsyncResult result);
-public abstract void reportError(Exception e);
+public abstract void onError(Exception e);
 public boolean isComplete() {}</pre>
 
 <p>The user is expected to implement the "onComplete " and "reportError "
@@ -995,7 +991,7 @@ asynchrony!!</strong></p>
                     }
                 }
 
-                public void reportError(Exception e) {
+                public void onError(Exception e) {
                     e.printStackTrace();
                 }
             };
@@ -1320,6 +1316,7 @@ runs.</p>
 <pre>&lt;handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
 &lt;order phase="loggingPhase" /&gt;
 &lt;/handler&gt;</pre>
+<p>To learn more on Phase rules, click on <a href="http://www.developer.com/java/web/article.php/3529321" target="_blank">here</a></p>
 
 <h4><a name="step4loggingmodule">Step 4: Modify the "axis2.xml"</a></h4>
 
@@ -1333,32 +1330,64 @@ an extract of the phase section of the "axis2.xml".</p>
 <pre>&lt;!-- ================================================= --&gt;
 &lt;!-- Phases --&gt;
 &lt;!-- ================================================= --&gt;
+
 &lt;phaseOrder type="inflow"&gt;
-&lt;!-- System pre defined phases --&gt;
+        &lt;!--  System pre defined phases       --&gt;
         &lt;phase name="TransportIn"/&gt;
         &lt;phase name="PreDispatch"/&gt;
-        &lt;phase name="Dispatch"/&gt;
-        &lt;phase name="PostDispatch"/&gt;
-&lt;!-- System pre defined phases --&gt;
+        &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
+            &lt;handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
 
-&lt;!-- After Postdispatch phase module author or or service author can add any phase he want --&gt;
-        &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
-&lt;/phaseOrder&gt;
+            &lt;handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
 
-&lt;phaseOrder type="outflow"&gt;
-&lt;!-- user can add his own phases to this area --&gt;
-        &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
-&lt;/phaseOrder&gt;
+            &lt;handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
 
-&lt;phaseOrder type="INfaultflow"&gt;
-&lt;!-- user can add his own phases to this area --&gt;
+            &lt;handler name="SOAPMessageBodyBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+            &lt;handler name="InstanceDispatcher"
+                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
+                &lt;order phase="PostDispatch"/&gt;
+            &lt;/handler&gt;
+        &lt;/phase&gt;
+        &lt;!--  System pre defined phases       --&gt;
+        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --&gt;
+        &lt;phase name="userphase1"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
-&lt;/phaseOrder&gt;
-
-&lt;phaseOrder type="Outfaultflow"&gt;
-&lt;!-- user can add his own phases to this area --&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="outflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="userphase1"/>
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
-&lt;/phaseOrder&gt;</pre>
+        &lt;!--system predefined phase--&gt;
+        &lt;!--these phase will run irrespective of the service--&gt;
+        &lt;phase name="PolicyDetermination"/&gt;
+        &lt;phase name="MessageOut"/&gt;
+    &lt;/phaseOrder/&gt;
+    &lt;phaseOrder type="INfaultflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="Outfaultflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
+        &lt;phase name="PolicyDetermination"/&gt;
+        &lt;phase name="MessageOut"/&gt;
+    &lt;/phaseOrder&gt;
+    
+</pre>
 
 <p>Shown in green, the custom phase "loggingPhase" is placed in all the
 flows, hence that phase will be called in all the message flows in the
