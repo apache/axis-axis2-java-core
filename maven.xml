@@ -693,6 +693,7 @@
                      version="true"
                      use="true"
                      windowtitle="Axis2 API">
+            <ant:arg line="-J-Dhttp.proxy.port=${maven.proxy.port} -J-Dhttp.proxy.host=${maven.proxy.host}"/>
             <ant:sourcepath>
                 <ant:pathelement location="modules/adb/src"/>
                 <ant:pathelement location="modules/addressing/src"/>

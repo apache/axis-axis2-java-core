@@ -259,7 +259,7 @@ public class Phase implements Handler {
 
     /**
      * This method assume that both the before and after cant be a same hander
-     * that dose not check inside this , it should check befor calling this method
+     * that does not check inside this , it should check befor calling this method
      *
      * @param handler
      * @throws PhaseException
