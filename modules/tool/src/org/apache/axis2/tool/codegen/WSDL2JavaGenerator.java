@@ -16,8 +16,8 @@
 package org.apache.axis2.tool.codegen;
 
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.codegen.CommandLineOption;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
