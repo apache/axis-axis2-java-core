@@ -11,6 +11,9 @@
             <property name="axis2.home">
                 <xsl:attribute name="value">${env.AXIS2_HOME}</xsl:attribute>
             </property>
+            <property name="axis2.class.path">
+                <xsl:attribute name="value"></xsl:attribute>
+            </property>
             <property name="name">
                 <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
             </property>
@@ -36,27 +39,18 @@
             <property name="jars.ok" value=""></property>
 
             <path id="axis2.class.path">
+                <pathelement>
+                    <xsl:attribute name="path">${java.class.path}</xsl:attribute>
+                </pathelement>
+                <pathelement>
+                    <xsl:attribute name="path">${axis2.class.path}</xsl:attribute>
+                </pathelement>
                 <fileset>
                     <xsl:attribute name="dir">${axis2.home}</xsl:attribute>
                     <include>
                         <xsl:attribute name="name">lib/*.jar</xsl:attribute>
                     </include>
                 </fileset>
-                <fileset>
-                    <xsl:attribute name="dir">${user.home}</xsl:attribute>
-                    <include>
-                        <xsl:attribute name="name">.maven/repository/junit/jars/*.jar</xsl:attribute>
-                    </include>
-                    <include>
-                        <xsl:attribute name="name">.maven/repository/stax/jars/*.jar</xsl:attribute>
-                    </include>
-                    <include>
-                        <xsl:attribute name="name">.maven/repository/axis2/jars/*.jar</xsl:attribute>
-                    </include>
-                </fileset>
-                <pathelement>
-                    <xsl:attribute name="path">${java.class.path}</xsl:attribute>
-                </pathelement>
             </path>
             
             <target name="init">

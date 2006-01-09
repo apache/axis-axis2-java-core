@@ -17,6 +17,9 @@
     </postGoal>
 
     <preGoal name="test:compile">
+		<!-- Set a property that can be picked up from the ant build.xml's -->
+        <ant:property name="axis2.class.path" refid="maven.dependency.classpath"/>
+
 		<!-- copy the mars so that they are available on the test classpath -->
         <copy file="../addressing/target/addressing.mar"
             tofile="target/test-classes/modules/addressing.mar"/>
