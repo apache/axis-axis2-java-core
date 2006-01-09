@@ -690,6 +690,7 @@
                      defaultexcludes="yes"
                      destdir="target/apidocs"
                      author="true"
+                     breakiterator="true"
                      version="true"
                      use="true"
                      windowtitle="Axis2 API">
