@@ -44,9 +44,9 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
 
 <h3><a name="Download">Download Axis2</a></h3>
 
-<p>Axis2 is distributed in several formats and can be installed either as a
+<p>Axis2 is distributed in several ceonvenient distribution packages and can be installed either as a
 standalone server or as part of a J2EE compliant servlet container. Axis2 is
-distributed under the Apache License, version 2.0. You can download Axis2 <a href="http://ws.apache.org/axis2/download.cgi">here</a>. Latest release of Axis2 is version 0.94 and followings are available for download in this release. </p>
+distributed under the Apache License, version 2.0. You can download Axis2 <a href="http://ws.apache.org/axis2/download.cgi">here</a>. Latest release of Axis2 is version 0.94. </p>
 <table width="940" border="1" cellpadding="1">
   <tr>
     <th width="83" scope="col">Distribution Name</th>
@@ -55,34 +55,34 @@ distributed under the Apache License, version 2.0. You can download Axis2 <a hre
   </tr>
   <tr>
     <td>Minimal Distribution - Binary </td>
-    <td>This distribution is aimed at for the advanced users who will be embedding Axis2 and thus will contain the minimal runtime required for it to act as a Web Service client and/or a server (axis2-core-0.94.jar will contain compiled versions of common, xml, wsdl and core modules.) </td>
+    <td>This distribution is aimed at advanced users who will be embedding Axis2. It will contain the minimal runtime required to act as a Web Service client and/or a server (axis2-core-0.94.jar will contain compiled versions of common, xml, wsdl and core modules.) </td>
     <td><ul>
       <li>axis2-core-0.94.jar, axis2-adb-0.94.jar</li>
       <li>third party distributable libraries</li>
-      <li>readme.txt and releaseNote.html  </li>
+      <li>README.TXT and release-notes.html </li>
     </ul></td>
   </tr>
   <tr>
     <td>Minimal Distribution - Source </td>
-    <td background="#_Toc96698083"><p>This will contain the sources of Axis2 minimal distribution. One can get binary distribution from this by typing  <span class="style1">$maven dist-min-bin. </span>(<a href="#_Toc96698083">Set up Axis2 environment</a> before this) </p></td>
+    <td background="#_Toc96698083"><p>This will contain the sources of Axis2 minimal distribution. One can generate a binary distribution from this by typing  <span class="style1">$maven dist-min-bin. </span>(<a href="#_Toc96698083">Set up Axis2 environment</a> before running this command) </p></td>
     <td><ul>
       <li>sources of Axis2 common, xml, wsdl, adb and core modules </li>
-      <li>readme.txt and releaseNote.html </li>
+      <li>README.TXT and release-notes.html</li>
     </ul></td>
   </tr>
   <tr>
     <td>Standard Distribution - Binary </td>
-    <td>This is the complete version of Axis2 and will contain useful samples also for some one to get familiar with Axis2. (Since WS-Addressing implementation module is engaged in to Axis2, by default, this distribution will contain addressing.mar. But  the other modules that are being developed within Axis2 will not be included here and are available to be downloaded separately from <a href="http://ws.apache.org/axis2/modules/index.html">here</a>.)</td>
+    <td>This is the complete version of Axis2 and will contain useful samples as well. Useful for some one to get familiar with Axis2. (Since WS-Addressing implementation module is engaged in to Axis2, by default, this distribution will contain addressing.mar. But  the other modules that are being developed within Axis2 will not be included here and are available to be downloaded separately from <a href="http://ws.apache.org/axis2/modules/index.html">here</a>.)</td>
     <td><ul>
       <li>all the content of minimal-binary distribution</li>
       <li>Contents of codegen and DOOM modules</li>
       <li>Samples</li>
-      <li>Addressing.mar</li>
+      <li>addressing.mar</li>
     </ul></td>
   </tr>
   <tr>
     <td>Standard Distribution - Source </td>
-    <td>This will contain the sources of Axis2 standard distribution. One can get binary distribution from this by typing <span class="style1">$maven dist-standard-bin. </span>(<a href="#_Toc96698083">Set up Axis2 environment</a> before this) </td>
+    <td>This will contain the sources of Axis2 standard distribution. One can generate a binary distribution from this by typing <span class="style1">$maven dist-standard-bin. </span>(<a href="#_Toc96698083">Set up Axis2 environment</a> before running this command) </td>
     <td><ul>
       <li>all the content of minimal-source distribution</li>
       <li>Contents of codegen and DOOM modules</li>
@@ -90,11 +90,11 @@ distributed under the Apache License, version 2.0. You can download Axis2 <a hre
       </ul></td>
   </tr>
   <tr>
-    <td>War (Web Archive) Distribution </td>
+    <td>WAR (Web Archive) Distribution </td>
     <td>This will be the web application of Axis2 which can be deployed in most of the servlet containers. </td>
     <td><ul>
       <li>
-        all the content of the minimal distribution 
+        all the contents of the minimal distribution 
       </li>
       <li>
         Admin web app
@@ -103,10 +103,10 @@ distributed under the Apache License, version 2.0. You can download Axis2 <a hre
   </tr>
   <tr>
     <td>Documents Distribution </td>
-    <td>This will make all the documents that are available in the site to be downloaded in one package.</td>
+    <td>This will contain all the documentation in one package.</td>
     <td><ul>
       <li>xdocs</li>
-      <li>java docs </li>
+      <li>javadocs </li>
     </ul></td>
   </tr>
   <tr>
@@ -287,9 +287,9 @@ deployed.</p>
 
   <p></p>
 
-  <p>If the service has deployment time error it will list out those services
-  as faulty services. If you click on the link it will show your deployment
-  fault.</p>
+  <p>If the service has deployment time error it will list those services
+  as faulty services. If you click on the link you can see the your deployment
+  fault error message(s).</p>
 
   <p align="center"><img src="images/faultservice.jpg"
   alt=""></p>
