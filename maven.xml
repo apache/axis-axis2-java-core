@@ -627,7 +627,7 @@
 
     <goal name="rebuild">
         <attainGoal name="clean"/>
-        <attainGoal name="build"/>
+        <attainGoal name="jar"/>
     </goal>
 
     <!-- For testing -->
