@@ -70,6 +70,7 @@ public class JavaBeanWriter implements BeanWriter {
     private Document globalWrappedDocument;
 
     private Map modelMap = new HashMap();
+    private static final String DEFAULT_PACKAGE = "adb";
 
     /**
      * Default constructor
@@ -108,12 +109,12 @@ public class JavaBeanWriter implements BeanWriter {
                 Element rootElement = XSLTUtils.getElement(globalWrappedDocument, "beans");
                 globalWrappedDocument.appendChild(rootElement);
                 XSLTUtils.addAttribute(globalWrappedDocument, "name", WRAPPED_DATABINDING_CLASS_NAME, rootElement);
-                String tempPackageName = null;
+                String tempPackageName;
 
                 if (packageName !=null && packageName.endsWith(".")) {
                     tempPackageName = this.packageName.substring(0, this.packageName.lastIndexOf("."));
                 }else{
-                    tempPackageName = "adb"; //todo - fix this
+                    tempPackageName = DEFAULT_PACKAGE;
                 }
 
                 XSLTUtils.addAttribute(globalWrappedDocument, "package", tempPackageName, rootElement);
@@ -176,8 +177,13 @@ public class JavaBeanWriter implements BeanWriter {
     public void writeBatch() throws SchemaCompilationException {
         try {
             if (wrapClasses) {
-
-                File out = createOutFile(packageName, WRAPPED_DATABINDING_CLASS_NAME);
+                String tempPackage ;
+                if (packageName==null){
+                   tempPackage = DEFAULT_PACKAGE;
+                }else{
+                    tempPackage = packageName;
+                }
+                File out = createOutFile(tempPackage, WRAPPED_DATABINDING_CLASS_NAME);
                 //parse with the template and create the files
                 parse(globalWrappedDocument, out);
             }
@@ -255,7 +261,7 @@ public class JavaBeanWriter implements BeanWriter {
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
             );
-            packagePrefix =  (this.packageName == null ? "" : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME;
+            packagePrefix =  (this.packageName == null ? DEFAULT_PACKAGE+"." : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME;
 
         } else {
             //create the model
@@ -412,7 +418,7 @@ public class JavaBeanWriter implements BeanWriter {
     /**
      * Given the xml name, make a unique class name taking into account that some
      * file systems are case sensitive and some are not.
-     *
+     * -Consider the Jax-WS spec for this
      * @param listOfNames
      * @param xmlName
      * @return Returns String.

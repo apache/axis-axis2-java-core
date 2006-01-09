@@ -33,6 +33,43 @@ import java.util.Map;
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private WSDLDescription wom;
+
+    public void setWom(WSDLDescription wom) {
+        this.wom = wom;
+    }
+
+    public void setOutputLanguage(String outputLanguage) {
+        this.outputLanguage = outputLanguage;
+    }
+
+    public void setAdvancedCodeGenEnabled(boolean advancedCodeGenEnabled) {
+        this.advancedCodeGenEnabled = advancedCodeGenEnabled;
+    }
+
+    public void setAsyncOn(boolean asyncOn) {
+        this.asyncOn = asyncOn;
+    }
+
+    public void setSyncOn(boolean syncOn) {
+        this.syncOn = syncOn;
+    }
+
+    public void setServerSide(boolean serverSide) {
+        this.serverSide = serverSide;
+    }
+
+    public void setGenerateDeployementDescriptor(boolean generateDeployementDescriptor) {
+        this.generateDeployementDescriptor = generateDeployementDescriptor;
+    }
+
+    public void setWriteTestCase(boolean writeTestCase) {
+        this.writeTestCase = writeTestCase;
+    }
+
+    public void setOutputLocation(File outputLocation) {
+        this.outputLocation = outputLocation;
+    }
+
     private File outputLocation;
 
     //get the defaults for these from the property file
@@ -56,6 +93,27 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private boolean generateAll = false;
 
+    //user selected portname
+    private String portName;
+    //user selected servicename
+    private String serviceName;
+
+
+    public String getPortName() {
+        return portName;
+    }
+
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
     /**
      * A hashmap to hang the property objects
@@ -203,86 +261,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      */
     public CodeGenConfiguration(WSDLDescription wom, Map optionMap) {
         this.wom = wom;
-
-        String outputLocation = "."; //default output directory is the current working directory
-        CommandLineOption clo =
-                ((CommandLineOption) optionMap.get(OUTPUT_LOCATION_OPTION));
-        if (clo != null) {
-            outputLocation = clo.getOptionValue();
-        }
-        this.outputLocation = new File(outputLocation);
-
-        //check and create the directories
-        if (this.outputLocation.exists()) {
-            if (this.outputLocation.isFile()) {
-                throw new RuntimeException(CodegenMessages.getMessage("options.notADirectoryException"));
-            }
-        } else {
-            this.outputLocation.mkdirs();
-        }
-
-        serverSide = (optionMap.get(SERVER_SIDE_CODE_OPTION) != null);
-        generateDeployementDescriptor = (optionMap.get(
-                GENERATE_SERVICE_DESCRIPTION_OPTION) !=
-                null);
-        writeTestCase = (optionMap.get(GENERATE_TEST_CASE_OPTION) != null);
-
-        boolean asyncFlagPresent = (optionMap.get(CODEGEN_ASYNC_ONLY_OPTION) !=
-                null);
-        boolean syncFlagPresent = (optionMap.get(CODEGEN_SYNC_ONLY_OPTION) !=
-                null);
-        if (asyncFlagPresent) {
-            this.asyncOn = true;
-            this.syncOn = false;
-        }
-        if (syncFlagPresent) {
-            this.asyncOn = false;
-            this.syncOn = true;
-        }
-
-        CommandLineOption packageOption = (CommandLineOption) optionMap.get(
-                PACKAGE_OPTION);
-        if (packageOption != null) {
-            this.packageName = packageOption.getOptionValue();
-        }
-
-        CommandLineOption langOption = (CommandLineOption) optionMap.get(
-                STUB_LANGUAGE_OPTION);
-        //The language here
-        if (langOption != null) {
-            outputLanguage = langOption.getOptionValue();
-        }
-
-        CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
-                DATA_BINDING_TYPE_OPTION);
-        if (dataBindingOption != null) {
-            setDatabindingType(dataBindingOption.getOptionValue());
-        }
-
-        CommandLineOption unwrapClassesOption = (CommandLineOption) optionMap.get(
-                UNPACK_CLASSES_OPTION);
-        if (unwrapClassesOption != null) {
-            packClasses = false;
-        }
-
-        CommandLineOption generateAllOption = (CommandLineOption) optionMap.get(
-                GENERATE_ALL_OPTION);
-        if (generateAllOption != null) {
-            generateAll = true;
-        }
-
-        //loop through the map and find parameters having the extra prefix.
-        //put them in the property map
-        Iterator keyIterator = optionMap.keySet().iterator();
-        while (keyIterator.hasNext()) {
-            Object key = keyIterator.next();
-            CommandLineOption option = (CommandLineOption) optionMap.get(key);
-            if (key.toString().startsWith(EXTRA_OPTIONTYPE_PREFIX)) {
-                //add this to the property map
-                configurationProperties.put(key.toString().replaceFirst(EXTRA_OPTIONTYPE_PREFIX, ""), option.getOptionValue());
-            }
-        }
-
+        CodegenConfigLoader.loadConfig(this,optionMap);
     }
 
 

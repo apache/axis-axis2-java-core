@@ -34,6 +34,8 @@ public interface CommandLineOptionConstants {
     public static final String DATA_BINDING_TYPE_OPTION = "d";
     public static final String UNPACK_CLASSES_OPTION = "u";
     public static final String GENERATE_ALL_OPTION = "g";
+    public static final String PORT_NAME_OPTION = "pn";
+    public static final String SERVICE_NAME_OPTION = "sn";
 
      //long option constants
     public static final String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -47,6 +49,8 @@ public interface CommandLineOptionConstants {
     public static final String DATA_BINDING_TYPE_OPTION_LONG = "databinding-method";
     public static final String UNPACK_CLASSES_OPTION_LONG = "unpack-classes";
     public static final String GENERATE_ALL_OPTION_LONG = "generate-all";
+    public static final String PORT_NAME_OPTION_LONG = "port-name";
+    public static final String SERVICE_NAME_OPTION_LONG = "service-name";
 
 
     public static final String INVALID_OPTION = "INVALID_OPTION";

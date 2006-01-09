@@ -407,7 +407,7 @@ public class WSDLPump {
             wsdlBindingOperation.setOperation(
                     wsdlInterface.getOperation(
                             wsdl4jBindingOperation.getOperation().getName()));
-            this.copyExtensibleElements(
+            copyExtensibleElements(
                     wsdl4jBindingOperation.getExtensibilityElements(),
                     wsdlBindingOperation, wsdl4jDefinition);
             wsdlBinding.addBindingOperation(wsdlBindingOperation);

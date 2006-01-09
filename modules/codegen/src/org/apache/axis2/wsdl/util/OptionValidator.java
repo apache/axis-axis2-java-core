@@ -39,6 +39,8 @@ class OptionValidator implements CommandLineOptionConstants{
                     (DATA_BINDING_TYPE_OPTION).equalsIgnoreCase(optionType) ||
                     (UNPACK_CLASSES_OPTION).equalsIgnoreCase(optionType) ||
                     (GENERATE_ALL_OPTION).equalsIgnoreCase(optionType) ||
+                    (PORT_NAME_OPTION).equalsIgnoreCase(optionType) ||
+                    (SERVICE_NAME_OPTION).equalsIgnoreCase(optionType) ||
 
                     (OUTPUT_LOCATION_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (SERVER_SIDE_CODE_OPTION_LONG).equalsIgnoreCase(optionType) ||
@@ -50,6 +52,8 @@ class OptionValidator implements CommandLineOptionConstants{
                     (STUB_LANGUAGE_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (DATA_BINDING_TYPE_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (UNPACK_CLASSES_OPTION_LONG).equalsIgnoreCase(optionType) ||
+                    (PORT_NAME_OPTION_LONG).equalsIgnoreCase(optionType) ||
+                    (SERVICE_NAME_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (GENERATE_ALL_OPTION_LONG).equalsIgnoreCase(optionType)
             );
 

@@ -1,5 +1,15 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
+
+     <!-- import the databinding template-->
+    <xsl:include href="databindsupporter"/>
+    <!-- import the other templates for databinding
+         Note  -  these names would be handled by a special
+         URI resolver during the xslt transformations
+     -->
+    <xsl:include href="externalTemplate"/>
+
+
     <xsl:template match="/interface">
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
@@ -73,6 +83,11 @@
 
         </xsl:if>
        </xsl:for-each>
+
+       <!-- Apply other templates --> 
+       //<xsl:apply-templates/>
        }
+
+
     </xsl:template>
    </xsl:stylesheet>

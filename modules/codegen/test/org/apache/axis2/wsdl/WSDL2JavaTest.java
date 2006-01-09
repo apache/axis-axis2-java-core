@@ -380,6 +380,11 @@ public class WSDL2JavaTest extends TestCase{
                 CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
                 new CommandLineOption(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
                         new String[]{TestConstants.Databinding.XML_BEANS}));
+
+         optionMap.put(
+                CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                new CommandLineOption(CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                        new String[0]));
         //todo Make this work
         //test case option is on
 //        optionMap.put(

@@ -30,10 +30,11 @@
 
     <!-- this is the common template -->
     <xsl:template match="bean">
-        <!-- write the class header. this should be done only when unwrapped -->
-        <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
 
-        <xsl:if test="not(@skip-write)">
+        <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+    <!-- write the class header. this should be done only when unwrapped -->
+
+        <xsl:if test="not(not(@unwrapped) or (@skip-write))">
             /**
             * <xsl:value-of select="$name"/>.java
             *
