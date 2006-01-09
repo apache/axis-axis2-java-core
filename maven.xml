@@ -357,7 +357,7 @@
     </goal>
 
     <goal name="create-lib">
-        <macros:copy-deps copyToDir="${target/lib}" mods="*"/>
+        <macros:copy-deps copyToDir="target/lib" mods="*"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -684,8 +684,7 @@
     <!--- Create the Java Docs -->
     <!-- ================================================================ -->
 
-    <goal name="javadocs" prereqs="init">
-        <!--<goal name="javadocs" prereqs="init, create-lib">-->
+    <goal name="javadocs" prereqs="init, create-lib">
         <ant:javadoc packagenames="org.apache.axis2.*"
                      defaultexcludes="yes"
                      destdir="target/apidocs"
@@ -764,9 +763,6 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
-
-            <ant:echo message="######## MODULES=${mods}"/>
-            <ant:echo message="######## Copy2Dir=${copyToDir}"/>
 
             <j:set var="modules" value="${mods}"/>
 
