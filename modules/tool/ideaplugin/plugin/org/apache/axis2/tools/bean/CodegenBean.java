@@ -3,9 +3,9 @@ package org.apache.axis2.tools.bean;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.codegen.CommandLineOption;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
