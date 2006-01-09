@@ -7,6 +7,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
+
+import java.io.File;
 import java.io.FileInputStream;
 
 /*
@@ -29,43 +31,43 @@ import java.io.FileInputStream;
  * TestCase for AxisServiceBuilder.
  */
 public class AxisServiceBuilderTest extends TestCase {
-    private AxisServiceBuilder builder;
+	private AxisServiceBuilder builder;
 
-    public AxisServiceBuilderTest() {
-        super("AxisServiceBuilderTest");
-    }
+	public AxisServiceBuilderTest() {
+		super("AxisServiceBuilderTest");
+	}
 
-    protected void setUp() throws Exception {
-        super.setUp();
-        builder = new AxisServiceBuilder();
-    }
+	protected void setUp() throws Exception {
+		super.setUp();
+		builder = new AxisServiceBuilder();
+	}
 
-    public void test1() throws Exception {
+	public void test1() throws Exception {
 
-        AxisService service = builder.getAxisService(new FileInputStream(
-                "./test-resources/wsdl/test1.wsdl"));
+		AxisService service = builder.getAxisService(new FileInputStream(
+				"./test-resources/wsdl/echo.wsdl"));
 
-        assertNotNull(service);
-        assertEquals("MyService", service.getName());
-        
+		assertNotNull(service);
+		assertEquals("EchoService", service.getName());
 
-        AxisOperation axisOperation = service.getOperation(new QName(
-                "MyOperation"));
-        assertNotNull(axisOperation);
+		AxisOperation axisOperation = service.getOperation(new QName("Echo"));
+		assertNotNull(axisOperation);
 
-        assertEquals(WSDLConstants.MEP_URI_IN_OUT, axisOperation
-                .getMessageExchangePattern());
+		assertEquals(WSDLConstants.MEP_URI_IN_OUT, axisOperation
+				.getMessageExchangePattern());
 
-        AxisMessage input = axisOperation
-                .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        assertNotNull(input);
-        assertEquals(input.getElementQName(), new QName(
-                "http://ws-policy.tests", "SimpleRequest"));
+		AxisMessage input = axisOperation
+				.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+		assertNotNull(input);
+		assertEquals(input.getParent(), axisOperation);
+		assertEquals(input.getElementQName(), new QName(
+				"http://ws.apache.org/axis2/tests", "Echo"));
 
-        AxisMessage output = axisOperation
-                .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-        assertNotNull(output);
-        assertEquals(output.getElementQName(), new QName("http://ws-policy.tests",
-                "SimpleResponse"));
-    }
+		AxisMessage output = axisOperation
+				.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+		assertNotNull(output);
+		assertEquals(output.getParent(), axisOperation);
+		assertEquals(output.getElementQName(), new QName(
+				"http://ws.apache.org/axis2/tests", "EchoResponse"));
+	}
 }
