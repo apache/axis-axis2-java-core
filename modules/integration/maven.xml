@@ -37,6 +37,20 @@
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf" target="jar.client"/>
 		<ant:path id="samples.wsdl.perf.client.jar" location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
         <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf.client.jar"/>
+
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <classpath refid="maven.dependency.classpath"/>
+            <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -t -ss -sd -uri test/samples/wsdl/perf2/perf.wsdl"/>
+		</java>
+        <ant:copy overwrite="yes" todir="target/perf2/test/samples/perf2">
+            <ant:fileset dir="test/samples/wsdl/perf2">
+                <ant:include name="*Skeleton.java"/>
+            </ant:fileset>
+        </ant:copy>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2" target="make.repo"/>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2" target="jar.client"/>
+		<ant:path id="samples.wsdl.perf2.client.jar" location="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
+        <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf2.client.jar"/>
     </preGoal>
 
     <postGoal name="test:compile">
