@@ -107,6 +107,7 @@ public class ADBPullParser implements XMLStreamReader {
      * remove them from the namespace map, after the end element.
      */
     private HashMap namespaceMap;
+    private static final QName NIL_QNAME = new QName("nil");
 
 
     private ADBPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
@@ -146,24 +147,24 @@ public class ADBPullParser implements XMLStreamReader {
      *                  ---------------------------------------------------------------------------------------------------
      *                  This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
      *                  We directly get the pull parser from that. If not we create a reflection based
-                        pull parser for that java bean.
+    pull parser for that java bean.
 
-                        <p/>
+    <p/>
      *                   <p/>
-                        This is the how the passed array should look like
+    This is the how the passed array should look like
      *                           Key             Value
      *                         String          String
      *                         QName           ADBBean, OMElement, Bean, String
-                               String          String[]
-                               QName           Object[] - this contains only one type of objects
+    String          String[]
+    QName           Object[] - this contains only one type of objects
      *                   <p/>
      *                   <p/>
-                       This is how the passed attribute array should look like
-                                Key             Value
-                               null            OMAttribute[]
-                               QName           String
-                               String          String
-                  </pre>
+    This is how the passed attribute array should look like
+    Key             Value
+    null            OMAttribute[]
+    QName           String
+    String          String
+    </pre>
      * @return XMLStreamReader
      */
     public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
@@ -302,6 +303,24 @@ public class ADBPullParser implements XMLStreamReader {
                     }
                     processingADBNameValuePair = true;
                     return processADBNameValuePair(new QName(simplePropertyName), simplePropertyValue);
+                }else if (property == null){
+                    // a null value has a special resolution, it should produce an element with nil="true" attribute and
+                    // no content
+                    //add to the attributes nil="true" to the list
+                    if (attributesList==null || attributesList.size()==0){
+                        attributesList = new ArrayList();
+                        attributesList.add(NIL_QNAME);
+                        attributesList.add("true");
+                    }else{
+                        //since we append the nil attribute at the end, check the nil attrib at the end
+                        //if it's already there, move on
+                        if (!attributesList.contains(NIL_QNAME)){
+                            attributesList.add(NIL_QNAME);
+                            attributesList.add("true");
+                        }
+                    }
+                    processingADBNameValuePair = true;
+                    return processADBNameValuePair(new QName(simplePropertyName), null);
                 }
                 throw new XMLStreamException("Only String and String[] are accepted as the values when the key is a String");
             } else {
@@ -313,11 +332,11 @@ public class ADBPullParser implements XMLStreamReader {
 
     private void removeDeclaredNamespaces() {
         if(declaredNamespaces != null){
-        Iterator declaredNamespacesURIIter = declaredNamespaces.keySet().iterator();
-        while (declaredNamespacesURIIter.hasNext()) {
-            String s = (String) declaredNamespacesURIIter.next();
-            namespaceMap.remove(s);
-        }
+            Iterator declaredNamespacesURIIter = declaredNamespaces.keySet().iterator();
+            while (declaredNamespacesURIIter.hasNext()) {
+                String s = (String) declaredNamespacesURIIter.next();
+                namespaceMap.remove(s);
+            }
         }
     }
 
@@ -695,6 +714,10 @@ public class ADBPullParser implements XMLStreamReader {
             parserInformation = new ParserInformation(simplePropertyName, simplePropertyValue);
             nameValuePairStartElementProcessed = true;
             finishedProcessingNameValuePair = false;
+            //Forcibly set nameValuePairTextProcessed to avoid a character event
+            if (simplePropertyValue==null){
+                nameValuePairTextProcessed=true;
+            }
         } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {
             event = XMLStreamConstants.CHARACTERS;
             nameValuePairTextProcessed = true;

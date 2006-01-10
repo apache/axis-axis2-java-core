@@ -70,21 +70,31 @@
             <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
             <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
             <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
+            <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
             <xsl:variable name="varName">local<xsl:value-of select="$javaName"/></xsl:variable>
+            <xsl:variable name="settingTracker">local<xsl:value-of select="$javaName"/>Tracker</xsl:variable>
             /**
             * field for <xsl:value-of select="$javaName"/>
             <xsl:if test="@attribute">* This was an Attribute!</xsl:if>
             <xsl:if test="@array">* This was an Array!</xsl:if>
-
             */
             private <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+            <!-- Generate a tracker only if the min occurs is zero, which means if the user does
+                 not bother to set that value, we do not send it -->
+            <xsl:if test="$min=0">
+            /*  This tracker boolean wil be used to detect whether the user called the set method
+                for this attribute. It will be used to determine whether to include this field
+                in the serialized XML
+            */
+            private boolean <xsl:value-of select="$settingTracker"/> = false ;
+            </xsl:if>
 
             /**
             * Auto generated getter method
             * @return <xsl:value-of select="$propertyType"/>
             */
             public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
-            return <xsl:value-of select="$varName"/>;
+                return <xsl:value-of select="$varName"/>;
             }
 
             /**
@@ -105,6 +115,10 @@
                     }
                 </xsl:if>
             </xsl:if>
+             <xsl:if test="$min=0">
+             //update the setting tracker
+             <xsl:value-of select="$settingTracker"/> = true;
+             </xsl:if>
             this.<xsl:value-of select="$varName"/>=param;
             }
         </xsl:for-each>
@@ -114,46 +128,59 @@
         *
         */
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName){
+
+
         <xsl:choose>
             <xsl:when test="@type|@anon">
-                Object[] elementList = new Object[]{
+                 java.util.ArrayList elementList = new java.util.ArrayList();
+                 java.util.ArrayList attribList = new java.util.ArrayList();
+
                 <xsl:for-each select="property[not(@attribute)]">
                     <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
+                    <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
+                    <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+                    <xsl:variable name="settingTracker">local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
 
-                    <xsl:if test="position()>1">,</xsl:if>
+
+                    <xsl:if test="$min=0"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
-                        <xsl:when test="@ours">
-                            new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),<xsl:value-of select="$varName"/>
-                        </xsl:when>
-                        <xsl:when test="@any">
-                            new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),<xsl:value-of select="$varName"/>
+                        <xsl:when test="@ours or @any">
+                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
+                            elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:when test="@array">
-                            "<xsl:value-of select="$propertyName"/>",<xsl:value-of select="$varName"/>
+                            elementList.add("<xsl:value-of select="$propertyName"/>");
+                            elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:otherwise>
-                            "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
+                             elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                         </xsl:otherwise>
                     </xsl:choose>
-                </xsl:for-each>};
+                    <xsl:if test="$min=0">}</xsl:if>
+                </xsl:for-each>
 
-                Object[] attribList = new Object[]{
                 <xsl:for-each select="property[@attribute]">
                     <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
+                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:if test="position()>1">,</xsl:if>
                     <xsl:choose>
                         <xsl:when test="@anyAtt">
-                            null,<xsl:value-of select="$varName"/>
+                            attribList.add(null);
+                            attribList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:otherwise>
-                            new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                            attribList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
+                            attribList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>
-                };
-                return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList, attribList);
+
+                return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), attribList.toArray());
             </xsl:when>
             <xsl:otherwise>
                 <!-- if the element is associated with a type, then its gonna be only one -->
@@ -167,7 +194,6 @@
 
                 <!-- What do we do for the other case ???? -->
                 <xsl:for-each select="property[not(@ours)]">
-                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
                     return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(MY_QNAME,
                     new Object[]{

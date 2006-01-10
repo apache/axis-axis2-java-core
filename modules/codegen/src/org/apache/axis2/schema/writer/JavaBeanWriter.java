@@ -137,7 +137,7 @@ public class JavaBeanWriter implements BeanWriter {
 
         try {
             QName qName = element.getQName();
-           
+
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
@@ -179,7 +179,7 @@ public class JavaBeanWriter implements BeanWriter {
             if (wrapClasses) {
                 String tempPackage ;
                 if (packageName==null){
-                   tempPackage = DEFAULT_PACKAGE;
+                    tempPackage = DEFAULT_PACKAGE;
                 }else{
                     tempPackage = packageName;
                 }
@@ -279,7 +279,9 @@ public class JavaBeanWriter implements BeanWriter {
             }
 
             //add the model to the model map
-            modelMap.put(qName,model);
+            modelMap.put(
+                    new QName(qName.getNamespaceURI(),className)
+                    ,model);
 
 
         }
@@ -354,10 +356,10 @@ public class JavaBeanWriter implements BeanWriter {
             name = qNames[i];
             String xmlName = name.getLocalPart();
             XSLTUtils.addAttribute(model, "name", xmlName, property);
-
+            XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
             String javaName = makeUniqueJavaClassName(propertyNames, xmlName);
-            XSLTUtils.addAttribute(model, "name", xmlName, property);
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
+
             String javaClassNameForElement = metainf.getClassNameForQName(name);
 
             String shortTypeName = "";
@@ -386,6 +388,12 @@ public class JavaBeanWriter implements BeanWriter {
             if (metainf.getAnyAttributeStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "anyAtt", "yes", property);
             }
+
+            //put the min occurs count irrespective of whether it's an array or not
+            long minOccurs = metainf.getMinOccurs(name);
+            XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
+
+            
             if (metainf.getArrayStatusForQName(name)) {
 
                 XSLTUtils.addAttribute(model, "array", "yes", property);
@@ -394,13 +402,6 @@ public class JavaBeanWriter implements BeanWriter {
                         "arrayBaseType",
                         javaClassNameForElement.substring(0, javaClassNameForElement.indexOf("[")),
                         property);
-
-
-                long minOccurs = metainf.getMinOccurs(name);
-
-                if (minOccurs > 0) {
-                    XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
-                }
 
                 long maxOccurs = metainf.getMaxOccurs(name);
                 if (maxOccurs == Long.MAX_VALUE) {
@@ -411,6 +412,9 @@ public class JavaBeanWriter implements BeanWriter {
             }
         }
 
+        /////////////////////////////////////
+//        System.out.println("rootElt = " + rootElt);
+        /////////////////////////////////////
         return rootElt;
     }
 

@@ -146,7 +146,10 @@
                                         env = toEnvelope(getFactory(_options.getSoapVersionURI()), <xsl:value-of select="@name"/>);
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
+                                        // add the children only if the parameter is not null
+                                        if (<xsl:value-of select="@name"/>!=null){
                                         env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                        }
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -244,7 +247,10 @@
                                         env = toEnvelope(getFactory(_options.getSoapVersionURI()), <xsl:value-of select="@name"/>);
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
-                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                         // add the headers only if they are not null
+                                        if (<xsl:value-of select="@name"/>!=null){
+                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                        }
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>

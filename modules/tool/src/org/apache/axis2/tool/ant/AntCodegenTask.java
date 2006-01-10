@@ -37,6 +37,8 @@ public class AntCodegenTask extends Task {
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
     private String language = ConfigPropertyFileLoader.getDefaultLanguage();
     private String databindingName=ConfigPropertyFileLoader.getDefaultDBFrameworkName();
+    private String portName=null;
+    private String serviceName=null;
 
     private boolean asyncOnly = false;
     private boolean syncOnly = false;
@@ -44,7 +46,7 @@ public class AntCodegenTask extends Task {
     private boolean testcase = false;
     private boolean generateServiceXml = false;
     private boolean generateAllClasses = false;
-    private boolean unwrapClasses = false;
+    private boolean unpackClasses = false;
 
     private Path classpath;
 
@@ -170,7 +172,7 @@ public class AntCodegenTask extends Task {
 
         //Unwrap classes option - this determines whether the generated classes are inside the stub/MR
         //or gets generates as seperate classes
-        if (unwrapClasses) {
+        if (unpackClasses) {
             optionMap.put(
                     CommandLineOptionConstants.UNPACK_CLASSES_OPTION,
                     new CommandLineOption(
@@ -178,7 +180,17 @@ public class AntCodegenTask extends Task {
                             new String[0]));
         }
 
+        optionMap.put(
+                CommandLineOptionConstants.SERVICE_NAME_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.SERVICE_NAME_OPTION,
+                        new String[]{serviceName}));
 
+        optionMap.put(
+                CommandLineOptionConstants.PORT_NAME_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.PORT_NAME_OPTION,
+                        new String[]{portName}));
         return optionMap;
     }
 
@@ -220,6 +232,22 @@ public class AntCodegenTask extends Task {
             throw new BuildException(e);
         }
 
+    }
+
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void setGenerateAllClasses(boolean generateAllClasses) {
+        this.generateAllClasses = generateAllClasses;
+    }
+
+    public void setUnpackClasses(boolean unpackClasses) {
+        this.unpackClasses = unpackClasses;
     }
 
     public void setWSDLFileName(String WSDLFileName) {

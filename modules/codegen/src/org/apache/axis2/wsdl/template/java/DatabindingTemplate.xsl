@@ -110,7 +110,7 @@
                     private  org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
-                                    org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(param.MY_QNAME),
+                                    org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME),
                                                                                      factory);
                             return builder.getEnvelope();
                         }else{
