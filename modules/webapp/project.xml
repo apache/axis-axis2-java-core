@@ -178,56 +178,55 @@
                 <module>true</module>
             </properties>
         </dependency>
-    </dependencies>
-    <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
-        <properties>
-            <module>true</module>
-        </properties>
-    </dependency>
-    <dependency>
-        <groupId>xml-apis</groupId>
-        <artifactId>xml-apis</artifactId>
-        <version>${xml_apis.version}</version>
-        <properties>
-            <module>true</module>
-        </properties>
-    </dependency>
-    <dependency>
-        <groupId>servletapi</groupId>
-        <artifactId>servletapi</artifactId>
-        <version>${servletapi.version}</version>
-        <properties>
-            <module>true</module>
-        </properties>
-    </dependency>
-    <dependency>
-        <groupId>commons-fileupload</groupId>
-        <artifactId>commons-fileupload</artifactId>
-        <version>${commons.fileupload.version}</version>
-        <properties>
-            <module>true</module>
-        </properties>
-    </dependency>
-    <dependency>
-        <groupId>geronimo-spec</groupId>
-        <artifactId>geronimo-spec-javamail</artifactId>
-        <version>${geronimo.spec.javamail.version}</version>
-        <properties>
-            <module>true</module>
-        </properties>
-    </dependency>
-    <dependency>
-        <groupId>geronimo-spec</groupId>
-        <artifactId>geronimo-spec-jms</artifactId>
-        <version>${geronimo.spec.jms.version}</version>
-        <properties>
-            <module>true</module>
-        </properties>
-    </dependency>
-     <dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>${xerces.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>${xml_apis.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>servletapi</groupId>
+            <artifactId>servletapi</artifactId>
+            <version>${servletapi.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons.fileupload.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-javamail</artifactId>
+            <version>${geronimo.spec.javamail.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jms</artifactId>
+            <version>${geronimo.spec.jms.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>${jaxen.version}</version>
@@ -236,7 +235,7 @@
             </properties>
             <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
         </dependency>
-    <dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons.codec.version}</version>
@@ -244,6 +243,8 @@
                 <module>true</module>
             </properties>
         </dependency>
+    </dependencies>
+
 
     <reports/>
     <!-- add the build properties-->
