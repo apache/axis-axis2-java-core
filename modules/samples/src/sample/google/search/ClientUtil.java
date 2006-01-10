@@ -116,11 +116,7 @@ public class ClientUtil {
         operation.addChild(
                 getOMElement(omFactory, defNs, "oe", "xsd:string", "latin1"));
 
-        ConfigurationContextFactory fac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = fac.createConfigurationContextFromFileSystem(
-                "doGoogleSearch");
         msgContext = new MessageContext();
-        msgContext.setConfigurationContext(configContext);
         msgContext.setEnvelope(envelope);
         return msgContext;
     }
