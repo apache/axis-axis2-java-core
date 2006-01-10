@@ -1,7 +1,6 @@
 package org.apache.axis2.schema.i18n;
 
 import org.apache.axis2.i18n.MessageBundle;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.i18n.MessagesConstants;
 
 import java.util.Locale;

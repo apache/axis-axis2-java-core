@@ -17,17 +17,13 @@
 package org.apache.axis2.attachments.utils;
 
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.MediaTracker;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageWriter;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageWriter;
 
 /**
  * JDK1.4 based Image I/O

@@ -7,8 +7,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
-
-import java.io.File;
 import java.io.FileInputStream;
 
 /*

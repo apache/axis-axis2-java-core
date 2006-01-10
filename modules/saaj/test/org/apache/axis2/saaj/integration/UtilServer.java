@@ -15,12 +15,7 @@
  */
 package org.apache.axis2.saaj.integration;
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -30,6 +25,9 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+
+import javax.xml.namespace.QName;
+import java.io.File;
 
 /**
  * 

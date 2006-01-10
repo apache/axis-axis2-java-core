@@ -1,17 +1,16 @@
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
-
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class AttachmentTest extends TestCase {
 

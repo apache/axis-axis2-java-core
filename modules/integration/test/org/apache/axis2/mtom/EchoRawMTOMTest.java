@@ -45,7 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
-import java.awt.Image;
+import java.awt.*;
 import java.io.InputStream;
 
 public class EchoRawMTOMTest extends TestCase implements TestConstants {

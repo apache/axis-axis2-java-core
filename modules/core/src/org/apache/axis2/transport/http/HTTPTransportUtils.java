@@ -17,17 +17,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -53,6 +42,16 @@ import org.apache.axis2.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+import java.util.Map;
 
 public class HTTPTransportUtils {
 

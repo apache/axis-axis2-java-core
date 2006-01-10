@@ -16,11 +16,8 @@
 
 package sample.mtom.imagetransfer.client;
 
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 
 public class MTOMClient extends JFrame {
 

@@ -53,7 +53,9 @@
     <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
     <j:set var="dist.dir" value="target/dist"/>
 
-    <!--<ant:TODAY />-->
+    <tstamp>
+        <format property="release_date" pattern="MMMM d, yyyy" locale="en"/>
+    </tstamp>
 
     <j:set var="modules" value="*"/>
 
@@ -257,7 +259,7 @@
         <ant:mkdir dir="${dist.dir}"/>
         <ant:mkdir dir="target/lib"/>
 
-        <uptodate property="jars.uptodate" targetfile="target/axis2.war">
+        <uptodate property="jars.uptodate" targetfile="target/axis2-${pom.currentVersion}.war">
             <srcfiles dir="modules">
                 <include name="**/*.java"/>
                 <include name="**/*.xml"/>
@@ -355,7 +357,7 @@
     <!-- ================================================================ -->
     <!--- Create the War -->
     <!-- ================================================================ -->
-    <goal name="war" prereqs="init-dist,cache-std-deps">
+    <goal name="war" prereqs="init-dist,cache-war-deps">
         <ant:mkdir dir="target/temp/war/lib"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
@@ -386,12 +388,18 @@
         <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:fileset dir="modules/webapp"/>
+            <ant:lib dir="target/temp/war/lib"/>
             <ant:lib dir="${min_dep_cache}">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
             </ant:lib>
             <ant:lib dir="${std_dep_cache}">
+                <ant:include name="**"/>
+                <ant:exclude name="**servlet**"/>
+                <ant:exclude name="ant*.jar"/>
+            </ant:lib>
+            <ant:lib dir="${war_dep_cache}">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
@@ -416,8 +424,8 @@
     <!-- ================================================================ -->
     <goal name="release"
           prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
-          <!--prereqs="dist-min-bin,dist-std-bin">-->
-          <!--prereqs="jar,dist-min-bin,dist-std-bin">-->
+        <!--prereqs="dist-min-bin,dist-std-bin">-->
+        <!--prereqs="jar,dist-min-bin,dist-std-bin">-->
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -437,6 +445,7 @@
 
         <property name="min_dep_cache" value="target/temp/cache/min"/>
         <property name="std_dep_cache" value="target/temp/cache/std"/>
+        <property name="war_dep_cache" value="target/temp/cache/war"/>
 
         <ant:mkdir dir="target/dist"/>
     </goal>
@@ -701,6 +710,15 @@
             <macros:copy-deps copyToDir="${std_dep_cache}"
                               mods="codegen,doom"/>
             <property name="stdDeps.uptodate" value="yes"/>
+        </j:if>
+    </goal>
+
+    <goal name="cache-war-deps" prereqs="init-dist,cache-std-deps">
+        <ant:mkdir dir="${war_dep_cache}"/>
+        <j:if test="${warDeps.uptodate != 'yes'}">
+            <macros:copy-deps copyToDir="${war_dep_cache}"
+                              mods="webapp"/>
+            <property name="warDeps.uptodate" value="yes"/>
         </j:if>
     </goal>
 

@@ -1,8 +1,7 @@
 package org.apache.axis2.saaj.integration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import junit.framework.TestCase;
+import org.apache.axis2.addressing.EndpointReference;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -19,10 +18,9 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.addressing.EndpointReference;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 public class IntegrationTest extends TestCase {
 

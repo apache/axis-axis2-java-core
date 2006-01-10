@@ -30,7 +30,7 @@ import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.awt.Image;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

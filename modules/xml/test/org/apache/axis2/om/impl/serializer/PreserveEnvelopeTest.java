@@ -1,12 +1,11 @@
 package org.apache.axis2.om.impl.serializer;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
 
 	public class PreserveEnvelopeTest extends XMLTestCase{
 

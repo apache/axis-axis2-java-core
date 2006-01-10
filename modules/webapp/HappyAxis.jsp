@@ -11,15 +11,13 @@
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
-                 javax.servlet.jsp.JspWriter,
-                 javax.xml.parsers.SAXParser"
+                 javax.xml.parsers.SAXParser,
+                 javax.xml.parsers.SAXParserFactory"
          session="false" %>
-<%@ page import="javax.xml.parsers.SAXParserFactory" %>
 <%@ page import="javax.xml.stream.XMLOutputFactory" %>
 <%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
-
 <%@ page import="java.io.StringWriter" %>
 
 <%

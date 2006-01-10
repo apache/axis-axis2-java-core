@@ -1,7 +1,6 @@
 package org.apache.axis2.wsdl.util;
 
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;

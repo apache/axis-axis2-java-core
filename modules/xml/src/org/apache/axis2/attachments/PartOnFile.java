@@ -16,6 +16,11 @@
 
 package org.apache.axis2.attachments;
 
+import org.apache.axis2.om.OMException;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,12 +29,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.mail.MessagingException;
-
-import org.apache.axis2.om.OMException;
 
 public class PartOnFile implements Part {
 

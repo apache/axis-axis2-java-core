@@ -1,12 +1,12 @@
 package org.apache.axis2.wsdl.codegen;
 
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
-import java.util.Map;
-import java.util.Iterator;
 import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

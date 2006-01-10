@@ -16,7 +16,7 @@
 
 package org.apache.axis2.tool.tracer;
 
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.io.InputStream;
 import java.io.OutputStream;

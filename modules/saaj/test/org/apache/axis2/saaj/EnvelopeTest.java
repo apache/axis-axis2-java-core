@@ -1,7 +1,6 @@
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+import junit.framework.TestCase;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -16,8 +15,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 public class EnvelopeTest extends TestCase {
 

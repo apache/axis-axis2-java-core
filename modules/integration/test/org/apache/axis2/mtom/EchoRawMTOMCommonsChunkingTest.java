@@ -38,7 +38,7 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
-import java.awt.Image;
+import java.awt.*;
 import java.io.InputStream;
 
 public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestConstants {

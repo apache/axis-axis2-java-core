@@ -16,17 +16,16 @@
 
 package org.apache.axis2.om.impl;
 
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMText;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
-
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMText;
 
 public class MIMEOutputUtils {
 
