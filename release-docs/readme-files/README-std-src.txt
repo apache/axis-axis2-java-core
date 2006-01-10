@@ -19,8 +19,14 @@ Axis2 modules:
 7. webapp
 8. doom
 
-The lib directory contains all third party library dependencies
+The lib directory contains all third party library dependencies, that are distributable,
 of the above modules.
 
 The samples directory contains all the Axis2 module & service samples.
+
+One can use maven 1.x to create the standard binary distribution out of this, by typing "$maven dist-std-bin".
+
+(Please note that this does not include the other WS-* implementation modules, like WS-Security, that are being developed
+ within Axis2. Those can be downloaded from http://ws.apache.org/axis2/modules/)
+
 

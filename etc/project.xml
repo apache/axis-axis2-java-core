@@ -65,7 +65,7 @@
             <name>Sanjiva Weerawarana</name>
             <id>sanjiva</id>
             <email>sanjiva AT apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2</organization>
         </developer>
         <developer>
             <name>Glen Daniels</name>
@@ -90,7 +90,7 @@
             <name>Eran Chinthaka</name>
             <id>chinthaka</id>
             <email>chinthaka AT apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2</organization>
             <url>http://www.apache.org/~chinthaka</url>
         </developer>
         <developer>
@@ -117,7 +117,7 @@
             <name>Deepal Jayasinghe</name>
             <id>deepal</id>
             <email>deepal AT apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2</organization>
             <url>http://www.apache.org/~deepal</url>
 
         </developer>
@@ -125,7 +125,7 @@
             <name>Ajith Ranabahu</name>
             <id>ajith</id>
             <email>ajith AT apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2</organization>
             <url>http://www.apache.org/~ajith</url>
 
         </developer>
@@ -157,13 +157,25 @@
             <name>Ruchith Fernando</name>
             <id>ruchith</id>
             <email>ruchithf AT apache.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2</organization>
         </developer>
         <developer>
             <name>Saminda Abeyruwan</name>
             <id>saminda</id>
             <email>saminda AT opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Chamil Thanthrimudalige</name>
+            <id>chamil</id>
+            <email>chamil AT opensource.lk</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Sanka Samaranayake</name>
+            <id>sanka</id>
+            <email>sanka AT wso2.com</email>
+            <organization>WSO2</organization>
         </developer>
 
 
@@ -180,9 +192,9 @@
             <organization>Tmax Soft, Korea</organization>
         </contributor>
         <contributor>
-            <name>Chamil Thanthrimudalige</name>
-            <email>chamil AT opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <name>Afkham Azeez Thanthrimudalige</name>
+            <email>azeez AT wso2.com</email>
+            <organization>WSO2</organization>
         </contributor>
         <contributor>
             <name>Nadana Gunarathna</name>
@@ -208,6 +220,16 @@
             <name>Dharshana Dias</name>
             <email></email>
             <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Chatra Nakkawita</name>
+            <email>chatra AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </contributor>
+        <contributor>
+            <name>Thilini Gunarathne</name>
+            <email>thilini AT WSO2.com</email>
+            <organization>WSO2</organization>
         </contributor>
     </contributors>
 
