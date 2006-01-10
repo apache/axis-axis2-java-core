@@ -24,8 +24,7 @@
                  java.util.HashMap,
                  java.util.Iterator" %>
 <html>
-<jsp:include page="include/adminheader.jsp">
-</jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <%
     String status = (String) request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
@@ -67,5 +66,4 @@
 <p><font color="blue"><%=status%></font></p>
 <%
     } %>
-<jsp:include page="include/adminfooter.jsp">
-</jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>
