@@ -67,7 +67,8 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	/**
 	 * If the given data is null the content will be deleted.
 	 */
-	public void replaceData(int offset, int count, String data) throws DOMException {
+	public void replaceData(int offset, int count, String data) throws
+                                                             DOMException {
 		
 		if (this.isReadonly()) {
 			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
@@ -144,8 +145,9 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	
 	/**
 	 * Extracts a range of data from the node.
-	 * @return Returns the specified substring. If the sum of offset and count exceeds
-	 * the length, then all 16-bit units to the end of the data are returned.
+	 * @return Returns the specified substring. If the sum of offset and count 
+     * exceeds the length, then all 16-bit units to the end of the data are 
+     * returned.
 	 */
 	public String substringData(int offset, int count) throws DOMException {
 		if(offset < 0 || offset > this.textValue.length() || count < 0) {

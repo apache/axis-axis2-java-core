@@ -35,8 +35,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.Writer;
 
-public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
-
+public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
 
     /**
      * Field builder
@@ -53,19 +52,21 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
      */
     protected int nodeType;
 
-
-
-
     protected DocumentImpl ownerNode;
 
     // data
 
     protected short flags;
-    protected final static short OWNED        = 0x1<<1;
-    protected final static short FIRSTCHILD   = 0x1<<2;
-    protected final static short READONLY     = 0x1<<3;
-    protected final static short SPECIFIED    = 0x1<<4;
-    protected final static short NORMALIZED   = 0x1<<5;
+
+    protected final static short OWNED = 0x1 << 1;
+
+    protected final static short FIRSTCHILD = 0x1 << 2;
+
+    protected final static short READONLY = 0x1 << 3;
+
+    protected final static short SPECIFIED = 0x1 << 4;
+
+    protected final static short NORMALIZED = 0x1 << 5;
 
     //
     // Constructors
@@ -74,97 +75,92 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     protected NodeImpl(DocumentImpl ownerDocument) {
 
         this.ownerNode = ownerDocument;
-//        this.isOwned(true);
+        // this.isOwned(true);
 
     }
 
     protected NodeImpl() {
     }
 
-
-
     public void normalize() {
-        /* by default we do not have any children,
-             ParentNode overrides this behavior */
+        /*
+         * by default we do not have any children, ParentNode overrides this
+         * behavior
+         */
     }
-
 
     public boolean hasAttributes() {
-        return false;           // overridden in ElementImpl
+        return false; // overridden in ElementImpl
     }
-
 
     public boolean hasChildNodes() {
-        return false; //Override in ParentNode
+        return false; // Override in ParentNode
     }
 
-
     public String getLocalName() {
-        return null; //Override in AttrImpl and ElementImpl
+        return null; // Override in AttrImpl and ElementImpl
     }
 
     public String getNamespaceURI() {
-        return null; //Override in AttrImpl and ElementImpl
+        return null; // Override in AttrImpl and ElementImpl
     }
-
-
-
 
     public String getNodeValue() throws DOMException {
         return null;
     }
 
-
     /*
-      * Overidden in ElementImpl and AttrImpl.
-      */
+     * Overidden in ElementImpl and AttrImpl.
+     */
     public String getPrefix() {
         return null;
     }
 
     public void setNodeValue(String arg0) throws DOMException {
-        //Don't do anything, to be overridden in SOME Child classes
+        // Don't do anything, to be overridden in SOME Child classes
     }
 
-
     public void setPrefix(String prefix) throws DOMException {
-        throw new DOMException(DOMException.NAMESPACE_ERR,
-              DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN,
-                 "NAMESPACE_ERR", null));
+        throw new DOMException(DOMException.NAMESPACE_ERR, DOMMessageFormatter
+                .formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NAMESPACE_ERR",
+                        null));
     }
 
     /**
-     * Finds the document that this Node belongs to (the document in
-     * whose context the Node was created). The Node may or may not
+     * Finds the document that this Node belongs to (the document in whose
+     * context the Node was created). The Node may or may not
      */
     public Document getOwnerDocument() {
         return (Document) this.ownerNode;
     }
 
     /**
-     * Returns the collection of attributes associated with this node,
-     * or null if none. At this writing, Element is the only type of node
-     * which will ever have attributes.
-     *
+     * Returns the collection of attributes associated with this node, or null
+     * if none. At this writing, Element is the only type of node which will
+     * ever have attributes.
+     * 
      * @see ElementImpl
      */
     public NamedNodeMap getAttributes() {
         return null; // overridden in ElementImpl
     }
 
-    /** Gets the first child of this Node, or null if none.
+    /**
+     * Gets the first child of this Node, or null if none.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
+     * 
      * @see ParentNode
      */
     public Node getFirstChild() {
         return null;
     }
 
-
-    /** Gets the last child of this Node, or null if none.
+    /**
+     * Gets the last child of this Node, or null if none.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
+     * 
      * @see ParentNode
      */
     public Node getLastChild() {
@@ -173,13 +169,12 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
     /** Returns the next child of this node's parent, or null if none. */
     public Node getNextSibling() {
-        return null;            // default behavior, overriden in ChildNode
+        return null; // default behavior, overriden in ChildNode
     }
 
-
     public Node getParentNode() {
-        return null;            // overriden by ChildNode
-        //Document, DocumentFragment, and Attribute will never have parents.
+        return null; // overriden by ChildNode
+        // Document, DocumentFragment, and Attribute will never have parents.
     }
 
     /*
@@ -191,28 +186,28 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
     /** Returns the previous child of this node's parent, or null if none. */
     public Node getPreviousSibling() {
-        return null;            // default behavior, overriden in ChildNode
+        return null; // default behavior, overriden in ChildNode
     }
 
-//    public Node cloneNode(boolean deep) {
-//    	if(this instanceof OMElement) {
-//    		return (Node)((OMElement)this).cloneOMElement();
-//    	} else if(this instanceof OMText ){
-//    		return ((TextImpl)this).cloneText();
-//    	} else {
-//    		throw new UnsupportedOperationException("Only elements can be cloned right now");
-//    	}
-//    }
-//    
+    // public Node cloneNode(boolean deep) {
+    // if(this instanceof OMElement) {
+    // return (Node)((OMElement)this).cloneOMElement();
+    // } else if(this instanceof OMText ){
+    // return ((TextImpl)this).cloneText();
+    // } else {
+    // throw new UnsupportedOperationException("Only elements can be cloned
+    // right now");
+    // }
+    // }
+    //    
     public Node cloneNode(boolean deep) {
         NodeImpl newnode;
         try {
-            newnode = (NodeImpl)clone();
-        }
-        catch (CloneNotSupportedException e) {
+            newnode = (NodeImpl) clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeException("**Internal Error**" + e);
         }
-        newnode.ownerNode      = this.ownerNode;
+        newnode.ownerNode = this.ownerNode;
         newnode.isOwned(false);
 
         newnode.isReadonly(false);
@@ -220,37 +215,34 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         return newnode;
     }
 
-
     /*
-      * (non-Javadoc)
-      * 
-      * @see org.w3c.dom.Node#getChildNodes()
-      */
+     * (non-Javadoc)
+     * 
+     * @see org.w3c.dom.Node#getChildNodes()
+     */
     public NodeList getChildNodes() {
         return this;
     }
 
-    public boolean isSupported(String feature, String version)
-    {
+    public boolean isSupported(String feature, String version) {
         throw new UnsupportedOperationException();
-        //TODO
+        // TODO
     }
 
-
     /*
-      * (non-Javadoc)
-      * 
-      * @see org.w3c.dom.Node#appendChild(org.w3c.dom.Node)
-      */
+     * (non-Javadoc)
+     * 
+     * @see org.w3c.dom.Node#appendChild(org.w3c.dom.Node)
+     */
     public Node appendChild(Node newChild) throws DOMException {
         return insertBefore(newChild, null);
     }
 
     /*
-      * (non-Javadoc)
-      * 
-      * @see org.w3c.dom.Node#removeChild(org.w3c.dom.Node)
-      */
+     * (non-Javadoc)
+     * 
+     * @see org.w3c.dom.Node#removeChild(org.w3c.dom.Node)
+     */
     public Node removeChild(Node oldChild) throws DOMException {
         throw new DOMException(DOMException.NOT_FOUND_ERR, DOMMessageFormatter
                 .formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NOT_FOUND_ERR",
@@ -258,12 +250,12 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /*
-      * (non-Javadoc)
-      * 
-      * @see org.w3c.dom.Node#insertBefore(org.w3c.dom.Node, org.w3c.dom.Node)
-      */
+     * (non-Javadoc)
+     * 
+     * @see org.w3c.dom.Node#insertBefore(org.w3c.dom.Node, org.w3c.dom.Node)
+     */
     public Node insertBefore(Node newChild, Node refChild) throws DOMException {
-        //Overridden in ParentNode
+        // Overridden in ParentNode
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
                 DOMMessageFormatter.formatMessage(
                         DOMMessageFormatter.DOM_DOMAIN,
@@ -272,18 +264,16 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /*
-      * (non-Javadoc)
-      * 
-      * @see org.w3c.dom.Node#replaceChild(org.w3c.dom.Node, org.w3c.dom.Node)
-      */
+     * (non-Javadoc)
+     * 
+     * @see org.w3c.dom.Node#replaceChild(org.w3c.dom.Node, org.w3c.dom.Node)
+     */
     public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
                 DOMMessageFormatter.formatMessage(
                         DOMMessageFormatter.DOM_DOMAIN,
                         "HIERARCHY_REQUEST_ERR", null));
     }
-
-
 
     //
     // NodeList methods
@@ -293,8 +283,9 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
      * NodeList method: Returns the number of immediate children of this node.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
+     * 
      * @see ParentNode
-     *
+     * 
      * @return Returns int.
      */
     public int getLength() {
@@ -302,12 +293,13 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     }
 
     /**
-     * NodeList method: Returns the Nth immediate child of this node, or
-     * null if the index is out of bounds.
+     * NodeList method: Returns the Nth immediate child of this node, or null if
+     * the index is out of bounds.
      * <P>
      * By default we do not have any children, ParentNode overrides this.
+     * 
      * @see ParentNode
-     *
+     * 
      * @return Returns org.w3c.dom.Node
      * @param index
      */
@@ -315,13 +307,9 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         return null;
     }
 
-
-
-
     /*
-    * Flags setters and getters
-    */
-
+     * Flags setters and getters
+     */
 
     final boolean isOwned() {
         return (flags & OWNED) != 0;
@@ -364,24 +352,28 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         if (!value && isNormalized() && ownerNode != null) {
             ownerNode.isNormalized(false);
         }
-        flags = (short) (value ?  flags | NORMALIZED : flags & ~NORMALIZED);
+        flags = (short) (value ? flags | NORMALIZED : flags & ~NORMALIZED);
     }
 
-    ///
-    ///OM Methods
-    ///
+    // /
+    // /OM Methods
+    // /
 
-    /* (non-Javadoc)
-      * @see org.apache.axis.om.OMNode#getParent()
-      */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis.om.OMNode#getParent()
+     */
     public OMContainer getParent() throws OMException {
         return null; // overriden by ChildNode
-        //Document, DocumentFragment, and Attribute will never have parents.
+        // Document, DocumentFragment, and Attribute will never have parents.
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axis.om.OMNode#isComplete()
-      */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis.om.OMNode#isComplete()
+     */
     public boolean isComplete() {
         return this.done;
     }
@@ -394,15 +386,19 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
     /**
      * There no concept of caching in this OM-DOM implementation.
      */
-    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serializeWithCache(OMOutputImpl omOutput)
+            throws XMLStreamException {
         this.serialize(omOutput);
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axis.om.OMNode#insertSiblingAfter(org.apache.axis.om.OMNode)
-      */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis.om.OMNode#insertSiblingAfter
+     * (org.apache.axis.om.OMNode)
+     */
     public void insertSiblingAfter(OMNode sibling) throws OMException {
-        //Overridden in ChildNode
+        // Overridden in ChildNode
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
                 DOMMessageFormatter.formatMessage(
                         DOMMessageFormatter.DOM_DOMAIN,
@@ -410,19 +406,20 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axis.om.OMNode#insertSiblingBefore(org.apache.axis.om.OMNode)
-      */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis.om.OMNode#insertSiblingBefore
+     * (org.apache.axis.om.OMNode)
+     */
     public void insertSiblingBefore(OMNode sibling) throws OMException {
-        //Overridden in ChildNode
+        // Overridden in ChildNode
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
                 DOMMessageFormatter.formatMessage(
                         DOMMessageFormatter.DOM_DOMAIN,
                         "HIERARCHY_REQUEST_ERR", null));
 
     }
-
-
 
     /**
      * Default behavior returns null, overriden in ChildNode.
@@ -462,6 +459,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
     /**
      * Sets the owner document.
+     * 
      * @param document
      */
     protected void setOwnerDocument(DocumentImpl document) {
@@ -475,7 +473,8 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         omOutput.flush();
     }
 
-    public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
+    public void serializeAndConsume(XMLStreamWriter xmlWriter)
+            throws XMLStreamException {
         OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
         serializeAndConsume(omOutput);
         omOutput.flush();
@@ -483,12 +482,12 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
     public OMNode detach() {
         throw new OMException(
-                    "Elements that doesn't have a parent can not be detached");
+                "Elements that doesn't have a parent can not be detached");
     }
 
     /*
-      * DOM-Level 3 methods 
-      */
+     * DOM-Level 3 methods
+     */
 
     public String getBaseURI() {
         // TODO TODO
@@ -558,35 +557,44 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
         serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
     }
 
-    public void serializeAndConsume(OutputStream output) throws XMLStreamException {
-        serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(output));
+    public void serializeAndConsume(OutputStream output)
+            throws XMLStreamException {
+        serializeAndConsume(XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(output));
     }
 
     public void serializeAndConsume(Writer writer) throws XMLStreamException {
-        serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+        serializeAndConsume(XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(writer));
     }
 
-    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {    
-        OMOutputImpl omOutput = new  OMOutputImpl(output, format);
+    public void serialize(OutputStream output, OMOutputFormat format)
+            throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(output, format);
         serialize(omOutput);
         omOutput.flush();
     }
 
-    public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
-        OMOutputImpl omOutput = new  OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+    public void serialize(Writer writer, OMOutputFormat format)
+            throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(writer));
         omOutput.setOutputFormat(format);
         serialize(omOutput);
         omOutput.flush();
     }
 
-    public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        OMOutputImpl omOutput = new  OMOutputImpl(output, format);
+    public void serializeAndConsume(OutputStream output, OMOutputFormat format)
+            throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(output, format);
         serializeAndConsume(omOutput);
         omOutput.flush();
     }
 
-    public void serializeAndConsume(Writer writer, OMOutputFormat format) throws XMLStreamException {
-        OMOutputImpl omOutput = new  OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+    public void serializeAndConsume(Writer writer, OMOutputFormat format)
+            throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(writer));
         omOutput.setOutputFormat(format);
         serializeAndConsume(omOutput);
         omOutput.flush();

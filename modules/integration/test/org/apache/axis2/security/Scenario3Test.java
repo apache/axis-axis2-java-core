@@ -59,9 +59,6 @@ public class Scenario3Test extends InteropTestBase {
 		return SCENARIO3_SERVICE_REPOSITORY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.InteropTestBase#useSOAP12()
-	 */
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return true;
 	}

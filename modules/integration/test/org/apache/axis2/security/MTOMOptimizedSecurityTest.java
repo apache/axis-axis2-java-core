@@ -22,7 +22,8 @@ import org.apache.axis2.security.handler.config.OutflowConfiguration;
 
 /**
  * Testing optimizing the base 64 elements with 
- * <code><parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter></code>
+ * <code><parameter name="optimizeParts" locked="false">//xenc:Encrypted
+ * Data/xenc:CipherData/xenc:CipherValue</parameter></code>
  */
 public class MTOMOptimizedSecurityTest extends InteropTestBase {
 
@@ -36,7 +37,8 @@ public class MTOMOptimizedSecurityTest extends InteropTestBase {
 		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
 		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
 		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
-		ofc.setOptimizeParts("//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue");
+		ofc.setOptimizeParts("//xenc:EncryptedData/xenc:CipherData/" +
+                             "xenc:CipherValue");
 		
 		return ofc;
 	}
@@ -59,9 +61,6 @@ public class MTOMOptimizedSecurityTest extends InteropTestBase {
 		return MTOM_SEC_SERVICE_REPOSITORY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.InteropTestBase#useSOAP12()
-	 */
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return true;
 	}

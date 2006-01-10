@@ -36,26 +36,23 @@ import java.io.InputStream;
 
 public class TextImpl extends CharacterImpl implements Text, OMText {
 
-	
-	private String mimeType;
-	
-	private boolean optimize;
-	
-	private boolean isBinary;
+    private String mimeType;
+
+    private boolean optimize;
+
+    private boolean isBinary;
 
     /**
-     *
+     * 
      */
     private String contentID = null;
 
     /**
-     * Field dataHandler contains the DataHandler.
-     * Declaring as Object to remove the dependency on 
-     * Javax.activation.DataHandler
+     * Field dataHandler contains the DataHandler. Declaring as Object to remove
+     * the dependency on Javax.activation.DataHandler
      */
     private Object dataHandlerObject = null;
 
-    
     /**
      * Field nameSpace is used when serializing Binary stuff as MTOM optimized.
      */
@@ -71,50 +68,52 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
      * Field attribute is used when serializing Binary stuff as MTOM optimized.
      */
     protected OMAttribute attribute;
-    
-    
-	/**
-	 * Creates a text node with the given text required by the OMDOMFactory.
-	 * The owner document should be set properly when appending this to a DOM tree.
-	 * @param text
-	 */
-	public TextImpl(String text) {
-		this.textValue = new StringBuffer(text);
-		this.done = true;
-	}
-	
+
+    /**
+     * Creates a text node with the given text required by the OMDOMFactory. The
+     * owner document should be set properly when appending this to a DOM tree.
+     * 
+     * @param text
+     */
+    public TextImpl(String text) {
+        this.textValue = new StringBuffer(text);
+        this.done = true;
+    }
+
     /**
      * @param contentID
      * @param parent
-     * @param builder   Used when the builder is encountered with a XOP:Include tag
-     *                  Stores a reference to the builder and the content-id. Supports
-     *                  deffered parsing of MIME messages
+     * @param builder
+     *            Used when the builder is encountered with a XOP:Include tag
+     *            Stores a reference to the builder and the content-id. Supports
+     *            deffered parsing of MIME messages
      */
     public TextImpl(String contentID, OMElement parent,
-                      OMXMLParserWrapper builder) {
-        super((DocumentImpl)((ParentNode)parent).getOwnerDocument());
+            OMXMLParserWrapper builder) {
+        super((DocumentImpl) ((ParentNode) parent).getOwnerDocument());
         this.contentID = contentID;
         this.optimize = true;
         this.isBinary = true;
         this.done = true;
         this.builder = builder;
     }
-    
-	public TextImpl(String text, String mimeType, boolean optimize) {
-		this(text,mimeType,optimize,true);
-	}
-	
-	public TextImpl(String text, String mimeType, boolean optimize, boolean isBinary) {
-		this(text);
-		this.mimeType = mimeType;
-		this.optimize = optimize;
-		this.isBinary = isBinary;
-	}
-	
+
+    public TextImpl(String text, String mimeType, boolean optimize) {
+        this(text, mimeType, optimize, true);
+    }
+
+    public TextImpl(String text, String mimeType, boolean optimize,
+            boolean isBinary) {
+        this(text);
+        this.mimeType = mimeType;
+        this.optimize = optimize;
+        this.isBinary = isBinary;
+    }
 
     /**
      * @param dataHandler
-     * @param optimize    To send binary content. Created progrmatically.
+     * @param optimize
+     *            To send binary content. Created progrmatically.
      */
     public TextImpl(Object dataHandler, boolean optimize) {
         this.dataHandlerObject = dataHandler;
@@ -122,126 +121,130 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         this.optimize = optimize;
         done = true;
     }
-	
-	/**
-	 * @param ownerNode
-	 */
-	public TextImpl(DocumentImpl ownerNode) {
-		super(ownerNode);
-		this.done =true; 
-	}
 
-	/**
-	 * @param ownerNode
-	 * @param value
-	 */
-	public TextImpl(DocumentImpl ownerNode, String value) {
-		super(ownerNode, value);
-		this.done = true;
-	}
+    /**
+     * @param ownerNode
+     */
+    public TextImpl(DocumentImpl ownerNode) {
+        super(ownerNode);
+        this.done = true;
+    }
 
-	/**
-	 * @param ownerNode
-	 * @param value
-	 */
-	public TextImpl(DocumentImpl ownerNode, String value, String mimeType, boolean optimize) {
-		this(ownerNode,value);
-		this.mimeType = mimeType;
-		this.optimize = optimize;
+    /**
+     * @param ownerNode
+     * @param value
+     */
+    public TextImpl(DocumentImpl ownerNode, String value) {
+        super(ownerNode, value);
+        this.done = true;
+    }
+
+    /**
+     * @param ownerNode
+     * @param value
+     */
+    public TextImpl(DocumentImpl ownerNode, String value, String mimeType,
+            boolean optimize) {
+        this(ownerNode, value);
+        this.mimeType = mimeType;
+        this.optimize = optimize;
         this.isBinary = true;
         done = true;
-	}
+    }
 
-	
-	/**
-	 * Breaks this node into two nodes at the specified offset, keeping both 
-	 * in the tree as siblings. After being split, this node will contain all 
-	 * the content up to the offset point. A new node of the same type, which 
-	 * contains all the content at and after the offset point, is returned. If 
-	 * the original node had a parent node, the new node is inserted as the 
-	 * next sibling of the original node. When the offset is equal to the 
-	 * length of this node, the new node has no data.
-	 */
-	public Text splitText(int offset) throws DOMException {
-		if (this.isReadonly()) {
-			throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-					DOMMessageFormatter.formatMessage(
-							DOMMessageFormatter.DOM_DOMAIN,
-							"NO_MODIFICATION_ALLOWED_ERR", null));
-		}
-		if(offset < 0 || offset > this.textValue.length()) {
-			throw new DOMException(DOMException.INDEX_SIZE_ERR,
-					DOMMessageFormatter.formatMessage(
-							DOMMessageFormatter.DOM_DOMAIN, "INDEX_SIZE_ERR",
-							null));
-		}
-		String newValue = this.textValue.substring(offset);
-		this.deleteData(offset, this.textValue.length());
-		
-		TextImpl newText = (TextImpl)this.getOwnerDocument().createTextNode(newValue);
-		
-		if(this.parentNode != null) {
-			newText.setParent(this.parentNode);
-		}
-		
-		this.insertSiblingAfter(newText);
-		
+    /**
+     * Breaks this node into two nodes at the specified offset, keeping both in
+     * the tree as siblings. After being split, this node will contain all the
+     * content up to the offset point. A new node of the same type, which
+     * contains all the content at and after the offset point, is returned. If
+     * the original node had a parent node, the new node is inserted as the next
+     * sibling of the original node. When the offset is equal to the length of
+     * this node, the new node has no data.
+     */
+    public Text splitText(int offset) throws DOMException {
+        if (this.isReadonly()) {
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+                    DOMMessageFormatter.formatMessage(
+                            DOMMessageFormatter.DOM_DOMAIN,
+                            "NO_MODIFICATION_ALLOWED_ERR", null));
+        }
+        if (offset < 0 || offset > this.textValue.length()) {
+            throw new DOMException(DOMException.INDEX_SIZE_ERR,
+                    DOMMessageFormatter.formatMessage(
+                            DOMMessageFormatter.DOM_DOMAIN, "INDEX_SIZE_ERR",
+                            null));
+        }
+        String newValue = this.textValue.substring(offset);
+        this.deleteData(offset, this.textValue.length());
 
-		return newText;
-	}
-	
-	///
-	///org.w3c.dom.Node methods
-	///
-	public String getNodeName() {
-		return "#text";
-	}
-	public short getNodeType() {
-		return Node.TEXT_NODE;
-	}
-	
-	
-	///
-	///OMNode methods
-	///
-		
+        TextImpl newText = (TextImpl) this.getOwnerDocument().createTextNode(
+                newValue);
 
+        if (this.parentNode != null) {
+            newText.setParent(this.parentNode);
+        }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMNode#getType()
-	 */
-	public int getType() throws OMException {
-		return Node.TEXT_NODE;
-	}
+        this.insertSiblingAfter(newText);
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMNode#setType(int)
-	 */
-	public void setType(int nodeType) throws OMException {
-		//do not do anything here
-		//Its not clear why we should let someone change the type of a node
-	}
+        return newText;
+    }
 
+    // /
+    // /org.w3c.dom.Node methods
+    // /
+    public String getNodeName() {
+        return "#text";
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.OMOutput)
-	 */
-	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
+    public short getNodeType() {
+        return Node.TEXT_NODE;
+    }
+
+    // /
+    // /OMNode methods
+    // /
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.om.OMNode#getType()
+     */
+    public int getType() throws OMException {
+        return Node.TEXT_NODE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.om.OMNode#setType(int)
+     */
+    public void setType(int nodeType) throws OMException {
+        // do not do anything here
+        // Its not clear why we should let someone change the type of a node
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.OMOutput)
+     */
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serializeLocal(omOutput);
-	}
-	
-	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
+    }
+
+    public void serializeAndConsume(OMOutputImpl omOutput)
+            throws XMLStreamException {
         serializeLocal(omOutput);
-	}
+    }
 
-	public boolean isOptimized() {
-		return this.optimize;
-	}
+    public boolean isOptimized() {
+        return this.optimize;
+    }
 
-	public void setOptimize(boolean value) {
-		this.optimize = value;
-	}
-	
+    public void setOptimize(boolean value) {
+        this.optimize = value;
+    }
+
     public void discard() throws OMException {
         if (done) {
             this.detach();
@@ -249,10 +252,10 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
             builder.discard((OMElement) this.parentNode);
         }
     }
-    
+
     /**
      * Writes the relevant output.
-     *
+     * 
      * @param omOutput
      * @throws XMLStreamException
      */
@@ -268,25 +271,24 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         }
     }
 
-	
-	public String getText() {
-        if (this.textValue!= null) {
+    public String getText() {
+        if (this.textValue != null) {
             return this.textValue.toString();
         } else {
             try {
                 InputStream inStream;
                 inStream = this.getInputStream();
-                //int x = inStream.available();
+                // int x = inStream.available();
                 byte[] data;
                 StringBuffer text = new StringBuffer();
                 do {
-                	data = new byte[1024];
-                	int len;
-                	while((len = inStream.read(data)) > 0) {
-                		byte[] temp = new byte[len];
-                		System.arraycopy(data,0,temp,0,len);
-                		text.append(Base64.encode(temp));
-                	}
+                    data = new byte[1024];
+                    int len;
+                    while ((len = inStream.read(data)) > 0) {
+                        byte[] temp = new byte[len];
+                        System.arraycopy(data, 0, temp, 0, len);
+                        text.append(Base64.encode(temp));
+                    }
 
                 } while (inStream.available() > 0);
                 return text.toString();
@@ -294,26 +296,27 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                 throw new OMException(e);
             }
         }
-	}
-	
-	public String getNodeValue() throws DOMException {
-		return this.getText();
-	}
-	
-	public String getContentID() {
+    }
+
+    public String getNodeValue() throws DOMException {
+        return this.getText();
+    }
+
+    public String getContentID() {
         if (contentID == null) {
-            contentID = UUIDGenerator.getUUID()
-                    + "@apache.org";
+            contentID = UUIDGenerator.getUUID() + "@apache.org";
         }
         return this.contentID;
-	}
-	public Object getDataHandler() {
+    }
+
+    public Object getDataHandler() {
         /*
          * this should return a DataHandler containing the binary data
          * reperesented by the Base64 strings stored in OMText
          */
         if (textValue != null & isBinary) {
-        	return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(textValue.toString() ,mimeType);
+            return org.apache.axis2.attachments.DataHandlerUtils
+                    .getDataHandlerFromText(textValue.toString(), mimeType);
         } else {
 
             if (dataHandlerObject == null) {
@@ -324,9 +327,8 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                         .getDataHandler(contentID);
             }
             return dataHandlerObject;
-        }	
-	}
-	
+        }
+    }
 
     public java.io.InputStream getInputStream() throws OMException {
         if (isBinary) {
@@ -334,7 +336,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                 getDataHandler();
             }
             InputStream inStream;
-            javax.activation.DataHandler dataHandler = (javax.activation.DataHandler)dataHandlerObject;
+            javax.activation.DataHandler dataHandler = (javax.activation.DataHandler) dataHandlerObject;
             try {
                 inStream = dataHandler.getDataSource().getInputStream();
             } catch (IOException e) {
@@ -346,9 +348,9 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
             throw new OMException("Unsupported Operation");
         }
     }
-    
-    
-    private void serializeLocal(OMOutputImpl omOutput) throws XMLStreamException {
+
+    private void serializeLocal(OMOutputImpl omOutput)
+            throws XMLStreamException {
         if (!this.isBinary) {
             writeOutput(omOutput);
         } else {
@@ -364,10 +366,9 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                 omOutput.getXmlStreamWriter().writeEndElement();
             } else {
                 omOutput.getXmlStreamWriter().writeCharacters(this.getText());
-            } 
+            }
         }
     }
-    
 
     /*
      * Methods to copy from OMSerialize utils.
@@ -391,8 +392,8 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                     if (prefix != null) {
                         writer.writeStartElement(prefix, this.getLocalName(),
                                 nameSpaceName);
-                        //TODO FIX ME
-                        //writer.writeNamespace(prefix, nameSpaceName);
+                        // TODO FIX ME
+                        // writer.writeNamespace(prefix, nameSpaceName);
                         writer.setPrefix(prefix, nameSpaceName);
                     } else {
                         writer.writeStartElement(nameSpaceName, this
@@ -415,7 +416,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 
     /**
      * Method serializeAttribute.
-     *
+     * 
      * @param attr
      * @param omOutput
      * @throws XMLStreamException
@@ -439,13 +440,15 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                         .getAttributeValue());
             }
         } else {
-            writer.writeAttribute(attr.getLocalName(), attr.getAttributeValue());
+            writer
+                    .writeAttribute(attr.getLocalName(), attr
+                            .getAttributeValue());
         }
     }
 
     /**
      * Method serializeNamespace.
-     *
+     * 
      * @param namespace
      * @param omOutput
      * @throws XMLStreamException
@@ -461,36 +464,33 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         }
     }
 
-    
     public Node cloneNode(boolean deep) {
-    	TextImpl textImpl = new TextImpl(this.textValue.toString());
-    	textImpl.setOwnerDocument(this.ownerNode);
-		return textImpl;
+        TextImpl textImpl = new TextImpl(this.textValue.toString());
+        textImpl.setOwnerDocument(this.ownerNode);
+        return textImpl;
     }
-    
-	/*
-	 * DOM-Level 3 methods
-	 */
-    
-	public String getWholeText() {
-		// TODO TODO
-		throw new UnsupportedOperationException("TODO");
-	}
 
-	public boolean isElementContentWhitespace() {
-		// TODO TODO
-		throw new UnsupportedOperationException("TODO");
-	}
+    /*
+     * DOM-Level 3 methods
+     */
 
-	public Text replaceWholeText(String arg0) throws DOMException {
-		// TODO TODO
-		throw new UnsupportedOperationException("TODO");
-	}
+    public String getWholeText() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
+    public boolean isElementContentWhitespace() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
-	public String toString() {
-		return (this.textValue != null)?textValue.toString() : "";
-	}
-    
-	
+    public Text replaceWholeText(String arg0) throws DOMException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public String toString() {
+        return (this.textValue != null) ? textValue.toString() : "";
+    }
+
 }

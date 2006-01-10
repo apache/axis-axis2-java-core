@@ -22,34 +22,36 @@ import org.w3c.dom.DocumentType;
 
 public class DOMImplementationImpl implements DOMImplementation {
 
-	public boolean hasFeature(String arg0, String arg1) {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
-	}
+    public boolean hasFeature(String arg0, String arg1) {
+        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
-	public Document createDocument(String namespaceURI, String qualifiedName, DocumentType doctype)
-			throws DOMException {
-		//TODO Handle docType stuff
-		DocumentImpl doc = new DocumentImpl();
-		
-		new ElementImpl(doc,DOMUtil.getLocalName(qualifiedName),new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName)));
-		
-		return doc;
-	}
+    public Document createDocument(String namespaceURI, String qualifiedName,
+            DocumentType doctype) throws DOMException {
+        // TODO Handle docType stuff
+        DocumentImpl doc = new DocumentImpl();
 
-	public DocumentType createDocumentType(String qualifiedName, String publicId, 
-			String systemId) throws DOMException {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
-	}
+        new ElementImpl(doc, DOMUtil.getLocalName(qualifiedName),
+                new NamespaceImpl(namespaceURI, DOMUtil
+                        .getPrefix(qualifiedName)));
 
-	/*
-	 * DOM-Level 3 methods
-	 */
-	
-	public Object getFeature(String arg0, String arg1) {
-		// TODO TODO
-		throw new UnsupportedOperationException("TODO");
-	}
+        return doc;
+    }
+
+    public DocumentType createDocumentType(String qualifiedName,
+            String publicId, String systemId) throws DOMException {
+        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    /*
+     * DOM-Level 3 methods
+     */
+
+    public Object getFeature(String arg0, String arg1) {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
 }

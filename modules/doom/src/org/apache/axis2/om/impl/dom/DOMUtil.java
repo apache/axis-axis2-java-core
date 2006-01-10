@@ -20,49 +20,53 @@ package org.apache.axis2.om.impl.dom;
  */
 class DOMUtil {
 
-	public static boolean isValidChras(String value) {
-		// TODO check for valid characters
-		//throw new UnsupportedOperationException("TODO");
-		return true;
-	}
-	
-	public static boolean isValidNamespace(String namespaceURI, String qualifiedname) {
-		// TODO check for valid namespace
-		/**
-		 * if the qualifiedName has a prefix and the namespaceURI is null, if
-		 * the qualifiedName has a prefix that is "xml" and the namespaceURI is
-		 * different from " http://www.w3.org/XML/1998/namespace", or if the
-		 * qualifiedName, or its prefix, is "xmlns" and the namespaceURI is
-		 * different from " http://www.w3.org/2000/xmlns/".
-		 */
-		//throw new UnsupportedOperationException("TODO");
-		//temporary fix
-		return true;
-	}
-	
-	/**
-	 * Get the local name from a qualified name 
-	 * @param qualifiedName
-	 * @return
-	 */
-	public static String getLocalName(String qualifiedName) {
-		if(qualifiedName.indexOf(":") > -1 && !qualifiedName.trim().endsWith(":")) {
-			return qualifiedName.split(":")[1];
-		} else  {
-			return qualifiedName;
-		}
-	}
-	
-	/**
-	 * Get the prefix from a qualified name
-	 * @param qualifiedName
-	 * @return
-	 */
-	public static String getPrefix(String qualifiedName) {
-		if(qualifiedName.indexOf(":") > -1) {
-			return qualifiedName.split(":")[0];
-		} else  {
-			return null;
-		}
-	}
+    public static boolean isValidChras(String value) {
+        // TODO check for valid characters
+        // throw new UnsupportedOperationException("TODO");
+        return true;
+    }
+
+    public static boolean isValidNamespace(String namespaceURI,
+            String qualifiedname) {
+        // TODO check for valid namespace
+        /**
+         * if the qualifiedName has a prefix and the namespaceURI is null, if
+         * the qualifiedName has a prefix that is "xml" and the namespaceURI is
+         * different from " http://www.w3.org/XML/1998/namespace", or if the
+         * qualifiedName, or its prefix, is "xmlns" and the namespaceURI is
+         * different from " http://www.w3.org/2000/xmlns/".
+         */
+        // throw new UnsupportedOperationException("TODO");
+        // temporary fix
+        return true;
+    }
+
+    /**
+     * Get the local name from a qualified name
+     * 
+     * @param qualifiedName
+     * @return
+     */
+    public static String getLocalName(String qualifiedName) {
+        if (qualifiedName.indexOf(":") > -1
+                && !qualifiedName.trim().endsWith(":")) {
+            return qualifiedName.split(":")[1];
+        } else {
+            return qualifiedName;
+        }
+    }
+
+    /**
+     * Get the prefix from a qualified name
+     * 
+     * @param qualifiedName
+     * @return
+     */
+    public static String getPrefix(String qualifiedName) {
+        if (qualifiedName.indexOf(":") > -1) {
+            return qualifiedName.split(":")[0];
+        } else {
+            return null;
+        }
+    }
 }

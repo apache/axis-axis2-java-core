@@ -31,7 +31,7 @@ public class Scenario2aTest extends InteropTestBase {
 		
 		ofc.setActionItems("UsernameTokenSignature Encrypt Timestamp");
 		ofc.setUser("Chris");
-		ofc.setEncryptionParts("{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken");
+		ofc.setEncryptionParts("{Element}{" + WSSE_NS + "}UsernameToken");
 		ofc.setEncryptionUser("bob");
 		ofc.setEncryptionPropFile("interop.properties");
 		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
@@ -53,9 +53,6 @@ public class Scenario2aTest extends InteropTestBase {
 		return SCENARIO2a_SERVICE_REPOSITORY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.InteropTestBase#useSOAP12()
-	 */
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return true;
 	}

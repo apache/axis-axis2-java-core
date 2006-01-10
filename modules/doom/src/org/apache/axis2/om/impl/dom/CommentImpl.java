@@ -27,49 +27,50 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class CommentImpl extends CharacterImpl implements Comment, OMComment {
 
-	public CommentImpl(DocumentImpl ownerNode) {
-		super(ownerNode);
-		this.done = true;
-	}
+    public CommentImpl(DocumentImpl ownerNode) {
+        super(ownerNode);
+        this.done = true;
+    }
 
-	public CommentImpl(DocumentImpl ownerNode, String value) {
-		super(ownerNode, value);
-		this.done = true;
-	}
+    public CommentImpl(DocumentImpl ownerNode, String value) {
+        super(ownerNode, value);
+        this.done = true;
+    }
 
-	public String getNodeName() {
-		return "#comment";
-	}
+    public String getNodeName() {
+        return "#comment";
+    }
 
-	public short getNodeType() {
-		return Node.COMMENT_NODE;
-	}
+    public short getNodeType() {
+        return Node.COMMENT_NODE;
+    }
 
-	public String getValue() {
-		return this.getData();
-	}
+    public String getValue() {
+        return this.getData();
+    }
 
-	public void setValue(String text) {
-		this.textValue.delete(0,this.textValue.length());
-		this.textValue.append(text);
-	}
+    public void setValue(String text) {
+        this.textValue.delete(0, this.textValue.length());
+        this.textValue.append(text);
+    }
 
-	public int getType() {
-		return Node.COMMENT_NODE;
-	}
+    public int getType() {
+        return Node.COMMENT_NODE;
+    }
 
-	public void setType(int nodeType) throws OMException {
-		throw new UnsupportedOperationException("You should not set the node type of a comment");
-	}
+    public void setType(int nodeType) throws OMException {
+        throw new UnsupportedOperationException(
+                "You should not set the node type of a comment");
+    }
 
-	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeComment(this.textValue.toString());
-	}
+    }
 
-	public void serializeAndConsume(OMOutputImpl omOutput)
-			throws XMLStreamException {
-		serialize(omOutput);
-	}
+    public void serializeAndConsume(OMOutputImpl omOutput)
+            throws XMLStreamException {
+        serialize(omOutput);
+    }
 
 }

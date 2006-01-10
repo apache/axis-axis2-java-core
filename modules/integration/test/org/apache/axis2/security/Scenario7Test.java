@@ -19,6 +19,7 @@ package org.apache.axis2.security;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.ws.security.WSConstants;
 
 /**
@@ -39,7 +40,9 @@ public class Scenario7Test extends InteropTestBase {
 		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
 		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
 		ofc.setEmbeddedKeyCallbackClass("rg.apache.axis2.security.PWCallback");
-		ofc.setSignatureParts("{}{http://schemas.xmlsoap.org/soap/envelope/}Body;STRTransform");
+		ofc.setSignatureParts("{}{" + 
+                                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI + 
+                                "}Body;STRTransform");
 		
 		return ofc;
 	}
@@ -63,9 +66,6 @@ public class Scenario7Test extends InteropTestBase {
 		return SCENARIO7_SERVICE_REPOSITORY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.InteropTestBase#useSOAP12()
-	 */
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return false;
 	}

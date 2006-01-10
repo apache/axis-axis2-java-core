@@ -22,9 +22,8 @@ import org.apache.axis2.om.OMNode;
 
 /**
  * This is exactly the same as org.apache.axis2.om.impl.om.OMNavigator, only the
- * llom specifics are changed to dom.
- * Refer to the testClass to find out how to use features like isNavigable, 
- * isComplete and step.
+ * llom specifics are changed to dom. Refer to the testClass to find out how to
+ * use features like isNavigable, isComplete and step.
  */
 public class DOMNavigator {
     /**
@@ -75,7 +74,7 @@ public class DOMNavigator {
 
     /**
      * Constructor OMNavigator.
-     *
+     * 
      * @param node
      */
     public DOMNavigator(OMNode node) {
@@ -84,7 +83,7 @@ public class DOMNavigator {
 
     /**
      * Method init.
-     *
+     * 
      * @param node
      */
     public void init(OMNode node) {
@@ -95,9 +94,10 @@ public class DOMNavigator {
 
     /**
      * Gets the next node.
-     *
-     * @return Returns OMNode in the sequence of preorder traversal. Note however that an element node is
-     *         treated slightly differently. Once the element is passed it returns the same element in the
+     * 
+     * @return Returns OMNode in the sequence of preorder traversal. Note
+     *         however that an element node is treated slightly differently.
+     *         Once the element is passed it returns the same element in the
      *         next encounter as well.
      */
     public OMNode next() {
@@ -149,7 +149,7 @@ public class DOMNavigator {
 
     /**
      * Method visited.
-     *
+     * 
      * @return Returns boolean.
      */
     public boolean visited() {
@@ -157,11 +157,11 @@ public class DOMNavigator {
     }
 
     /**
-     * This is a very special method. This allows the navigator to step
-     * once it has reached the existing OM. At this point the isNavigable
-     * method will return false but the isComplete method may return false
-     * which means that the navigating the given element is not complete but
-     * the navigator cannot proceed.
+     * This is a very special method. This allows the navigator to step once it
+     * has reached the existing OM. At this point the isNavigable method will
+     * return false but the isComplete method may return false which means that
+     * the navigating the given element is not complete but the navigator cannot
+     * proceed.
      */
     public void step() {
         if (!end) {
@@ -172,7 +172,7 @@ public class DOMNavigator {
 
     /**
      * Returns the navigable status.
-     *
+     * 
      * @return Returns boolean.
      */
     public boolean isNavigable() {
@@ -185,7 +185,7 @@ public class DOMNavigator {
 
     /**
      * Returns the completed status.
-     *
+     * 
      * @return Returns boolean.
      */
     public boolean isCompleted() {

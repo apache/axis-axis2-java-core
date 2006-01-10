@@ -38,111 +38,118 @@ import java.io.InputStream;
 
 public class DocumentBuilderImpl extends DocumentBuilder {
 
-	public DocumentBuilderImpl() {
-		super();
-	}
+    public DocumentBuilderImpl() {
+        super();
+    }
 
-	/**
-	 * Returns whether the parser is configured to understand namespaces or not.
-	 * The StAX parser used by this DOM impl is namespace aware
-	 * therefore this will always return true.
-	 * @see javax.xml.parsers.DocumentBuilder#isNamespaceAware()
-	 */
-	public boolean isNamespaceAware() {
-		return true;
-	}
+    /**
+     * Returns whether the parser is configured to understand namespaces or not.
+     * The StAX parser used by this DOM impl is namespace aware therefore this
+     * will always return true.
+     * 
+     * @see javax.xml.parsers.DocumentBuilder#isNamespaceAware()
+     */
+    public boolean isNamespaceAware() {
+        return true;
+    }
 
-	/**
-	 * The StAX builder used is the org.apache.axis2.om.impl.llom.StAXOMBuilder
-	 * is a validating builder.
-	 * @see javax.xml.parsers.DocumentBuilder#isValidating()
-	 */
-	public boolean isValidating() {
-		return true;
-	}
+    /**
+     * The StAX builder used is the org.apache.axis2.om.impl.llom.StAXOMBuilder
+     * is a validating builder.
+     * 
+     * @see javax.xml.parsers.DocumentBuilder#isValidating()
+     */
+    public boolean isValidating() {
+        return true;
+    }
 
-	public DOMImplementation getDOMImplementation() {
-		return new DOMImplementationImpl();
-	}
+    public DOMImplementation getDOMImplementation() {
+        return new DOMImplementationImpl();
+    }
 
-	/**
-	 * Returns a new document impl.
-	 * @see javax.xml.parsers.DocumentBuilder#newDocument()
-	 */
-	public Document newDocument() {
-		DocumentImpl documentImpl = new DocumentImpl();
-		documentImpl.setComplete(true);
-		return documentImpl;
-	}
+    /**
+     * Returns a new document impl.
+     * 
+     * @see javax.xml.parsers.DocumentBuilder#newDocument()
+     */
+    public Document newDocument() {
+        DocumentImpl documentImpl = new DocumentImpl();
+        documentImpl.setComplete(true);
+        return documentImpl;
+    }
 
-	public void setEntityResolver(EntityResolver arg0) {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
-	}
+    public void setEntityResolver(EntityResolver arg0) {
+        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
-	public void setErrorHandler(ErrorHandler arg0) {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
-	}
+    public void setErrorHandler(ErrorHandler arg0) {
+        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
-	public Document parse(InputSource inputSource) throws SAXException, IOException {
-		try {
-			OMDOMFactory factory = new OMDOMFactory();
-			//Not really sure whether this will work :-?
-			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(inputSource.getCharacterStream());
-			StAXOMBuilder builder = new StAXOMBuilder(factory,reader);
-			DocumentImpl doc = (DocumentImpl)builder.getDocument();
-			((ElementImpl)doc.getDocumentElement()).build();
-			return (DocumentImpl)builder.getDocument();
-		}catch (XMLStreamException e) {
-			throw new SAXException(e);
-		} 
-	}
-	
-	/**
-	 * @see javax.xml.parsers.DocumentBuilder#parse(java.io.InputStream)
-	 */
-	public Document parse(InputStream is) throws SAXException, IOException {
-		try {
-			OMDOMFactory factory = new OMDOMFactory();
-			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
-			StAXOMBuilder builder = new StAXOMBuilder(factory,reader);
-			return (DocumentImpl)builder.getDocument();
-		}catch (XMLStreamException e) {
-			throw new SAXException(e);
-		} 
-	}
+    public Document parse(InputSource inputSource) throws SAXException,
+            IOException {
+        try {
+            OMDOMFactory factory = new OMDOMFactory();
+            // Not really sure whether this will work :-?
+            XMLStreamReader reader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(inputSource.getCharacterStream());
+            StAXOMBuilder builder = new StAXOMBuilder(factory, reader);
+            DocumentImpl doc = (DocumentImpl) builder.getDocument();
+            ((ElementImpl) doc.getDocumentElement()).build();
+            return (DocumentImpl) builder.getDocument();
+        } catch (XMLStreamException e) {
+            throw new SAXException(e);
+        }
+    }
 
-	/**
-	 * @see javax.xml.parsers.DocumentBuilder#parse(java.io.File)
-	 */
-	public Document parse(File file) throws SAXException, IOException {
-		try {
-			OMDOMFactory factory = new OMDOMFactory();
-			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(file));
-			StAXOMBuilder builder = new StAXOMBuilder(factory,reader);
-			return (DocumentImpl)builder.getDocument();
-		}catch (XMLStreamException e) {
-			throw new SAXException(e);
-		} 
-	}
+    /**
+     * @see javax.xml.parsers.DocumentBuilder#parse(java.io.InputStream)
+     */
+    public Document parse(InputStream is) throws SAXException, IOException {
+        try {
+            OMDOMFactory factory = new OMDOMFactory();
+            XMLStreamReader reader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(is);
+            StAXOMBuilder builder = new StAXOMBuilder(factory, reader);
+            return (DocumentImpl) builder.getDocument();
+        } catch (XMLStreamException e) {
+            throw new SAXException(e);
+        }
+    }
 
-	/**
-	 * @see javax.xml.parsers.DocumentBuilder#parse(java.io.InputStream, java.lang.String)
-	 */
-	public Document parse(InputStream is, String systemId) throws SAXException, IOException {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
-	}
+    /**
+     * @see javax.xml.parsers.DocumentBuilder#parse(java.io.File)
+     */
+    public Document parse(File file) throws SAXException, IOException {
+        try {
+            OMDOMFactory factory = new OMDOMFactory();
+            XMLStreamReader reader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(new FileInputStream(file));
+            StAXOMBuilder builder = new StAXOMBuilder(factory, reader);
+            return (DocumentImpl) builder.getDocument();
+        } catch (XMLStreamException e) {
+            throw new SAXException(e);
+        }
+    }
 
-	/**
-	 * @see javax.xml.parsers.DocumentBuilder#parse(java.lang.String)
-	 */
-	public Document parse(String uri) throws SAXException, IOException {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
-	}
+    /**
+     * @see javax.xml.parsers.DocumentBuilder#parse(java.io.InputStream,
+     *      java.lang.String)
+     */
+    public Document parse(InputStream is, String systemId) throws SAXException,
+            IOException {
+        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
-	
-	
+    /**
+     * @see javax.xml.parsers.DocumentBuilder#parse(java.lang.String)
+     */
+    public Document parse(String uri) throws SAXException, IOException {
+        // TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
 }

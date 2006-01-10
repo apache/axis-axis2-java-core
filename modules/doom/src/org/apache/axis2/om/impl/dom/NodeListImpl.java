@@ -26,87 +26,106 @@ import java.util.Vector;
 /**
  * Implementation of org.w3c.dom.NodeList
  */
-public class NodeListImpl implements NodeList  {
-	
-    protected NodeImpl rootNode; 
-    protected String tagName;  
+public class NodeListImpl implements NodeList {
+
+    protected NodeImpl rootNode;
+
+    protected String tagName;
+
     protected Vector nodes;
-    
+
     protected String nsName;
+
     protected boolean enableNS = false;
-	
-	
+
     /** Constructor. */
     public NodeListImpl(NodeImpl rootNode, String tagName) {
         this.rootNode = rootNode;
-        this.tagName  = (tagName != null && !tagName.equals("")) ? tagName : null;
+        this.tagName = (tagName != null && !tagName.equals("")) ? tagName
+                : null;
         nodes = new Vector();
-    }  
+    }
 
     /** Constructor for Namespace support. */
-    public NodeListImpl(NodeImpl rootNode,
-                            String namespaceURI, String localName) {
+    public NodeListImpl(NodeImpl rootNode, String namespaceURI, 
+                                                    String localName) {
         this(rootNode, localName);
-        this.nsName = (namespaceURI != null && !namespaceURI.equals("")) ? namespaceURI : null;
-        if(this.nsName != null) {
-        	enableNS = true;
+        this.nsName = (namespaceURI != null && !namespaceURI.equals("")) 
+                       ? namespaceURI
+                       : null;
+        if (this.nsName != null) {
+            enableNS = true;
         }
     }
 
-	/**
-	 * Returns the number of nodes.
-	 * @see org.w3c.dom.NodeList#getLength()
-	 */
-	public int getLength() {
-		Iterator children;
-		if(this.tagName == null) {
-			children = ((OMContainerEx)rootNode).getChildren();
-		} else if(!enableNS) {
-			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
-		} else {
-			if(DOMUtil.getPrefix(this.tagName) != null) {
-				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
-			} else {
-				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName)));
-			}
-		}
-		int count  = 0;
-		while (children.hasNext()) {
-			count++;
-			children.next();
-		}
-		return count;
-	}
+    /**
+     * Returns the number of nodes.
+     * 
+     * @see org.w3c.dom.NodeList#getLength()
+     */
+    public int getLength() {
+        Iterator children;
+        if (this.tagName == null) {
+            children = ((OMContainerEx) rootNode).getChildren();
+        } else if (!enableNS) {
+            children = ((OMContainerEx) rootNode)
+                    .getChildrenWithName(new QName(this.tagName));
+        } else {
+            if (DOMUtil.getPrefix(this.tagName) != null) {
+                children = ((OMContainerEx) rootNode)
+                        .getChildrenWithName(new QName(this.nsName, DOMUtil
+                                .getLocalName(this.tagName), DOMUtil
+                                .getPrefix(this.tagName)));
+            } else {
+                children = ((OMContainerEx) rootNode)
+                        .getChildrenWithName(new QName(this.nsName, DOMUtil
+                                .getLocalName(this.tagName)));
+            }
+        }
+        int count = 0;
+        while (children.hasNext()) {
+            count++;
+            children.next();
+        }
+        return count;
+    }
 
-	/**
-	 * Returns the node at the given index.
-	 * Returns null if the index is invalid. 
-	 * @see org.w3c.dom.NodeList#item(int)
-	 */
-	public Node item(int index) {
-		Iterator children;
+    /**
+     * Returns the node at the given index. Returns null if the index is
+     * invalid.
+     * 
+     * @see org.w3c.dom.NodeList#item(int)
+     */
+    public Node item(int index) {
+        Iterator children;
 
-		if(this.tagName == null) {
-			children = ((OMContainerEx)rootNode).getChildren();
-		} else if(!enableNS) {
-			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
-		} else {
-			if(DOMUtil.getPrefix(this.tagName) != null) {
-				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
-			} else {
-				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName)));
-			}
-		}
+        if (this.tagName == null) {
+            children = ((OMContainerEx) rootNode).getChildren();
+        } else if (!enableNS) {
+            children = ((OMContainerEx) rootNode)
+                    .getChildrenWithName(new QName(this.tagName));
+        } else {
+            if (DOMUtil.getPrefix(this.tagName) != null) {
+                children = ((OMContainerEx) rootNode)
+                        .getChildrenWithName(new QName(this.nsName, DOMUtil
+                                .getLocalName(this.tagName), DOMUtil
+                                .getPrefix(this.tagName)));
+            } else {
+                children = ((OMContainerEx) rootNode)
+                        .getChildrenWithName(new QName(this.nsName, DOMUtil
+                                .getLocalName(this.tagName)));
+            }
+        }
 
-		int count  = 0;
-		while (children.hasNext()) {
-			if(count == index) {
-				return (Node)children.next();
-			} else {
-				children.next();
-			}
-			count++;
-		}
-		return null;
-	}
+        int count = 0;
+        while (children.hasNext()) {
+            if (count == index) {
+                return (Node) children.next();
+            } else {
+                children.next();
+            }
+            count++;
+        }
+        return null;
+    }
 }
