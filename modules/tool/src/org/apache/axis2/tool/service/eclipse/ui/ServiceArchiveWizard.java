@@ -19,6 +19,7 @@ package org.apache.axis2.tool.service.eclipse.ui;
 import org.apache.axis2.tool.service.bean.WizardBean;
 import org.apache.axis2.tool.service.control.Controller;
 import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -123,7 +124,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation()
         {
            protected void execute(IProgressMonitor monitor)
-           {
+           throws CoreException , InvocationTargetException, InterruptedException{
               if (monitor == null)
                  monitor = new NullProgressMonitor();
 
@@ -153,7 +154,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
               }
               catch (Throwable e)
               {
-                 throw new RuntimeException(e);
+                 throw new InterruptedException(e.getMessage() );
               }
 
               monitor.done();
@@ -182,7 +183,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         }
         catch (Exception e)
         {
-            showErrorMessage(ServiceArchiver.getResourceString("wizard.codegen.unknown.error") + e.getMessage());
+            showErrorMessage(ServiceArchiver.getResourceString("wizard.codegen.unknown.error") + "  "+  e.getMessage());
             return false;
         }
 
