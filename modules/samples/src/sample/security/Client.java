@@ -18,9 +18,12 @@ package sample.security;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -43,15 +46,17 @@ public class Client {
             String port = args[1];
 
             OMElement payload = getEchoElement();
-            Call call = new Call(repo);
+            ConfigurationContextFactory fac = new ConfigurationContextFactory();
+            ConfigurationContext configContext = fac.createConfigurationContextFromFileSystem(repo);
+            ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
-            call.setClientOptions(options);
+            serviceClient.setOptions(options);
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
 
             //Blocking invocation
-            OMElement result = call.invokeBlocking("echo", payload);
+            OMElement result = serviceClient.sendReceive(payload);
 
             StringWriter writer = new StringWriter();
             result.serialize(XMLOutputFactory.newInstance()
