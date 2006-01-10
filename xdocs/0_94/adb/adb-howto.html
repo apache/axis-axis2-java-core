@@ -33,11 +33,11 @@ the code generator architecture is depicted below</p>
 <p><img src="images/ADB.jpg"/></p>
 
 <p>ADB utilizes the WS-commons XmlSchema library for reading the Schema. The
-object model for the schema comes in the form of a XmlSchema object. The
+object model for the schema comes in the form of an XmlSchema object. The
 schema compiler keeps an instance of the writer (in the default case it's the
 JavaBeanWriter) which actually writes the classes. The writers may use
-whatever the technique they prefer, as in the case of the JavaBeanWriter,
-they use an XSLT template. The SchemaCompiler also uses a typemapper object
+whatever technique they prefer, in the case of the JavaBeanWriter,
+it uses an XSLT template. The SchemaCompiler also uses a typemapper object
 that tells it what classnames to be used for the QNames that it encounters.
 This type mapper is also part of the configuration and the users can override
 the default type mapper by overriding the property setting.</p>
@@ -134,8 +134,8 @@ depending on the following rules</p>
     encapsulated in this complex type will become a field in the generated
     class. Note that the support for constructs other than the sequence and
     all is not yet implemented.</li>
-  <li>All top level elements become classes. This is rather a questioning
-    feature but unless classes are generated for the top level elements the
+  <li>All top level elements become classes. This is a rather questioning
+    feature since unless classes are generated for the top level elements the
     handling of elements become difficult and messy!</li>
   <li>SimpleType restrictions are handled by replacing the relevant type with
     the basetype</li>
@@ -165,13 +165,13 @@ schema.</p>
 </ol>
 
 <p>As explained earlier, SOAPStruct refers to the complexType. MyElement is
-the class that refers to the element.Just as expected, the SOAPStruct bean
-has getters and Setters for varString,varInt and varFloat which are a
-String,an int and a float respectively.myElement on the other hand has a
+the class that refers to the element. Just as expected, the SOAPStruct bean
+has getters and Setters for varString, varInt and varFloat which are 
+String, int and float respectively. myElement on the other hand has a
 single field representing the SOAPStruct object that it encapsulates.</p>
 
 <p>The most important aspect of the generated code is that it encapsulates
-two methods for creation and serializing the beans.Note that to make this
+two methods for creation and serializing the beans. Note that to make this
 work, the generated beans implement the
 <strong>org.apache.axis2.databinding.ADBBean</strong> interface</p>
 
@@ -184,11 +184,11 @@ work, the generated beans implement the
     element based classes and complexType based classes</p>
     <ol>
       <li>An element based bean class (like myElement.java in the example)
-        will ignore the passed in QName. instead of using the passed in QName
+        will ignore the passed in QName. Instead of using the passed in QName
         it'll utilize it's own QName which is embedded in the class under the
-        constant MY_QNAME,during the code generation.</li>
+        constant MY_QNAME, during the code generation.</li>
       <li>A ComplexType based bean class(like SOAPStruct.java in the example)
-        will use the passed on QName to return an instance of the
+        will use the passed in QName to return an instance of the
         ADBpullparser. This will effectively wrap the elements inside with an
         element having the passed QName</li>
     </ol>
@@ -197,7 +197,7 @@ work, the generated beans implement the
              parse(javax.xml.stream.XMLStreamReader reader) 
              throws java.lang.Exception </pre>
     <p>This method returns a populated instance of the class in
-    question.(Note that</p>
+    question. Note that</p>
     <pre>[Object]</pre>
     will be replaced by the actual class that contains this method. Say for
     SOAPStruct the method looks like
