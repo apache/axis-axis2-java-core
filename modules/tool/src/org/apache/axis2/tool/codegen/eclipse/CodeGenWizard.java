@@ -19,6 +19,7 @@ import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.wsdl.WSDLDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -166,7 +167,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation()
         {
            protected void execute(IProgressMonitor monitor)
-           {
+           throws CoreException, InvocationTargetException, InterruptedException{
               if (monitor == null)
                  monitor = new NullProgressMonitor();
 
@@ -206,18 +207,15 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                  monitor.worked(1);
                  
                  monitor.subTask(CodegenWizardPlugin.getResourceString("generator.generating"));
-                 try {
-                    new CodeGenerationEngine(codegenConfig).generate();
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+                 
+                 new CodeGenerationEngine(codegenConfig).generate();
+                
                  monitor.worked(1);
               }
               catch (Exception e)
               {
-                 e.printStackTrace(); 
-                 throw new RuntimeException(e);
+                
+                 throw new InterruptedException(e.getMessage());
               }
 
               monitor.done();
@@ -239,7 +237,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
         }
         catch (InterruptedException e1)
         {
-           throw new RuntimeException("User Aborted!");
+           throw new RuntimeException(e1);
         }
         catch (Exception e)
         {
