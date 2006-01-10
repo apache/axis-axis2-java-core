@@ -376,6 +376,11 @@
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+         <!-- Copy the doom jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- copy the addressing mar -->
         <ant:copy toDir="target/temp/war/toWEB-INF/modules">
             <ant:fileset file="modules/addressing/target/addressing.mar"/>
@@ -413,7 +418,7 @@
         </ant:war>
     </goal>
 
-    <!-- to transforme htmls to xdocs -->
+    <!-- to transform htmls to xdocs -->
     <preGoal name="xdoc:jelly-transform">
         <attainGoal name="html2xdoc"/>
     </preGoal>
@@ -423,8 +428,6 @@
     <!-- ================================================================ -->
     <goal name="release"
           prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
-        <!--prereqs="dist-min-bin,dist-std-bin">-->
-        <!--prereqs="jar,dist-min-bin,dist-std-bin">-->
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
