@@ -9,13 +9,13 @@ This is the Standard Binary release of Axis2.
 
 The lib directory contains;
 
-1. aaxis2-core-@axis2_version@.jar
+1. axis2-core-@axis2_version@.jar
 2. axis2-adb-@axis2_version@.jar
 3. axis2-codegen-@axis2_version@.jar
 4. axis2-doom-@axis2_version@.jar
 5. All 3rd party distributable dependencies of the above jars
 
-The mar directory contains the deployable addressing
+The modules directory contains the deployable addressing
 module(addressing.mar)
 
 The samples directory contains all the Axis2 module samples

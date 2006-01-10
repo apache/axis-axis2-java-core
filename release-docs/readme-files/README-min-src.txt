@@ -17,7 +17,5 @@ Axis2 modules:
 4. wsdl
 5. adb
 
-The lib directory contains all third party library dependencies
-of the above modules.
 One can use maven 1.x to create the minimal binary distribution out of this, by typing "$maven dist-min-bin".
 
