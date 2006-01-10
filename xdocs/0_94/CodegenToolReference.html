@@ -62,8 +62,7 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
       <td width="20%">-p &lt;package name&gt;</td>
       <td width="20%">--package</td>
       <td width="60%">The target package name. If omitted, a default package
-        (formed using the target&#xa0; namespace of the WSDL) will be
-      used.</td>
+        (formed using the target  namespace of the WSDL) will be used.</td>
       <td></td>
     </tr>
     <tr>
@@ -128,22 +127,29 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
         the classes and generate seperate classes for the databinders.</td>
       <td></td>
     </tr>
-<tr>
+    <tr>
       <td width="20%">-sn</td>
       <td width="20%">--service-name</td>
-      <td width="60%">Specifies the service name to be code generated. If the service name is
-      is not specified, then the first service will be picked</td>
+      <td width="60%">Specifies the service name to be code generated. If the
+        service name is is not specified, then the first service will be
+        picked</td>
       <td></td>
     </tr>
-<tr>
+    <tr>
       <td width="20%">-pn</td>
       <td width="20%">--port-name</td>
-      <td width="60%">Specifies the port name to be code generated. If the port name is
-      is not specified, then the first port (of the selected service) will be picked</td>
+      <td width="60%">Specifies the port name to be code generated. If the
+        port name is is not specified, then the first port (of the selected
+        service) will be picked</td>
       <td></td>
     </tr>
   </tbody>
 </table>
+
+<p>Apart from these mentioned options one can pass extra option by prefixing
+them with -E (uppercase). These extra options will be processed by the
+extensions. The extra options that can be passed are documented seperately
+with the extensions documentation (For example with ADB)</p>
 
 <h1>Code Generator Wizard - Ant Task</h1>
 
@@ -186,9 +192,8 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
     <tr>
       <td width="50%" height="57">packagename</td>
       <td width="50%" height="57">The target package name. If omitted, a
-        default package (formed using the target&#xa0; namespace of the WSDL)
-        will be used.&#xa0; Maps to the -p option of the command line
-      tool.</td>
+        default package (formed using the target  namespace of the WSDL) will
+        be used.  Maps to the -p option of the command line tool.</td>
     </tr>
     <tr>
       <td width="50%" height="75">asynconly</td>
@@ -222,18 +227,17 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
         skeletons). Only true and false are applicable as values. Default is
         false. Maps to the -sd option of the command line tool.</td>
     </tr>
-<tr>
+    <tr>
       <td width="50%" height="18">unpackClasses</td>
-      <td width="50%" height="18">unpackes the generated classes. This forces the
-      databinding classes to be generated seperately, which otherwise would have been
-       generated as inner classes.
-</td>
+      <td width="50%" height="18">unpackes the generated classes. This forces
+        the databinding classes to be generated seperately, which otherwise
+        would have been generated as inner classes.</td>
     </tr>
-<tr>
+    <tr>
       <td width="50%" height="18">serviceName</td>
       <td width="50%" height="18">The name of the service</td>
     </tr>
-<tr>
+    <tr>
       <td width="50%" height="18">PortName</td>
       <td width="50%" height="18">The name of the port</td>
     </tr>
@@ -249,15 +253,15 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
 &lt;project name="CodegenExample" default="main" basedir="."&gt;
 &lt;target name="declare" &gt;
 &lt;taskdef name="codegen"
-&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; classname="org.apache.axis2.tool.ant.AntCodegenTask"
-&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; classpath="classes"/&gt;
+        classname="org.apache.axis2.tool.ant.AntCodegenTask"
+        classpath="classes"/&gt;
 &lt;/target&gt;
 &lt;target name="main" depends="declare"&gt;
 &lt;codegen 
-&#xa0;&#xa0;&#xa0; wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
-&#xa0;&#xa0;&#xa0; output="C:\"
-&#xa0;&#xa0;&#xa0; serverside="true"
-&#xa0;&#xa0;&#xa0; generateserverxml="true"/&gt;
+    wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
+    output="C:\"
+    serverside="true"
+    generateserverxml="true"/&gt;
 &lt;/target&gt;
 &lt;/project&gt;</pre>
 
@@ -710,19 +714,19 @@ appear:</p>
 <ul>
   <li>Eclipse reference - <a href="http://www.eclipse.org/">
     http://www.eclipse.org/</a></li>
-  <li>Custom Ant Tasks&#xa0; - <a
+  <li>Custom Ant Tasks  - <a
     href="http://ant.apache.org/manual/develop.html">
     http://ant.apache.org/manual/develop.html</a></li>
 </ul>
 
-<p>&#xa0;</p>
+<p> </p>
 
-<p>&#xa0;</p>
+<p> </p>
 
-<p>&#xa0;</p>
+<p> </p>
 
-<p>&#xa0;</p>
+<p> </p>
 
-<p>&#xa0;</p>
+<p> </p>
 </body>
 </html>
