@@ -30,17 +30,17 @@ to generate code for other languages.</p>
 configured writer depending on the configuration.The 'big block diagram' for
 the code generator architecture is depicted below</p>
 
-<p><img src="images/ADB.jpg"/></p>
+<p><img src="images/ADB.jpg"></p>
 
 <p>ADB utilizes the WS-commons XmlSchema library for reading the Schema. The
 object model for the schema comes in the form of an XmlSchema object. The
 schema compiler keeps an instance of the writer (in the default case it's the
 JavaBeanWriter) which actually writes the classes. The writers may use
-whatever technique they prefer, in the case of the JavaBeanWriter,
-it uses an XSLT template. The SchemaCompiler also uses a typemapper object
-that tells it what classnames to be used for the QNames that it encounters.
-This type mapper is also part of the configuration and the users can override
-the default type mapper by overriding the property setting.</p>
+whatever technique they prefer, in the case of the JavaBeanWriter, it uses an
+XSLT template. The SchemaCompiler also uses a typemapper object that tells it
+what classnames to be used for the QNames that it encounters. This type
+mapper is also part of the configuration and the users can override the
+default type mapper by overriding the property setting.</p>
 
 <h2>Code and Dependencies</h2>
 
@@ -49,9 +49,8 @@ WS-Commons XmlSchema library. The XSLT transformations are dependent on the
 JVM's DOMimplementation (either crimson or xerces) which means that the
 underlying JVM should be 1.4 or higher. Apart from that ADB has no special
 dependencies on any other special jar files. The code for the schema compiler
-is completely in the <strong>org.apache.axis2.schema.*</strong>
-package. This package resides in the codegen module of the Axis2 source
-tree.</p>
+is completely in the <strong>org.apache.axis2.schema.*</strong> package. This
+package resides in the codegen module of the Axis2 source tree.</p>
 
 <p>Following are the important classes and files</p>
 <ol>
@@ -119,11 +118,65 @@ important classes and methods of the Schema compiler are as follows.</p>
 </ul>
 
 <p>For a comprehensive code sample in invoking the schema compiler throught
-the API, the following classes would be helpful</p>
+the API, the following classes would be helpful. One would also need an
+undertanding of the generation modes of the ADB schema compiler when using it
+through the API.</p>
 <ul>
   <li><strong>org.apache.axis2.schema.XSD2Java</strong></li>
   <li><strong>org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension</strong></li>
 </ul>
+
+<h2>Generation Modes</h2>
+
+<p>ADB extension provides several Generation modes for the data bound
+classes.</p>
+<ol>
+  <li><strong>Integrated mode</strong>
+    <p>In this mode the classes are generated as inner classes of the stub,
+    message receiver or the interface. The ADB framework refrains from
+    writing the classes but provides a map of DOM document objects that
+    contains the model for the databinding class. The implementers are free
+    to use the models for their needs. The Axis2 codegen engine parses these
+    documents with the an XSLT parser to create the necessary code.</p>
+    <p>Integrated mode is supposed to be used by the tool builders.</p>
+  </li>
+  <li><strong>Wrapped mode</strong>
+    <p>In the wrapped mode, the ADB databinder generates one class that
+    contains all the databound classes. This is convenient when the number of
+    classes need to be limited.</p>
+  </li>
+  <li><strong>Expanded mode</strong>
+    <p>This is the usual mode where the codegenerator generates a class for
+    each of the outer elements and the named complex types. The command line
+    tool (XSD2Java) always generates code in the expanded mode.</p>
+  </li>
+</ol>
+
+<p>The rules for generating code (described in the next section) applies
+regardless of the mode. Switching these modes can be done by passing the
+correct options via the CompilerOptions object. The following is table lists
+the options and the consequences of using them.</p>
+
+<table border="1">
+  <caption></caption>
+  <tbody>
+    <tr>
+      <td><strong>Field Name in Options</strong></td>
+      <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+      <td>writeOutput</td>
+      <td>This determines whether to write the output or not. If the flag is
+        on then the classes will be written by ADB. The default is off.</td>
+    </tr>
+    <tr>
+      <td>wrapClasses</td>
+      <td>This determines whether to wrap the generated classes. If the flag
+        is on then a single class (with adb added to the end of the specified
+        packge) will be generated. The default is off.</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2>Deep into the Generated Code</h2>
 
@@ -156,9 +209,11 @@ xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org
 &lt;element name="myElement" type="tns:SOAPStruct"/&gt;
 &lt;/schema&gt;</pre>
 
-<p>This particular schema generates the following two classes in the
-designated package. This package is derived from the target Namespace of the
-schema.</p>
+<p>For comprehension let us consider the expanded mode for the code
+generator. Unless specifically mentioned, the rest of this document assumes
+that the expanded mode of the code generation is used. This particular schema
+generates the following two classes in the designated package. This package
+is derived from the target Namespace of the schema.</p>
 <ol>
   <li>myElement.java</li>
   <li>SOAPStruct.java</li>
@@ -166,9 +221,9 @@ schema.</p>
 
 <p>As explained earlier, SOAPStruct refers to the complexType. MyElement is
 the class that refers to the element. Just as expected, the SOAPStruct bean
-has getters and Setters for varString, varInt and varFloat which are 
-String, int and float respectively. myElement on the other hand has a
-single field representing the SOAPStruct object that it encapsulates.</p>
+has getters and Setters for varString, varInt and varFloat which are String,
+int and float respectively. myElement on the other hand has a single field
+representing the SOAPStruct object that it encapsulates.</p>
 
 <p>The most important aspect of the generated code is that it encapsulates
 two methods for creation and serializing the beans. Note that to make this
@@ -196,8 +251,8 @@ work, the generated beans implement the
   <li><pre> public static [Object] 
              parse(javax.xml.stream.XMLStreamReader reader) 
              throws java.lang.Exception </pre>
-    <p>This method returns a populated instance of the class in
-    question. Note that</p>
+    <p>This method returns a populated instance of the class in question.
+    Note that</p>
     <pre>[Object]</pre>
     will be replaced by the actual class that contains this method. Say for
     SOAPStruct the method looks like
