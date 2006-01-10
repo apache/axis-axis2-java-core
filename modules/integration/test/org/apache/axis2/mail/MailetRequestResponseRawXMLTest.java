@@ -147,7 +147,6 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
                         "Async response is taking too long[10s+]. Server is being shut down.");
             }
         }
-        sender.finalizeInvoke();
 
     }
 }

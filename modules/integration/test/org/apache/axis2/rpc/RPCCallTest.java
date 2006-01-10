@@ -129,7 +129,6 @@ public class RPCCallTest extends TestCase {
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
-        sender.finalizeInvoke();
     }
 
     private void configureSystem(String opName) throws AxisFault {
@@ -182,7 +181,6 @@ public class RPCCallTest extends TestCase {
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
-        sender.finalizeInvoke();
     }
 
 
@@ -203,7 +201,6 @@ public class RPCCallTest extends TestCase {
         args.add("foo");
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(response.getFirstElement().getText(), "foo");
-        sender.finalizeInvoke();
     }
 
     public void testEchoInt() throws AxisFault {
@@ -224,7 +221,6 @@ public class RPCCallTest extends TestCase {
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 100);
-        sender.finalizeInvoke();
     }
 
     public void testAdd() throws AxisFault {
@@ -244,7 +240,6 @@ public class RPCCallTest extends TestCase {
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
-        sender.finalizeInvoke();
     }
 
     public void testDivide() throws AxisFault {
@@ -266,7 +261,6 @@ public class RPCCallTest extends TestCase {
         args.add("0");
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(response.getFirstElement().getText(), "INF");
-        sender.finalizeInvoke();
     }
 
     public void testEchoBool() throws AxisFault {
@@ -287,7 +281,6 @@ public class RPCCallTest extends TestCase {
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Boolean.valueOf(response.getFirstElement().getText()).booleanValue(), true);
-        sender.finalizeInvoke();
     }
 
     public void testEchoByte() throws AxisFault {
@@ -308,7 +301,6 @@ public class RPCCallTest extends TestCase {
         args.add("1");
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
-        sender.finalizeInvoke();
     }
 
     public void testCompany() throws AxisFault {
@@ -348,7 +340,6 @@ public class RPCCallTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add(com);
         sender.invokeBlocking(operationName, args.toArray());
-        sender.finalizeInvoke();
     }
 
     public void testEchoOM() throws AxisFault {
@@ -368,7 +359,6 @@ public class RPCCallTest extends TestCase {
         args.add("1");
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
-        sender.finalizeInvoke();
     }
 
     public void testCalender() throws AxisFault {
@@ -390,7 +380,6 @@ public class RPCCallTest extends TestCase {
         args.add(zulu.format(date));
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         assertEquals(response.getFirstElement().getText(), zulu.format(date));
-        sender.finalizeInvoke();
     }
 
 
@@ -427,7 +416,6 @@ public class RPCCallTest extends TestCase {
         MyBean resBean = (MyBean) response[0];
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
-        sender.finalizeInvoke();
     }
 
     public void testechoInt2() throws AxisFault {
@@ -451,7 +439,6 @@ public class RPCCallTest extends TestCase {
 
         Object [] response = sender.invokeBlocking(operationName, args.toArray(), ret.toArray());
         assertEquals(((Integer) response[0]).intValue(), 100);
-        sender.finalizeInvoke();
     }
 
     public void testmultireturn() throws AxisFault {
@@ -478,7 +465,6 @@ public class RPCCallTest extends TestCase {
         assertEquals(((Integer) response[0]).intValue(), 10);
         assertEquals(response[1], "foo");
 //        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
-        sender.finalizeInvoke();
     }
 
     public void testmulReturn() throws AxisFault {
@@ -500,7 +486,6 @@ public class RPCCallTest extends TestCase {
 
         sender.invokeBlocking(operationName, args.toArray());
 //        assertEquals(response.getFirstElement().getText(), "foo");
-        sender.finalizeInvoke();
     }
 
 
@@ -519,7 +504,6 @@ public class RPCCallTest extends TestCase {
 
         OMElement elem = sender.sendReceive(getpayLoad());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
-        sender.finalizeInvoke();
     }
 
     private OMElement getpayLoad() throws AxisFault {

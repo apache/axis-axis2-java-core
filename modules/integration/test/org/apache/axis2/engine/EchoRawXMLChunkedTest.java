@@ -115,6 +115,5 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 }

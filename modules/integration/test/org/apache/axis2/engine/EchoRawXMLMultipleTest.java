@@ -114,7 +114,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                             "Server was shutdown as the async response take too long to complete");
                 }
             }
-            sender.finalizeInvoke();
 
         }
 
@@ -164,7 +163,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                             "Server is shutdown as the Async response take too longs time");
                 }
             }
-            sender.finalizeInvoke();
         }
 
         log.info("send the request");
@@ -186,7 +184,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
 
             TestingUtils.campareWithCreatedOMElement(result);
-            sender.finalizeInvoke();
         }
     }
 
@@ -209,7 +206,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             OMElement result = sender.sendReceive(payload);
 
             TestingUtils.campareWithCreatedOMElement(result);
-            sender.finalizeInvoke();
         }
     }
 

@@ -2,6 +2,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.Callback;
@@ -314,5 +315,10 @@ class OutOnlyAxisOperationClient implements OperationClient {
         }
         mc = null;
         completed = false;
+    }
+
+    public void complete(MessageContext msgCtxt) throws AxisFault {
+        ListenerManager.stop(msgCtxt.getConfigurationContext(),
+                msgCtxt.getTransportIn().getName().getLocalPart());
     }
 }

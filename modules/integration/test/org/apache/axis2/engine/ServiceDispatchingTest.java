@@ -75,7 +75,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 
     public void testDispatchWithURLAndSOAPAction() throws Exception {
@@ -99,7 +98,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
         OMElement result = sender.sendReceive(payload);
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 
     public void testDispatchWithSOAPBody() throws Exception {
@@ -124,6 +122,5 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 }

@@ -63,7 +63,6 @@ public class InvokerThread extends Thread {
             OMElement result = sender.sendReceive(payload);
 
             TestingUtils.campareWithCreatedOMElement(result);
-            sender.finalizeInvoke();
             log.info("Finishing Thread number " + threadNumber + " .....");
         } catch (AxisFault axisFault) {
             thrownException = axisFault;

@@ -361,7 +361,6 @@ public class MultirefTest extends TestCase {
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
-        rpcClient.finalizeInvoke();
     }
 
 
@@ -422,7 +421,6 @@ public class MultirefTest extends TestCase {
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
-        rpcClient.finalizeInvoke();
     }
 
 
@@ -488,7 +486,6 @@ public class MultirefTest extends TestCase {
         Object [] resBean = BeanUtil.deserialize(response, args.toArray());
         assertNotNull(resBean);
         assertEquals(((Boolean) resBean[0]).booleanValue(), true);
-        rpcClient.finalizeInvoke();
     }
 
     private OMElement getOMelemnt(String str, OMFactory fac) throws AxisFault {

@@ -100,6 +100,5 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
                 System.out));
 
 
-        sender.finalizeInvoke();
     }
 }

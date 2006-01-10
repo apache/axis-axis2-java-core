@@ -137,7 +137,6 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             }
         } finally {
             if(finish) {
-                sender.finalizeInvoke();
             }
         }
 

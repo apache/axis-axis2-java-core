@@ -139,7 +139,6 @@ public class JMSEchoRawXMLTest extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {
@@ -158,7 +157,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
 
-        sender.finalizeInvoke();
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
@@ -185,7 +183,6 @@ public class JMSEchoRawXMLTest extends TestCase {
 
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
-        sender.finalizeInvoke();
 
     }
 

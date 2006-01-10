@@ -78,7 +78,6 @@ public class EchoNonBlockingDualClient {
                 Thread.sleep(1000);
             }
             //Need to close the Client Side Listener.
-            sender.finalizeInvoke();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

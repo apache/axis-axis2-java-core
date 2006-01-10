@@ -114,7 +114,6 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
             }
         }
         log.info("send the request");
-        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {
@@ -133,7 +132,6 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 
     public void testCorrectSOAPEnvelope() throws Exception {
@@ -153,7 +151,6 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 
 

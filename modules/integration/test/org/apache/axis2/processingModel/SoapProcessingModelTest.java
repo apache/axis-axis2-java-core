@@ -105,7 +105,6 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             fail("Exception Occurred !! ." + e.getMessage());
             throw new AxisFault(e);
         } finally {
-            serviceClient.finalizeInvoke();
         }
     }
 

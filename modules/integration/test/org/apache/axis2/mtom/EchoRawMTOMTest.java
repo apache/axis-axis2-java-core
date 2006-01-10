@@ -142,7 +142,6 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {

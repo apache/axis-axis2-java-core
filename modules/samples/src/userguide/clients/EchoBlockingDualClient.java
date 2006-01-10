@@ -57,7 +57,6 @@ public class EchoBlockingDualClient {
             System.out.println(writer.toString());
 
             //Need to close the Client Side Listener.
-            sender.finalizeInvoke();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

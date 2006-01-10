@@ -367,6 +367,11 @@ class OutInAxisOperationClient implements OperationClient {
         completed = false;
     }
 
+    public void complete(MessageContext msgCtxt) throws AxisFault {
+        ListenerManager.stop(msgCtxt.getConfigurationContext(),
+                msgCtxt.getTransportIn().getName().getLocalPart());
+    }
+
     /**
      * This class is the workhorse for a non-blocking invocation that uses a two
      * way transport.
@@ -390,6 +395,7 @@ class OutInAxisOperationClient implements OperationClient {
 
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();
+                resenvelope.build();
                 SOAPBody body = resenvelope.getBody();
 
                 if (body.hasFault()) {

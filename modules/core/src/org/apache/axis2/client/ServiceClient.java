@@ -363,14 +363,11 @@ public class ServiceClient {
             }
             // process the resule of the invocation
             if (callback.envelope != null) {
-//                MessageContext resMsgctx = new MessageContext();
-//                resMsgctx.setConfigurationContext(serviceContext
-//                        .getConfigurationContext());
                 MessageContext resMsgctx = callback.getMsgctx();
-//                resMsgctx.setEnvelope(callback.envelope);
-                ListenerManager.stop(serviceContext.getConfigurationContext(),
-                        resMsgctx.getTransportIn().getName().getLocalPart());
-
+                //building soap enevlop
+                callback.envelope.build();
+                //closing tranport
+                finalizeInvoke(resMsgctx);
                 return callback.envelope.getBody().getFirstElement();
             } else {
                 if (callback.error instanceof AxisFault) {
@@ -442,13 +439,10 @@ public class ServiceClient {
      *
      * @throws AxisFault
      */
-    public void finalizeInvoke() throws AxisFault {
-        if (options.isUseSeparateListener()) {
-            //TODO : need to improve this
-            if (options.getTransportInProtocol() != null) {
-                ListenerManager.stop(serviceContext.getConfigurationContext(),
-                        options.getTransportInProtocol());
-            }
+    private void finalizeInvoke(MessageContext msgCtx) throws AxisFault {
+        if (options.getTransportInProtocol() != null) {
+            ListenerManager.stop(msgCtx.getConfigurationContext(),
+                    msgCtx.getTransportIn().getName().getLocalPart());
         }
     }
 

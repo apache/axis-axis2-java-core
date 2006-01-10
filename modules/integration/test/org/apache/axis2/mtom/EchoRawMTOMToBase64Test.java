@@ -137,7 +137,6 @@ public class EchoRawMTOMToBase64Test extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        sender.finalizeInvoke();
     }
 
     public void testEchoXMLSync() throws Exception {
@@ -160,7 +159,6 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
             OMElement data = (OMElement) result.getFirstOMChild();
             compareWithCreatedOMText(data.getText());
-            sender.finalizeInvoke();
             log.info("" + i);
             UtilServer.unDeployClientService();
         }

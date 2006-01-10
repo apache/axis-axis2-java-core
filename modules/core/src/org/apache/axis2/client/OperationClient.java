@@ -19,9 +19,8 @@ public interface OperationClient {
      * Sets the options that should be used for this particular client. This
      * resets the entire set of options to use the new options - so you'd lose
      * any option cascading that may have been set up.
-     * 
-     * @param options
-     *            the options
+     *
+     * @param options the options
      */
     public void setOptions(Options options);
 
@@ -29,7 +28,7 @@ public interface OperationClient {
      * Return the options used by this client. If you want to set a single
      * option, then the right way is to do getOptions() and set specific
      * options.
-     * 
+     *
      * @return the options, which will never be null.
      */
     public Options getOptions();
@@ -38,23 +37,19 @@ public interface OperationClient {
      * Add a message context to the client for processing. This method must not
      * process the message - it only records it in the operation client.
      * Processing only occurs when execute() is called.
-     * 
-     * @param mc
-     *            the message context
-     * @throws AxisFault
-     *             if this is called inappropriately.
+     *
+     * @param mc the message context
+     * @throws AxisFault if this is called inappropriately.
      */
     public void addMessageContext(MessageContext mc) throws AxisFault;
 
     /**
      * Return a message from the client - will return null if the requested
      * message is not available.
-     * 
-     * @param messageLabel
-     *            the message label of the desired message context
+     *
+     * @param messageLabel the message label of the desired message context
      * @return the desired message context or null if its not available.
-     * @throws AxisFault
-     *             if the message label is invalid
+     * @throws AxisFault if the message label is invalid
      */
     public MessageContext getMessageContext(String messageLabel)
             throws AxisFault;
@@ -65,10 +60,9 @@ public interface OperationClient {
      * provides notification that a message has been received by it. Exactly
      * when its executed and under what conditions is a function of the specific
      * operation client.
-     * 
-     * @param callback
-     *            the callback to be used when the client decides its time to
-     *            use it
+     *
+     * @param callback the callback to be used when the client decides its time to
+     *                 use it
      */
     public void setCallback(Callback callback);
 
@@ -79,14 +73,12 @@ public interface OperationClient {
      * an Out-In MEP, then if the Out message has been set, then executing the
      * client asks it to send the message and get the In message, possibly using
      * a different thread.
-     * 
-     * @param block
-     *            Indicates whether execution should block or return ASAP. What
-     *            block means is of course a function of the specific operation
-     *            client.
-     * @throws AxisFault
-     *             if something goes wrong during the execution of the operation
-     *             client.
+     *
+     * @param block Indicates whether execution should block or return ASAP. What
+     *              block means is of course a function of the specific operation
+     *              client.
+     * @throws AxisFault if something goes wrong during the execution of the operation
+     *                   client.
      */
     public void execute(boolean block) throws AxisFault;
 
@@ -94,10 +86,20 @@ public interface OperationClient {
      * Reset the operation client to a clean status after the MEP has completed.
      * This is how you can reuse an operation client. NOTE: this does not reset
      * the options; only the internal state so the client can be used again.
-     * 
-     * @throws AxisFault
-     *             if reset is called before the MEP client has completed an
-     *             interaction.
+     *
+     * @throws AxisFault if reset is called before the MEP client has completed an
+     *                   interaction.
      */
     public void reset() throws AxisFault;
+
+    /**
+     * To close the tranport if necessary , can call this method. The most usage of thie method
+     * when clinet use two tarnport for sending and receiving , there we need to remove entry from
+     * waitings calls in the transport listener queue
+     * Note : DO NOT call this method if you are not using two transport send and recive
+     *
+     * @param msgCtxt : MessageContext# which have all the trnport information
+     * @throws AxisFault : throws AxisFault if something goes worng
+     */
+    public void complete(MessageContext msgCtxt) throws AxisFault;
 }

@@ -119,7 +119,6 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
             OMText binaryNode = (OMText) ele1.getFirstOMChild();
             compareWithActualOMText(binaryNode);
             log.info("" + i);
-            sender.finalizeInvoke();
             UtilServer.unDeployClientService();
         }
     }

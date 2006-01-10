@@ -157,7 +157,6 @@ public class MailRequestResponseRawXMLTest extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        sender.finalizeInvoke();
 
     }
 

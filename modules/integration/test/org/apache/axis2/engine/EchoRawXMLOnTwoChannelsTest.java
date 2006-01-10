@@ -127,7 +127,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             }
             log.info("send the reqest");
         } finally {
-            sender.finalizeInvoke();
         }
 
     }

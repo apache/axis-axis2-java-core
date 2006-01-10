@@ -72,6 +72,5 @@ public class ServiceCreateTest extends TestCase {
 
         OMElement response = client.invokeBlocking(new QName("add"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
-        client.finalizeInvoke();
     }
 }

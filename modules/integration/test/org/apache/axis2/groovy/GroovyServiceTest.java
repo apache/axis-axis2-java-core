@@ -106,7 +106,6 @@ public class GroovyServiceTest extends TestCase {
         result.build();
         result.serialize(writer);
         writer.flush();
-        sender.finalizeInvoke();
     }
 
 

@@ -2,6 +2,7 @@ package org.apache.axis2.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
@@ -35,8 +36,9 @@ public class CallbackReceiver implements MessageReceiver {
         if (callback != null) {
             callback.onComplete(result);
             callback.setComplete(true);
-            //TODO : need to close the InputStream at this point ,
-            // first need to read the enevelop fully and then close the in
+            //closing the tranport
+            ListenerManager.stop(messageCtx.getConfigurationContext(),
+                    messageCtx.getTransportIn().getName().getLocalPart());
         } else {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }

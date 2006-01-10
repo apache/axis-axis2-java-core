@@ -110,6 +110,5 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
     }
 }
