@@ -15,12 +15,6 @@
  */
 package org.apache.axis2.tool.codegen;
 
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.util.CommandLineOption;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.wsdl.WSDLDescription;
-
-import javax.wsdl.WSDLException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +23,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.wsdl.WSDLException;
+
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.wsdl.WSDLDescription;
 
 
 public class WSDL2JavaGenerator {
