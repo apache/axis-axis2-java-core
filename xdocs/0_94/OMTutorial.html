@@ -159,15 +159,18 @@ about SOAP.</p>
 
 <h3>Obtaining the OM binary</h3>
 
-<p>OM is not a separate product but part of Axis2. However since Axis2 has a
-modular build structure, it is possible to obtain an "OM only" jar.</p>
+<p>OM is not a separate product but part of Axis2. But Axis2 provides a minimal jar which contains the run time of Axis2. This axis2-core-0.94.jar contains the compiled version of OM module. </p>
 
-<p>The easiest way to obtain the OM binary is to download the Axis2 binary
-distribution. <em><font> </font></em><font color="red"
+<p>The easiest way to obtain the OM binary is to download the Axis2 minimal binary
+distribution.  <font color="red"
 style="color: #000000">The lib directory will contain the <span
-style="color: #FF0000">axis2-xml-0.94.jar</span></font><span
+style="color: #FF0000">axis2-</span></font><font
+style="color: #000000"><span
+style="color: #FF0000">core</span></font><font color="red"
+style="color: #000000"><span
+style="color: #FF0000">-0.94.jar</span></font><span
 style="color: #000000">. However more adventurous users can build the OM from
-source, which is described in the next section.</span></p>
+source, which is described in the next section. In this way one get only the &quot;OM jar&quot;. </span></p>
 
 <p>Detailed information on getting source from Axis2 SVN repository can be
 found <a href="svn.html" target="_blank">here</a>.</p>
@@ -181,9 +184,9 @@ be found in the newly created "targets" directory in the XML
 module.</span></font></p>
 
 <p>Once the OM-binary is obtained by any of the above ways , it should be
-included in the class path for any of the OM based programs to work.
+included in the classpath for any of the OM based programs to work.
 Subsequent sections of this tutorial assume that this build step is complete
-and the <font color="red">Axis-0.94.jar </font> is correct in the classpath
+and the <font color="red">axis2-core-0.94.jar or axis2-xml-0.94.jar </font>is correct in the classpath
 along with the StAX API jar file and a StAX implementation.</p>
 
 <h3>Creation</h3>
