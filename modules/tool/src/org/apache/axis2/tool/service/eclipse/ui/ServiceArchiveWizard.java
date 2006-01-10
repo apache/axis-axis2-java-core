@@ -37,7 +37,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     private ClassFileLocationPage classFileLocationPage;
     private WSDLFileSelectionPage wsdlFileSelectionPage;
     private ServiceXMLFileSelectionPage serviceXMLFileSelectionPage;
-    private ServiceXMLGenerationPage serviceXMLGenerationPage;
+    //private ServiceXMLGenerationPage serviceXMLGenerationPage;
     private ServiceArchiveOutputLocationPage serviceArchiveOutputLocationPage;
     private LibraryAddingPage libPage;
 
@@ -67,9 +67,9 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         this.classFileLocation = location;
     }
     
-    public void updateServiceXMLGeneration(boolean status){
-        serviceXMLGenerationPage.setPageComplete(status);
-    }
+//    public void updateServiceXMLGeneration(boolean status){
+//        serviceXMLGenerationPage.setPageComplete(status);
+//    }
     /**
      * 
      */
@@ -107,8 +107,8 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         this.addPage(wsdlFileSelectionPage);
         serviceXMLFileSelectionPage = new ServiceXMLFileSelectionPage();
         this.addPage(serviceXMLFileSelectionPage);
-        serviceXMLGenerationPage = new ServiceXMLGenerationPage();
-        this.addPage(serviceXMLGenerationPage);
+//        serviceXMLGenerationPage = new ServiceXMLGenerationPage();
+//        this.addPage(serviceXMLGenerationPage);
         libPage = new LibraryAddingPage();
         this.addPage(libPage);
         serviceArchiveOutputLocationPage = new ServiceArchiveOutputLocationPage();
@@ -142,7 +142,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
                   monitor.worked(1);
                   wizBean.setWsdlBean(wsdlFileSelectionPage.getBean());
                   monitor.worked(1);
-                  wizBean.setPage2bean(serviceXMLGenerationPage.getBean(serviceXMLFileSelectionPage.getBean()));
+                  wizBean.setPage2bean(serviceXMLFileSelectionPage.getBean());
                   monitor.worked(1);
                   wizBean.setLibraryBean(libPage.getBean());
                   monitor.worked(1);

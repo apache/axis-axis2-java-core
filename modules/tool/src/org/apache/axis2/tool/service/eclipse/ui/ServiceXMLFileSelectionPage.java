@@ -101,8 +101,8 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
 		    public void widgetDefaultSelected(SelectionEvent e){}
 		});
 		/////////////////////////////////////////
-		//enable the selection combo for now
-		//selectAutoFileGenerationCheckBox.setEnabled(false);
+		//disable the selection combo for now
+		selectAutoFileGenerationCheckBox.setEnabled(false);
 		selectAutoFileGenerationCheckBox.setToolTipText(ServiceArchiver.getResourceString("page2.autogen.tooltip"));
 		////////////////////////////////////////////
 		
@@ -153,7 +153,7 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
     
     private void updateGenerationPage(boolean status){
         ServiceArchiveWizard wizard = (ServiceArchiveWizard)this.getWizard();
-        wizard.updateServiceXMLGeneration(status);
+        //wizard.updateServiceXMLGeneration(status);
        
     }
     
