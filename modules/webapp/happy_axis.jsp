@@ -8,12 +8,13 @@
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
+                 javax.servlet.jsp.JspWriter,
                  javax.xml.namespace.QName,
                  javax.xml.parsers.SAXParser,
                  javax.xml.parsers.SAXParserFactory,
-                 javax.xml.stream.XMLOutputFactory,
-                 javax.xml.stream.XMLStreamException"
+                 javax.xml.stream.XMLOutputFactory"
    session="false" %>
+<%@ page import="javax.xml.stream.XMLStreamException"%>
 <%@ page import="java.io.IOException"%>
 <%@ page import="java.io.InputStream"%>
 <%@ page import="java.io.StringWriter"%>
