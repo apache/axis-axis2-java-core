@@ -877,7 +877,7 @@ provides an abstract Callback with the following methods:</p>
 public abstract void onError(Exception e);
 public boolean isComplete() {}</pre>
 
-<p>The user is expected to implement the "onComplete " and "reportError "
+<p>The user is expected to implement the "onComplete " and "onError "
 methods of their extended call back class. Axis2 engine calls the onComplete
 method once the Web Service response is received by the Axis2 Client API
 (ServiceClient). This will eliminate the blocking nature of the Web Service
@@ -943,7 +943,7 @@ asynchrony!!</strong></p>
                         System.out.println(writer.toString());
 
                     } catch (XMLStreamException e) {
-                        reportError(e);
+                        onError(e);
                     }
                 }
 
