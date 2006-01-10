@@ -83,12 +83,12 @@ just by giving the schema file reference.This main class is pretty much
 primitive and does not provide much control over the code generation process.
 This is bound to improve in the near future.</p>
 
-<p>Code generator accepts the follwing parameters</p>
+<p>Code generator accepts the following parameters</p>
 <ol>
   <li>The Schema file name - This should be a complete file name pointing to
     the local file system</li>
   <li>The output folder name - This should be the name of a folder within the
-    local fileSystem</li>
+    local file system</li>
 </ol>
 
 <p>Since the main class has no validations built in, the compiler is likely
@@ -117,9 +117,9 @@ important classes and methods of the Schema compiler are as follows.</p>
   </li>
 </ul>
 
-<p>For a comprehensive code sample in invoking the schema compiler throught
+<p>For a comprehensive code sample in invoking the schema compiler through
 the API, the following classes would be helpful. One would also need an
-undertanding of the generation modes of the ADB schema compiler when using it
+understanding of the generation modes of the ADB schema compiler when using it
 through the API.</p>
 <ul>
   <li><strong>org.apache.axis2.schema.XSD2Java</strong></li>
@@ -173,7 +173,7 @@ the options and the consequences of using them.</p>
       <td>wrapClasses</td>
       <td>This determines whether to wrap the generated classes. If the flag
         is on then a single class (with adb added to the end of the specified
-        packge) will be generated. The default is off.</td>
+        package) will be generated. The default is off.</td>
     </tr>
   </tbody>
 </table>
@@ -195,7 +195,7 @@ depending on the following rules</p>
 </ol>
 
 <p>Once the code is generated according to the rules it looks like the
-following. Consider the follwing piece of schema</p>
+following. Consider the following piece of schema</p>
 <pre>&lt;schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org/types"&gt;
 &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
@@ -213,7 +213,7 @@ xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org
 generator. Unless specifically mentioned, the rest of this document assumes
 that the expanded mode of the code generation is used. This particular schema
 generates the following two classes in the designated package. This package
-is derived from the target Namespace of the schema.</p>
+is derived from the target namespace of the schema.</p>
 <ol>
   <li>myElement.java</li>
   <li>SOAPStruct.java</li>
@@ -264,7 +264,7 @@ work, the generated beans implement the
 
 <h3>An Example!</h3>
 
-<p>Consider the follwing XML fragment</p>
+<p>Consider the following XML fragment</p>
 <pre>&lt;myElement&gt;
   &lt;varInt&gt;5&lt;/varInt&gt;
   &lt;varString&gt;Hello&lt;/varString&gt;
@@ -283,7 +283,7 @@ myElement elt = myElement.parse(reader);</pre>
 
 <p>Although this example takes on the tedious effort of creating a reader out
 of the String, inside the Axis2 environment an XMLStreamReader can be
-direclty asked from the OMElement! Hence the parse method becomes a hugh
+direclty asked from the OMElement! Hence the parse method becomes a huge
 advantage for hassle free object creation.</p>
 
 <p>Similarly the reader obtained from the object can also be utilized as
