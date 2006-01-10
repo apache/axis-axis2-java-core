@@ -80,7 +80,7 @@ public class ArchiveReader implements DeploymentConstants {
             if (!axisService.isWsdlfound()) {
                 //trying to generate WSDL for the service using JAM  and Java refelection
                 try {
-                    Utils.fillAxisService(service,axisConfig);
+                    Utils.fillAxisService(service, axisConfig);
                 } catch (Exception e) {
                     log.info("Error in schema generating :" + e.getMessage());
                 }

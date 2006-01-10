@@ -35,6 +35,8 @@ public class CallbackReceiver implements MessageReceiver {
         if (callback != null) {
             callback.onComplete(result);
             callback.setComplete(true);
+            //TODO : need to close the InputStream at this point ,
+            // first need to read the enevelop fully and then close the in
         } else {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }

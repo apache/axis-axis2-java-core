@@ -282,6 +282,13 @@ class OutOnlyAxisOperationClient implements OperationClient {
         }
         mc.setTransportOut(senderTransport);
 
+        if (mc.getSoapAction() == null) {
+            Parameter soapaction = axisOp.getParameter(AxisOperation.SOAP_ACTION);
+            if (soapaction != null) {
+                mc.setSoapAction((String) soapaction.getValue());
+            }
+        }
+
         // create the operation context for myself
         OperationContext oc = new OperationContext(axisOp, sc);
         oc.addMessageContext(mc);

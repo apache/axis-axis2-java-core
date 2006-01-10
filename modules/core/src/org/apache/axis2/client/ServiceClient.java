@@ -17,6 +17,7 @@ import org.apache.axis2.util.CallbackReceiver;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -75,7 +76,6 @@ public class ServiceClient {
         // create a config context if needed
         this.configContext = (configContext != null) ? configContext
                 : new ConfigurationContextFactory()
-
                 .createConfigurationContextFromFileSystem(null);
 
         // save the axisConfig and service
@@ -112,9 +112,23 @@ public class ServiceClient {
      */
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
                          QName wsdlServiceName, String portName) throws AxisFault {
-        // TODO: Srinath to write this code :)
-        throw new UnsupportedOperationException(
-                "ServiceClient currently does not support direct WSDL construction");
+        // create a config context if needed
+        this.configContext = (configContext != null) ? configContext
+                : new ConfigurationContextFactory()
+                .createConfigurationContextFromFileSystem(null);
+        try {
+            this.axisConfig = this.configContext.getAxisConfiguration();
+            axisService = ClientUtils.creatAxisService(wsdlURL, wsdlServiceName, portName, options);
+            // add the service to the config context if it isn't in there already
+            if (this.axisConfig.getService(this.axisService.getName()) == null) {
+                this.axisConfig.addService(this.axisService);
+            }
+            ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
+                    this.axisService.getParent());
+            this.serviceContext = sgc.getServiceContext(this.axisService);
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 
     /**
@@ -349,11 +363,13 @@ public class ServiceClient {
             }
             // process the resule of the invocation
             if (callback.envelope != null) {
-                MessageContext resMsgctx = new MessageContext();
-                resMsgctx.setConfigurationContext(serviceContext
-                        .getConfigurationContext());
-
-                resMsgctx.setEnvelope(callback.envelope);
+//                MessageContext resMsgctx = new MessageContext();
+//                resMsgctx.setConfigurationContext(serviceContext
+//                        .getConfigurationContext());
+                MessageContext resMsgctx = callback.getMsgctx();
+//                resMsgctx.setEnvelope(callback.envelope);
+                ListenerManager.stop(serviceContext.getConfigurationContext(),
+                        resMsgctx.getTransportIn().getName().getLocalPart());
 
                 return callback.envelope.getBody().getFirstElement();
             } else {
@@ -481,15 +497,21 @@ public class ServiceClient {
      */
     private class SyncCallBack extends Callback {
         private SOAPEnvelope envelope;
+        private MessageContext msgctx;
 
         private Exception error;
 
         public void onComplete(AsyncResult result) {
             this.envelope = result.getResponseEnvelope();
+            this.msgctx = result.getResponseMessageContext();
         }
 
         public void onError(Exception e) {
             error = e;
+        }
+
+        public MessageContext getMsgctx() {
+            return msgctx;
         }
     }
 }

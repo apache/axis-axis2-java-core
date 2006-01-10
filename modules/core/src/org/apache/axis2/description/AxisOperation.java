@@ -31,6 +31,8 @@ public abstract class AxisOperation
     private Log log = LogFactory.getLog(getClass());
     private int mep = MEP_CONSTANT_INVALID;
 
+    public static final String SOAP_ACTION ="soapaction";
+
     // to store engaged modules
     private ArrayList engagedModules = new ArrayList();
 

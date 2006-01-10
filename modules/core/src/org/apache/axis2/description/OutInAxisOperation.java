@@ -237,6 +237,13 @@ class OutInAxisOperationClient implements OperationClient {
             }
         }
 
+        if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
+            Parameter soapaction = axisOp.getParameter(AxisOperation.SOAP_ACTION);
+            if (soapaction != null) {
+                mc.setSoapAction((String) soapaction.getValue());
+            }
+        }
+
         if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
@@ -257,7 +264,7 @@ class OutInAxisOperationClient implements OperationClient {
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
-                MessageContext response = send(mc, options.getTransportIn());
+                MessageContext response = send(mc);
                 // check for a fault and return the result
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 if (resenvelope.getBody().hasFault()) {
@@ -301,12 +308,10 @@ class OutInAxisOperationClient implements OperationClient {
      * Sends the message using a two way transport and waits for a response
      *
      * @param msgctx
-     * @param transportIn
      * @return Returns MessageContext.
      * @throws AxisFault
      */
-    public MessageContext send(MessageContext msgctx,
-                               TransportInDescription transportIn) throws AxisFault {
+    private MessageContext send(MessageContext msgctx) throws AxisFault {
         AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
         engine.send(msgctx);
@@ -315,7 +320,7 @@ class OutInAxisOperationClient implements OperationClient {
         MessageContext responseMessageContext = new MessageContext();
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
-        
+
         // This is a hack - Needs to change
         responseMessageContext.setOptions(options);
 
@@ -342,6 +347,7 @@ class OutInAxisOperationClient implements OperationClient {
             throw new AxisFault(Messages
                     .getMessage("blockingInvocationExpectsResponse"));
         }
+
         return responseMessageContext;
     }
 
@@ -380,7 +386,7 @@ class OutInAxisOperationClient implements OperationClient {
             try {
 
                 // send the request and wait for reponse
-                MessageContext response = send(msgctx, options.getTransportIn());
+                MessageContext response = send(msgctx);
 
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();

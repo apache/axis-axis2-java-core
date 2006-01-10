@@ -30,9 +30,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -173,8 +171,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
     }
 
     public void testEchoXMLMultipleSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = TestingUtils.createDummyOMElement();
         for (int i = 0; i < 5; i++) {
             Options options = new Options();
