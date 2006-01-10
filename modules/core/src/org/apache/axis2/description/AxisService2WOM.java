@@ -3,23 +3,8 @@ package org.apache.axis2.description;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.ExtensionFactory;
-import org.apache.wsdl.extensions.SOAPBinding;
-import org.apache.wsdl.extensions.SOAPBody;
-import org.apache.wsdl.extensions.SOAPOperation;
-import org.apache.wsdl.extensions.Schema;
+import org.apache.wsdl.*;
+import org.apache.wsdl.extensions.*;
 import org.apache.wsdl.extensions.impl.SOAPAddressImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.w3c.dom.Document;
@@ -137,6 +122,10 @@ public class AxisService2WOM {
         Iterator operations = axisService.getOperations().values().iterator();
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
+            if (axisOperation.isControlOperation()) {
+                //we do not need to expose control operation in the WSDL
+                continue;
+            }
             WSDLOperation wsdlOperation = womDescription.createOperation();
             wsdlOperation.setName(axisOperation.getName());
 
