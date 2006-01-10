@@ -33,8 +33,8 @@ set AXIS2_CLASS_PATH=%AXIS_HOME%
 FOR %%c in (%AXIS_HOME%\lib\*.jar) DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
 set AXIS2_CLASS_PATH=%AXIS2_CLASS_PATH%;%CURRENT_DIR%\amazonQS.jar
 
-start javaw -cp %AXIS2_CLASS_PATH% sample.amazon.amazonSimpleQueueService.RunGUICQ
-start javaw -cp %AXIS2_CLASS_PATH% sample.amazon.amazonSimpleQueueService.RunGUIRQ
+start javaw -cp %AXIS2_CLASS_PATH% -Daxis2.home=%AXIS_HOME% sample.amazon.amazonSimpleQueueService.RunGUICQ
+start javaw -cp %AXIS2_CLASS_PATH% -Daxis2.home=%AXIS_HOME% sample.amazon.amazonSimpleQueueService.RunGUIRQ
 
 endlocal
 :end
