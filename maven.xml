@@ -357,7 +357,8 @@
     <!-- ================================================================ -->
     <!--- Create the War -->
     <!-- ================================================================ -->
-    <goal name="war" prereqs="init-dist,cache-war-deps">
+    <goal name="war" prereqs="jar,init-dist,cache-war-deps">
+
         <ant:mkdir dir="target/temp/war/lib"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
@@ -387,14 +388,12 @@
 
         <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
-            <ant:fileset dir="modules/webapp"/>
-            <ant:lib dir="target/temp/war/lib"/>
-            <ant:lib dir="${min_dep_cache}">
-                <ant:include name="**"/>
-                <ant:exclude name="**servlet**"/>
-                <ant:exclude name="ant*.jar"/>
-            </ant:lib>
-            <ant:lib dir="${std_dep_cache}">
+            <ant:fileset dir="modules/webapp">
+                <ant:exclude name="project.xml" />
+                <ant:exclude name="**/*.iml" />
+                <ant:exclude name="**/.*" />
+            </ant:fileset>
+            <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
@@ -713,7 +712,8 @@
         </j:if>
     </goal>
 
-    <goal name="cache-war-deps" prereqs="init-dist,cache-std-deps">
+    <!--<goal name="cache-war-deps" prereqs="init-dist,cache-std-deps">-->
+    <goal name="cache-war-deps" prereqs="init-dist">
         <ant:mkdir dir="${war_dep_cache}"/>
         <j:if test="${warDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${war_dep_cache}"

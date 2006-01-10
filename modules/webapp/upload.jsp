@@ -6,6 +6,9 @@
 <%@ page import="java.io.IOException"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>
+<%@ page import="org.apache.commons.fileupload.FileUpload"%>
+<%@ page import="org.apache.commons.fileupload.DiskFileUpload"%>
+<%@ page import="org.apache.commons.fileupload.FileItem"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"
  %>
 <%
