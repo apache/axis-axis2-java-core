@@ -1,10 +1,10 @@
 package org.apache.axis2.tool.core;
 
+import java.io.File;
+
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
-
-import java.io.File;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
