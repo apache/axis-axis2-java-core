@@ -1,6 +1,6 @@
 <serviceGroup>
 
-  <service name="AddService">
+  <service name="AddService" scope="soapsession">
 
     <parameter name="ServiceClass" locked="xsd:false">sample.sgccalculator.AddService</parameter>
 
@@ -14,7 +14,7 @@
     
   </service>
   
-  <service name="MultiplyService">
+  <service name="MultiplyService" scope="soapsession">
   
     <parameter name="ServiceClass" locked="xsd:false">sample.sgccalculator.MultiplyService</parameter>
 
@@ -28,7 +28,7 @@
      
   </service>
  
-   <service name="SubstractService">
+   <service name="SubstractService" scope="soapsession">
    
    <parameter name="ServiceClass" locked="xsd:false">sample.sgccalculator.SubstractService</parameter>
 
