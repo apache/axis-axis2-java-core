@@ -217,7 +217,7 @@ class: Represent an Implementation class of observer, and it should be note
 <br>
 
 <font color="blue"><b>Service Configuration</b></font>
-<li><a name="service"></a>Writing service.xml</li>
+<li><a name="service"></a>Writing services.xml</li>
 <p>
 The description of service is specified using services.xml, each service archive 
 file need to have services.xml in order to be a valid service. And which has to be 
@@ -244,9 +244,9 @@ about the service via Axis2 web-admin module then the description can be specifi
 </p>
 <p>
 <b>Parameter:</b><br>
-service.xml can have any number of top level parameters and all the specified 
+services.xml can have any number of top level parameters and all the specified 
 parameters will be transformed into service properties in corresponding ServiceDescrption. 
-There is a compulsory parameter in a service.xml called ServiceClass which specify the 
+There is a compulsory parameter in a services.xml called ServiceClass which specify the 
 java class which really does the job and the class will be loaded by MessageReceiver.
 </p>
 <p>
@@ -271,7 +271,7 @@ after:  the handler should be invoked after the handler specified by after handl
 </p>
 <p>
 <b>Operations</b><br>
-All the operations you are going to exposeby the service has to be indicated in the service.xml and the correct way of specifying that should be as follows:
+All the operations you are going to exposeby the service has to be indicated in the services.xml and the correct way of specifying that should be as follows:
  <source><pre>
     &lt;operation name="echoString"&gt;
         &lt;module ref=" a module name "/&gt;
@@ -323,14 +323,14 @@ Module can contains any number of parameters and all the listed parameters in th
 </p
 <p>
 <b>Flow :</b><br>
-It is possible to add handlers into a flow directly form service.xml rather than 
+It is possible to add handlers into a flow directly form services.xml rather than 
 engaging a modules and the way of doing that is through flow elements. 
 It is possible to add any number of handlers into a flow and those handlers 
 will be available in corresponding operations flows in the service 
 (inflow consist of two parts, one part is up to post dispatch phase and other 
 part is consisting of operation handlers)  
 <br>
-There are four types of valid flows that can be available in service.xml,
+There are four types of valid flows that can be available in services.xml,
  and the adding the handles into them can be done by following the above procedure. 
 <br>
 Valid flows:
@@ -344,7 +344,7 @@ Valid flows:
 
 <p>
 <b>operations</b>
-If a module wants to add an operation when it is engaged into a service it can be done by adding operation tag in module.xml and the way of specifying the operation is same as operation in service.xml.  
+If a module wants to add an operation when it is engaged into a service it can be done by adding operation tag in module.xml and the way of specifying the operation is same as operation in services.xml.  
 
 </p>
 <br>
