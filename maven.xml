@@ -815,8 +815,6 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
-            <ant:echo message="######## MODULES=${mods}"/>
-            <ant:echo message="######## Copy2Dir=${copyToDir}"/>
 
             <j:set var="modules" value="${mods}"/>
 
