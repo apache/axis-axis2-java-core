@@ -248,107 +248,63 @@ participation.</p>
 href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a>" and make
 sure to prefix the subject of the mail with [Axis2].</p>
 
-<h3><a name="_Toc96698078"></a><a name="Featurelist"></a>Axis2 Complete
-Features List</h3>
-This release includes the following features:
-<ul>
-  <li><p style="margin-bottom: 0in">AXIOM, an XML object model working on StAX
-    (Streaming API for XML) parsing optimized for SOAP 1.1/1.2 Messages. This
-    has complete XML infoset support.</p></li>
-  <li><p style="margin-bottom: 0in">Support for One-Way Messaging (In-Only)
-    and Request Response Messaging (In-Out)</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Module Architecture, mechanism to extend
-    the SOAP Processing Model</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Content hierarchy</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Archive based deployment Model</p>
-  </li>
-  <li><p style="margin-bottom: 0in">WSDL Code Generation Tool for Stub and
-    skeletons</p>
-  </li>
-  <li><p style="margin-bottom: 0in">WS-Addressing, both the submission
-    (2004/08) and final (2005/08) versions</p>
-  </li>
-  <li><p style="margin-bottom: 0in">WSS4J module for security</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Improved and user friendly Client API</p>
-  </li>
-  <li><p style="margin-bottom: 0in">WSDL2Java and Java2WSDL</p>
-  </li>
-  <li><p style="margin-bottom: 0in">REST Web Service Support</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Transports supports: HTTP, SMTP, TCP,
-    JMS</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Raw XML providers</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Support for MTOM/ MIME/ SwA</p>
-  </li>
-  <li><p style="margin-bottom: 0in">SAAJ implementation</p>
-  </li>
-  <li><p style="margin-bottom: 0in">DOOM <sup><span
-    style="color: #FF0000; background-color: #FFFFFF">new</span></sup></p>
-  </li>
-  <li><p style="margin-bottom: 0in">Wrap/Unwrap capability for the generated
-    code <sup><span
-    style="color: #FF0000; background-color: #FFFFFF">new</span></sup></p>
-  </li>
-</ul>
-
-<h4><a name="experimental">Experimental Features List</a></h4>
-<ul>
-  <li><style="margin-bottom: 0in">Sessions scoping for Application, SOAP,
-    Transport and Request levels</li>
-  <li><p style="margin-bottom: 0in">Web Service Policy Support</p>
-  </li>
-</ul>
-
-<h4><a name="majorchanges">Major Changes Since Last Release</a></h4>
-<ul>
-  <li>Fixing of memory leaks</li>
-</ul>
-
-<h3><a name="toolsinrelease">Tools included in this Release</a></h3>
-<ol>
-  <li><style="margin-bottom: 0in">Axis2 Web Application (Web App)</li>
-  <li><p style="margin-bottom: 0in">WSDL2WS- <a href="CodegenTools-EclipsePlugin.html" target="_blank">eclipse Plugin</a>/ <a
-    href="CodegenToolReference.html" target="_blank">Command line
-    version</a>/ Intellij IDEA Plugin</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Service Archive Wizard- <a
-    href="ServiceArchiveToolReference.html" target="_blank">eclipse
-    Plugin</a>/ Intellij IDEA Plugin</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Module Archive Wizard- eclipse Plugin</p>
-  </li>
+<h3><a name="_Toc96698078"></a>Axis2 Complete Features List</h3>
+<ol type="1">
+  <li> AXIOM, an XML object model working on StAX (Streaming API for XML) parsing optimized for SOAP 1.1/1.2 Messages. This has complete XML infoset support. </li>
+  <li>Support for One-Way Messaging (In-Only) and Request Response Messaging (In-Out) </li>
+  <li>Module Architecture, mechanism to extend the SOAP Processing Model </li>
+  <li>Module version support , can have multiple versions of the same module and use them depending on the requirement. </li>
+  <li>Content hierarchy </li>
+  <li>Archive based deployment Model and Directory based deployment model </li>
+  <li>JWS like deployment (making Java class into Web service) </li>
+  <li>WSDL Code Generation Tool for Stub and skeletons </li>
+  <li>WS-Addressing, both the submission (2004/08) and final (2005/08) versions </li>
+  <li>WSS4J module for security </li>
+  <li>Improved and user friendly Client API </li>
+  <li>WSDL2Java and Java2WSDL </li>
+  <li>REST (REpresentational State Transfer) Support </li>
+  <li>Transports supports: HTTP, SMTP, TCP, JMS </li>
+  <li>Raw XML providers </li>
+  <li>Support for MTOM/ MIME/ SwA </li>
+  <li>SAAJ implementation </li>
+  <li>DOOM - New Feature </li>
+  <li>Pack/Unpack capability for the generated code- New Feature </li>
+  <li>Axis Data Binding - ADB (Framework and Schema Compiler) </li>
+  <li>Numerous bug fixes since last release </li>
 </ol>
-
-<h3><a name="_Toc96698079"></a><a name="WhatsStillToDo"></a>What's still to
-do?</h3>
-
-<p>See list of what we think needs to be done, and consider helping out if
-you're interested &amp; able!</p>
-<ul>
-  <li><p style="margin-bottom: 0in">JAX-RPC 1.1 and/or JAX-WS compliance</p>
-  </li>
-  <li><p style="margin-bottom: 0in">SOAP Encoding</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Binary serialization and de-serialization
-    support</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Management Interface for Axis2</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Implementation of other Transports.</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Resource framework implementation (WS-RF)
-    and Enterprise web services such as JSR 109 support</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Interop tests</p>
-  </li>
-</ul>
-
+<h3 id="head-5bb5aa099717d1d49642f7ae2d63ce5cf94487ad">Axis2 Experimental Features List</h3>
+<ol type="1">
+  <li> Sessions scoping for Application, SOAP, Transport and Request levels </li>
+  <li>Server side Web Service Policy support </li>
+  <li>?wsdl and ?xsd support </li>
+  <li>Generating ServiceClient for a given WSDL and invoke the corresponding service using generated client. </li>
+</ol>
+<h3 id="head-7dd8e783bb9e22fb00f88748855bb6e500111e12">Major changes since last release</h3>
+<ol type="1">
+  <li> Fixing of memory leaks </li>
+  <li>Client API changes , Introducing ServiceClient instead of MEPClient, InOnlyMEPClient, InOutMEPClient, Call. (Please note that the above classes will be deprecated in this release.) </li>
+  <li>Module versioning support , can have multiple versions of the same module and use them depending on the requirement. </li>
+  <li>Code generator imporved to process multiport WSDL's properly </li>
+  <li>Packing and unpacking options for the code generated classes </li>
+</ol>
+<h3 id="head-83371cc3d6961295be042f584c7b74d81cca23c4">Tools included in this Release</h3>
+<ol type="1">
+  <li> Axis2 Web Application (Web App) </li>
+  <li>WSDL2WS- eclipse Plugin/ Command line version/ Intellij IDEA Plugin </li>
+  <li>Service Archive Wizard- eclipse Plugin/ Intellij IDEA Plugin </li>
+  <li>Module Archive Wizard- eclipse Plugin </li>
+</ol>
+<h3 id="head-599c5a50552f02ebdeb5f58ef8da289234812ca4">What's still to do?</h3>
+<p>See list of what we think needs to be done, and consider helping out if you're interested &amp; able! </p>
+<ol type="1">
+  <li> JAX-RPC 1.1 and/or JAX-WS compliance </li>
+  <li>SOAP Encoding </li>
+  <li>Binary serialization and de-serialization support </li>
+  <li>Management Interface for Axis2 </li>
+  <li>Implementation of other Transports. </li>
+  <li>Resource framework implementation (WS-RF) and Enterprise web services such as JSR 109 support </li>
+  <li>Completion of Interop tests </li>
+</ol>
 <h2><a name="samples">Samples</a></h2>
 
 <p>In the following sections of the user's guide we will look at how to write
