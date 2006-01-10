@@ -184,6 +184,8 @@ public class Utils {
                 // no need to expose , private and protected methods
                 continue;
             }
+            if (jmethod.getSimpleName().equals("init"))
+                continue;
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the opeartion there in services.xml then try to set it schema element name

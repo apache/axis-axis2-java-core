@@ -208,7 +208,9 @@ public class SchemaGenerator {
     private void generateWrapperElements(JMethod methods[]) {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
-            if (method.getSimpleName().equals("init") || !method.isPublic())
+            if (method.getSimpleName().equals("init"))
+                continue;
+            if (!method.isPublic())
                 continue;
             genereteWrapperElementforMethod(method);
         }

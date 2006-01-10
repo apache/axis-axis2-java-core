@@ -6,7 +6,7 @@
     <name>Axis2 IDEA tools</name>
 
     <!-- Description -->
-    <description> Service Rrchive craetion and Codegenaration </description>
+    <description> Service Archive creation and Codegenaration </description>
 
     <!-- Plugin version -->
     <version>1.0</version>
@@ -33,7 +33,7 @@
         <!-- We use "PluginName.ComponentName.ActionName" notation for "id" to avoid conflicts -->
         <action id="ActionsSample.ActionsPlugin.ServiceArchiveCreator"
             class="org.apache.ideaplugin.plugin.Axis2PluginAction"
-            text="Axis2 plugins" description="Service craetion and codegeneration">
+            text="Axis2 plugins" description="Service creation and codegeneration">
             <keyboard-shortcut first-keystroke="alt W" second-keystroke="C" keymap="$default"/>
             <mouse-shortcut keystroke="ctrl alt button2" keymap="$default"/>
         </action>
