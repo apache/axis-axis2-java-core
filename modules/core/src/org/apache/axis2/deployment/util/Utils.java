@@ -173,6 +173,10 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                // no need to expose , private and protected methods
+                continue;
+            }
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the opeartion there in services.xml then try to set it schema element name
@@ -252,6 +256,10 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                // no need to expose , private and protected methods
+                continue;
+            }
             AxisOperation operation = getAxisOperationforJmethod(jmethod, table);
 
             // loading message recivers

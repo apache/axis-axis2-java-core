@@ -67,6 +67,9 @@ public class AxisService2WOM {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
         StringWriter writer = new StringWriter();
+        if(schema == null){
+            throw new Exception("no scheam found for the service");
+        }
         schema.write(writer);
         writer.flush();
         Document doc = domBuilder.parse(new ByteArrayInputStream(writer.toString().getBytes()));

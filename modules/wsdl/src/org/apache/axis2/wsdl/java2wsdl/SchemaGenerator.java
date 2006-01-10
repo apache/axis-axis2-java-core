@@ -3,22 +3,11 @@ package org.apache.axis2.wsdl.java2wsdl;
 import org.apache.axis2.wsdl.java2wsdl.bytecode.MethodTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaForm;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JParameter;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
+import org.apache.ws.commons.schema.*;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
+import java.util.HashMap;
 import java.util.Hashtable;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -128,11 +117,23 @@ public class SchemaGenerator {
              */
             methods = jclass.getDeclaredMethods();
 
+            // since we do not support overload
+            HashMap uniqueMethods = new HashMap();
+
             for (int i = 0; i < methods.length; i++) {
                 JMethod jMethod = methods[i];
                 //no need to think abt this method , since that is system config method
                 if (jMethod.getSimpleName().equals("init"))
                     continue;
+                if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
+                    throw new Exception(" Sorry we don't support methods overloading !!!! ");
+                }
+
+                if (!jMethod.isPublic()) {
+                    // no need to generate Schema for non public methods
+                    continue;
+                }
+                uniqueMethods.put(jMethod.getSimpleName(), jMethod);
 
                 //it can easily get the annotations
 //                jMethod.getAnnotations();
@@ -195,7 +196,7 @@ public class SchemaGenerator {
     private void generateWrapperElements(JMethod methods[]) {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
-            if (method.getSimpleName().equals("init"))
+            if (method.getSimpleName().equals("init") || !method.isPublic())
                 continue;
             genereteWrapperElementforMethod(method);
         }
