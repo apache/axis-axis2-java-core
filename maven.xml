@@ -53,6 +53,8 @@
     <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
     <j:set var="dist.dir" value="target/dist"/>
 
+    <!--<ant:TODAY />-->
+
     <j:set var="modules" value="*"/>
 
     <preGoal name="modules:reactor:init">
@@ -255,7 +257,7 @@
         <ant:mkdir dir="${dist.dir}"/>
         <ant:mkdir dir="target/lib"/>
 
-        <uptodate property="jars.uptodate" targetfile="target/axis2-${pom.currentVersion}.war">
+        <uptodate property="jars.uptodate" targetfile="target/axis2.war">
             <srcfiles dir="modules">
                 <include name="**/*.java"/>
                 <include name="**/*.xml"/>
@@ -353,7 +355,7 @@
     <!-- ================================================================ -->
     <!--- Create the War -->
     <!-- ================================================================ -->
-    <goal name="war" prereqs="init-dist,cache-min-deps">
+    <goal name="war" prereqs="init-dist,cache-std-deps">
         <ant:mkdir dir="target/temp/war/lib"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
@@ -381,10 +383,15 @@
             <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
         </ant:copy>
 
-        <ant:war destfile="target/dist/axis2-${pom.currentVersion}.war"
+        <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:fileset dir="modules/webapp"/>
             <ant:lib dir="${min_dep_cache}">
+                <ant:include name="**"/>
+                <ant:exclude name="**servlet**"/>
+                <ant:exclude name="ant*.jar"/>
+            </ant:lib>
+            <ant:lib dir="${std_dep_cache}">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
@@ -409,6 +416,8 @@
     <!-- ================================================================ -->
     <goal name="release"
           prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
+          <!--prereqs="dist-min-bin,dist-std-bin">-->
+          <!--prereqs="jar,dist-min-bin,dist-std-bin">-->
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -418,8 +427,8 @@
             <ant:fileset file="modules/security/target/security.mar"/>
         </ant:copy>
 
-        <ant:delete dir="target/temp"/>
-        <ant:delete dir="target/apidocs"/>
+        <!--<ant:delete dir="target/temp"/>-->
+        <!--<ant:delete dir="target/apidocs"/>-->
     </goal>
 
     <goal name="init-dist">
@@ -521,7 +530,7 @@
         <ant:echo>| Creating: Axis2 Standard Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:property name="std.bin.temp.dir" value="target/temp/std/bin" />
+        <ant:property name="std.bin.temp.dir" value="target/temp/std/bin"/>
 
         <ant:mkdir dir="${std.bin.temp.dir}/lib"/>
         <ant:mkdir dir="${std.bin.temp.dir}/bin"/>
@@ -677,7 +686,7 @@
         <ant:echo message="***** IMPORTANT: Please manually copy the Eclipse &amp; IDEA plugins"/>
     </goal>
 
-   <goal name="cache-min-deps" prereqs="init-dist">
+    <goal name="cache-min-deps" prereqs="init-dist">
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
@@ -708,7 +717,8 @@
                      version="true"
                      use="true"
                      windowtitle="Axis2 API">
-            <ant:arg line="-J-Dhttp.proxy.port=${maven.proxy.port} -J-Dhttp.proxy.host=${maven.proxy.host}"/>
+            <ant:arg
+                    line="-J-Dhttp.proxy.port=${maven.proxy.port} -J-Dhttp.proxy.host=${maven.proxy.host}"/>
             <ant:sourcepath>
                 <ant:pathelement location="modules/adb/src"/>
                 <ant:pathelement location="modules/addressing/src"/>
@@ -836,6 +846,8 @@
                     </j:forEach>
                 </ant:fileset>
             </ant:fileScanner>
+
+            <j:set var="modules.reactor.includes" value=""/>
 
             <!-- Setup the includes which will be used by the reactor -->
             <j:forEach var="file" items="${scanner.iterator()}">
