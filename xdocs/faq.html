@@ -21,6 +21,14 @@
     with OM quickly. For more information read<a href="OMTutorial.html">
     Axiom Tutorial</a></p>
   </li>
+  <li><strong>Integration security tests fail with JDK 1.5</strong></a><br>
+
+    <p>You have to add Bouncy Castle as a JCE provider. Add the following entry to 
+    JDK_HOME/jre/lib/security/java.security file</p>
+    <p>security.provider.7=org.bouncycastle.jce.provider.BouncyCastleProvider</p>
+    <p>security.provider.# will have to be decided depending on the existing entries 
+    in the java.security file</p>
+  </li>
 </ol>
 
 <h1>Client API</h1>
@@ -56,7 +64,7 @@
     <p>Modules and services have a archive format defined and they are
     automatically picked up by Axis2 when they are copied to corresponding
     folders.</p>
-
+</ol>
     <h1>Maven</h1>
     <ol>
       <li><strong>I just installed maven and it gives an error when I was
