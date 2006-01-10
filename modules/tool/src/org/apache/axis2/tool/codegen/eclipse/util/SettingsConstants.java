@@ -79,6 +79,14 @@ public interface SettingsConstants {
      * A boolean value whether the server-side configuration file for Axis2 (server.xml) will be generated or not.
      */
     static final String PREF_CHECK_GENERATE_SERVERCONFIG = "PREF_CHECK_GENERATE_SERVERCONFIG";
+    
+    static final String PREF_TEXT_PORTNAME = "PREF_TEXT_PORTNAME";
+    
+    static final String PREF_TEXT_SERVICENAME = "PREF_TEXT_SERVICENAME";
+    
+    static final String PREF_DATABINDER_INDEX = "PREF_DATABINDER_INDEX";
+    
+    static final String PREF_GEN_ALL = "PREF_GEN_ALL";
 
     // ##################################################################################
     // Java source file selection page

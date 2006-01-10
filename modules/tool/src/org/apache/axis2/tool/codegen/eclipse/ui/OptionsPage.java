@@ -77,8 +77,22 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
     * Checkbox to enable the generation of a default server.xml configuration file
     */
    private Button serverXMLCheckBoxButton;
-   private Button enableDataBindingButton;
+   /**
+    * Checkbox to enable the generate all classes
+    */
+   private Button generateAllCheckBoxButton;
+   
    private Combo databindingTypeCombo;
+   
+   /**
+    * Text box to have the portname
+    */
+   private Text portNameText;
+   
+   /**
+    * Text box to have the service name
+    */
+   private Text serviceNameText;
   
    /**
     * Creates the page and initialize some settings
@@ -103,6 +117,10 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
       settings.put(PREF_RADIO_ASYNC_ONLY, false);
       settings.put(PREF_RADIO_SYNC_AND_ASYNC, true);
       settings.put(PREF_RADIO_SYNC_ONLY, false);
+      settings.put(PREF_TEXT_PORTNAME, "");
+      settings.put(PREF_TEXT_SERVICENAME, "");
+      settings.put(PREF_DATABINDER_INDEX,0);
+      settings.put(PREF_GEN_ALL,false);
    }
 
    /*
@@ -187,10 +205,38 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
          {
          }
       });
-
+      
+//    service name
+      label = new Label(container, SWT.NULL);
+      label.setText(CodegenWizardPlugin.getResourceString("page2.serviceName.caption"));
+      serviceNameText = new Text(container, SWT.BORDER);
+      gd = new GridData(GridData.FILL_HORIZONTAL);
+      gd.horizontalSpan = 2;
+      serviceNameText.setLayoutData(gd);
+      serviceNameText.setText(settings.get(PREF_TEXT_SERVICENAME));
+      serviceNameText.addModifyListener(new ModifyListener(){
+          public void modifyText(ModifyEvent e){
+              settings.put(PREF_TEXT_SERVICENAME,serviceNameText.getText());
+          }
+      });
+      
+      //port name
+      label = new Label(container, SWT.NULL);
+      label.setText(CodegenWizardPlugin.getResourceString("page2.portName.caption"));
+      portNameText = new Text(container, SWT.BORDER);
+      gd = new GridData(GridData.FILL_HORIZONTAL);
+      gd.horizontalSpan = 2;
+      portNameText.setLayoutData(gd);
+      portNameText.setText(settings.get(PREF_TEXT_PORTNAME));
+      portNameText.addModifyListener(new ModifyListener(){
+          public void modifyText(ModifyEvent e){
+              settings.put(PREF_TEXT_PORTNAME,portNameText.getText());
+          }
+      });
+      
+      //package name
       label = new Label(container, SWT.NULL);
       label.setText(CodegenWizardPlugin.getResourceString("page2.package.caption"));
-
       packageText = new Text(container, SWT.BORDER);
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 2;
@@ -234,7 +280,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
          {
          }
       });
-
+      // Server side check box
       serverSideCheckBoxButton = new Button(container, SWT.CHECK);
       serverSideCheckBoxButton.setText(CodegenWizardPlugin.getResourceString("page2.serverside.caption"));
       serverSideCheckBoxButton.setSelection(settings.getBoolean(PREF_CHECK_GENERATE_SERVERSIDE));
@@ -250,8 +296,10 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
          {
          }
       });
+      
+      //Server side services xml
       gd = new GridData(GridData.FILL_HORIZONTAL);
-      gd.horizontalSpan = 2;
+      gd.horizontalSpan = 1;
       serverXMLCheckBoxButton = new Button(container, SWT.CHECK);
       serverXMLCheckBoxButton.setLayoutData(gd);
       serverXMLCheckBoxButton.setSelection(settings.getBoolean(PREF_CHECK_GENERATE_SERVERCONFIG));
@@ -267,18 +315,45 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
          {
          }
       });
+      //generate all
+      generateAllCheckBoxButton = new Button(container, SWT.CHECK);
+      gd = new GridData(GridData.FILL_HORIZONTAL);
+      gd.horizontalSpan = 1;
+      generateAllCheckBoxButton.setLayoutData(gd);
+      generateAllCheckBoxButton.setSelection(settings.getBoolean(PREF_GEN_ALL));
+      generateAllCheckBoxButton.setText(CodegenWizardPlugin.getResourceString("page2.genAll.caption"));
+      generateAllCheckBoxButton.addSelectionListener(new SelectionListener()
+      {
+         public void widgetSelected(SelectionEvent e)
+         {
+            settings.put(PREF_GEN_ALL, serverXMLCheckBoxButton.getEnabled());
+         }
 
-      enableDataBindingButton = new Button(container, SWT.CHECK);
-      enableDataBindingButton.setText(CodegenWizardPlugin.getResourceString("page2.databindingCheck.caption"));
-      //this button is disabled
-      enableDataBindingButton.setEnabled(false);
+         public void widgetDefaultSelected(SelectionEvent e)
+         {
+         }
+      });
+
+      // Databinding
+      label = new Label(container, SWT.NULL);
+      label.setText(CodegenWizardPlugin.getResourceString("page2.databindingCheck.caption"));
+           
       
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 2;
       databindingTypeCombo  = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
       databindingTypeCombo.setLayoutData(gd);
-      //this combo is also disabled
-      databindingTypeCombo.setEnabled(false);
+      fillDatabinderCombo();
+      databindingTypeCombo.select(settings.getInt(PREF_DATABINDER_INDEX));
+      databindingTypeCombo.addSelectionListener(new SelectionListener(){
+          public void widgetSelected(SelectionEvent e){
+            settings.put(PREF_DATABINDER_INDEX,databindingTypeCombo.getSelectionIndex());    
+          
+          };
+          public void widgetDefaultSelected(SelectionEvent e){}; 
+      });
+            
+   
       /*
        * Check the state of server-side selection, so we can enable/disable
        * the serverXML checkbox button.
@@ -295,13 +370,24 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
     * Fill the combo with proper language names
     * 
     */
+   private void fillDatabinderCombo()
+   {
+
+      databindingTypeCombo.add(DATA_BINDING_ADB);
+      databindingTypeCombo.add(DATA_BINDING_NONE);
+      
+      
+   }
+   /**
+    * Fill the combo with proper language names
+    * 
+    */
    private void fillLanguageCombo()
    {
 
       languageSelectionComboBox.add(JAVA);
       languageSelectionComboBox.add(C_SHARP);
-      languageSelectionComboBox.add(C_PLUS_PLUS);
-
+      
       languageSelectionComboBox.select(0);
    }
 
@@ -314,10 +400,12 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
       if (this.serverSideCheckBoxButton.getSelection())
       {
          this.serverXMLCheckBoxButton.setEnabled(true);
+         this.generateAllCheckBoxButton.setEnabled(true);
       }
       else
       {
          this.serverXMLCheckBoxButton.setEnabled(false);
+         this.generateAllCheckBoxButton.setEnabled(false);
       }
    }
 
@@ -398,5 +486,44 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
      */
     public int getPageType() {
           return WSDL_2_JAVA_TYPE;
+    }
+    
+    /**
+     * 
+     * @return null if portname is empty
+     */
+    public String getPortName(){
+        String text = this.portNameText.getText();
+        if (text==null || text.trim().equals("")){
+            return null;
+        }
+        return text;
+        
+    }
+    
+    /**
+     * @return null if the text is empty
+     * 
+     */
+    public String getServiceName(){
+        String text = this.serviceNameText.getText();
+        if (text==null || text.trim().equals("")){
+            return null;
+        }
+        return text;
+        
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String getDatabinderName(){
+        return this.databindingTypeCombo.getItem(databindingTypeCombo.getSelectionIndex());
+        
+   }
+    
+    public boolean getGenerateAll(){
+        return this.generateAllCheckBoxButton.getSelection();
     }
 }

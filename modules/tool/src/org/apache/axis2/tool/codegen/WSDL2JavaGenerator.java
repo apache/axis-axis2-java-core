@@ -41,7 +41,7 @@ public class WSDL2JavaGenerator {
      */
     private String mapLanguagesWithCombo(String UILangValue)
     {
-       return UILangValue; // TODO : Ajith please fix this.
+       return UILangValue;
     }
     /**
      * Creates a list of parameters for the code generator based on the decisions made by the user on the OptionsPage
@@ -54,6 +54,10 @@ public class WSDL2JavaGenerator {
             		  boolean isServerSide,
             		  boolean isServerXML,
             		  boolean isTestCase,
+            		  boolean isGenerateAll,
+            		  String serviceName,
+            		  String portName,
+            		  String databindingName,
             		  String WSDLURI,
             		  String packageName,
             		  String selectedLanguage,
@@ -88,6 +92,10 @@ public class WSDL2JavaGenerator {
              optionMap.put(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new CommandLineOption(
                 CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new String[0]));
           }
+          if (isGenerateAll){
+              optionMap.put(CommandLineOptionConstants.GENERATE_ALL_OPTION, new CommandLineOption(
+                      CommandLineOptionConstants.GENERATE_ALL_OPTION, new String[0]));
+          }
        }
        //test case
        if (isTestCase)
@@ -105,13 +113,22 @@ public class WSDL2JavaGenerator {
        optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, new CommandLineOption(
           CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, getStringArray(outputLocation)));
        
-       //data binding constant
-       // #########################################################################################
-       // This is set to the default NONE option since eclipse cannot load the XBeans thingy
-       //###########################################################################################
+      //databinding
        optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
-               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray("none")));
+               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(databindingName)));
+       
+       //port name
+       if (portName!=null){
+	       optionMap.put(CommandLineOptionConstants.PORT_NAME_OPTION, new CommandLineOption(
+	               CommandLineOptionConstants.PORT_NAME_OPTION, getStringArray(portName)));
+       }
+       //service name
+       if (serviceName!= null){
+	       optionMap.put(CommandLineOptionConstants.SERVICE_NAME_OPTION, new CommandLineOption(
+	               CommandLineOptionConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
+       }
        return optionMap;
+       
     }
     /**
      * Reads the WSDL Object Model from the given location.
