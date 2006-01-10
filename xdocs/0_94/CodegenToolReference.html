@@ -23,19 +23,30 @@ distribution)</p>
 style="border-collapse: collapse" width="100%" id="AutoNumber1">
   <tbody>
     <tr>
-      <td width="50%">-uri &lt;Location of WSDL&gt;</td>
-      <td width="50%">WSDL file location. This should point to a WSDL file in
-        the local file system</td>
+      <td width="20%"><strong>Short Option</strong></td>
+      <td width="20%"><strong>Long Option</strong></td>
+      <td width="60%"><strong>Description</strong></td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-o &lt;output Location&gt; :</td>
-      <td width="50%">output file location. This is where the files would be
+      <td width="20%">-uri &lt;Location of WSDL&gt;</td>
+      <td width="20%">None</td>
+      <td width="60%">WSDL file location. This should point to a WSDL file in
+        the local file system</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td width="20%">-o &lt;output Location&gt; :</td>
+      <td width="20%">--output</td>
+      <td width="60%">output file location. This is where the files would be
         copied once the code generation is done. If this option is omitted
         the generated files would be copied to the working directory.</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-l &lt;language&gt;</td>
-      <td width="50%">Output language. Currently the code generator can
+      <td width="20%">-l &lt;language&gt;</td>
+      <td width="20%">--language</td>
+      <td width="60%">Output language. Currently the code generator can
         generate code in Java and CSharp. (CSharp support is experimental)
         When omitted defaults to Java.
 
@@ -45,59 +56,91 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
           <li>cs</li>
         </ul>
       </td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-p &lt;package name&gt;</td>
-      <td width="50%">The target package name. If omitted, a default package
-        (formed using the target  namespace of the WSDL) will be used.</td>
+      <td width="20%">-p &lt;package name&gt;</td>
+      <td width="20%">--package</td>
+      <td width="60%">The target package name. If omitted, a default package
+        (formed using the target&#xa0; namespace of the WSDL) will be
+      used.</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-a</td>
-      <td width="50%">Generate code only for async style . when this option
+      <td width="20%">-a</td>
+      <td width="20%">--async</td>
+      <td width="60%">Generate code only for async style . when this option
         is used the generated stubs will have only the asynchronous
         invocation methods. Switched off by default.</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-s</td>
-      <td width="50%">Generate code only for sync style . When this option is
+      <td width="20%">-s</td>
+      <td width="20%">--sync</td>
+      <td width="60%">Generate code only for sync style . When this option is
         used the generated stubs will have only the  synchronous invocation
         methods. Switched off by default. When used with the -a option, this
         takes precedence.</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-t</td>
-      <td width="50%">Generates a test case. In the case of Java it would be
-        a junit test case. </td>
+      <td width="20%">-t</td>
+      <td width="20%">--test-case</td>
+      <td width="60%">Generates a test case. In the case of Java it would be
+        a junit test case.</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-ss</td>
-      <td width="50%">Generates server side code (i.e. skeletons). Default is
+      <td width="20%">-ss</td>
+      <td width="20%">--server-side</td>
+      <td width="60%">Generates server side code (i.e. skeletons). Default is
         off</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-sd</td>
-      <td width="50%">Generates the service descriptor (i.e. server.xml).
+      <td width="20%">-sd</td>
+      <td width="20%">--service-description</td>
+      <td width="60%">Generates the service descriptor (i.e. server.xml).
         Default is off. only valid with -ss, the server side code generation
         option</td>
+      <td></td>
     </tr>
     <tr>
-      <td width="50%">-d</td>
-      <td width="50%">Specifies the Databinding framework. valid values are
+      <td width="20%">-d</td>
+      <td width="20%">--databinding-method</td>
+      <td width="60%">Specifies the Databinding framework. valid values are
         xmlbeans,adb and none. Default is adb.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td width="20%">-g</td>
+      <td width="20%">--generate-all</td>
+      <td width="60%">Genrates all the classes. This option is valid only
+        with the -ss (server side code generation) option. When on, the
+        client code (stubs) will also be generated along with the
+      skeleton.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td width="20%">-u</td>
+      <td width="20%">--unpack-classes</td>
+      <td width="60%">Unpack classes. This option specifies whether to unpack
+        the classes and generate seperate classes for the databinders.</td>
+      <td></td>
     </tr>
 <tr>
-      <td width="50%">-g</td>
-      <td width="50%">Genrates all the classes. This option is valid only with the
--ss (server side code generation) option. When on, the client code (stubs) will also be generated
-along with the skeleton.
-</td>
+      <td width="20%">-sn</td>
+      <td width="20%">--service-name</td>
+      <td width="60%">Specifies the service name to be code generated. If the service name is
+      is not specified, then the first service will be picked</td>
+      <td></td>
     </tr>
-
-      <td width="50%">-u</td>
-      <td width="50%">
-Unwrap classes. This option specifies whether to unwrap the classes and generate seperate classes for
-the databinders.
-</td>
+<tr>
+      <td width="20%">-pn</td>
+      <td width="20%">--port-name</td>
+      <td width="60%">Specifies the port name to be code generated. If the port name is
+      is not specified, then the first port (of the selected service) will be picked</td>
+      <td></td>
     </tr>
   </tbody>
 </table>
@@ -143,8 +186,9 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
     <tr>
       <td width="50%" height="57">packagename</td>
       <td width="50%" height="57">The target package name. If omitted, a
-        default package (formed using the target  namespace of the WSDL) will
-        be used.  Maps to the -p option of the command line tool.</td>
+        default package (formed using the target&#xa0; namespace of the WSDL)
+        will be used.&#xa0; Maps to the -p option of the command line
+      tool.</td>
     </tr>
     <tr>
       <td width="50%" height="75">asynconly</td>
@@ -178,6 +222,21 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
         skeletons). Only true and false are applicable as values. Default is
         false. Maps to the -sd option of the command line tool.</td>
     </tr>
+<tr>
+      <td width="50%" height="18">unpackClasses</td>
+      <td width="50%" height="18">unpackes the generated classes. This forces the
+      databinding classes to be generated seperately, which otherwise would have been
+       generated as inner classes.
+</td>
+    </tr>
+<tr>
+      <td width="50%" height="18">serviceName</td>
+      <td width="50%" height="18">The name of the service</td>
+    </tr>
+<tr>
+      <td width="50%" height="18">PortName</td>
+      <td width="50%" height="18">The name of the port</td>
+    </tr>
   </tbody>
 </table>
 
@@ -190,15 +249,15 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
 &lt;project name="CodegenExample" default="main" basedir="."&gt;
 &lt;target name="declare" &gt;
 &lt;taskdef name="codegen"
-        classname="org.apache.axis2.tool.ant.AntCodegenTask"
-        classpath="classes"/&gt;
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; classname="org.apache.axis2.tool.ant.AntCodegenTask"
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; classpath="classes"/&gt;
 &lt;/target&gt;
 &lt;target name="main" depends="declare"&gt;
 &lt;codegen 
-    wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
-    output="C:\"
-    serverside="true"
-    generateserverxml="true"/&gt;
+&#xa0;&#xa0;&#xa0; wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
+&#xa0;&#xa0;&#xa0; output="C:\"
+&#xa0;&#xa0;&#xa0; serverside="true"
+&#xa0;&#xa0;&#xa0; generateserverxml="true"/&gt;
 &lt;/target&gt;
 &lt;/project&gt;</pre>
 
@@ -632,8 +691,7 @@ public class LoginClient {
             ex.printStackTrace();
         }
     }
-}
-</pre>
+}</pre>
 
 <p>Now run the ant task 'ant runLogin' . The following output should
 appear:</p>
@@ -652,19 +710,19 @@ appear:</p>
 <ul>
   <li>Eclipse reference - <a href="http://www.eclipse.org/">
     http://www.eclipse.org/</a></li>
-  <li>Custom Ant Tasks  - <a
+  <li>Custom Ant Tasks&#xa0; - <a
     href="http://ant.apache.org/manual/develop.html">
     http://ant.apache.org/manual/develop.html</a></li>
 </ul>
 
-<p> </p>
+<p>&#xa0;</p>
 
-<p> </p>
+<p>&#xa0;</p>
 
-<p> </p>
+<p>&#xa0;</p>
 
-<p> </p>
+<p>&#xa0;</p>
 
-<p> </p>
+<p>&#xa0;</p>
 </body>
 </html>
