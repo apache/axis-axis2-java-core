@@ -91,7 +91,6 @@ public class HTTPWorker implements HttpRequestHandler {
                 throw new AxisFault("HTTP version can not be Null");
             }
 
-//            String httpVersion = null;
 
             if (HttpVersion.HTTP_1_0.equals(ver)) {
 //                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;

@@ -46,6 +46,9 @@ import javax.xml.namespace.QName;
  * This class captures the handling of In-Out type method invocations for both blocking
  * and non-blocking calls. The basic API is based on MessageContext and
  * provides more convenient APIs.
+ *
+ * @deprecated 
+ * @see ServiceClient
  */
 public class InOutMEPClient extends MEPClient {
 

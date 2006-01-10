@@ -30,6 +30,8 @@ import org.apache.wsdl.WSDLConstants;
 
 /**
  * This class handles In-Only (fire and forget) MEP
+* @deprecated
+ * @see ServiceClient
  */
 public class InOnlyMEPClient extends MEPClient {
     public InOnlyMEPClient(ServiceContext service) {

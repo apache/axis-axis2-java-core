@@ -104,7 +104,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
          */
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(postMethod, msgContext);
-
             return;
         } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
@@ -122,6 +121,8 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                     return;
                 }
             }
+        } else {
+            throw new AxisFault("Axis2 transport error : " + postMethod.getStatusText(), SOAP12Constants.FAULT_CODE_SENDER);
         }
 
         throw new AxisFault(Messages.getMessage("transportError",

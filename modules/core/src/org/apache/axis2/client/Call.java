@@ -36,6 +36,8 @@ import javax.xml.namespace.QName;
 /**
  * This class is used to invoke INOUT web services and serves as a convenience
  * class to work with INOUT MEP.
+ * @deprecated
+ * @see ServiceClient
  */
 public class Call extends InOutMEPClient {
     protected AxisOperation axisOperationTemplate;

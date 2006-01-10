@@ -266,16 +266,6 @@
         <echo message="the files are up to date = ${jars.uptodate}"></echo>
     </goal>
 
-    <goal name="init-dist">
-        <ant:filter token="axis2_version" value="${pom.currentVersion}"/>
-        <ant:filter token="release_date" value="${release_date}"/>
-
-        <property name="min_dep_cache" value="target/temp/cache/min"/>
-        <property name="std_dep_cache" value="target/temp/cache/std"/>
-
-        <ant:mkdir dir="target/dist"/>
-    </goal>
-
     <goal name="modules:clean">
         <attainGoal name="modules:reactor:init"/>
         <u:tokenize var="directories" delim=",">${modules.directories}</u:tokenize>
@@ -432,6 +422,16 @@
         <ant:delete dir="target/apidocs"/>
     </goal>
 
+    <goal name="init-dist">
+        <ant:filter token="axis2_version" value="${pom.currentVersion}"/>
+        <ant:filter token="release_date" value="${release_date}"/>
+
+        <property name="min_dep_cache" value="target/temp/cache/min"/>
+        <property name="std_dep_cache" value="target/temp/cache/std"/>
+
+        <ant:mkdir dir="target/dist"/>
+    </goal>
+
     <goal name="dist-min-bin" prereqs="init-dist,cache-min-deps">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Minimal Binary Distribution</ant:echo>
@@ -565,7 +565,7 @@
         <ant:copy todir="${std.bin.temp.dir}/samples/userguide">
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
         </ant:copy>
-        <ant:delete file="${std.bin.temp.dir}/samples/groovyService.aar" />
+        <ant:delete file="${std.bin.temp.dir}/samples/groovyService.aar"/>
 
         <!-- Copy the release documents -->
         <macros:copy-release-docs toDir="${std.bin.temp.dir}"
@@ -581,9 +581,14 @@
         <ant:echo>| Creating: Axis2 Standard Source Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:mkdir dir="target/dist"/>
+        <ant:property name="std.src.temp.dir" value="target/temp/std/src"/>
 
-        <ant:copy toDir="target/temp/std/src">
+        <!-- Copy bin scripts -->
+        <ant:copy todir="${std.src.temp.dir}/bin">
+            <ant:fileset dir="modules/tool/script"/>
+        </ant:copy>
+
+        <ant:copy toDir="${std.src.temp.dir}">
             <ant:fileset dir=".">
                 <ant:include name="**/etc/**"/>
                 <ant:include name="**/modules/core/**"/>
@@ -597,6 +602,7 @@
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
                 <ant:exclude name="**/target/**"/>
+                <ant:exclude name="**/xdocs/**"/>
                 <ant:exclude name="**/*class*/**"/>
                 <ant:exclude name="**/.svn/**"/>
                 <ant:exclude name="**/bin/**"/>
@@ -606,26 +612,35 @@
                 <ant:exclude name="**/*.iml"/>
             </ant:fileset>
         </ant:copy>
-        <ant:copy toDir="target/temp/std/src/etc" overwrite="true" filtering="on">
+        <ant:copy toDir="${std.src.temp.dir}/etc" overwrite="true" filtering="on">
             <ant:fileset dir="release-docs/release-etc/std"/>
         </ant:copy>
 
         <!-- Copy the master maven files for the standard src distro -->
-        <ant:copy toFile="target/temp/std/src/maven.xml">
+        <ant:copy toFile="${std.src.temp.dir}/maven.xml">
             <ant:fileset file="release-docs/maven-scripts/maven-std.xml"/>
         </ant:copy>
-        <ant:copy toDir="target/temp/std/src">
+        <ant:copy toDir="${std.src.temp.dir}">
             <ant:fileset file="project.xml"/>
         </ant:copy>
 
+        <!-- Copy the samples -->
+        <ant:copy todir="${std.src.temp.dir}/samples">
+            <ant:fileset dir="modules/samples/target/samples">
+                <ant:exclude name="**/*.jar"/>
+                <ant:exclude name="**/*.aar"/>
+                <ant:exclude name="**/*.mar"/>
+            </ant:fileset>
+        </ant:copy>
+
         <!-- Copy the release documents -->
-        <macros:copy-release-docs toDir="target/temp/std/src"
+        <macros:copy-release-docs toDir="${std.src.temp.dir}"
                                   readmeFile="release-docs/readme-files/README-std-src.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-std-${pom.currentVersion}-src.zip">
-            <ant:fileset dir="target/temp/std/src"/>
+            <ant:fileset dir="${std.src.temp.dir}"/>
         </ant:zip>
-        <ant:delete dir="target/temp/std/src"/>
+        <ant:delete dir="${std.src.temp.dir}"/>
     </goal>
 
     <goal name="dist-war" prereqs="war">
@@ -662,7 +677,7 @@
         <ant:echo message="***** IMPORTANT: Please manually copy the Eclipse &amp; IDEA plugins"/>
     </goal>
 
-    <goal name="cache-min-deps" prereqs="init-dist">
+   <goal name="cache-min-deps" prereqs="init-dist">
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
@@ -769,6 +784,8 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
+            <ant:echo message="######## MODULES=${mods}"/>
+            <ant:echo message="######## Copy2Dir=${copyToDir}"/>
 
             <j:set var="modules" value="${mods}"/>
 

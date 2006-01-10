@@ -44,6 +44,8 @@ import java.util.List;
 
 /**
  * This is the super class for all MEPClients.
+ * @deprecated
+ * @see OperationClient
  */
 public abstract class MEPClient {
     private static final String ANONYMOUS_SERVICE = "AnonymousService";

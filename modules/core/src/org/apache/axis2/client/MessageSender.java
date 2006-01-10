@@ -34,6 +34,9 @@ import javax.xml.namespace.QName;
 
 /**
  * Message Sender is similar to the Call. Call is just a wrapper that provides a simple API.
+ *
+ * @see ServiceClient
+ * @deprecated
  */
 public class MessageSender extends InOnlyMEPClient {
     protected static AxisOperation axisOperationTemplate;
