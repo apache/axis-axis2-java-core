@@ -11,13 +11,13 @@
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
+      <library name="lib/axis2-0.94.jar">
+         <export name="*"/>
+      </library>
       <library name="lib/axis-wsdl4j-1.2.jar">
          <export name="*"/>
       </library>
       <library name="lib/stax-api-1.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-logging.jar">
          <export name="*"/>
       </library>
       <library name="lib/log4j-1.2.8.jar">
@@ -26,10 +26,22 @@
       <library name="lib/stax-1.1.1-dev.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-0.92.jar">
+      <library name="lib/commons-logging-1.0.4.jar">
          <export name="*"/>
       </library>
       <library name="lib/xbean.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/XmlSchema.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/jakarta-oro-2.0.8.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/jalopy-1.0b11.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/jdom.jar">
          <export name="*"/>
       </library>
    </runtime>
