@@ -1,4 +1,5 @@
 <project name="samples" default="all">
+    <property name="mainDir" value="../.."/>
     <path id="axis.classpath">
         <fileset dir="../../lib">
             <include name="*.jar"/>
@@ -6,10 +7,16 @@
         <pathelement location="./amazonQS.jar"/>
     </path>
     <target name="cq">
-        <java classname="sample.amazon.amazonSimpleQueueService.RunGUICQ" classpathref="axis.classpath" fork="true"/>
+        <java classname="sample.amazon.amazonSimpleQueueService.RunGUICQ"
+              classpathref="axis.classpath" fork="true">
+            <jvmarg value="-Daxis2.home=${mainDir}"/>
+        </java>
     </target>
     <target name="rq">
-        <java classname="sample.amazon.amazonSimpleQueueService.RunGUIRQ" classpathref="axis.classpath" fork="true"/>
+        <java classname="sample.amazon.amazonSimpleQueueService.RunGUIRQ"
+              classpathref="axis.classpath" fork="true">
+            <jvmarg value="-Daxis2.home=${mainDir}"/>
+        </java>
     </target>
     <target name="all" depends="cq,rq"/>
 </project>

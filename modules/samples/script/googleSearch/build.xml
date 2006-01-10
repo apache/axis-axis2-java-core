@@ -1,4 +1,5 @@
 <project name="samples" default="run">
+    <property name="mainDir" value="../.."/>
     <path id="axis.classpath">
         <fileset dir="../../lib">
             <include name="*.jar"/>
@@ -6,6 +7,9 @@
         <pathelement location="./googleSearch.jar"/>
     </path>
     <target name="run">
-        <java classname="sample.google.search.AsynchronousClient" classpathref="axis.classpath" fork="true"/>
+        <java classname="sample.google.search.AsynchronousClient"
+              classpathref="axis.classpath" fork="true">
+            <jvmarg value="-Daxis2.home=${mainDir}"/>
+        </java>
     </target>
 </project>

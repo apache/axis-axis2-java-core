@@ -1,4 +1,5 @@
 <project name="samples" default="mtomSample">
+    <property name="mainDir" value="../.."/>
     <path id="axis.classpath">
         <fileset dir="../../lib">
             <include name="*.jar"/>
@@ -12,6 +13,9 @@
         <path refid="mtom.classpath"/>
     </path>
     <target name="mtomSample">
-        <java classname="sample.mtom.imagetransfer.client.MTOMClient" classpathref="sample.classpath" fork="true"/>
+        <java classname="sample.mtom.imagetransfer.client.MTOMClient"
+              classpathref="sample.classpath" fork="true">
+            <jvmarg value="-Daxis2.home=${mainDir}"/>
+        </java>
     </target>
 </project>

@@ -23,6 +23,7 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import sample.google.common.util.PropertyLoader;
@@ -86,13 +87,14 @@ public class AsynchronousClient {
         URL url = null;
         try {
             url = new URL("http", "api.google.com", "/search/beta2");
-            //  url = new URL("http://127.0.0.1:8080/axis2/services/axisversion/viewVersion");
+//              url = new URL("http://127.0.0.1:8084/search/beta2");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             System.exit(0);
         }
 
         Options options = new Options();
+        options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
         options.setTo(
                 new EndpointReference(url.toString()));
 

@@ -64,7 +64,9 @@ public class RunnableListMyQueues extends QueueManager implements Runnable {
             options.setSoapAction("http://soap.amazon.com");
             options.setTo(new EndpointReference(url));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
+            options.setProperty(
+                    org.apache.axis2.context.MessageContextConstants.CHUNKED,
+                    org.apache.axis2.Constants.VALUE_FALSE);
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
             sender.sendReceiveNonblocking(element, specificCallbackObject);

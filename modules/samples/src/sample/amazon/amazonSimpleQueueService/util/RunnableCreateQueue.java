@@ -36,7 +36,8 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
     JTextField queueCode;
     JTextField enqueue;
 
-    public RunnableCreateQueue(JTextField createQueue, JTextField queueCode, JTextField enqueue,
+    public RunnableCreateQueue(JTextField createQueue, JTextField queueCode,
+                               JTextField enqueue,
                                JTextArea result) {
         this.createQueue = createQueue;
         this.queueCode = queueCode;
@@ -50,7 +51,8 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
                     this.createQueue.getText(), getKey());
             this.axis2EngineRuns("CreateQueue",
                     createQueueElement,
-                    new SimpleQueueCreateQueueCallbackHandler(this.createQueue, this.queueCode,
+                    new SimpleQueueCreateQueueCallbackHandler(this.createQueue,
+                            this.queueCode,
                             this.enqueue, this.result));
         }
         if (this.enqueue.isEditable()) {
@@ -69,12 +71,16 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
     private void axis2EngineRuns(String operation, OMElement element,
                                  Callback specificCallbackObject) {
         //endpoint uri is hard coded....
-        String url = "http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService";
+        String url =
+                "http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService";
         try {
             Options options = new Options();
             options.setTo(new EndpointReference(url));
             options.setSoapAction("http://soap.amazon.com");
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+            options.setProperty(
+                    org.apache.axis2.context.MessageContextConstants.CHUNKED,
+                    org.apache.axis2.Constants.VALUE_FALSE);
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
             sender.sendReceiveNonblocking(element, specificCallbackObject);

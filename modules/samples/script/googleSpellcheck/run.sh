@@ -9,4 +9,4 @@ done
 export AXIS2_CLASSPATH
 echo classpath: $AXIS2_CLASSPATH
 
-java -classpath $AXIS2_CLASSPATH sample.google.spellcheck.SuggestionForm
+java -classpath $AXIS2_CLASSPATH -Daxis2.home=$AXIS2_HOME sample.google.spellcheck.SuggestionForm
