@@ -569,6 +569,16 @@
             <ant:fileset dir="${std_dep_cache}"/>
         </ant:copy>
 
+        <!-- Delete tesing jars -->
+        <echo message="Deleting Unwanted testing jars"/>
+        <ant:delete>
+            <fileset dir="${std.bin.temp.dir}/lib">
+                <include name="**/ant*.jar"/>
+                <include name="**/xmlunit*.jar"/>
+                <include name="**/junit*.jar"/>
+            </fileset>
+        </ant:delete>
+
         <!-- Create axis2-core.jar -->
         <jar destfile="${std.bin.temp.dir}/lib/axis2-core-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
