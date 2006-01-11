@@ -195,7 +195,7 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
 
-        String serviceName = req.getParameter("service");
+        String serviceName = req.getParameter("axisService");
 
         if (serviceName != null) {
             req.getSession().setAttribute("service", serviceName);
