@@ -45,6 +45,10 @@
     <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
     <j:set var="dist.dir" value="target/dist"/>
 
+    <tstamp>
+        <format property="release_date" pattern="MMMM d, yyyy" locale="en"/>
+    </tstamp>
+
     <preGoal name="modules:reactor:init">
         <j:set var="groupId" value="maven-itest-plugin"/>
         <j:set var="artifactId" value="maven-itest-plugin"/>
@@ -56,7 +60,7 @@
     </preGoal>
 
     <preGoal name="build:start">
-        <property name="modules" value="core,common,xml,wsdl,adb" />
+        <property name="modules" value="core,common,xml,wsdl,adb"/>
     </preGoal>
 
     <!-- ======= -->
@@ -330,6 +334,70 @@
         <macros:copy-deps copyToDir="${target/lib}"/>
     </goal>
 
+    <!-- ================================================================ -->
+    <!--- Create the Distro -->
+    <!-- ================================================================ -->
+    <goal name="dist-bin" prereqs="jar,init-dist,cache-min-deps">
+        <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: Axis2 Minimal Binary Distribution</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
+
+        <ant:mkdir dir="target/dist"/>
+        <ant:mkdir dir="target/temp/min/bin/lib"/>
+
+        <!-- Copy the 3rd party libs -->
+        <ant:copy toDir="target/temp/min/bin/lib">
+            <ant:fileset dir="${min_dep_cache}"/>
+        </ant:copy>
+
+        <!-- Delete tesing jars -->
+        <echo message="Deleting Unwanted testing jars"/>
+        <ant:delete>
+            <fileset dir="target/temp/min/bin/lib">
+                <include name="**/ant*.jar"/>
+                <include name="**/xmlunit*.jar"/>
+                <include name="**/junit*.jar"/>
+            </fileset>
+        </ant:delete>
+
+        <!-- Create axis2-core.jar -->
+        <jar destfile="target/temp/min/bin/lib/axis2-core-${pom.currentVersion}.jar">
+            <fileset dir="modules/core/target/classes/"/>
+            <fileset dir="modules/common/target/classes/"/>
+            <fileset dir="modules/xml/target/classes/"/>
+            <fileset dir="modules/wsdl/target/classes/"/>
+        </jar>
+
+        <!-- Copy the adb jar -->
+        <ant:copy toDir="target/temp/min/bin/lib">
+            <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <ant:mkdir dir="${dist.dir}"/>
+        <ant:zip file="${dist.dir}/axis2-min-${pom.currentVersion}-bin.zip"
+                 basedir="target/temp/min/bin"/>
+        <ant:delete dir="target/temp/min/bin"/>
+    </goal>
+
+    <goal name="init-dist">
+        <ant:filter token="axis2_version" value="${pom.currentVersion}"/>
+        <ant:filter token="release_date" value="${release_date}"/>
+
+        <property name="min_dep_cache" value="target/temp/cache/min"/>
+        <property name="std_dep_cache" value="target/temp/cache/std"/>
+        <property name="war_dep_cache" value="target/temp/cache/war"/>
+
+        <ant:mkdir dir="target/dist"/>
+    </goal>
+
+    <goal name="cache-min-deps" prereqs="init-dist">
+        <ant:mkdir dir="${min_dep_cache}"/>
+        <j:if test="${minDeps.uptodate != 'yes'}">
+            <macros:copy-deps copyToDir="${min_dep_cache}"
+                              mods="core,common,xml,wsdl,adb"/>
+            <property name="minDeps.uptodate" value="yes"/>
+        </j:if>
+    </goal>
 
     <!-- ================================================================ -->
     <!--- Create the Java Docs -->
@@ -406,10 +474,78 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
-            <j:if test="${context.getVariable('modules') != null}">
-                <property name="modules" value="${modules}"/>
+            <j:set var="modules" value="${mods}"/>
+
+            <!-- ######################### REACTOR INIT ##########################################-->
+
+            <j:if test="${context.getVariable('module.types') == null}">
+                <j:set var="module.types" value="modules,applications,plugins"/>
             </j:if>
-            <attainGoal name="modules:reactor:init"/>
+
+            <j:set var="module.includes" value="${modules}"/>
+
+            <j:if test="${context.getVariable('module.excludes') == null}">
+                <j:set var="module.excludes" value=""/>
+            </j:if>
+
+            <u:tokenize var="types" delim=",">${module.types}</u:tokenize>
+
+            <ant:fileScanner var="scanner">
+                <ant:fileset dir="${basedir}">
+                    <j:forEach var="type" items="${types}">
+                        <j:choose>
+                            <j:when test="${context.getVariable('module.includes') == '*'}">
+                                <ant:include name="${type}/*/project.xml"/>
+                            </j:when>
+                            <j:otherwise>
+                                <u:tokenize var="includes" delim=",">${module.includes}</u:tokenize>
+                                <j:forEach var="include" items="${includes}">
+                                    <u:available file="${basedir}/${type}/${include}/project.xml">
+                                        <ant:include name="${type}/${include}/project.xml"/>
+                                    </u:available>
+                                </j:forEach>
+                            </j:otherwise>
+                        </j:choose>
+
+                        <j:choose>
+                            <j:when test="${context.getVariable('module.excludes') == '*'}">
+                                <ant:exclude name="${type}/*/project.xml"/>
+                            </j:when>
+                            <j:otherwise>
+                                <u:tokenize var="excludes" delim=",">${module.excludes}</u:tokenize>
+                                <j:forEach var="exclude" items="${excludes}">
+                                    <u:available file="${basedir}/${type}/${exclude}/project.xml">
+                                        <ant:exclude name="${type}/${exclude}/project.xml"/>
+                                    </u:available>
+                                </j:forEach>
+                            </j:otherwise>
+                        </j:choose>
+                    </j:forEach>
+                </ant:fileset>
+            </ant:fileScanner>
+
+            <j:set var="modules.reactor.includes" value=""/>
+
+            <!-- Setup the includes which will be used by the reactor -->
+            <j:forEach var="file" items="${scanner.iterator()}">
+                <j:set var="directory"
+                       value="${file.parentFile.parentFile.name}/${file.parentFile.name}"/>
+                <j:set var="filename" value="${directory}/${file.name}"/>
+                <j:choose>
+                    <j:when test="${context.getVariable('modules.reactor.includes') == null}">
+                        <j:set var="modules.directories" value="${directory}"/>
+                        <j:set var="modules.reactor.includes" value="${filename}"/>
+                    </j:when>
+                    <j:otherwise>
+                        <j:set var="modules.directories"
+                               value="${modules.directories},${directory}"/>
+                        <j:set var="modules.reactor.includes"
+                               value="${modules.reactor.includes},${filename}"/>
+                    </j:otherwise>
+                </j:choose>
+            </j:forEach>
+            <!-- #################### END OF REACTOR INIT #######################################-->
+
             <ant:echo message="Fetching Dependencies for modules: ${modules.reactor.includes}"/>
             <maven:reactor
                     basedir="${basedir}"

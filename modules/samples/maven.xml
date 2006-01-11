@@ -291,7 +291,6 @@
     <mkdir dir="target/security/client_repo"/>
     <mkdir dir="target/security/client_repo/modules"/>
 
-    <ant:copy file="../security/target/modules/security.mar" tofile="target/toWar/modules/security.mar"/>
     <ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/toWar/modules/addressing.mar"/>
 
     <!-- Copy the sources and others orver to the target/samples/security-->
@@ -300,7 +299,6 @@
          <ant:fileset dir="src/sample/security" />
     </ant:copy>
     <mkdir dir="target/security/client_repo/modules"/>
-    <ant:copy file="../security/target/modules/security.mar" tofile="target/samples/security/client_repo/modules/security.mar"/>
     <ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/samples/security/client_repo/modules/addressing.mar"/>
     <ant:copy file="resources/security/client.axis2.xml" tofile="target/samples/security/client_repo/axis2.xml"/>
     <ant:copy file="target/security/SecureService.aar" tofile="target/samples/security/SecureService.aar"/>

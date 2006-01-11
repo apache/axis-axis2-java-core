@@ -17,5 +17,5 @@ Axis2 modules:
 4. wsdl
 5. adb
 
-One can use maven 1.x to create the minimal binary distribution out of this, by typing "$maven dist-min-bin".
+One can use maven 1.x to create the minimal binary distribution out of this, by typing "$maven dist-bin".
 
