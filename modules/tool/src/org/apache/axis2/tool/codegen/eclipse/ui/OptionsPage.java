@@ -373,8 +373,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
    private void fillDatabinderCombo()
    {
 
-      databindingTypeCombo.add(DATA_BINDING_XMLBEANS);
+     
       databindingTypeCombo.add(DATA_BINDING_ADB);
+      databindingTypeCombo.add(DATA_BINDING_XMLBEANS);
       databindingTypeCombo.add(DATA_BINDING_NONE);
       
       
