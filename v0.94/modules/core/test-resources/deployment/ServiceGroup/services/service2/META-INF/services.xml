@@ -1,0 +1,7 @@
+<serviceGroup>
+    <service name="serevice1">
+    </service>
+    
+    <service name="serevice2">
+    </service>
+</serviceGroup>
