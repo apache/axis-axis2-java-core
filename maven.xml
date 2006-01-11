@@ -402,6 +402,7 @@
                 <ant:exclude name="project.xml"/>
                 <ant:exclude name="**/*.iml"/>
                 <ant:exclude name="**/.*"/>
+                <ant:exclude name="**/conf/**"/>
             </ant:fileset>
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
