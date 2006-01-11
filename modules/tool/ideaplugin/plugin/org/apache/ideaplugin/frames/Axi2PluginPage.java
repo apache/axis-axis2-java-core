@@ -95,7 +95,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
                 win.showUI();
             } else {
                 ServiceArciveFrame window = new ServiceArciveFrame();
-                window.setTitle("Service Rchive creation");
+                window.setTitle("Service Archive creation");
                 window.show();
             }
         }

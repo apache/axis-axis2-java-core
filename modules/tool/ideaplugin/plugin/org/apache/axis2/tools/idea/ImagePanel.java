@@ -93,8 +93,7 @@ class ImageLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
@@ -102,23 +101,10 @@ class ImageLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+368,insets.top+0,168,80);}
+        if (c.isVisible()) {c.setBounds(insets.left+368,insets.top,168,80);}
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+0,368,40);}
+        if (c.isVisible()) {c.setBounds(insets.left,insets.top,368,40);}
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+40,368,40);}
+        if (c.isVisible()) {c.setBounds(insets.left,insets.top+40,368,40);}
     }
 }
-
-
-//
-//    public ImagePanel() {
-////        apachelogo = new ImageIcon("/icons/asf-feather.gif");
-//        java.net.URL resource = ImagePanel.class.getResource("/icons/asf-feather.png");
-//        apachelogo = new ImageIcon(resource);
-//        JLabel lblWSDL = new JLabel(apachelogo);
-//        add(lblWSDL);
-//        setSize(getPreferredSize());
-//
-//    }
-//}

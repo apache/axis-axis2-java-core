@@ -2,16 +2,8 @@ package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -39,11 +31,11 @@ import java.io.File;
  * Date: Jul 22, 2005
  * Time: 12:52:31 PM
  */
-public class OutPutPane extends JPanel implements ActionListener{
+public class OutPutPane extends JPanel implements ActionListener {
     JLabel lbloutput;
     JTextField txtoutput;
     JButton btwBrowse;
-    private CodegenBean cogenbean ;
+    private CodegenBean cogenbean;
     final JFileChooser fc = new JFileChooser();
 
     public OutPutPane(CodegenBean bean) {
@@ -67,7 +59,7 @@ public class OutPutPane extends JPanel implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == btwBrowse){
+        if (obj == btwBrowse) {
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -103,8 +95,7 @@ class OutPutPaneLayout implements LayoutManager {
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-        return dim;
+        return new Dimension(0, 0);
     }
 
     public void layoutContainer(Container parent) {
@@ -112,11 +103,17 @@ class OutPutPaneLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+8,72,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 8, 72, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+88,insets.top+8,354,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 88, insets.top + 8, 354, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+450,insets.top+8,80,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 450, insets.top + 8, 80, 24);
+        }
     }
 }
 

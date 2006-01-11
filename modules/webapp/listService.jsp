@@ -64,7 +64,7 @@
 		boolean modules_present=false;
                  if(engagedModules.size() >0){
            %>
-           <i>Engaged Modules for the axisService</i>
+           <i>Engaged modules for the service</i>
                 <%
                      for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
                          ModuleDescription axisOperation = (ModuleDescription) iteratorm.next();
