@@ -15,15 +15,14 @@
  */
 package org.apache.axis2.security.trust.token;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.message.token.SecurityTokenReference;
-
-import javax.xml.namespace.QName;
 
 public class CancelTarget extends CompositeToken {
 
@@ -35,7 +34,11 @@ public class CancelTarget extends CompositeToken {
     public CancelTarget(SecurityTokenReference securityTokenReference) throws TrustException {
 		super();
 		this.securityTokenReference = securityTokenReference;
-		this.tokenElement.addChild(Axis2Util.toOM(this.securityTokenReference.getElement()));
+        try {
+            this.tokenElement.addChild(Axis2Util.toOM(this.securityTokenReference.getElement()));
+        } catch (Exception e) {
+            throw new TrustException(e.getMessage(), e);
+        }
 	}
     
     /**
@@ -90,7 +93,11 @@ public class CancelTarget extends CompositeToken {
 		}
 		
 		this.securityTokenReference = securityTokenReference;
-		this.tokenElement.addChild(Axis2Util.toOM(this.securityTokenReference.getElement()));
+        try {
+            this.tokenElement.addChild(Axis2Util.toOM(this.securityTokenReference.getElement()));
+        } catch (Exception e) {
+            throw new TrustException(e.getMessage(), e);
+        }
 	}
 	
 	/**
@@ -126,8 +133,8 @@ public class CancelTarget extends CompositeToken {
 		if(el.equals(new QName(WSConstants.WSSE_NS,SecurityTokenReference.SECURITY_TOKEN_REFERENCE)) && this.targetToken == null) {
 			try {
 				this.securityTokenReference = new SecurityTokenReference(Axis2Util.toDOM(element));
-			} catch (WSSecurityException wsse) {
-				throw new TrustException(wsse.getMessage(),wsse);
+			} catch (Exception e) {
+				throw new TrustException(e.getMessage(), e);
 			}
 		} else if(this.securityTokenReference == null) {
 			this.targetToken = element;

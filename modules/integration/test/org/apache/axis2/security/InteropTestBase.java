@@ -120,7 +120,7 @@ public abstract class InteropTestBase extends TestCase {
     private String targetEpr = "http://127.0.0.1:" +
             // 5556 +
             UtilServer.TESTING_PORT + "/axis2/services/PingPort";
-
+ 
     public InteropTestBase() {
         super();
     }

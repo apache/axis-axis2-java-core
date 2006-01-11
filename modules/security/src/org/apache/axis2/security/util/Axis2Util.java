@@ -16,12 +16,18 @@
 
 package org.apache.axis2.security.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -31,13 +37,6 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * Utility class for the Axis2-WSS4J Module
@@ -111,10 +110,9 @@ public class Axis2Util {
 	 * Converts a given DOM Element to an OMElement.
 	 * @param element
 	 * @return Returns OMElement.
-	 * @throws TrustException
+	 * @throws Exception
 	 */
-	public static OMElement toOM(Element element) throws TrustException {
-		try {
+	public static OMElement toOM(Element element) throws Exception {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			XMLUtils.outputDOM(element, os, true);
 			
@@ -126,10 +124,6 @@ public class Axis2Util {
 			builder.setCache(true);
 
 			return builder.getDocumentElement();
-		} catch (XMLStreamException e) {
-			throw new TrustException(TrustException.ERROR_IN_CONVERTING_TO_OM,
-					TrustException.ERROR_IN_CONVERTING_TO_OM, new Object[] {}, e);
-		}
 	}
 	
 
@@ -137,10 +131,9 @@ public class Axis2Util {
 	 * Converts a given OMElement to a DOM Element.
 	 * @param element
 	 * @return Returns Element.
-	 * @throws TrustException
+	 * @throws Exception
 	 */
-	public static Element toDOM(OMElement element) throws TrustException {
-		try {
+	public static Element toDOM(OMElement element) throws Exception {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			element.serialize(baos);
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
@@ -148,9 +141,5 @@ public class Axis2Util {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			return factory.newDocumentBuilder().parse(bais).getDocumentElement();
-		} catch (Exception e) {
-			throw new TrustException(TrustException.ERROR_IN_CONVERTING_TO_DOM,
-					TrustException.ERROR_IN_CONVERTING_TO_DOM, new Object[] {}, e);			
-		}
 	}
 }
