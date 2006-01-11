@@ -348,7 +348,7 @@
     <!-- ================================================================ -->
     <!--- Create the War -->
     <!-- ================================================================ -->
-    <goal name="war" prereqs="init">
+    <goal name="war" prereqs="init, jar">
         <ant:mkdir dir="target/temp/war/lib"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
@@ -380,7 +380,7 @@
             <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
         </ant:copy>
 
-        <ant:war destfile="target/dist/axis2-${pom.currentVersion}.war"
+        <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:fileset dir="modules/webapp"/>
             <ant:lib dir="target/temp/war/lib">

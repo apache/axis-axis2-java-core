@@ -438,10 +438,12 @@
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:copy toDir="target/dist">
-            <ant:fileset file="modules/addressing/target/addressing.mar"/>
-            <ant:fileset file="modules/security/target/security.mar"/>
-        </ant:copy>
+        <ant:copy toFile="target/dist/addressing-${pom.currentVersion}.mar"
+                  file="modules/addressing/target/addressing.mar"/>
+
+        <ant:copy toFile="target/dist/security-${pom.currentVersion}.mar"
+                  file="modules/addressing/target/security.mar"/>
+
 
         <ant:delete dir="target/temp"/>
         <ant:delete dir="target/apidocs"/>
@@ -520,7 +522,8 @@
                 <ant:include name="**/modules/xml/**"/>
                 <ant:include name="**/modules/wsdl/**"/>
                 <ant:include name="**/modules/adb/**"/>
-                <ant:exclude name="**/SameServiceAddingTest.java"/> <!-- TODO: This is failing in the distros. Must Fix it. -->
+                <ant:exclude name="**/SameServiceAddingTest.java"/>
+                <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
                 <ant:exclude name="**/*class*/**"/>
                 <ant:exclude name="**/.svn/**"/>
@@ -653,7 +656,8 @@
                 <ant:include name="**/modules/doom/**"/>
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
-                <ant:exclude name="**/SameServiceAddingTest.java"/> <!-- TODO: This is failing in the distros. Must Fix it. -->
+                <ant:exclude name="**/SameServiceAddingTest.java"/>
+                <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
                 <ant:exclude name="xdocs/**"/>
                 <ant:exclude name="**/*class*/**"/>
