@@ -376,7 +376,7 @@
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-         <!-- Copy the doom jar -->
+        <!-- Copy the doom jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
         </ant:copy>
@@ -394,9 +394,9 @@
         <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:fileset dir="modules/webapp">
-                <ant:exclude name="project.xml" />
-                <ant:exclude name="**/*.iml" />
-                <ant:exclude name="**/.*" />
+                <ant:exclude name="project.xml"/>
+                <ant:exclude name="**/*.iml"/>
+                <ant:exclude name="**/.*"/>
             </ant:fileset>
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
@@ -464,8 +464,8 @@
         <ant:copy toDir="target/temp/min/bin/lib">
             <ant:fileset dir="${min_dep_cache}"/>
         </ant:copy>
-        
-         <!-- Delete tesing jars -->
+
+        <!-- Delete tesing jars -->
         <echo message="Deleting Unwanted testing jars"/>
         <ant:delete>
             <fileset dir="target/temp/min/bin/lib">
@@ -495,7 +495,7 @@
         <ant:mkdir dir="${dist.dir}"/>
         <ant:zip file="${dist.dir}/axis2-min-${pom.currentVersion}-bin.zip"
                  basedir="target/temp/min/bin"/>
-        <!-- ant:delete dir="target/temp/min/bin"/ -->
+        <ant:delete dir="target/temp/min/bin"/>
     </goal>
 
     <goal name="dist-min-src" prereqs="init-dist">
@@ -691,6 +691,10 @@
         <ant:copy toDir="target/temp/docs/xdocs">
             <ant:fileset dir="xdocs"/>
         </ant:copy>
+
+        <!-- Delete 0.93 docs -->
+        <ant:delete dir="target/temp/docs/xdocs/0_93"/>
+
 
         <ant:copy toDir="target/temp/docs/javadocs">
             <ant:fileset dir="target/apidocs"/>
