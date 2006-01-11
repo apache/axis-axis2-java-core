@@ -176,9 +176,7 @@ public class ListingAgent {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName + " module engaged globally Successfully");
             } catch (AxisFault axisFault) {
-                if (axisFault.getMessage() != null) {
-                    req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
-                }
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
         }
 
@@ -197,7 +195,7 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
 
-        String serviceName = req.getParameter("axisService");
+        String serviceName = req.getParameter("service");
 
         if (serviceName != null) {
             req.getSession().setAttribute("service", serviceName);
