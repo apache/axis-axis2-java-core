@@ -432,8 +432,8 @@
     <!-- ================================================================ -->
     <!--- Create the Release -->
     <!-- ================================================================ -->
-    <goal name="release"
-          prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
+    <goal name="release">
+          <!-- prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs" -->
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -442,7 +442,7 @@
                   file="modules/addressing/target/addressing.mar"/>
 
         <ant:copy toFile="target/dist/security-${pom.currentVersion}.mar"
-                  file="modules/addressing/target/security.mar"/>
+                  file="modules/security/target/security.mar"/>
 
 
         <ant:delete dir="target/temp"/>
