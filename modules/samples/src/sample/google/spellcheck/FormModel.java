@@ -2,12 +2,12 @@ package sample.google.spellcheck;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -106,6 +106,8 @@ public class FormModel {
         Options options = new Options();
 
         options.setTo(new EndpointReference(url.toString()));
+        options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
+
         try {
 
             ServiceClient sender = new ServiceClient();
@@ -116,7 +118,10 @@ public class FormModel {
             observer.updateError(axisFault.getMessage());
         }
 
-
+        if (responseElement == null) {
+            this.observer.update("No suggestions found for " + word);
+            return;
+        }
         this.getResponseFromElement(responseElement);
     }
 
