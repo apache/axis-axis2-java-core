@@ -23,13 +23,10 @@ import org.apache.axis2.om.OMNamespace;
 
 public class Version {
 
-    public OMElement getVersion() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "ns1");
-        OMElement version = fac.createOMElement("getVersionResponse", omNs);
-        version.addChild(
-                fac.createText(version,
-                        "Hello I am Axis2 version service , My version is " + org.apache.axis2.Version.getVersionText()));
-        return version;
+
+    public String getVersion() {
+          return   "Hello I am Axis2 version service , My version is " + org.apache.axis2.Version.getVersionText();
     }
+
+
 }
