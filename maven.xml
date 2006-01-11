@@ -381,6 +381,11 @@
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the codegen jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- copy the addressing mar -->
         <ant:copy toDir="target/temp/war/toWEB-INF/modules">
             <ant:fileset file="modules/addressing/target/addressing.mar"/>
@@ -596,6 +601,11 @@
         <!-- Copy addressing mar -->
         <ant:copy toDir="${std.bin.temp.dir}/modules">
             <ant:fileset file="modules/addressing/target/addressing.mar"/>
+        </ant:copy>
+
+        <!-- Copy the codegen jar -->
+        <ant:copy toDir="${std.bin.temp.dir}/lib">
+            <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy the samples -->
