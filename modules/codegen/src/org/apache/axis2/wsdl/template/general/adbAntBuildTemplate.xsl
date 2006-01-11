@@ -11,7 +11,7 @@
             <property name="axis2.home">
                 <xsl:attribute name="value">${env.AXIS2_HOME}</xsl:attribute>
             </property>
-            <property name="axis2.class.path">
+            <property name="maven.class.path">
                 <xsl:attribute name="value"></xsl:attribute>
             </property>
             <property name="name">
@@ -43,7 +43,7 @@
                     <xsl:attribute name="path">${java.class.path}</xsl:attribute>
                 </pathelement>
                 <pathelement>
-                    <xsl:attribute name="path">${axis2.class.path}</xsl:attribute>
+                    <xsl:attribute name="path">${maven.class.path}</xsl:attribute>
                 </pathelement>
                 <fileset>
                     <xsl:attribute name="dir">${axis2.home}</xsl:attribute>
@@ -182,14 +182,13 @@
                 </java>
             </target>
             <target if="jars.ok" name="run.test" depends="compile.test">
-                <property name="axis2.class.path" refid="axis2.class.path"/>
                 <path id="test.class.path">
                     <pathelement>
                         <xsl:attribute name="location">${lib}/${name}-test-client.jar</xsl:attribute>
                     </pathelement>
-                    <pathelement>
-                        <xsl:attribute name="path">${axis2.class.path}</xsl:attribute>
-                    </pathelement>
+                    <path>
+                        <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
+                    </path>
                 </path>
                 <mkdir>
                     <xsl:attribute name="dir">${build}/test-reports/</xsl:attribute>

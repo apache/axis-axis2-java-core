@@ -22,6 +22,7 @@ public interface UIConstants {
     
     public static final String DATA_BINDING_NONE = "none" ;
     public static final String DATA_BINDING_ADB = "adb" ;
+    public static final String DATA_BINDING_XMLBEANS = "xmlbeans" ;
     
     
 
