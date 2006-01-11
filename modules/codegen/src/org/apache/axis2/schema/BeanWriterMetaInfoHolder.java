@@ -181,7 +181,7 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean getAnyStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
-        return anyState != null && anyState.equals(SchemaConstants.ANY_TYPE);
+        return anyState != null && anyState.equals(SchemaConstants.ANY);
     }
 
     /**

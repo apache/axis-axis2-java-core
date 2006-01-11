@@ -30,9 +30,17 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import sun.misc.BASE64Decoder;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -42,6 +50,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.io.ByteArrayInputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -244,8 +253,19 @@ public class ConverterUtil {
         return Boolean.valueOf(s).booleanValue();
     }
 
-    public static Object convertToanyType(String s) {
-        return s; //todo -> What to do here?
+    public static String convertToanySimpleType(String s) {
+        return s;
+    }
+
+    public static OMElement convertToanyType(String s) {
+        try {
+            XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(
+                    new ByteArrayInputStream(s.getBytes()));
+            StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(),r);
+            return builder.getDocumentElement();
+        } catch (XMLStreamException e) {
+            return null;
+        }
     }
 
     public static YearMonth convertTogYearMonth(String s) {
