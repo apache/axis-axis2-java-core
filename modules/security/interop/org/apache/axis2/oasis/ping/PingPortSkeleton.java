@@ -34,25 +34,31 @@ public class PingPortSkeleton {
                 (Vector) mc.getProperty(WSHandlerConstants.RECV_RESULTS))
                 == null) {
             System.out.println("No security results!!");
-        }
-        System.out.println("Number of results: " + results.size());
-        for (int i = 0; i < results.size(); i++) {
-            WSHandlerResult rResult =
-                    (WSHandlerResult) results.get(i);
-            Vector wsSecEngineResults = rResult.getResults();
-
-            for (int j = 0; j < wsSecEngineResults.size(); j++) {
-                WSSecurityEngineResult wser =
-                        (WSSecurityEngineResult) wsSecEngineResults.get(j);
-                if (wser.getAction() != WSConstants.ENCR && wser.getPrincipal() != null) {
-                    System.out.println(wser.getPrincipal().getName());
+            PingResponseDocument response = PingResponseDocument.Factory.newInstance();
+            PingResponse pingRes = response.addNewPingResponse();
+            pingRes.setText("Response: " + param0.getPing().getText() + "\n" +
+                    "WARNING: wsse:Security missing !!!!");
+            return response;
+        } else {
+            System.out.println("Number of results: " + results.size());
+            for (int i = 0; i < results.size(); i++) {
+                WSHandlerResult rResult =
+                        (WSHandlerResult) results.get(i);
+                Vector wsSecEngineResults = rResult.getResults();
+    
+                for (int j = 0; j < wsSecEngineResults.size(); j++) {
+                    WSSecurityEngineResult wser =
+                            (WSSecurityEngineResult) wsSecEngineResults.get(j);
+                    if (wser.getAction() != WSConstants.ENCR && wser.getPrincipal() != null) {
+                        System.out.println(wser.getPrincipal().getName());
+                    }
                 }
             }
+            PingResponseDocument response = PingResponseDocument.Factory.newInstance();
+            PingResponse pingRes = response.addNewPingResponse();
+            pingRes.setText("Response: " + param0.getPing().getText());
+            return response;
         }
-        PingResponseDocument response = PingResponseDocument.Factory.newInstance();
-        PingResponse pingRes = response.addNewPingResponse();
-        pingRes.setText("Response: " + param0.getPing().getText());
-        return response;
     }
 
 }
