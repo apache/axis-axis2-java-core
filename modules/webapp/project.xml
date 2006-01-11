@@ -81,6 +81,22 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-javamail</artifactId>
+            <version>${geronimo.spec.javamail.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jms</artifactId>
+            <version>${geronimo.spec.jms.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>xmlbeans</groupId>
             <artifactId>xbean</artifactId>
             <version>${xbean.version}</version>
@@ -179,6 +195,14 @@
             <groupId>ws-commons</groupId>
             <artifactId>ws-policy</artifactId>
             <version>${ws_policy.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>wss4j</groupId>
+            <artifactId>wss4j</artifactId>
+            <version>${wss4j.version}</version>
             <properties>
                 <module>true</module>
             </properties>
