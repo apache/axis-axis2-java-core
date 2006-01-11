@@ -49,20 +49,9 @@
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2-tools</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-security</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency> 
-
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
