@@ -105,11 +105,11 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
             return;
         }
 
-        if (!fileName.matches(".*\\.wsdl")) {
-            updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                    .getResourceString("page1.error.wrongextension"));
-            return;
-        }
+//        if (!fileName.matches(".*\\.wsdl")) {
+//            updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+//                    .getResourceString("page1.error.wrongextension"));
+//            return;
+//        }
 
         updateStatus(null);
 

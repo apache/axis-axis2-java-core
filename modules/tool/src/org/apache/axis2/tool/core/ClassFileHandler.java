@@ -6,9 +6,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
-
-import sun.misc.URLClassPath;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -27,29 +24,15 @@ import sun.misc.URLClassPath;
 public class ClassFileHandler {
 
 
-    /**
-     * @deprecated
-     * This needs to be written in a functional manner.
-     * @param location
-     * @return Returns ArrayList.
-     * @throws IOException
-     */
-    //todo see whether this is possible
-    public ArrayList getClassesAtLocation(String location) throws IOException {
-        File fileEndpoint = new File(location);
-        if (!fileEndpoint.exists())
-            throw new IOException("the location is invalid");
-        URL[] urlList = {fileEndpoint.toURL()};
-        URLClassPath classLoader = new URLClassPath(urlList);
-        Enumeration enumerator = classLoader.getResources("");
-
-        while (enumerator.hasMoreElements()) {
-            Object o =  enumerator.nextElement();
-        }
-        return null;
-
-    }
-
+   
+/**
+ * 
+ * @param classFileName
+ * @param location
+ * @return
+ * @throws IOException
+ * @throws ClassNotFoundException
+ */
     public ArrayList getMethodNamesFromClass(String classFileName,String location) throws IOException, ClassNotFoundException{
         ArrayList returnList = new ArrayList();
         File fileEndpoint = new File(location);
