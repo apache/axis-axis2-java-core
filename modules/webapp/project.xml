@@ -184,51 +184,7 @@
             </properties>
         </dependency>
 
-       <!--  <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-xml</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-common</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-core</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-adb</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-doom</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>-->
     </dependencies>
 
     <reports/>
-    <!-- add the build properties-->
-    <build>
-        <resources>
-            <resource>
-                <directory>src</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                    <include>**/*.xsl</include>
-                    <include>**/*.xsd</include>
-                </includes>
-            </resource>
-        </resources>
-    </build>
 </project>

@@ -24,14 +24,6 @@ public class OMAbstractFactory {
     public static final String SOAP11_FACTORY_NAME_PROPERTY = "soap11.factory";
     public static final String SOAP12_FACTORY_NAME_PROPERTY = "soap12.factory";
     public static final String SOAP_FACTORY_NAME_PROPERTY = "soap.factory";
-    /**
-     * Eran Chinthaka (chinthaka@apache.org)
-     */
-    /**
-     * Constructor OMFactory
-     */
-    protected OMAbstractFactory() {
-    }
 
     /**
      * Picks up the default factory implementation from the classpath.
@@ -124,8 +116,6 @@ public class OMAbstractFactory {
      * So this method is to solve the chicken and egg problem, we have. If you do not know the SOAP version to be used
      * to process a particluar SOAP message you have recd, use this method to buid the SOAP envelope, and then extract the SOAP
      * version from that envlope and switch to the proper factory using that.
-     *
-     * @deprecated
      */
     public static SOAPFactory getDefaultSOAPFactory() {
         return new SOAPLinkedListImplFactory();
