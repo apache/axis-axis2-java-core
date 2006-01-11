@@ -464,6 +464,16 @@
         <ant:copy toDir="target/temp/min/bin/lib">
             <ant:fileset dir="${min_dep_cache}"/>
         </ant:copy>
+        
+         <!-- Delete tesing jars -->
+        <echo message="Deleting Unwanted testing jars"/>
+        <ant:delete>
+            <fileset dir="target/temp/min/bin/lib">
+                <include name="**/ant*.jar"/>
+                <include name="**/xmlunit*.jar"/>
+                <include name="**/junit*.jar"/>
+            </fileset>
+        </ant:delete>
 
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/min/bin/lib/axis2-core-${pom.currentVersion}.jar">
@@ -485,7 +495,7 @@
         <ant:mkdir dir="${dist.dir}"/>
         <ant:zip file="${dist.dir}/axis2-min-${pom.currentVersion}-bin.zip"
                  basedir="target/temp/min/bin"/>
-        <ant:delete dir="target/temp/min/bin"/>
+        <!-- ant:delete dir="target/temp/min/bin"/ -->
     </goal>
 
     <goal name="dist-min-src" prereqs="init-dist">
