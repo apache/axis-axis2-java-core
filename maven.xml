@@ -846,9 +846,11 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
+            <!--
+            PLEASE don't check in with these lines enabled.
             <ant:echo message="######## MODULES=${mods}"/>
             <ant:echo message="######## Copy2Dir=${copyToDir}"/>
-
+            -->
             <j:set var="modules" value="${mods}"/>
 
             <!-- ######################### REACTOR INIT ##########################################-->

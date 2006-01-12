@@ -176,13 +176,14 @@ public class SimpleHTTPServer extends TransportListener {
         args = optionsParser.getRemainingArgs();
         // first check if we should print usage
         if ((optionsParser.isFlagSet('?') > 0) || (optionsParser.isFlagSet('h') > 0) ||
-                args == null || args.length == 0 || args.length > 1) {
+                args == null || args.length == 0 || args.length > 2) {
             printUsage();
         }
         String paramPort = optionsParser.isValueSet('p');
         if (paramPort != null) {
             port = Integer.parseInt(paramPort);
         }
+        args = optionsParser.getRemainingArgs();
 
         System.out.println("[SimpleHTTPServer] Starting");
         System.out.println("[SimpleHTTPServer] Using the Axis2 Repository "
