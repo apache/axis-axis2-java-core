@@ -159,18 +159,20 @@ about SOAP.</p>
 
 <h3>Obtaining the OM binary</h3>
 
-<p>OM is not a separate product but part of Axis2. But Axis2 provides a minimal jar which contains the run time of Axis2. This axis2-core-0.94.jar contains the compiled version of OM module. </p>
+<p>OM is not a separate product but part of Axis2. But Axis2 provides a
+minimal jar which contains the run time of Axis2. This axis2-core-0.94.jar
+contains the compiled version of OM module.</p>
 
-<p>The easiest way to obtain the OM binary is to download the Axis2 minimal binary
-distribution.  <font color="red"
-style="color: #000000">The lib directory will contain the <span
-style="color: #FF0000">axis2-</span></font><font
+<p>The easiest way to obtain the OM binary is to download the Axis2 minimal
+binary distribution.  <font color="red" style="color: #000000">The lib
+directory will contain the <span
+style="color: #000000">axis2-</span></font><font style="color: #000000"><span
+style="color: #000000">core</span></font><font color="red"
 style="color: #000000"><span
-style="color: #FF0000">core</span></font><font color="red"
-style="color: #000000"><span
-style="color: #FF0000">-0.94.jar</span></font><span
-style="color: #000000">. However more adventurous users can build the OM from
-source, which is described in the next section. In this way one get only the &quot;OM jar&quot;. </span></p>
+style="color: #000000">-0.94.jar</span></font><span style="color: #000000">.
+However more adventurous users can build the OM from source, which is
+described in the next section. In this way one get only the "OM
+jar".</span></p>
 
 <p>Detailed information on getting source from Axis2 SVN repository can be
 found <a href="svn.html" target="_blank">here</a>.</p>
@@ -179,15 +181,17 @@ found <a href="svn.html" target="_blank">here</a>.</p>
 Linux move it to the project directory and execute the command "maven jar".
 All other necessary jars will be automatically downloaded. <em> </em><font
 color="red"><span style="color: #000000">When the build finishes
-successfully, the <span style="color: #FF0000">axis2-xml-0.94.jar</span> can
+successfully, the <span style="color: #000000">axis2-xml-0.94.jar</span> can
 be found in the newly created "targets" directory in the XML
 module.</span></font></p>
 
 <p>Once the OM-binary is obtained by any of the above ways , it should be
 included in the classpath for any of the OM based programs to work.
 Subsequent sections of this tutorial assume that this build step is complete
-and the <font color="red">axis2-core-0.94.jar or axis2-xml-0.94.jar </font>is correct in the classpath
-along with the StAX API jar file and a StAX implementation.</p>
+and the <font color="red"><span style="color: #000000">axis2-core-0.94.jar
+or</span> <span style="color: #000000">axis2-xml-0.94.jar </span></font>is
+correct in the classpath along with the StAX API jar file and a StAX
+implementation.</p>
 
 <h3>Creation</h3>
 
@@ -325,7 +329,8 @@ root.addChild(elt12);</pre>
 namespaces.</p>
 
 <div align="left">
-<b><p>Code Listing 5</p></b></div>
+<p><b>Code Listing 5</b></p>
+</div>
 <pre class="code">public OMNamespace declareNamespace(String uri, String prefix);
 public OMNamespace declareNamespace(OMNamespace namespace);
 public OMNamespace findNamespace(String uri, String prefix) throws OMException;</pre>
@@ -377,7 +382,8 @@ shows how the children can be accessed. The children are of the type OMNode
 that can either be OMText or OMElement.</p>
 
 <div align="left">
-<b><p>Code Listing 7</p></b></div>
+<p><b>Code Listing 7</b></p>
+</div>
 <pre class="code">Iterator children = root.getChildren();
 While(children.hasNext()){
         OMNode node = (OMNode)children.next();
@@ -442,7 +448,8 @@ reference to the earlier code sample (Code listing 1 ) that created a SOAP
 envelope.</p>
 
 <div align="left">
-<b><p>Code Listing 8</p></b></div>
+<p><b>Code Listing 8</b></p>
+</div>
 <pre class="code">XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 //dump the output to console with caching
 envelope.serializeWithCache(writer); 
@@ -510,7 +517,8 @@ complete. The following code sample shows how the navigator should be used
 and handled using its states.</p>
 
 <div align="left">
-<b><p>Code Listing 10</p></b></div>
+<p><b>Code Listing 10</b></p>
+</div>
 <pre class="code">//Create a navigator
 OMNavigator navigator = new OMNavigator(envelope);
 OMNode node = null;
@@ -567,7 +575,8 @@ a similar Code Listing to Code Listing 6 is used, but with two elements
 having the same namespace. Note that the newly added items are in bold.</p>
 
 <div align="left">
-<b><p>Code Listing 11</p></b></div>
+<p><b>Code Listing 11</b></p>
+</div>
 <pre class="code">OMFactory factory = OMAbstractFactory.getOMFactory();
 OMNamespace ns1 = factory.createOMNamespace("bar","x");
 OMElement root = factory.createOMElement("root",ns1);
