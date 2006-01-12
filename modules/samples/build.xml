@@ -17,13 +17,13 @@
 
     <property name="jardrop.dir" value="${build.dir}/services"/>
     <property environment="env"/>
-    <property name="AXIS_HOME" value="${env.AXIS_HOME}"/>
-    <property name="axis.serverJarDrop.dir" value="${AXIS_HOME}/WEB-INF/services"/>
+    <property name="AXIS2_HOME" value="${env.AXIS2_HOME}"/>
+    <property name="axis.serverJarDrop.dir" value="${AXIS2_HOME}/WEB-INF/services"/>
 
     <property name="conf.dir" value="conf"/>
 
     <path id="classpath.library">
-        <fileset dir="${AXIS_HOME}/WEB-INF/lib">
+        <fileset dir="${AXIS2_HOME}/WEB-INF/lib">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -47,15 +47,15 @@
     </target>
 
     <target name="validateAxisHome">
-        <available file="${AXIS_HOME}}" type="dir" property="axis2.deployed"/>
+        <available file="${AXIS2_HOME}}" type="dir" property="axis2.deployed"/>
     </target>
 
     <target name="validateSevices.dir">
-        <available file="${AXIS_HOME}/WEB-INF/services" type="dir" property="axis2.services"/>
+        <available file="${AXIS2_HOME}/WEB-INF/services" type="dir" property="axis2.services"/>
     </target>
 
     <target name="validateDeploymentSettings" depends="validateAxisHome" unless="validateSevices.dir">
-        <mkdir dir="${AXIS_HOME}/WEB-INF/services"/>
+        <mkdir dir="${AXIS2_HOME}/WEB-INF/services"/>
     </target>
 
 

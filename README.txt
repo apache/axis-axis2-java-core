@@ -20,8 +20,8 @@ be performed:
      and the services.xml file, 
   2) Archive the class files into a jar with the services.xml file in 
      the META-INF
-  3) Drop the jar file to the $AXIS_HOME/WEB-INF/services directory
-where $AXIS_HOME represents the install directory of your Axis2 
+  3) Drop the jar file to the $AXIS2_HOME/WEB-INF/services directory
+where $AXIS2_HOME represents the install directory of your Axis2 
 runtime. (In the case of a servelet container this would be the
 "axis2" directory inside "webapps".)
 
