@@ -355,7 +355,7 @@
 
         <!-- Copy the 3rd party libs, relevant to minimal bin distro  -->
         <macros:copy-deps copyToDir="target/temp/war/lib"
-                          modules="core,common,xml,wsdl,adb"/>
+                          modules="core,common,xml,wsdl,adb,webapp"/>
 
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-core-${pom.currentVersion}.jar">

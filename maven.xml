@@ -432,8 +432,7 @@
     <!-- ================================================================ -->
     <!--- Create the Release -->
     <!-- ================================================================ -->
-    <goal name="release">
-          <!-- prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs" -->
+    <goal name="release" prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
