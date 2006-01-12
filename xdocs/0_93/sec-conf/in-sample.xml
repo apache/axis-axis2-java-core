@@ -1,7 +1,0 @@
-    <parameter name="InflowSecurity">
-      <action>
-        <items>Timestamp Signature Encrypt</items>
-        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
-        <signaturePropFile>interop.properties</signaturePropFile>
-      </action>
-    </parameter>
