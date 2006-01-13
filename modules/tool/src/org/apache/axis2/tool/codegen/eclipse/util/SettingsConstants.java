@@ -38,6 +38,7 @@ public interface SettingsConstants {
      *  
      */
     static final String PREF_OUTPUT_LOCATION = "PREF_OUTPUT_LOCATION";
+    static final String PREF_CHECK_BROWSE_PROJECTS = "PREF_CHECK_BROWSE_PROJECTS";
 
     //Options page constants
     /**
@@ -80,9 +81,9 @@ public interface SettingsConstants {
      */
     static final String PREF_CHECK_GENERATE_SERVERCONFIG = "PREF_CHECK_GENERATE_SERVERCONFIG";
     
-    static final String PREF_TEXT_PORTNAME = "PREF_TEXT_PORTNAME";
+    static final String PREF_COMBO_PORTNAME_INDEX = "PREF_TEXT_PORTNAME";
     
-    static final String PREF_TEXT_SERVICENAME = "PREF_TEXT_SERVICENAME";
+    static final String PREF_COMBO_SERVICENAME_INDEX = "PREF_TEXT_SERVICENAME";
     
     static final String PREF_DATABINDER_INDEX = "PREF_DATABINDER_INDEX";
     

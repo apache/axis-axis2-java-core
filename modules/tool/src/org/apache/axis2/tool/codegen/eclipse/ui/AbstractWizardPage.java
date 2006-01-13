@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
+import org.apache.axis2.tool.codegen.eclipse.CodeGenWizard;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -61,4 +62,12 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
     protected abstract void initializeDefaultSettings(); 
    
     public abstract int getPageType() ;
+    
+    /**
+     * a convenient method to get the wizard
+     * @return
+     */
+    public CodeGenWizard getCodegenWizard(){
+    	return (CodeGenWizard)getWizard();
+    }
 }

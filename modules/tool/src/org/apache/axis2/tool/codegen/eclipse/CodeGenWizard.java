@@ -57,7 +57,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
 
     private ISelection selection;
 
-    private boolean canFinish = false;
+   
 
     /**
      * Constructor for CodeGenWizard.
@@ -335,5 +335,21 @@ public class CodeGenWizard extends Wizard implements INewWizard {
      */
     public void setSelectedWizardType(int selectedWizardType) {
         this.selectedWizardType = selectedWizardType;
+    }
+    
+    /**
+     * Get the selected WSDL from the WSDLselectionpage
+     * @return
+     */
+    public String getWSDLname(){
+        return wsdlSelectionPage.getFileName();	
+    }
+    
+    /**
+     * populate the options page. Usually done after reloading the WSDL
+     *
+     */
+    public void populateOptions(){
+    	optionsPage.populateServiceAndPort();
     }
 }

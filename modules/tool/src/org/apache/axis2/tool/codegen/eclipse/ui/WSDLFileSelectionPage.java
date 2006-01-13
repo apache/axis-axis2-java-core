@@ -104,13 +104,10 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
                     .getResourceString("page1.error.filemissingerror"));
             return;
         }
-
-//        if (!fileName.matches(".*\\.wsdl")) {
-//            updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-//                    .getResourceString("page1.error.wrongextension"));
-//            return;
-//        }
-
+        
+        //try populate the options
+        getCodegenWizard().populateOptions();
+        // update the status
         updateStatus(null);
 
     }
@@ -147,4 +144,6 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
     public int getPageType() {
         return WSDL_2_JAVA_TYPE;
     }
+    
+    
 }
