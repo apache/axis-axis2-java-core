@@ -347,8 +347,8 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				.getResourceString("page2.genAll.caption"));
 		generateAllCheckBoxButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				settings
-						.put(PREF_GEN_ALL, generateAllCheckBoxButton.getSelection());
+				settings.put(PREF_GEN_ALL, generateAllCheckBoxButton
+						.getSelection());
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -389,7 +389,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		 */
 		if (restoredFromPreviousSettings) {
 			populateServiceAndPort();
-			
+
 			selectDefaults();
 		}
 
@@ -401,14 +401,15 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 	private void selectDefaults() {
 		serviceNameCombo.select(settings.getInt(PREF_COMBO_SERVICENAME_INDEX));
-		//ports need to be renamed in order for correct default selection
+		// ports need to be renamed in order for correct default selection
 		loadPortNames();
 		portNameCombo.select(settings.getInt(PREF_COMBO_SERVICENAME_INDEX));
 	}
 
-	private void populatePackageName(){
+	private void populatePackageName() {
 		this.packageText.setText(reader.packageFromTargetNamespace());
 	}
+
 	/**
 	 * populate the service and the port from the WSDL this needs to be public
 	 * since the WSDLselection page may call this
@@ -443,18 +444,21 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				} else {
 					// service name list being empty means we are switching to
 					// the interface mode
-					serviceNameCombo.removeAll();
-					portNameCombo.removeAll();
+					if (serviceNameCombo!=null) serviceNameCombo.removeAll();
+					if (portNameCombo!=null) portNameCombo.removeAll();
 					// disable the combo's
 					setComboBoxEnable(false);
+					//this is not an error
+					updateStatus(null);
+			
 				}
-				
+
 				populatePackageName();
 			}
 		} catch (Exception e) {
 			// disable the combo's
 			setComboBoxEnable(false);
-		
+
 			updateStatus(CodegenWizardPlugin
 					.getResourceString("page2.wsdlNotFound.message"));
 		}
@@ -462,21 +466,23 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	}
 
 	private void loadPortNames() {
-		List ports = reader.getPortNameList((QName) serviceQNameList
-				.get(serviceNameCombo.getSelectionIndex()));
-		if (!ports.isEmpty()) {
-			portNameCombo.removeAll();
-			for (int i = 0; i < ports.size(); i++) {
-				// add the local part of the
-				portNameCombo.add(ports.get(i).toString());
+		int selectionIndex = serviceNameCombo.getSelectionIndex();
+		if (selectionIndex != -1) {
+			List ports = reader.getPortNameList((QName) serviceQNameList
+					.get(selectionIndex));
+			if (!ports.isEmpty()) {
+				portNameCombo.removeAll();
+				for (int i = 0; i < ports.size(); i++) {
+					// add the local part of the
+					portNameCombo.add(ports.get(i).toString());
+				}
+				updateStatus(null);
+				portNameCombo.select(0);
+			} else {
+				updateStatus(CodegenWizardPlugin
+						.getResourceString("page2.noports.message"));// TODO
 			}
-			updateStatus(null);
-			portNameCombo.select(0);
-		} else {
-			updateStatus(CodegenWizardPlugin
-					.getResourceString("page2.noports.message"));// TODO
 		}
-
 	}
 
 	private void setComboBoxEnable(boolean b) {
@@ -603,14 +609,17 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * @return null if portname is empty
 	 */
 	public String getPortName() {
-		String text = this.portNameCombo.getItem(
-				portNameCombo.getSelectionIndex());
-		
-		if (text == null || text.trim().equals("")) {
+		int selectionIndex = portNameCombo.getSelectionIndex();
+		if (selectionIndex != -1) {
+			String text = this.portNameCombo.getItem(selectionIndex);
+
+			if (text == null || text.trim().equals("")) {
+				return null;
+			}
+			return text;
+		} else {
 			return null;
 		}
-		return text;
-
 	}
 
 	/**
@@ -618,14 +627,18 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * 
 	 */
 	public String getServiceName() {
-		String text = this.serviceNameCombo.getItem(
-				serviceNameCombo.getSelectionIndex());
-		
-		if (text == null || text.trim().equals("")) {
+		int selectionIndex = serviceNameCombo.getSelectionIndex();
+		// cater for the scenario where the combo's can be empty
+		if (selectionIndex != -1) {
+			String text = this.serviceNameCombo.getItem(selectionIndex);
+
+			if (text == null || text.trim().equals("")) {
+				return null;
+			}
+			return text;
+		} else {
 			return null;
 		}
-		return text;
-
 	}
 
 	/**
