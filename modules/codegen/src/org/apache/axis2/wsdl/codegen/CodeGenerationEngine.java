@@ -26,6 +26,8 @@ import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.WSDLException;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeGenerationEngine {
+    private Log log = LogFactory.getLog(getClass());
+
     private List moduleEndpoints = new ArrayList();
 
 
@@ -69,8 +73,10 @@ public class CodeGenerationEngine {
     }
 
     private void addExtension(CodeGenExtension ext) {
-        ext.init(configuration);
-        moduleEndpoints.add(ext);
+        if(ext != null) {
+            ext.init(configuration);
+            moduleEndpoints.add(ext);
+        }
     }
 
 
@@ -146,6 +152,9 @@ public class CodeGenerationEngine {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.extensionInstantiationProblem"), e);
         } catch (IllegalAccessException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.illegalExtension"), e);
+        } catch (NoClassDefFoundError e) {
+            log.debug(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
+            return null;
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
