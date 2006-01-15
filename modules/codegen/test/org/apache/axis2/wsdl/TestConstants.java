@@ -27,7 +27,7 @@ public class TestConstants {
 
     public interface Databinding {
     	public static final String XML_BEANS = "xmlbeans";
-    	public static final String JAXB = "jaxb";
+    	public static final String JAXME = "jaxme";
     	public static final String ADB = "adb";
         public static final String NONE = "none";
     }

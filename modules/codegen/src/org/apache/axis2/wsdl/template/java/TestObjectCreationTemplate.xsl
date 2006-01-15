@@ -28,6 +28,22 @@
 
     </xsl:template>
     <!-- #################################################################################  -->
+    <!-- ############################   jaxme template   ##############################  -->
+    <xsl:template match="databinders[@dbtype='jaxme']">
+        //Create the desired Object and provide it as the test object
+        public  java.lang.Object getTestObject(java.lang.Class type) throws Exception{
+            Class factoryClazz = org.apache.axis2.util.Loader.loadClass(type.getPackage().getName() + ".ObjectFactory"); 
+            Object factory = factoryClazz.newInstance();   
+            java.lang.reflect.Method creatorMethod = factoryClazz.getMethod("newInstance", new Class[]{ Class.class });
+            if (creatorMethod != null) {
+                return creatorMethod.invoke(factory, null);
+            } else {
+                throw new Exception("newInstance method not found!");
+            }
+        }
+
+    </xsl:template>
+    <!-- #################################################################################  -->
     <!-- ############################   ADB template   ###################################  -->
     <xsl:template match="databinders[@dbtype='adb']">
         //Create an ADBBean and provide it as the test object

@@ -79,6 +79,77 @@
     </xsl:if>
     </xsl:template>
     <!-- #################################################################################  -->
+    <!-- ############################   jaxme template   ##############################  -->
+    <xsl:template match="databinders[@dbtype='jaxme']">
+
+        <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
+        <xsl:if test="$base64">
+            private static javax.xml.namespace.QName[] qNameArray = {
+            <xsl:for-each select="base64Elements/name">
+                <xsl:if test="position()>1">,</xsl:if>new javax.xml.namespace.QName("<xsl:value-of select="@ns-url"/>","<xsl:value-of select="@localName"/>")
+            </xsl:for-each>
+            };
+        </xsl:if>
+
+        private org.apache.axis2.om.OMElement toOM(Object param) {
+            try {
+                javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(param.getClass().getPackage()
+                                                                                            .getName());
+                org.apache.axis2.om.impl.llom.builder.SAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.SAXOMBuilder();
+                javax.xml.bind.Marshaller marshaller = ctx.createMarshaller();
+                marshaller.marshal(param, builder);
+                return builder.getRootElement();
+            } catch (javax.xml.bind.JAXBException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private org.apache.axis2.soap.SOAPEnvelope toEnvelope(
+            org.apache.axis2.soap.SOAPFactory factory, Object param) {
+            org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+            envelope.getBody().addChild(toOM(param));
+
+            return envelope;
+        }
+
+        public java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
+        java.lang.Class type){
+            try{
+                javax.xml.transform.Source source =
+                        new javanet.staxutils.StAXSource(param.getXMLStreamReaderWithoutCaching());
+                javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(
+                        type.getPackage().getName());
+                javax.xml.bind.Unmarshaller u = ctx.createUnmarshaller();
+                return u.unmarshal(source);
+            } catch(java.lang.Exception e) {
+                throw new RuntimeException("Data binding error",e);
+            }
+        }
+    <!-- Generate the base 64 optimize methods only if the base64 items are present -->    
+   <xsl:if test="$base64">
+   private void optimizeContent(org.apache.axis2.om.OMElement element, javax.xml.namespace.QName[] qNames){
+        for (int i = 0; i &lt; qNames.length; i++) {
+            markElementsAsOptimized(qNames[i],element);
+        }
+    }
+
+    private void markElementsAsOptimized(javax.xml.namespace.QName qName,org.apache.axis2.om.OMElement rootElt){
+        if (rootElt.getQName().equals(qName)){
+            //get the text node and mark it
+            org.apache.axis2.om.OMNode node = rootElt.getFirstOMChild();
+            if (node.getType()==org.apache.axis2.om.OMNode.TEXT_NODE){
+                ((org.apache.axis2.om.OMText)node).setOptimize(true);
+            }
+
+        }
+        java.util.Iterator childElements = rootElt.getChildElements();
+        while (childElements.hasNext()) {
+            markElementsAsOptimized(qName,(org.apache.axis2.om.OMElement)childElements.next());
+        }
+    }
+    </xsl:if>
+    </xsl:template>
+    <!-- #################################################################################  -->
        <!-- ############################   ADB template   ##############################  -->
        <xsl:template match="databinders[@dbtype='adb']">
 
