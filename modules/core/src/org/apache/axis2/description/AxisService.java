@@ -51,8 +51,7 @@ import java.util.Iterator;
 /**
  * Class AxisService
  */
-public class AxisService
-        implements ParameterInclude, DescriptionConstants {
+public class AxisService extends AxisDescription {
     private Definition definition = null;
     private Log log = LogFactory.getLog(getClass());
     private String fileName = "";
@@ -72,8 +71,6 @@ public class AxisService
     private long lastupdate;
     private HashMap moduleConfigmap;
     private String name;
-    private ParameterInclude parameterInclude;
-    private AxisServiceGroup parent;
     private ClassLoader serviceClassLoader;
 
     //to keep the XMLScheam getting either from WSDL or java2wsdl
@@ -88,9 +85,6 @@ public class AxisService
     //to store default message receivers
     private HashMap messageReceivers;
 
-    // to store policies which are valid for the entire service
-    private PolicyInclude policyInclude;
-
 // to set the handler chain available in phase info
     private boolean useDefaultChains = true;
 
@@ -98,13 +92,11 @@ public class AxisService
      * Constructor AxisService.
      */
     public AxisService() {
-        this.parameterInclude = new ParameterIncludeImpl();
         this.operationsAliasesMap = new HashMap();
         moduleConfigmap = new HashMap();
         //by dafault service scope is for the request
         scope = Constants.SCOPE_REQUEST;
         messageReceivers = new HashMap();
-        policyInclude = new PolicyInclude();
     }
 
     /**
@@ -180,11 +172,11 @@ public class AxisService
 
         while (modules.hasNext()) {
             ModuleDescription module = (ModuleDescription) modules.next();
-            AxisServiceGroup parent = getParent();
+            AxisServiceGroup parent = (AxisServiceGroup) getParent();
             AxisConfiguration axisConfig = null;
 
             if (parent != null) {
-                axisConfig = parent.getParent();
+                axisConfig = (AxisConfiguration) parent.getParent();
             }
 
             try {
@@ -197,23 +189,6 @@ public class AxisService
 
         operations.put(axisOperation.getName(), axisOperation);
         operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
-    }
-
-    /**
-     * Method addParameter.
-     *
-     * @param param
-     */
-    public void addParameter(Parameter param) throws AxisFault {
-        if (param == null) {
-            return;
-        }
-
-        if (isParameterLocked(param.getName())) {
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else {
-            parameterInclude.addParameter(param);
-        }
     }
 
     /**
@@ -245,10 +220,6 @@ public class AxisService
         operation.setPhasesOutFlow(axisOperation.getPhasesOutFlow());
 
         return operation;
-    }
-
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        parameterInclude.deserializeParameters(parameterElement);
     }
 
     /*
@@ -515,29 +486,6 @@ public class AxisService
      */
 
     /**
-     * Method getParameter.
-     *
-     * @param name
-     * @return Returns Parameter.
-     */
-    public Parameter getParameter(String name) {
-        return parameterInclude.getParameter(name);
-    }
-
-    public ArrayList getParameters() {
-        return parameterInclude.getParameters();
-    }
-
-    /**
-     * Gets the parent. (AxisConfiguration in this case)
-     *
-     * @return Returns <code>AxisConfiguration</code>
-     */
-    public AxisServiceGroup getParent() {
-        return parent;
-    }
-
-    /**
      * Gets only the published operations.
      */
     public ArrayList getPublishedOperations() {
@@ -557,25 +505,6 @@ public class AxisService
 
     public Definition getWSDLDefinition() {
         return definition;
-    }
-
-    // to check whether a given parameter is locked
-    public boolean isParameterLocked(String parameterName) {
-
-        // checking the locked value of parent
-        boolean loscked = false;
-
-        if (getParent() != null) {
-            loscked = getParent().getAxisDescription().isParameterLocked(parameterName);
-        }
-
-        if (loscked) {
-            return true;
-        } else {
-            Parameter parameter = getParameter(parameterName);
-
-            return (parameter != null) && parameter.isLocked();
-        }
     }
 
     /**
@@ -617,13 +546,6 @@ public class AxisService
         this.name = name;
     }
 
-    public void setParent(AxisServiceGroup parent) {
-        this.parent = parent;
-        if (parent.getPolicyInclude() != null) {
-            policyInclude.setParent(parent.getPolicyInclude());
-        }
-    }
-
     public void setWSDLDefinition(Definition difDefinition) {
         this.definition = difDefinition;
     }
@@ -658,19 +580,15 @@ public class AxisService
         }
     }
 
-    public void setPolicyInclude(PolicyInclude policyInclude) {
-        this.policyInclude = policyInclude;
-    }
-
-    public PolicyInclude getPolicyInclude() {
-        return policyInclude;
-    }
-
     public boolean isUseDefaultChains() {
         return useDefaultChains;
     }
 
     public void setUseDefaultChains(boolean useDefaultChains) {
         this.useDefaultChains = useDefaultChains;
+    }
+    
+    public Object getKey() {
+    	return getName();
     }
 }

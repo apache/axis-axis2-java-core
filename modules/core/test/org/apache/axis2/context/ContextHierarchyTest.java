@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -49,7 +50,7 @@ public class ContextHierarchyTest extends TestCase {
         ConfigurationContext configurationContext = new ConfigurationContext(
                 axisConfiguration);
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
-                configurationContext, axisService.getParent());
+                configurationContext, (AxisServiceGroup) axisService.getParent());
         ServiceContext serviceContext = serviceGroupContext
                 .getServiceContext(axisService);
         MessageContext msgctx = new MessageContext();

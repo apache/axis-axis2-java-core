@@ -112,11 +112,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 processHostCongiguration(hostElement, axisConfig);
             }
 
-            // setting the PolicyInclude
-            PolicyInclude policyInclude = new PolicyInclude();
-            axisConfig.setPolicyInclude(policyInclude);
-
-            // processing <wsp:Policy> .. </..> elements
+           // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
                     TAG_POLICY));
 

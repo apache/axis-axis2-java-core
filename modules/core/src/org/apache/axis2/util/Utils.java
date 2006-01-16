@@ -194,7 +194,7 @@ public class Utils {
                                                                            ConfigurationContext configurationContext) {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,
-                axisService.getParent());
+                (AxisServiceGroup) axisService.getParent());
 
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContext(serviceGroupContext);

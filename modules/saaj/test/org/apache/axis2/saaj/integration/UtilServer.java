@@ -23,6 +23,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
@@ -126,7 +127,7 @@ public class UtilServer {
 
         configContext.getAxisConfiguration().addService(service);
 
-        return new ServiceGroupContext(configContext, service.getParent())
+        return new ServiceGroupContext(configContext, (AxisServiceGroup) service.getParent())
                 .getServiceContext(service);
     }
 
@@ -163,7 +164,7 @@ public class UtilServer {
 
         configContext.getAxisConfiguration().addService(service);
 
-        return new ServiceGroupContext(configContext, service.getParent())
+        return new ServiceGroupContext(configContext, (AxisServiceGroup) service.getParent())
                 .getServiceContext(service);
     }
 }

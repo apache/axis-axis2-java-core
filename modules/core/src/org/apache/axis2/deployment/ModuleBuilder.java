@@ -92,17 +92,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // setting the PolicyInclude
-            PolicyInclude policyInclude;
-
-            if (axisConfig != null) {
-                PolicyInclude parent = axisConfig.getPolicyInclude();
-                policyInclude = new PolicyInclude(parent);
-
-            } else {
-                policyInclude = new PolicyInclude();
-            }
-            module.setPolicyInclude(policyInclude);
-
+            
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 

@@ -21,6 +21,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.transport.tcp.TCPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +45,7 @@ public class UtilsTCPServer {
 
         receiver.getConfigurationContext().getAxisConfiguration().addService(service);
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
-                receiver.getConfigurationContext(), service.getParent());
+                receiver.getConfigurationContext(), (AxisServiceGroup) service.getParent());
     }
 
     public static synchronized void unDeployService(QName service)

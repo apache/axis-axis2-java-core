@@ -23,6 +23,7 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -55,7 +56,7 @@ import java.util.List;
 /**
  * Class AxisConfigurationImpl
  */
-public class AxisConfiguration implements ParameterInclude {
+public class AxisConfiguration extends AxisDescription {
 
     private Log log = LogFactory.getLog(getClass());
     /**
@@ -94,14 +95,10 @@ public class AxisConfiguration implements ParameterInclude {
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     private HashMap messageReceivers;
 
-    // to store policies which are valid for entire system
-    private PolicyInclude policyInclude;
-
     private ClassLoader moduleClassLoader;
     private HashMap moduleConfigmap;
     private ArrayList outFaultPhases;
     private ArrayList outPhases;
-    protected final ParameterInclude paramInclude;
     protected PhasesInfo phasesinfo;
     private ClassLoader serviceClassLoader;
     private ClassLoader systemClassLoader;
@@ -111,7 +108,6 @@ public class AxisConfiguration implements ParameterInclude {
      */
     public AxisConfiguration() {
         moduleConfigmap = new HashMap();
-        paramInclude = new ParameterIncludeImpl();
         engagedModules = new ArrayList();
         messageReceivers = new HashMap();
         outPhases = new ArrayList();
@@ -121,8 +117,6 @@ public class AxisConfiguration implements ParameterInclude {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-
-        policyInclude = new PolicyInclude();
 
         systemClassLoader = Thread.currentThread().getContextClassLoader();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
@@ -174,19 +168,6 @@ public class AxisConfiguration implements ParameterInclude {
 
     public void addObservers(AxisObserver axisObserver) {
         observersList.add(axisObserver);
-    }
-
-    /**
-     * Method addParameter.
-     *
-     * @param param
-     */
-    public void addParameter(Parameter param) throws AxisFault {
-        if (isParameterLocked(param.getName())) {
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else {
-            paramInclude.addParameter(param);
-        }
     }
 
     /**
@@ -299,10 +280,6 @@ public class AxisConfiguration implements ParameterInclude {
         inPhasesUptoAndIncludingPostDispatch.add(transportIN);
         inPhasesUptoAndIncludingPostDispatch.add(preDispatch);
         inPhasesUptoAndIncludingPostDispatch.add(dispatchPhase);
-    }
-
-    public void deserializeParameters(OMElement parameters) throws AxisFault {
-        this.paramInclude.deserializeParameters(parameters);
     }
 
     /**
@@ -512,20 +489,6 @@ public class AxisConfiguration implements ParameterInclude {
         return outFaultPhases;
     }
 
-    /**
-     * Method getParameter.
-     *
-     * @param name
-     * @return Returns Parameter.
-     */
-    public Parameter getParameter(String name) {
-        return paramInclude.getParameter(name);
-    }
-
-    public ArrayList getParameters() {
-        return paramInclude.getParameters();
-    }
-
     public PhasesInfo getPhasesInfo() {
         return phasesinfo;
     }
@@ -660,14 +623,6 @@ public class AxisConfiguration implements ParameterInclude {
         this.systemClassLoader = classLoader;
     }
 
-    public void setPolicyInclude(PolicyInclude policyInclude) {
-        this.policyInclude = policyInclude;
-    }
-
-    public PolicyInclude getPolicyInclude() {
-        return policyInclude;
-    }
-
     public static String getAxis2HomeDirectory() {
         // if user has set the axis2 home variable try to get that from System properties
         String axis2home = System.getProperty(Constants.HOME_AXIS2);
@@ -705,5 +660,9 @@ public class AxisConfiguration implements ParameterInclude {
         } else {
             return (ModuleDescription) allModules.get(new QName(moduleName + "-" + defualtModuleVersion));
         }
+    }
+    
+    public Object getKey() {
+    	return getAxis2HomeDirectory(); // TODO CheckMe
     }
 }

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class AxisServiceGroup implements ParameterInclude {
+public class AxisServiceGroup extends AxisDescription {
     private Log log = LogFactory.getLog(getClass());
 
     // to store module ref at deploy time parsing
@@ -40,34 +40,22 @@ public class AxisServiceGroup implements ParameterInclude {
 
     // to store modeule configuration info
     private HashMap moduleConfigmap;
-
-    // to add and get parameters
-    protected ParameterInclude paramInclude;
-
-    // to keep the parent of service group , to chcek parameter lock checking
-    // and serching
-    private AxisConfiguration parent;
-
+    
     // class loader
     private ClassLoader serviceGroupClassLoader;
 
     // to keep name of the service group
     private String serviceGroupName;
     
-    // to store policy information
-    private PolicyInclude policyInclude;
-
     /**
      * Field services
      */
     private HashMap services;
 
     public AxisServiceGroup() {
-        paramInclude = new ParameterIncludeImpl();
         services = new HashMap();
         moduleConfigmap = new HashMap();
         engagedModules = new ArrayList();
-        policyInclude = new PolicyInclude();
     }
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
@@ -92,14 +80,10 @@ public class AxisServiceGroup implements ParameterInclude {
         modulesList.add(moduleref);
     }
 
-    public void addParameter(Parameter param) throws AxisFault {
-        paramInclude.addParameter(param);
-    }
-
     public void addService(AxisService service) throws AxisFault {
         service.setParent(this);
 
-        AxisConfiguration axisConfig = getParent();
+        AxisConfiguration axisConfig = (AxisConfiguration) getParent();
 
         if (axisConfig != null) {
             Iterator modules = getEngagedModules().iterator();
@@ -125,10 +109,6 @@ public class AxisServiceGroup implements ParameterInclude {
         engagedModules.add(moduleName);
     }
 
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.paramInclude.deserializeParameters(parameterElement);
-    }
-
     public void engageModule(ModuleDescription module) throws AxisFault {
         QName moduleName = module.getName();
         boolean needToadd = true;
@@ -148,7 +128,7 @@ public class AxisServiceGroup implements ParameterInclude {
             // engaging each service
             AxisService axisService = (AxisService) srevice.next();
             try {
-                axisService.engageModule(module, parent);
+                axisService.engageModule(module, (AxisConfiguration) getParent());
             } catch (AxisFault axisFault) {
                 log.info(axisFault.getMessage());
             }
@@ -163,14 +143,14 @@ public class AxisServiceGroup implements ParameterInclude {
         AxisService service = getService(name);
 
         if (service != null) {
-            this.parent.notifyObservers(AxisEvent.SERVICE_DEPLOY, service);
+            ((AxisConfiguration) getParent()).notifyObservers(AxisEvent.SERVICE_DEPLOY, service);
         }
 
         services.remove(name);
     }
 
     public AxisConfiguration getAxisDescription() {
-        return parent;
+        return (AxisConfiguration) getParent();
     }
 
     public ArrayList getEngagedModules() {
@@ -183,18 +163,6 @@ public class AxisServiceGroup implements ParameterInclude {
 
     public ArrayList getModuleRefs() {
         return modulesList;
-    }
-
-    public Parameter getParameter(String name) {
-        return paramInclude.getParameter(name);
-    }
-
-    public ArrayList getParameters() {
-        return paramInclude.getParameters();
-    }
-
-    public AxisConfiguration getParent() {
-        return parent;
     }
 
     public AxisService getService(String name) throws AxisFault {
@@ -213,33 +181,8 @@ public class AxisServiceGroup implements ParameterInclude {
         return services.values().iterator();
     }
 
-    public boolean isParameterLocked(String parameterName) {
-
-        // checking the locked value of parent
-        boolean loscked = false;
-
-        if (getParent() != null) {
-            loscked = getParent().isParameterLocked(parameterName);
-        }
-
-        if (loscked) {
-            return true;
-        } else {
-            Parameter parameter = getParameter(parameterName);
-
-            return (parameter != null) && parameter.isLocked();
-        }
-    }
-
     public void setAxisDescription(AxisConfiguration axisDescription) {
-        this.parent = axisDescription;
-    }
-
-    public void setParent(AxisConfiguration parent) {
-        this.parent = parent;
-        if (parent.getPolicyInclude() != null) {
-            policyInclude.setParent(parent.getPolicyInclude());
-        }
+    	setParent(axisDescription);
     }
 
     public void setServiceGroupClassLoader(ClassLoader serviceGroupClassLoader) {
@@ -250,11 +193,7 @@ public class AxisServiceGroup implements ParameterInclude {
         this.serviceGroupName = serviceGroupName;
     }
     
-    public PolicyInclude getPolicyInclude() {
-        return policyInclude;
-    }
-    
-    public void setPolicyInclude(PolicyInclude policyInclude) {
-        this.policyInclude = policyInclude;
+    public Object getKey() {
+    	return getServiceGroupName();
     }
 }

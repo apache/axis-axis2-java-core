@@ -26,6 +26,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
@@ -147,7 +148,7 @@ public abstract class MEPClient {
 
         configurationContext.getAxisConfiguration().addService(axisService);
         serviceContext = new ServiceGroupContext(configurationContext,
-                                                 axisService.getParent()).getServiceContext(axisService);
+                                                 (AxisServiceGroup) axisService.getParent()).getServiceContext(axisService);
     }
 
     /**

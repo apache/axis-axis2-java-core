@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public abstract class AxisOperation
-        implements ParameterInclude, DescriptionConstants, WSDLConstants {
+public abstract class AxisOperation extends AxisDescription
+        implements  WSDLConstants {
     public static final String STYLE_RPC = "rpc";
     public static final String STYLE_MSG = "msg";
     public static final String STYLE_DOC = "doc";
@@ -50,20 +50,13 @@ public abstract class AxisOperation
 
     // todo need to change name to String
     private QName name;
-    private ParameterInclude parameterInclude;
 
-    private AxisService parent;
     private ArrayList wsamappingList;
     
-    // to store policies which are valid for entire operation
-    private PolicyInclude policyInclude;
-
     public AxisOperation() {
         mepURI = MEP_URI_IN_OUT;
-        parameterInclude = new ParameterIncludeImpl();
         modulerefs = new ArrayList();
         moduleConfigmap = new HashMap();
-        policyInclude = new PolicyInclude();
     }
 
     public AxisOperation(QName name) {
@@ -99,27 +92,6 @@ public abstract class AxisOperation
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
-    }
-
-    /**
-     * Method addParameter.
-     *
-     * @param param Parameter that is added
-     */
-    public void addParameter(Parameter param) throws AxisFault {
-        if (param == null) {
-            return;
-        }
-
-        if (isParameterLocked(param.getName())) {
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else {
-            parameterInclude.addParameter(param);
-        }
-    }
-
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        parameterInclude.deserializeParameters(parameterElement);
     }
 
     /**
@@ -326,23 +298,6 @@ public abstract class AxisOperation
         return name;
     }
 
-    /**
-     * Method getParameter.
-     *
-     * @param name Name of the parameter
-     */
-    public Parameter getParameter(String name) {
-        return parameterInclude.getParameter(name);
-    }
-
-    public ArrayList getParameters() {
-        return parameterInclude.getParameters();
-    }
-
-    public AxisService getParent() {
-        return parent;
-    }
-
     public abstract ArrayList getPhasesInFaultFlow();
 
     public abstract ArrayList getPhasesOutFaultFlow();
@@ -398,13 +353,6 @@ public abstract class AxisOperation
         this.name = name;
     }
 
-    public void setParent(AxisService parent) {
-        this.parent = parent;
-        if (parent.getPolicyInclude() != null) {
-            policyInclude.setParent(parent.getPolicyInclude());
-        }
-    }
-
     public abstract void setPhasesInFaultFlow(ArrayList list);
 
     public abstract void setPhasesOutFaultFlow(ArrayList list);
@@ -427,11 +375,7 @@ public abstract class AxisOperation
         throw new UnsupportedOperationException ("The MEP you are using (" + mepURI + ") has not implemented createClient().");
     }
     
-    public void setPolicyInclude(PolicyInclude policyInclude) {
-        this.policyInclude = policyInclude;
-    }
-    
-    public PolicyInclude getPolicyInclude() {
-        return policyInclude;
+    public Object getKey() {
+    	return getName();
     }
 }

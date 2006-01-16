@@ -159,7 +159,7 @@ public class AxisServiceBuilder {
 
 		// ///////////////// adding Policies ////////////////////////////
 
-		PolicyInclude policyInclude = new PolicyInclude();
+		PolicyInclude policyInclude = axisService.getPolicyInclude();
 
 		List wsdlPolicies = getPoliciesAsExtElements(wsdlDefinition
 				.getExtensibilityElements());
@@ -173,9 +173,7 @@ public class AxisServiceBuilder {
 			}
 		}
 
-		axisService.setPolicyInclude(policyInclude);
-
-		// ////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
 
 		// setting the schema
 		Types types = wsdlDefinition.getTypes();
@@ -272,8 +270,8 @@ public class AxisServiceBuilder {
 
 				// //////////////adding Policy //////////////////////////////
 
-				PolicyInclude operationPolicyInclude = new PolicyInclude(
-						axisService.getPolicyInclude());
+				PolicyInclude operationPolicyInclude = axisOperation
+						.getPolicyInclude();
 
 				List operationPolicies;
 
@@ -288,8 +286,6 @@ public class AxisServiceBuilder {
 						.getExtensibilityElements());
 				addPolicyElements(PolicyInclude.BINDING_OPERATION_POLICY,
 						operationPolicies, operationPolicyInclude);
-
-				axisOperation.setPolicyInclude(operationPolicyInclude);
 
 				// /////////////////////////////////////////////////////////////
 
@@ -312,8 +308,8 @@ public class AxisServiceBuilder {
 
 				// ////////////////// adding Policies /////////////////////////
 
-				PolicyInclude inputPolicyInclue = new PolicyInclude(
-						axisOperation.getPolicyInclude());
+				PolicyInclude inputPolicyInclue = axisInputMessage
+						.getPolicyInclude();
 
 				List inputMessagePolicies;
 
@@ -334,8 +330,6 @@ public class AxisServiceBuilder {
 						.getExtensibilityElements());
 				addPolicyElements(PolicyInclude.MESSAGE_POLICY,
 						inputMessagePolicies, inputPolicyInclue);
-
-				axisInputMessage.setPolicyInclude(policyInclude);
 
 				// /////////////////////////////////////////////////////////////
 
@@ -369,8 +363,9 @@ public class AxisServiceBuilder {
 
 					// ///////////// adding Policies ///////////////////////////
 
-					PolicyInclude outputPolicyInclude = new PolicyInclude(
-							axisService.getPolicyInclude());
+					PolicyInclude outputPolicyInclude = axisOutputMessage
+							.getPolicyInclude();
+
 					List outputPolicies;
 
 					// wsdl:Output
@@ -390,8 +385,6 @@ public class AxisServiceBuilder {
 							.getExtensibilityElements());
 					addPolicyElements(PolicyInclude.MESSAGE_POLICY,
 							outputPolicies, outputPolicyInclude);
-
-					axisOutputMessage.setPolicyInclude(outputPolicyInclude);
 
 					// /////////////////////////////////////////////////////////
 

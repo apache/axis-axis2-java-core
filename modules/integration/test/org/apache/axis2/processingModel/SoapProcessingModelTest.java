@@ -29,6 +29,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -81,7 +82,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             configContext.getAxisConfiguration().addService(clientService);
 
             ServiceContext serviceContext = new ServiceGroupContext(
-                    configContext, clientService.getParent())
+                    configContext, (AxisServiceGroup) clientService.getParent())
                     .getServiceContext(clientService);
             serviceClient = new ServiceClient(configContext, clientService);
 

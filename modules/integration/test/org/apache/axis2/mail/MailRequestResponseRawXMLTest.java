@@ -32,6 +32,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
@@ -117,7 +118,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
         ServiceContext serviceContext = new ServiceGroupContext(configContext,
-                service.getParent()).getServiceContext(service);
+        		(AxisServiceGroup) service.getParent()).getServiceContext(service);
 
         Options options = new Options();
         options.setTo(targetEPR);

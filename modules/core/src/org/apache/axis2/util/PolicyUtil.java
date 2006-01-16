@@ -58,10 +58,10 @@ public class PolicyUtil {
         AxisServiceGroup axisServiceGroup = null;
         AxisConfiguration axisConfiguration = null;
         
-        axisServiceGroup = axisService.getParent();
+        axisServiceGroup = (AxisServiceGroup) axisService.getParent();
         
         if (axisServiceGroup == null) {
-            axisConfiguration = axisServiceGroup.getParent();
+            axisConfiguration = (AxisConfiguration) axisServiceGroup.getParent();
         }
 
         PolicyInclude servicePolicyInclude = axisService.getPolicyInclude();

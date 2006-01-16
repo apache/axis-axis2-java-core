@@ -16,196 +16,264 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyRegistry;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 public class PolicyInclude {
 
-    public static final String ANON_POLICY = "anonymous";
+	public static final String ANON_POLICY = "anonymous";
 
-    public static final int AXIS_POLICY = 1;
+	public static final int AXIS_POLICY = 1;
 
-    public static final int AXIS_SERVICE_POLICY = 2;
+	public static final int AXIS_SERVICE_POLICY = 2;
 
-    public static final int AXIS_OPERATION_POLICY = 14;
+	public static final int AXIS_OPERATION_POLICY = 14;
 
-    public static final int AXIS_MESSAGE_POLICY = 15;
+	public static final int AXIS_MESSAGE_POLICY = 15;
 
-    public static final int MODULE_POLICY = 3;
+	public static final int MODULE_POLICY = 3;
 
-    public static final int SERVICE_POLICY = 3;
+	public static final int SERVICE_POLICY = 3;
 
-    public static final int PORT_POLICY = 4;
+	public static final int PORT_POLICY = 4;
 
-    public static final int PORT_TYPE_POLICY = 5;
+	public static final int PORT_TYPE_POLICY = 5;
 
-    public static final int BINDING_POLICY = 6;
+	public static final int BINDING_POLICY = 6;
 
-    public static final int OPERATION_POLICY = 7;
+	public static final int OPERATION_POLICY = 7;
 
-    public static final int BINDING_OPERATION_POLICY = 8;
+	public static final int BINDING_OPERATION_POLICY = 8;
 
-    public static final int INPUT_POLICY = 9;
+	public static final int INPUT_POLICY = 9;
 
-    public static final int OUTPUT_POLICY = 10;
+	public static final int OUTPUT_POLICY = 10;
 
-    public static final int BINDING_INPUT_POLICY = 11;
+	public static final int BINDING_INPUT_POLICY = 11;
 
-    public static final int BINDING_OUTPUT_POLICY = 12;
+	public static final int BINDING_OUTPUT_POLICY = 12;
 
-    public static final int MESSAGE_POLICY = 13;
+	public static final int MESSAGE_POLICY = 13;
 
-    private Policy policy = null;
+	private Policy policy = null;
 
-    private Policy effectivePolicy = null;
+	private Policy effectivePolicy = null;
+	
+	private PolicyRegistry reg;
 
-    private PolicyInclude parent = null;
+	private AxisDescription description;
+	
+	private ArrayList wrapperElements = new ArrayList();
 
-    private PolicyRegistry reg;
+	private boolean useCache = false;
 
-    private ArrayList policyElements = new ArrayList();
+	public PolicyInclude() {
+		reg = new PolicyRegistry();
+	}
+	
+	public PolicyInclude(AxisDescription axisDescription) {
+		reg = new PolicyRegistry();
+		setDescription(axisDescription);
+		
+		if (axisDescription.getParent() != null) {
+			PolicyInclude parentPolicyInclude = axisDescription.getParent().getPolicyInclude();
+			reg.setParent(parentPolicyInclude.getPolicyRegistry());
+		}
+		
+	}
 
-    public PolicyInclude() {
-        reg = new PolicyRegistry();
-    }
+	public void setPolicyRegistry(PolicyRegistry reg) {
+		this.reg = reg;
+	}
+	
+	public PolicyRegistry getPolicyRegistry() {
+		return reg;
+	}
 
-    public PolicyInclude(PolicyInclude parent) {
-        reg = new PolicyRegistry();
-        setParent(parent);
-    }
+	public void setPolicy(Policy policy) {
+		this.policy = policy;
+	}
+	
+	public void setEffectivePolicy(Policy effectivePolicy) {
+		this.effectivePolicy = effectivePolicy;
+	}
+	
+	public void setDescription(AxisDescription description) {
+		this.description = description;
+	}
+	
+	public AxisDescription getDescription() {
+		return description;
+	}
+	
+	private PolicyInclude getParent() {
 
-    public void setParent(PolicyInclude parent) {
-        this.parent = parent;
-        reg.setParent(parent.getPolicyRegistry());
-    }
+		if (description != null) {
+			return description.getPolicyInclude();
+		}
+		return null;
+	}
 
-    public void setPolicyRegistry(PolicyRegistry reg) {
-        this.reg = reg;
-    }
+	private void calculatePolicy() {
 
-    public PolicyRegistry getPolicyRegistry() {
-        return reg;
-    }
+		Policy result = null;
+		Iterator iterator = wrapperElements.iterator();
 
-    public void setPolicy(Policy policy) {
-        this.policy = policy;
-    }
+		while (iterator.hasNext()) {
+			Object policyElement = ((Wrapper) iterator.next()).getValue();
+			Policy p;
 
-    public Policy getPolicy() {
+			if (policyElement instanceof PolicyReference) {
+				p = (Policy) ((PolicyReference) policyElement)
+						.normalize(getPolicyRegistry());
 
-        if (policy == null) {
-            Iterator iterator = policyElements.iterator();
+			} else if (policyElement instanceof Policy) {
+				p = (Policy) policyElement;
 
-            while (iterator.hasNext()) {
+			} else {
+				// TODO AxisFault?
+				throw new RuntimeException();
+			}
 
-                Object policyElement = ((PolicyElement) iterator.next()).value;
-                Policy p = null;
+			result = (result == null) ? (Policy) p.normalize(reg)
+					: (Policy) result.merge(p, reg);
+		}
+		setPolicy(result);
+		calculateEffectivePolicy();
+	}
 
-                if (policyElement instanceof PolicyReference) {
-                    p = (Policy) ((PolicyReference) policyElement)
-                            .normalize(getPolicyRegistry());
+	private void calculateEffectivePolicy() {
+		Policy result = null;
+		
+		if (getParent() != null) {
+			Policy parentPolicy = getParent().getEffectivePolicy();
+			
+			if (parentPolicy == null) {
+				result = getPolicy();
+				
+			} else {
+				result = (Policy) parentPolicy.merge(getPolicy(), reg);
+			}
+			
+		} else {
+			result = getPolicy();
+		}
+		setEffectivePolicy(result);
+		useCache(true);		
+	}
+	
+	public Policy getPolicy() {
+		
+		if (! useCache) {
+			calculatePolicy();
+		}
+		return policy;
+	}
 
-                } else if (policyElement instanceof Policy) {
-                    p = (Policy) policyElement;
+	public Policy getEffectivePolicy() {
+		
+		if (! useCache) {
+			calculateEffectivePolicy();			
+		}
+		return effectivePolicy;
+	}
 
-                } else {
-                    // TODO an exception ?
-                }
-                policy = (policy == null) ? (Policy) p.normalize(reg)
-                        : (Policy) policy.merge(p, reg);
-            }
-        }
+	public ArrayList getPolicyElements() {
+		ArrayList policyElementsList = new ArrayList();
+		Iterator policyElementIterator = wrapperElements.iterator();
 
-        return policy;
-    }
+		while (policyElementIterator.hasNext()) {
+			policyElementsList
+					.add(((Wrapper) policyElementIterator.next()).getValue());
+		}
+		return policyElementsList;
+	}
 
-    public Policy getEffectivePolicy() {
+	public ArrayList getPolicyElements(int type) {
+		ArrayList policyElementList = new ArrayList();
+		Iterator wrapperElementIterator = wrapperElements.iterator();
+		Wrapper wrapper;
 
-        if (effectivePolicy != null) {
-            return effectivePolicy;
-        }
+		while (wrapperElementIterator.hasNext()) {
+			wrapper = (Wrapper) wrapperElementIterator.next();
 
-        Policy parentEffectivePolicy = parent.getEffectivePolicy();
+			if (wrapper.getType() == type) {
+				policyElementList.add(wrapper.getValue());
+			}
+		}
+		return policyElementList;
+	}
 
-        if (parent == null || parentEffectivePolicy == null) {
-            return getPolicy();
-        }
+	public void registerPolicy(Policy policy) {
+		reg.register(policy.getPolicyURI(), policy);
+	}
 
-        if (getPolicy() != null) {
-            return parent.getEffectivePolicy();
-        }
+	public Policy getPolicy(String policyURI) {
+		return reg.lookup(policyURI);
+	}
 
-        return (Policy) parentEffectivePolicy.merge(getPolicy(), reg);
+	public void addPolicyElement(int type, Policy policy) {
+		Wrapper wrapper = new Wrapper(type, policy);
+		wrapperElements.add(wrapper);
 
-    }
+		if (policy.getPolicyURI() != null) {
+			reg.register(policy.getPolicyURI(), policy);
+		}
+	}
 
-    //    public void setPolicyElements(ArrayList policyElements) {
-    //        this.policyElements = policyElements;
-    //    }
+	public void addPolicyRefElement(int type, PolicyReference policyReference) {
+		Wrapper wrapper = new Wrapper(type, policyReference);
+		wrapperElements.add(wrapper);
+	}
 
-    public ArrayList getPolicyElements() {
-        ArrayList policyElementsList = new ArrayList();
-        Iterator policyElementIterator = policyElements.iterator();
-
-        while (policyElementIterator.hasNext()) {
-            policyElementsList.add(((PolicyElement) policyElementIterator
-                    .next()).value);
-        }
-        return policyElementsList;
-    }
-
-
-    public ArrayList getPolicyElements(int type) {
-        ArrayList policyElementList = new ArrayList();
-        Iterator policyElementIterator = policyElements.iterator();
-
-        PolicyElement policyElement;
-
-        while (policyElementIterator.hasNext()) {
-            policyElement = (PolicyElement) policyElementIterator.next();
-
-            if (policyElement.type == type) {
-                policyElementList.add(policyElement.value);
-            }
-        }
-
-        return policyElementList;
-
-    }
-
-    public void registerPolicy(Policy policy) {
-        reg.register(policy.getPolicyURI(), policy);
-    }
-
-    public Policy getPolicy(String policyURI) {
-        return reg.lookup(policyURI);
-    }
-
-    public void addPolicyElement(int type, Policy policy) {
-        PolicyElement policyElement = new PolicyElement();
-        policyElement.type = type;
-        policyElement.value = policy;
-        policyElements.add(policyElement);
-
-        if (policy.getPolicyURI() != null) {
-            reg.register(policy.getPolicyURI(), policy);
-        }
-    }
-
-    public void addPolicyRefElement(int type, PolicyReference policyReference) {
-        PolicyElement policyElement = new PolicyElement();
-        policyElement.type = type;
-        policyElement.value = policyReference;
-        policyElements.add(policyElement);
-    }
-
-    private class PolicyElement {
-        int type;
-
-        Object value;
-    }
+	public void invalidate() {
+		
+		if (description != null) {
+//			Iterator children = description.getChildren();
+//			
+//			if (children != null) {
+//				AxisDescription axisDescription;
+//				
+//				while (children.hasNext()) {
+//					axisDescription = (AxisDescription) children.next();
+//					axisDescription.getPolicyInclude().invalidate();
+//				}				
+//			}
+		}
+		useCache(false);
+	}
+	
+	private void useCache(boolean useCache) {
+		this.useCache = useCache;
+	}
+	
+	class Wrapper {
+		private int type;
+		private Object value;
+		
+		Wrapper(int type, Object value) {
+			setType(type);
+			setValue(value);
+		}
+		
+		void setType(int type) {
+			this.type = type;
+		}
+		
+		int getType() {
+			return type;
+		}
+		
+		void setValue(Object value) {
+			this.value = value;
+		}
+		
+		Object getValue() {
+			return value;
+		}
+	}
 }

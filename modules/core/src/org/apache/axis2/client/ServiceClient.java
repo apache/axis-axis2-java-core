@@ -10,6 +10,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ClientUtils;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
@@ -101,7 +102,7 @@ public class ServiceClient {
         // context and then get the service context for myself as I'll need that
         // later for stuff that I gotta do
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
-                this.axisService.getParent());
+                (AxisServiceGroup) this.axisService.getParent());
         this.serviceContext = sgc.getServiceContext(this.axisService);
     }
 
@@ -133,7 +134,7 @@ public class ServiceClient {
                 this.axisConfig.addService(this.axisService);
             }
             ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
-                    this.axisService.getParent());
+                    (AxisServiceGroup) this.axisService.getParent());
             this.serviceContext = sgc.getServiceContext(this.axisService);
         } catch (IOException e) {
             throw new AxisFault(e);

@@ -189,9 +189,6 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
-            // setting the PolicyInclude
-//            PolicyInclude policyInclude = message.getPolicyInclude();
-
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
@@ -301,7 +298,6 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             // setting the PolicyInclude
-//            PolicyInclude policyInclude = op_descrip.getPolicyInclude();
 
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
