@@ -261,7 +261,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             if (soapActionString == null) {
-                soapActionString = "";
+                soapActionString = "\"\"";
             }
 
             // select the Message Sender depending on the REST status
