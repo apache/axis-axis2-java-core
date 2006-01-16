@@ -43,7 +43,8 @@
         <copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
-
+        <copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
+        
         <jar jarfile="target/security.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
