@@ -225,7 +225,7 @@
 
            private org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, org.apache.axis2.om.OMElement param){
                 org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                envelope.getBody().addChild(param));
+                envelope.getBody().addChild(param);
                 return envelope;
            }
        </xsl:template>
