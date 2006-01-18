@@ -1,15 +1,12 @@
 <xsl:stylesheet version="1.0" xmlns:xalan="http://xml.apache.org/xslt" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" xalan:indent-amount="4"/>
 
-    <xsl:template match="/interfaces">
-        <xsl:comment>Auto generated Axis Services XML</xsl:comment>
+    <xsl:template match="/">
+        <xsl:comment> This file was auto-generated from WSDL </xsl:comment>
+        <xsl:comment> by the Apache Axis2 version: #axisVersion# #today# </xsl:comment>
         <serviceGroup>
             <xsl:apply-templates/>
         </serviceGroup>
-    </xsl:template>
-
-    <xsl:template match="/">
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="interface">
