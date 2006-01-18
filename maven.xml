@@ -364,7 +364,7 @@
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
 
         <!-- Create axis2-core.jar -->
-        <jar destfile="target/temp/war/lib/axis2-core-${pom.currentVersion}.jar">
+        <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/xml/target/classes/"/>
@@ -483,7 +483,7 @@
         </ant:delete>
 
         <!-- Create axis2-core.jar -->
-        <jar destfile="target/temp/min/bin/lib/axis2-core-${pom.currentVersion}.jar">
+        <jar destfile="target/temp/min/bin/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/xml/target/classes/"/>
@@ -589,7 +589,7 @@
         </ant:delete>
 
         <!-- Create axis2-core.jar -->
-        <jar destfile="${std.bin.temp.dir}/lib/axis2-core-${pom.currentVersion}.jar">
+        <jar destfile="${std.bin.temp.dir}/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/xml/target/classes/"/>
@@ -843,6 +843,33 @@
                         styledir="${basedir}/etc"/>
         </ant:junitreport>
     </goal>
+
+    <!-- ================================================================ -->
+    <!--- Create all the distributable jars -->
+    <!-- ================================================================ -->
+    <goal name="all-jars" prereqs="jar">
+           <ant:echo>+----------------------------------------------</ant:echo>
+           <ant:echo>| Creating: JARs</ant:echo>
+           <ant:echo>+----------------------------------------------</ant:echo>
+
+           <ant:property name="destdir" value="target/jars" />
+           <ant:mkdir dir="${destdir}"/>
+
+           <!-- Create axis2-core.jar -->
+           <jar destfile="${destdir}/axis2-kernel-${pom.currentVersion}.jar">
+               <fileset dir="modules/core/target/classes/"/>
+               <fileset dir="modules/common/target/classes/"/>
+               <fileset dir="modules/xml/target/classes/"/>
+               <fileset dir="modules/wsdl/target/classes/"/>
+           </jar>
+
+           <ant:copy toDir="${destdir}">
+               <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
+               <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
+               <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+           </ant:copy>
+       </goal>
+
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
