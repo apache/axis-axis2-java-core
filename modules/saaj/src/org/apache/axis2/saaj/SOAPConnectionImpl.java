@@ -17,35 +17,54 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.saaj.util.SAAJUtil;
-import org.apache.axis2.saaj.util.SessionUtils2;
-import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.saaj.util.IDGenerator;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPElement;
+import javax.xml.stream.XMLStreamException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
+import java.io.ByteArrayOutputStream;
 
 /**
  *
  */
 public class SOAPConnectionImpl extends SOAPConnection {
+
+    /**
+     * Attribute which keeps track of whether this connection has been closed
+     */
+    private boolean closed = false;
+
+    private Log log = LogFactory.getLog(getClass());
+
     /**
      * Sends the given message to the specified endpoint and
      * blocks until it has returned the response.
@@ -60,9 +79,14 @@ public class SOAPConnectionImpl extends SOAPConnection {
      *                 <code>javax.xml.messaging.URLEndpoint</code>
      * @return the <CODE>SOAPMessage</CODE> object that is the
      *         response to the message that was sent
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws javax.xml.soap.SOAPException if there is a SOAP error,
+     *                                      or this SOAPConnection is already closed
      */
     public SOAPMessage call(SOAPMessage request, Object endpoint) throws SOAPException {
+
+        if (closed) {
+            throw new SOAPException("SOAPConnection closed");
+        }
 
         // initialize URL
         URL url;
@@ -72,170 +96,234 @@ public class SOAPConnectionImpl extends SOAPConnection {
             throw new SOAPException(e);
         }
 
+        // initialize and set Options
+        Options options = new Options();
+        options.setTo(new EndpointReference(url.toString()));
+
+        // initialize the Sender
+        OperationClient opClient;
+        try {
+            opClient = new ServiceClient().createClient(ServiceClient.ANON_OUT_IN_OP);
+        } catch (AxisFault e) {
+            throw new SOAPException(e);
+        }
+        opClient.setOptions(options);
+
         if (request.countAttachments() != 0) { // SOAPMessage with attachments
-            return handleSOAPMessageWithAttachments(request, url);
+            opClient.getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+            return handleSOAPMessage(request, opClient);
         } else { // simple SOAPMessage
-            return handleBasicSOAPMessage(request, url);
+            return handleSOAPMessage(request, opClient);
         }
     }
 
     /**
      * Closes this <CODE>SOAPConnection</CODE> object.
      *
-     * @throws javax.xml.soap.SOAPException if there is a SOAP error
+     * @throws javax.xml.soap.SOAPException if there is a SOAP error,
+     *                                      or this SOAPConnection is already closed
      */
     public void close() throws SOAPException {
-        //TODO: Method implementation
-
+        if (closed) {
+            throw new SOAPException("SOAPConnection Closed");
+        }
+        closed = true;
     }
 
-    private SOAPMessage handleSOAPMessageWithAttachments(SOAPMessage request,
-                                                         URL url) throws SOAPException {
-        SOAPMessage response = null;
+    private SOAPMessage handleSOAPMessage(SOAPMessage request,
+                                          OperationClient opClient) throws SOAPException {
 
-        // initialize the Sender
-        ServiceClient sender;
+        MessageContext requestMsgCtx = new MessageContext();
         try {
-            sender = new ServiceClient(null, null);  //TODO: create the config context properly
+            requestMsgCtx.setEnvelope(toOMSOAPEnvelope(request));
+            opClient.addMessageContext(requestMsgCtx);
+            opClient.execute(true);
+            return getSOAPMessage(opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).
+                    getEnvelope());
         } catch (AxisFault e) {
             throw new SOAPException(e);
         }
-
-        // initialize and set Options
-        Options options = new Options();
-        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
-        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setTo(new EndpointReference(url.toString()));
-        sender.setOptions(options);
-
-        // process the attachments
-        final Iterator attachmentIter = request.getAttachments();
-        while (attachmentIter.hasNext()) {
-            System.err.println("########### Att=" + attachmentIter.next());
-            //TODO: process it
-        }
-
-        try {
-            OMElement result =
-                        sender.sendReceive(SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement()));
-
-            //-------------- Handle the response --------------------
-            SOAPEnvelopeImpl responseEnv =
-                    new SOAPEnvelopeImpl(SAAJUtil.toDOOMSOAPEnvelope((org.apache.axis2.soap.SOAPEnvelope) result));
-
-            response = new SOAPMessageImpl(responseEnv);
-
-            //TODO: process the attachments in result and add in those as attachments of response
-        } catch (AxisFault e) {
-            throw new SOAPException(e);
-        }
-
-        return response;
     }
 
-    private SOAPMessage handleBasicSOAPMessage(SOAPMessage request, URL url) throws SOAPException {
-        SOAPMessage response = null;
+    /**
+     * This method handles the conversion of an OM SOAP Envelope to a SAAJ SOAPMessage
+     *
+     * @param respOMSoapEnv
+     * @return the SAAJ SOAPMessage
+     * @throws SOAPException If an exception occurs during this conversion
+     */
+    private SOAPMessage getSOAPMessage(org.apache.axis2.soap.SOAPEnvelope respOMSoapEnv)
+            throws SOAPException {
 
-        // initialize the Sender
-        ServiceClient sender;
-        try {
-            sender = new ServiceClient();
-        } catch (AxisFault e) {
-            throw new SOAPException(e);
+        // Create the basic SOAP Message
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage response = mf.createMessage();
+        SOAPPart sPart = response.getSOAPPart();
+        javax.xml.soap.SOAPEnvelope env = sPart.getEnvelope();
+        SOAPBody body = env.getBody();
+        SOAPHeader header = env.getHeader();
+
+        //Convert all header blocks
+        for (Iterator hbIter = respOMSoapEnv.getHeader().examineAllHeaderBlocks();
+             hbIter.hasNext();) {
+
+            // Converting a single OM SOAP HeaderBlock to a SAAJ SOAP HeaderBlock
+            org.apache.axis2.soap.SOAPHeaderBlock hb =
+                    (org.apache.axis2.soap.SOAPHeaderBlock) hbIter.next();
+            final QName hbQName = hb.getQName();
+            final SOAPHeaderElement headerEle =
+                    header.addHeaderElement(env.createName(hbQName.getLocalPart(),
+                                                           hbQName.getPrefix(),
+                                                           hbQName.getNamespaceURI()));
+            for (Iterator attribIter = hb.getAllAttributes(); attribIter.hasNext();) {
+                OMAttribute attr = (OMAttribute) attribIter.next();
+                final QName attrQName = attr.getQName();
+                headerEle.addAttribute(env.createName(attrQName.getLocalPart(),
+                                                      attrQName.getPrefix(),
+                                                      attrQName.getNamespaceURI()),
+                                       attr.getAttributeValue());
+            }
+            final String role = hb.getRole();
+            if (role != null) {
+                headerEle.setActor(role);
+            }
+            headerEle.setMustUnderstand(hb.getMustUnderstand());
+
+            toSAAJElement(headerEle, hb, response);
         }
 
-        // initialize and set Options
-        Options options = new Options();
-        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-8");
-        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setTo(new EndpointReference(url.toString()));
-        sender.setOptions(options);
+        // Convert the body
+        toSAAJElement(body, respOMSoapEnv.getBody(), response);
 
-        try {
-            OMElement result =
-                    sender.sendReceive(SAAJUtil.toOMSOAPEnvelope(request.getSOAPPart().getDocumentElement()));
-            SOAPEnvelopeImpl responseEnv =
-                    new SOAPEnvelopeImpl(SAAJUtil.toDOOMSOAPEnvelope((org.apache.axis2.soap.SOAPEnvelope) result));
-
-            response = new SOAPMessageImpl(responseEnv);
-        } catch (AxisFault e) {
-            throw new SOAPException(e);
-        }
         return response;
     }
 
     /**
-     * This method recursively stuffs the OMElement with appropriate OMText nodes
-     * that are prepared out of attachment contents whereever those attachments are referenced
+     * Converts an OMNode into a SAAJ SOAPElement
      *
-     * @param omEnvelope
-     * @param soapMsg
+     * @param saajEle
+     * @param omNode
+     * @param saajSOAPMsg
+     * @throws SOAPException If conversion fails
      */
-    private void insertAttachmentNodes(OMElement omEnvelope, SOAPMessage soapMsg) throws SOAPException {
-//    private void insertAttachmentNodes(org.apache.axis2.soap.SOAPEnvelope omEnvelope,
-//                                       SOAPMessage soapMsg) throws SOAPException {
+    private void toSAAJElement(SOAPElement saajEle,
+                               OMNode omNode,
+                               javax.xml.soap.SOAPMessage saajSOAPMsg) throws SOAPException {
 
-        Iterator childIter = omEnvelope.getChildElements();
-        while (childIter.hasNext()) {
-            OMElement child = (OMElement) childIter.next();
-            //check if there is an href attribute
-            OMAttribute hrefAttr = child.getAttribute(new QName("href"));
-            String hrefContentId = validateHref(hrefAttr);
+        if (omNode instanceof OMText) {
+            return; // simply return since the text has already been added to saajEle
+        }
 
-            System.err.println("########## hrefContentId=" + hrefContentId);
-            if (hrefContentId != null) {//This is an omEnvelope referencing an attachment!
-                child.build();
-                OMText omText = getOMTextForReferencedAttachment(hrefContentId,
-                                                                 soapMsg,
-                                                                 (DocumentImpl) ((ElementImpl) child).getOwnerDocument());
+        if (omNode instanceof OMElement) {
+            OMElement omEle = (OMElement) omNode;
+            for (Iterator childIter = omEle.getChildren(); childIter.hasNext();) {
+                OMNode omChildNode = (OMNode) childIter.next();
+                SOAPElement saajChildEle = null;
 
-                child.removeAttribute(hrefAttr); //y did SAAJ1 implementors remove the attribute???
-                child.addChild(omText);
-            } else { //possibly there can be references in the children of this omEnvelope
-                //so recurse through.
-                insertAttachmentNodes(child, soapMsg);
+                if (omChildNode instanceof OMText) {
+                    // check whether the omtext refers to an attachment
+
+                    final OMText omText = (OMText) omChildNode;
+                    if (omText.isOptimized()) { // is this an attachment?
+                        final DataHandler datahandler = (DataHandler) omText.getDataHandler();
+                        AttachmentPart attachment = saajSOAPMsg.createAttachmentPart(datahandler);
+                        final String sessionID = IDGenerator.generateID();
+                        attachment.setContentId(sessionID);
+                        attachment.setContentType(datahandler.getContentType());
+                        saajSOAPMsg.addAttachmentPart(attachment);
+
+                        saajEle.addAttribute(saajSOAPMsg.getSOAPPart().getEnvelope().createName("href"),
+                                             "cid:" + sessionID);
+                    } else {
+                        saajChildEle = saajEle.addTextNode(omText.getText());
+                    }
+                } else if (omChildNode instanceof OMElement) {
+                    OMElement omChildEle = (OMElement) omChildNode;
+                    final QName omChildQName = omChildEle.getQName();
+                    saajChildEle =
+                            saajEle.addChildElement(omChildQName.getLocalPart(),
+                                                    omChildQName.getPrefix(),
+                                                    omChildQName.getNamespaceURI());
+                    for (Iterator attribIter = omChildEle.getAllAttributes();
+                         attribIter.hasNext();) {
+                        OMAttribute attr = (OMAttribute) attribIter.next();
+                        final QName attrQName = attr.getQName();
+                        saajChildEle.addAttribute(saajSOAPMsg.getSOAPPart().getEnvelope().
+                                createName(attrQName.getLocalPart(),
+                                           attrQName.getPrefix(),
+                                           attrQName.getNamespaceURI()),
+                                                  attr.getAttributeValue());
+                    }
+                }
+
+                // go down the tree adding child elements, till u reach a leaf(i.e. text element)
+                toSAAJElement(saajChildEle, omChildNode, saajSOAPMsg);
             }
         }
     }
 
     /**
-     * The method recursively looks for the binary text nodes and adds them as attachment
-     * to soapMessage at the same time removing them from soapEnv and putting appropriate
-     * contentId
-     *
-     * @param element
-     * @param soapMsg
+     * Converts a SAAJ SOAPMessage to an OM SOAPEnvelope
+     * 
+     * @param saajSOAPMsg
+     * @return
+     * @throws SOAPException
      */
-    private void extractAttachmentNodes(OMElement element, SOAPMessage soapMsg) {
-        Iterator childIter = element.getChildren();
-        while (childIter.hasNext()) {
-            OMNode child = (OMNode) childIter.next();
-            if (child instanceof OMText) {
-                OMText binaryNode = (OMText) child;
-                DataHandler actualDH = (DataHandler) binaryNode.getDataHandler();
-                if (actualDH != null) {
-                    AttachmentPart ap = soapMsg.createAttachmentPart(actualDH);
-                    String contentId = SessionUtils2.generateSessionId();
-                    ap.setContentId(contentId);
-                    ap.setContentType(actualDH.getContentType());
-                    OMElement parent = (OMElement) child.getParent();
-                    OMAttribute attr =
-                            DOOMAbstractFactory.getOMFactory().createOMAttribute("href",
-                                                                                 null,
-                                                                                 "cid:" + contentId);
+    protected org.apache.axis2.soap.SOAPEnvelope toOMSOAPEnvelope(SOAPMessage saajSOAPMsg)
+            throws SOAPException {
 
-                    parent.addAttribute(attr);
-                    binaryNode.detach();
-                    soapMsg.addAttachmentPart(ap);
-                }
+        final org.apache.axis2.soap.SOAPEnvelope omSOAPEnv =
+                SAAJUtil.toOMSOAPEnvelope(saajSOAPMsg.getSOAPPart().getDocumentElement());
+
+        Map attachmentMap = new HashMap();
+        final Iterator attachments = saajSOAPMsg.getAttachments();
+        while (attachments.hasNext()) {
+            final AttachmentPart attachment = (AttachmentPart) attachments.next();
+            if (attachment.getContentId() == null || attachment.getContentId().trim().length() == 0)
+            {
+                throw new SOAPException("Attachment with NULL or Empty contend ID");
+            }
+            if (attachment.getDataHandler() == null) {
+                throw new SOAPException("Attachment with NULL DataHandler");
+            }
+            attachmentMap.put(attachment.getContentId(), attachment);
+        }
+
+        insertAttachmentNodes(attachmentMap, omSOAPEnv);
+
+        printOMSOAPEnvelope(omSOAPEnv);
+
+        return omSOAPEnv;
+    }
+
+    /**
+     * Inserts the attachments in the proper places
+     *
+     * @param attachments
+     * @param omEnvelope
+     * @throws SOAPException
+     */
+    private void insertAttachmentNodes(Map attachments,
+                                       OMElement omEnvelope) throws SOAPException {
+
+        Iterator childIter = omEnvelope.getChildElements();
+        while (childIter.hasNext()) {
+            OMElement child = (OMElement) childIter.next();
+            final OMAttribute hrefAttr = child.getAttribute(new QName("href"));
+            String contentID = getContentID(hrefAttr);
+
+            if (contentID != null) {//This is an omEnvelope referencing an attachment
+                child.build();
+                OMText text =
+                        new OMTextImpl(((AttachmentPart) attachments.get(contentID.trim())).getDataHandler(),
+                                       true);
+                child.removeAttribute(hrefAttr);
+                child.addChild(text);
             } else {
-                if (child instanceof OMElement) {
-                    OMElement childElement = (OMElement) child;
-                    extractAttachmentNodes(childElement, soapMsg);
-                }
+
+                //possibly there can be references in the children of this omEnvelope
+                //so recurse through.
+                insertAttachmentNodes(attachments, child);
             }
         }
     }
@@ -245,8 +333,10 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * returns the contentID (with cid: prefix stripped off) or else returns null.
      * A null return value can be assumed that this attribute is not an attachment
      * referencing attribute
+     *
+     * @return the ContentID
      */
-    private String validateHref(OMAttribute attr) {
+    private String getContentID(OMAttribute attr) {
         String contentId;
         if (attr != null) {
             contentId = attr.getAttributeValue();
@@ -261,29 +351,15 @@ public class SOAPConnectionImpl extends SOAPConnection {
         return null;
     }
 
-    /**
-     * This method looks up the attachment part corresponding to the given contentId and
-     * returns the OMText node thta has the content of the attachment.
-     *
-     * @param contentId
-     * @param soapMsg
-     * @return OMText
-     */
-    private OMText getOMTextForReferencedAttachment(String contentId,
-                                                    SOAPMessage soapMsg,
-                                                    DocumentImpl doc) throws SOAPException {
-
-        Iterator attachIter = soapMsg.getAttachments();
-        while (attachIter.hasNext()) {
-            AttachmentPart attachment = (AttachmentPart) attachIter.next();
-            if (attachment.getContentId().equals(contentId)) {
-                try {
-                    return ((AttachmentPartImpl) attachment).getText(doc);
-                } catch (Exception e) {
-                    throw new SOAPException(e);
-                }
-            }
+    private void printOMSOAPEnvelope(final org.apache.axis2.soap.SOAPEnvelope omSOAPEnv) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            omSOAPEnv.serialize(baos);
+            log.info("---------------------------------------------------------------------------");
+            log.info(baos);
+            log.info("---------------------------------------------------------------------------");
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
         }
-        throw new SOAPException("No attachment found with the given contentID");
     }
 }

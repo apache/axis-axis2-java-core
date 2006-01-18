@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
@@ -354,8 +355,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
         while (childIter.hasNext()) {
             Object o = childIter.next();
-            if (o instanceof org.apache.axis2.om.OMNode)
+            if (o instanceof org.apache.axis2.om.OMNode) {
                 ((org.apache.axis2.om.OMNode) o).detach();
+            }
         }
     }
 
@@ -551,7 +553,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
             final OMNode firstOMChild = element.getFirstOMChild();
             if (firstOMChild instanceof TextImpl) {
                 return ((TextImpl) firstOMChild).getData();
-            } else {
+            } else if(firstOMChild instanceof SOAPElementImpl) {
                 return ((SOAPElementImpl) firstOMChild).getValue();
             }
         }
@@ -589,5 +591,34 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     public boolean hasChildNodes() {
         return this.element.hasChildNodes();
+    }
+
+    /**
+     * If this is a Text node then this method will set its value, otherwise it
+     * sets the value of the immediate (Text) child of this node. The value of
+     * the immediate child of this node can be set only if, there is one child
+     * node and that node is a Text node, or if there are no children in which
+     * case a child Text node will be created.
+     *
+     * @param value the text to set
+     * @throws IllegalStateException if the node is not a Text  node and
+     *                               either has more than one child node or has a child node that
+     *                               is not a Text node
+     */
+    public void setValue(String value) {
+        OMNode firstChild = element.getFirstOMChild();
+        if (firstChild == null ||
+            (((javax.xml.soap.Node) firstChild).getNodeType() == javax.xml.soap.Node.TEXT_NODE &&
+             firstChild.getNextOMSibling() == null)) {
+
+            //If there are no children OR
+            //the first child is a text node and the only child
+
+            element.setText(value);
+        } else {
+            throw new IllegalStateException("This node is not a Text  node and " +
+                                            "either has more than one child node or has a child " +
+                                            "node that is not a Text node");
+        }
     }
 }

@@ -34,29 +34,7 @@ public class TextImplEx extends NodeImplEx implements Text {
     public TextImplEx(String data) {
         textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
     }
-    /*public TextImplEx(SOAPElementImpl parent, String s) throws SOAPException {
-        //super();
-        //super.setParentElement(parent);
-        OMElement par = parent.getOMElement();
-        omNode =
-        omText =
-                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
-                        .createText(par, s);
-    }
-
-    public TextImplEx(org.w3c.dom.CharacterData data) {
-        if (data == null) {
-            throw new IllegalArgumentException("Text value may not be null.");
-        }
-        omText =
-                org.apache.axis2.om.OMAbstractFactory.getOMFactory()
-                        .createText(data.getData());
-    }
-
-    public TextImplEx(OMText omText) {
-        omNode = this.omText = omText;
-    }*/
-
+    
     /**
      * Retrieves whether this <CODE>Text</CODE> object
      * represents a comment.
@@ -271,7 +249,25 @@ public class TextImplEx extends NodeImplEx implements Text {
         return textNode.getData();
     }
 
+    /**
+     * If this is a Text node then this method will set its value, otherwise it
+     * sets the value of the immediate (Text) child of this node. The value of
+     * the immediate child of this node can be set only if, there is one child
+     * node and that node is a Text node, or if there are no children in which
+     * case a child Text node will be created.
+     *
+     * @param value the text to set
+     * @throws IllegalStateException if the node is not a Text  node and
+     *                               either has more than one child node or has a child node that
+     *                               is not a Text node
+     */
+    public void setValue(String value) {
+        textNode.setData(value);
+    }
+
     public String toString() {
         return getValue();
     }
+
+
 }

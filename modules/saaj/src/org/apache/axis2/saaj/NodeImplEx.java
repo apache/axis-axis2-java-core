@@ -107,38 +107,6 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
         this.parentElement = parent;
     }
 
-    /**
-     * If this is a Text node then this method will set its value, otherwise it
-     * sets the value of the immediate (Text) child of this node. The value of
-     * the immediate child of this node can be set only if, there is one child
-     * node and that node is a Text node, or if there are no children in which
-     * case a child Text node will be created.
-     *
-     * @param value the text to set
-     * @throws IllegalStateException if the node is not a Text  node and
-     *                               either has more than one child node or has a child node that
-     *                               is not a Text node
-     */
-    public void setValue(String value) {
-        if (this.getNodeType() == Node.TEXT_NODE) {
-            this.setNodeValue(value);
-        } else if (this.getNodeType() == Node.ELEMENT_NODE) {
-            OMElement elem = ((OMElement) this);
-            OMNode firstChild = elem.getFirstOMChild();
-            if (firstChild == null ||
-                (((Node) firstChild).getNodeType() == Node.TEXT_NODE &&
-                 firstChild.getNextOMSibling() == null)){//If there are no children OR
-                //the first child is a text node and the only child
-
-                ((OMElement) this).setText(value);
-            } else {
-                throw new IllegalStateException("This node is not a Text  node and " +
-                                                "either has more than one child node or has a child " +
-                                                "node that is not a Text node");
-            }
-        }
-    }
-
     public void setType(int nodeType) throws OMException {
         throw new UnsupportedOperationException("TODO");
     }

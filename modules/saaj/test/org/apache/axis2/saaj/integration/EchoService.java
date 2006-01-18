@@ -16,21 +16,33 @@
 package org.apache.axis2.saaj.integration;
 
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.MTOMConstants;
+import org.apache.axis2.om.impl.llom.OMTextImpl;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.attachments.MIMEHelper;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.namespace.QName;
+import javax.activation.DataHandler;
 
 /**
  * 
  */
 public class EchoService {
-    public OMElement echo(OMElement element) throws XMLStreamException {
+     public OMElement echo(OMElement element) throws XMLStreamException {
+        System.err.println("################ Echo Service was called, Element=" + element);
+
         //Praparing the OMElement so that it can be attached to another OM Tree.
-        //First the OMElement should be completely build in case it is not fully built and still
+        //First the OMElement should be completely built in case it is not fully built and still
         //some of the xml is in the stream.
         element.build();
         //Secondly the OMElement should be detached from the current OMTree so that it can be attached
         //some other OM Tree. Once detached the OmTree will remove its connections to this OMElement.
-        element.detach();
+//        element.detach();
         return element;
     }
+
+
 }

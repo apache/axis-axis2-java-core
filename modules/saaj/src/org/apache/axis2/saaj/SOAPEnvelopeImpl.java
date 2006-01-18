@@ -160,11 +160,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         org.apache.axis2.soap.SOAPHeader header = omSOAPEnvelope.getHeader();
         if (header == null) {
             header = new SOAP11HeaderImpl(omSOAPEnvelope);
-            omSOAPEnvelope.addChild(header);
             return (new SOAPHeaderImpl(header));
         } else {
             throw new SOAPException("Header already present, can't set header again without " +
-                                    "deleting the existing header.");
+                                    "deleting the existing header. Use getHeader() method instead.");
         }
     }
 
@@ -186,11 +185,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         org.apache.axis2.soap.SOAPBody body = omSOAPEnvelope.getBody();
         if (body == null) {
             body = new SOAP11BodyImpl(omSOAPEnvelope);
-            omSOAPEnvelope.addChild(body);
             return (new SOAPBodyImpl(body));
         } else {
             throw new SOAPException("Body already present, can't set body again without " +
-                                    "deleting the existing body.");
+                                    "deleting the existing body. Use getBody() method instead.");
         }
     }
 

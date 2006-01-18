@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.saaj.util.SessionUtils2;
+import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -57,7 +57,7 @@ public class SOAPPartImpl extends SOAPPart {
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         SOAPEnvelopeImpl soapEnvelope) {
 
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionUtils2.generateSessionId());
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, IDGenerator.generateID());
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
 
         soapMessage = parentSoapMsg;
@@ -68,7 +68,7 @@ public class SOAPPartImpl extends SOAPPart {
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         InputStream inputStream) throws SOAPException {
 
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionUtils2.generateSessionId());
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, IDGenerator.generateID());
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
 
         soapMessage = parentSoapMsg;

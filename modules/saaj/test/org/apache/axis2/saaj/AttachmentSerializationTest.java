@@ -16,6 +16,7 @@ import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -29,11 +30,6 @@ public class AttachmentSerializationTest extends TestCase {
 
     public AttachmentSerializationTest(String name) {
         super(name);
-    }
-
-    public static void main(String args[]) throws Exception {
-        AttachmentSerializationTest tester = new AttachmentSerializationTest("tester");
-        tester.testAttachments();
     }
 
     public void testAttachments() throws Exception {
@@ -66,7 +62,7 @@ public class AttachmentSerializationTest extends TestCase {
         el2.addTextNode("bodyvalue3a");
         el2 = el.addChildElement("bodyfield3b", NS_PREFIX);
         el2.addTextNode("bodyvalue3b");
-        el2 = el.addChildElement("datefield", NS_PREFIX);
+        el.addChildElement("datefield", NS_PREFIX);
 
         // First Attachment
         AttachmentPart ap = msg.createAttachmentPart();
@@ -75,7 +71,7 @@ public class AttachmentSerializationTest extends TestCase {
         msg.addAttachmentPart(ap);
 
         // Second attachment
-        String jpgfilename = "./test-resources/axis.jpg";
+        String jpgfilename = "test-resources/axis.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler dh = new DataHandler(fds);
@@ -88,19 +84,23 @@ public class AttachmentSerializationTest extends TestCase {
         String [] contentType = headers.getHeader("Content-Type");
         assertTrue(contentType != null);
 
+        int i = 0;
         for (Iterator iter = msg.getAttachments(); iter.hasNext();) {
             AttachmentPart attachmentPart = (AttachmentPart) iter.next();
             final Object content = attachmentPart.getDataHandler().getContent();
             if (content instanceof String) {
                 assertEquals(testText, (String) content);
             } else if (content instanceof FileInputStream) {
-            	//TODO : Complete this
-                // try to write to a File and check whether it is ok
-                // final FileInputStream fis = (FileInputStream) content;
-                /*File file = new File("output-file.jpg");
-                file.createNewFile();
 
-                fis.read(new byte[(int)file.length()])*/
+                // try to write to a File and check whether it is ok
+                final FileInputStream fis = (FileInputStream) content;
+                byte[] b = new byte[15000];
+                final int lengthRead = fis.read(b);
+                FileOutputStream fos =
+                        new FileOutputStream(new File("target/test-resources/atts-op" + (i++) + ".jpg"));
+                fos.write(b, 0, lengthRead);
+                fos.flush();
+                fos.close();
             }
         }
 

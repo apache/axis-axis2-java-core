@@ -20,7 +20,7 @@ import java.util.Random;
 /**
  * Code borrowed from AuthenticatorBase.java for generating a secure id's.
  */
-public class SessionUtils2 {
+public class IDGenerator {
 
     /**
      * The number of random bytes to include when generating a
@@ -44,7 +44,7 @@ public class SessionUtils2 {
      *
      * @return a new session id
      */
-    public static synchronized String generateSessionId() {
+    public static synchronized String generateID() {
         // Generate a byte array containing a session identifier
         byte bytes[] = new byte[SESSION_ID_BYTES];
 
@@ -69,15 +69,6 @@ public class SessionUtils2 {
             }
         }
         return (result.toString());
-    }
-
-    /**
-     * Generate and return a new session identifier.
-     *
-     * @return a new session.
-     */
-    public static synchronized Long generateSession() {
-        return new Long(getRandom().nextLong());
     }
 
     /**

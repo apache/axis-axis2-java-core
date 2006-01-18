@@ -21,6 +21,7 @@ import org.apache.axis2.om.OMText;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
+import javax.activation.DataHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -67,9 +68,10 @@ public class MIMEOutputUtils {
     public static MimeBodyPart createMimeBodyPart(OMText node)
             throws MessagingException {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setDataHandler((javax.activation.DataHandler)node.getDataHandler());
+        final DataHandler dataHandler = (DataHandler) node.getDataHandler();
+        mimeBodyPart.setDataHandler(dataHandler);
         mimeBodyPart.addHeader("content-id", "<"+node.getContentID()+">");
-        mimeBodyPart.addHeader("content-type", "application/octet-stream");
+        mimeBodyPart.addHeader("content-type", dataHandler.getContentType());
         mimeBodyPart.addHeader("content-transfer-encoding", "binary");
         return mimeBodyPart;
 
