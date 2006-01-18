@@ -35,7 +35,7 @@ public class SameServiceAddingTest extends TestCase {
 
     public void testServiceGroup() throws AxisFault {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
+        ar = builder.createConfigurationContextFromFileSystem(repo,null).getAxisConfiguration();
         AxisService servie = ar.getService("serevice1");
         assertNotNull(servie);
         servie = ar.getService("serevice4");

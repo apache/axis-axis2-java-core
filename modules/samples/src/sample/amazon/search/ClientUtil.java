@@ -118,7 +118,7 @@ public class ClientUtil {
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = null;
         try {
-            configContext = fac.createConfigurationContextFromFileSystem("Search");
+            configContext = fac.createConfigurationContextFromFileSystem("Search","Search/axis2.xml");
         } catch (DeploymentException e) {
             e.printStackTrace();
         }

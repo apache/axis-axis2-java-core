@@ -49,7 +49,7 @@ public class MailServer {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
 
-            configurationContext = builder.createConfigurationContextFromFileSystem(dir);
+            configurationContext = builder.createConfigurationContextFromFileSystem(dir, null);
         } catch (Exception e) {
             log.error(e);
         }

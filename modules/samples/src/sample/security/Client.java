@@ -18,12 +18,11 @@ package sample.security;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -44,10 +43,11 @@ public class Client {
             // Get the repository location from the args
             String repo = args[0];
             String port = args[1];
+            //todo  : third argumnet should be axis2.xml
 
             OMElement payload = getEchoElement();
             ConfigurationContextFactory fac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = fac.createConfigurationContextFromFileSystem(repo);
+            ConfigurationContext configContext = fac.createConfigurationContextFromFileSystem(repo, repo + "/axis2.xml");
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
             serviceClient.setOptions(options);

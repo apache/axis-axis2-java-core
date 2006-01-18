@@ -61,7 +61,7 @@ public class TCPServer extends TransportListener implements Runnable {
         try {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
 
-            this.configContext = erfac.createConfigurationContextFromFileSystem(dir);
+            this.configContext = erfac.createConfigurationContextFromFileSystem(dir, null);
             Thread.sleep(3000);
             serversocket = new ServerSocket(port);
         } catch (DeploymentException e1) {

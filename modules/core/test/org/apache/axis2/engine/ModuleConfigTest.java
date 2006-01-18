@@ -35,13 +35,14 @@ import java.io.InputStream;
 public class ModuleConfigTest extends TestCase {
 
     AxisConfiguration ar;
+    String axis2xml = "./test-resources/deployment/moduleConfig/axis2.xml";
     String repo = "./test-resources/deployment/moduleConfig";
 
 
     public void testModuleConfigAtAxisConfig() {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
+            ar = builder.createConfigurationContextFromFileSystem(null, axis2xml).getAxisConfiguration();
             ModuleConfiguration moduleConfiguration =
                     ar.getModuleConfig(new QName("testModule"));
             assertNotNull(moduleConfiguration);
@@ -62,7 +63,7 @@ public class ModuleConfigTest extends TestCase {
     public void testModuleConfigAtService() {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
+            ar = builder.createConfigurationContextFromFileSystem(null, axis2xml).getAxisConfiguration();
 
 
             AxisService service = new AxisService();

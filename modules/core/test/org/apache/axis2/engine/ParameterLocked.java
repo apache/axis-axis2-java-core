@@ -29,129 +29,129 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
 public class ParameterLocked extends TestCase {
 
     AxisConfiguration ar;
-    String repo ="./test-resources/deployment/ParaLockedRepo";
-
+    String repo = "./test-resources/deployment/ParaLockedRepo";
 
 
     protected void setUp() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
+        ar = builder.createConfigurationContextFromFileSystem(null, repo + "/axis2.xml").getAxisConfiguration();
     }
 
-    public void testOveride_Non_locked_Para_Service(){
+    public void testOveride_Non_locked_Para_Service() {
         try {
             assertNotNull(ar);
             AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service_overide_non_locked_para.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);
             sbuilder.populateService(sbuilder.buildOM());
             assertNotNull(sbuilder);
 
-        }catch (FileNotFoundException e) {
-            fail("This can not fail with this FileNotFoundException " + e) ;
+        } catch (FileNotFoundException e) {
+            fail("This can not fail with this FileNotFoundException " + e);
         } catch (DeploymentException e) {
-            fail("This can not fail with this DeploymentException " + e) ;
+            fail("This can not fail with this DeploymentException " + e);
         } catch (AxisFault axisFault) {
-            fail("This can not fail with this AxisFault " + axisFault) ;
+            fail("This can not fail with this AxisFault " + axisFault);
         } catch (XMLStreamException e) {
-            fail("This can not fail with this AxisFault " + e) ;
+            fail("This can not fail with this AxisFault " + e);
         }
     }
 
-     public void testOveride_locked_Para_Service(){
+    public void testOveride_locked_Para_Service() {
         try {
             assertNotNull(ar);
             AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service_overide_locked_para.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);
             sbuilder.populateService(sbuilder.buildOM());
             assertNotNull(sbuilder);
-            fail("Parmter is locked can not overide" ) ;
-        }catch (FileNotFoundException e) {
-            fail("This can not fail with this FileNotFoundException " + e) ;
+            fail("Parmter is locked can not overide");
+        } catch (FileNotFoundException e) {
+            fail("This can not fail with this FileNotFoundException " + e);
         } catch (DeploymentException e) {
 
         } catch (AxisFault axisFault) {
-            fail("This can not fail with this AxisFault " + axisFault) ;
+            fail("This can not fail with this AxisFault " + axisFault);
         } catch (XMLStreamException e) {
-            fail("This can not fail with this AxisFault " + e) ;
+            fail("This can not fail with this AxisFault " + e);
         }
-     }
+    }
 
-    public void testOveride_locked_Para_Operation(){
+    public void testOveride_locked_Para_Operation() {
         try {
             assertNotNull(ar);
             AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/op_overide_global_para.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);
             sbuilder.populateService(sbuilder.buildOM());
             assertNotNull(sbuilder);
-            fail("Parmter is locked can not overide" ) ;
-        }catch (FileNotFoundException e) {
-            fail("This can not fail with this FileNotFoundException " + e) ;
+            fail("Parmter is locked can not overide");
+        } catch (FileNotFoundException e) {
+            fail("This can not fail with this FileNotFoundException " + e);
         } catch (DeploymentException e) {
 
         } catch (AxisFault axisFault) {
-            fail("This can not fail with this AxisFault " + axisFault) ;
+            fail("This can not fail with this AxisFault " + axisFault);
         } catch (XMLStreamException e) {
-            fail("This can not fail with this AxisFault " + e) ;
+            fail("This can not fail with this AxisFault " + e);
         }
     }
 
-    public void testOveride_Service_locked_Para_Operation(){
+    public void testOveride_Service_locked_Para_Operation() {
         try {
             assertNotNull(ar);
             AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/Op_overide_Service_para.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);
             sbuilder.populateService(sbuilder.buildOM());
-            fail("Parmter is locked can not overide" ) ;
-        }catch (FileNotFoundException e) {
-            fail("This can not fail with this FileNotFoundException " + e) ;
+            fail("Parmter is locked can not overide");
+        } catch (FileNotFoundException e) {
+            fail("This can not fail with this FileNotFoundException " + e);
         } catch (DeploymentException e) {
 
         } catch (AxisFault axisFault) {
-            fail("This can not fail with this AxisFault " + axisFault) ;
+            fail("This can not fail with this AxisFault " + axisFault);
         } catch (XMLStreamException e) {
-            fail("This can not fail with this AxisFault " + e) ;
+            fail("This can not fail with this AxisFault " + e);
         }
     }
 
-     public void testOveride_Non_locked_Para_Module(){
+    public void testOveride_Non_locked_Para_Module() {
         try {
             assertNotNull(ar);
             ModuleDescription module = new ModuleDescription();
             module.setParent(ar);
             InputStream in = new FileInputStream(repo + "/module_overide_global_non_locked_para.xml");
-            ModuleBuilder mbuilder = new ModuleBuilder(in,module,ar);
+            ModuleBuilder mbuilder = new ModuleBuilder(in, module, ar);
             mbuilder.populateModule();
-        }catch (FileNotFoundException e) {
-            fail("This can not fail with this FileNotFoundException " + e) ;
+        } catch (FileNotFoundException e) {
+            fail("This can not fail with this FileNotFoundException " + e);
         } catch (DeploymentException e) {
 
         }
-     }
+    }
 
-     public void testOveride_locked_Para_Module(){
+    public void testOveride_locked_Para_Module() {
         try {
             assertNotNull(ar);
             ModuleDescription module = new ModuleDescription();
             module.setParent(ar);
             InputStream in = new FileInputStream(repo + "/module_overide_locked_para.xml");
-            ModuleBuilder mbuilder = new ModuleBuilder(in,module,ar);
+            ModuleBuilder mbuilder = new ModuleBuilder(in, module, ar);
             mbuilder.populateModule();
-            fail("Parmter is locked can not overide" ) ;
-        }catch (FileNotFoundException e) {
-            fail("This can not fail with this FileNotFoundException " + e) ;
+            fail("Parmter is locked can not overide");
+        } catch (FileNotFoundException e) {
+            fail("This can not fail with this FileNotFoundException " + e);
         } catch (DeploymentException e) {
 
         }
-     }
+    }
 }

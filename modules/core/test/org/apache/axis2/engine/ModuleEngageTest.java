@@ -38,7 +38,7 @@ public class ModuleEngageTest extends TestCase {
         String filename = "./target/test-resources/deployment";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ac =
-                builder.createConfigurationContextFromFileSystem(filename)
+                builder.createConfigurationContextFromFileSystem(filename,null)
                 .getAxisConfiguration();
         ModuleDescription module = ac.getModule(new QName("module1"));
         assertNotNull(module);

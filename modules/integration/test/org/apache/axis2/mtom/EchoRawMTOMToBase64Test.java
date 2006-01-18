@@ -122,7 +122,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
 
@@ -151,7 +151,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
+                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(clientOptions);
 

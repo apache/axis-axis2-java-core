@@ -77,6 +77,7 @@ public interface DeploymentConstants {
 
     String PROPERTY_TEMP_DIR = "java.io.tmpdir";
     String DIRECTORY_MODULES = "modules";
+    String DIRECTORY_CONF = "conf";
     String DIRECTORY_AXIS2_HOME = ".axis2";
     String RESOURCE_MODULES = "modules/";
     String SUFFIX_MAR = ".mar";
@@ -86,16 +87,17 @@ public interface DeploymentConstants {
      * Resource that contains the configuration.
      */
     String AXIS2_CONFIGURATION_RESOURCE =
-            "org/apache/axis2/deployment/axis2.xml";
+            "org/apache/axis2/deployment/default_axis2.xml";
+    String AXIS2_REPO = "repository";
     String AXIS2_CONFIGURATION_XML = "axis2.xml";
     String DIRECTORY_SERVICES = "services";
     String BOOLEAN_TRUE = "true";
     String BOOLEAN_FALSE = "false";
     char SEPARATOR_DOT = '.';
     char SEPARATOR_COLON = ':';
-    
+
     String POLICY_NS_URI = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     String TAG_POLICY = "Policy";
     String TAG_POLICY_REF = "PolicyReference";
-    
+
 }

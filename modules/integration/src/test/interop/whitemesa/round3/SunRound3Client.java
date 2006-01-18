@@ -56,7 +56,7 @@ public class SunRound3Client {
 
             ConfigurationContext configContext =
                     new ConfigurationContextFactory().createConfigurationContextFromFileSystem(
-                            "target/test-resources/integrationRepo");
+                            "target/test-resources/integrationRepo",null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             serviceClient.setOptions(options);
             OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);

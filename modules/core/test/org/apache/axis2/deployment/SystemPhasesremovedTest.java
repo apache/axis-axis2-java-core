@@ -33,7 +33,7 @@ public class SystemPhasesremovedTest extends TestCase {
             String filename = "./test-resources/deployment/SystemPhaseRemove";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             er =
-                    builder.createConfigurationContextFromFileSystem(filename)
+                    builder.createConfigurationContextFromFileSystem(filename,filename + "/axis2.xml")
                     .getAxisConfiguration();
             fail(
                     "this must failed gracefully with DeploymentException \"Invalid System predefined " +

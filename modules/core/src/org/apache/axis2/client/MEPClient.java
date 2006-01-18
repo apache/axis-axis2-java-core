@@ -19,11 +19,7 @@ package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -32,11 +28,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
@@ -45,8 +37,9 @@ import java.util.List;
 
 /**
  * This is the super class for all MEPClients.
- * @deprecated
+ *
  * @see OperationClient
+ * @deprecated
  */
 public abstract class MEPClient {
     private static final String ANONYMOUS_SERVICE = "AnonymousService";
@@ -94,7 +87,7 @@ public abstract class MEPClient {
      */
     public void addSOAPHeader(QName soapHeaderQName, String soapHeaderText) {
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(soapHeaderQName,
-                                                                               null);
+                null);
 
         omElement.setText(soapHeaderText);
 
@@ -107,7 +100,7 @@ public abstract class MEPClient {
 
     protected void addUserAddedSOAPHeaders(MessageContext msgCtx, Options options) {
         if ((soapHeaderList != null) && (soapHeaderList.size() > 0)
-            && (msgCtx.getEnvelope() != null)) {
+                && (msgCtx.getEnvelope() != null)) {
             SOAPFactory soapFactory;
             SOAPHeader header = msgCtx.getEnvelope().getHeader();
 
@@ -136,7 +129,7 @@ public abstract class MEPClient {
      */
     protected void assumeServiceContext(String clientHome) throws AxisFault {
         ConfigurationContext configurationContext =
-                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientHome);
+                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientHome, null);
         AxisService axisService =
                 configurationContext.getAxisConfiguration().getService(ANONYMOUS_SERVICE);
 
@@ -148,7 +141,7 @@ public abstract class MEPClient {
 
         configurationContext.getAxisConfiguration().addService(axisService);
         serviceContext = new ServiceGroupContext(configurationContext,
-                                                 (AxisServiceGroup) axisService.getParent()).getServiceContext(axisService);
+                (AxisServiceGroup) axisService.getParent()).getServiceContext(axisService);
     }
 
     /**
@@ -173,7 +166,7 @@ public abstract class MEPClient {
         if (clientOptions == null) {
             throw new AxisFault(
                     "Can not proceed without options being set for invocation. Set the"
-                    + "properties for this invocation via MEPClient.setOptions(Options) first.");
+                            + "properties for this invocation via MEPClient.setOptions(Options) first.");
         }
 
         String soapVersionURI = clientOptions.getSoapVersionURI();
@@ -286,7 +279,7 @@ public abstract class MEPClient {
 
             if (this.clientOptions.getTranportOut() == null) {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
-                                                        senderTrasportProtocol));
+                        senderTrasportProtocol));
             }
         }
     }
@@ -303,10 +296,10 @@ public abstract class MEPClient {
         // I should check that is
         // available either from the message context or from the options.
         if (((msgCtx == null) || (msgCtx.getTo() == null))
-            && ((clientOptions == null) || (clientOptions.getTo() == null))) {
+                && ((clientOptions == null) || (clientOptions.getTo() == null))) {
             throw new AxisFault(
                     "Can not proceed without options being set for invocation. Set the"
-                    + "properties for this invocation via MEPClient.setOptions(Options) first.");
+                            + "properties for this invocation via MEPClient.setOptions(Options) first.");
         }
 
         if (axisop == null) {
@@ -316,7 +309,7 @@ public abstract class MEPClient {
         // make sure operation is type right MEP
         if (mep.equals(axisop.getMessageExchangePattern())) {
             throw new AxisFault(Messages.getMessage("mepClientSupportOnly", mep,
-                                                    axisop.getMessageExchangePattern()));
+                    axisop.getMessageExchangePattern()));
         }
 
         // if operation not alrady added, add it

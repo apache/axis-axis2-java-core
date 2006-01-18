@@ -70,7 +70,6 @@ public class MessageWithServerTest extends TestCase {
         service.addOperation(axisOperation);
 
         UtilServer.deployService(service);
-        UtilServer.start();
     }
 
     protected void tearDown() throws Exception {

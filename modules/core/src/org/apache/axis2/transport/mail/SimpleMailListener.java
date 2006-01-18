@@ -86,7 +86,14 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
 
-            configurationContext = builder.createConfigurationContextFromFileSystem(dir);
+            File repo = new File(dir);
+            if (repo.exists()) {
+                File axis2xml = new File(repo, "axis2.xml");
+                this.configurationContext = builder.createConfigurationContextFromFileSystem(
+                        dir, axis2xml.getName());
+            } else {
+                throw new Exception("repository not found");
+            }
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -141,14 +148,21 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         if (args.length != 1) {
             log.info("java SimpleMailListener <repository>");
         } else {
+            String dir = args[0];
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            ConfigurationContext configurationContext =
-                    builder.createConfigurationContextFromFileSystem(args[0]);
+            ConfigurationContext configurationContext;
+            File repo = new File(dir);
+            if (repo.exists()) {
+                File axis2xml = new File(repo, "axis2.xml");
+                configurationContext = builder.createConfigurationContextFromFileSystem(
+                        dir, axis2xml.getName());
+            } else {
+                throw new AxisFault("repository not found");
+            }
             SimpleMailListener sas = new SimpleMailListener();
             TransportInDescription transportIn =
                     configurationContext.getAxisConfiguration().getTransportIn(
                             new QName(Constants.TRANSPORT_MAIL));
-
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
                 log.info("Starting the SimpleMailListener with repository "

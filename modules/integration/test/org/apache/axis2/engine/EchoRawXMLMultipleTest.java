@@ -97,7 +97,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             };
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
+                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             options.setTo(targetEPR);
@@ -127,7 +127,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
+                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
 
         for (int i = 0; i < 5; i++) {
@@ -176,7 +176,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
+                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 
@@ -198,7 +198,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
+                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
 
             sender.setOptions(options);

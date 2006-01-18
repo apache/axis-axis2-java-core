@@ -41,7 +41,8 @@ public class ClientSideModuleEngagement {
         //then modify the axis2.xml that is generating there according to
         //phases that being included in the "module.xml"
         ConfigurationContext configContext = new ConfigurationContextFactory().
-                createConfigurationContextFromFileSystem(repository.getAbsolutePath());
+                createConfigurationContextFromFileSystem(repository.getAbsolutePath(),
+                        repository.getName() + "/axis2.xml");
         ServiceClient serviceClient = new ServiceClient(configContext, null);
         serviceClient.engageModule(new QName("LoggingModule"));
 //        call.engageModule(new QName("LoggingModule"));

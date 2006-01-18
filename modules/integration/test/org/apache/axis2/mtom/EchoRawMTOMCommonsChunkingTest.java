@@ -28,11 +28,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.util.Utils;
@@ -102,7 +98,8 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository");
+                factory.createConfigurationContextFromFileSystem(
+                        Constants.TESTING_PATH + "commons-http-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);

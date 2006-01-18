@@ -23,7 +23,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
@@ -42,11 +41,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -587,8 +582,8 @@ public class AxisService extends AxisDescription {
     public void setUseDefaultChains(boolean useDefaultChains) {
         this.useDefaultChains = useDefaultChains;
     }
-    
+
     public Object getKey() {
-    	return getName();
+        return getName();
     }
 }

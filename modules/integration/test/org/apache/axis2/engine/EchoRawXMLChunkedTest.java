@@ -106,7 +106,7 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(CLIENT_HOME);
+                factory.createConfigurationContextFromFileSystem(CLIENT_HOME,null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
         clientOptions.setTo(targetEPR);

@@ -89,7 +89,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository");
+                    factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository",null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

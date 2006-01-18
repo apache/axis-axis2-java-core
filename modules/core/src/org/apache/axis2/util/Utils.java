@@ -22,22 +22,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -249,8 +235,12 @@ public class Utils {
             throw new Exception("repository directory " + file.getAbsolutePath()
                     + " does not exists");
         }
-
-        return erfac.createConfigurationContextFromFileSystem(file.getAbsolutePath());
+        File axis2xml = new File(file, "axis.xml");
+        String axis2xmlString = null;
+        if(axis2xml.exists()){
+            axis2xmlString = axis2xml.getName();
+        }
+        return erfac.createConfigurationContextFromFileSystem(file.getAbsolutePath(),axis2xmlString);
     }
 
     public static String getParameterValue(Parameter param) {

@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 
@@ -27,21 +28,25 @@ public class FileSystemConfigurator implements AxisConfigurator {
     /**
      * To check whether need to create a service side or client side
      */
-    private boolean isServer;
+    private String axis2xml;
     private String repoLocation;
 
     /**
      * Load an AxisConfiguration from the repository directory specified
-     * 
+     *
      * @param repoLocation
-     * @param isServer
+     * @param axis2xml
      */
-    public FileSystemConfigurator(String repoLocation, boolean isServer) {
+    public FileSystemConfigurator(String repoLocation, String axis2xml) {
         if (repoLocation == null) {
-            repoLocation = AxisConfiguration.getAxis2HomeDirectory();
+            //checking wether user has set the system property
+            repoLocation = System.getProperty(Constants.HOME_AXIS2);
+        }
+        if (axis2xml == null) {
+            axis2xml  = System.getProperty(Constants.CONF_AXIS2);
         }
         this.repoLocation = repoLocation;
-        this.isServer = isServer;
+        this.axis2xml = axis2xml;
     }
 
     /**
@@ -51,11 +56,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
      * @throws AxisFault
      */
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
-        if (isServer) {
-            DeploymentEngine deploymentEngine = new DeploymentEngine(repoLocation);
-            return deploymentEngine.load();
-        } else {
-            return new DeploymentEngine().loadClient(repoLocation);
-        }
+        return new DeploymentEngine(repoLocation, axis2xml).load();
+
     }
 }

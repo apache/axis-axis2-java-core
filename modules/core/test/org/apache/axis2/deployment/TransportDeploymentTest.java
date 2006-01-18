@@ -39,7 +39,7 @@ public class TransportDeploymentTest extends AbstractTestCase {
             DeploymentException,
             XMLStreamException {
         DeploymentEngine engine = new DeploymentEngine(
-                testResourceDir + "/deployment", "server-transport.xml");
+                testResourceDir + "/deployment", testResourceDir + "/deployment/server-transport.xml");
         engine.load();
         AxisConfiguration er = engine.getAxisConfig();
         TransportInDescription transport = er.getTransportIn(new QName("http"));

@@ -88,8 +88,9 @@ public class EchoRawRuntimeProxyTest extends TestCase {
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
-        ServiceClient sender = new ServiceClient(configContext,null);
+                factory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
         OMElement result = sender.sendReceive(payload);

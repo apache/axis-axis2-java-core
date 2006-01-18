@@ -45,8 +45,8 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -2085869393709833372L;
-	private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
+    private static final long serialVersionUID = -2085869393709833372L;
+    private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
     private ConfigurationContext configContext;
     private AxisConfiguration axisConfiguration;
@@ -208,7 +208,7 @@ public class AxisServlet extends HttpServlet {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = erfac.createConfigurationContextFromFileSystem(repoDir);
+            ConfigurationContext configContext = erfac.createConfigurationContextFromFileSystem(repoDir, null);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
             configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
             return configContext;

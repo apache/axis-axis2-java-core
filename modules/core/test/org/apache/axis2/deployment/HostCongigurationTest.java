@@ -24,18 +24,17 @@ import org.apache.axis2.util.HostConfiguration;
 
 public class HostCongigurationTest extends TestCase {
     AxisConfiguration ar;
-    String repo ="./test-resources/deployment/hostConfigrepo";
-
+    String xml = "./test-resources/deployment/hostConfigrepo/axis2.xml";
 
 
     protected void setUp() throws Exception {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.createConfigurationContextFromFileSystem(repo).getAxisConfiguration();
+        ar = builder.createConfigurationContextFromFileSystem(null, xml).getAxisConfiguration();
     }
 
     public void testHostConfig() throws AxisFault {
-        HostConfiguration  hc = ar.getHostConfiguration();
+        HostConfiguration hc = ar.getHostConfiguration();
         assertNotNull(hc);
-        assertEquals(5555,hc.getPort());
+        assertEquals(5555, hc.getPort());
     }
 }

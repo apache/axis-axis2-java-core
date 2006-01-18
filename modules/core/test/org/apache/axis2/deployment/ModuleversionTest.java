@@ -30,9 +30,9 @@ import java.util.Iterator;
 public class ModuleversionTest extends TestCase {
 
     public void testDefautModuleVersion() throws AxisFault {
-        String filename = "./test-resources/deployment/moduleVersion/Test1";
+        String filename = "./test-resources/deployment/moduleVersion/Test1/axis2.xml";
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        AxisConfiguration ac = builder.createConfigurationContextFromFileSystem(filename)
+        AxisConfiguration ac = builder.createConfigurationContextFromFileSystem(null,filename)
                 .getAxisConfiguration();
         assertNotNull(ac);
         assertEquals(ac.getDefaultModuleVersion("abc"), "1.23");

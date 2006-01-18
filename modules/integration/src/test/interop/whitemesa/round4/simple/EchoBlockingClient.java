@@ -44,8 +44,8 @@ public class EchoBlockingClient {
 
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo");
-            ServiceClient sender = new ServiceClient(configContext, null); 
+                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+            ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             options.setTo(targetEPR);
             firstchild = sender.sendReceive(util.getEchoOMElement());

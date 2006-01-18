@@ -20,15 +20,15 @@ import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
 
-public class AddingObserverTest extends TestCase{
+public class AddingObserverTest extends TestCase {
 
-     AxisConfiguration er;
+    AxisConfiguration er;
 
-    public void testAddingObservs() throws Exception{
+    public void testAddingObservs() throws Exception {
         try {
             String filename = "./test-resources/deployment/ConfigWithObservers";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er =  builder.createConfigurationContextFromFileSystem(filename).getAxisConfiguration();
+            er = builder.createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml").getAxisConfiguration();
             assertNotNull(er);
         } catch (DeploymentException e) {
             throw new DeploymentException(e);

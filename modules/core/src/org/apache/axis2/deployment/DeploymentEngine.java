@@ -28,12 +28,7 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
@@ -44,19 +39,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class DeploymentEngine implements DeploymentConstants {
 
@@ -64,6 +48,7 @@ public class DeploymentEngine implements DeploymentConstants {
     private boolean hotUpdate = true;    // to do hot update or not
     private boolean hotDeployment = true;    // to do hot deployment or not
     public String axis2repository = null;
+    private boolean useDefault = false;
 
     /**
      * Stores all the web Services to deploy.
@@ -88,7 +73,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private AxisConfiguration axisConfig;
     private ArchiveFileData currentArchiveFile;
-    private String engineConfigName;
+    private String axis2_xml_file_name;
 
 
     /**
@@ -97,25 +82,34 @@ public class DeploymentEngine implements DeploymentConstants {
     public DeploymentEngine() {
     }
 
-    /**
-     * This constructor is used by Engine to start the deployment module.
-     *
-     * @param repositoryName is the path to which Repository Listener should
-     *                       listen to.
-     */
-    public DeploymentEngine(String repositoryName) throws DeploymentException {
-        this(repositoryName, AXIS2_CONFIGURATION_XML);
-    }
-
     public DeploymentEngine(String repositoryName, String xmlFile)
             throws DeploymentException {
-        if ((repositoryName == null) || "".equals(repositoryName.trim())) {
-            throw new DeploymentException(
-                    Messages.getMessage(DeploymentErrorMsgs.REPOSITORY_CANNOT_BE_NULL));
+        if ((repositoryName == null || "".equals(repositoryName.trim())) &&
+                (xmlFile == null || "".equals(xmlFile.trim()))) {
+            axis2repository = repositoryName;
+            axis2_xml_file_name = xmlFile;
+
+            useDefault = true;
+            axis2repository = null;
+            log.info("nither repository location nor aixs2.xml are given ," +
+                    " so system will continue using default configuration (using default_axis2.xml)");
+        } else if (!(repositoryName == null || "".equals(repositoryName.trim()))) {
+            axis2repository = repositoryName.trim();
+            File axisRepo = new File(axis2repository);
+            if (!axisRepo.exists()) {
+                throw new DeploymentException("System can not find the given repository location: "
+                        + axis2repository);
+            }
+            if (xmlFile == null || "".equals(xmlFile.trim())) {
+                axis2_xml_file_name = null;
+            } else {
+                axis2_xml_file_name = xmlFile;
+            }
+            prepareRepository(repositoryName);
+        } else if (!(xmlFile == null || "".equals(xmlFile.trim()))) {
+            axis2_xml_file_name = xmlFile;
+            axis2repository = null;
         }
-        axis2repository = repositoryName;
-        prepareRepository(repositoryName, xmlFile);
-        this.engineConfigName = repositoryName + '/' + xmlFile;
     }
 
     /**
@@ -269,15 +263,13 @@ public class DeploymentEngine implements DeploymentConstants {
             this.setPhasesinfo(config.getPhasesInfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, TYPE_MODULE);
             axismodule = new ModuleDescription();
-            axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
-
             ArchiveReader archiveReader = new ArchiveReader();
-            ClassLoader moduleClassLoader = config.getModuleClassLoader();
 
-            currentArchiveFile.setClassLoader(false, moduleClassLoader);
+            currentArchiveFile.setClassLoader(false, config.getModuleClassLoader());
+            axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
             archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,
                     false, axisConfig);
-
+            ClassLoader moduleClassLoader = axismodule.getModuleClassLoader();
             Flow inflow = axismodule.getInFlow();
 
             if (inflow != null) {
@@ -348,15 +340,6 @@ public class DeploymentEngine implements DeploymentConstants {
         }
 
         return axisService;
-    }
-
-    private void checkClientHome(String repositoryName) throws DeploymentException {
-        prepareRepository(repositoryName, AXIS2_CONFIGURATION_XML);
-        this.engineConfigName = repositoryName + '/' + AXIS2_CONFIGURATION_XML;
-    }
-
-    private AxisConfiguration createEngineConfig() {
-        return new AxisConfiguration();
     }
 
     public void doDeploy() {
@@ -504,19 +487,26 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public AxisConfiguration load() throws DeploymentException {
-        if (engineConfigName == null) {
-            throw new DeploymentException(
-                    Messages.getMessage(DeploymentErrorMsgs.PATH_TO_CONFIG_CANNOT_BE_NULL));
-        }
-
-        File tempfile = new File(engineConfigName);
-        RepositoryListenerImpl repoListener;
-
-        try {
-            InputStream in = new FileInputStream(tempfile);
-
-            axisConfig = createEngineConfig();
-
+        axisConfig = new AxisConfiguration();
+        if (useDefault && axis2repository == null) {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
+            AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
+            builder.populateConfig();
+            axisConfig.setPhasesinfo(phasesinfo);
+            return axisConfig;
+        } else if (axis2repository != null) {
+            InputStream in;
+            if (useDefault) {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
+            } else {
+                try {
+                    in = new FileInputStream(axis2_xml_file_name);
+                } catch (FileNotFoundException e) {
+                    throw new DeploymentException(e);
+                }
+            }
             AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
 
             builder.populateConfig();
@@ -524,95 +514,60 @@ public class DeploymentEngine implements DeploymentConstants {
 
             // setting the CLs
             setClassLoaders(axis2repository);
-        } catch (FileNotFoundException e) {
-            throw new DeploymentException(e);
-        }
-
-        setDeploymentFeatures();
-        repoListener = new RepositoryListenerImpl(axis2repository, this);
-
-        try {
-            axisConfig.setRepository(axis2repository);
-            validateSystemPredefinedPhases();
-            engageModules();
-        } catch (AxisFault axisFault) {
-            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
-                    axisFault.getMessage()));
-
-            throw new DeploymentException(axisFault);
-        }
-
-        repoListener.checkServices();
-
-        if (hotDeployment) {
-            startSearch(repoListener);
-        }
-
-        return axisConfig;
-    }
-
-    public AxisConfiguration loadClient(String clientHome) throws DeploymentException {
-        InputStream in;
-
-        axis2repository = clientHome;
-
-        boolean isRepositoryExist = false;
-        RepositoryListenerImpl repoListener = null;
-
-        if (!((clientHome == null) || "".equals(clientHome.trim()))) {
-            checkClientHome(clientHome);
-            isRepositoryExist = true;
-
+            setDeploymentFeatures();
+            RepositoryListener repoListener = new RepositoryListenerImpl(axis2repository, this);
             try {
-                File tempfile = new File(engineConfigName);
-
-                in = new FileInputStream(tempfile);
+                axisConfig.setRepository(axis2repository);
+                if (!useDefault) {
+                    validateSystemPredefinedPhases();
+                    engageModules();
+                }
+            } catch (AxisFault axisFault) {
+                log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
+                        axisFault.getMessage()));
+                throw new DeploymentException(axisFault);
+            }
+            repoListener.checkServices();
+            if (hotDeployment) {
+                startSearch(repoListener);
+            }
+            return axisConfig;
+        } else {
+            InputStream in;
+            try {
+                in = new FileInputStream(axis2_xml_file_name);
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
             }
-        } else {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-            in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
-
-            if (in == null) {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
+            AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
+            builder.populateConfig();
+            axisConfig.setPhasesinfo(phasesinfo);
+            Parameter axis2repoPara = axisConfig.getParameter(AXIS2_REPO);
+            if (axis2repoPara != null) {
+                axis2repository = (String) axis2repoPara.getValue();
+                setClassLoaders(axis2repository);
+                setDeploymentFeatures();
+                RepositoryListener repoListener = new RepositoryListenerImpl(axis2repository, this);
+                try {
+                    axisConfig.setRepository(axis2repository);
+                    validateSystemPredefinedPhases();
+                    engageModules();
+                } catch (AxisFault axisFault) {
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
+                            axisFault.getMessage()));
+                    throw new DeploymentException(axisFault);
+                }
+                repoListener.checkServices();
+                if (hotDeployment) {
+                    startSearch(repoListener);
+                }
+                return axisConfig;
+            } else {
+                log.info("no repository location found in axis2.xml");
+                validateSystemPredefinedPhases();
+                return axisConfig;
             }
         }
-
-        axisConfig = createEngineConfig();
-
-        AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
-
-        axisConfig.setPhasesinfo(phasesinfo);
-        builder.populateConfig();
-
-        if (isRepositoryExist) {
-            hotDeployment = false;
-            hotUpdate = false;
-
-            // setting CLs
-            setClassLoaders(axis2repository);
-            repoListener = new RepositoryListenerImpl(axis2repository, this);
-        }
-
-        try {
-            axisConfig.setRepository(axis2repository);
-            validateSystemPredefinedPhases();
-            engageModules();
-        } catch (AxisFault axisFault) {
-            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
-                    axisFault.getMessage()));
-
-            throw new DeploymentException(axisFault);
-        }
-
-        if (repoListener != null) {
-            repoListener.checkServices();
-        }
-
-        return axisConfig;
     }
 
     /**
@@ -626,27 +581,23 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void unDeploy() {
         String serviceName = "";
-
         try {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
-
                     if (wsInfo.getType() == TYPE_SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFileName());
-
+                        //TODO : need to remove Servicegroup  from configuration : AXIS2- 390
                         // todo fix me deepal
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                                 wsInfo.getFileName()));
                     }
-
                     axisConfig.getFaultyServices().remove(serviceName);
                 }
             }
         } catch (Exception e) {
             log.info(e);
         }
-
         wsToUnDeploy.clear();
     }
 
@@ -803,64 +754,38 @@ public class DeploymentEngine implements DeploymentConstants {
      * Creates directories for modules/services, copies configuration xml from class loader if necessary
      *
      * @param repositoryName
-     * @param xmlFile
-     * @throws DeploymentException
      */
-    private void prepareRepository(String repositoryName, String xmlFile) throws DeploymentException {
+
+    private void prepareRepository(String repositoryName) {
         File repository = new File(repositoryName);
 
-        if (!repository.exists()) {
-            repository.mkdirs();
-
-            File services = new File(repository, DIRECTORY_SERVICES);
-            File modules = new File(repository, DIRECTORY_MODULES);
-
-            modules.mkdirs();
+        File services = new File(repository, DIRECTORY_SERVICES);
+        if (!services.exists()) {
             services.mkdirs();
+            log.info("no services directory found , new one created");
+        }
+        File modules = new File(repository, DIRECTORY_MODULES);
+        if (!modules.exists()) {
+            modules.mkdirs();
+            log.info("no modules directory found , new one created");
         }
 
-        File serverConf = new File(repository, xmlFile);
-
-        if (!serverConf.exists()) {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
-            FileOutputStream out = null;
-
-            if (in != null) {
-                try {
-                    serverConf.createNewFile();
-                    out = new FileOutputStream(serverConf);
-
-                    int BUFSIZE = 512;    // since only a test file going to load , the size has selected
-                    byte[] buf = new byte[BUFSIZE];
-                    int read;
-
-                    while ((read = in.read(buf)) > 0) {
-                        out.write(buf, 0, read);
-                    }
-
-                    in.close();
-                    out.close();
-                } catch (IOException e) {
-                    throw new DeploymentException(e);
-                } finally {
-                    if (out != null) {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        // ignore
-                    }
-                }
+        if (axis2_xml_file_name == null) {
+            File confdir = new File(repository, DIRECTORY_CONF);
+            if (!confdir.exists()) {
+                log.info("conf directory not found , and no axis2.xml file is given ! " +
+                        "System will continue using default_axis2.xml");
+                useDefault = true;
             } else {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
+                File axis2xml = new File(confdir, "axis2.xml");
+                if (!axis2xml.exists()) {
+                    useDefault = true;
+                    log.info("axis2.xml file not found in conf directory , " +
+                            "system will continue using default_axis2.xml");
+                } else {
+                    useDefault = false;
+                    axis2_xml_file_name = axis2xml.getAbsolutePath();
+                }
             }
         }
     }

@@ -76,6 +76,7 @@ public class Constants {
     public static final String SCOPE_REQUEST = "request";
 
     public static final String HOME_AXIS2 = "axis2.home";
+    public static final String CONF_AXIS2 = "axis2.conf";
     public static final String HOME_USER = "user.home";
 
     /**

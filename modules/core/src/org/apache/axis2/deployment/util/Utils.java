@@ -96,37 +96,26 @@ public class Utils {
         if (file != null) {
             try {
                 ArrayList urls = new ArrayList();
-
                 urls.add(file.toURL());
-
                 // lower case directory name
                 File libfiles = new File(file, "lib");
-
                 if (libfiles.exists()) {
                     urls.add(libfiles.toURL());
-
                     File jarfiles[] = libfiles.listFiles();
-
                     for (int i = 0; i < jarfiles.length; i++) {
                         File jarfile = jarfiles[i];
-
                         if (jarfile.getName().endsWith(".jar")) {
                             urls.add(jarfile.toURL());
                         }
                     }
                 }
-
                 // upper case directory name
                 libfiles = new File(file, "Lib");
-
                 if (libfiles.exists()) {
                     urls.add(libfiles.toURL());
-
                     File jarfiles[] = libfiles.listFiles();
-
                     for (int i = 0; i < jarfiles.length; i++) {
                         File jarfile = jarfiles[i];
-
                         if (jarfile.getName().endsWith(".jar")) {
                             urls.add(jarfile.toURL());
                         }
@@ -134,13 +123,10 @@ public class Utils {
                 }
 
                 URL urllist[] = new URL[urls.size()];
-
                 for (int i = 0; i < urls.size(); i++) {
                     urllist[i] = (URL) urls.get(i);
                 }
-
                 classLoader = new URLClassLoader(urllist, parent);
-
                 return classLoader;
             } catch (MalformedURLException e) {
                 throw new DeploymentException(e);

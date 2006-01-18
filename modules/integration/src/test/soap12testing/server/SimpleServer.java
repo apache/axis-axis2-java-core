@@ -27,6 +27,7 @@ import java.io.File;
 public class SimpleServer {
     private int port;
     private Log log = LogFactory.getLog(getClass());
+
     public SimpleServer() {
         this.port = 8008;
     }
@@ -37,11 +38,12 @@ public class SimpleServer {
 
     public void start() {
         try {
-            File file = new File(MessageComparator.TEST_MAIN_DIR+ "target/Repository");
-            if(!file.exists()){
+            File file = new File(MessageComparator.TEST_MAIN_DIR + "target/Repository");
+            if (!file.exists()) {
                 throw new AxisFault(file.getAbsolutePath() + " File does not exist");
             }
-            SimpleHTTPServer receiver = new SimpleHTTPServer(file.getAbsolutePath(), port);
+            SimpleHTTPServer receiver = new SimpleHTTPServer(file.getAbsolutePath(),
+                    file.getAbsolutePath() + "/axis2xml", port);
             receiver.start();
         } catch (Exception e) {
             log.info(e.getMessage());

@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.jms.BytesMessage;
 import javax.jms.MessageListener;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,8 +69,17 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
                              boolean doThreads)
             throws Exception {
         ConfigurationContextFactory erfac = new ConfigurationContextFactory();
+        //TODO : modify this constructor to take locatiom of axis2.xml
+        File repo = new File(repositoryDirectory);
+        if (repo.exists()) {
+            File axis2xml = new File(repo, "axis2.xml");
+            this.configurationContext = erfac.createConfigurationContextFromFileSystem(
+                    repositoryDirectory, axis2xml.getName());
+        } else {
+            throw new Exception("repository not found");
+        }
 
-        this.configurationContext = erfac.createConfigurationContextFromFileSystem(repositoryDirectory);
+
         this.doThreads = doThreads;
         this.properties = new HashMap(connectorMap);
         this.properties.putAll(cfMap);

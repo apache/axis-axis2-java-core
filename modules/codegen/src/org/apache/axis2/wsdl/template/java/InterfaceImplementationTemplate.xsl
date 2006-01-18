@@ -91,7 +91,7 @@
      * Constructor taking the traget endpoint
      */
     public <xsl:value-of select="@name"/>(String targetEndpoint) throws java.lang.Exception {
-        this(new org.apache.axis2.context.ConfigurationContextFactory().createConfigurationContextFromFileSystem(AXIS2_HOME),
+        this(new org.apache.axis2.context.ConfigurationContextFactory().createConfigurationContextFromFileSystem(AXIS2_HOME,null),
                 targetEndpoint);
     }
 

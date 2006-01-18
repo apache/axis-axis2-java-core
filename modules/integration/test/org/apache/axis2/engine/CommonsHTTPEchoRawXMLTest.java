@@ -91,7 +91,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository");
+                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -121,7 +121,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository");
+                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 

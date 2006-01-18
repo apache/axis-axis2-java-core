@@ -36,7 +36,7 @@ public class AddressingModuleTest extends TestCase {
 
     public void testExtractAddressingInformationFromHeaders() throws AxisFault {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        AxisConfiguration er = builder.createConfigurationContextFromFileSystem("target")
+        AxisConfiguration er = builder.createConfigurationContextFromFileSystem("target", null)
                 .getAxisConfiguration();
         File file = new File("target/addressing.mar");
         assertTrue(file.exists());

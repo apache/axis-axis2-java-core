@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
-    
+
     private Log log = LogFactory.getLog(getClass());
 
     /**
-     * Creates a AxisConfiguration depending on the user requirment. 
+     * Creates a AxisConfiguration depending on the user requirment.
      * First creates an AxisConfigurator object with appropriate parameters.
      * Depending on the implementation getAxisConfiguration(), gets
      * the AxisConfiguration and uses it to create the ConfigurationContext.
@@ -43,20 +43,22 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Builds the configuration. 
+     * Builds the configuration.
      *
-     * @param path
+     * @param path     : location of the repository
+     * @param axis2xml : location of the axis2.xml (configuration) file
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */
-    public ConfigurationContext createConfigurationContextFromFileSystem(String path) throws AxisFault {
-        return createConfigurationContext(new FileSystemConfigurator(path, true));
+    public ConfigurationContext createConfigurationContextFromFileSystem(String path,
+                                                                         String axis2xml) throws AxisFault {
+        return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
     }
 
     /**
      * Initializes modules and creates Transports.
      */
-    
+
     private void init(ConfigurationContext configContext) throws AxisFault {
         try {
             PhaseResolver phaseResolver = new PhaseResolver(configContext.getAxisConfiguration());

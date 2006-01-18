@@ -83,11 +83,11 @@ public class SimpleHTTPServer extends TransportListener {
     /**
      * Constructor SimpleHTTPServer
      *
-     * @param dir
+     * @param repoPath
      * @throws AxisFault
      */
-    public SimpleHTTPServer(String dir, int port) throws AxisFault {
-        this(dir, port, null);
+    public SimpleHTTPServer(String repoPath, String axis2xml, int port) throws AxisFault {
+        this(repoPath, axis2xml, port, null);
     }
 
     /**
@@ -114,17 +114,17 @@ public class SimpleHTTPServer extends TransportListener {
     /**
      * Constructor SimpleHTTPServer
      *
-     * @param dir
+     * @param repoPath
      * @param pool
      * @throws AxisFault
      */
-    public SimpleHTTPServer(String dir, int port, ThreadFactory pool) throws AxisFault {
+    public SimpleHTTPServer(String repoPath, String axis2xml, int port, ThreadFactory pool) throws AxisFault {
         try {
             this.port = port;
 
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-
-            this.configurationContext = erfac.createConfigurationContextFromFileSystem(dir);
+            this.configurationContext = erfac.createConfigurationContextFromFileSystem(repoPath,
+                    axis2xml);
 
             // If a thread pool is not passed the thread pool from the config context
             // is used. If one is passed it is set on the config context.
@@ -189,12 +189,14 @@ public class SimpleHTTPServer extends TransportListener {
         System.out.println("[SimpleHTTPServer] Using the Axis2 Repository "
                 + new File(args[0]).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
-        try  {
-            SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], port);
-            Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
-            receiver.start();
-            System.out.println("[SimpleHTTPServer] Started");
-        } catch (Throwable t){
+        try {
+            throw new UnsupportedOperationException("hey please fix me Deepal , I dont have axis2.xml location");
+            //todo : Deepal pls fix me
+//            SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], null, port);
+//            Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
+//            receiver.start();
+//            System.out.println("[SimpleHTTPServer] Started");
+        } catch (Throwable t) {
             log.fatal("Error starting SimpleHTTPServer", t);
             System.out.println("[SimpleHTTPServer] Shutting down");
         }

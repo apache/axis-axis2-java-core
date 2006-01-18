@@ -28,13 +28,7 @@ import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
 import org.apache.axis2.databinding.serializers.CollectionSerializer;
 import org.apache.axis2.databinding.serializers.SimpleSerializer;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -175,7 +169,8 @@ public class SimpleTest extends TestCase {
     public void testRPC() throws Exception {
 //        Call call = new Call("test-resources/xmls");
         ConfigurationContext configcontext = new ConfigurationContextFactory()
-                .createConfigurationContextFromFileSystem("test-resources/xmls");
+                .createConfigurationContextFromFileSystem("test-resources/xmls",
+                        "test-resources/xmls/axis2.xml");
         ServiceClient client = new ServiceClient(configcontext, null);
 //        Call call = new Call(".");
 

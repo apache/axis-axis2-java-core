@@ -17,15 +17,7 @@
 
 package org.apache.axis2.deployment.repository.util;
 
-import org.apache.axis2.deployment.AxisServiceBuilder;
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DescriptionBuilder;
-import org.apache.axis2.deployment.ModuleBuilder;
-import org.apache.axis2.deployment.ServiceBuilder;
-import org.apache.axis2.deployment.ServiceGroupBuilder;
+import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -39,15 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -157,7 +141,7 @@ public class ArchiveReader implements DeploymentConstants {
             if (in == null) {
                 throw new DeploymentException(
                         Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_XML_MISSING, moduleName));
+                                DeploymentErrorMsgs.MODULE_NOT_FOUND, moduleName));
             } else {
                 if (!modules.exists()) {
                     modules.mkdirs();
@@ -216,7 +200,7 @@ public class ArchiveReader implements DeploymentConstants {
             throws DeploymentException {
         // get attribute values
         if (!extractService) {
-            ZipInputStream zin;
+            ZipInputStream zin = null;
             try {
                 zin = new ZipInputStream(new FileInputStream(filename));
                 ZipEntry entry;
@@ -232,11 +216,19 @@ public class ArchiveReader implements DeploymentConstants {
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND, filename));
             } catch (Exception e) {
                 throw new DeploymentException(e);
+            } finally {
+                if (zin != null) {
+                    try {
+                        zin.close();
+                    } catch (IOException e) {
+                        log.info("error in closing input stream");
+                    }
+                }
             }
         } else {
             File file = new File(filename, SERVICES_XML);
             if (file.exists()) {
-                InputStream in;
+                InputStream in = null;
                 try {
                     in = new FileInputStream(file);
                     axisServiceGroup.setServiceGroupName(engine.getCurrentFileItem().getName());
@@ -247,6 +239,14 @@ public class ArchiveReader implements DeploymentConstants {
                 } catch (XMLStreamException e) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.XML_STREAM_EXCEPTION, e.getMessage()));
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            log.info("error in cloasing input stream");
+                        }
+                    }
                 }
             } else {
                 throw new DeploymentException(
