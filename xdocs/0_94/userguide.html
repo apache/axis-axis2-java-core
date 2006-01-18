@@ -523,10 +523,10 @@ values depending on their requirements.</p>
 skeleton and the other required classes.</p>
 
 <p>Windows users can use the following command in the console:</p>
-<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -ss -sd -o ..\samples -p org.apache.axis2.userguide</pre>
+<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -d xmlbeans -ss -sd -o ..\samples -p org.apache.axis2.userguide</pre>
 
 <p>Linux users should switch the file separator:</p>
-<pre style="margin-bottom: 0.2in">WSDL2Java -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -o ../samples -p org.apache.axis2.userguide</pre>
+<pre style="margin-bottom: 0.2in">WSDL2Java -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans -ss -sd -o ../samples -p org.apache.axis2.userguide</pre>
 
 <p>This will generate the required classes in the <b>src</b> directory inside
 samples, and the schema classes in <strong>schema</strong> directory also
