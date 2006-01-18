@@ -37,8 +37,7 @@ public class ParameterLocked extends TestCase {
 
 
     protected void setUp() throws Exception {
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.createConfigurationContextFromFileSystem(null, repo + "/axis2.xml").getAxisConfiguration();
+        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, repo + "/axis2.xml").getAxisConfiguration();
     }
 
     public void testOveride_Non_locked_Para_Service() {

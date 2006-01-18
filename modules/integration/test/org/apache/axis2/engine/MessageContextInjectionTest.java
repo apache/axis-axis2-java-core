@@ -96,9 +96,8 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     public void testEchoXMLSync() throws Exception {
         OMElement payload = createEnvelope();
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         Options options = new Options();
         sender.setOptions(options);

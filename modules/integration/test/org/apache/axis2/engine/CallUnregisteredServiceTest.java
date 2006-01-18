@@ -72,9 +72,8 @@ public class CallUnregisteredServiceTest extends TestCase {
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setTo(targetEPR);
 
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

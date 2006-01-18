@@ -43,7 +43,7 @@ public class SimpleServer {
                 throw new AxisFault(file.getAbsolutePath() + " File does not exist");
             }
             SimpleHTTPServer receiver = new SimpleHTTPServer(file.getAbsolutePath(),
-                    file.getAbsolutePath() + "/axis2xml", port);
+                    file.getAbsolutePath() + "/axis2.xml", port);
             receiver.start();
         } catch (Exception e) {
             log.info(e.getMessage());

@@ -121,9 +121,7 @@ public class SimpleHTTPServer extends TransportListener {
     public SimpleHTTPServer(String repoPath, String axis2xml, int port, ThreadFactory pool) throws AxisFault {
         try {
             this.port = port;
-
-            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            this.configurationContext = erfac.createConfigurationContextFromFileSystem(repoPath,
+            this.configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoPath,
                     axis2xml);
 
             // If a thread pool is not passed the thread pool from the config context
@@ -253,7 +251,7 @@ public class SimpleHTTPServer extends TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getReplyToEPR(String)
      */
     public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
-        String hostAddress = null;
+        String hostAddress ;
         try {
             hostAddress = SimpleHttpServerConnection.getIpAddress();
         } catch (SocketException e) {

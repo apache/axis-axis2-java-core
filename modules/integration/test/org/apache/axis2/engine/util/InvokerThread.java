@@ -55,9 +55,8 @@ public class InvokerThread extends Thread {
             Options options = new Options();
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem(
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                             "target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);

@@ -115,10 +115,9 @@ public class ClientUtil {
         operation.addChild(value2);
         operation.addChild(value1);
 
-        ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = null;
         try {
-            configContext = fac.createConfigurationContextFromFileSystem("Search","Search/axis2.xml");
+            configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("Search","Search/axis2.xml");
         } catch (DeploymentException e) {
             e.printStackTrace();
         }

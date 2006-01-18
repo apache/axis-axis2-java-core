@@ -57,9 +57,8 @@ public class UtilsMailServer {
             TestCase.assertTrue(
                     "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                     file.exists());
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
             SERVER_CONFIG_CONTEXT =
-                    builder.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
         }
         return SERVER_CONFIG_CONTEXT;
     }
@@ -71,9 +70,8 @@ public class UtilsMailServer {
         TestCase.assertTrue(
                 "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                 file.exists());
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
         CLIENT_CONFIG_CONTEXT =
-                builder.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
         }
         return CLIENT_CONFIG_CONTEXT;
     }

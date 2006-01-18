@@ -32,9 +32,7 @@ public class DeploymentTotalTest extends TestCase {
             AxisFault,
             XMLStreamException {
         String filename = "./target/test-resources/deployment";
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        er =
-                builder.createConfigurationContextFromFileSystem(filename, null)
+        er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
                         .getAxisConfiguration();
     }
 

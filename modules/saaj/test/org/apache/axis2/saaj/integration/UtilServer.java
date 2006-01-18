@@ -81,13 +81,12 @@ public class UtilServer {
 
     public static ConfigurationContext getNewConfigurationContext(String repository)
             throws Exception {
-        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
         File file = new File(repository);
         if (!file.exists()) {
             throw new Exception("repository directory "
                                 + file.getAbsolutePath() + " does not exists");
         }
-        return erfac.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
     }
 
     public static synchronized void stop() {
@@ -118,8 +117,7 @@ public class UtilServer {
                              + "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
 
-        ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = efac
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                                                                     configContext.getAxisConfiguration());
@@ -137,8 +135,7 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
-        ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = efac .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                                                                     configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(moduleDesc);
@@ -153,8 +150,7 @@ public class UtilServer {
                              + "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
 
-        ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = efac
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome,null);
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                                                                     configContext.getAxisConfiguration());

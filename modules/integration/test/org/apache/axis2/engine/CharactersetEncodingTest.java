@@ -44,8 +44,6 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 
     private AxisService service;
 
-    private boolean finish = false;
-
     public CharactersetEncodingTest(String arg0) {
         super(arg0);
     }
@@ -87,9 +85,8 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 //            OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
 
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository",null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

@@ -40,7 +40,7 @@ public class ClientSideModuleEngagement {
         //copy the LoggingModule.mar to "modules" folder.
         //then modify the axis2.xml that is generating there according to
         //phases that being included in the "module.xml"
-        ConfigurationContext configContext = new ConfigurationContextFactory().
+        ConfigurationContext configContext = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(repository.getAbsolutePath(),
                         repository.getName() + "/axis2.xml");
         ServiceClient serviceClient = new ServiceClient(configContext, null);

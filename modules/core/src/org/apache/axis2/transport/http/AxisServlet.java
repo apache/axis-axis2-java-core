@@ -207,8 +207,8 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = erfac.createConfigurationContextFromFileSystem(repoDir, null);
+            ConfigurationContext configContext =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoDir, null);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
             configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
             return configContext;

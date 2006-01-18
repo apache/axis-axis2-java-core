@@ -187,8 +187,7 @@ public class JMSEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLSyncMC() throws Exception {
-        ConfigurationContextFactory confac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = confac.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY,null);
+        ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY,null);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         Options options = new Options();

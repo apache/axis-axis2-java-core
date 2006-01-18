@@ -43,9 +43,8 @@ public class EchoBlockingClient {
 
             //Blocking invocation
 
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
             ServiceClient sender = new ServiceClient(configContext,null);
             sender.setOptions(options);
             options.setTo(targetEPR);

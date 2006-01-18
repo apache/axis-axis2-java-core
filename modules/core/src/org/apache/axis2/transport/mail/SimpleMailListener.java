@@ -84,12 +84,10 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         this.password = password;
 
         try {
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
-
             File repo = new File(dir);
             if (repo.exists()) {
                 File axis2xml = new File(repo, "axis2.xml");
-                this.configurationContext = builder.createConfigurationContextFromFileSystem(
+                this.configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                         dir, axis2xml.getName());
             } else {
                 throw new Exception("repository not found");
@@ -149,12 +147,11 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             log.info("java SimpleMailListener <repository>");
         } else {
             String dir = args[0];
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
             ConfigurationContext configurationContext;
             File repo = new File(dir);
             if (repo.exists()) {
                 File axis2xml = new File(repo, "axis2.xml");
-                configurationContext = builder.createConfigurationContextFromFileSystem(
+                configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                         dir, axis2xml.getName());
             } else {
                 throw new AxisFault("repository not found");

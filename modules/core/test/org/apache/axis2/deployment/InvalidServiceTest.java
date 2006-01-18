@@ -31,8 +31,7 @@ public class InvalidServiceTest extends TestCase {
     public void testInvalidService() {
         try {
             String filename = "./target/test-resources/InvalidDeployment";
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er =builder.createConfigurationContextFromFileSystem(filename,null)
+            er =ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
                     .getAxisConfiguration();
             String msg = (String) er.getFaultyServices().get("invalidService");
             if (msg == null || "".equals(msg)) {

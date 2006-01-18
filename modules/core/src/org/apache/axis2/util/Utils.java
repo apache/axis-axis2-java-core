@@ -228,9 +228,7 @@ public class Utils {
 
     public static ConfigurationContext getNewConfigurationContext(String repositry)
             throws Exception {
-        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
         File file = new File(repositry);
-
         if (!file.exists()) {
             throw new Exception("repository directory " + file.getAbsolutePath()
                     + " does not exists");
@@ -240,7 +238,7 @@ public class Utils {
         if(axis2xml.exists()){
             axis2xmlString = axis2xml.getName();
         }
-        return erfac.createConfigurationContextFromFileSystem(file.getAbsolutePath(),axis2xmlString);
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),axis2xmlString);
     }
 
     public static String getParameterValue(Parameter param) {

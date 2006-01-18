@@ -13,7 +13,6 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
@@ -21,8 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
-
-    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Creates a AxisConfiguration depending on the user requirment.
@@ -34,7 +31,7 @@ public class ConfigurationContextFactory {
      * @return Returns ConfigurationContext.
      * @throws AxisFault
      */
-    public ConfigurationContext createConfigurationContext(
+    public static ConfigurationContext createConfigurationContext(
             AxisConfigurator axisConfigurator) throws AxisFault {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
@@ -50,8 +47,8 @@ public class ConfigurationContextFactory {
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */
-    public ConfigurationContext createConfigurationContextFromFileSystem(String path,
-                                                                         String axis2xml) throws AxisFault {
+    public static ConfigurationContext createConfigurationContextFromFileSystem(String path,
+                                                                                String axis2xml) throws AxisFault {
         return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
     }
 
@@ -59,7 +56,7 @@ public class ConfigurationContextFactory {
      * Initializes modules and creates Transports.
      */
 
-    private void init(ConfigurationContext configContext) throws AxisFault {
+    private static void init(ConfigurationContext configContext) throws AxisFault {
         try {
             PhaseResolver phaseResolver = new PhaseResolver(configContext.getAxisConfiguration());
 
@@ -80,7 +77,7 @@ public class ConfigurationContextFactory {
      * @param context
      * @throws DeploymentException
      */
-    private void initModules(ConfigurationContext context) throws DeploymentException {
+    private static void initModules(ConfigurationContext context) throws DeploymentException {
         try {
             HashMap modules = context.getAxisConfiguration().getModules();
             Collection col = modules.values();
@@ -103,7 +100,7 @@ public class ConfigurationContextFactory {
      *
      * @param configContext
      */
-    public void initTransports(ConfigurationContext configContext) {
+    public static void initTransports(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
 
         // Initialize Transport Ins
@@ -118,8 +115,9 @@ public class ConfigurationContextFactory {
                 try {
                     listener.init(configContext, transportIn);
                 } catch (AxisFault axisFault) {
-                    log.info("Transport-IN initialization error : "
-                            + transportIn.getName().getLocalPart());
+                    LogFactory.getLog(ConfigurationContextFactory.class)
+                            .info("Transport-IN initialization error : "
+                                    + transportIn.getName().getLocalPart());
                 }
             }
         }
@@ -137,8 +135,9 @@ public class ConfigurationContextFactory {
                 try {
                     sender.init(configContext, transportOut);
                 } catch (AxisFault axisFault) {
-                    log.info("Transport-OUT initialization error : "
-                            + transportOut.getName().getLocalPart());
+                    LogFactory.getLog(ConfigurationContextFactory.class)
+                            .info("Transport-OUT initialization error : "
+                                    + transportOut.getName().getLocalPart());
                 }
             }
         }
@@ -149,7 +148,7 @@ public class ConfigurationContextFactory {
      *
      * @return Returns ConfigurationContext.
      */
-    public ConfigurationContext createEmptyConfigurationContext() {
+    public static ConfigurationContext createEmptyConfigurationContext() {
         return new ConfigurationContext(new AxisConfiguration());
     }
 }

@@ -104,9 +104,8 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
         Options clientOptions = new Options();
         clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(CLIENT_HOME,null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_HOME,null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
         clientOptions.setTo(targetEPR);

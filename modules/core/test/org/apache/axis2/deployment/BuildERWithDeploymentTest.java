@@ -35,8 +35,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
     public void testDeployment() {
         try {
             String filename = "./target/test-resources/deployment";
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            AxisConfiguration er = builder.createConfigurationContextFromFileSystem(filename,null)
+            AxisConfiguration er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
                     .getAxisConfiguration();
 
             assertNotNull(er);

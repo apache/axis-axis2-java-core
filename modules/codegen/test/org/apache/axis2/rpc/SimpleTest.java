@@ -168,7 +168,7 @@ public class SimpleTest extends TestCase {
 
     public void testRPC() throws Exception {
 //        Call call = new Call("test-resources/xmls");
-        ConfigurationContext configcontext = new ConfigurationContextFactory()
+        ConfigurationContext configcontext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem("test-resources/xmls",
                         "test-resources/xmls/axis2.xml");
         ServiceClient client = new ServiceClient(configcontext, null);

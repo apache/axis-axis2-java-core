@@ -96,9 +96,8 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
 
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                         Constants.TESTING_PATH + "commons-http-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);

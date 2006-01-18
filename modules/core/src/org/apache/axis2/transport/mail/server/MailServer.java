@@ -47,9 +47,7 @@ public class MailServer {
 
     public MailServer(String dir, int popPort, int smtpPort) throws AxisFault {
         try {
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
-
-            configurationContext = builder.createConfigurationContextFromFileSystem(dir, null);
+            configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(dir, null);
         } catch (Exception e) {
             log.error(e);
         }

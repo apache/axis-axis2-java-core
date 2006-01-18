@@ -52,9 +52,8 @@ public class MTOMEchoTestMultipleTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext,null);
         sender.setOptions(options);
         options.setTo(targetEPR);

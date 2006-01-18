@@ -138,8 +138,7 @@ public class AxisServiceBuilder {
 
 	public AxisService getAxisService(Definition wsdlDefinition)
 			throws DeploymentException {
-		logger
-				.debug("Entering AxisServiceBuilder:getAxisService(javax.wsdl.Definition)");
+		logger.debug("Entering AxisServiceBuilder:getAxisService(javax.wsdl.Definition)");
 
 		AxisService axisService = new AxisService();
 		axisService.setWSDLDefinition(wsdlDefinition);

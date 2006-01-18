@@ -89,9 +89,8 @@ public class ServiceGroupContextTest extends TestCase {
 
         options.setAction(operationName.getLocalPart());
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext,null);
         sender.setOptions(options);
 
@@ -100,10 +99,6 @@ public class ServiceGroupContextTest extends TestCase {
         OMNamespace axis2Namespace = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI,
                 Constants.AXIS2_NAMESPACE_PREFIX);
         SOAPEnvelope defaultEnvelope = fac.getDefaultEnvelope();
-
-
-        SOAPHeaderBlock soapHeaderBlock = defaultEnvelope.getHeader().addHeaderBlock(Constants.SERVICE_GROUP_ID,
-                axis2Namespace);
 
         //TODO : ple imporove this , what I have done is a hack
         OMElement body = (OMElement) result.getParent();

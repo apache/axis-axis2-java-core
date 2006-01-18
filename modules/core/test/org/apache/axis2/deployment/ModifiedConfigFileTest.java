@@ -28,8 +28,7 @@ public class ModifiedConfigFileTest extends TestCase {
     public void testPhaseOrderchage() {
         try {
             String filename = "./test-resources/deployment/BadConfigOrderChange/axis2.xml";
-            ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er = builder.createConfigurationContextFromFileSystem(null,filename).getAxisConfiguration();
+            er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,filename).getAxisConfiguration();
             fail(
                     "this must failed gracefully with DeploymentException \"Invalid System predefined " +
                     "inphases , phase order does not\" +\n support\\n recheck axis2.xml\"");

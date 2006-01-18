@@ -52,7 +52,7 @@ public class InteropScenarioClient {
         pingDoc.setPing(ping);
 
         PingPortStub stub = new PingPortStub(
-                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                         clientRepo, null), url);
 
         //Enable MTOM to those scenarios where they are configured using:
@@ -81,7 +81,7 @@ public class InteropScenarioClient {
         pingDoc.setPing(ping);
 
         PingPortStub stub = new PingPortStub(
-                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientRepo, null), url);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(clientRepo, null), url);
 
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>

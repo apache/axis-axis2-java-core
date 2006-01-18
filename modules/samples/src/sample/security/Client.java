@@ -46,8 +46,7 @@ public class Client {
             //todo  : third argumnet should be axis2.xml
 
             OMElement payload = getEchoElement();
-            ConfigurationContextFactory fac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = fac.createConfigurationContextFromFileSystem(repo, repo + "/axis2.xml");
+            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, repo + "/axis2.xml");
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
             serviceClient.setOptions(options);

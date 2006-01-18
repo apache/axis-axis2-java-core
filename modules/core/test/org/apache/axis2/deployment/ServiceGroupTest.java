@@ -29,8 +29,7 @@ public class ServiceGroupTest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.createConfigurationContextFromFileSystem(repo,null).getAxisConfiguration();
+        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,null).getAxisConfiguration();
     }
 
     public void testServiceGroup() throws AxisFault {

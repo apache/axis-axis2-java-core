@@ -91,9 +91,8 @@ public class GroovyServiceTest extends TestCase {
 //        call.setClientOptions(options);
 
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(payload);

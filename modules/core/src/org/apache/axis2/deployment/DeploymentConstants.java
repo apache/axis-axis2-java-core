@@ -87,7 +87,7 @@ public interface DeploymentConstants {
      * Resource that contains the configuration.
      */
     String AXIS2_CONFIGURATION_RESOURCE =
-            "org/apache/axis2/deployment/default_axis2.xml";
+            "org/apache/axis2/deployment/axis2_default.xml";
     String AXIS2_REPO = "repository";
     String AXIS2_CONFIGURATION_XML = "axis2.xml";
     String DIRECTORY_SERVICES = "services";

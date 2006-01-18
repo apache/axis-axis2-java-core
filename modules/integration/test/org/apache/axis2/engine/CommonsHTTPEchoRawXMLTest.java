@@ -89,9 +89,8 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
             }
         };
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -113,15 +112,12 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
     }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 

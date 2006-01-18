@@ -31,7 +31,7 @@ public class EchoBlockingClient {
 
 
     public OMElement sendMsg(WhitemesaR4ClientUtil util, String soapAction) throws AxisFault {
-        OMElement firstchild = null;
+        OMElement firstchild ;
         EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc");
 
         try {
@@ -42,9 +42,8 @@ public class EchoBlockingClient {
             options.setSoapAction(soapAction);
             //Blocking invocation
 
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             options.setTo(targetEPR);

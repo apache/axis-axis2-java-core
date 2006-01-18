@@ -36,9 +36,7 @@ public class ModuleEngageTest extends TestCase {
             AxisFault,
             XMLStreamException {
         String filename = "./target/test-resources/deployment";
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ac =
-                builder.createConfigurationContextFromFileSystem(filename,null)
+        ac = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
                 .getAxisConfiguration();
         ModuleDescription module = ac.getModule(new QName("module1"));
         assertNotNull(module);

@@ -63,11 +63,8 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -90,9 +87,8 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapAction("echoOMElement");
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -112,9 +108,8 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         payload.addChild(value);
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);

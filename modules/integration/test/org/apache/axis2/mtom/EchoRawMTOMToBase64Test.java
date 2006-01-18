@@ -120,9 +120,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             }
         };
 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
 
@@ -149,9 +148,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             clientOptions.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
-                    factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(clientOptions);
 

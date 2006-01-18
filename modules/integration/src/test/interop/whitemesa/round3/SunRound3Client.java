@@ -55,7 +55,7 @@ public class SunRound3Client {
             msgCtx.setEnvelope(requestEnvilope);
 
             ConfigurationContext configContext =
-                    new ConfigurationContextFactory().createConfigurationContextFromFileSystem(
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                             "target/test-resources/integrationRepo",null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             serviceClient.setOptions(options);

@@ -75,8 +75,7 @@ public class ServiceClient {
                          AxisService axisService) throws AxisFault {
         // create a config context if needed
         this.configContext = (configContext != null) ? configContext
-                : new ConfigurationContextFactory()
-                .createConfigurationContextFromFileSystem(null, null);
+                : ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
 
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
@@ -114,8 +113,7 @@ public class ServiceClient {
                          QName wsdlServiceName, String portName) throws AxisFault {
         // create a config context if needed
         this.configContext = (configContext != null) ? configContext
-                : new ConfigurationContextFactory()
-                .createConfigurationContextFromFileSystem(null, null);
+                : ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
         try {
             this.axisConfig = this.configContext.getAxisConfiguration();
             axisService = ClientUtils.creatAxisService(wsdlURL, wsdlServiceName, portName, options);

@@ -28,8 +28,7 @@ public class HostCongigurationTest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ar = builder.createConfigurationContextFromFileSystem(null, xml).getAxisConfiguration();
+        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, xml).getAxisConfiguration();
     }
 
     public void testHostConfig() throws AxisFault {

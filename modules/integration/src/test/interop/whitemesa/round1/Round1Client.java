@@ -56,7 +56,7 @@ public class Round1Client {
         options.setSoapAction(soapAction);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                new ConfigurationContextFactory().createConfigurationContextFromFileSystem(clientHome,
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(clientHome,
                         null);
         ServiceClient serviceClient = new ServiceClient(configContext, null);
         SOAPEnvelope reqEnv = util.getEchoSoapEnvelope();
