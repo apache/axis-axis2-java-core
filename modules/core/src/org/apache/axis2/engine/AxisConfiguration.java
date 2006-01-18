@@ -52,7 +52,7 @@ public class AxisConfiguration extends AxisDescription {
     //to store mapping between default version to module name
     private final HashMap nameToverionMap = new HashMap();
 
-    private final HashMap serviceGroups = new HashMap();
+//    private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
     private final HashMap transportsOut = new HashMap();
 
@@ -188,7 +188,7 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             description = (AxisService) services.next();
             if (description.isUseDefaultChains()) {
-                Iterator operations = description.getOperations().values().iterator();
+                Iterator operations = description.getOperations();
                 while (operations.hasNext()) {
                     AxisOperation operation = (AxisOperation) operations.next();
                     phasesinfo.setOperationPhases(operation);
@@ -205,7 +205,8 @@ public class AxisConfiguration extends AxisDescription {
             axisServiceGroup.engageModule(getModule(moduleName));
         }
 
-        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
+//        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
+        addChild(axisServiceGroup);
     }
 
     /**
@@ -495,11 +496,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString) {
-        return (AxisServiceGroup) serviceGroups.get(serviceNameAndGroupString);
+//        return (AxisServiceGroup) serviceGroups.get(serviceNameAndGroupString);
+    	return (AxisServiceGroup) getChild(serviceNameAndGroupString);
     }
 
     public Iterator getServiceGroups() {
-        return serviceGroups.values().iterator();
+//        return serviceGroups.values().iterator();
+    	return getChildren();
     }
 
     // to get all the services in the system
@@ -543,18 +546,6 @@ public class AxisConfiguration extends AxisDescription {
 
     public boolean isEngaged(QName moduleName) {
         return engagedModules.contains(moduleName);
-    }
-
-    /**
-     * Checks whether a given parameter is locked.
-     *
-     * @param parameterName
-     * @return Returns boolean.
-     */
-    public boolean isParameterLocked(String parameterName) {
-        Parameter parameter = getParameter(parameterName);
-
-        return (parameter != null) && parameter.isLocked();
     }
 
     public void setGlobalOutPhase(ArrayList outPhases) {

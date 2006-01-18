@@ -23,6 +23,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.wsdl.builder.wsdl4j.WSDLPump;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.wsdl.Component;
@@ -38,13 +39,16 @@ import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
+import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
 
+import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.List;
 
 public class PolicyUtil {
+	
     public static void populatePolicy(WSDLDescription description,
                                       AxisService axisService) {
         WSDLService wsdlService = description.getService(new QName(axisService
@@ -60,7 +64,7 @@ public class PolicyUtil {
         
         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
         
-        if (axisServiceGroup == null) {
+        if (axisServiceGroup != null) {
             axisConfiguration = (AxisConfiguration) axisServiceGroup.getParent();
         }
 
@@ -111,8 +115,8 @@ public class PolicyUtil {
         PolicyInclude policyInclude = axisService.getPolicyInclude();
         List policyList = policyInclude
                 .getPolicyElements(PolicyInclude.PORT_TYPE_POLICY);
-        addPolicyAsExtAttributes(description, policyList, wsdlInterface,
-                policyInclude);
+//        addPolicyAsExtAttributes(description, policyList, wsdlInterface,
+//                policyInclude);
 
         Iterator wsdlOperations = wsdlInterface.getOperations().values()
                 .iterator();

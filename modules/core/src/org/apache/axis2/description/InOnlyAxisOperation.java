@@ -4,6 +4,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.impl.WDSLPropertyImpl;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  */
 public class InOnlyAxisOperation extends AxisOperation {
     private AxisMessage inFaultMessage;
-    private AxisMessage inMessage;
+//    private AxisMessage inMessage;
     private AxisMessage outFaultMessage;
 
     // this is just to store the chain , we don't use it
@@ -33,7 +34,8 @@ public class InOnlyAxisOperation extends AxisOperation {
 
     public void addMessage(AxisMessage message, String label) {
         if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-            inMessage = message;
+//            inMessage = message;
+        	addChild("inMessage", message);
         } else {
             throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -50,9 +52,12 @@ public class InOnlyAxisOperation extends AxisOperation {
     }
 
     private void createMessage() {
-        inMessage = new AxisMessage();
-        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-        inMessage.setParent(this);
+//        inMessage = new AxisMessage();
+//        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+//        inMessage.setParent(this);
+    	AxisMessage inMessage = new AxisMessage();
+    	inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+    	inMessage.setParent(this);
 
         inFaultMessage = new AxisMessage();
         inFaultMessage.setParent(this);
@@ -61,11 +66,14 @@ public class InOnlyAxisOperation extends AxisOperation {
         outFaultMessage.setParent(this);
 
         outPhase = new ArrayList();
+        
+        addChild("inMessage", inMessage);
     }
 
     public AxisMessage getMessage(String label) {
         if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-            return inMessage;
+//            return inMessage;
+        	return (AxisMessage) getChild("inMessage");
         } else {
             throw new UnsupportedOperationException("In valid acess");
         }
@@ -84,7 +92,7 @@ public class InOnlyAxisOperation extends AxisOperation {
     }
 
     public ArrayList getRemainingPhasesInFlow() {
-        return inMessage.getMessageFlow();
+        return ((AxisMessage) getChild("inMessage")).getMessageFlow();
     }
 
     public void setPhasesInFaultFlow(ArrayList list) {
@@ -100,6 +108,6 @@ public class InOnlyAxisOperation extends AxisOperation {
     }
 
     public void setRemainingPhasesInFlow(ArrayList list) {
-        inMessage.setMessageFlow(list);
+        ((AxisMessage) getChild("inMessage")).setMessageFlow(list);
     }
 }

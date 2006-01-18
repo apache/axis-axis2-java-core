@@ -137,7 +137,7 @@ public class AxisService2WOM {
         portType.setName(new QName(axisService.getName() + "Port"));
 
 
-        Iterator operations = axisService.getOperations().values().iterator();
+        Iterator operations = axisService.getOperations();
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
             if (axisOperation.isControlOperation()) {

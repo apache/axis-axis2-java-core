@@ -170,7 +170,7 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
 
             result.serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
                     System.out));
-            fail("the test must fail due to bad service Name");
+            fail("the test must fail due to the intentional failure of the \"culprit\" handler");
         } catch (AxisFault e) {
             log.info(e.getMessage());
             String message = e.getMessage();

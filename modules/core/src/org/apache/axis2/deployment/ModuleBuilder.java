@@ -97,14 +97,14 @@ public class ModuleBuilder extends DescriptionBuilder {
             Iterator policyElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null) {
-                processPolicyElements(PolicyInclude.MODULE_POLICY, policyElements, module.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_MODULE_POLICY, policyElements, module.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null) {
-                processPolicyRefElements(PolicyInclude.MODULE_POLICY, policyRefElements, module.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_MODULE_POLICY, policyRefElements, module.getPolicyInclude());
             }
 
             // processing Parameters

@@ -24,6 +24,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.wsdl.builder.wsdl4j.WSDLPump;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
@@ -31,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.impl.WSDLDescriptionImpl;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -52,7 +54,7 @@ public class AxisService extends AxisDescription {
     private String fileName = "";
 
     private HashMap operationsAliasesMap = null;
-    private HashMap operations = new HashMap();
+//    private HashMap operations = new HashMap();
 
     // to store module ref at deploy time parsing
     private ArrayList moduleRefs = new ArrayList();
@@ -182,7 +184,8 @@ public class AxisService extends AxisDescription {
             }
         }
 
-        operations.put(axisOperation.getName(), axisOperation);
+//        operations.put(axisOperation.getName(), axisOperation);
+        addChild(axisOperation);
         operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
     }
 
@@ -251,7 +254,7 @@ public class AxisService extends AxisDescription {
         // adding module operations
         addModuleOperations(moduleref, axisConfig);
 
-        Iterator operations = getOperations().values().iterator();
+        Iterator operations = getOperations();
 
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
@@ -282,11 +285,11 @@ public class AxisService extends AxisDescription {
     }
 
     public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
-        if (getWSDLDefinition() != null) {
-            printUsingWSDLDefinition(out, serviceURL);
-        } else {
+//        if (getWSDLDefinition() != null) {
+//            printUsingWSDLDefinition(out, serviceURL);
+//        } else {
             printUsingWOM(out, serviceURL);
-        }
+//        }
     }
 
     public void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
@@ -311,14 +314,12 @@ public class AxisService extends AxisDescription {
                     port.addExtensibilityElement(soapAddress);
                 }
             }
-
-            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
+            
+            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);      
             out.flush();
-        } catch (WSDLException e) {
-            throw new AxisFault(e);
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
+        } catch (Exception e) {
+        	throw new AxisFault(e);
+		}
     }
 
     public void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
@@ -328,7 +329,6 @@ public class AxisService extends AxisDescription {
             WSDLDescription desc = axisService2WOM.generateWOM();
 
             // populate it with policy information ..
-            //TODO : This gives an NPE , Sanka pls fix that
             PolicyUtil.populatePolicy(desc, this);
 
             WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
@@ -368,7 +368,7 @@ public class AxisService extends AxisDescription {
      * Gets the control operation which are added by module like RM.
      */
     public ArrayList getControlOperations() {
-        Iterator op_itr = getOperations().values().iterator();
+        Iterator op_itr = getOperations();
         ArrayList operationList = new ArrayList();
 
         while (op_itr.hasNext()) {
@@ -418,7 +418,8 @@ public class AxisService extends AxisDescription {
      * @return Returns AxisOperation.
      */
     public AxisOperation getOperation(QName operationName) {
-        AxisOperation axisOperation = (AxisOperation) operations.get(operationName);
+//        AxisOperation axisOperation = (AxisOperation) operations.get(operationName);
+    	AxisOperation axisOperation = (AxisOperation) getChild(operationName);
 
         if (axisOperation == null) {
             axisOperation = (AxisOperation) operationsAliasesMap.get(operationName.getLocalPart());
@@ -454,7 +455,8 @@ public class AxisService extends AxisDescription {
             return null;
         }
 
-        AxisOperation operation = (AxisOperation) operations.get(new QName(soapAction));
+//        AxisOperation operation = (AxisOperation) operations.get(new QName(soapAction));
+        AxisOperation operation = (AxisOperation) getChild(new QName(soapAction));
 
         if (operation != null) {
             return operation;
@@ -470,8 +472,8 @@ public class AxisService extends AxisDescription {
      *
      * @return Returns HashMap
      */
-    public HashMap getOperations() {
-        return operations;
+    public Iterator getOperations() {
+        return getChildren();
     }
 
     /*
@@ -484,7 +486,7 @@ public class AxisService extends AxisDescription {
      * Gets only the published operations.
      */
     public ArrayList getPublishedOperations() {
-        Iterator op_itr = getOperations().values().iterator();
+        Iterator op_itr = getOperations();
         ArrayList operationList = new ArrayList();
 
         while (op_itr.hasNext()) {

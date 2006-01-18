@@ -28,36 +28,36 @@ public class PolicyInclude {
 	public static final String ANON_POLICY = "anonymous";
 
 	public static final int AXIS_POLICY = 1;
+	
+	public static final int AXIS_MODULE_POLICY = 2;
 
-	public static final int AXIS_SERVICE_POLICY = 2;
+	public static final int AXIS_SERVICE_POLICY = 3;
 
-	public static final int AXIS_OPERATION_POLICY = 14;
+	public static final int AXIS_OPERATION_POLICY = 4;
 
-	public static final int AXIS_MESSAGE_POLICY = 15;
+	public static final int AXIS_MESSAGE_POLICY = 5;
 
-	public static final int MODULE_POLICY = 3;
+	public static final int SERVICE_POLICY = 6;
 
-	public static final int SERVICE_POLICY = 3;
+	public static final int PORT_POLICY = 7;
 
-	public static final int PORT_POLICY = 4;
+	public static final int PORT_TYPE_POLICY = 8;
 
-	public static final int PORT_TYPE_POLICY = 5;
+	public static final int BINDING_POLICY = 9;
 
-	public static final int BINDING_POLICY = 6;
+	public static final int OPERATION_POLICY = 10;
 
-	public static final int OPERATION_POLICY = 7;
+	public static final int BINDING_OPERATION_POLICY = 11;
 
-	public static final int BINDING_OPERATION_POLICY = 8;
+	public static final int INPUT_POLICY = 12;
 
-	public static final int INPUT_POLICY = 9;
+	public static final int OUTPUT_POLICY = 13;
 
-	public static final int OUTPUT_POLICY = 10;
+	public static final int BINDING_INPUT_POLICY = 14;
 
-	public static final int BINDING_INPUT_POLICY = 11;
+	public static final int BINDING_OUTPUT_POLICY = 15;
 
-	public static final int BINDING_OUTPUT_POLICY = 12;
-
-	public static final int MESSAGE_POLICY = 13;
+	public static final int MESSAGE_POLICY = 16;
 
 	private Policy policy = null;
 

@@ -335,19 +335,18 @@ public class HTTPTransportReceiver {
             temp += "<h2>" + "Deployed services" + "</h2>";
 
             for (Iterator it = serviceCollection.iterator(); it.hasNext();) {
-                Map operations;
-                Collection operationsList;
-                AxisService axisService = (AxisService) it.next();
+                
+            	AxisService axisService = (AxisService) it.next();
 
-                operations = axisService.getOperations();
-                operationsList = operations.values();
+                Iterator iterator = axisService.getOperations();
+                
                 temp += "<h3><a href=\""+ axisService.getName() + "?wsdl\">"+ axisService.getName() + "</a></h3>";
 
-                if (operationsList.size() > 0) {
+                if (iterator.hasNext()) {
                     temp += "Available operations <ul>";
 
-                    for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                        AxisOperation axisOperation = (AxisOperation) iterator1.next();
+                    for (; iterator.hasNext();) {
+                        AxisOperation axisOperation = (AxisOperation) iterator.next();
 
                         temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
                     }

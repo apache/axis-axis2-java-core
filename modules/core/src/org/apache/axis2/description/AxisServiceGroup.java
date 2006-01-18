@@ -50,10 +50,10 @@ public class AxisServiceGroup extends AxisDescription {
     /**
      * Field services
      */
-    private HashMap services;
+//    private HashMap services;
 
     public AxisServiceGroup() {
-        services = new HashMap();
+//        services = new HashMap();
         moduleConfigmap = new HashMap();
         engagedModules = new ArrayList();
     }
@@ -102,7 +102,8 @@ public class AxisServiceGroup extends AxisDescription {
         }
 
         service.setLastupdate();
-        services.put(service.getName(), service);
+//        services.put(service.getName(), service);
+        addChild(service);
     }
 
     public void addToengagedModules(QName moduleName) {
@@ -146,7 +147,8 @@ public class AxisServiceGroup extends AxisDescription {
             ((AxisConfiguration) getParent()).notifyObservers(AxisEvent.SERVICE_DEPLOY, service);
         }
 
-        services.remove(name);
+//        services.remove(name);
+        removeChild(name);
     }
 
     public AxisConfiguration getAxisDescription() {
@@ -166,7 +168,8 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public AxisService getService(String name) throws AxisFault {
-        return (AxisService) services.get(name);
+//        return (AxisService) services.get(name);
+    	return (AxisService) getChild(name);
     }
 
     public ClassLoader getServiceGroupClassLoader() {
@@ -178,7 +181,8 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public Iterator getServices() {
-        return services.values().iterator();
+//        return services.values().iterator();
+    	return getChildren();
     }
 
     public void setAxisDescription(AxisConfiguration axisDescription) {

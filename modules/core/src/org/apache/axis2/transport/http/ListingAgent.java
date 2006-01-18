@@ -121,10 +121,7 @@ public class ListingAgent {
                     service.addParameter(new ParameterImpl(parameter.getName(), para));
                 }
 
-                HashMap operation = service.getOperations();
-                Collection op_col = operation.values();
-
-                for (Iterator iterator = op_col.iterator(); iterator.hasNext();) {
+                for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
                     AxisOperation axisOperation = (AxisOperation) iterator.next();
                     String op_name = axisOperation.getName().getLocalPart();
                     ArrayList operation_para = axisOperation.getParameters();

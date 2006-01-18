@@ -16,13 +16,14 @@ public abstract class AxisDescription implements ParameterInclude,
 
     private PolicyInclude policyInclude;
 
-    private HashMap children = new HashMap();
-
+	private HashMap children;
+	
     public AxisDescription() {
-        parameterInclude = new ParameterIncludeImpl();
-        policyInclude = new PolicyInclude(this);
-    }
-
+		parameterInclude = new ParameterIncludeImpl();
+		policyInclude = new PolicyInclude(this);
+		children = new HashMap();
+	}
+    
     public void addParameter(Parameter param) throws AxisFault {
 
         if (param == null) {
@@ -62,13 +63,10 @@ public abstract class AxisDescription implements ParameterInclude,
                 && getParameter(parameterName).isLocked();
     }
 
-    public void setParent(AxisDescription parent) {
-        this.parent = parent;
-        if (parent.getChild(getKey()) == null
-                || parent.getChild(getKey()) != this) {
-            parent.addChild(this);
-        }
-    }
+
+	public void setParent(AxisDescription parent) {
+		this.parent = parent;
+	}
 
     public AxisDescription getParent() {
         return parent;
@@ -83,11 +81,12 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public void addChild(AxisDescription child) {
-        children.put(child.getKey(), child);
-        if (child.getParent() == null || child.getParent() != this) {
-            child.setParent(this);
-        }
-    }
+		children.put(child.getKey(), child);
+	}
+    
+	public void addChild(Object key, AxisDescription child) {
+		children.put(key, child);
+	}
 
     public Iterator getChildren() {
         return children.values().iterator();
@@ -96,6 +95,10 @@ public abstract class AxisDescription implements ParameterInclude,
     public AxisDescription getChild(Object key) {
         return (AxisDescription) children.get(key);
     }
+	
+	public void removeChild(Object key) {
+		children.remove(key);
+	}
 
     public abstract Object getKey();
 }
