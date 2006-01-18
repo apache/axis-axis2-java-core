@@ -432,7 +432,8 @@
     <!-- ================================================================ -->
     <!--- Create the Release -->
     <!-- ================================================================ -->
-    <goal name="release" prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
+    <goal name="release"
+          prereqs="jar,dist-min-bin,dist-min-src,dist-std-bin,dist-std-src,dist-war,dist-docs">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -848,27 +849,31 @@
     <!--- Create all the distributable jars -->
     <!-- ================================================================ -->
     <goal name="all-jars" prereqs="jar">
-           <ant:echo>+----------------------------------------------</ant:echo>
-           <ant:echo>| Creating: JARs</ant:echo>
-           <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: JARs</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
 
-           <ant:property name="destdir" value="target/jars" />
-           <ant:mkdir dir="${destdir}"/>
+        <ant:property name="destdir" value="target/jars"/>
+        <ant:mkdir dir="${destdir}"/>
 
-           <!-- Create axis2-core.jar -->
-           <jar destfile="${destdir}/axis2-kernel-${pom.currentVersion}.jar">
-               <fileset dir="modules/core/target/classes/"/>
-               <fileset dir="modules/common/target/classes/"/>
-               <fileset dir="modules/xml/target/classes/"/>
-               <fileset dir="modules/wsdl/target/classes/"/>
-           </jar>
+        <!-- Create axis2-core.jar -->
+        <jar destfile="${destdir}/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/core/target/classes/"/>
+            <fileset dir="modules/common/target/classes/"/>
+            <fileset dir="modules/xml/target/classes/"/>
+            <fileset dir="modules/wsdl/target/classes/"/>
+        </jar>
 
-           <ant:copy toDir="${destdir}">
-               <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
-               <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
-               <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
-           </ant:copy>
-       </goal>
+        <ant:copy toDir="${destdir}">
+            <ant:fileset file="modules/xml/target/axis2-xml-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/wsdl/target/axis2-wsdl-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/core/target/axis2-core-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/common/target/axis2-common-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+        </ant:copy>
+    </goal>
 
 
     <define:taglib uri="macros">
