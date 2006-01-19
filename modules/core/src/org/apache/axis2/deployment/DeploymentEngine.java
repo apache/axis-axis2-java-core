@@ -292,7 +292,8 @@ public class DeploymentEngine implements DeploymentConstants {
             Module module = axismodule.getModule();
 
             if (module != null) {
-                module.init(axisConfig);
+                //TODO : Need to fix this , I just comment this to remove compile errors
+//                module.init(axisConfig, null);
             }
 
         } catch (AxisFault axisFault) {

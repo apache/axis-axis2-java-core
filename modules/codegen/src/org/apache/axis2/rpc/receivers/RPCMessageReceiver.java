@@ -115,7 +115,6 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             outMessage.setEnvelope(envelope);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw AxisFault.makeFault(e);
         }
     }

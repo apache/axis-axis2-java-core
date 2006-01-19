@@ -87,7 +87,7 @@ public class ConfigurationContextFactory {
                 Module module = axismodule.getModule();
 
                 if (module != null) {
-                    module.init(context.getAxisConfiguration());
+                    module.init(context, axismodule);
                 }
             }
         } catch (AxisFault e) {
