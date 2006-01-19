@@ -115,6 +115,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             outMessage.setEnvelope(envelope);
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw AxisFault.makeFault(e);
         }
     }
@@ -125,7 +126,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
     }
 
     private OMElement getResponseElement(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs);
+        return BeanUtil.getOMElement(resname, objs,RETURN_WRAPPER);
     }
 
     private void processResponse(SOAPFactory fac, Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {

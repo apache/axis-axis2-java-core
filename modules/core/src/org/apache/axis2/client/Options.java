@@ -218,7 +218,7 @@ public class Options {
 
     public String getSoapAction() {
         if (soapAction == null && parent != null) {
-            soapAction = parent.getSoapAction();
+            return parent.getSoapAction();
         }
 
         return (soapAction != null) ? soapAction : "";

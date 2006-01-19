@@ -48,9 +48,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
         log.debug("Checking for Operation using target endpoint uri fragment : " + operationName);
-
         EndpointReference toEPR = messageContext.getTo();
-
         if ((toEPR != null) && (operationName == null)) {
             String filePart = toEPR.getAddress();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
@@ -61,7 +59,9 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         }
 
         if (operationName != null) {
-            return service.getOperation(operationName);
+            AxisOperation axisOperation = service.getOperation(operationName);
+            operationName = null;
+            return axisOperation;
         }
 
         return null;

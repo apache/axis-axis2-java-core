@@ -22,6 +22,7 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
@@ -322,21 +323,45 @@ public class BeanUtil {
         return retObjs;
     }
 
-    public static OMElement getOMElement(QName opName, Object [] args) {
+    public static OMElement getOMElement(QName opName, Object [] args, String partName) {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
+            if (arg == null) {
+                continue;
+            }
             //todo if the request parameter has name other than argi (0<i<n) , there should be a
             //way to do that , to solve that problem we need to have RPCRequestParameter
             //note that The value of request parameter can either be simple type or JavaBean
             if (SimpleTypeMapper.isSimpleType(arg)) {
-                objects.add("arg" + argCount);
+                if (partName == null) {
+                    objects.add("arg" + argCount);
+                } else {
+                    objects.add(partName);
+                }
                 objects.add(arg.toString());
             } else {
-                objects.add(new QName("arg" + argCount));
-                objects.add(arg);
+                if (partName == null) {
+                    objects.add(new QName("arg" + argCount));
+                } else {
+                    objects.add(new QName(partName));
+                }
+                if (arg instanceof OMElement) {
+                    OMFactory fac = OMAbstractFactory.getOMFactory();
+                    OMElement wrappingElement;
+                    if (partName == null) {
+                        wrappingElement = fac.createOMElement("arg" + argCount, null);
+                        wrappingElement.addChild((OMElement) arg);
+                    } else {
+                        wrappingElement = fac.createOMElement(partName, null);
+                        wrappingElement.addChild((OMElement) arg);
+                    }
+                    objects.add(wrappingElement);
+                } else {
+                    objects.add(arg);
+                }
             }
             argCount ++;
         }

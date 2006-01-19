@@ -86,9 +86,6 @@ public class DeploymentEngine implements DeploymentConstants {
             throws DeploymentException {
         if ((repositoryName == null || "".equals(repositoryName.trim())) &&
                 (xmlFile == null || "".equals(xmlFile.trim()))) {
-            axis2repository = repositoryName;
-            axis2_xml_file_name = xmlFile;
-
             useDefault = true;
             axis2repository = null;
             log.info("nither repository location nor aixs2.xml are given ," +
