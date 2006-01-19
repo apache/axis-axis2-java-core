@@ -35,7 +35,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import sun.misc.BASE64Decoder;
+import org.apache.axis2.util.Base64;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -210,6 +210,11 @@ public class ConverterUtil {
     public static String convertToString(Month o) {
         return o.toString();
     }
+
+    public static String convertToString(byte[] bytes) {
+        return Base64.encode(bytes);
+    }
+
     /* ################################################################################ */
     /* String to java type conversions
        These methods have a special signature structure
@@ -297,8 +302,7 @@ public class ConverterUtil {
     }
 
     public static byte[] convertTobase64Binary(String s) throws Exception{
-        //using the Sun's base64 decoder that should come with the JRE
-        return new BASE64Decoder().decodeBuffer(s);
+        return Base64.decode(s);
     }
 
     /**
