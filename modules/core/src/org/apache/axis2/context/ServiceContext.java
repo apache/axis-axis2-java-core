@@ -21,6 +21,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /**
  * Well this is never clearly defined, what it does or the lifecycle.
@@ -34,12 +35,13 @@ public class ServiceContext extends AbstractContext {
 
     //to store service implementation class , to handler session
     private Object serviceImpl;
+    private ArrayList replyTorefpars;
 
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
-
+        this.replyTorefpars = new ArrayList();
         if (serviceConfig != null) {
             serviceInstanceID = serviceConfig.getName();
         }
@@ -87,5 +89,13 @@ public class ServiceContext extends AbstractContext {
 
     public ServiceGroupContext getServiceGroupContext() {
         return serviceGroupContext;
+    }
+
+    public ArrayList getReplyTorefpars() {
+        return replyTorefpars;
+    }
+
+    public void setReplyTorefpars(ArrayList replyTorefpars) {
+        this.replyTorefpars = replyTorefpars;
     }
 }

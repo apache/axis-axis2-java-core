@@ -85,6 +85,7 @@ public class ServiceGroupContextTest extends TestCase {
         SOAPEnvelope payload = fac.getDefaultEnvelope();
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setManageSession(true);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         options.setAction(operationName.getLocalPart());
@@ -104,14 +105,14 @@ public class ServiceGroupContextTest extends TestCase {
         OMElement body = (OMElement) result.getParent();
         SOAPEnvelope soapEnvlop = (SOAPEnvelope) body.getParent();
 
-        String serviceGroupId = soapEnvlop.getHeader().getFirstChildWithName(new QName("ReplyTo"))
+        String serviceGroupIds= soapEnvlop.getHeader().getFirstChildWithName(new QName("ReplyTo"))
                 .getFirstChildWithName(new QName("ReferenceParameters")).
                 getFirstChildWithName(new QName("ServiceGroupId")).getText();
 
-        OMElement soapHeaderElement = fac.createOMElement(Constants.SERVICE_GROUP_ID, axis2Namespace);
-        soapHeaderElement.setText(serviceGroupId);
+//        OMElement soapHeaderElement = fac.createOMElement(Constants.SERVICE_GROUP_ID, axis2Namespace);
+//        soapHeaderElement.setText(serviceGroupId);
 
-        sender.addHeader(soapHeaderElement);
+//        sender.addHeader(soapHeaderElement);
         OMElement result2 = sender.sendReceive(defaultEnvelope.getBody().getFirstElement());
         String text = result2.getText();
         assertEquals("Number of requests should be 2", 2, Integer.parseInt(text));

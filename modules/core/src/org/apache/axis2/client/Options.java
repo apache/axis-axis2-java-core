@@ -94,6 +94,10 @@ public class Options {
 
     private EndpointReference to;
 
+    //To control , session managment , default is set to true , if user wants he can set that to true
+    // There operation clinet will manage session using ServiceGroupID if it is there in the response
+    private boolean manageSession = false;
+
     /**
      * Default constructor
      */
@@ -483,5 +487,13 @@ public class Options {
         }
 
         referenceParameters.add(referenceParameter);
+    }
+
+    public boolean isManageSession() {
+        return manageSession;
+    }
+
+    public void setManageSession(boolean manageSession) {
+        this.manageSession = manageSession;
     }
 }

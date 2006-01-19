@@ -13,16 +13,21 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Author: Deepal Jayasinghe Date: Oct 3, 2005 Time: 6:01:33 PM
@@ -243,7 +248,7 @@ class OutInAxisOperationClient implements OperationClient {
                 mc.setSoapAction((String) soapaction.getValue());
             }
         }
-
+        addRefParsToRequset(mc.getEnvelope());
         if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
@@ -304,6 +309,19 @@ class OutInAxisOperationClient implements OperationClient {
         }
     }
 
+    private void addRefParsToRequset(SOAPEnvelope env) {
+        if (options.isManageSession()) {
+            SOAPHeader sh = env.getHeader();
+            ArrayList replyTorefpars = sc.getReplyTorefpars();
+            if (replyTorefpars.size() > 0) {
+                for (int i = 0; i < replyTorefpars.size(); i++) {
+                    OMElement refPars = (OMElement) replyTorefpars.get(i);
+                    sh.addChild(refPars);
+                }
+            }
+        }
+    }
+
     /**
      * Sends the message using a two way transport and waits for a response
      *
@@ -339,6 +357,23 @@ class OutInAxisOperationClient implements OperationClient {
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                 responseMessageContext, msgctx.getEnvelope().getNamespace()
                 .getName());
+        try {
+            // Adding request reference parameters into ServiceContext , so then in the next
+            // requesy automatically send them back
+            OMElement refernceParameters = resenvelope.getHeader()
+                    .getFirstChildWithName(new QName("ReplyTo"))
+                    .getFirstChildWithName(new QName("ReferenceParameters"));
+            ArrayList replyTorefPars = new ArrayList();
+            Iterator refPars = refernceParameters.getChildren();
+            while (refPars.hasNext()) {
+                OMElement omElement = (OMElement) refPars.next();
+                replyTorefPars.add(omElement);
+            }
+            sc.setReplyTorefpars(replyTorefPars);
+
+        } catch (Exception e) {
+            //NPE may occure there for need to catch this
+        }
 
         if (resenvelope != null) {
             responseMessageContext.setEnvelope(resenvelope);
