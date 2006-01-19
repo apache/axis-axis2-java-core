@@ -19,18 +19,9 @@ package test.interop.whitemesa.round3;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
-import test.interop.whitemesa.round3.util.GDImport1EchoStringUtil;
-import test.interop.whitemesa.round3.util.GDImport2EchoStructUtil;
-import test.interop.whitemesa.round3.util.GDImport3StructArrayUtil;
-import test.interop.whitemesa.round3.util.GDRpcStringUtil;
-import test.interop.whitemesa.round3.util.GDRpcStructUtil;
-import test.interop.whitemesa.round3.util.GDRpcVoidUtil;
-import test.interop.whitemesa.round3.util.GEListUtil;
-import test.interop.whitemesa.round3.util.Round3EmptySAEchoStringUtil;
-import test.interop.whitemesa.round3.util.SunRound3ClientUtil;
+import test.interop.whitemesa.round3.util.*;
 
 /**
- * /**
  * class MsStkv3Round3InteropTest
  * To test interoperability in Axis2 Clients Vs MS STK v3.0 Server, Round 3
  *
@@ -40,13 +31,11 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
 
     SunRound3Client client = null;
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     String url = "";
     String soapAction = "";
     String resFilePath = "interop/whitemesa/round3/";
     String tempPath = "";
     SunRound3ClientUtil util = null;
-    private boolean result = false;
 
     public void setUp() {
         client = new SunRound3Client();
@@ -56,7 +45,6 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
      * Round 3
      * Group EmptySA
      * operation EchoString
-     * This test fails!!!
      */
     public void testR3EsaEchoString() throws AxisFault {
 
@@ -66,8 +54,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new Round3EmptySAEchoStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3R3EsaEchoStringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
 
     }
 
@@ -84,8 +71,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDImport1EchoStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDImport1StringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -101,8 +87,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDImport2EchoStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDImport2StructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -118,8 +103,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDImport2EchoStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDImport3StructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -135,8 +119,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDImport3StructArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDImport3StructArrayRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -152,8 +135,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDRpcStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDRpcStringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -162,17 +144,15 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
      * Service rpcencoded
      * operation EchoStringArray
      */
-    //commented due to a problem of XMLComparator
-//    public void testR3GDI3EchoStringArray() throws AxisFault {
-//        url = "http://mssoapinterop.org/stkv3/wsdl/interopTestRpcEnc.wsdl";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GDRpcStringArrayUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MsStkv3GDRpcStringArrayRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//    }
+    public void testR3GDI3EchoStringArray() throws AxisFault {
+        url = "http://mssoapinterop.org/stkv3/wsdl/interopTestRpcEnc.wsdl";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GDRpcStringArrayUtil();
+        retEnv = client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MsStkv3GDRpcStringArrayRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
     /**
      * Round 3
@@ -187,8 +167,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDRpcStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDRpcStructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -204,8 +183,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDRpcVoidUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GDRpcVoidRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -221,8 +199,7 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         util = new GDRpcStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GERpcStringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
 
@@ -236,37 +213,10 @@ public class MsStkv3Round3InteropTest extends WhiteMesaIneterop {
         url = "http://mssoapinterop.org/stkv3/wsdl/interopTestList.wsdl";
         soapAction = "";
 
-        util = new GEListUtil();
+        util = new GELinkedListUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MsStkv3GEListRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    InputStream stream = MsStkv3Round3InteropTest.class.getClassLoader().getResourceAsStream( filePath);
-//                    OMElement firstChild = (OMElement) body.getFirstElement();
-//                    XMLStreamReader parser = null;
-//                    parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(firstChild, refNode);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }

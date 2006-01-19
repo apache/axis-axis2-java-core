@@ -19,36 +19,22 @@ package test.interop.whitemesa.round3;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
-import test.interop.whitemesa.round3.util.GDImport1EchoStringUtil;
-import test.interop.whitemesa.round3.util.GDImport2EchoStructUtil;
-import test.interop.whitemesa.round3.util.GDImport3StructArrayUtil;
-import test.interop.whitemesa.round3.util.GDRpcStringArrayUtil;
-import test.interop.whitemesa.round3.util.GDRpcStringUtil;
-import test.interop.whitemesa.round3.util.GDRpcStructUtil;
-import test.interop.whitemesa.round3.util.GDRpcVoidUtil;
-import test.interop.whitemesa.round3.util.GEListUtil;
-import test.interop.whitemesa.round3.util.GFHeaderTestUtil;
-import test.interop.whitemesa.round3.util.SunRound3ClientUtil;
+import test.interop.whitemesa.round3.util.*;
 
 /**
- * /**
  * class SunRound3InteropTest
  * To test interoperability in Axis2 Clients Vs ASP NET Server, Round 3
- *
  */
 
-public class
-        SunRound3InteropTest extends WhiteMesaIneterop {
+public class SunRound3InteropTest extends WhiteMesaIneterop {
 
     SunRound3Client client = null;
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     String url = "";
     String soapAction = "";
     String resFilePath = "interop/whitemesa/round3/";
     String tempPath = "";
     SunRound3ClientUtil util = null;
-    private boolean result = false;
 
     public void setUp() {
         client = new SunRound3Client();
@@ -58,20 +44,17 @@ public class
      * Round 3
      * Group EmptySA
      * operation EchoString
-     * todo This test fails!!!
      */
-//    public void testR3EsaEchoString() throws AxisFault {
-//
-//        url = "http://www.whitemesa.net:80/interop/r3/emptySA";
-//        soapAction = "";
-//
-//        util = new Round3EmptySAEchoStringUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "Round3EmptySAEchoStringRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//
-//    }
+    public void testR3EsaEchoString() throws AxisFault {
+
+        url = "http://soapinterop.java.sun.com:80/round3/groupd/emptysa";
+        soapAction = "";
+
+        util = new Round3EmptySAEchoStringUtil();
+        retEnv = client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "Round3EmptySAEchoStringRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
     /**
      * Round 3
@@ -86,8 +69,7 @@ public class
         util = new GDImport1EchoStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDImport1StringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -103,8 +85,7 @@ public class
         util = new GDImport2EchoStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDImport2StructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -120,8 +101,7 @@ public class
         util = new GDImport2EchoStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDImport3StructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -137,8 +117,7 @@ public class
         util = new GDImport3StructArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDImport3StructArrayRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -154,8 +133,7 @@ public class
         util = new GDRpcStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDRpcStringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -171,8 +149,7 @@ public class
         util = new GDRpcStringArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDRpcStringArrayRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -188,8 +165,7 @@ public class
         util = new GDRpcStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDRpcStructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -205,8 +181,7 @@ public class
         util = new GDRpcVoidUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGDRpcVoidRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -222,8 +197,7 @@ public class
         util = new GDRpcStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunGERpcStringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -239,8 +213,7 @@ public class
         util = new GDRpcStringArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunGERpcStringArrayRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -256,8 +229,7 @@ public class
         util = new GDRpcStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunGERpcStructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
 
@@ -269,13 +241,12 @@ public class
      */
     public void testR3GERpcEchoVoid() throws AxisFault {
         url = "http://soapinterop.java.sun.com:80/round3/groupe/rpcencoded";
-                soapAction = "http://soapinterop.org/";
+        soapAction = "http://soapinterop.org/";
 
         util = new GDRpcVoidUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunGERpcVoidRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -286,14 +257,12 @@ public class
      */
     public void testR3GEEchoList() throws AxisFault {
         url = "http://soapinterop.java.sun.com:80/round3/groupe/list";
-//        url = "http://localhost:8000/round3/groupe/list";
-        soapAction = "http://soapinterop.org/";
+        soapAction = "";
 
         util = new GEListUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunGEListRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -309,34 +278,6 @@ public class
         util = new GFHeaderTestUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GFHeaderTestRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
-
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    InputStream stream = SunRound3InteropTest.class.getClassLoader().getResourceAsStream( filePath);
-//                    OMElement firstChild = (OMElement) body.getFirstElement();
-//                    XMLStreamReader parser = null;
-//                    parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(firstChild, refNode);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }

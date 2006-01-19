@@ -1,9 +1,1 @@
-<soapenv:Envelope xmlns:tns="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://soapinterop.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-      <soapenv:Body>
-         <tns:echoStructAsSimpleTypesResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-            <outputString xsi:type="xsd:string">strss fdfing1</outputString>
-            <outputInt xsi:type="xsd:int">25</outputInt>
-            <outputFloat xsi:type="xsd:float">25.23</outputFloat>
-         </tns:echoStructAsSimpleTypesResponse>
-      </soapenv:Body>
-   </soapenv:Envelope>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soapinterop.org/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:s="http://soapinterop.org/xsd"><soapenv:Body><tns:echoStructAsSimpleTypesResponse xmlns:tns="http://soapinterop.org/" soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><tns:outputString xsi:type="xsd:string">strss fdfing1</tns:outputString><tns:outputInt xsi:type="xsd:int">25</tns:outputInt><tns:outputFloat xsi:type="xsd:float">25.23</tns:outputFloat></tns:echoStructAsSimpleTypesResponse></soapenv:Body></soapenv:Envelope>

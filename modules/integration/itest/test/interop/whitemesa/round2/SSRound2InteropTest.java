@@ -42,22 +42,20 @@ import java.io.File;
  * To test Interoperability Axis2 clients vs SilverStream Server, Round2
  * WSDL:-
  * "base"  	http://www.xmethods.net/soapbuilders/silverstream/InteropTest.wsdl
+ *
+ * All tests failed since no service tag is available in the endpoint WSDL
  */
-//todo all tests failed, connection failure
 
 public class SSRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     File file = null;
     String url = "";
     String soapAction = "";
-    String FS = System.getProperty("file.separator");
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-    boolean results;
-    
+
     public void testChack(){
             //just addding a test case , since all the tase casea are fail
         }
@@ -75,8 +73,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStringRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
    }
 
     /**
@@ -91,8 +88,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunBaseStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+       compareXML(retEnv, tempPath);
     }
 
     /**
@@ -107,8 +103,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseIntegerRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -123,8 +118,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseIntegerArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -139,8 +133,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseFloatRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -155,8 +148,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseFloatArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -171,8 +163,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -187,8 +178,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStructArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -203,8 +193,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoVoidClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseVoidRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -219,8 +208,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBase64Res.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -235,8 +223,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseDateRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 
@@ -252,8 +239,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseHexBinaryRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -268,8 +254,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseDecimalRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -284,8 +269,7 @@ public class SSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBooleanRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 

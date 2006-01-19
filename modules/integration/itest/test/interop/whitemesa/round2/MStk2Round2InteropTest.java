@@ -41,15 +41,12 @@ import java.io.File;
 public class MStk2Round2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     File file = null;
     String url = "";
     String soapAction = "";
-    String FS = System.getProperty("file.separator");
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-    private boolean results = false;
 
     /**
      * Round2
@@ -58,13 +55,13 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
      */
     public void testR2GBEchoStructAsSimpleTypes() throws AxisFault {
         url = "http://mssoapinterop.org/stk/interopB.wsdl";
+//         url = "http://127.0.0.1:8080/stk/interopB.wsdl";
         soapAction = "http://soapinterop.org/";
 
         util = new GroupbEchoStructAsSimpleTypesUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MStk2GroupbStructAsSimpleTypesRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -79,8 +76,7 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoSimpleTypesAsStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MStk2GroupbSimpletypesAsStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -95,8 +91,7 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEcho2DStringArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MStk2Groupb2DStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -111,8 +106,7 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoNestedStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MStk2GroupbNestedStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -127,89 +121,83 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoNestedArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MStk2GroupbNestedArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
-         * Round2
-         * Group B Typed
-         * operation echoStructAsSimpleTypes
-         */
-        public void testR2GBTypedEchoStructAsSimpleTypes() throws AxisFault {
-            url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
-            soapAction = "http://soapinterop.org/";
+     * Round2
+     * Group B Typed
+     * operation echoStructAsSimpleTypes
+     */
+    public void testR2GBTypedEchoStructAsSimpleTypes() throws AxisFault {
+        url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
+        soapAction = "http://soapinterop.org/";
 
-            util = new GroupbEchoStructAsSimpleTypesUtil();
-            retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-            tempPath = resFilePath + "MStk2GroupbTypedStructAsSimpleTypesRes.xml";
-            results = compare(retEnv, tempPath);
-            assertTrue(results);
-        }
+        util = new GroupbEchoStructAsSimpleTypesUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk2GroupbTypedStructAsSimpleTypesRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
-        /**
-         * Round2
-         * Group B Typed
-         * operation echoSimpleTypesAsStruct
-         */
-        public void testR2GBTypedEchoSimpleTypesAsStruct() throws AxisFault {
-            url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
-            soapAction = "http://soapinterop.org/";
+    /**
+     * Round2
+     * Group B Typed
+     * operation echoSimpleTypesAsStruct
+     */
+    public void testR2GBTypedEchoSimpleTypesAsStruct() throws AxisFault {
+        url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
+        soapAction = "http://soapinterop.org/";
 
-            util = new GroupbEchoSimpleTypesAsStructUtil();
-            retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-            tempPath = resFilePath + "MStk2GroupbTypedSimpletypesAsStructRes.xml";
-            results = compare(retEnv, tempPath);
-            assertTrue(results);
-        }
+        util = new GroupbEchoSimpleTypesAsStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk2GroupbTypedSimpletypesAsStructRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
-        /**
-         * Round2
-         * Group B Typed
-         * operation echo2DStringArray
-         */
-        public void testR2GBTypedEcho2DStringArray() throws AxisFault {
-            url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
-            soapAction = "http://soapinterop.org/";
+    /**
+     * Round2
+     * Group B Typed
+     * operation echo2DStringArray
+     */
+    public void testR2GBTypedEcho2DStringArray() throws AxisFault {
+        url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
+        soapAction = "http://soapinterop.org/";
 
-            util = new GroupbEcho2DStringArrayUtil();
-            retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-            tempPath = resFilePath + "MStk2GroupbTyped2DStringArrayRes.xml";
-            results = compare(retEnv, tempPath);
-            assertTrue(results);
-        }
+        util = new GroupbEcho2DStringArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk2GroupbTyped2DStringArrayRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
-        /**
-         * Round2
-         * Group B Typed
-         * operation echoNestedStruct
-         */
-        public void testR2GBTypedEchoNestedStruct() throws AxisFault {
-            url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
-            soapAction = "http://soapinterop.org/";
+    /**
+     * Round2
+     * Group B Typed
+     * operation echoNestedStruct
+     */
+    public void testR2GBTypedEchoNestedStruct() throws AxisFault {
+        url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
+        soapAction = "http://soapinterop.org/";
 
-            util = new GroupbEchoNestedStructUtil();
-            retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-            tempPath = resFilePath + "MStk2GroupbTypedNestedStructRes.xml";
-            results = compare(retEnv, tempPath);
-            assertTrue(results);
-        }
+        util = new GroupbEchoNestedStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk2GroupbTypedNestedStructRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
-        /**
-         * Round2
-         * Group B Typed
-         * operation echoNestedArray
-         */
-        public void testR2GBTypedEchoNestedArray() throws AxisFault {
-            url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
-            soapAction = "http://soapinterop.org/";
+    /**
+     * Round2
+     * Group B Typed
+     * operation echoNestedArray
+     */
+    public void testR2GBTypedEchoNestedArray() throws AxisFault {
+        url = "http://mssoapinterop.org/stk/interopBTyped.wsdl";
+        soapAction = "http://soapinterop.org/";
 
-            util = new GroupbEchoNestedArrayUtil();
-            retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-            tempPath = resFilePath + "MStk2GroupTypedbNestedArrayRes.xml";
-            results = compare(retEnv, tempPath);
-            assertTrue(results);
-        }
+        util = new GroupbEchoNestedArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk2GroupTypedbNestedArrayRes.xml";
+        compareXML(retEnv, tempPath);
+    }
 
 
     /**
@@ -224,8 +212,7 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
         util = new GroupcVoidUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MStk2GroupcVoidRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 }
 

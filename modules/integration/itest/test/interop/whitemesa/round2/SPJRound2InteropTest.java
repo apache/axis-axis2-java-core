@@ -49,7 +49,6 @@ import java.io.File;
  * "base"    http://soap.fmui.de/interop.wsdl
  * "Group B" http://soap.fmui.de/interopb.wsdl
  */
-//todo check echoHexBinary test
 
 public class SPJRound2InteropTest extends WhiteMesaIneterop {
 
@@ -58,11 +57,9 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
     File file = null;
     String url = "";
     String soapAction = "";
-    String FS = System.getProperty("file.separator");
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-    private boolean results = false;
 
     /**
      * Round2
@@ -76,8 +73,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseStringRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -92,8 +88,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -108,8 +103,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseIntegerRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -117,15 +111,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoIntegerArray
      */
-    public void testR2BaseEchoIntegerArray() throws AxisFault  {
+    public void testR2BaseEchoIntegerArray() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseIntegerArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -133,15 +126,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoFloat
      */
-    public void testR2BaseEchoFloat()  throws AxisFault {
+    public void testR2BaseEchoFloat() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoFloatClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseFloatRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -149,15 +141,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoFloatArray
      */
-    public void testR2BaseEchoFloatArray()  throws AxisFault {
+    public void testR2BaseEchoFloatArray() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseFloatArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -165,15 +156,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoStruct
      */
-    public void testRBaseEchoStruct() throws AxisFault  {
+    public void testRBaseEchoStruct() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "";
 
         util = new Round2EchoStructClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -181,15 +171,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoStructArray
      */
-    public void testR2BaseEchoStructArray() throws AxisFault  {
+    public void testR2BaseEchoStructArray() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStructArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseStructArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -197,15 +186,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoVoid
      */
-    public void testR2BaseEchoVoid() throws AxisFault  {
+    public void testR2BaseEchoVoid() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoVoidClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseVoidRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -213,15 +201,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoBase64
      */
-    public void testR2BaseEchoBase64() throws AxisFault  {
+    public void testR2BaseEchoBase64() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoBase64ClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseBase64Res.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -229,15 +216,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoBase64
      */
-    public void testR2BaseEchoDate() throws AxisFault  {
+    public void testR2BaseEchoDate() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoDateClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseDateRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 
@@ -246,15 +232,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoHexBinary
      */
-    public void testR2BaseEchoHexBinary() throws AxisFault  {
+    public void testR2BaseEchoHexBinary() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseHexBinaryRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -262,15 +247,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoDecimal
      */
-    public void testR2BaseEchoDecimal() throws AxisFault  {
+    public void testR2BaseEchoDecimal() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoDecimalClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseDecimalRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -278,15 +262,14 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoBoolean
      */
-    public void testR2BaseEchoBoolean() throws AxisFault  {
+    public void testR2BaseEchoBoolean() throws AxisFault {
         url = "http://soap.fmui.de/RPC";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoBooleanClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJBaseBooleanRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -301,8 +284,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoStructAsSimpleTypesUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJGroupbStructAsSimpleTypesRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -317,8 +299,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoSimpleTypesAsStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJGroupbSimpletypesAsStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -333,8 +314,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEcho2DStringArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJGroupb2DStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -349,8 +329,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoNestedStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJGroupbNestedStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -365,8 +344,7 @@ public class SPJRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoNestedArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SpJGroupbNestedArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 }

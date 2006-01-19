@@ -151,9 +151,8 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoStruct
      */
-    /* public void testRBaseEchoStruct() throws AxisFault  {
-        url = "http://127.0.0.1:8070/~engelen/interop2.cgi";
-       // url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
+    /*public void testRBaseEchoStruct() throws AxisFault {
+        url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStructClientUtil();

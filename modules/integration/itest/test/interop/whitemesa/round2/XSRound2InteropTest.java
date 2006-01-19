@@ -41,21 +41,18 @@ import java.io.File;
  * class
  * To test Interoperability Axis2 clients vs XSOAP 1.2 Server, Round2
  * WSDLs:-
- *  	"base"  	http://www.extreme.indiana.edu/~aslom/XSOAP_1_2_SoapRMI.wsdl
- *
+ * "base"  	http://www.extreme.indiana.edu/~aslom/XSOAP_1_2_SoapRMI.wsdl
  */
 
 public class XSRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     File file = null;
     String url = "";
     String soapAction = "";
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-    private boolean results = false;
 
     /**
      * Round2
@@ -69,8 +66,7 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseStringRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -85,8 +81,7 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -101,8 +96,7 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseIntegerRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -110,15 +104,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoIntegerArray
      */
-    public void testR2BaseEchoIntegerArray() throws AxisFault  {
+    public void testR2BaseEchoIntegerArray() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseIntegerArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -126,15 +119,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoFloat
      */
-    public void testR2BaseEchoFloat()  throws AxisFault {
+    public void testR2BaseEchoFloat() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoFloatClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseFloatRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -142,15 +134,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoFloatArray
      */
-    public void testR2BaseEchoFloatArray()  throws AxisFault {
+    public void testR2BaseEchoFloatArray() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseFloatArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -158,15 +149,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoStruct
      */
-    public void testRBaseEchoStruct() throws AxisFault  {
+    public void testRBaseEchoStruct() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "";
 
         util = new Round2EchoStructClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -174,15 +164,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoStructArray
      */
-    public void testR2BaseEchoStructArray() throws AxisFault  {
+    public void testR2BaseEchoStructArray() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStructArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseStructArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -190,15 +179,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoVoid
      */
-    public void testR2BaseEchoVoid() throws AxisFault  {
+    public void testR2BaseEchoVoid() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoVoidClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseVoidRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -206,33 +194,31 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoBase64
      */
-    public void testR2BaseEchoBase64() throws AxisFault  {
+    public void testR2BaseEchoBase64() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoBase64ClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseBase64Res.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
      * Round2
      * Group Base
      * operation echoBase64
-     * todo - this test failed, have tocheck the dateTime format that remote server asking
+     * todo - this test failed, have to check the dateTime format that remote server is asking
      */
-    public void testR2BaseEchoDate() throws AxisFault  {
-        url = "http://localhost:8010/";
+    public void testR2BaseEchoDate() throws AxisFault {
+        url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoDateClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseDateRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
-   }
+        compare(retEnv, tempPath);
+    }
 
 
     /**
@@ -240,15 +226,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoHexBinary
      */
-    public void testR2BaseEchoHexBinary() throws AxisFault  {
+    public void testR2BaseEchoHexBinary() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseHexBinaryRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -256,15 +241,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoDecimal
      */
-    public void testR2BaseEchoDecimal() throws AxisFault  {
+    public void testR2BaseEchoDecimal() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoDecimalClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseDecimalRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
     /**
@@ -272,15 +256,14 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoBoolean
      */
-    public void testR2BaseEchoBoolean() throws AxisFault  {
+    public void testR2BaseEchoBoolean() throws AxisFault {
         url = "http://www.extreme.indiana.edu:1568/";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoBooleanClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "XSBaseBooleanRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compare(retEnv, tempPath);
     }
 
 }

@@ -19,55 +19,26 @@ package test.interop.whitemesa.round3;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
-import test.interop.whitemesa.round3.util.GDImport1EchoStringUtil;
-import test.interop.whitemesa.round3.util.GDImport2EchoStructUtil;
-import test.interop.whitemesa.round3.util.GDImport3StructArrayUtil;
-import test.interop.whitemesa.round3.util.GDRpcStringArrayUtil;
-import test.interop.whitemesa.round3.util.GDRpcStringUtil;
-import test.interop.whitemesa.round3.util.GDRpcStructUtil;
-import test.interop.whitemesa.round3.util.GDRpcVoidUtil;
-import test.interop.whitemesa.round3.util.SunRound3ClientUtil;
+import test.interop.whitemesa.round3.util.*;
 
 /**
  * class MsAsmxRound3InteropTest
  * To test interoperability in Axis2 Clients Vs White Mesa Server, Round 3 *
  */
-public class
-        WMRound3InteropTest extends WhiteMesaIneterop {
+public class WMRound3InteropTest extends WhiteMesaIneterop {
 
     SunRound3Client client = null;
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     String url = "";
     String soapAction = "";
     String resFilePath = "";
     String tempPath = "";
     SunRound3ClientUtil util = null;
-    private boolean result = false;
 
     public void setUp() {
         client = new SunRound3Client();
         resFilePath = "interop/whitemesa/round3/";
     }
-
-    /**
-     * Round 3
-     * Group EmptySA
-     * operation EchoString
-     * This test Not Available!!!
-     */
-//    public void testR3EsaEchoString() throws AxisFault {
-//
-//        url = "http://www.whitemesa.net/interop/r3/emptySA-12";
-//        soapAction = "";
-//
-//        util = new Round3EmptySAEchoStringUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "WMR3EsaRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//
-//    }
 
     /**
      * Round 3
@@ -82,8 +53,7 @@ public class
         util = new GDImport1EchoStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDImport1StringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -99,8 +69,7 @@ public class
         util = new GDImport2EchoStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDImport2StructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -116,8 +85,7 @@ public class
         util = new GDImport2EchoStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDImport3StructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -133,12 +101,10 @@ public class
         util = new GDImport3StructArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDImport3StructArrayRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
-
-     /**
+    /**
      * Round 3
      * Group D
      * Service rpcencoded
@@ -151,8 +117,7 @@ public class
         util = new GDRpcStringUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDRpcStringRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -168,8 +133,7 @@ public class
         util = new GDRpcStringArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDRpcStringArrayRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -185,8 +149,7 @@ public class
         util = new GDRpcStructUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDRpcStructRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -202,36 +165,6 @@ public class
         util = new GDRpcVoidUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMGDRpcVoidRes.xml";
-        result = compare(retEnv, tempPath);
-        assertTrue(result);
+        compareXML(retEnv, tempPath);
     }
-
-
-
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    InputStream stream = WMRound3InteropTest.class.getClassLoader().getResourceAsStream( filePath);
-//                    OMElement firstChild = (OMElement) body.getFirstElement();
-//                    XMLStreamReader parser = null;
-//                    parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(firstChild, refNode);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }

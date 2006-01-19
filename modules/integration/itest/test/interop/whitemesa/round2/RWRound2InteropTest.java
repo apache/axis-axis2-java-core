@@ -39,7 +39,6 @@ import test.interop.whitemesa.round2.util.GroupcVoidUtil;
 import test.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoDateClientUtil;
-import test.interop.whitemesa.round2.util.Round2EchoDecimalClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoFloatArrayClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoFloatClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoHexBinaryClientUtil;
@@ -61,20 +60,19 @@ import java.io.File;
  * "base"     http://soapinterop.roguewave.com:8013/interop2base/InteropRound2BaseTest
  * "Group B"  http://soapinterop.roguewave.com:8013/interop2testB/InteropRound2TestB
  * "Group C"  http://soapinterop.roguewave.com:8013/interop2testC/InteropRound2TestC
+ *
+ * Todo - Some Tests Fail
  */
 
 public class RWRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
-    boolean success = false;
     File file = null;
     String url = "";
     String soapAction = "";
-    String FS = System.getProperty("file.separator");
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-    private boolean results = false;
 
     /**
      * Round2
@@ -88,8 +86,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseStringRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -105,8 +102,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -121,8 +117,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseIntegerRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -138,8 +133,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseIntegerArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -154,8 +148,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseFloatRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -171,8 +164,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseFloatArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -187,8 +179,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -204,8 +195,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseStructArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -220,8 +210,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoVoidClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseVoidRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -236,8 +225,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseBase64Res.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -252,8 +240,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseDateRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 
@@ -269,8 +256,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseHexBinaryRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -282,11 +268,9 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         url = "http://soapinterop.roguewave.com:8013/interop2base/InteropRound2BaseTest";
         soapAction = "http://soapinterop.org/";
 
-        util = new Round2EchoDecimalClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseDecimalRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -301,8 +285,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseBooleanRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -317,8 +300,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoStructAsSimpleTypesUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupbStructAsSimpleTypesRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -333,8 +315,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoSimpleTypesAsStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupbSimpletypesAsStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -350,8 +331,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEcho2DStringArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupb2DStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -366,8 +346,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoNestedStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupbNestedStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -383,8 +362,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEchoNestedArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupbNestedArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -400,8 +378,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcEchoStringUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcEchoStringRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -416,8 +393,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcIntergerUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcIntergerRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -432,8 +408,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcStringArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcStringArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -448,8 +423,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcIntegerArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcIntegerArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -464,8 +438,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcFloatUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcFloatRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -480,8 +453,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcFloatArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcFloatArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -496,8 +468,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcStructUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcStructRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -512,8 +483,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcStructArrayUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcStructArrayRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -528,8 +498,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcVoidUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcVoidRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -544,8 +513,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcBase64Util();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcBase64Res.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -560,8 +528,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcHexBinaryUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcHexBinaryRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
     /**
@@ -576,8 +543,7 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupcBooleanUtil();
         retEnv = SunRound2Client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWGroupcBooleanRes.xml";
-        results = compare(retEnv, tempPath);
-        assertTrue(results);
+        compareXML(retEnv, tempPath);
     }
 
 }

@@ -22,10 +22,10 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.context.MessageContextConstants;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.wsdl.WSDLConstants;
 import test.interop.whitemesa.round3.util.SunRound3ClientUtil;
@@ -35,39 +35,39 @@ import java.net.URL;
 public class SunRound3Client {
 
     public SOAPEnvelope sendMsg(SunRound3ClientUtil util, String epUrl, String soapAction) throws AxisFault {
-        SOAPEnvelope retEnvelope;
+
+        SOAPEnvelope resEnv;
         URL url;
         try {
-            //todo set the path to repository in Call()
             url = new URL(epUrl);
 
             Options options = new Options();
+            options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
             options.setTo(new EndpointReference(url.toString()));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapAction(soapAction);
 
-            AxisConfiguration axisConfig = new AxisConfiguration();
-            ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
-            MessageContext msgCtx = new MessageContext();
-            msgCtx.setConfigurationContext(configCtx);
-
+            MessageContext messageContext = new MessageContext();
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
-            msgCtx.setEnvelope(requestEnvilope);
+            messageContext.setEnvelope(requestEnvilope);
 
+            ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                             "target/test-resources/integrationRepo",null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             serviceClient.setOptions(options);
+
             OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-            opClient.addMessageContext(msgCtx);
-            opClient.setOptions(options);
-            MessageContext resMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            retEnvelope = resMsgCtx.getEnvelope();
+            opClient.addMessageContext(messageContext);
+            opClient.execute(true);
+            MessageContext responseMCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
+            resEnv = responseMCtx.getEnvelope();
 
         } catch (Exception e) {
             throw new AxisFault(e);
         }
-        return retEnvelope;
+        return resEnv;
     }
 }

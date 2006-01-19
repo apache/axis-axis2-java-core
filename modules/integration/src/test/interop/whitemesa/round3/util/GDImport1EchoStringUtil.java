@@ -18,7 +18,6 @@ package test.interop.whitemesa.round3.util;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 
@@ -27,20 +26,17 @@ public class GDImport1EchoStringUtil implements SunRound3ClientUtil{
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "xmlns");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop/echoString/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
 
         OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop/echoString/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
+        reqEnv.getBody().addChild(operation);
         operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
 
         OMElement part = omfactory.createOMElement("x", "", null);
@@ -48,7 +44,6 @@ public class GDImport1EchoStringUtil implements SunRound3ClientUtil{
         part.addChild(omfactory.createText("strss fdfing1"));
 
         operation.addChild(part);
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }

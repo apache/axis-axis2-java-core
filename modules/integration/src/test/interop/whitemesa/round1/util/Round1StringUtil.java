@@ -26,7 +26,7 @@ public class Round1StringUtil implements Round1ClientUtil {
     public SOAPEnvelope getEchoSoapEnvelope() {
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omFactory.getDefaultEnvelope();
-        //OMNamespace namespace = reqEnv.declareNamespace("http://sample1.org/sample1", "sample1");
+        
         reqEnv.declareNamespace("http://soapinterop.org/", "ns1");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
