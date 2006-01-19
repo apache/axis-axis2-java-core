@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.lang.reflect.Array;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -67,7 +68,7 @@ public class ADBPullParser implements XMLStreamReader {
     // ===== To be used with Simple Name Value pair ====
     // this is used when we have an array of Strings
     private boolean processingComplexADBNameValuePair = false;
-    private String[] complexStringArray;
+    private Object complexObjectArray;
     private String complexStringArrayName;
     // ==============================================
     //
@@ -224,10 +225,10 @@ public class ADBPullParser implements XMLStreamReader {
         if (processingComplexADBNameValuePair && finishedProcessingNameValuePair) {
             // this means we are done with processing one complex string array entry
             // check we have more
-            if (complexStringArray.length > ++secondArrayIndex) {
+            if (Array.getLength(complexObjectArray) > ++secondArrayIndex) {
                 // we have some more to process
                 processingADBNameValuePair = true;
-                return processADBNameValuePair(new QName(complexStringArrayName), complexStringArray[secondArrayIndex]);
+                return processADBNameValuePair(new QName(complexStringArrayName), Array.get(complexObjectArray, secondArrayIndex));
             } else {
                 // completed looking at all the entries. Now go forward with normal entries, if any.
                 processingComplexADBNameValuePair = false;
@@ -284,16 +285,16 @@ public class ADBPullParser implements XMLStreamReader {
                 Object property = properties[currentIndex];
                 String simplePropertyName = (String) o;
 
-                if (property instanceof String[]) {
+                if (property.getClass().isArray()) {
 
                     complexStringArrayName = simplePropertyName;
-                    complexStringArray = (String[]) property;
+                    complexObjectArray = property;
                     secondArrayIndex = 0;
                     processingComplexADBNameValuePair = true;
 
                     // use the simple name value pair processing recursively
                     processingADBNameValuePair = true;
-                    return processADBNameValuePair(new QName(simplePropertyName), complexStringArray[secondArrayIndex]);
+                    return processADBNameValuePair(new QName(simplePropertyName), Array.get(complexObjectArray, secondArrayIndex));
 
                 } else if (property instanceof String) {
                     String simplePropertyValue = (String) properties[currentIndex];
@@ -702,16 +703,16 @@ public class ADBPullParser implements XMLStreamReader {
 // Utill methods inside this class
 // =============================================================================
 
-    private int processADBNameValuePair(QName simplePropertyName, String simplePropertyValue) {
+    private int processADBNameValuePair(QName simplePropertyName, Object simplePropertyValue) {
         int event = 0;
         if(processingElementText){
-            this.parserInformation.setText(simplePropertyValue);
+            this.parserInformation.setText(ConverterUtil.convertToString(simplePropertyValue));
             finishedProcessingNameValuePair = true;
             event = XMLStreamConstants.CHARACTERS;
         } else if (!nameValuePairStartElementProcessed) {
             event = XMLStreamConstants.START_ELEMENT;
             tempParserInfo = parserInformation;
-            parserInformation = new ParserInformation(simplePropertyName, simplePropertyValue);
+            parserInformation = new ParserInformation(simplePropertyName, ConverterUtil.convertToString(simplePropertyValue));
             nameValuePairStartElementProcessed = true;
             finishedProcessingNameValuePair = false;
             //Forcibly set nameValuePairTextProcessed to avoid a character event
