@@ -59,15 +59,15 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
     </ul>
   </li>
 </ul>
-
-<h3><a name="Intro">Introduction</a></h3>
+<a name="Intro">
+<h3>Introduction</h3>
 
 <p>Axis2 Web Administration Module provides a way to configure Axis2
 dynamically. It's important to note that this dynamic configuration will NOT
 be persistent, i.e. if the servlet container is restarted then all the
 dynamic configuration changes will be lost.</p>
-
-<h4><a name="login">Login into Administration Site</a></h4>
+<a name="login">
+<h4>Login into Administration Site</h4>
 
 <p>From <a href="#homepage">Axis2 Web Application Home page</a> you can go to
 Administration page by following 'Administration' link, then login page shown
@@ -75,26 +75,29 @@ below will appear requesting user name and a password. The default user name
 is 'admin' (without quotes) and default password is 'axis2' (without
 quotes).</p>
 
-<p align="center"><img src="images/adminlogin.jpg"></p>
+<p align="center"><img alt="" src="images/adminlogin.jpg"></p>
 
 <p>You can change the user name &amp; password values by changing following
 two parameters in axis2.xml as required.</p>
 
-<p align="center"><img src="images/parameters.jpg"></p>
+<p align="center"><img alt="" src="images/parameters.jpg"></p>
 
 <p>If the login is successful you will see the screen below. This is where
 you can view the configuration and the state of the running system and
 dynamically configure it.</p>
 
-<p align="center"><img src="images/admin.jpg"></p>
+<p align="center"><img alt="" src="images/admin.jpg"></p>
 
-<h3><a name="adminoptions">Administration Options</a></h3>
+    <a name="adminoptions"/>
+<h3>Administration Options</h3>
 <ul>
-  <b><a name="tools">Tools</a></b>
+    <a name="tools"/>
+  <b>Tools</b>
   <ul>
     <li><a href="#upservice">Upload Service</a></li>
   </ul>
-  <b><a name="syscomponents">System components</a></b>
+    <a name="syscomponents"/>
+  <b>System components</b>
   <ul>
     <li><a href="#heading1">Available services</a></li>
     <li><a href="#servgroups">Available service groups</a></li>
@@ -102,29 +105,34 @@ dynamically configure it.</p>
     <li><a href="#globalmodules">Globally engaged modules</a></li>
     <li><a href="#phases">Available phases</a></li>
   </ul>
-  <b><a name="executionchains">Execution chains</a></b>
+    <a name="executionchains"/>
+  <b>Execution chains</b>
   <ul>
     <li><a href="#globalchains">Global chains</a></li>
     <li><a href="#operationchains">Operation specific chains</a></li>
   </ul>
-  <b><a href="#engaginmodule">Engage module</a></b> <br>
-  <br>
-  <b><a name="services">Services</a></b>
+  <b><a href="#engaginmodule">Engage module</a></b> <br/>
+  <br/>
+    <a name="services"/>
+  <b>Services</b>
   <ul>
     <li><a href="#turnoffservice">Undeploy service</a></li>
     <li><a href="#editservicepara">Edit service parameters</a></li>
   </ul>
-  <b><a name="context">Contexts</a></b>
+    <a name="context"/>
+  <b>Contexts</b>
   <ul>
     <li><a href="#viewhierarchy">View Hierarchy</a></li>
   </ul>
 </ul>
 
-<h3><a name="homepage">Axis2 Web Application Home Page</a></h3>
+    <a name="homepage"/>
+<h3>Axis2 Web Application Home Page</h3>
 
-<p align="center"><strong><img src="images/clip_image006.jpg"></strong></p>
+<p align="center"><strong><img alt="" src="images/clip_image006.jpg"></strong></p>
 
-<h3><a name="upservice">Upload Services</a></h3>
+    <a name="upservice"/>
+<h3>Upload Services</h3>
 
 <p>You can upload packaged Axis2<em> </em>service archive files using this
 page. This can be done in two simple steps:</p>
@@ -134,9 +142,10 @@ page. This can be done in two simple steps:</p>
   <li>then click Upload</li>
 </ul>
 
-<p align="center"><img src="images/clip_image010.jpg"></p>
+<p align="center"><img alt="" src="images/clip_image010.jpg"></p>
 
-<h3><a name="heading1"></a>Available Services</h3>
+<a name="heading1"></a>
+<h3>Available Services</h3>
 
 <p>The functionality of the 'Available Services' option is almost same as the
 functionality of Axis2 Web Application Home page 'Services' option where it
@@ -144,35 +153,37 @@ displays the list of deployed services. But as an additional feature, if
 there are any modules engaged globally to services or operations those
 details will also be displayed here.</p>
 
-<p align="center"><img src="images/adminmain.jpg"></p>
+<p align="center"><img alt="" src="images/adminmain.jpg"></p>
 
-<h3><a name="servgroups"></a>Available Service Groups</h3>
+<a name="servgroups"></a>
+<h3>Available Service Groups</h3>
 
 <p>Service group is a logical collection of set of services and 'Available
 Service Groups' link will list all the available service groups in the system
 .</p>
 
-<p align="center"><img src="images/servicegroups.jpg"></p>
+<p align="center"><img alt="" src="images/servicegroups.jpg"></p>
 
-<h3><a name="avmodules"></a>Available Modules</h3>
+<a name="avmodules"></a>
+<h3>Available Modules</h3>
 
 <p>To view the available modules in the 'modules' directory of the
 'repository' click 'Available Modules' link. This will show you all the
 available modules in the system. Those modules can be engaged dynamically.</p>
 
-<p align="center"><img src="images/modules.jpg"></p>
-<br>
+<p align="center"><img alt="" src="images/modules.jpg"></p>
+<br/>
 
-
-<h3><a name="globalmodules"></a>Globally Engaged Modules</h3>
+<a name="globalmodules"></a>
+<h3>Globally Engaged Modules</h3>
 
 <p>From the 'Globally Engaged Modules' link you can view globally engaged
 modules, if any. If a module was engaged globally then the handlers that
 belong to that module will be executed irrespective of the service.</p>
-<br>
+<br/>
 
-
-<h3><a name="phases"></a>Available Phases</h3>
+<a name="phases"></a>
+<h3>Available Phases</h3>
 
 <p>'Available Phases' link will display all the available phases. In Axis2
 there are two levels of phases:</p>
@@ -186,10 +197,10 @@ phases will be invoked irrespective of the services, while user defined
 phases will be invoked when the dispatcher finds the operation. Note that it
 is essential for module developers and service writers to have a good
 understanding of phases and phase ordering.</p>
-<p align="center"><img src="images/viewphases.jpg"></p><br>
+<p align="center"><img alt="" src="images/viewphases.jpg"></p><br/>
 
-
-<h3><a name="globalchains"></a>Global Chains</h3>
+<a name="globalchains"></a>
+<h3>Global Chains</h3>
 
 <p>'Global Chains' link will display all the Global Execution Chains. The
 most interesting feature of Axis2 Web Administration Module is that it
@@ -200,21 +211,21 @@ way to list out handlers in the global chains. If you engage a new module,
 the new handlers will be added to the global chains and displayed on this
 page.</p>
 
-<p align="center"><img src="images/globalchain.jpg"></p>
-<br>
+<p align="center"><img alt="" src="images/globalchain.jpg"></p>
+<br/>
 
-
-<h3><a name="operationchains"></a>Operation Specific Chains</h3>
+<a name="operationchains"></a>
+<h3>Operation Specific Chains</h3>
 
 <p>The 'Operation Specific Chains' link can be used to view the handlers
 corresponding to a given service in the same order as it is in the real
 execution chain.</p>
 
-<p align="center"><img src="images/serviceHandlers.jpg"></p>
-<br>
+<p align="center"><img alt="" src="images/serviceHandlers.jpg"></p>
+<br/>
 
-
-<h3><a name="engaginmodule"></a>Engaging Modules</h3>
+<a name="engaginmodule"></a>
+<h3>Engaging Modules</h3>
 
 <p>'Engaging Modules' link allows to engage modules either globally (to all
 services), to a service group, to a service or to an operation depending on
@@ -230,29 +241,31 @@ Thus it can only be included in <a href="#phases">User Defined Phases</a>.</p>
 <p>Immediately after engaging the module you can see the status of engagement
 indicating whether it is engaged properly or not.</p>
 
-<p align="center"><img src="images/moduleengage.jpg"></p>
+<p align="center"><img alt="" src="images/moduleengage.jpg"></p>
 
-<p> </p>
+<p>&nbsp;</p>
 
-<h3><a name="turnoffservice"></a>Undeploy Service</h3>
+<a name="turnoffservice"></a>
+<h3>Undeploy Service</h3>
 
 <p>This functionality provide a way to remove unnecessary services from the
 running system, but the removal is transient which means if you restart the
 system the service will be available.</p>
 
-<p align="center"><img src="images/removeservice.jpg"></p>
-<br>
+<p align="center"><img alt="" src="images/removeservice.jpg"></p>
+<br/>
 
-
-<h3><a name="editservicepara"></a>Edit Service Parameters</h3>
+<a name="editservicepara"></a>
+<h3>Edit Service Parameters</h3>
 
 <p>This functionality provide a way to change parameters in a service or its
 operations.These changes will be transient too, which means if you restart
 the system changes will not be reflected.</p>
 
-<p align="center"><img src="images/editserviecpara.jpg"></p>
+<p align="center"><img alt="" src="images/editserviecpara.jpg"></p>
 
-<h3><a name="viewhierarchy"></a>View Hierarchy</h3>
+<a name="viewhierarchy"></a>
+<h3>View Hierarchy</h3>
 
 <p>By listing current context hierarchy 'View Hierarchy' link provides a
 means to look at the run time system. This will list out all the available

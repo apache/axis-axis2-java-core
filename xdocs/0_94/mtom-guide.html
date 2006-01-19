@@ -35,7 +35,7 @@
 there are times when serializing data into XML does not make sense. Web
 services users may need to transmit binary attachments of various sorts like
 images, drawings, xml docs, etc together with SOAP message. Such data are
-often in a particular binary format.<br>
+often in a particular binary format.<br/>
 Traditionally, two techniques have been used in dealing with opaque data in
 XML;</p>
 <ol>
@@ -238,9 +238,11 @@ in the server side for outgoing messages,</p>
   </li>
 </ul>
 
-<p><source></p>
+<p><source>
 <pre>&lt;parameter name="enableMTOM" locked="false"&gt;true&lt;/parameter&gt;</pre>
-</source><ul>
+</source>
+</p>
+<ul>
   <ul>
     <p>User must restart the server after setting this parameter.</p>
   </ul>
@@ -276,7 +278,8 @@ in the server side for outgoing messages,</p>
     }
 }</pre>
 </source><ul>
-  <li><strong><a name="242"></a>Client</strong></li>
+    <a name="242"/>
+  <li><strong>Client</strong></li>
 </ul>
 <source><pre>        Options options = new Options();
         options.setTo(targetEPR); 

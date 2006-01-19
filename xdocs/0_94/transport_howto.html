@@ -70,7 +70,7 @@ a configuration context. The following code fragment will do this. This
 should ideally be only done once for the lifetime of the Transport
 receiver.</p>
 
-<p><source></p>
+<p><source>
 <pre>try {
         //Create a factory 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
@@ -80,6 +80,7 @@ receiver.</p>
         log.info(e.getMessage());
 }</pre>
 </source>
+</p>
 <p>Now we need some kind of a listener to listen to the requests that come
 in. This you will need to implement according to the transport that you are
 trying to build. After a message is received at the receiver you can use the

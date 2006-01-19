@@ -8,7 +8,8 @@
 </head>
 
 <body lang="en-US" dir="ltr">
-<h4><a name="Axis2_User's_Guide">Axis2 User's Guide</a></h4>
+<a name="Axis2_User's_Guide"/>
+<h4>Axis2 User's Guide</h4>
 
 <p><i>Version 0.94</i></p>
 <i>User Feedback: <a
@@ -25,22 +26,22 @@ guide we will look at how to write Web Service Clients using Axis2. All the
 user's guide samples are located at the <b><font
 color="#000000">"samples/userguide/src"</font></b> directory of the binary
 distribution. So... let's explore the samples.</p>
-
-<h2><a name="Web_Service_Clients_Using_Axis2">Web Service Clients Using Axis2</a></h2>
+<a name="Web_Service_Clients_Using_Axis2"/>
+<h2>Web Service Clients Using Axis2</h2>
 
 <p>Now let's see how we can write a Web Service Client to use this Web
 Service.</p>
 
 <p>Web services can be used to provide wide range of functionality to the
-users ranging from simple, less time consuming  operations such as
-"getStockQuote"  to time consuming business services. When we utilize (invoke
+users ranging from simple, less time consuming operations such as
+"getStockQuote" to time consuming business services. When we utilize (invoke
 using client applications) these Web Service we cannot use some simple
 generic invocation paradigm that suites all the timing complexities involved
 in the service operations. For example, if we use a single transport channel
 (such as HTTP) to invoke a Web Service with and IN-OUT operation that take
 long time to complete, then most of the time we may end up with "connection
 time outs". On the other hand, if there are simultaneous service invocations
-that  we need to perform from a single client application, then the use of a
+that we need to perform from a single client application, then the use of a
 "blocking" client API will degrade the performance of the client application.
 Similarly there are various other consequences such as One-Way transports
 that come in to play when we need them. Let's try to analyze some common
@@ -49,22 +50,22 @@ service invocation paradigms.</p>
 <p>Many web service engines provide the users with a Blocking and
 Non-Blocking client APIs.</p>
 <ul>
-  <li><p style="margin-bottom: 0in"><b>Blocking API</b> -Once the service
+  <li><b>Blocking API</b> -Once the service
     invocation is called, the client application hangs and only gets control
     back when the operation completes, after which client receives a response
     or a fault. This is the simplest way of invoking Web Services and it also
-    suites many business situations.</p>
+    suites many business situations.
   </li>
-  <li><p><b>Non-Blocking API </b>- This is a callback or polling based API,
+  <li><b>Non-Blocking API </b>- This is a callback or polling based API,
     hence once a service invocation is called, the client application
     immediately gets the control back and the response is retrieved using the
     callback object provided. This approach provides the flexibility to the
     client application to invoke several Web Services simultaneously without
-    blocking the operation already invoked.</p>
+    blocking the operation already invoked.
   </li>
 </ul>
 
-<p>Both these mechanisms work in the API level. Let's name the  asynchronous
+<p>Both these mechanisms work in the API level. Let's name the asynchronous
 behavior that we can get using the <strong>Non-Blocking API</strong> as
 <b>API Level Asynchrony.</b></p>
 
@@ -89,7 +90,7 @@ following table.</p>
       <td width="33%" height="19"><p><strong>API
         (Blocking/Non-Blocking)</strong></p>
       </td>
-      <td width="33%"><p><strong> Dual Transports (Yes/No)</strong></p>
+      <td width="33%"><p><strong>Dual Transports (Yes/No)</strong></p>
       </td>
       <td width="33%"><p><strong>Description</strong></p>
       </td>
@@ -144,11 +145,11 @@ be done in two methods:</p>
     client applications</p>
   </li>
 </ol>
-
-<h3><a name="Writing_Web_Service_Clients_using_Axis2's_Primary_APIs">Writing
-Web Service Clients Using Axis2's Primary APIs</a></h3>
-
-<h4><a name="EchoBlockingClient">EchoBlockingClient</a></h4>
+<a name="Writing_Web_Service_Clients_using_Axis2's_Primary_APIs"/>
+<h3>Writing
+Web Service Clients Using Axis2's Primary APIs</h3>
+<a name="EchoBlockingClient"/>
+<h4>EchoBlockingClient</h4>
 
 <p>Axis2 provides the user with several invocation patterns for Web Services,
 ranging from pure blocking single channel invocations to a non-blocking dual
@@ -185,13 +186,13 @@ inorder to invoke a web service. The rest is used to create the OMElement
 that needs to be sent and display the response OMElement. To test this
 client, use the provided ant build file that can be found in the
 "Axis2Home/samples" directory. Run the "testEchoBlockingClient" target . If
-you can see the response OMElement printed in your command line,  then you
+you can see the response OMElement printed in your command line, then you
 have successfully tested the client. </p>
-
-<h4><a name="PingClient">PingClient</a></h4>
+<a name="PingClient"/>
+<h4>PingClient</h4>
 
 <p>In the Web Service "MyService" we had a IN-ONLY operation with the name
-"ping" (see <a href="userguide2.html#Web_Services_Using_Axis2" tareget="_blank">Web Services Using
+"ping" (see <a href="userguide2.html#Web_Services_Using_Axis2" target="_blank">Web Services Using
 Axis2</a>). Let's write a client to invoke this operation. The client code is
 as follows:</p>
 <pre> try {
@@ -216,8 +217,8 @@ to the client. You can test this client by running the target
 <p>We have invoked the two operations in our service. Are we done? No! There
 are lot more to explore. Let's see some other ways to invoke the same
 operations...</p>
-
-<h4><a name="EchoNonBlockingClient">EchoNonBlockingClient</a></h4>
+  <a name="EchoNonBlockingClient"/>
+<h4>EchoNonBlockingClient</h4>
 
 <p>In the EchoBlockingClient once the "serviceCleint.sendReceive(payload);"
 is called, the client is blocked till the operation is completed. This
@@ -249,11 +250,11 @@ API for Web Service Clients.</p>
 <p>To run the sample client ( EchoNonBlockingClient) you can simply use the
 "testEchoNonBlockingClient" target of the ant file found at the
 "Axis2Home/samples" directory.</p>
-
-<h4><a name="EchoNonBlockingDualClient">EchoNonBlockingDualClient</a></h4>
+      <a name="EchoNonBlockingDualClient"/>
+<h4>EchoNonBlockingDualClient</h4>
 
 <p>The solution provided by the Non-Blocking API has one limitation when it
-comes to  Web Service invocations which takes long time to complete. The
+comes to Web Service invocations which takes long time to complete. The
 limitation is due to the use of single transport connection to invoke the Web
 Service and to retrieve the response. In other words, client API provides a
 non blocking invocation mechanism for the users, but the request and the
@@ -268,7 +269,7 @@ to be solved is the correlation (correlating the request and the response).
 <a href="http://www.w3.org/Submission/ws-addressing/"
 target="_blank">WS-Addressing</a> provides a neat solution to this using
 &lt;wsa:MessageID&gt; and &lt;wsa:RelatesTo&gt; headers. Axis2 provides
-support for addressing  based correlation mechanism and a complying Client
+support for addressing based correlation mechanism and a complying Client
 API to invoke Web Services with two transport connections. (Core of Axis2
 does not depend on WS-Addressing, but contains a set of parameters like in
 addressing that can be populated in any means. WS-Addressing is one of the
@@ -342,7 +343,7 @@ need to "engage" addressing module in the server side as well. According to
 the Axis2 architecture, addressing module is deployed in the
 "<strong>pre-dispatch</strong>" phase (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
-more details about phases)  and hence "engaging" means simply adding module
+more details about phases) and hence "engaging" means simply adding module
 reference in the "axis2.xml" (NOT the "services.xml"). Now add the following
 line to the "axis2.xml" that you can find in the "/webapps/axis2/WEB-INF"
 directory in the servlet container. </p>
@@ -357,8 +358,8 @@ target of the ant file found at "Axis2Home/samples" directory. If you see the
 response OMElement printed in the client side, then you have successfully
 tested the Non Blocking API with two transport channels at the client
 side.</p>
-
-<h4><a name="EchoBlockingDualClient">EchoBlockingDualClient</a></h4>
+      <a name="EchoBlockingDualClient"/>
+<h4>EchoBlockingDualClient</h4>
 
 <p>This is again a Two-Way transport request/response client, but this time,
 we use a Blocking API in the client code. Sample code for this can be found
@@ -374,10 +375,10 @@ connections for request and response. User can test this client using the
 
 <p>See <a href="http-transport.html" target="_blank">Configuring
 Transports</a> for use different transports.</p>
-
-<h3><a
-name="Writing_Web_Service_Clients_using_Code_Generation_with_Data_Binding_Support">Writing
-Web Service Clients using Code Generation with Data Binding Support</a></h3>
+<a
+name="Writing_Web_Service_Clients_using_Code_Generation_with_Data_Binding_Support"/>
+<h3>Writing
+Web Service Clients using Code Generation with Data Binding Support</h3>
 
 <p>Axis2 provides the data binding support for Web Service client as well.
 The user can generate the required stubs from a given WSDL with the other
@@ -392,9 +393,9 @@ that can be used to invoke the Web Service Axis2SampleDocLitPortType. Let's
 see how we can use this stub to write Web Service clients to utilize the Web
 Service Axis2SampleDocLitPortType (the service that we have already
 deployed).</p>
-
-<h4><a name="Client_for_echoVoid_Operation">Client for echoVoid
-Operation</a></h4>
+               <a name="Client_for_echoVoid_Operation"/>
+<h4>Client for echoVoid
+Operation</h4>
 
 <p>Following code fragment shows the necessary code for utilizing the
 echoVoid operation of the Axis2SampleDocLitPortType that we have already
@@ -410,9 +411,9 @@ Service and the same SOAP envelope is echoed back.</p>
 } catch (Exception e) {
     e.printStackTrace();
 }</pre>
-
-<h4><a name="Client_for_echoString_Operation">Client for echoString
-Operation</a></h4>
+            <a name="Client_for_echoString_Operation"/>
+<h4>Client for echoString
+Operation</h4>
 
 <p>Following code fragment shows the necessary code for utilizing the
 echoString operation of the Axis2SampleDocLitPortType that we have already
@@ -436,9 +437,9 @@ the form of comments.</p>
 
 <p>Similarly following code fragments show client side code for
 echoStringArray operation and echoStruct operation respectively.</p>
-
-<h4><a name="Client_for_echoStringArray_Operation">Client for echoStringArray
-Operation</a></h4>
+            <a name="Client_for_echoStringArray_Operation"/>
+<h4>Client for echoStringArray
+Operation</h4>
 <pre>try {
      //Create the stub by passing the AXIS_HOME and target EPR.
      //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
@@ -464,9 +465,9 @@ Operation</a></h4>
       } catch (Exception e) {
         e.printStackTrace();
       }</pre>
-
-<h4><a name="Client_for_echoStruct_Operation">Client for echoStruct
-Operation</a></h4>
+            <a name="Client_for_echoStruct_Operation"/>
+<h4>Client for echoStruct
+Operation</h4>
 <pre>try {
     //Create the stub by passing the AXIS_HOME and target EPR.
     //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
@@ -498,7 +499,7 @@ Operation</a></h4>
 
 <p align="right"><a href="userguide2.html" target="_blank"><img
 src="images/arrow_left.gif"> Previous</a> | <a href="userguide4.html"
-target="_blank">Next <img src="images/arrow_right.gif"></a></p>
+target="_blank">Next <img src="images/arrow_right.gif" alt=""></a></p>
 
 <p>Pages: <a href="userguide.html" target="_blank">Content</a>, <a
 href="userguide1.html" target="_blank">1</a>, <a href="userguide2.html"

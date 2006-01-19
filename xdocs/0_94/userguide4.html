@@ -8,7 +8,8 @@
 </head>
 
 <body lang="en-US" dir="ltr">
-<h4><a name="Axis2_User's_Guide">Axis2 User's Guide</a></h4>
+<a name="Axis2_User's_Guide"/>
+<h4>Axis2 User's Guide</h4>
 
 <p><i>Version 0.94</i></p>
 <i>User Feedback: <a
@@ -22,8 +23,8 @@ target="_blank">5</a></p>
 <b><font size="4">Note (on samples):</font></b>All the user's guide samples
 are located in the <b>"samples/userguide/src"</b> directory of the binary
 distribution.
-
-<h2><a name="Modules"></a>Modules</h2>
+<a name="Modules"/>
+<h2>Modules</h2>
 
 <p>Axis2 provides an extended support for modules (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for more details
@@ -31,26 +32,26 @@ about modules in Axis2). Let's create a custom module and deploy it to the
 MyService which we created earlier. Following steps shows the actions that
 need to be performed to deploy a custom module for a given Web Service:</p>
 <ol>
-  <li><p style="margin-bottom: 0in">Create the Module Implementation</p>
+  <li>Create the Module Implementation
   </li>
-  <li><p style="margin-bottom: 0in">Create the Handlers</p>
+  <li>Create the Handlers
   </li>
-  <li><p style="margin-bottom: 0in">Create the module.xml</p>
+  <li>Create the module.xml
   </li>
-  <li><p style="margin-bottom: 0in">Modify the "axis2.xml" (if you need
-    custom phases)</p>
+  <li>Modify the "axis2.xml" (if you need
+    custom phases)
   </li>
-  <li><p style="margin-bottom: 0in">Modify the "services.xml" to engage
-    modules at the deployment time.</p>
+  <li>Modify the "services.xml" to engage
+    modules at the deployment time.
   </li>
-  <li><p style="margin-bottom: 0in">Package in a ".mar" (Module Archive)</p>
+  <li>Package in a ".mar" (Module Archive)
   </li>
-  <li><p>Deploy the module in Axis2</p>
+  <li>Deploy the module in Axis2
   </li>
 </ol>
-
-<h3><a name="MyService_with_a_Logging_Module">MyService with a Logging
-Module</a></h3>
+<a name="MyService_with_a_Logging_Module"/>
+<h3>MyService with a Logging
+Module</h3>
 
 <p>Let's write a simple logging module for our sample. This module contains
 one handler that just logs the message that is passed through it. Axis2 uses
@@ -60,8 +61,8 @@ create all these and see how it works.</p>
 
 <p><img src="images/userguide/ModuleView.jpg" name="Graphic5" align="bottom"
 width="185" height="120" border="0"></p>
-
-<h4><a name="Step1_:_LoggingModule_Class">Step1 : LoggingModule Class</a></h4>
+ <a name="Step1_:_LoggingModule_Class"/>
+<h4>Step1 : LoggingModule Class</h4>
 
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2
 modules should implement the "org.apache.axis2.modules.Module" interface with
@@ -74,8 +75,8 @@ termination. With the input parameter AxisConfiguration user is provided with
 the complete configuration hierarchy. This can be used to fine-tune the
 module behavior using the module writers. For the simple logging service we
 can keep these methods blank in our implementation class.</p>
-
-<h4><a name="Step2_:_LogHandler">Step2 : LogHandler</a></h4>
+    <a name="Step2_:_LogHandler"/>
+<h4>Step2 : LogHandler</h4>
 
 <p>A module in Axis2 can contain, one or more handlers that perform various
 SOAP header processing at different phases. (See<a
@@ -105,8 +106,8 @@ handlers are revoked by the Axis2 engine.</p>
         this.name = name;
     }
 }</pre>
-
-<h4><a name="Step3_:_module_xml">Step3 : module.xml</a></h4>
+        <a name="Step3_:_module_xml"/>
+<h4>Step3 : module.xml</h4>
 
 <p>"module.xml" contains the deployment configurations for a particular
 module. It contains details such as Implementation class of the module (in
@@ -141,17 +142,17 @@ follows:</p>
 
 <p>As it can be seen there are four phases defined in this "module.xml"</p>
 <ol>
-  <li>inflow               - Represents the handler chain that will run when
+  <li>inflow - Represents the handler chain that will run when
     a message is coming in. </li>
-  <li><p style="margin-bottom: 0in">outflow             - Represents the
-    handler chain that will run when the message is going out. </p>
+  <li>outflow - Represents the
+    handler chain that will run when the message is going out.
   </li>
-  <li><p style="margin-bottom: 0in">Outfaultflow      - Represents the
+  <li>Outfaultflow - Represents the
     handler chain that will run when there is a fault and the fault is going
-    out </p>
+    out
   </li>
-  <li><p>INfaultflow       - Represents the handler chain that will run when
-    there is a fault and the fault is coming in </p>
+  <li>INfaultflow - Represents the handler chain that will run when
+    there is a fault and the fault is coming in
   </li>
 </ol>
 
@@ -170,9 +171,9 @@ runs.</p>
 <p>To learn more on Phase rules, click on <a
 href="http://www.developer.com/java/web/article.php/3529321"
 target="_blank">here</a></p>
-
-<h4><a name="Step_4:_Modify_the_&#34;axis2_xml&#34;">Step 4: Modify the
-"axis2.xml"</a></h4>
+ <a name="Step_4:_Modify_the_&#34;axis2_xml&#34;"/>
+<h4>Step 4: Modify the
+"axis2.xml"</h4>
 
 <p>In this handler the phase "loggingPhase" is defined by the module writer.
 It is not a pre-defined handler phase, hence the module writer should
@@ -246,9 +247,9 @@ an extract of the phase section of the "axis2.xml".</p>
 flows, hence that phase will be called in all the message flows in the
 engine. Since our module is associated with this phase, the LogHandler inside
 the module now will be executed in this phase.</p>
-
-<h4><a name="Step5_:_Modify_the_&#34;services_xml&#34;">Step5 : Modify the
-"services.xml"</a></h4>
+  <a name="Step5_:_Modify_the_&#34;services_xml&#34;"/>
+<h4>Step5 : Modify the
+"services.xml"</h4>
 
 <p>Up to this point we have created the required classes and configuration
 descriptions for the logging module and by changing the "axis2.xml" we have
@@ -282,16 +283,16 @@ ref="logging"/&gt;"</b> to "services.xml". This informs the Axis2 engine that
 the module "logging" should be engaged for this service. The handler inside
 the module will be executed in their respective phases as described by the
 "module.xml".</p>
-
-<p><b><a name="Step6_:_Packaging">Step6 : Packaging</a></b></p>
+     <a name="Step6_:_Packaging"/>
+<p><b>Step6 : Packaging</b></p>
 
 <p>Before deploying the module we need to create the ".mar" file for this
 module. This can be done, using the "jar" command and then renaming the
 created jar file. Or you can find the "Logging.mar" that is already created
 for you in the "Axis2Home/samples/userguide" directory.</p>
-
-<h4><a name="Step7_:_Deploy_the_Module_in_Axis2">Step7 : Deploy the Module in
-Axis2</a></h4>
+           <a name="Step7_:_Deploy_the_Module_in_Axis2"/>
+<h4>Step7 : Deploy the Module in
+Axis2</h4>
 
 <p>Deploying a module in Axis2 require the user to create a directory with
 the name "modules" in the "webapps/axis2/WEB-INF" directory of their servlet
@@ -301,8 +302,9 @@ directory.</p>
 
 <p>Although the required changes to the "services.xml" is very little, we
 have created a separate service archive (MyServiceWithModule.aar) for users
-to deploy and see. Deploy this service using the <a href="userguide2.html#Step4_:Deploy_the_Web_Service"">same steps
-that you used to deploy "MyService"</a> and copy the "LoggingModule.mar" file
+to deploy and see. Deploy this service using the
+    <a href="userguide2.html#Step4_:Deploy_the_Web_Service">
+        same steps that you used to deploy "MyService"</a> and copy the "LoggingModule.mar" file
 to the "modules" directory. Then run using the
 "TestWebServiceWithModuleClient.bat" or "TestWebServiceWithModuleClient.sh"
 in the "Axis2Home/samples/userguide/src/userguide/clients/bin" directory.</p>
@@ -312,9 +314,9 @@ log INFO. The property file is located in "webapps\axis2\WEB-INF\classes" of
 your servlet container. Change the line "log4j.rootCategory= ERROR, LOGFILE"
 to "log4j.rootCategory=INFO, ERROR, LOGFILE".</p>
 
-<p align="right"><a href="userguide3.html" target="_blank"><img
+<p align="right"><a href="userguide3.html" target="_blank"><img alt=""
 src="images/arrow_left.gif"> Previous</a> | <a href="userguide5.html"
-target="_blank">Next <img src="images/arrow_right.gif"></a></p>
+target="_blank">Next <img src="images/arrow_right.gif" alt=""></a></p>
 
 <p>Pages: <a href="userguide.html" target="_blank">Content</a>, <a
 href="userguide1.html" target="_blank">1</a>, <a href="userguide2.html"

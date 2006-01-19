@@ -2,7 +2,7 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>OM Tutorial</title>
-  <link href="css/axis-docs.css" type="text/css" rel="stylesheet">
+  <link href="css/axis-docs.css" type="text/css" rel="stylesheet"/>
 </head>
 
 <body>
@@ -10,7 +10,7 @@
 <table width="100%">
 <tr>
 <td align="left"><h1>Apache Axis2</h1></td>
-<td align="right"><img src="images/axis.jpg"/></td>
+<td align="right"><img alt="" src="images/axis.jpg"/></td>
 </tr>
 </table>
 end of header section -->
@@ -118,8 +118,8 @@ memory intensive programming. Following is a short feature overview of OM.</p>
 <p>The Following image shows how OM API is viewed by the user</p>
 <!-- Image -->
 
-<p align="center" class="img"><img src="images/archi006.jpg"
-alt="OM Structure" class="img" width="490" height="282"></p>
+<p align="center" class="img"><img alt="" src="images/archi006.jpg"
+                                   class="img" width="490" height="282"></p>
 
 <p align="center" class="img-title">Figure 1</p>
 <!--  End of Image -->
@@ -214,11 +214,11 @@ used in this example.</p>
 <div align="left">
 <p><b>Code Listing 1</b></p>
 </div>
-<source><pre>//create the parser<br>        
+<source><pre>//create the parser<br/>
 XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-<br>//create the builder<br>        
+<br/>//create the builder<br/>
 OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser); 
-//get the root element (in this case the envelope)<br>
+//get the root element (in this case the envelope)<br/>
         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();</pre>
 </source>
 <p>As the example shows, creating an OM from an input stream is pretty
@@ -454,7 +454,7 @@ envelope.</p>
 //dump the output to console with caching
 envelope.serializeWithCache(writer); 
 writer.flush();</pre>
-<pre class="code"> </pre>
+<pre class="code"></pre>
 
 <p>The above mentioned features of the serializer forces a correct
 serialization even if only a part of the OM tree is serialized. The following
@@ -565,7 +565,7 @@ models. This makes such operations faster and efficient.</p>
 </table>
 <!-- End of special section -->
 
-<h3> Known Limitations of OM</h3>
+<h3>Known Limitations of OM</h3>
 
 <h3>Inefficient Namespace serialization</h3>
 
@@ -595,9 +595,9 @@ root.addChild(elt1);</pre>
 <p>Serialization of the root element provides the following XML</p>
 <pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;
 &lt;x:foo&gt;
-  &lt;y:yuck&gt;blahblah&lt;/y:yuck&gt;
+ &lt;y:yuck&gt;blahblah&lt;/y:yuck&gt;
  &lt;y:yuck&gt;blah&lt;/y:yuck&gt;
- &lt;/x:foo&gt;
+&lt;/x:foo&gt;
 &lt;/x:root&gt;
 
 </pre>
@@ -605,9 +605,9 @@ root.addChild(elt1);</pre>
 <p>However if the serialization is carried on the foo element then the
 following XML is produced</p>
 <pre class="xml">&lt;x:foo xmlns:x="bar" &gt;
-  &lt;y:yuck " xmlns:y="bar1"&gt;blahblah&lt;/y:yuck&gt;
-  &lt;y:yuck " xmlns:y="bar1"&gt;blah&lt;/y:yuck&gt;
- &lt;/x:foo&gt;
+ &lt;y:yuck " xmlns:y="bar1"&gt;blahblah&lt;/y:yuck&gt;
+ &lt;y:yuck " xmlns:y="bar1"&gt;blah&lt;/y:yuck&gt;
+&lt;/x:foo&gt;
 
 </pre>
 
