@@ -98,4 +98,10 @@ public class ServiceContext extends AbstractContext {
     public void setReplyTorefpars(ArrayList replyTorefpars) {
         this.replyTorefpars = replyTorefpars;
     }
+
+    public String getMyEPR() {
+
+        // TODO : Fix me Deepal
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

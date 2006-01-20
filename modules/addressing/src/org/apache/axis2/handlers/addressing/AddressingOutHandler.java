@@ -40,8 +40,8 @@ import java.util.Map;
 public class AddressingOutHandler extends AddressingHandler {
 
     private static final long serialVersionUID = -2623986992336863995L;
-    
-	private Log log = LogFactory.getLog(getClass());
+
+    private Log log = LogFactory.getLog(getClass());
 
 
     public void invoke(MessageContext msgContext) throws AxisFault {
@@ -122,12 +122,17 @@ public class AddressingOutHandler extends AddressingHandler {
         if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject)) {
             epr = messageContextOptions.getReplyTo();
             if (epr == null) {//optional
-                // setting anonymous URI. Defaulting to Final.
-                String anonymousURI = Final.WSA_ANONYMOUS_URL;
-                if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
-                    anonymousURI = Submission.WSA_ANONYMOUS_URL;
+
+                if (msgContext.getServiceContext() != null & msgContext.getServiceContext().getMyEPR() != null) {
+                    epr = new EndpointReference(msgContext.getServiceContext().getMyEPR());
+                } else {
+                    // setting anonymous URI. Defaulting to Final.
+                    String anonymousURI = Final.WSA_ANONYMOUS_URL;
+                    if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+                        anonymousURI = Submission.WSA_ANONYMOUS_URL;
+                    }
+                    epr = new EndpointReference(anonymousURI);
                 }
-                epr = new EndpointReference(anonymousURI);
             }
             // add the service group id as a reference parameter
             String serviceGroupContextId = msgContext.getServiceGroupContextId();
@@ -260,7 +265,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
             // Note : We are not handling ServiceName purposely here. Most of the time, it will not
             // and even from the final version this has been removed.
-            }
+        }
 
     }
 
