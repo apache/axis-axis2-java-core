@@ -123,7 +123,7 @@ public class AddressingOutHandler extends AddressingHandler {
             epr = messageContextOptions.getReplyTo();
             if (epr == null) {//optional
 
-                if (msgContext.getServiceContext() != null & msgContext.getServiceContext().getMyEPR() != null) {
+                if (msgContext.getServiceContext() != null && msgContext.getServiceContext().getMyEPR() != null) {
                     epr = new EndpointReference(msgContext.getServiceContext().getMyEPR());
                 } else {
                     // setting anonymous URI. Defaulting to Final.
