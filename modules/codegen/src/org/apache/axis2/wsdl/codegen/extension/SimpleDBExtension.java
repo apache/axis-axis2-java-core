@@ -96,7 +96,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             setDefaultOptions(options);
 
             //set the user parameters. the user parameters get the preference over
-            //the default once. But the user better know what he's doing if he
+            //the default ones. But the user better know what he's doing if he
             //used module specific parameters
             setUserparameters(options);
 

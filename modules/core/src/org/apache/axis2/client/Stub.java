@@ -17,7 +17,6 @@
 
 package org.apache.axis2.client;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -31,7 +30,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 
@@ -39,31 +37,20 @@ public abstract class Stub {
     protected static AxisService _service;
     protected ArrayList modules = new ArrayList();
 
-    /**
-     * If _maintainSession is set to true, all the calls can use the same
-     * ServiceContext. The user can share information through this
-     * ServiceContext across operations.
-     */
-    protected Options _options = new Options();
+
     protected ServiceClient _serviceClient;
 
-    public Options _getOptions() {
-        return _options;
+    public ServiceClient _getServiceClient() {
+        return _serviceClient;
     }
 
-    public void _setOptions(Options _clientOptions) {
-        this._options = _clientOptions;
+    public void _setServiceClient(ServiceClient _serviceClient) {
+        this._serviceClient = _serviceClient;
     }
 
-    protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
-        return getFactory(this._options.getSoapVersionURI()).getDefaultEnvelope();
+    protected SOAPEnvelope createEnvelope(Options options) throws SOAPProcessingException {
+        return getFactory(options.getSoapVersionURI()).getDefaultEnvelope();
     }
-
-    public void engageModule(QName moduleName) throws AxisFault {
-        _serviceClient.engageModule(moduleName);
-    }
-
-
 
     /**
      * A util method that extracts the correct element.
@@ -92,9 +79,8 @@ public abstract class Stub {
         return builder.getDocumentElement();
     }
 
-    protected SOAPFactory getFactory(String soapNamespaceURI) {
-        String soapVersionURI = _options.getSoapVersionURI();
-
+    protected SOAPFactory getFactory(String soapVersionURI) {
+        
         if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP11Factory();
         } else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {

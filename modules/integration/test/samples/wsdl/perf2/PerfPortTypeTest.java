@@ -64,7 +64,7 @@ public class PerfPortTypeTest extends TestCase {
    public void testhandleStringArray() throws java.lang.Exception {
         PerfPortTypeStub stub = new PerfPortTypeStub(null, targetEpr);
         //create a new databinder
-        stub._getOptions().setSoapAction("handleStringArray");
+        stub._getServiceClient().getOptions().setSoapAction("handleStringArray");
         log.info(">>>> Warming up...");
         pump(stub, 1);
         log.info(">>>> Running volume tests...");

@@ -257,7 +257,7 @@
                             }
                             //step one event
                             event = reader.next();
-                            if (reader.isEndElement()){
+                            if (reader.isEndElement() &amp;&amp;  !"<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
                             //two continuous end elements means we are exiting the xml structure
                             <xsl:value-of select="$loopBoolName"/> = true;
                             }else if (reader.isStartElement()){
@@ -290,7 +290,7 @@
                             }
                             //step one event
                             event = reader.next();
-                            if (reader.isEndElement()){
+                            if (reader.isEndElement() &amp;&amp;  !"<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
                             //two continuous end elements means we are exiting the xml structure
                             <xsl:value-of select="$loopBoolName"/> = true;
                             }else if (reader.isStartElement()){
