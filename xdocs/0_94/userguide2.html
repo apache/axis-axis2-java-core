@@ -8,8 +8,7 @@
 </head>
 
 <body lang="en-US" dir="ltr">
-<a name="Axis2_User's_Guide"/>
-<h4>Axis2 User's Guide</h4>
+<h4><a name="Axis2_User's_Guide">Axis2 User's Guide</a></h4>
 
 <p><i>Version 0.94</i></p>
 <i>User Feedback: <a
@@ -25,13 +24,13 @@ target="_blank">5</a></p>
 guide we will look at how to write and deploy Web Services using Axis2. All
 the user's guide samples are located in the <b>"samples/userguide/src"</b>
 directory of the binary distribution.
-<a name="Web_Services_Using_Axis2"/>
-<h2>Web Services Using Axis2</h2>
+
+<h2><a name="Web_Services_Using_Axis2">Web Services Using Axis2</a></h2>
 
 <p>Before starting, please check whether you have deployed the "axis2.war" in
 your servlet container and it is working properly. (See <a
 href="installationguide.html" target="_blank">Installation Guide</a>). User
-can select any of the following two ways of writing web services using
+can select any of the  following two ways of writing web services using
 Axis2. </p>
 <ol>
   <li><a href="#Writing_Web_Services_Using Axis2's_Primary_APIs">Use Axis2's primary interfaces (APIs) and implement
@@ -41,13 +40,11 @@ Axis2. </p>
   </li>
 </ol>
 
-        <a name="Writing_Web_Services_Using Axis2's_Primary_APIs"/>
-<h3>Writing Web
-Services Using Axis2's Primary APIs</h3>
+<h3><a name="Writing_Web_Services_Using Axis2's_Primary_APIs">Writing Web
+Services Using Axis2's Primary APIs</a></h3>
 
-        <a name="Creating_Web_Service__MyService_"/>
-<h4>Creating Web Service
-(MyService)</h4>
+<h4><a name="Creating_Web_Service__MyService_">Creating Web Service
+(MyService)</a></h4>
 
 <p>First let's see how we can write a simple Web Service (MyService) using
 Axis2's primary interfaces and deploy it. For this purpose we will create a
@@ -61,26 +58,25 @@ public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMEleme
 package. As you can see, the two operations are very simple and need no
 explanations on what they do. Now let's see how we can write the deployment
 descriptors for the service and deploy it.</p>
-<a name="How_to_write_the_Web_Service_"/>
-<h4>How to write the Web
-Service?</h4>
+
+<h4><a name="How_to_write_the_Web_Service_">How to write the Web
+Service?</a></h4>
 Writing a new Web Service with Axis2 involve four steps:
 <ol>
-  <li>Write the Implementation Class
+  <li><p style="margin-bottom: 0in">Write the Implementation Class</p>
   </li>
-  <li>Write a services.xml file to explain the
-    Web Service
+  <li><p style="margin-bottom: 0in">Write a services.xml file to explain the
+    Web Service</p>
   </li>
-  <li>create a *.aar archive (Axis Archive) for
-    the Web Service
+  <li><p style="margin-bottom: 0in">create a *.aar archive (Axis Archive) for
+    the Web Service</p>
   </li>
-  <li>Deploy the Web Service
+  <li><p>Deploy the Web Service</p>
   </li>
 </ol>
 
-        <a name="Step1_:Write_the_Implementation_Class"/>
-<h4>Step1 :Write the
-Implementation Class</h4>
+<h4><a name="Step1_:Write_the_Implementation_Class">Step1 :Write the
+Implementation Class</a></h4>
 
 <p>Provides a implementation class that provide the business logic for the
 Web Service, it should have methods that match the operations in the Web
@@ -95,9 +91,8 @@ one parameter of type OMElement.</p>
     }
 }</pre>
 
-        <a name="Step2_:Write_the_services_xml_file"/>
-<h4>Step2 :Write the
-services.xml file</h4>
+<h4><a name="Step2_:Write_the_services_xml_file">Step2 :Write the
+services.xml file</a></h4>
 
 <p>Axis2 uses "services.xml" to keep configurations for a Web Service. Each
 Web Service deployed in Axis2 needs a "services.xml" containing the
@@ -147,15 +142,14 @@ format.</p>
 
 <p>Note : name of the service is a compulsory attribute</p>
 
-        <a name="Step3_:Create_the_Web_Service_Archive"/>
-<h4>Step3 :Create the Web
-Service Archive</h4>
+<h4><a name="Step3_:Create_the_Web_Service_Archive">Step3 :Create the Web
+Service Archive</a></h4>
 
 <p>Axis2 use ".aar" (Axis Archive) file as the deployment package for Web
 Services. Therefore, for MyService we will use "MyService.aar" with the
 "services.xml" packaged in the META-INF as shown in the following picture.</p>
 
-<p><img src="images/userguide/ServiceItems.jpg" name="Graphic1" alt=""
+<p><img src="images/userguide/ServiceItems.jpg" name="Graphic1"
 align="bottom" width="176" height="91" border="0"></p>
 
 <p>To create "MyService.aar" user can first create a jar file containing all
@@ -163,11 +157,10 @@ the files necessary for the service and then rename the "jar" to "aar" so
 that Axis2 understands it as a service archive. This has already been created
 in the "Axis2Home/samples/userguide" directory. Now let's use it...</p>
 
-        <a name="Step4_:Deploy_the_Web_Service"/>
-<h4>Step4 :Deploy the Web
-Service</h4>
+<h4><a name="Step4_:Deploy_the_Web_Service">Step4 :Deploy the Web
+Service</a></h4>
 
-<p>Deploying the service is just a matter of dropping the ".aar" in to
+<p>Deploying the service  is just a matter of dropping the ".aar" in to
 "services" directory that can be found in the "\webapps\axis2\WEB-INF" of
 your servlet container, hence copy the "MyService.aar" into the
 "<b>services</b>" directory. Once these steps are completed, start the
@@ -178,7 +171,7 @@ target="_blank">Home Page of Axis2 Web Application</a>
 deployed properly. If you can see the following output then you have
 successfully deployed MyService on Axis2.</p>
 
-<p align="center"><img src="images/userguide/MyServiceDeployed.jpg"  alt=""
+<p align="center"><img src="images/userguide/MyServiceDeployed.jpg"
 name="Graphic2" align="bottom" width="734" height="766" border="0"></p>
 
 <p>Note: Axis2 provides an easy way to deploy Web Services using the "Upload
@@ -186,17 +179,15 @@ Service" tool on Axis2 Web Application's Administration module. (See the <a
 href="webadminguide.html" target="_blank">Web Administration Guide</a> for
 more information on this)</p>
 
-        <a name="Writing_Web_Services_by_Code_Generating_Skeleton"/>
-<h3>Writing Web
-Services by Code Generating Skeleton</h3>
+<h3><a name="Writing_Web_Services_by_Code_Generating_Skeleton">Writing Web
+Services by Code Generating Skeleton</a></h3>
 
 <p>This is the second method of writing Web Services using Axis2. Let's see
 how we can generate the skeleton from a given WSDL and implement the business
 logic using Axis2. For this we use Axis2SampleDocLit.wsdl that can be found
 in the <b>wsdl</b> directory under samples.</p>
 
-        <a name="WSDL2Java_Tool"/>
-<h4>WSDL2Java Tool</h4>
+<h4><a name="WSDL2Java_Tool">WSDL2Java Tool</a></h4>
 
 <p>To generate the skeleton and the required classes you can use the
 WSDL2Java tool provided in Axis2. This tool is located in the bin directory
@@ -217,44 +208,50 @@ values depending on their requirements.</p>
 skeleton and the other required classes.</p>
 
 <p>Windows users can use the following command in the console:</p>
-<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -d xmlbeans -ss -sd -o ..\samples -p org.apache.axis2.userguide</pre>
+<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -ss -sd -o ..\samples -p org.apache.axis2.userguide</pre>
 
 <p>Linux users should switch the file separator:</p>
-<pre style="margin-bottom: 0.2in">WSDL2Java -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans -ss -sd -o ../samples -p org.apache.axis2.userguide</pre>
+<pre style="margin-bottom: 0.2in">WSDL2Java -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -o ../samples -p org.apache.axis2.userguide</pre>
 
 <p>This will generate the required classes in the <b>src</b> directory inside
 samples, and the schema classes in <strong>schema</strong> directory also
 inside samples. Note that these are not source files and should be availed in
 the class path in order to compile the generated classes</p>
 
-        <a name="Implement_the_Business_Logic"/>
-<h4>Implement the Business Logic</h4>
+<h4><a name="Implement_the_Business_Logic">Implement the Business Logic</a></h4>
 
 <p>Locate the skeleton class that can be found under src/userguide directory
 with the name "Axis2SampleDocLitPortTypeSkeleton.java". This is the skeleton
 for our web service and we can now easily implement the business logic. The
-WSDL we have used has three operations:<!--<li>echoVoid - Operation that does not
-accept any input parameters and also provide no out put parameters. Just
+WSDL we have used has three operations:<!--<li><p style="margin-bottom: 0in">echoVoid   - Operation that does not
+accept any input parameters  and also provide no out put parameters. Just
 perform some task </p>
 </li>-->
 </p>
 <ul>
-  <li>echoString - Operation that echoes a
-    String value
+  <li><p style="margin-bottom: 0in">echoString  - Operation that echoes a
+    String value </p>
   </li>
-  <li>echoStringArray - Operation that accept
-    string array as the input and echoes them back
+  <li><p style="margin-bottom: 0in">echoStringArray - Operation that accept
+    string array as the input and echoes them back</p>
   </li>
-  <li>echoStruct - Operation that accept a Struct as the input and echoes
-    them back.
+  <li><p>echoStruct - Operation that accept a Struct as the input and echoes
+    them back.</p>
   </li>
 </ul>
+<!--<h4>echoVoid   </h4>
 
-        <a name="echoString"/>
-<h4>echoString</h4>
+<p>Locate the following code segment  in the
+"Axis2SampleDocLitPortTypeSkeleton.java"  and fill the business logic. For
+the explanation purpose we do not need anything to be implemented here.</p>
+<pre>public  void echoVoid(){
+//Todo fill this with the necessary business logic
+}</pre> -->
 
-<p>Locate the following code segment in the
-"Axis2SampleDocLitPortTypeSkeleton.java" and fill the business logic as
+<h4><a name="echoString">echoString</a></h4>
+
+<p>Locate the following code segment  in the
+"Axis2SampleDocLitPortTypeSkeleton.java"  and fill the business logic as
 shown below.</p>
 <pre> public  org.soapinterop.xsd.EchoStringArrayReturnDocument 
                 echoStringArray(org.soapinterop.xsd.EchoStringArrayParamDocument param2){
@@ -276,8 +273,7 @@ simple and the explanations are given as comments.</p>
 <p>Similarly following code fragments shows how you can fill the business
 logic for our first web service.</p>
 
-        <a name="echoStringArray"/>
-<h4>echoStringArray</h4>
+<h4><a name="echoStringArray">echoStringArray</a></h4>
 <pre>public org.soapinterop.xsd.EchoStringArrayReturnDocument 
                 echoStringArray(org.soapinterop.xsd.EchoStringArrayParamDocument param2) {
 
@@ -297,8 +293,7 @@ logic for our first web service.</p>
     return retDoc;
 }</pre>
 
-        <a name="echoStruct"/>
-<h4>echoStruct</h4>
+<h4><a name="echoStruct">echoStruct</a></h4>
 <pre>public org.soapinterop.xsd.EchoStructReturnDocument 
                 echoStruct(org.soapinterop.xsd.EchoStructParamDocument param4) {
   
@@ -320,10 +315,10 @@ logic for our first web service.</p>
   
    return retDoc;
 }</pre>
-  <a name="services_xml"/>
-<h4>services.xml</h4>
 
-<p>Axis2 uses "services.xml" to hold the configurations for a particular web
+<h4><a name="services_xml">services.xml</a></h4>
+
+<p> Axis2 uses "services.xml" to hold the configurations for a particular web
 service deployed in the Axis2 engine. When we generate the skeleton using the
 WSDL2Java tool, it will also generate the required services.xml for this web
 service as well. This can be found in the same directory as the skeleton. The
@@ -350,8 +345,7 @@ is used in the URL to the service as the service name. Next comes the
 description and the service class. The next xml tags describe the operations
 that are available in this service with respective message receivers.</p>
 
-        <a name="Packaging"/>
-<h4>Packaging</h4>
+<h4><a name="Packaging">Packaging</a></h4>
 
 <p>Next step in the process is to package the classes in a .aar (axis2
 archive) and deploy it in Axis2. When the WSDL2Java tool generate the
@@ -362,7 +356,7 @@ supporting classes. In order to create the .aar file, let's create the
 following directory structure with the required files and then simply use jar
 command to package it.</p>
 
-<p><img src="images/userguide/DirectoryStructure.JPG" align="bottom"  alt=""
+<p><img src="images/userguide/DirectoryStructure.JPG" align="bottom"
 width="164" height="142" border="0"></p>
 
 <p>Go to the top level directory where you can find the class files for the
@@ -370,7 +364,7 @@ above service (i.e. one level up on the directory structure shown above),
 then type the following command in a command line.</p>
 <pre style="margin-bottom: 0.2in">jar -cf Axis2SampleDocLitPortType.aar .</pre>
 
-<p>Deploying the service is just a matter of dropping the ".aar" in to
+<p>Deploying the service  is just a matter of dropping the ".aar" in to
 "services" directory that can be found in the "\webapps\axis2\WEB-INF" of
 your servlet container, hence copy the "echo.aar" into the "<b>services</b>"
 directory. Once these steps are completed, please start the servlet container
@@ -381,7 +375,7 @@ whether the Axis2SampleDocLitPortType is deployed properly. If you can see
 the following output then you have successfully deployed
 Axis2SampleDocLitPortType on Axis2.</p>
 
-<p align="center"><img src="images/userguide/ServiceDeployed.JPG" alt=""
+<p align="center"><img src="images/userguide/ServiceDeployed.JPG"
 name="Graphic4" align="bottom" width="734" height="764" border="0"></p>
 
 <p>Note: Axis2 provides an easy way to deploy Web Services using the "Upload
@@ -391,7 +385,7 @@ more information on this)</p>
 
 <p align="right"><a href="userguide1.html" target="_blank"><img
 src="images/arrow_left.gif"> Previous</a> | <a href="userguide3.html"
-target="_blank">Next <img src="images/arrow_right.gif" alt=""></a></p>
+target="_blank">Next <img src="images/arrow_right.gif"></a></p>
 
 <p>Pages: <a href="userguide.html" target="_blank">Content</a>, <a
 href="userguide1.html" target="_blank">1</a>, <b>2</b>, <a
