@@ -88,7 +88,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 (xmlFile == null || "".equals(xmlFile.trim()))) {
             useDefault = true;
             axis2repository = null;
-            log.info("nither repository location nor aixs2.xml are given ," +
+            log.debug("neither repository location nor axis2.xml are given ," +
                     " so system will continue using default configuration (using default_axis2.xml)");
         } else if (!(repositoryName == null || "".equals(repositoryName.trim()))) {
             axis2repository = repositoryName.trim();
@@ -99,6 +99,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
             if (xmlFile == null || "".equals(xmlFile.trim())) {
                 axis2_xml_file_name = null;
+                useDefault = true;
             } else {
                 axis2_xml_file_name = xmlFile;
             }

@@ -188,12 +188,10 @@ public class SimpleHTTPServer extends TransportListener {
                 + new File(args[0]).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
-            throw new UnsupportedOperationException("hey please fix me Deepal , I dont have axis2.xml location");
-            //todo : Deepal pls fix me
-//            SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], null, port);
-//            Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
-//            receiver.start();
-//            System.out.println("[SimpleHTTPServer] Started");
+            SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], null, port);
+            Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
+            receiver.start();
+            System.out.println("[SimpleHTTPServer] Started");
         } catch (Throwable t) {
             log.fatal("Error starting SimpleHTTPServer", t);
             System.out.println("[SimpleHTTPServer] Shutting down");
