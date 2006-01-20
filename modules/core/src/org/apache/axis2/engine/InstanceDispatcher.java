@@ -38,17 +38,20 @@ public class InstanceDispatcher extends AbstractHandler {
 
 	private static final long serialVersionUID = -1928612412157492489L;
 
-	/**
+
+    /**
      * Post Condition : All the Contexts must be populated.
      *
      * @param msgContext
      * @throws org.apache.axis2.AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        ServiceContext serviceContext = msgContext.getServiceContext();
+
         if ((msgContext.getOperationContext() != null)
-                && (msgContext.getServiceContext() != null)) {
+                && (serviceContext != null)) {
             msgContext.setServiceGroupContextId(
-                    ((ServiceGroupContext) msgContext.getServiceContext().getParent()).getId());
+                    ((ServiceGroupContext) serviceContext.getParent()).getId());
 
             return;
         }
@@ -70,7 +73,7 @@ public class InstanceDispatcher extends AbstractHandler {
             // register operation context and message context
             axisOperation.registerOperationContext(msgContext, operationContext);
 
-            ServiceContext serviceContext = (ServiceContext) operationContext.getParent();
+            serviceContext = (ServiceContext) operationContext.getParent();
             ServiceGroupContext serviceGroupContext =
                     (ServiceGroupContext) serviceContext.getParent();
 
@@ -81,15 +84,21 @@ public class InstanceDispatcher extends AbstractHandler {
             operationContext = new OperationContext(axisOperation);
 
             axisOperation.registerOperationContext(msgContext, operationContext);
-            if (msgContext.getServiceContext() != null) {
+            if (serviceContext != null) {
                 // no need to added to configuration conetxt , since we are happy in
                 //  storing in session context
-                operationContext.setParent(msgContext.getServiceContext());
+                operationContext.setParent(serviceContext);
             } else {
                 // fill the service group context and service context info
                 msgContext.getConfigurationContext().fillServiceContextAndServiceGroupContext(
                         msgContext);
             }
+        }
+
+
+        String transportURL = (String) msgContext.getProperty(Constants.Configuration.TRANSPORT_IN_URL);
+        if (serviceContext != null && transportURL != null) {
+           serviceContext.setMyEPRAddress(transportURL);
         }
     }
 

@@ -118,6 +118,8 @@ public class HTTPWorker implements HttpRequestHandler {
             // This is way to provide access to the transport information to the transport Sender
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                     new SimpleHTTPOutTransportInfo(response));
+            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, request.getRequestLine().getUri());
+
 
             String soapAction = null;
 

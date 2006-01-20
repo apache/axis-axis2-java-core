@@ -29,6 +29,8 @@ import java.util.ArrayList;
  */
 public class ServiceContext extends AbstractContext {
 
+    private String myEPRAddress;
+
     private transient AxisService axisService;
     private String serviceInstanceID;
     private ServiceGroupContext serviceGroupContext;
@@ -99,9 +101,11 @@ public class ServiceContext extends AbstractContext {
         this.replyTorefpars = replyTorefpars;
     }
 
-    public String getMyEPR() {
+    public String getMyEPRAddress() {
+        return myEPRAddress;
+    }
 
-        // TODO : Fix me Deepal
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    public void setMyEPRAddress(String myEPRAddress) {
+        this.myEPRAddress = myEPRAddress;
     }
 }

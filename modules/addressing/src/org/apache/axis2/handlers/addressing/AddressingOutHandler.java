@@ -123,8 +123,8 @@ public class AddressingOutHandler extends AddressingHandler {
             epr = messageContextOptions.getReplyTo();
             if (epr == null) {//optional
 
-                if (msgContext.getServiceContext() != null && msgContext.getServiceContext().getMyEPR() != null) {
-                    epr = new EndpointReference(msgContext.getServiceContext().getMyEPR());
+                if (msgContext.getServiceContext() != null && msgContext.getServiceContext().getMyEPRAddress() != null) {
+                    epr = new EndpointReference(msgContext.getServiceContext().getMyEPRAddress());
                 } else {
                     // setting anonymous URI. Defaulting to Final.
                     String anonymousURI = Final.WSA_ANONYMOUS_URL;

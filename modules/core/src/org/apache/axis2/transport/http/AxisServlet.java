@@ -68,6 +68,7 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
                 getTransportHeaders(httpServletRequest));
         msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
+        msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, httpServletRequest.getRequestURL());
 
         return msgContext;
     }

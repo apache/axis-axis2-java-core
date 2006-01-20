@@ -212,5 +212,7 @@ public class Constants {
         // this property once set to Boolean.TRUE will make the messages to skip Addressing Handler.
         // So you will not see Addressing Headers in the OUT path.
         public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
+
+        public static final String TRANSPORT_IN_URL = "TransportInURL";
     }
 }
