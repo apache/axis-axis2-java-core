@@ -55,6 +55,8 @@ import java.util.Iterator;
 public class ElementImpl extends ParentNode implements Element, OMElement,
         OMConstants {
 
+    private int lineNumber;
+
     protected OMNamespace namespace;
 
     protected String localName;
@@ -1148,6 +1150,14 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
         ElementImpl elem = (ElementImpl) (new StAXOMBuilder(new OMDOMFactory(),
                 this.getXMLStreamReader(true))).getDocumentElement();
         return elem;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     public Node cloneNode(boolean deep) {

@@ -78,6 +78,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     protected int noPrefixNamespaceCounter = 0;
     private OMNode lastChild;
+    private int lineNumber;
 
     /**
      * Constructor OMElementImpl.
@@ -849,5 +850,13 @@ public class OMElementImpl extends OMNodeImpl
         OMElement clonedElement = new StAXOMBuilder(this.getXMLStreamReader(true)).getDocumentElement();
         clonedElement.build();
         return clonedElement;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 }

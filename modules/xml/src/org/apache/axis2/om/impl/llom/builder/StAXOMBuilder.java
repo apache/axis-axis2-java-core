@@ -31,13 +31,14 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.Location;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
 /**
- * Constructs an OM without using SOAP specific classes like SOAPEnvelope, 
+ * Constructs an OM without using SOAP specific classes like SOAPEnvelope,
  * SOAPHeader, SOAPHeaderBlock and SOAPBody. This has the document concept also.
  */
 public class StAXOMBuilder extends StAXBuilder {
@@ -60,22 +61,20 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     *
      * @param filePath - Path to the XML file
      * @throws XMLStreamException
      * @throws FileNotFoundException
      */
     public StAXOMBuilder(String filePath) throws XMLStreamException, FileNotFoundException {
-       this(XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(filePath)));
+        this(XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(filePath)));
     }
 
     /**
-     *
      * @param inStream - instream which contains the XML
      * @throws XMLStreamException
      */
     public StAXOMBuilder(InputStream inStream) throws XMLStreamException {
-       this(XMLInputFactory.newInstance().createXMLStreamReader(inStream));
+        this(XMLInputFactory.newInstance().createXMLStreamReader(inStream));
     }
 
     /**
@@ -90,7 +89,7 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     /**
-     * Method createOMElement. 
+     * Method createOMElement.
      *
      * @return Returns OMNode.
      * @throws OMException
@@ -103,8 +102,8 @@ public class StAXOMBuilder extends StAXBuilder {
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
                     lastNode.getParent(), this);
-            ((OMNodeEx)lastNode).setNextOMSibling(node);
-            ((OMNodeEx)node).setPreviousOMSibling(lastNode);
+            ((OMNodeEx) lastNode).setNextOMSibling(node);
+            ((OMNodeEx) node).setPreviousOMSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createOMElement(elementName, null,
@@ -115,6 +114,7 @@ public class StAXOMBuilder extends StAXBuilder {
         processNamespaceData(node, false);
         // fill in the attributes
         processAttributes(node);
+        node.setLineNumber(parser.getLocation().getLineNumber());
         return node;
     }
 
@@ -150,6 +150,7 @@ public class StAXOMBuilder extends StAXBuilder {
 
     /**
      * Method createPI.
+     *
      * @return Returns OMNode.
      * @throws OMException
      */
@@ -169,21 +170,21 @@ public class StAXOMBuilder extends StAXBuilder {
         return node;
     }
 
-    protected void endElement(){
+    protected void endElement() {
         if (lastNode.isComplete()) {
             OMElement parent = (OMElement) lastNode.getParent();
-            ((OMNodeEx)parent).setComplete(true);
+            ((OMNodeEx) parent).setComplete(true);
             lastNode = parent;
         } else {
             OMElement e = (OMElement) lastNode;
-            ((OMNodeEx)e).setComplete(true);
+            ((OMNodeEx) e).setComplete(true);
         }
 
         //return lastNode;
     }
-    
+
     /**
-     * Method next. 
+     * Method next.
      *
      * @return Returns int.
      * @throws OMException
@@ -199,72 +200,72 @@ public class StAXOMBuilder extends StAXBuilder {
             }
             switch (token) {
                 case XMLStreamConstants.START_ELEMENT:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("START_ELEMENT: " + parser.getName() + ":" + parser.getLocalName());
                     }
                     lastNode = createOMElement();
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
                     // Document has already being created.
-                    
+
                     document.setXMLVersion(parser.getVersion());
                     document.setCharsetEncoding(parser.getEncoding());
                     document.setStandalone(parser.isStandalone() ? "yes" : "no");
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("START_DOCUMENT: ");
                     }
                     break;
                 case XMLStreamConstants.CHARACTERS:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("CHARACTERS: [" + parser.getText() + "]");
                     }
                     lastNode = createOMText(XMLStreamConstants.CHARACTERS);
                     break;
                 case XMLStreamConstants.CDATA:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("CDATA: [" + parser.getText() + "]");
                     }
                     lastNode = createOMText(XMLStreamConstants.CDATA);
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("END_ELEMENT: " + parser.getName() + ":" + parser.getLocalName());
                     }
                     endElement();
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("END_DOCUMENT: ");
                     }
                     done = true;
-                    ((OMContainerEx)this.document).setComplete(true);
+                    ((OMContainerEx) this.document).setComplete(true);
                     break;
                 case XMLStreamConstants.SPACE:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("SPACE: [" + parser.getText() + "]");
                     }
                     lastNode = createOMText(XMLStreamConstants.SPACE);
                     break;
                 case XMLStreamConstants.COMMENT:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("COMMENT: [" + parser.getText() + "]");
                     }
                     createComment();
                     break;
                 case XMLStreamConstants.DTD:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("DTD: [" + parser.getText() + "]");
                     }
                     createDTD();
                     break;
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("PROCESSING_INSTRUCTION: [" + parser.getPITarget() + "][" + parser.getPIData() + "]");
                     }
                     createPI();
                     break;
                 case XMLStreamConstants.ENTITY_REFERENCE:
-                    if(doDebug) {
+                    if (doDebug) {
                         System.out.println("ENTITY_REFERENCE: " + parser.getLocalName() + "[" + parser.getText() + "]");
                     }
                     lastNode = createOMText(XMLStreamConstants.ENTITY_REFERENCE);
@@ -280,7 +281,7 @@ public class StAXOMBuilder extends StAXBuilder {
         }
     }
 
-   /**
+    /**
      * Method getDocumentElement.
      *
      * @return Returns root element.
@@ -317,26 +318,25 @@ public class StAXOMBuilder extends StAXBuilder {
 
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
-        	String nsprefix = parser.getNamespacePrefix(i);
-        	nsprefix = (nsprefix == null?"":nsprefix);
-        	
-        	//if the namespace is not defined already when we write the start tag declare it
-        	
-            if (!nsprefix.equals(prefix)){
-            node.declareNamespace(parser.getNamespaceURI(i),
-                    parser.getNamespacePrefix(i));
+            String nsprefix = parser.getNamespacePrefix(i);
+            nsprefix = (nsprefix == null ? "" : nsprefix);
+
+            //if the namespace is not defined already when we write the start tag declare it
+
+            if (!nsprefix.equals(prefix)) {
+                node.declareNamespace(parser.getNamespaceURI(i),
+                        parser.getNamespacePrefix(i));
             }
         }
     }
-
 
 
     public void setDoDebug(boolean doDebug) {
         this.doDebug = doDebug;
     }
 
-    protected String createPrefix(){
-        return "ns"+ nsCount++;
+    protected String createPrefix() {
+        return "ns" + nsCount++;
     }
 
 }

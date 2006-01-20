@@ -294,4 +294,6 @@ public interface OMElement extends OMNode, OMContainer {
     public OMElement cloneOMElement();
 
 
+    public void setLineNumber(int lineNumber);
+    public int getLineNumber();
 }

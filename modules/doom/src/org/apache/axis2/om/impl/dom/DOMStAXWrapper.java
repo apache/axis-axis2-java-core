@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.OMStreamingException;
+import org.apache.axis2.om.impl.llom.EmptyOMLocation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
@@ -964,7 +965,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return Returns Location.
      */
     public Location getLocation() {
-        throw new UnsupportedOperationException();
+        return new EmptyOMLocation();
     }
 
     /**

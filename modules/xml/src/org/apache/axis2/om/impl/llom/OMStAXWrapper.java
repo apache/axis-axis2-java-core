@@ -993,7 +993,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return Returns Location.
      */
     public Location getLocation() {
-        return null;
+         return new EmptyOMLocation();
     }
 
     /**
@@ -1224,4 +1224,5 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     public void setParser(XMLStreamReader parser) {
         this.parser = parser;
     }
+
 }
