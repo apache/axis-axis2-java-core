@@ -195,20 +195,20 @@
 
             private  java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
             java.lang.Class type){
-                 Object obj;
+
                 try {
-                    java.lang.reflect.Method parseMethod = type.getMethod("parse",new Class[]{javax.xml.stream.XMLStreamReader.class});
-                    obj = null;
-                    if (parseMethod!=null){
-                        obj = parseMethod.invoke(null,new Object[]{param.getXMLStreamReaderWithoutCaching()});
-                    }else{
-                        //oops! we don't know how to deal with this. Perhaps the reflective one is a good choice here
-                    }
+                       <xsl:for-each select="param">
+                              <xsl:if test="@type!=''">
+                      if (<xsl:value-of select="@type"/>.class.equals(type)){
+                           return <xsl:value-of select="@type"/>.parse(param.getXMLStreamReaderWithoutCaching());
+                      }
+                              </xsl:if>
+                     </xsl:for-each>
                 } catch (Exception e) {
                      throw new RuntimeException(e);
                 }
 
-                return obj;
+                return null;
             }
 
         </xsl:template>

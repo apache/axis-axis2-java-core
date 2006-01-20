@@ -195,9 +195,17 @@
                            org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(
                                                        org.apache.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                             org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
-                            <!-- todo need to change this to cater for unwrapped messgaes (multiple parts) -->
-                            java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
-                            return (<xsl:value-of select="$outputtype"/>)object;
+                            <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
+                            <xsl:choose>
+                                <xsl:when test="$style='doc'">
+                                       java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+                                       return (<xsl:value-of select="$outputtype"/>)object;
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    //Unsupported style!! No code is generated
+                                    throw java.lang.UnsupportedOperationException("Unsupported Style");
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
 
