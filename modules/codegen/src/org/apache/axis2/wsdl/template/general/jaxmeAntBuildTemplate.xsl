@@ -16,22 +16,22 @@
                 <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
             </property>
             <property name="src">
-                <xsl:attribute name="value">${basedir}\src</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/src</xsl:attribute>
             </property>
             <property name="test">
-                <xsl:attribute name="value">${basedir}\test</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/test</xsl:attribute>
             </property>
             <property name="build">
-                <xsl:attribute name="value">${basedir}\build</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/build</xsl:attribute>
             </property>
             <property name="classes">
-                <xsl:attribute name="value">${build}\classes</xsl:attribute>
+                <xsl:attribute name="value">${build}/classes</xsl:attribute>
             </property>
             <property name="lib">
-                <xsl:attribute name="value">${build}\lib</xsl:attribute>
+                <xsl:attribute name="value">${build}/lib</xsl:attribute>
             </property>
             <property name="resources">
-                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/resources</xsl:attribute>
             </property>
 
             <property name="xbeans.packaged.jar.name" value="XBeans-packaged.jar"></property>
@@ -69,7 +69,7 @@
                 <!-- jar the  XMLbeans stuff to the lib folder-->
                 <jar>
                     <xsl:attribute name="basedir">${resources}</xsl:attribute>
-                    <xsl:attribute name="destfile">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                    <xsl:attribute name="destfile">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     <xsl:attribute name="excludes">**/services.xml</xsl:attribute>
                 </jar>
             </target>
@@ -106,7 +106,7 @@
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
-                        <xsl:attribute name="location">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                        <xsl:attribute name="location">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     </classpath>
                     <classpath>
                         <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
@@ -124,7 +124,7 @@
                         <xsl:attribute name="path">${test}</xsl:attribute>
                     </src>
                     <classpath>
-                        <xsl:attribute name="location">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                        <xsl:attribute name="location">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     </classpath>
                     <classpath>
                         <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
@@ -155,7 +155,7 @@
                     </fileset>
                 </copy>
                 <copy>
-                    <xsl:attribute name="file">${lib}\${xbeans.packaged.jar.name}</xsl:attribute>
+                    <xsl:attribute name="file">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     <xsl:attribute name="toDir">${classes}/lib</xsl:attribute>
                 </copy>
                 <jar>

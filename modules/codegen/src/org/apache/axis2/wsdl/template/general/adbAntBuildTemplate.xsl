@@ -18,22 +18,22 @@
                 <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
             </property>
             <property name="src">
-                <xsl:attribute name="value">${basedir}\src</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/src</xsl:attribute>
             </property>
             <property name="test">
-                <xsl:attribute name="value">${basedir}\test</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/test</xsl:attribute>
             </property>
             <property name="build">
-                <xsl:attribute name="value">${basedir}\build</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/build</xsl:attribute>
             </property>
             <property name="classes">
-                <xsl:attribute name="value">${build}\classes</xsl:attribute>
+                <xsl:attribute name="value">${build}/classes</xsl:attribute>
             </property>
             <property name="lib">
-                <xsl:attribute name="value">${build}\lib</xsl:attribute>
+                <xsl:attribute name="value">${build}/lib</xsl:attribute>
             </property>
             <property name="resources">
-                <xsl:attribute name="value">${basedir}\resources</xsl:attribute>
+                <xsl:attribute name="value">${basedir}/resources</xsl:attribute>
             </property>
 
             <property name="jars.ok" value=""></property>
