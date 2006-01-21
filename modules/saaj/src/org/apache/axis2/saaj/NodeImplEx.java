@@ -20,6 +20,9 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.w3c.dom.TypeInfo;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Attr;
 
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
@@ -114,4 +117,25 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
     public int getType() {
         return this.getNodeType();
     }
+
+    public TypeInfo getSchemaTypeInfo() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public void setIdAttribute(String name, boolean isId) throws DOMException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
 }

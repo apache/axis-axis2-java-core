@@ -82,6 +82,21 @@ public class TextImplEx extends NodeImplEx implements Text {
         return textNode.splitText(offset);
     }
 
+    public boolean isElementContentWhitespace() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public String getWholeText() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public org.w3c.dom.Text replaceWholeText(String content) throws DOMException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
     /**
      * The character data of the node that implements this interface. The DOM
      * implementation may not put arbitrary limits on the amount of data
