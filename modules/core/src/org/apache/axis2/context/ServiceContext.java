@@ -19,6 +19,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.addressing.EndpointReference;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 public class ServiceContext extends AbstractContext {
 
     private String myEPRAddress;
+    private EndpointReference targetEPR;
 
     private transient AxisService axisService;
     private String serviceInstanceID;
@@ -107,5 +109,13 @@ public class ServiceContext extends AbstractContext {
 
     public void setMyEPRAddress(String myEPRAddress) {
         this.myEPRAddress = myEPRAddress;
+    }
+
+    public EndpointReference getTargetEPR() {
+        return targetEPR;
+    }
+
+    public void setTargetEPR(EndpointReference targetEPR) {
+        this.targetEPR = targetEPR;
     }
 }

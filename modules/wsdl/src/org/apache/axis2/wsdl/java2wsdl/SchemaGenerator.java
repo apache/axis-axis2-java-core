@@ -3,20 +3,8 @@ package org.apache.axis2.wsdl.java2wsdl;
 import org.apache.axis2.wsdl.java2wsdl.bytecode.MethodTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaForm;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JParameter;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
+import org.apache.ws.commons.schema.*;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -317,6 +305,21 @@ public class SchemaGenerator {
         }
     }
 
+    /**
+     * JAM convert first name of an attribute into UpperCase as an example
+     * if there is a instance variable called foo in a bean , then Jam give that as Foo
+     * so this method is to correct that error
+     *
+     * @param wrongName
+     * @return
+     */
+    private String getCorrectName(String wrongName) {
+        if (wrongName.length() > 1) {
+            return wrongName.substring(0, 1).toLowerCase() + wrongName.substring(1, wrongName.length());
+        } else {
+            return wrongName.substring(0, 1).toLowerCase();
+        }
+    }
 
     private void generateSchema(JClass javaType) {
         String name = javaType.getQualifiedName();
@@ -352,11 +355,12 @@ public class SchemaGenerator {
                 }
                 if (typeTable.isSimpleType(propertyName)) {
                     XmlSchemaElement elt1 = new XmlSchemaElement();
-                    elt1.setName(property.getSimpleName());
+                    elt1.setName(getCorrectName(property.getSimpleName()));
                     elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
                     sequence.getItems().add(elt1);
                     if (isArryType) {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
+                        elt1.setMinOccurs(Long.MIN_VALUE);
 //                        elt1.setMinOccurs(2);
                     }
                 } else {
@@ -366,11 +370,12 @@ public class SchemaGenerator {
                         generateSchema(property.getType());
                     }
                     XmlSchemaElement elt1 = new XmlSchemaElement();
-                    elt1.setName(property.getSimpleName());
+                    elt1.setName(getCorrectName(property.getSimpleName()));
                     elt1.setSchemaTypeName(typeTable.getComplexScheamType(propertyName));
                     sequence.getItems().add(elt1);
                     if (isArryType) {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
+                        elt1.setMinOccurs(Long.MIN_VALUE);
                     }
                 }
             }

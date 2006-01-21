@@ -42,27 +42,29 @@
         Hashtable errornessservice =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
          boolean status = false;
         if (serviceMap!=null && !serviceMap.isEmpty()){
-        HashMap operations;
+        Iterator opItr;
+        //HashMap operations;
         String serviceName ;
         Collection servicecol = serviceMap.values();
-        Collection operationsList;
+       // Collection operationsList;
        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
             AxisService axisService = (AxisService) iterator.next();
-            operations = axisService.getOperations();
-            operationsList = operations.values();
+            opItr = axisService.getOperations();
+            //operationsList = operations.values();
             serviceName = axisService.getName();
             %><h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
            <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName()%></font>
            <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
-            if (operationsList.size() > 0) {
+            if (opItr.hasNext()) {
                 %><i>Available operations</i><%
             } else {
                 %><i> There are no Operations specified</i><%
             }
+               opItr = axisService.getOperations();
            %><ul><%
-            for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                AxisOperation axisOperation = (AxisOperation) iterator1.next();
+            while (opItr.hasNext()) {
+                AxisOperation axisOperation = (AxisOperation) opItr.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
 <%--                <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                 <%

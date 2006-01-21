@@ -277,7 +277,13 @@ public class Utils {
 
 
     public static QName getModuleName(String name, String versionID) {
-        return new QName(name + "-" + versionID);
+        String moduleName ;
+        if(versionID!=null && !versionID.equals("")){
+           moduleName = name + "-" + versionID;
+        } else {
+            moduleName = name;
+        }
+        return new QName(moduleName);
     }
 
     public static void calculateDefaultModuleVersion(HashMap modules, AxisConfiguration axisConfig) {

@@ -192,6 +192,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         if (mc.getMessageID() == null) {
             setMessageID(mc);
         }
+        mc.setServiceContext(sc);
         axisOp.registerOperationContext(mc, oc);
         this.completed = false;
     }

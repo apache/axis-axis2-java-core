@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.OperationClient;
@@ -14,7 +15,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
@@ -25,9 +25,9 @@ import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Author: Deepal Jayasinghe Date: Oct 3, 2005 Time: 6:01:33 PM
@@ -104,7 +104,7 @@ class OutInAxisOperationClient implements OperationClient {
                              Options options) {
         this.axisOp = axisOp;
         this.sc = sc;
-        this.options = new Options(options);
+        this.options = options;
         this.completed = false;
         this.oc = new OperationContext(axisOp);
         this.oc.setParent(this.sc);
@@ -311,12 +311,16 @@ class OutInAxisOperationClient implements OperationClient {
 
     private void addRefParsToRequset(SOAPEnvelope env) {
         if (options.isManageSession()) {
-            SOAPHeader sh = env.getHeader();
-            ArrayList replyTorefpars = sc.getReplyTorefpars();
-            if (replyTorefpars.size() > 0) {
-                for (int i = 0; i < replyTorefpars.size(); i++) {
-                    OMElement refPars = (OMElement) replyTorefpars.get(i);
-                    sh.addChild(refPars);
+            EndpointReference tepr = sc.getTargetEPR();
+            if (tepr != null) {
+                Map map = tepr.getAllReferenceParameters();
+                Iterator valuse = map.values().iterator();
+                SOAPHeader sh = env.getHeader();
+                while (valuse.hasNext()) {
+                    Object refparaelement = valuse.next();
+                    if (refparaelement instanceof OMElement) {
+                        sh.addChild((OMElement) refparaelement);
+                    }
                 }
             }
         }
@@ -360,16 +364,19 @@ class OutInAxisOperationClient implements OperationClient {
         try {
             // Adding request reference parameters into ServiceContext , so then in the next
             // requesy automatically send them back
-            OMElement refernceParameters = resenvelope.getHeader()
-                    .getFirstChildWithName(new QName("ReplyTo"))
-                    .getFirstChildWithName(new QName("ReferenceParameters"));
-            ArrayList replyTorefPars = new ArrayList();
-            Iterator refPars = refernceParameters.getChildren();
-            while (refPars.hasNext()) {
-                OMElement omElement = (OMElement) refPars.next();
-                replyTorefPars.add(omElement);
-            }
-            sc.setReplyTorefpars(replyTorefPars);
+            sc.setTargetEPR(getReplyToEPR(resenvelope.getHeader()
+                    .getFirstChildWithName(new QName("ReplyTo"))));
+//            sc.setTargetEPR(epr);
+//            OMElement refernceParameters = resenvelope.getHeader()
+//                    .getFirstChildWithName(new QName("ReplyTo"))
+//                    .getFirstChildWithName(new QName("ReferenceParameters"));
+//            ArrayList replyTorefPars = new ArrayList();
+//            Iterator refPars = refernceParameters.getChildren();
+//            while (refPars.hasNext()) {
+//                OMElement omElement = (OMElement) refPars.next();
+//                replyTorefPars.add(omElement);
+//            }
+//            sc.setReplyTorefpars(replyTorefPars);
 
         } catch (Exception e) {
             //NPE may occure there for need to catch this
@@ -385,6 +392,27 @@ class OutInAxisOperationClient implements OperationClient {
         }
 
         return responseMessageContext;
+    }
+
+    private EndpointReference getReplyToEPR(OMElement headerElement) {
+        EndpointReference epr = new EndpointReference(null);
+        Iterator childElements = headerElement.getChildElements();
+        while (childElements.hasNext()) {
+            OMElement eprChildElement = (OMElement) childElements.next();
+            if (AddressingConstants.EPR_ADDRESS.equals(eprChildElement.getLocalName())) {
+//                epr.setAddress(eprChildElement.getText());
+            } else if (AddressingConstants.EPR_REFERENCE_PARAMETERS.equals(eprChildElement.getLocalName())) {
+
+                Iterator referenceParameters = eprChildElement.getChildElements();
+                while (referenceParameters.hasNext()) {
+                    OMElement element = (OMElement) referenceParameters.next();
+                    epr.addReferenceParameter(element);
+                }
+            } else if (AddressingConstants.Final.WSA_METADATA.equals(eprChildElement.getLocalName())) {
+                epr.setMetaData(eprChildElement);
+            }
+        }
+        return epr;
     }
 
     /**

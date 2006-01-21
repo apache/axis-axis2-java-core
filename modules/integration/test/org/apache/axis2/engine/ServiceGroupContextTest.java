@@ -13,10 +13,8 @@ import org.apache.axis2.engine.util.RequestCounterMessageReceiver;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,28 +89,15 @@ public class ServiceGroupContextTest extends TestCase {
         options.setAction(operationName.getLocalPart());
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-        ServiceClient sender = new ServiceClient(configContext,null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
-        OMElement result = sender.sendReceive(payload.getBody().getFirstElement());
+        sender.sendReceive(payload.getBody().getFirstElement());
 
-        OMNamespace axis2Namespace = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI,
-                Constants.AXIS2_NAMESPACE_PREFIX);
         SOAPEnvelope defaultEnvelope = fac.getDefaultEnvelope();
 
         //TODO : ple imporove this , what I have done is a hack
-        OMElement body = (OMElement) result.getParent();
-        SOAPEnvelope soapEnvlop = (SOAPEnvelope) body.getParent();
-
-        String serviceGroupIds= soapEnvlop.getHeader().getFirstChildWithName(new QName("ReplyTo"))
-                .getFirstChildWithName(new QName("ReferenceParameters")).
-                getFirstChildWithName(new QName("ServiceGroupId")).getText();
-
-//        OMElement soapHeaderElement = fac.createOMElement(Constants.SERVICE_GROUP_ID, axis2Namespace);
-//        soapHeaderElement.setText(serviceGroupId);
-
-//        sender.addHeader(soapHeaderElement);
         OMElement result2 = sender.sendReceive(defaultEnvelope.getBody().getFirstElement());
         String text = result2.getText();
         assertEquals("Number of requests should be 2", 2, Integer.parseInt(text));
