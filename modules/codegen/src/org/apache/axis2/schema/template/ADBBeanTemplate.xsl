@@ -145,7 +145,7 @@
 
                     <xsl:if test="$min=0"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
-                        <xsl:when test="@ours or @any">
+                        <xsl:when test="@ours or @any or @default">
                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
                                                                       "<xsl:value-of select="$propertyName"/>"));
                             elementList.add(<xsl:value-of select="$varName"/>);

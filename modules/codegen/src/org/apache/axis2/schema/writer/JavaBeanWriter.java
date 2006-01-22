@@ -3,6 +3,7 @@ package org.apache.axis2.schema.writer;
 import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
+import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.util.JavaUtils;
@@ -370,7 +371,14 @@ public class JavaBeanWriter implements BeanWriter {
             if (javaClassNameForElement == null) {
                 throw new SchemaCompilationException("Type missing!");
             }
+
             XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
+
+            //add an attribute that says the type is default
+            if (isDefault(javaClassNameForElement)){
+                XSLTUtils.addAttribute(model, "default", "yes", property);
+            }
+
             if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
                 XSLTUtils.addAttribute(model, "ours", "yes", property); //todo introduce a better name for this
             }
@@ -413,9 +421,18 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         /////////////////////////////////////
-//        System.out.println("rootElt = " + rootElt);
+        //System.out.println("rootElt = " + rootElt);
         /////////////////////////////////////
         return rootElt;
+    }
+
+    /**
+     * Test whether the given class name matches the default
+     * @param javaClassNameForElement
+     * @return
+     */
+    private boolean isDefault(String javaClassNameForElement) {
+        return SchemaCompiler.DEFAULT_CLASS_NAME.equals(javaClassNameForElement);
     }
 
 

@@ -75,6 +75,8 @@ public class SchemaCompiler {
     private static final String ANY_ELEMENT_FIELD_NAME = "extraElements";
     private static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
+    public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+
 
     /**
      * @return the processes element map
@@ -324,7 +326,7 @@ public class SchemaCompiler {
             //contained schema type. We better set the default then
             //however it's better if the default can be set through the
             //property file
-            className = OMElement.class.getName();
+            className = DEFAULT_CLASS_NAME;
         }
         if (isArray) {
             //append the square braces that say this is an array
@@ -588,7 +590,7 @@ public class SchemaCompiler {
         //we need to put a name here
         metainf.registerMapping(new QName(ANY_ELEMENT_FIELD_NAME),
                 null,
-                OMElement.class.getName(),
+                DEFAULT_CLASS_NAME,
                 SchemaConstants.ANY_TYPE);
 
     }
