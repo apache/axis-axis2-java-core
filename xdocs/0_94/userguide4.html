@@ -14,22 +14,22 @@
 <i>User Feedback: <a
 href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></i>
 
-<p align="right">Pages: <a href="userguide.html"
-target="_blank">Content</a>, <a href="userguide1.html" target="_blank">1</a>,
-<a href="userguide2.html" target="_blank">2</a>,<a href="userguide3.html"
-target="_blank"> 3</a>, <b>4</b>, <a href="userguide5.html"
-target="_blank">5</a></p>
-<b><font size="4">Note (on samples):</font></b>All the user's guide samples
+<p align="right">Pages: <a href="userguide.html">Content</a>, <a
+href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <a
+href="userguide3.html">3</a>, <b>4</b>, <a href="userguide5.html">5</a></p>
+
+<p><b><font size="4">Note (on samples):</font></b> All the user's guide samples
 are located in the <b>"samples/userguide/src"</b> directory of the binary
-distribution.
+distribution.</p>
 
 <h2><a name="Modules"></a>Modules</h2>
 
 <p>Axis2 provides an extended support for modules (See <a
-href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for more details
-about modules in Axis2). Let's create a custom module and deploy it to the
-MyService which we created earlier. Following steps shows the actions that
-need to be performed to deploy a custom module for a given Web Service:</p>
+href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
+more details about modules in Axis2). Let's create a custom module and deploy
+it to the MyService which we created earlier. Following steps shows the
+actions that need to be performed to deploy a custom module for a given Web
+Service:</p>
 <ol>
   <li><p style="margin-bottom: 0in">Create the Module Implementation</p>
   </li>
@@ -301,24 +301,24 @@ directory.</p>
 
 <p>Although the required changes to the "services.xml" is very little, we
 have created a separate service archive (MyServiceWithModule.aar) for users
-to deploy and see. Deploy this service using the <a href="userguide2.html#Step4_:Deploy_the_Web_Service"">same steps
-that you used to deploy "MyService"</a> and copy the "LoggingModule.mar" file
-to the "modules" directory. Then run using the
-"TestWebServiceWithModuleClient.bat" or "TestWebServiceWithModuleClient.sh"
-in the "Axis2Home/samples/userguide/src/userguide/clients/bin" directory.</p>
+to deploy and see. Deploy this service using the <a
+href="userguide2.html#Step4_:Deploy_the_Web_Service">same steps that you used
+to deploy "MyService"</a> and copy the "LoggingModule.mar" file to the
+"modules" directory. Then run using the "TestWebServiceWithModuleClient.bat"
+or "TestWebServiceWithModuleClient.sh" in the
+"Axis2Home/samples/userguide/src/userguide/clients/bin" directory.</p>
 
 <p>Note: To see the logs, the user needs to modify the "log4j.properties" to
 log INFO. The property file is located in "webapps\axis2\WEB-INF\classes" of
 your servlet container. Change the line "log4j.rootCategory= ERROR, LOGFILE"
 to "log4j.rootCategory=INFO, ERROR, LOGFILE".</p>
 
-<p align="right"><a href="userguide3.html" target="_blank"><img
-src="images/arrow_left.gif"> Previous</a> | <a href="userguide5.html"
-target="_blank">Next <img src="images/arrow_right.gif"></a></p>
+<p align="right"><a href="userguide3.html"><img src="images/arrow_left.gif">
+Previous</a> | <a href="userguide5.html">Next <img
+src="images/arrow_right.gif"></a></p>
 
-<p>Pages: <a href="userguide.html" target="_blank">Content</a>, <a
-href="userguide1.html" target="_blank">1</a>, <a href="userguide2.html"
-target="_blank">2</a>,<a href="userguide3.html" target="_blank"> 3</a>,
-<b>4</b>, <a href="userguide5.html" target="_blank">5</a></p>
+<p>Pages: <a href="userguide.html">Content</a>, <a
+href="userguide1.html">1</a>, <a href="userguide2.html">2</a>,<a
+href="userguide3.html"> 3</a>, <b>4</b>, <a href="userguide5.html">5</a></p>
 </body>
 </html>
