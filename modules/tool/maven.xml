@@ -9,7 +9,7 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
     <postGoal name="jar">
-        <!--<attainGoal name="jar-tool"/>-->
+        <attainGoal name="create-tracer"/>
     </postGoal>
     <goal name="jar-tool">
         <!-- make the jar tool-->
@@ -23,6 +23,40 @@
         <copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
         <copy file="src/script/jar-tool-UI.bat" todir="target/jar-tool"></copy>
     </goal>
+    
+    <!-- ================================================================ -->
+    <!--- Create the Tracer JAR -->
+    <!-- ================================================================ -->
+    <goal name="create-tracer">
+        <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: Axis2 Tracer</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
+
+        <ant:property name="tracer.dir" value="target/tracer"/>
+        <ant:property name="tracer.temp.dir" value="target/tracer/temp"/>
+        <ant:mkdir dir="${tracer.dir}"/>
+        <ant:mkdir dir="${tracer.temp.dir}"/>
+
+        <ant:copy todir="${tracer.temp.dir}">
+            <fileset dir="target/classes">
+                <include name="**/tracer/**"/>
+                <exclude name="*"/>
+            </fileset>
+            <fileset dir="conf/tracer">
+                <include name="META-INF/**"/>
+            </fileset>
+        </ant:copy>
+        <jar destfile="${tracer.dir}/axis2-tracer-${pom.currentVersion}.jar">
+            <fileset dir="target/classes">
+                <include name="**/tracer/**"/>
+                <exclude name="*"/>
+            </fileset>
+        </jar>
+        <ant:zip destfile="target/axis2-tracer-${pom.currentVersion}.jar"
+                 basedir="${tracer.temp.dir}"
+                 includes="**"/>
+    </goal>
+
     <preGoal name="itest:compile">
         <u:file var="file" name="${maven.itest.src}"/>
         <j:if test="${!file.exists()}">
