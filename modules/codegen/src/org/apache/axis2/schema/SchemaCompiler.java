@@ -241,7 +241,12 @@ public class SchemaCompiler {
                 }
 
 
-            } else {
+            }else if (xsElt.getRefName()!= null){
+
+                // We need to handle the references here
+
+            }else{
+
                 //we are going to special case the anonymous complex type. Our algorithm for dealing
                 //with it is to generate a single object that has the complex content inside. Really the
                 //intent of the user when he declares the complexType anonymously is to use it privately
@@ -368,7 +373,8 @@ public class SchemaCompiler {
         XmlSchemaParticle particle = complexType.getParticle();
         BeanWriterMetaInfoHolder metaInfHolder = new BeanWriterMetaInfoHolder();
         if (particle != null) {
-            //Process the particle
+            // Process the particle . A particle may be a <code>sequence</code>
+            // ,<code>choice</code> or <code>all</code>
             processParticle(particle, metaInfHolder);
         }
 
@@ -388,6 +394,13 @@ public class SchemaCompiler {
         XmlSchemaAnyAttribute anyAtt = complexType.getAnyAttribute();
         if (anyAtt != null) {
             processAnyAttribute(metaInfHolder);
+        }
+
+
+        if (complexType.getContentModel()!= null){
+            //this complex type has content, throw a meaningful exception for now
+            //todo - Finish this
+             throw new RuntimeException(SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror"));
         }
 
         //since this is a special case (an unnamed complex type) we'll put the already processed
@@ -435,10 +448,11 @@ public class SchemaCompiler {
 
         if (complexType.getContentModel()!=null){
             //for the time being we cannot deal with these content. so throw an exception
+            //todo Finish this
             throw new RuntimeException(SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror"));
         }
 
-        // Process the other types - Say the complex content, extensions and so on
+        
 
         //write the class. This type mapping would have been populated right now
         //Note - We always write classes for complex types
