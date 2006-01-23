@@ -120,6 +120,34 @@
 					</sequence>
 				</complexType>
 			</element>
+			<element name="receiveSimpleEventsRequest">
+				<complexType>
+					<sequence>
+						<element name="input" type="impl:ArrayOfSimpleEvent"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="receiveMeshInterfaceObjectsRequest">
+				<complexType>
+					<sequence>
+						<element name="input" type="impl:ArrayOfMeshInterfaceObject"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="receiveSimpleEventsResponse">
+				<complexType>
+					<sequence>
+						<element name="receiveSimpleEventsReturn" type="xsd:int"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="receiveMeshInterfaceObjectsResponse">
+				<complexType>
+					<sequence>
+						<element name="receiveMeshInterfaceObjectsReturn" type="xsd:int"/>
+					</sequence>
+				</complexType>
+			</element>
 			<element name="sendBase64">
 				<complexType>
 					<sequence>
@@ -176,6 +204,63 @@
 					</sequence>
 				</complexType>
 			</element>
+			<element name="sendSimpleEventsRequest">
+				<complexType>
+					<sequence>
+						<element name="size" type="xsd:int"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="sendSimpleEventsResponse">
+				<complexType>
+					<sequence>
+						<element name="sendSimpleEventsReturn" type="impl:ArrayOfSimpleEvent"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="sendMeshInterfaceObjectsRequest">
+				<complexType>
+					<sequence>
+						<element name="size" type="xsd:int"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="sendMeshInterfaceObjectsResponse">
+				<complexType>
+					<sequence>
+						<element name="sendMeshInterfaceObjectsReturn" type="impl:ArrayOfMeshInterfaceObject"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="echoSimpleEventsRequest">
+				<complexType>
+					<sequence>
+						<element name="input" type="impl:ArrayOfSimpleEvent"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="echoSimpleEventsResponse">
+				<complexType>
+					<sequence>
+						<element name="echoSimpleEventsReturn" type="impl:ArrayOfSimpleEvent"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="echoMeshInterfaceObjectsRequest">
+				<complexType>
+					<sequence>
+						<element name="input" type="impl:MeshInterfaceObject" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="echoMeshInterfaceObjectsResponse">
+				<complexType>
+					<sequence>
+						<element name="echoMeshInterfaceObjectReturn" type="impl:MeshInterfaceObject" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="SimpleEvent" type="impl:SimpleEvent"/>
 			<xsd:complexType name="SimpleEvent">
 				<xsd:all>
 					<xsd:element name="sequenceNumber" type="xsd:int"/>
@@ -183,11 +268,13 @@
 					<xsd:element name="message" type="xsd:string"/>
 				</xsd:all>
 			</xsd:complexType>
-			<complexType name="ArrayOfSimpleEvents">
+			<element name="ArrayOfSimpleEvent" type="impl:ArrayOfSimpleEvent"/>
+			<complexType name="ArrayOfSimpleEvent">
 				<xsd:sequence>
 					<xsd:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="impl:SimpleEvent"/>
 				</xsd:sequence>
 			</complexType>
+			<element name="MeshInterfaceObject" type="impl:MeshInterfaceObject"/>
 			<xsd:complexType name="MeshInterfaceObject">
 				<xsd:all>
 					<xsd:element name="x" type="xsd:int"/>
@@ -195,6 +282,7 @@
 					<xsd:element name="value" type="xsd:double"/>
 				</xsd:all>
 			</xsd:complexType>
+			<element name="ArrayOfMeshInterfaceObject" type="impl:ArrayOfMeshInterfaceObject"/>
 			<complexType name="ArrayOfMeshInterfaceObject">
 				<xsd:sequence>
 					<xsd:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="impl:MeshInterfaceObject"/>
@@ -281,40 +369,40 @@
 		<wsdl:part name="parameters" element="impl:echoDoublesResponse"/>
 	</wsdl:message>
 	<wsdl:message name="echoSimpleEventsRequest">
-		<wsdl:part name="input" type="impl:ArrayOfSimpleEvents"/>
+		<wsdl:part name="input" element="impl:echoSimpleEventsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="echoSimpleEventsResponse">
-		<wsdl:part name="output" type="impl:ArrayOfSimpleEvents"/>
+		<wsdl:part name="output" element="impl:echoSimpleEventsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="echoMeshInterfaceObjectsRequest">
-		<wsdl:part name="input" type="impl:ArrayOfMeshInterfaceObject"/>
+		<wsdl:part name="input" element="impl:echoMeshInterfaceObjectsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="echoMeshInterfaceObjectsResponse">
-		<wsdl:part name="output" type="impl:ArrayOfMeshInterfaceObject"/>
+		<wsdl:part name="output" element="impl:echoMeshInterfaceObjectsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="receiveSimpleEventsRequest">
-		<wsdl:part name="input" type="impl:ArrayOfSimpleEvents"/>
+		<wsdl:part name="input" element="impl:receiveSimpleEventsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="receiveSimpleEventsResponse">
-		<wsdl:part name="size" type="xsd:int"/>
+		<wsdl:part name="size" element="impl:receiveSimpleEventsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="receiveMeshInterfaceObjectsRequest">
-		<wsdl:part name="input" type="impl:ArrayOfMeshInterfaceObject"/>
+		<wsdl:part name="input" element="impl:receiveMeshInterfaceObjectsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="receiveMeshInterfaceObjectsResponse">
-		<wsdl:part name="size" type="xsd:int"/>
+		<wsdl:part name="size" element="impl:receiveMeshInterfaceObjectsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="sendSimpleEventsRequest">
-		<wsdl:part name="size" type="xsd:int"/>
+		<wsdl:part name="size" element="impl:sendSimpleEventsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="sendSimpleEventsResponse">
-		<wsdl:part name="output" type="impl:ArrayOfSimpleEvents"/>
+		<wsdl:part name="output" element="impl:sendSimpleEventsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="sendMeshInterfaceObjectsRequest">
-		<wsdl:part name="size" type="xsd:int"/>
+		<wsdl:part name="size" element="impl:sendMeshInterfaceObjectsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="sendMeshInterfaceObjectsResponse">
-		<wsdl:part name="output" type="impl:ArrayOfMeshInterfaceObject"/>
+		<wsdl:part name="output" element="impl:sendMeshInterfaceObjectsResponse"/>
 	</wsdl:message>
 	<wsdl:portType name="Benchmark">
 		<wsdl:operation name="echoVoid">
@@ -338,12 +426,12 @@
 			<wsdl:output name="echoDoublesResponse" message="impl:echoDoublesResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="echoSimpleEvents">
-			<wsdl:input message="impl:echoSimpleEventsRequest"/>
-			<wsdl:output message="impl:echoSimpleEventsResponse"/>
+			<wsdl:input name="echoSimpleEventsRequest" message="impl:echoSimpleEventsRequest"/>
+			<wsdl:output name="echoSimpleEventsResponse" message="impl:echoSimpleEventsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="echoMeshInterfaceObjects">
-			<wsdl:input message="impl:echoMeshInterfaceObjectsRequest"/>
-			<wsdl:output message="impl:echoMeshInterfaceObjectsResponse"/>
+			<wsdl:input name="echoMeshInterfaceObjectsRequest" message="impl:echoMeshInterfaceObjectsRequest"/>
+			<wsdl:output name="echoMeshInterfaceObjectsResponse" message="impl:echoMeshInterfaceObjectsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="receiveBase64">
 			<wsdl:input name="receiveBase64Request" message="impl:receiveBase64Request"/>
@@ -362,12 +450,12 @@
 			<wsdl:output name="receiveDoublesResponse" message="impl:receiveDoublesResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="receiveSimpleEvents">
-			<wsdl:input message="impl:receiveSimpleEventsRequest"/>
-			<wsdl:output message="impl:receiveSimpleEventsResponse"/>
+			<wsdl:input name="receiveSimpleEventsRequest" message="impl:receiveSimpleEventsRequest"/>
+			<wsdl:output name="receiveSimpleEventsResponse" message="impl:receiveSimpleEventsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="receiveMeshInterfaceObjects">
-			<wsdl:input message="impl:receiveMeshInterfaceObjectsRequest"/>
-			<wsdl:output message="impl:receiveMeshInterfaceObjectsResponse"/>
+			<wsdl:input name="receiveMeshInterfaceObjectsRequest" message="impl:receiveMeshInterfaceObjectsRequest"/>
+			<wsdl:output name="receiveMeshInterfaceObjectsResponse" message="impl:receiveMeshInterfaceObjectsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="sendBase64">
 			<wsdl:input name="sendBase64Request" message="impl:sendBase64Request"/>
@@ -386,12 +474,12 @@
 			<wsdl:output name="sendDoublesResponse" message="impl:sendDoublesResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="sendSimpleEvents">
-			<wsdl:input message="impl:sendSimpleEventsRequest"/>
-			<wsdl:output message="impl:sendSimpleEventsResponse"/>
+			<wsdl:input name="sendSimpleEventsRequest" message="impl:sendSimpleEventsRequest"/>
+			<wsdl:output name="sendSimpleEventsResponse" message="impl:sendSimpleEventsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="sendMeshInterfaceObjects">
-			<wsdl:input message="impl:sendMeshInterfaceObjectsRequest"/>
-			<wsdl:output message="impl:sendMeshInterfaceObjectsResponse"/>
+			<wsdl:input name="sendMeshInterfaceObjectsRequest" message="impl:sendMeshInterfaceObjectsRequest"/>
+			<wsdl:output name="sendMeshInterfaceObjectsResponse" message="impl:sendMeshInterfaceObjectsResponse"/>
 		</wsdl:operation>
 	</wsdl:portType>
 	<wsdl:binding name="BenchmarkSoapBinding" type="impl:Benchmark">
