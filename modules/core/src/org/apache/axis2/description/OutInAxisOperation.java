@@ -396,11 +396,13 @@ class OutInAxisOperationClient implements OperationClient {
 
     private EndpointReference getReplyToEPR(OMElement headerElement) {
         EndpointReference epr = new EndpointReference(null);
+        if(headerElement == null)
+            return null;
+        
         Iterator childElements = headerElement.getChildElements();
         while (childElements.hasNext()) {
             OMElement eprChildElement = (OMElement) childElements.next();
             if (AddressingConstants.EPR_ADDRESS.equals(eprChildElement.getLocalName())) {
-//                epr.setAddress(eprChildElement.getText());
             } else if (AddressingConstants.EPR_REFERENCE_PARAMETERS.equals(eprChildElement.getLocalName())) {
 
                 Iterator referenceParameters = eprChildElement.getChildElements();
