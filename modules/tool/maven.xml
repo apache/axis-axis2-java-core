@@ -8,7 +8,7 @@
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
-    <postGoal name="jar">
+    <postGoal name="jar:jar">
         <attainGoal name="create-tracer"/>
     </postGoal>
     <goal name="jar-tool">
