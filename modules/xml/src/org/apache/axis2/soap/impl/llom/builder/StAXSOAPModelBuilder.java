@@ -173,9 +173,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
             while (!soapHeader.isComplete()) {
                 next();
             }
-        } else {
-            log.info("No SOAPHeaders present !!");
-        }
+        } 
     }
 
 
