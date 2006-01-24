@@ -200,6 +200,15 @@
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>
+	<!-- For WS-Policy support -->
+	<dependency>
+		<groupId>ws-commons</groupId>
+		<artifactId>ws-policy</artifactId>
+		<version>${ws_policy.version}</version>
+		<properties>
+			<module>true</module>
+		</properties>
+	</dependency>
     </dependencies>
 
     <reports/>

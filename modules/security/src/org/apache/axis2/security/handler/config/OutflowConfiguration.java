@@ -218,6 +218,16 @@ public class OutflowConfiguration {
 		return (String) this.actionList[this.currentAction]
 				.get(WSHandlerConstants.SIG_KEY_ID);
 	}
+    
+    public void setSignatureAlgorithm(String signatureAlgo) {
+        this.actionList[this.currentAction].put(WSHandlerConstants.SIG_ALGO,
+                signatureAlgo);
+    }
+    
+    public String getSignatureAlgorithm() {
+        return (String) this.actionList[this.currentAction]
+                .get(WSHandlerConstants.SIG_ALGO);
+    }
 	
 	/**
 	 * Sets the encrypted key identifier of the current action.
