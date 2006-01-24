@@ -209,9 +209,11 @@
 
         }
 
+    /** Factory class that keeps the parse method
+      */
+    public static class Factory{
         /**
         * static method to create the object
-        * Note -  This is not complete
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
         <xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();
@@ -247,7 +249,7 @@
                     <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.parse(reader));
+                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
                             //loop until we find a start element that is not part of this array
                             boolean <xsl:value-of select="$loopBoolName"/> = false;
                             while(!<xsl:value-of select="$loopBoolName"/>){
@@ -262,7 +264,7 @@
                             <xsl:value-of select="$loopBoolName"/> = true;
                             }else if (reader.isStartElement()){
                             if ("<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
-                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.parse(reader));
+                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
                             }else{
                             <xsl:value-of select="$loopBoolName"/> = true;
                             }
@@ -314,7 +316,7 @@
                 </xsl:when>
                 <xsl:when test="@ours">
                     object.set<xsl:value-of select="$javaName"/>(
-                    <xsl:value-of select="$propertyType"/>.parse(reader));
+                    <xsl:value-of select="$propertyType"/>.Factory.parse(reader));
                     count++;
                 </xsl:when>
                 <xsl:when test="@any">
@@ -349,6 +351,7 @@
 
         return object;
         }
+        }//end of factory class
 
         }
     </xsl:template>

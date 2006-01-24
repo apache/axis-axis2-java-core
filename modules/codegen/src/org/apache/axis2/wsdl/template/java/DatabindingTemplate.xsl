@@ -200,7 +200,7 @@
                        <xsl:for-each select="param">
                               <xsl:if test="@type!=''">
                       if (<xsl:value-of select="@type"/>.class.equals(type)){
-                           return <xsl:value-of select="@type"/>.parse(param.getXMLStreamReaderWithoutCaching());
+                           return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());
                       }
                               </xsl:if>
                      </xsl:for-each>

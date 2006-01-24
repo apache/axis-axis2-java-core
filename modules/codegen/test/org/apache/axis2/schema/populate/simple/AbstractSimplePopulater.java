@@ -36,7 +36,10 @@ public abstract class AbstractSimplePopulater extends TestCase {
     protected Object process(String testString,String className) throws Exception{
         XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(testString.getBytes()));
         Class clazz = Class.forName(className);
-        Method parseMethod = clazz.getMethod("parse",new Class[]{XMLStreamReader.class});
+        Class[] declaredClasse = clazz.getDeclaredClasses();
+        //ideally this should be 1
+        Class innerClazz = declaredClasse[0];
+        Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});
         Object obj = parseMethod.invoke(null,new Object[]{reader});
         assertNotNull(obj);
 

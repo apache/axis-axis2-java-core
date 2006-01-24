@@ -312,4 +312,12 @@ public class BeanWriterMetaInfoHolder {
         return returnQNames;
     }
 
+    /**
+     *  Finds the starting count for the addition of new items to the order
+     * @return the starting number for the sequence
+     */
+    public int getOrderStartPoint(){
+          return qNameOrderMap.size();
+    }
+
 }
