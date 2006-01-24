@@ -99,7 +99,7 @@ Connection closed by foreign host.
   <h2>Using the included mail server</h2>
 
   <p>The inbuilt mail server can be started from the command line using the following piece of code when all the needed jars are in the class path.</p>
-<p><code>java org.apache.axis2.transport.mail.server.MailServer</code></p>
+<source><pre>java org.apache.axis2.transport.mail.server.MailServer</pre></source>
   <p>The server itself does not need any configuration or tinkering to work. A ConfigurationContext and the ports to operate on are the only details needed. The server will store the mails in memory against the recipient till the recipient pops it from the server. To facilitate the use in *nix environments as a non root user the pop and smtp ports used by default config/test cases are (1024 + 25) and (1024 + 110).</p>
 
   <hr/>
