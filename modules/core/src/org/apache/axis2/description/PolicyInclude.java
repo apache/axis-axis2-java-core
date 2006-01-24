@@ -69,7 +69,9 @@ public class PolicyInclude {
 	
 	private ArrayList wrapperElements = new ArrayList();
 
-	private boolean useCache = false;
+	private boolean useCacheP = false;
+	
+	private boolean useCacheE = false;
 
 	public PolicyInclude() {
 		reg = new PolicyRegistry();
@@ -143,6 +145,8 @@ public class PolicyInclude {
 					: (Policy) result.merge(p, reg);
 		}
 		setPolicy(result);
+		useCacheP(true);
+		
 		calculateEffectivePolicy();
 	}
 
@@ -163,20 +167,21 @@ public class PolicyInclude {
 			result = getPolicy();
 		}
 		setEffectivePolicy(result);
-		useCache(true);		
+		useCacheE(true);		
 	}
 	
 	public Policy getPolicy() {
 		
-		if (! useCache) {
+		if (! useCacheP) {
 			calculatePolicy();
+			useCacheP(true);
 		}
 		return policy;
 	}
 
 	public Policy getEffectivePolicy() {
 		
-		if (! useCache) {
+		if (! useCacheE) {
 			calculateEffectivePolicy();			
 		}
 		return effectivePolicy;
@@ -247,8 +252,17 @@ public class PolicyInclude {
 		useCache(false);
 	}
 	
+	private void useCacheP(boolean useCache) {
+		this.useCacheP = useCache;
+	}
+	
+	private void useCacheE(boolean useCacheE) {
+		this.useCacheE = useCacheE;
+	}
+	
 	private void useCache(boolean useCache) {
-		this.useCache = useCache;
+		this.useCacheP = useCache;
+		this.useCacheE = useCache;
 	}
 	
 	class Wrapper {
