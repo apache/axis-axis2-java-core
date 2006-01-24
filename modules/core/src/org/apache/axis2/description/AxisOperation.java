@@ -11,7 +11,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -100,7 +99,7 @@ public abstract class AxisOperation extends AxisDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public final void engageModule(ModuleDescription moduleref, AxisConfiguration axisConfig)
+    public final void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
             throws AxisFault {
         if (moduleref == null) {
             return;
@@ -110,7 +109,7 @@ public abstract class AxisOperation extends AxisDescription
         Iterator module_itr = engagedModules.iterator();
 
         while (module_itr.hasNext()) {
-            ModuleDescription module = (ModuleDescription) module_itr.next();
+            AxisModule module = (AxisModule) module_itr.next();
 
             if (module.getName().equals(moduleref.getName())) {
                 log.debug(moduleref.getName().getLocalPart()

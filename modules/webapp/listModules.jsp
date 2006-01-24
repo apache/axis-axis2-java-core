@@ -24,7 +24,7 @@
  */
         %>
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.ModuleDescription,
+                 org.apache.axis2.description.AxisModule,
                  java.util.Collection"%>
  <%@ page import="java.util.Enumeration"%>
  <%@ page import="java.util.HashMap"%>
@@ -43,7 +43,7 @@
              Collection moduleNames = moduleMap.values();
              for (Iterator iterator = moduleNames.iterator(); iterator.hasNext();) {
                  foundModules = true;
-                 ModuleDescription  moduleQName = (ModuleDescription) iterator.next();
+                 AxisModule  moduleQName = (AxisModule) iterator.next();
                  modulename = moduleQName.getName().getLocalPart();
 		if (!wroteUL){
 			wroteUL = true;

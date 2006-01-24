@@ -20,7 +20,6 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
-import org.apache.axis2.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class AxisServiceGroup extends AxisDescription {
+
     private Log log = LogFactory.getLog(getClass());
 
     // to store module ref at deploy time parsing
@@ -46,7 +46,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     // to keep name of the service group
     private String serviceGroupName;
-    
+
     /**
      * Field services
      */
@@ -90,10 +90,10 @@ public class AxisServiceGroup extends AxisDescription {
 
             while (modules.hasNext()) {
                 QName moduleName = (QName) modules.next();
-                ModuleDescription moduleDesc = axisConfig.getModule(moduleName);
+                AxisModule axisModule = axisConfig.getModule(moduleName);
 
-                if (moduleDesc != null) {
-                    service.engageModule(moduleDesc, axisConfig);
+                if (axisModule != null) {
+                    service.engageModule(axisModule, axisConfig);
                 } else {
                     throw new AxisFault("Trying to engage a module which is not " + "available : "
                             + moduleName.getLocalPart());
@@ -110,7 +110,7 @@ public class AxisServiceGroup extends AxisDescription {
         engagedModules.add(moduleName);
     }
 
-    public void engageModule(ModuleDescription module) throws AxisFault {
+    public void engageModule(AxisModule module) throws AxisFault {
         QName moduleName = module.getName();
         boolean needToadd = true;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {

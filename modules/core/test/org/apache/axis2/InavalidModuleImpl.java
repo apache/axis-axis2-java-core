@@ -3,7 +3,7 @@ package org.apache.axis2;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisDescription;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -24,7 +24,7 @@ import org.apache.axis2.description.AxisDescription;
 
 public class InavalidModuleImpl implements Module {
     // initialize the module
-    public void init(ConfigurationContext configContext, ModuleDescription module) throws AxisFault {
+    public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {
     }
 
     public void engageNotify(AxisDescription axisDescription) throws AxisFault {

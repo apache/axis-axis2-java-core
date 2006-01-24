@@ -248,7 +248,7 @@ class OutInAxisOperationClient implements OperationClient {
                 mc.setSoapAction((String) soapaction.getValue());
             }
         }
-        addRefParsToRequset(mc.getEnvelope());
+        addReferenceParameters(mc.getEnvelope());
         if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
@@ -309,7 +309,7 @@ class OutInAxisOperationClient implements OperationClient {
         }
     }
 
-    private void addRefParsToRequset(SOAPEnvelope env) {
+    private void addReferenceParameters(SOAPEnvelope env) {
         if (options.isManageSession()) {
             EndpointReference tepr = sc.getTargetEPR();
             if (tepr != null) {
@@ -366,18 +366,6 @@ class OutInAxisOperationClient implements OperationClient {
             // requesy automatically send them back
             sc.setTargetEPR(getReplyToEPR(resenvelope.getHeader()
                     .getFirstChildWithName(new QName("ReplyTo"))));
-//            sc.setTargetEPR(epr);
-//            OMElement refernceParameters = resenvelope.getHeader()
-//                    .getFirstChildWithName(new QName("ReplyTo"))
-//                    .getFirstChildWithName(new QName("ReferenceParameters"));
-//            ArrayList replyTorefPars = new ArrayList();
-//            Iterator refPars = refernceParameters.getChildren();
-//            while (refPars.hasNext()) {
-//                OMElement omElement = (OMElement) refPars.next();
-//                replyTorefPars.add(omElement);
-//            }
-//            sc.setReplyTorefpars(replyTorefPars);
-
         } catch (Exception e) {
             //NPE may occure there for need to catch this
         }

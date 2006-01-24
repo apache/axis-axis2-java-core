@@ -24,7 +24,7 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -119,9 +119,9 @@ public class UtilServer {
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
+        AxisModule axisModule = deploymentEngine.buildModule(file,
                                                                     configContext.getAxisConfiguration());
-        configContext.getAxisConfiguration().addModule(moduleDesc);
+        configContext.getAxisConfiguration().addModule(axisModule);
 
         configContext.getAxisConfiguration().addService(service);
 
@@ -136,9 +136,9 @@ public class UtilServer {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
+        AxisModule axisModule = deploymentEngine.buildModule(file,
                                                                     configContext.getAxisConfiguration());
-        configContext.getAxisConfiguration().addModule(moduleDesc);
+        configContext.getAxisConfiguration().addModule(axisModule);
         configContext.getAxisConfiguration().engageModule(new QName("addressing"));
         return configContext;
     }
@@ -152,10 +152,10 @@ public class UtilServer {
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome,null);
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
+        AxisModule axisModule = deploymentEngine.buildModule(file,
                                                                     configContext.getAxisConfiguration());
 
-        configContext.getAxisConfiguration().addModule(moduleDesc);
+        configContext.getAxisConfiguration().addModule(axisModule);
         // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         configContext.getAxisConfiguration().addService(service);

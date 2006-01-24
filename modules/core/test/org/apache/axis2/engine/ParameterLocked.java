@@ -23,7 +23,7 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -126,7 +126,7 @@ public class ParameterLocked extends TestCase {
     public void testOveride_Non_locked_Para_Module() {
         try {
             assertNotNull(ar);
-            ModuleDescription module = new ModuleDescription();
+            AxisModule module = new AxisModule();
             module.setParent(ar);
             InputStream in = new FileInputStream(repo + "/module_overide_global_non_locked_para.xml");
             ModuleBuilder mbuilder = new ModuleBuilder(in, module, ar);
@@ -141,7 +141,7 @@ public class ParameterLocked extends TestCase {
     public void testOveride_locked_Para_Module() {
         try {
             assertNotNull(ar);
-            ModuleDescription module = new ModuleDescription();
+            AxisModule module = new AxisModule();
             module.setParent(ar);
             InputStream in = new FileInputStream(repo + "/module_overide_locked_para.xml");
             ModuleBuilder mbuilder = new ModuleBuilder(in, module, ar);

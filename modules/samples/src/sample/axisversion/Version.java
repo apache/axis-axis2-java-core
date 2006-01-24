@@ -16,16 +16,12 @@
 
 package sample.axisversion;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-
 public class Version {
 
 
-    public String getVersion() {
-          return   "Hello I am Axis2 version service , My version is " + org.apache.axis2.Version.getVersionText();
+    public String getVersion() throws Exception {
+        return "Hello I am Axis2 version service ," +
+                " My version is " + org.apache.axis2.Version.getVersionText();
     }
 
 

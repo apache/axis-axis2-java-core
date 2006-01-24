@@ -21,7 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
 
@@ -57,7 +57,7 @@ public class ParameterAddTest extends TestCase {
             para.setName("PARA_NAME");
             para.setLocked(true);
             reg.addParameter(para);
-            ModuleDescription module = new ModuleDescription(new QName("Service1"));
+            AxisModule module = new AxisModule(new QName("Service1"));
             module.setParent(reg);
             module.addParameter(para);
             fail("This should fails with Parmter is locked can not overide");

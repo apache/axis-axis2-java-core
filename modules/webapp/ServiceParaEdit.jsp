@@ -39,9 +39,8 @@
                      </tr>
                      <%
                  }
-                HashMap operations =  axisService.getOperations();
-                Collection ops = operations.values();
-                if(ops.size() >0){
+                Iterator operations =  axisService.getOperations();
+                if(operations.hasNext()){
                     %>
                     <tr>
                       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -55,8 +54,9 @@
                 }
 
                  ArrayList op_paras ;
-                 for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
-                     AxisOperation axisOperation = (AxisOperation) iterator.next();
+                        operations = axisService.getOperations();
+                 for (operations.hasNext()) {
+                     AxisOperation axisOperation = (AxisOperation) operations.next();
                      String operationName = axisOperation.getName().getLocalPart();
                      %>
                      <tr>

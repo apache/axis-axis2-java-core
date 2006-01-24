@@ -18,7 +18,7 @@
 package org.apache.axis2.modules;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -40,7 +40,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 public interface Module {
 
     // initialize the module
-    public void init(ConfigurationContext configContext, ModuleDescription module) throws AxisFault;
+    public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault;
 
     /**
      * When engaging this module to some service or operation , module will be notify by calling this

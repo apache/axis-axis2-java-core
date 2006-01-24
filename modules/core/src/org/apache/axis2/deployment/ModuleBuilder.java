@@ -19,11 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -34,6 +30,7 @@ import org.apache.axis2.om.OMElement;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -42,16 +39,16 @@ import java.util.Iterator;
  */
 public class ModuleBuilder extends DescriptionBuilder {
     private AxisConfiguration axisConfig;
-    private ModuleDescription module;
+    private AxisModule module;
 
-    public ModuleBuilder(InputStream serviceInputStream, ModuleDescription module,
+    public ModuleBuilder(InputStream serviceInputStream, AxisModule module,
                          AxisConfiguration axisConfig) {
         super(serviceInputStream, axisConfig);
         this.axisConfig = axisConfig;
         this.module = module;
     }
 
-    private void loadModuleClass(ModuleDescription module, String moduleClassName)
+    private void loadModuleClass(AxisModule module, String moduleClassName)
             throws DeploymentException {
         Class moduleClass;
 
@@ -91,8 +88,29 @@ public class ModuleBuilder extends DescriptionBuilder {
                 }
             }
 
+// process service description
+            OMElement descriptionElement =
+                    moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION));
+
+            if (descriptionElement != null) {
+                OMElement descriptionValue = descriptionElement.getFirstElement();
+
+                if (descriptionValue != null) {
+                    StringWriter writer = new StringWriter();
+
+                    descriptionValue.build();
+                    descriptionValue.serialize(writer);
+                    writer.flush();
+                    module.setModuleDescription(writer.toString());
+                } else {
+                    module.setModuleDescription(descriptionElement.getText());
+                }
+            } else {
+                module.setModuleDescription("module decription not found");
+            }
+
             // setting the PolicyInclude
-            
+
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 

@@ -40,7 +40,10 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class DeploymentEngine implements DeploymentConstants {
 
@@ -120,7 +123,7 @@ public class DeploymentEngine implements DeploymentConstants {
         modulelist.add(moduleName);
     }
 
-    private void addNewModule(ModuleDescription modulemetadata) throws AxisFault {
+    private void addNewModule(AxisModule modulemetadata) throws AxisFault {
 
         Flow inflow = modulemetadata.getInFlow();
         ClassLoader moduleClassLoader = modulemetadata.getModuleClassLoader();
@@ -169,7 +172,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         for (int i = 0; i < groupModules.size(); i++) {
             QName moduleName = (QName) groupModules.get(i);
-            ModuleDescription module = axisConfig.getModule(moduleName);
+            AxisModule module = axisConfig.getModule(moduleName);
 
             if (module != null) {
                 serviceGroup.engageModule(axisConfig.getModule(moduleName));
@@ -194,7 +197,7 @@ public class DeploymentEngine implements DeploymentConstants {
             ArrayList list = axisService.getModules();
 
             for (int i = 0; i < list.size(); i++) {
-                ModuleDescription module = axisConfig.getModule((QName) list.get(i));
+                AxisModule module = axisConfig.getModule((QName) list.get(i));
 
                 if (module == null) {
                     throw new DeploymentException(
@@ -212,7 +215,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
                 for (int i = 0; i < modules.size(); i++) {
                     QName moduleName = (QName) modules.get(i);
-                    ModuleDescription module = axisConfig.getModule(moduleName);
+                    AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
                         opDesc.engageModule(module, axisConfig);
@@ -250,14 +253,14 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return Returns ModuleDescription.
      * @throws DeploymentException
      */
-    public ModuleDescription buildModule(File modulearchive, AxisConfiguration config)
+    public AxisModule buildModule(File modulearchive, AxisConfiguration config)
             throws DeploymentException {
-        ModuleDescription axismodule;
+        AxisModule axismodule;
 
         try {
             this.setPhasesinfo(config.getPhasesInfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, TYPE_MODULE);
-            axismodule = new ModuleDescription();
+            axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
 
             currentArchiveFile.setClassLoader(false, config.getModuleClassLoader());
@@ -422,7 +425,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             String moduleStatus = "";
 
                             try {
-                                ModuleDescription metaData = new ModuleDescription();
+                                AxisModule metaData = new AxisModule();
 
                                 metaData.setModuleClassLoader(currentArchiveFile.getClassLoader());
                                 metaData.setParent(axisConfig);
@@ -576,19 +579,17 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public void unDeploy() {
-        String serviceName = "";
+        String fileName;
         try {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == TYPE_SERVICE) {
-                        serviceName = getAxisServiceName(wsInfo.getFileName());
-                        //TODO : need to remove Servicegroup  from configuration : AXIS2- 390
-                        // todo fix me deepal
+                        fileName = getAxisServiceName(wsInfo.getFileName());
+                        axisConfig.removeServiceGroup(fileName);
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                                 wsInfo.getFileName()));
                     }
-                    axisConfig.getFaultyServices().remove(serviceName);
                 }
             }
         } catch (Exception e) {
@@ -660,7 +661,7 @@ public class DeploymentEngine implements DeploymentConstants {
         return currentArchiveFile;
     }
 
-    public ModuleDescription getModule(QName moduleName) throws AxisFault {
+    public AxisModule getModule(QName moduleName) throws AxisFault {
         return axisConfig.getModule(moduleName);
     }
 

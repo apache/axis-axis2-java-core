@@ -20,7 +20,7 @@ package org.apache.axis2.phaseresolver;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -162,7 +162,7 @@ public class PhaseResolver {
         }
     }
 
-    public void engageModuleToOperation(AxisOperation axisOperation, ModuleDescription module)
+    public void engageModuleToOperation(AxisOperation axisOperation, AxisModule module)
             throws PhaseException {
         Flow flow = null;
 

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisServiceGroup,
-                                                                             org.apache.axis2.description.ModuleDescription,
+                                                                             org.apache.axis2.description.AxisModule,
                                                                              java.util.Collection" errorPage="" %>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
@@ -31,7 +31,7 @@
                 <select name="modules">
                     <%
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                    ModuleDescription axisOperation = (ModuleDescription) iterator.next();
+                    AxisModule axisOperation = (AxisModule) iterator.next();
                     String modulename = axisOperation.getName().getLocalPart();
             %> <option  align="left" value="<%=modulename%>"><%=modulename%></option>
                     <%

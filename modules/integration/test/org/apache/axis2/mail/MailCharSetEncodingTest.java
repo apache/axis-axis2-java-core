@@ -97,7 +97,6 @@ public class MailCharSetEncodingTest extends TestCase {
         finish = false;
         resultElem = null;
         envelope = null;
-        String expected = value;
         try {
             if (clientConfigContext == null) {
                 clientConfigContext = UtilsMailServer
@@ -117,7 +116,7 @@ public class MailCharSetEncodingTest extends TestCase {
             engineRegistry.removeService(serviceName.getLocalPart());
             clientService.addOperation(clientOperation);
             engineRegistry.addService(clientService);
-            clientServiceContext = Utils.fillContextInformation(clientOperation, clientService, clientConfigContext);
+            clientServiceContext = Utils.fillContextInformation(clientService, clientConfigContext);
 
 
             Options options = new Options();
@@ -157,7 +156,7 @@ public class MailCharSetEncodingTest extends TestCase {
 
             assertNotNull("Result value is null", result);
 
-            assertEquals("Expected result not received.", expected, result);
+            assertEquals("Expected result not received.", value, result);
 
         } catch (AxisFault e) {
             log.error(e, e);

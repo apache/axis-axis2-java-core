@@ -105,7 +105,7 @@ public class InstanceDispatcher extends AbstractHandler {
     private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
         AxisService service = msgContext.getAxisService();
         if (service == null) {
-            throw new AxisFault("AxisService Not found yet");
+            throw new AxisFault("Service not found operation terminated !!");
         }
         SessionContext sessionContext = msgContext.getSessionContext();
         String serviceGroupContextId = msgContext.getServiceGroupContextId();

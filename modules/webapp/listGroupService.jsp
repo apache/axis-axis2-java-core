@@ -1,7 +1,7 @@
 <%@ page import="org.apache.axis2.Constants" %>
 <%@ page import="org.apache.axis2.description.AxisOperation" %>
 <%@ page import="org.apache.axis2.description.AxisService" %>
-<%@ page import="org.apache.axis2.description.ModuleDescription" %>
+<%@ page import="org.apache.axis2.description.AxisModule" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
@@ -23,11 +23,9 @@
     String servicName = request.getParameter("serviceName");
     AxisService axisService = (AxisService) serviceMap.get(servicName);
     if (axisService != null) {
-        HashMap operations;
+        Iterator operations;
         String serviceName ;
-        Collection operationsList;
         operations = axisService.getOperations();
-        operationsList = operations.values();
         serviceName = axisService.getName();
 %><hr>
 
@@ -43,21 +41,22 @@
     <i>Engaged Modules for the axisService</i><ul>
     <%
         for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
-            ModuleDescription axisOperation = (ModuleDescription) iteratorm.next();
+            AxisModule axisOperation = (AxisModule) iteratorm.next();
             moduleName = axisOperation.getName().getLocalPart();
     %><li><%=moduleName%></li>
     <%
         }%>
 </ul>
     <%}
-        if (operationsList.size() > 0) {
+        if (operations.hasNext()) {
     %><br><i>Available operations</i><%
 } else {
 %><i> There are no operations specified</i><%
     }
 %><ul><%
-    for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-        AxisOperation axisOperation = (AxisOperation) iterator1.next();
+    operations = axisService.getOperations();
+    while (operations.hasNext()) {
+        AxisOperation axisOperation = (AxisOperation) operations.next();
 %><li><%=axisOperation.getName().getLocalPart()%></li>
     <%
         engagedModules = axisOperation.getEngagedModules();
@@ -66,7 +65,7 @@
     <br><i>Engaged Modules for the Operation</i><ul>
     <%
         for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
-            ModuleDescription moduleDecription = (ModuleDescription) iterator2.next();
+            AxisModule moduleDecription = (AxisModule) iterator2.next();
             moduleName = moduleDecription.getName().getLocalPart();
     %><li><%=moduleName%></li><br><%
     }

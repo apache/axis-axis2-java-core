@@ -3,7 +3,7 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.Utils;
 
@@ -40,23 +40,23 @@ public class ModuleversionTest extends TestCase {
 
     public void testCalculateDefaultModuleVersions() throws AxisFault {
         AxisConfiguration axiConfiguration = new AxisConfiguration();
-        ModuleDescription module1 = new ModuleDescription();
+        AxisModule module1 = new AxisModule();
         module1.setName(new QName("Module1"));
         axiConfiguration.addModule(module1);
 
-        ModuleDescription module2 = new ModuleDescription();
+        AxisModule module2 = new AxisModule();
         module2.setName(new QName("Module2-0.94"));
         axiConfiguration.addModule(module2);
 
-        ModuleDescription module3 = new ModuleDescription();
+        AxisModule module3 = new AxisModule();
         module3.setName(new QName("Module2-0.95"));
         axiConfiguration.addModule(module3);
 
-        ModuleDescription module4 = new ModuleDescription();
+        AxisModule module4 = new AxisModule();
         module4.setName(new QName("Module2-0.93"));
         axiConfiguration.addModule(module4);
 
-        ModuleDescription module5 = new ModuleDescription();
+        AxisModule module5 = new AxisModule();
         module5.setName(new QName("testModule-1.93"));
         axiConfiguration.addModule(module5);
 

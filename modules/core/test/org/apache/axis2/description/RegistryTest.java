@@ -67,7 +67,7 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testModule() throws AxisFault {
-        ModuleDescription module = new ModuleDescription(new QName("module1"));
+        AxisModule module = new AxisModule(new QName("module1"));
         module.setParent(reg);
         testParameteInClude(module);
         testFlowIncludeTest(module);

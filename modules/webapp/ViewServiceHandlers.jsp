@@ -41,10 +41,9 @@
                     getAttribute(Constants.SERVICE_HANDLERS);
              if(axisService != null ){
                  ArrayList handlers ;
-                HashMap operations =  axisService.getOperations();
-                Collection ops = operations.values();
-                 for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
-                     AxisOperation axisOperationon = (AxisOperation) iterator.next();
+                Iterator operations =  axisService.getOperations();
+                 while (operations.hasNext()) {
+                     AxisOperation axisOperationon = (AxisOperation) operations.next();
                      %><h2>Operation Name : <%=axisOperationon.getName().getLocalPart()%></h2><%
                      ArrayList phases = axisOperationon.getRemainingPhasesInFlow();
                  %>

@@ -106,7 +106,6 @@ public class Utils {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
 
-        // todo I assumed in-out mep , this has to be imroved : Deepal
         AxisOperation axisOp = new InOutAxisOperation(opName);
 
         axisOp.setMessageReceiver(messageReceiver);
@@ -126,7 +125,6 @@ public class Utils {
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
 
-        // todo I assumed in-out mep , this has to be imroved : Deepal
         AxisOperation axisOp = new OutInAxisOperation(opName);
 
         axisOp.setMessageReceiver(messageReceiver);
@@ -136,40 +134,8 @@ public class Utils {
         return service;
     }
 
-    public static void extractServiceGroupAndServiceInfo(String filePart,
-                                                         MessageContext messageContext) {
-        String[] values = parseRequestURLForServiceAndOperation(filePart);
-        String serviceNameAndGroup = values[0];
-
-        if (serviceNameAndGroup != null) {
-            String[]          serviceNameAndGroupStrings = serviceNameAndGroup.split(":");
-            AxisConfiguration registry =
-                    messageContext.getConfigurationContext().getAxisConfiguration();
-
-            if (serviceNameAndGroupStrings[0] != null) {
-                AxisServiceGroup axisServiceGroup =
-                        registry.getServiceGroup(serviceNameAndGroupStrings[0]);
-                String serviceNameStr = "";
-
-                if (serviceNameAndGroupStrings.length == 1) {
-
-                    // This means user has not given a service name.
-                    // the notations is ...../axis2/services/<ServiceGroupName>
-                    serviceNameStr = serviceNameAndGroupStrings[0];
-                }
-
-                AxisService axisService = registry.getService(serviceNameStr);
-
-                if ((axisServiceGroup != null) && (axisService != null)) {
-                    messageContext.setAxisServiceGroup(axisServiceGroup);
-                    messageContext.setAxisService(axisService);
-                }
-            }
-        }
-    }
-
-    public static ServiceContext fillContextInformation(AxisOperation axisOperation,
-                                                        AxisService axisService, ConfigurationContext configurationContext) {
+    public static ServiceContext fillContextInformation(AxisService axisService,
+                                                        ConfigurationContext configurationContext) {
 
         // 2. if null, create new opCtxt
         // fill the service group context and service context info
@@ -290,8 +256,8 @@ public class Utils {
         Iterator allModules = modules.values().iterator();
         HashMap defaultModules = new HashMap();
         while (allModules.hasNext()) {
-            ModuleDescription moduleDescription = (ModuleDescription) allModules.next();
-            QName moduleName = moduleDescription.getName();
+            AxisModule axisModule = (AxisModule) allModules.next();
+            QName moduleName = axisModule.getName();
             String moduleNameString = getModuleName(moduleName.getLocalPart());
             String moduleVersionString = getModuleVersion(moduleName.getLocalPart());
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);

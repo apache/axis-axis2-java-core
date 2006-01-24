@@ -21,7 +21,7 @@ import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
@@ -349,7 +349,7 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     public void readModuleArchive(String filename, DeploymentEngine engine,
-                                  ModuleDescription module, boolean explodedDir,
+                                  AxisModule module, boolean explodedDir,
                                   AxisConfiguration axisConfig)
             throws DeploymentException {
 

@@ -19,7 +19,7 @@
 %>
 
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.ModuleDescription,
+                 org.apache.axis2.description.AxisModule,
                  java.util.Collection,
                  java.util.HashMap,
                  java.util.Iterator" %>
@@ -44,7 +44,7 @@
                         HashMap moduels = (HashMap) request.getSession().getAttribute(Constants.MODULE_MAP);
                         Collection moduleCol = moduels.values();
                         for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                            ModuleDescription axisOperation = (ModuleDescription) iterator.next();
+                            AxisModule axisOperation = (AxisModule) iterator.next();
                             String modulename = axisOperation.getName().getLocalPart();
                     %> <option align="left" value="<%=modulename%>"><%=modulename%></option>
                     <%

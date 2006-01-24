@@ -134,7 +134,7 @@ public class AxisConfiguration extends AxisDescription {
      * @param module
      * @throws AxisFault
      */
-    public void addModule(ModuleDescription module) throws AxisFault {
+    public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
         allModules.put(module.getName(), module);
     }
@@ -209,6 +209,20 @@ public class AxisConfiguration extends AxisDescription {
         addChild(axisServiceGroup);
     }
 
+    public void removeServiceGroup(String serviceGroupName) throws AxisFault {
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) getChild(serviceGroupName);
+        if (axisServiceGroup == null) {
+            throw new AxisFault("invalid service group name : " + serviceGroupName);
+        }
+        Iterator services = axisServiceGroup.getServices();
+        while (services.hasNext()) {
+            AxisService axisService = (AxisService) services.next();
+            allservices.remove(axisService.getName());
+            notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
+        }
+        removeChild(serviceGroupName);
+    }
+
     /**
      * Method addTransportIn.
      *
@@ -276,7 +290,7 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault
      */
     public void engageModule(QName moduleref) throws AxisFault {
-        ModuleDescription module = getModule(moduleref);
+        AxisModule module = getModule(moduleref);
         if (module == null) {
             // there is no module found with the given name , so better check for dafult module version
             String moduleName = moduleref.getLocalPart();
@@ -300,7 +314,7 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void engageModule(String moduleName, String versionID) throws AxisFault {
         QName moduleQName = Utils.getModuleName(moduleName, versionID);
-        ModuleDescription module = getModule(moduleQName);
+        AxisModule module = getModule(moduleQName);
         if (module == null) {
             module = loadModulefromResources(moduleQName.getLocalPart());
             engageModule(module, moduleQName);
@@ -310,7 +324,7 @@ public class AxisConfiguration extends AxisDescription {
 
     }
 
-    private void engageModule(ModuleDescription module, QName moduleQName) throws AxisFault {
+    private void engageModule(AxisModule module, QName moduleQName) throws AxisFault {
         if (module != null) {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
@@ -339,8 +353,8 @@ public class AxisConfiguration extends AxisDescription {
      * @return Returns ModuleDescription.
      * @throws AxisFault
      */
-    public ModuleDescription loadModulefromResources(String moduleName) throws AxisFault {
-        ModuleDescription module;
+    public AxisModule loadModulefromResources(String moduleName) throws AxisFault {
+        AxisModule module;
         // trying to read from resources
         File file = new ArchiveReader().creatModuleArchivefromResource(moduleName,
                 getRepository());
@@ -428,8 +442,8 @@ public class AxisConfiguration extends AxisDescription {
      * @param name
      * @return Returns ModuleDescription.
      */
-    public ModuleDescription getModule(QName name) {
-        ModuleDescription module = (ModuleDescription) allModules.get(name);
+    public AxisModule getModule(QName name) {
+        AxisModule module = (AxisModule) allModules.get(name);
         if (module != null) {
             return module;
         }
@@ -439,7 +453,7 @@ public class AxisConfiguration extends AxisDescription {
             String moduleName = name.getLocalPart();
             String defaultModuleVersion = getDefaultModuleVersion(moduleName);
             if (defaultModuleVersion != null) {
-                module = (ModuleDescription) allModules.get(
+                module = (AxisModule) allModules.get(
                         Utils.getModuleName(moduleName, defaultModuleVersion));
                 if (module != null) {
                     return module;
@@ -486,8 +500,17 @@ public class AxisConfiguration extends AxisDescription {
      * @param name
      * @return Returns AxisService.
      */
-    public AxisService getService(String name) {
-        return (AxisService) allservices.get(name);
+    public AxisService getService(String name) throws AxisFault {
+        AxisService axisService = (AxisService) allservices.get(name);
+        if (axisService != null) {
+            if (axisService.isActive()) {
+                return axisService;
+            } else {
+                throw new AxisFault("Trying to acess inactive service :" + name);
+            }
+        } else {
+            return null;
+        }
     }
 
     // the class loder that become the parent of all the services
@@ -497,12 +520,12 @@ public class AxisConfiguration extends AxisDescription {
 
     public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString) {
 //        return (AxisServiceGroup) serviceGroups.get(serviceNameAndGroupString);
-    	return (AxisServiceGroup) getChild(serviceNameAndGroupString);
+        return (AxisServiceGroup) getChild(serviceNameAndGroupString);
     }
 
     public Iterator getServiceGroups() {
 //        return serviceGroups.values().iterator();
-    	return getChildren();
+        return getChildren();
     }
 
     // to get all the services in the system
@@ -626,16 +649,34 @@ public class AxisConfiguration extends AxisDescription {
         return (String) nameToverionMap.get(moduleName);
     }
 
-    public ModuleDescription getDefaultModule(String moduleName) {
+    public AxisModule getDefaultModule(String moduleName) {
         String defualtModuleVersion = getDefaultModuleVersion(moduleName);
         if (defualtModuleVersion == null) {
-            return (ModuleDescription) allModules.get(new QName(moduleName));
+            return (AxisModule) allModules.get(new QName(moduleName));
         } else {
-            return (ModuleDescription) allModules.get(new QName(moduleName + "-" + defualtModuleVersion));
+            return (AxisModule) allModules.get(new QName(moduleName + "-" + defualtModuleVersion));
         }
     }
 
     public Object getKey() {
         return getAxis2HomeDirectory(); // TODO CheckMe
+    }
+
+    public void stopService(String serviceName) throws AxisFault {
+        AxisService service = (AxisService) allservices.get(serviceName);
+        if (service == null) {
+            throw new AxisFault("Invalid service name : " + serviceName);
+        }
+        service.setActive(false);
+        notifyObservers(AxisEvent.SERVICE_STOP, service);
+    }
+
+    public void stratService(String serviceName) throws AxisFault {
+        AxisService service = (AxisService) allservices.get(serviceName);
+        if (service == null) {
+            throw new AxisFault("Invalid service name : " + serviceName);
+        }
+        service.setActive(true);
+        notifyObservers(AxisEvent.SERVICE_START, service);
     }
 }

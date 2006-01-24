@@ -27,6 +27,8 @@ public class AxisEvent {
      */
     public static final int SERVICE_DEPLOY = 1;
     public static final int SERVICE_REMOVE = 0;
+    public static final int SERVICE_STOP=2;
+    public static final int SERVICE_START=3;
     private int EVENT_TYPE;
     private AxisService service;
 

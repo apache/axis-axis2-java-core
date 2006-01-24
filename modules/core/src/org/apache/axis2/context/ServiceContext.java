@@ -95,14 +95,6 @@ public class ServiceContext extends AbstractContext {
         return serviceGroupContext;
     }
 
-    public ArrayList getReplyTorefpars() {
-        return replyTorefpars;
-    }
-
-    public void setReplyTorefpars(ArrayList replyTorefpars) {
-        this.replyTorefpars = replyTorefpars;
-    }
-
     public String getMyEPRAddress() {
         return myEPRAddress;
     }

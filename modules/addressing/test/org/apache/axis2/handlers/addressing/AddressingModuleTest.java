@@ -19,7 +19,7 @@ package org.apache.axis2.handlers.addressing;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -39,8 +39,8 @@ public class AddressingModuleTest extends TestCase {
                 .getAxisConfiguration();
         File file = new File("target/addressing.mar");
         assertTrue(file.exists());
-        ModuleDescription moduleDesc = er.getModule(new QName("addressing"));
-        assertNotNull(moduleDesc);
+        AxisModule axisModule = er.getModule(new QName("addressing"));
+        assertNotNull(axisModule);
     }
 
 }

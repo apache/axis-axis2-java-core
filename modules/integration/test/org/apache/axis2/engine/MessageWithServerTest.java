@@ -21,7 +21,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
@@ -57,7 +57,7 @@ public class MessageWithServerTest extends TestCase {
 
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
-        ModuleDescription m1 = new ModuleDescription(
+        AxisModule m1 = new AxisModule(
                 new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));

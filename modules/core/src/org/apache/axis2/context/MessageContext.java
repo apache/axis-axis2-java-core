@@ -25,7 +25,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -366,7 +366,7 @@ public class MessageContext extends AbstractContext {
             }
         }
 
-        ModuleDescription module = baseConfig.getModule(new QName(moduleName));
+        AxisModule module = baseConfig.getModule(new QName(moduleName));
 
         if (module != null) {
             param = module.getParameter(key);

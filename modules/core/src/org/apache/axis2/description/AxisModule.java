@@ -35,7 +35,7 @@ import java.util.HashMap;
  * <p>Handler are registered once they are available. They are available to all services if axis2.xml
  * has a module ref="." or avalible to a single service if services.xml have module ref=".."</p>
  */
-public class ModuleDescription implements FlowInclude, ParameterInclude {
+public class AxisModule implements FlowInclude, ParameterInclude {
 
     /**
      * Field flowInclude
@@ -57,16 +57,19 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     // to store module operations , which are suppose to be added to a service if it is engaged to a service
     private HashMap operations;
     private AxisConfiguration parent;
-    
+
     /*
-     * to store policies which are falid for any service for which the module is
-     */ 
+    * to store policies which are falid for any service for which the module is
+    */
     private PolicyInclude policyInclude;
+
+    // Small description about the module
+    private String moduleDescription;
 
     /**
      * Constructor ModuleDescription.
      */
-    public ModuleDescription() {
+    public AxisModule() {
         operations = new HashMap();
         policyInclude = new PolicyInclude();
     }
@@ -76,7 +79,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      *
      * @param name
      */
-    public ModuleDescription(QName name) {
+    public AxisModule(QName name) {
         this();
         this.name = name;
     }
@@ -231,12 +234,20 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     public void setParent(AxisConfiguration parent) {
         this.parent = parent;
     }
-    
+
     public void setPolicyInclude(PolicyInclude policyInclude) {
         this.policyInclude = policyInclude;
     }
-    
+
     public PolicyInclude getPolicyInclude() {
         return policyInclude;
+    }
+
+    public String getModuleDescription() {
+        return moduleDescription;
+    }
+
+    public void setModuleDescription(String moduleDescription) {
+        this.moduleDescription = moduleDescription;
     }
 }

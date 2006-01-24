@@ -24,7 +24,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.wsdl.builder.wsdl4j.WSDLPump;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
@@ -32,16 +31,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.impl.WSDLDescriptionImpl;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
@@ -49,6 +45,7 @@ import java.util.*;
  * Class AxisService
  */
 public class AxisService extends AxisDescription {
+
     private Definition definition = null;
     private Log log = LogFactory.getLog(getClass());
     private String fileName = "";
@@ -84,6 +81,9 @@ public class AxisService extends AxisDescription {
 
 // to set the handler chain available in phase info
     private boolean useDefaultChains = true;
+
+    //to keep the status of the service , since service can stop at the run time
+    private boolean active = true;
 
     /**
      * Constructor AxisService.
@@ -126,7 +126,7 @@ public class AxisService extends AxisDescription {
      *
      * @param module
      */
-    public void addModuleOperations(ModuleDescription module, AxisConfiguration axisConfig)
+    public void addModuleOperations(AxisModule module, AxisConfiguration axisConfig)
             throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
@@ -168,7 +168,7 @@ public class AxisService extends AxisDescription {
         Iterator modules = getEngagedModules().iterator();
 
         while (modules.hasNext()) {
-            ModuleDescription module = (ModuleDescription) modules.next();
+            AxisModule module = (AxisModule) modules.next();
             AxisServiceGroup parent = (AxisServiceGroup) getParent();
             AxisConfiguration axisConfig = null;
 
@@ -231,7 +231,7 @@ public class AxisService extends AxisDescription {
      *
      * @param moduleref
      */
-    public void engageModule(ModuleDescription moduleref, AxisConfiguration axisConfig)
+    public void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
             throws AxisFault {
         if (moduleref == null) {
             return;
@@ -241,7 +241,7 @@ public class AxisService extends AxisDescription {
         Iterator itr_engageModules = engagedModules.iterator();
 
         while (itr_engageModules.hasNext()) {
-            ModuleDescription module = (ModuleDescription) itr_engageModules.next();
+            AxisModule module = (AxisModule) itr_engageModules.next();
 
             if (module.getName().equals(moduleref.getName())) {
                 log.debug(moduleref.getName().getLocalPart()
@@ -288,7 +288,7 @@ public class AxisService extends AxisDescription {
 //        if (getWSDLDefinition() != null) {
 //            printUsingWSDLDefinition(out, serviceURL);
 //        } else {
-            printUsingWOM(out, serviceURL);
+        printUsingWOM(out, serviceURL);
 //        }
     }
 
@@ -314,12 +314,12 @@ public class AxisService extends AxisDescription {
                     port.addExtensibilityElement(soapAddress);
                 }
             }
-            
-            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);      
+
+            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
             out.flush();
         } catch (Exception e) {
-        	throw new AxisFault(e);
-		}
+            throw new AxisFault(e);
+        }
     }
 
     public void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
@@ -419,7 +419,7 @@ public class AxisService extends AxisDescription {
      */
     public AxisOperation getOperation(QName operationName) {
 //        AxisOperation axisOperation = (AxisOperation) operations.get(operationName);
-    	AxisOperation axisOperation = (AxisOperation) getChild(operationName);
+        AxisOperation axisOperation = (AxisOperation) getChild(operationName);
 
         if (axisOperation == null) {
             axisOperation = (AxisOperation) operationsAliasesMap.get(operationName.getLocalPart());
@@ -587,5 +587,13 @@ public class AxisService extends AxisDescription {
 
     public Object getKey() {
         return getName();
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

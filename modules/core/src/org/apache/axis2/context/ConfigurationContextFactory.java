@@ -3,7 +3,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.FileSystemConfigurator;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -83,7 +83,7 @@ public class ConfigurationContextFactory {
             Collection col = modules.values();
 
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                ModuleDescription axismodule = (ModuleDescription) iterator.next();
+                AxisModule axismodule = (AxisModule) iterator.next();
                 Module module = axismodule.getModule();
 
                 if (module != null) {

@@ -22,7 +22,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.phaseresolver.PhaseException;
 
 import javax.xml.namespace.QName;
@@ -38,7 +38,7 @@ public class ModuleEngageTest extends TestCase {
         String filename = "./target/test-resources/deployment";
         ac = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
                 .getAxisConfiguration();
-        ModuleDescription module = ac.getModule(new QName("module1"));
+        AxisModule module = ac.getModule(new QName("module1"));
         assertNotNull(module);
         ac.engageModule(new QName("module1"));
         AxisService service = ac.getService("service2");
