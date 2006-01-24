@@ -221,7 +221,7 @@ public class Utils {
      * moduleName-00.0000 as an exmple addressing-01.0001.aar
      */
 
-    private static String getModuleName(String moduleName) {
+    public static String getModuleName(String moduleName) {
         char version_seperator = '-';
         int version_index = moduleName.indexOf(version_seperator);
         if (version_index > 0) {
@@ -231,7 +231,7 @@ public class Utils {
         }
     }
 
-    private static String getModuleVersion(String moduleName) {
+    public static String getModuleVersion(String moduleName) {
         char version_seperator = '-';
         int version_index = moduleName.indexOf(version_seperator);
         if (version_index > 0) {

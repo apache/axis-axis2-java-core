@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
@@ -177,6 +178,11 @@ public class AxisService extends AxisDescription {
             }
 
             try {
+                Module moduleImpl = module.getModule();
+                if (moduleImpl != null) {
+                    // notyfying module for service engagement
+                    moduleImpl.engageNotify(axisOperation);
+                }
                 axisOperation.engageModule(module, axisConfig);
             } catch (AxisFault axisFault) {
                 log.info("Trying to engage a module which is already engege:"
@@ -258,7 +264,11 @@ public class AxisService extends AxisDescription {
 
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-
+            Module moduleImpl = moduleref.getModule();
+            if (moduleImpl != null) {
+                // notyfying module for service engagement
+                moduleImpl.engageNotify(axisOperation);
+            }
             axisOperation.engageModule(moduleref, axisConfig);
         }
 

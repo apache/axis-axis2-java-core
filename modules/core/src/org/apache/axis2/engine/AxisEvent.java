@@ -17,23 +17,21 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axis2.description.AxisService;
-
 public class AxisEvent {
 
     /**
      * An Axis event is sent to registered listeners whenever anything significant
      * happens to <code>AxisConfiguration</code>.
      */
-    public static final int SERVICE_DEPLOY = 1;
-    public static final int SERVICE_REMOVE = 0;
-    public static final int SERVICE_STOP=2;
-    public static final int SERVICE_START=3;
+    public static final int SERVICE_DEPLOY    = 1;
+    public static final int SERVICE_REMOVE    = 0;
+    public static final int SERVICE_STOP      = 2;
+    public static final int SERVICE_START     = 3;
+    public static final int MODULE_DEPLOY     = 4;
+    public static final int MODULE_REMOVE     = 5;
     private int EVENT_TYPE;
-    private AxisService service;
 
-    public AxisEvent(AxisService service, int EVENT_TYPE) {
-        this.service = service;
+    public AxisEvent(int EVENT_TYPE) {
         this.EVENT_TYPE = EVENT_TYPE;
     }
 
@@ -41,7 +39,4 @@ public class AxisEvent {
         return EVENT_TYPE;
     }
 
-    public AxisService getService() {
-        return service;
-    }
 }

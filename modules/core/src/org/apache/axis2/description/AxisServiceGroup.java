@@ -20,6 +20,7 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
+import org.apache.axis2.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,7 +41,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     // to store modeule configuration info
     private HashMap moduleConfigmap;
-    
+
     // class loader
     private ClassLoader serviceGroupClassLoader;
 
@@ -51,7 +52,6 @@ public class AxisServiceGroup extends AxisDescription {
      * Field services
      */
 //    private HashMap services;
-
     public AxisServiceGroup() {
 //        services = new HashMap();
         moduleConfigmap = new HashMap();
@@ -93,6 +93,11 @@ public class AxisServiceGroup extends AxisDescription {
                 AxisModule axisModule = axisConfig.getModule(moduleName);
 
                 if (axisModule != null) {
+                    Module moduleImpl = axisModule.getModule();
+                    if (moduleImpl != null) {
+                        // notyfying module for service engagement
+                        moduleImpl.engageNotify(service);
+                    }
                     service.engageModule(axisModule, axisConfig);
                 } else {
                     throw new AxisFault("Trying to engage a module which is not " + "available : "
@@ -129,6 +134,11 @@ public class AxisServiceGroup extends AxisDescription {
             // engaging each service
             AxisService axisService = (AxisService) srevice.next();
             try {
+                Module moduleImpl = module.getModule();
+                if (moduleImpl != null) {
+                    // notyfying module for service engagement
+                    moduleImpl.engageNotify(axisService);
+                }
                 axisService.engageModule(module, (AxisConfiguration) getParent());
             } catch (AxisFault axisFault) {
                 log.info(axisFault.getMessage());
@@ -169,7 +179,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     public AxisService getService(String name) throws AxisFault {
 //        return (AxisService) services.get(name);
-    	return (AxisService) getChild(name);
+        return (AxisService) getChild(name);
     }
 
     public ClassLoader getServiceGroupClassLoader() {
@@ -182,11 +192,11 @@ public class AxisServiceGroup extends AxisDescription {
 
     public Iterator getServices() {
 //        return services.values().iterator();
-    	return getChildren();
+        return getChildren();
     }
 
     public void setAxisDescription(AxisConfiguration axisDescription) {
-    	setParent(axisDescription);
+        setParent(axisDescription);
     }
 
     public void setServiceGroupClassLoader(ClassLoader serviceGroupClassLoader) {
@@ -196,8 +206,8 @@ public class AxisServiceGroup extends AxisDescription {
     public void setServiceGroupName(String serviceGroupName) {
         this.serviceGroupName = serviceGroupName;
     }
-    
+
     public Object getKey() {
-    	return getServiceGroupName();
+        return getServiceGroupName();
     }
 }

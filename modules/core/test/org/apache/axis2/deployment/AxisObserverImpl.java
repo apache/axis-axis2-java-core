@@ -17,6 +17,8 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.engine.AxisEvent;
@@ -25,7 +27,7 @@ import org.apache.axis2.om.OMElement;
 
 import java.util.ArrayList;
 
-public class AxisObserverImpl implements AxisObserver{
+public class AxisObserverImpl implements AxisObserver {
 
     ParameterIncludeImpl parameterimpl;
 
@@ -34,10 +36,13 @@ public class AxisObserverImpl implements AxisObserver{
         parameterimpl = new ParameterIncludeImpl();
     }
 
-    public void update(AxisEvent event) {
+    public void serviceUpdate(AxisEvent event, AxisService service) {
     }
 
-    public void addParameter(Parameter param) throws AxisFault{
+    public void moduleUpdate(AxisEvent event, AxisModule module) {
+    }
+
+    public void addParameter(Parameter param) throws AxisFault {
     }
 
     public Parameter getParameter(String name) {
@@ -45,7 +50,7 @@ public class AxisObserverImpl implements AxisObserver{
     }
 
     public ArrayList getParameters() {
-       return null;
+        return null;
     }
 
     //to check whether the parameter is locked at any levle

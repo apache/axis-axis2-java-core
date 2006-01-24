@@ -17,6 +17,8 @@
 
 package org.apache.axis2.engine;
 
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ParameterInclude;
 
 public interface AxisObserver extends ParameterInclude {
@@ -24,5 +26,7 @@ public interface AxisObserver extends ParameterInclude {
     // The initilization code will go here
     void init();
 
-    void update(AxisEvent event);
+    void serviceUpdate(AxisEvent event, AxisService service);
+
+    void moduleUpdate(AxisEvent event, AxisModule module);
 }

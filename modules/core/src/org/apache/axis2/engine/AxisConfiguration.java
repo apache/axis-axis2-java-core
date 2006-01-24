@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -136,6 +137,7 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
+        notifyObservers(AxisEvent.MODULE_DEPLOY,module);
         allModules.put(module.getName(), module);
     }
 
@@ -367,12 +369,22 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void notifyObservers(int event_type, AxisService service) {
-        AxisEvent event = new AxisEvent(service, event_type);
+        AxisEvent event = new AxisEvent(event_type);
 
         for (int i = 0; i < observersList.size(); i++) {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
 
-            axisObserver.update(event);
+            axisObserver.serviceUpdate(event, service);
+        }
+    }
+
+     public void notifyObservers(int event_type, AxisModule moule) {
+        AxisEvent event = new AxisEvent(event_type);
+
+        for (int i = 0; i < observersList.size(); i++) {
+            AxisObserver axisObserver = (AxisObserver) observersList.get(i);
+
+            axisObserver.moduleUpdate(event, moule);
         }
     }
 
