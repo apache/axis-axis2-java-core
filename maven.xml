@@ -362,6 +362,7 @@
         <ant:mkdir dir="target/temp/war/lib"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
+        <ant:mkdir dir="target/temp/war/toWEB-INF/conf"/>
 
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
@@ -396,6 +397,12 @@
             <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
         </ant:copy>
 
+        <!-- copy the axis2.xml into conf directoy -->
+        <ant:copy toDir="target/temp/war/toWEB-INF/conf">
+            <ant:fileset file="modules/core/conf/axis2.xml"/>
+        </ant:copy>
+
+
         <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:fileset dir="modules/webapp">
@@ -417,9 +424,9 @@
             <ant:classes dir="modules/core/conf">
                 <ant:include name="*.properties"/>
             </ant:classes>
-            <ant:webinf dir="modules/core/src/org/apache/axis2/deployment">
+          <!--  <ant:webinf dir="modules/core/src/org/apache/axis2/deployment">
                 <ant:include name="*.xml"/>
-            </ant:webinf>
+            </ant:webinf> -->
             <ant:webinf dir="target/temp/war/toWEB-INF"/>
         </ant:war>
     </goal>
