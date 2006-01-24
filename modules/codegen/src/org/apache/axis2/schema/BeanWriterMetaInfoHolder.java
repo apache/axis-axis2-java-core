@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -31,16 +33,31 @@ import java.util.Set;
 public class BeanWriterMetaInfoHolder {
 
 
-    private boolean ordered = false;
-    private boolean anonymous = false;
-    private boolean extension = false;
+    protected boolean ordered = false;
+    protected boolean anonymous = false;
+    protected boolean extension = false;
     private String extensionClassName = "";
-    private Map elementToSchemaQNameMap = new HashMap();
-    private Map elementToJavaClassMap = new HashMap();
-    private Map specialTypeFlagMap = new HashMap();
-    private Map qNameMaxOccursCountMap = new HashMap();
-    private Map qNameMinOccursCountMap = new HashMap();
-    private Map qNameOrderMap = new HashMap();
+    protected Map elementToSchemaQNameMap = new HashMap();
+    protected Map elementToJavaClassMap = new HashMap();
+    protected Map specialTypeFlagMap = new HashMap();
+    protected Map qNameMaxOccursCountMap = new HashMap();
+    protected Map qNameMinOccursCountMap = new HashMap();
+    protected Map qNameOrderMap = new HashMap();
+
+
+
+    //the parent metainfo holder, useful in handling extensions and
+    //restrictions
+    protected BeanWriterMetaInfoHolder parent = null;
+
+
+    /**
+     * Gets the parent
+     * @return
+     */
+    public BeanWriterMetaInfoHolder getParent() {
+        return parent;
+    }
 
     /**
      * Gets the anonymous status.
@@ -88,6 +105,8 @@ public class BeanWriterMetaInfoHolder {
     public boolean isExtension() {
         return extension;
     }
+
+    
 
     /**
      * Sets the extension status.
@@ -320,4 +339,14 @@ public class BeanWriterMetaInfoHolder {
           return qNameOrderMap.size();
     }
 
+
+    /**
+     * Creates link to th
+     * @param metaInfo
+     */
+    public void setAsParent(BeanWriterMetaInfoHolder metaInfo){
+        parent = metaInfo;
+
+
+    }
 }

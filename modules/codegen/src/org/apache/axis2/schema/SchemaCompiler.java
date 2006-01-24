@@ -1,7 +1,6 @@
 package org.apache.axis2.schema;
 
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -494,7 +493,7 @@ public class SchemaCompiler {
 
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(extension.getBaseTypeName())){
-               //pick the relevant basetype from the schema and process it
+                //pick the relevant basetype from the schema and process it
                 XmlSchemaType type=  parentSchema.getTypeByName(extension.getBaseTypeName());
                 if (type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
@@ -515,7 +514,7 @@ public class SchemaCompiler {
             // children (sometimes even preserving the order) to the metainfo holder of this type
             // the reason is that for extensions, the prefered way is to have the sequences of the base class
             //* before * the sequence of the child element.
-
+            copyMetaInfoHierarchy(metaInfHolder,extension.getBaseTypeName(),parentSchema);
 
 
             //process the particle of this node
@@ -526,17 +525,76 @@ public class SchemaCompiler {
             // The basetype has been processed already
             metaInfHolder.setExtension(true);
             metaInfHolder.setExtensionClassName(findClassName(extension.getBaseTypeName(),false));
-              //Note  - this is no array! so the array boolean is false
+            //Note  - this is no array! so the array boolean is false
 
         }else if (content instanceof XmlSchemaComplexContentRestriction){
             //todo handle complex restriction here
         }
     }
 
+    /**
+     * Recursive method to populate the metainfo holders with info from the base types
+     * @param metaInfHolder
+     * @param baseTypeName
+     * @param parentSchema
+     */
+    private void copyMetaInfoHierarchy(BeanWriterMetaInfoHolder metaInfHolder,
+                                       QName baseTypeName,
+                                       XmlSchema parentSchema)
+                                                throws SchemaCompilationException {
+        XmlSchemaType type = parentSchema.getTypeByName(baseTypeName);
+        BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
+                processedTypeMetaInfoMap.get(baseTypeName);
+
+        if (baseMetaInfoHolder!= null){
+
+            // see whether this type is also extended from some other type first
+            // if so proceed to set their parents as well.
+            if (type instanceof XmlSchemaComplexType){
+                XmlSchemaComplexType complexType = (XmlSchemaComplexType)type;
+                if (complexType.getContentModel()!= null){
+                    XmlSchemaContentModel content = complexType.getContentModel();
+                    if (content instanceof XmlSchemaComplexContent){
+                        XmlSchemaComplexContent complexContent =
+                                (XmlSchemaComplexContent)content;
+                        if (complexContent.getContent() instanceof XmlSchemaComplexContentExtension){
+                            XmlSchemaComplexContentExtension extension =
+                                    (XmlSchemaComplexContentExtension)complexContent.getContent();
+                            //recursively call the copyMetaInfoHierarchy method
+                            copyMetaInfoHierarchy(baseMetaInfoHolder,
+                                    extension.getBaseTypeName(),
+                                    parentSchema);
+
+                        }else  if (complexContent.getContent() instanceof XmlSchemaComplexContentRestriction){
+                            
+                            XmlSchemaComplexContentRestriction restriction =
+                                    (XmlSchemaComplexContentRestriction)complexContent.getContent();
+                            //recursively call the copyMetaInfoHierarchy method
+                            copyMetaInfoHierarchy(baseMetaInfoHolder,
+                                    restriction.getBaseTypeName(),
+                                    parentSchema);
+
+                        }else{
+                            throw new SchemaCompilationException(); //todo put the right message
+                        }
+
+                    }else if (content instanceof XmlSchemaSimpleContent){
+                        //todo
+                    }else{
+                        throw new SchemaCompilationException();
+                    }
+                }
+
+                //Do the actual parent setting
+                metaInfHolder.setAsParent(baseMetaInfoHolder);
+            }
+        }
+    }
+
     private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder){
         XmlSchemaContent content = simpleContent.getContent();
         if (content instanceof XmlSchemaSimpleContentExtension){
-             //todo - handle simple type extension here
+            //todo - handle simple type extension here
         }else if (content instanceof XmlSchemaSimpleContentRestriction){
             //todo - Handle simple type restriction here
         }

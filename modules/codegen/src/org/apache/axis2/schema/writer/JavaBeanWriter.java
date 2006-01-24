@@ -4,6 +4,7 @@ import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
 import org.apache.axis2.schema.SchemaCompiler;
+import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.util.JavaUtils;
@@ -72,6 +73,8 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Map modelMap = new HashMap();
     private static final String DEFAULT_PACKAGE = "adb";
+
+    private Map baseTypeMap = new JavaTypeMap().getTypeMap();
 
     /**
      * Default constructor
@@ -343,6 +346,47 @@ public class JavaBeanWriter implements BeanWriter {
         if (metainf.isExtension()) {
             XSLTUtils.addAttribute(model, "extension", metainf.getExtensionClassName(), rootElt);
         }
+
+        //populate all the information
+        populateInfo(metainf, model, rootElt, propertyNames, typeMap,false);
+
+       
+        return rootElt;
+    }
+
+    /**
+     *
+     * @param metainf
+     * @param model
+     * @param rootElt
+     * @param propertyNames
+     * @param typeMap
+     * @throws SchemaCompilationException
+     */
+    private void populateInfo(BeanWriterMetaInfoHolder metainf,
+                              Document model,
+                              Element rootElt,
+                              ArrayList propertyNames,
+                              Map typeMap,boolean isInherited)throws SchemaCompilationException{
+        if (metainf.getParent()!=null){
+            populateInfo(metainf.getParent(),model,rootElt,propertyNames,typeMap,true);
+        }
+        addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap,isInherited);
+
+    }
+
+    /**
+     *
+     * @param metainf
+     * @param model
+     * @param rootElt
+     * @param propertyNames
+     * @param typeMap
+     * @throws SchemaCompilationException
+     */
+    private void addPropertyEntries(BeanWriterMetaInfoHolder metainf, Document model, Element rootElt, ArrayList propertyNames,
+                                    Map typeMap,
+                                    boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
         QName[] qNames;
         if (metainf.isOrdered()) {
@@ -363,13 +407,9 @@ public class JavaBeanWriter implements BeanWriter {
 
             String javaClassNameForElement = metainf.getClassNameForQName(name);
 
-            String shortTypeName = "";
-            if (metainf.getSchemaQNameForQName(name) != null) {
-                shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
-            }
 
             if (javaClassNameForElement == null) {
-                throw new SchemaCompilationException("Type missing!");
+                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.typeMissing"));
             }
 
             XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
@@ -380,14 +420,29 @@ public class JavaBeanWriter implements BeanWriter {
             }
 
             if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
-                XSLTUtils.addAttribute(model, "ours", "yes", property); //todo introduce a better name for this
+                XSLTUtils.addAttribute(model, "ours", "yes", property);
             }
 
             if (metainf.getAttributeStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "attribute", "yes", property);
             }
 
+            String shortTypeName = "";
+             if (metainf.getSchemaQNameForQName(name) != null) {
+                 //see whether the QName is a basetype
+                 if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))){
+                    shortTypeName= metainf.getSchemaQNameForQName(name).getLocalPart();
+                 }else{
+                     shortTypeName =  getShortTypeName(javaClassNameForElement);
+                 }
+            }else{
+                 shortTypeName =  getShortTypeName(javaClassNameForElement);
+             }
             XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
+
+            if (isInherited){
+                XSLTUtils.addAttribute(model, "inherited", "yes", property);
+            }
 
             if (metainf.getAnyStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "any", "yes", property);
@@ -401,7 +456,7 @@ public class JavaBeanWriter implements BeanWriter {
             long minOccurs = metainf.getMinOccurs(name);
             XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
 
-            
+
             if (metainf.getArrayStatusForQName(name)) {
 
                 XSLTUtils.addAttribute(model, "array", "yes", property);
@@ -419,11 +474,6 @@ public class JavaBeanWriter implements BeanWriter {
                 }
             }
         }
-
-        /////////////////////////////////////
-        //System.out.println("rootElt = " + rootElt);
-        /////////////////////////////////////
-        return rootElt;
     }
 
     /**
@@ -566,5 +616,15 @@ public class JavaBeanWriter implements BeanWriter {
             mapURItoPrefix.put(uri, prefix);
         }
         return prefix;
+    }
+
+    private String getShortTypeName(String typeClassName){
+         if (typeClassName.endsWith("[]")){
+             typeClassName = typeClassName.substring(0,typeClassName.lastIndexOf("["));
+         }
+        String s = typeClassName.substring(typeClassName.lastIndexOf(".")+1, typeClassName.length());
+
+        return s;
+
     }
 }

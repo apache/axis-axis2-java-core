@@ -67,18 +67,22 @@
 
 
         <xsl:for-each select="property">
+            <!-- Write only the NOT inherited properties-->
+            <xsl:if test="not(@inherited)">
             <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
             <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
             <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
             <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
             <xsl:variable name="varName">local<xsl:value-of select="$javaName"/></xsl:variable>
             <xsl:variable name="settingTracker">local<xsl:value-of select="$javaName"/>Tracker</xsl:variable>
+
+
             /**
             * field for <xsl:value-of select="$javaName"/>
             <xsl:if test="@attribute">* This was an Attribute!</xsl:if>
             <xsl:if test="@array">* This was an Array!</xsl:if>
             */
-            private <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+            protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
             <!-- Generate a tracker only if the min occurs is zero, which means if the user does
                  not bother to set that value, we do not send it -->
             <xsl:if test="$min=0">
@@ -86,7 +90,7 @@
                 for this attribute. It will be used to determine whether to include this field
                 in the serialized XML
             */
-            private boolean <xsl:value-of select="$settingTracker"/> = false ;
+            protected boolean <xsl:value-of select="$settingTracker"/> = false ;
             </xsl:if>
 
             /**
@@ -121,6 +125,7 @@
              </xsl:if>
             this.<xsl:value-of select="$varName"/>=param;
             }
+            </xsl:if>
         </xsl:for-each>
 
         /**
