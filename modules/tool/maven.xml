@@ -57,7 +57,7 @@
                  basedir="${tracer.temp.dir}"
                  includes="**"/>
         <artifact:install
-                 artifact="target/axis2-tracer-${pom.currentVersion}.jar"
+                 artifact="${basedir}/target/axis2-tracer-${pom.currentVersion}.jar"
                  artifactIdOverride="axis2-tracer"
                  type="jar"
                  project="${pom}"
