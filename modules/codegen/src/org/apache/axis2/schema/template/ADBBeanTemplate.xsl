@@ -164,7 +164,7 @@
                     <xsl:variable name="settingTracker">local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
 
 
-                    <xsl:if test="$min=0"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
+                    <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
                         <xsl:when test="@ours or @any or @default">
                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
@@ -181,7 +181,7 @@
                              elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:if test="$min=0">}</xsl:if>
+                    <xsl:if test="$min=0 or $choice">}</xsl:if>
                 </xsl:for-each>
 
                 <xsl:for-each select="property[@attribute]">
