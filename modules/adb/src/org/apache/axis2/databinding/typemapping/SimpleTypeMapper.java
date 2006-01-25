@@ -139,7 +139,7 @@ public class SimpleTypeMapper {
         return ARRAY_LIST.equals(objClassName);
     }
 
-    private static boolean isSimpleType(String objClassName) {
+    public static boolean isSimpleType(String objClassName) {
         if (objClassName.equals(STRING)) {
             return true;
         } else if (objClassName.equals(INT)) {

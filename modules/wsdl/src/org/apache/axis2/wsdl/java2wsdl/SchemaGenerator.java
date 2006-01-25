@@ -360,7 +360,7 @@ public class SchemaGenerator {
                     sequence.getItems().add(elt1);
                     if (isArryType) {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
-                        elt1.setMinOccurs(Long.MIN_VALUE);
+                        elt1.setMinOccurs(0);
 //                        elt1.setMinOccurs(2);
                     }
                 } else {
@@ -375,7 +375,7 @@ public class SchemaGenerator {
                     sequence.getItems().add(elt1);
                     if (isArryType) {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
-                        elt1.setMinOccurs(Long.MIN_VALUE);
+                        elt1.setMinOccurs(0);
                     }
                 }
             }

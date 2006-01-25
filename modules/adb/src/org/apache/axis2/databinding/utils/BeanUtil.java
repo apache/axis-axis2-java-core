@@ -62,6 +62,22 @@ public class BeanUtil {
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
                     object.add(propDesc.getName());
                     object.add(value.toString());
+                } else if (ptype.isArray()) {
+                    Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject, null);
+                    if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
+                        for (int j = 0; j < value.length; j++) {
+                            Object o = value[j];
+                            object.add(propDesc.getName());
+                            object.add(o.toString());
+                        }
+                    } else {
+                         for (int j = 0; j < value.length; j++) {
+                            Object o = value[j];
+                            object.add(new QName(propDesc.getName()));
+                            object.add(o);
+                        }
+                    }
+
                 } else if (SimpleTypeMapper.isArrayList(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
                     ArrayList objList = (ArrayList) value;
