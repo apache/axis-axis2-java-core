@@ -1,6 +1,9 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.OperationClient;
@@ -16,6 +19,8 @@ import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Iterator;
 
 public class OutOnlyAxisOperation extends AxisOperation {
     private AxisMessage inFaultMessage;
@@ -148,7 +153,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
                                Options options) {
         this.axisOp = axisOp;
         this.sc = sc;
-        this.options = new Options(options);
+        this.options = options;
         this.completed = false;
         oc = new OperationContext(axisOp, sc);
     }
@@ -249,6 +254,23 @@ class OutOnlyAxisOperationClient implements OperationClient {
         mc.setMessageID(messageId);
     }
 
+    private void addReferenceParameters(SOAPEnvelope env) {
+        if (options.isManageSession()) {
+            EndpointReference tepr = sc.getTargetEPR();
+            if (tepr != null) {
+                Map map = tepr.getAllReferenceParameters();
+                Iterator valuse = map.values().iterator();
+                SOAPHeader sh = env.getHeader();
+                while (valuse.hasNext()) {
+                    Object refparaelement = valuse.next();
+                    if (refparaelement instanceof OMElement) {
+                        sh.addChild((OMElement) refparaelement);
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Executes the MEP. What this does depends on the specific MEP client. The
@@ -294,6 +316,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         // create the operation context for myself
         OperationContext oc = new OperationContext(axisOp, sc);
         oc.addMessageContext(mc);
+        addReferenceParameters(mc.getEnvelope());
         // ship it out
         AxisEngine engine = new AxisEngine(cc);
         engine.send(mc);

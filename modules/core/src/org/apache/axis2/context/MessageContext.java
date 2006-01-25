@@ -404,42 +404,25 @@ public class MessageContext extends AbstractContext {
 
         if (getAxisOperation() != null) {
             AxisOperation opDesc = getAxisOperation();
-
-            param = opDesc.getParameter(key);
-
-            if (param != null) {
-                return param;
-            }
+            return opDesc.getParameter(key);
         }
 
         if (getAxisService() != null) {
             AxisService axisService = getAxisService();
-
-            param = axisService.getParameter(key);
-
-            if (param != null) {
-                return param;
-            }
+            return axisService.getParameter(key);
         }
 
         if (getAxisServiceGroup() != null) {
             AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
-
-            param = axisServiceDesc.getParameter(key);
-
-            if (param != null) {
-                return param;
-            }
+            return axisServiceDesc.getParameter(key);
         }
 
         if (configurationContext != null) {
             AxisConfiguration baseConfig = configurationContext
                     .getAxisConfiguration();
-
-            param = baseConfig.getParameter(key);
+            return  baseConfig.getParameter(key);
         }
-
-        return param;
+        return null;
     }
 
     /**

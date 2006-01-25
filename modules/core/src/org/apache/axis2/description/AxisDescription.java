@@ -16,14 +16,14 @@ public abstract class AxisDescription implements ParameterInclude,
 
     private PolicyInclude policyInclude;
 
-	private HashMap children;
-	
+    private HashMap children;
+
     public AxisDescription() {
-		parameterInclude = new ParameterIncludeImpl();
-		policyInclude = new PolicyInclude(this);
-		children = new HashMap();
-	}
-    
+        parameterInclude = new ParameterIncludeImpl();
+        policyInclude = new PolicyInclude(this);
+        children = new HashMap();
+    }
+
     public void addParameter(Parameter param) throws AxisFault {
 
         if (param == null) {
@@ -46,7 +46,12 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public Parameter getParameter(String name) {
-        return parameterInclude.getParameter(name);
+        Parameter parameter = parameterInclude.getParameter(name);
+        if (parameter == null && parent != null) {
+            return parent.getParameter(name);
+        } else {
+            return parameter;
+        }
     }
 
     public ArrayList getParameters() {
@@ -64,9 +69,9 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
 
-	public void setParent(AxisDescription parent) {
-		this.parent = parent;
-	}
+    public void setParent(AxisDescription parent) {
+        this.parent = parent;
+    }
 
     public AxisDescription getParent() {
         return parent;
@@ -81,12 +86,12 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public void addChild(AxisDescription child) {
-		children.put(child.getKey(), child);
-	}
-    
-	public void addChild(Object key, AxisDescription child) {
-		children.put(key, child);
-	}
+        children.put(child.getKey(), child);
+    }
+
+    public void addChild(Object key, AxisDescription child) {
+        children.put(key, child);
+    }
 
     public Iterator getChildren() {
         return children.values().iterator();
@@ -95,10 +100,10 @@ public abstract class AxisDescription implements ParameterInclude,
     public AxisDescription getChild(Object key) {
         return (AxisDescription) children.get(key);
     }
-	
-	public void removeChild(Object key) {
-		children.remove(key);
-	}
+
+    public void removeChild(Object key) {
+        children.remove(key);
+    }
 
     public abstract Object getKey();
 }

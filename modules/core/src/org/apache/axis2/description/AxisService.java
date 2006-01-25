@@ -25,6 +25,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
@@ -85,6 +86,15 @@ public class AxisService extends AxisDescription {
 
     //to keep the status of the service , since service can stop at the run time
     private boolean active = true;
+
+    //to keep the service target name space
+    private QName targetNamespace = new QName(SchemaGenerator.TARGET_NAMESPACE,
+            "targetNamespace",
+            SchemaGenerator.TARGET_NAMESPACE_PREFIX);
+    // to store the target namespace for the schema
+    private QName schematargetNamespace = new QName(SchemaGenerator.SCHEMA_TARGET_NAMESPACE,
+            "schematargetNamespace",
+            SchemaGenerator.SCHEMA_NAMESPACE_PRFIX);
 
     /**
      * Constructor AxisService.
@@ -605,5 +615,21 @@ public class AxisService extends AxisDescription {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public QName getSchematargetNamespace() {
+        return schematargetNamespace;
+    }
+
+    public void setSchematargetNamespace(QName schematargetNamespace) {
+        this.schematargetNamespace = schematargetNamespace;
+    }
+
+    public QName getTargetNamespace() {
+        return targetNamespace;
+    }
+
+    public void setTargetNamespace(QName targetNamespace) {
+        this.targetNamespace = targetNamespace;
     }
 }

@@ -97,20 +97,31 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
+            OMAttribute targetNameSpace = service_element.getAttribute(new QName(TARGET_NAME_SPACE));
+            if(targetNameSpace!=null){
+               String nameSpeceVale=  targetNameSpace.getAttributeValue();
+            }
+
+
             // setting the PolicyInclude
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements = service_element.getChildrenWithName(
+                    new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null) {
-                processPolicyElements(PolicyInclude.AXIS_SERVICE_POLICY, policyElements, service.getPolicyInclude());
+                processPolicyElements(
+                        PolicyInclude.AXIS_SERVICE_POLICY, policyElements,
+                        service.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = service_element.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements = service_element.getChildrenWithName(
+                    new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null) {
-                processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY, policyRefElements, service.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY,
+                        policyRefElements, service.getPolicyInclude());
             }
 
             //processin Service Scop
