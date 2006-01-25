@@ -137,7 +137,7 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
-        notifyObservers(AxisEvent.MODULE_DEPLOY,module);
+        notifyObservers(AxisEvent.MODULE_DEPLOY, module);
         allModules.put(module.getName(), module);
     }
 
@@ -378,7 +378,7 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-     public void notifyObservers(int event_type, AxisModule moule) {
+    public void notifyObservers(int event_type, AxisModule moule) {
         AxisEvent event = new AxisEvent(event_type);
 
         for (int i = 0; i < observersList.size(); i++) {
@@ -580,7 +580,8 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public boolean isEngaged(QName moduleName) {
-        return engagedModules.contains(moduleName);
+        boolean b = engagedModules.contains(moduleName);
+        return b ? b : engagedModules.contains(this.getDefaultModule(moduleName.getLocalPart()).getName());
     }
 
     public void setGlobalOutPhase(ArrayList outPhases) {

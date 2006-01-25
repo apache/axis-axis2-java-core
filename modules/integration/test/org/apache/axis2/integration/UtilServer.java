@@ -96,7 +96,7 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);
     }
 
     public static synchronized void stop() {
@@ -127,7 +127,7 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo",null);
+                        "target/test-resources/integrationRepo", null);
         AxisModule axisModule = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
@@ -145,9 +145,9 @@ public class UtilServer {
     }
 
     private static File getAddressingMARFile() {
-        File dir = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
+        File dir = new File(org.apache.axis2.Constants.TESTING_REPOSITORY + "/modules");
         File[] files = dir.listFiles(new AddressingFilter());
-        TestCase.assertTrue(files.length==1);
+        TestCase.assertTrue(files.length == 1);
         File file = files[0];
         TestCase.assertTrue(file.exists());
         return file;
@@ -159,7 +159,7 @@ public class UtilServer {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
-                "target/test-resources/integrationRepo",null);
+                "target/test-resources/integrationRepo", null);
         AxisModule axisModule = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
@@ -174,7 +174,7 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(clientHome,null);
+                .createConfigurationContextFromFileSystem(clientHome, null);
         AxisModule axisModule = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
 
