@@ -29,6 +29,7 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.io.FilenameFilter;
 
 /**
  * 
@@ -110,11 +111,25 @@ public class UtilServer {
         return receiver.getConfigurationContext();
     }
 
+    static class AddressingFilter implements FilenameFilter {
+        public boolean accept(File dir, String name) {
+            return name.startsWith("addressing") && name.endsWith(".mar");
+        }
+    }
+
+    private static File getAddressingMARFile() {
+        File dir = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
+        File[] files = dir.listFiles(new AddressingFilter());
+        TestCase.assertTrue(files.length==1);
+        File file = files[0];
+        TestCase.assertTrue(file.exists());
+        return file;
+    }
+
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
-                             + "/modules/addressing-0.95.mar");
+        File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
@@ -130,8 +145,7 @@ public class UtilServer {
     }
 
     public static ConfigurationContext createClientConfigurationContext() throws AxisFault {
-        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
-                             + "/modules/addressing-0.95.mar");
+        File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
@@ -146,8 +160,7 @@ public class UtilServer {
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service, String clientHome) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
-                             + "/modules/addressing-0.95.mar");
+        File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
