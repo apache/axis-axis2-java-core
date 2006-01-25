@@ -3,6 +3,7 @@
 <!-- $Revision: 1.21 $ $Date: 2004-10-27 20:54:09 +0600 (Wed, 27 Oct 2004) $ -->
 
 <project default="jar"
+    xmlns:artifact="artifact"
     xmlns:j="jelly:core"
     xmlns:u="jelly:util"
     xmlns:maven="jelly:maven"
@@ -55,6 +56,12 @@
         <ant:zip destfile="target/axis2-tracer-${pom.currentVersion}.jar"
                  basedir="${tracer.temp.dir}"
                  includes="**"/>
+        <artifact:install
+                 artifact="target/axis2-tracer-${pom.currentVersion}.jar"
+                 artifactIdOverride="axis2-tracer-${pom.currentVersion}"
+                 type="jar"
+                 project="${pom}"
+        />
     </goal>
 
     <preGoal name="itest:compile">
