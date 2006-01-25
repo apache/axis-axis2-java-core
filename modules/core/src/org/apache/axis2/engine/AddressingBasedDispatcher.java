@@ -38,9 +38,9 @@ import javax.xml.namespace.QName;
  */
 public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
 
-	private static final long serialVersionUID = 8294130617631587374L;
-	
-	/**
+    private static final long serialVersionUID = 8294130617631587374L;
+
+    /**
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",
@@ -64,6 +64,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
+
         AxisService service = null;
 
         if (toEPR != null) {
@@ -76,8 +77,11 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 return null;
             }
 
-            QName serviceName = new QName(address);
+            QName serviceName;
             String[] values = Utils.parseRequestURLForServiceAndOperation(address);
+            if (values == null) {
+                return null;
+            }
 
             log.debug("Checking for Service using toEPR : " + values[0]);
 

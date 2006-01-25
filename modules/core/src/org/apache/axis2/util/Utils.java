@@ -162,6 +162,9 @@ public class Utils {
      *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(String path) {
+        if (path == null) {
+            return null;
+        }
         String[] values = new String[2];
 
         // TODO. This is kind of brittle. Any service with the name /services would cause fun.
@@ -201,10 +204,10 @@ public class Utils {
         }
         File axis2xml = new File(file, "axis.xml");
         String axis2xmlString = null;
-        if(axis2xml.exists()){
+        if (axis2xml.exists()) {
             axis2xmlString = axis2xml.getName();
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),axis2xmlString);
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), axis2xmlString);
     }
 
     public static String getParameterValue(Parameter param) {
@@ -243,9 +246,9 @@ public class Utils {
 
 
     public static QName getModuleName(String name, String versionID) {
-        String moduleName ;
-        if(versionID!=null && !versionID.equals("")){
-           moduleName = name + "-" + versionID;
+        String moduleName;
+        if (versionID != null && !versionID.equals("")) {
+            moduleName = name + "-" + versionID;
         } else {
             moduleName = name;
         }

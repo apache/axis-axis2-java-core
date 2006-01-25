@@ -62,6 +62,10 @@ public class HTTPTransportUtils {
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map) {
         String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl);
 
+        if (values == null) {
+            return new SOAP11Factory().getDefaultEnvelope();
+        }
+
         if ((values[1] != null) && (values[0] != null)) {
             String operation = values[1];
             SOAPFactory soapFactory = new SOAP11Factory();
@@ -94,13 +98,13 @@ public class HTTPTransportUtils {
         if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM) != null) {
             enableMTOM = Constants.VALUE_TRUE.equals(
                     msgContext.getParameter(Constants.Configuration.ENABLE_MTOM).getValue());
-        } 
-        
+        }
+
         if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
             enableMTOM = Constants.VALUE_TRUE.equals(
                     msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
         }
-        
+
         boolean forceMIME =
                 Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.FORCE_MIME));
 
@@ -109,10 +113,10 @@ public class HTTPTransportUtils {
         }
 
         // If MTOM is explicitly disabled, no need to check the envelope
-        if(!enableMTOM) {
+        if (!enableMTOM) {
             return false;
         }
-        
+
         boolean envelopeContainsOptimise =
                 HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
 
@@ -246,7 +250,7 @@ public class HTTPTransportUtils {
             }
 
             String charsetEncoding = builder.getDocument().getCharsetEncoding();
-        
+
             if ((charsetEncoding != null) && !"".equals(charsetEncoding)
                     && ! charsetEncoding.equalsIgnoreCase((String) msgContext.getProperty(
                     MessageContext.CHARACTER_SET_ENCODING))) {
