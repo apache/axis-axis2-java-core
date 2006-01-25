@@ -32,6 +32,7 @@
     <xsl:template match="bean">
 
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="choice"><xsl:value-of select="@choice"/></xsl:variable>
     <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
@@ -65,6 +66,17 @@
             </xsl:otherwise>
         </xsl:choose>
 
+        <xsl:if test="$choice">
+                    /** Whenever a new property is set ensure all others are unset
+                     *  There can be only one choice and the last one wins
+                     */
+                    private void clearAllSettingTrackers() {
+                    <xsl:for-each select="property">
+                        local<xsl:value-of select="@javaname"/>Tracker = false;
+                   </xsl:for-each>
+                    }
+                </xsl:if>
+
 
         <xsl:for-each select="property">
             <!-- Write only the NOT inherited properties-->
@@ -85,7 +97,7 @@
             protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
             <!-- Generate a tracker only if the min occurs is zero, which means if the user does
                  not bother to set that value, we do not send it -->
-            <xsl:if test="$min=0">
+            <xsl:if test="$min=0 or $choice">
             /*  This tracker boolean wil be used to detect whether the user called the set method
                 for this attribute. It will be used to determine whether to include this field
                 in the serialized XML
@@ -119,7 +131,11 @@
                     }
                 </xsl:if>
             </xsl:if>
-             <xsl:if test="$min=0">
+
+             <xsl:if test="$choice">
+                 clearAllSettingTrackers();
+             </xsl:if>
+             <xsl:if test="$min=0 or $choice">
              //update the setting tracker
              <xsl:value-of select="$settingTracker"/> = true;
              </xsl:if>

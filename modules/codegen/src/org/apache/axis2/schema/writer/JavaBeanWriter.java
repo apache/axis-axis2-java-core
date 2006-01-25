@@ -347,10 +347,16 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "extension", metainf.getExtensionClassName(), rootElt);
         }
 
+
+        if (metainf.isChoice()) {
+            XSLTUtils.addAttribute(model, "choice", "yes", rootElt);
+        }
+
+
         //populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap,false);
 
-       
+
         return rootElt;
     }
 
@@ -428,16 +434,16 @@ public class JavaBeanWriter implements BeanWriter {
             }
 
             String shortTypeName = "";
-             if (metainf.getSchemaQNameForQName(name) != null) {
-                 //see whether the QName is a basetype
-                 if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))){
+            if (metainf.getSchemaQNameForQName(name) != null) {
+                //see whether the QName is a basetype
+                if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))){
                     shortTypeName= metainf.getSchemaQNameForQName(name).getLocalPart();
-                 }else{
-                     shortTypeName =  getShortTypeName(javaClassNameForElement);
-                 }
+                }else{
+                    shortTypeName =  getShortTypeName(javaClassNameForElement);
+                }
             }else{
-                 shortTypeName =  getShortTypeName(javaClassNameForElement);
-             }
+                shortTypeName =  getShortTypeName(javaClassNameForElement);
+            }
             XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
 
             if (isInherited){
@@ -619,9 +625,9 @@ public class JavaBeanWriter implements BeanWriter {
     }
 
     private String getShortTypeName(String typeClassName){
-         if (typeClassName.endsWith("[]")){
-             typeClassName = typeClassName.substring(0,typeClassName.lastIndexOf("["));
-         }
+        if (typeClassName.endsWith("[]")){
+            typeClassName = typeClassName.substring(0,typeClassName.lastIndexOf("["));
+        }
         String s = typeClassName.substring(typeClassName.lastIndexOf(".")+1, typeClassName.length());
 
         return s;

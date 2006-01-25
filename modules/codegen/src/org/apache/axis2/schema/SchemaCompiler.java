@@ -383,6 +383,7 @@ public class SchemaCompiler {
             //property file
             className = DEFAULT_CLASS_NAME;
         }
+        
         if (isArray) {
             //append the square braces that say this is an array
             //hope this works for all cases!!!!!!!
@@ -678,7 +679,10 @@ public class SchemaCompiler {
             XmlSchemaObjectCollection items = ((XmlSchemaAll) particle).getItems();
             process(items, metainfHolder, false,parenSchema);
         } else if (particle instanceof XmlSchemaChoice) {
-            //todo put the code here to handle the choice!
+            XmlSchemaObjectCollection items = ((XmlSchemaChoice) particle).getItems();
+            metainfHolder.setChoice(true);
+            process(items, metainfHolder, false,parenSchema);
+
         }
     }
 

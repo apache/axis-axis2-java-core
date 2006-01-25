@@ -35,6 +35,8 @@ public class BeanWriterMetaInfoHolder {
 
     protected boolean ordered = false;
     protected boolean anonymous = false;
+    protected boolean choice = false;
+
     protected boolean extension = false;
     private String extensionClassName = "";
     protected Map elementToSchemaQNameMap = new HashMap();
@@ -50,6 +52,13 @@ public class BeanWriterMetaInfoHolder {
     //restrictions
     protected BeanWriterMetaInfoHolder parent = null;
 
+    public boolean isChoice() {
+        return choice;
+    }
+
+    public void setChoice(boolean choice) {
+        this.choice = choice;
+    }
 
     /**
      * Gets the parent
