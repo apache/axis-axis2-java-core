@@ -3,6 +3,7 @@ package org.apache.axis2.schema;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -68,6 +69,9 @@ public class SchemaCompiler {
     //The writing to the processedElementList happens when an outer element is processed.
     private HashMap processedElementMap;
     private HashMap processedAnonymousComplexTypesMap;
+    //we need this map to keep the referenced elements. these elements need to be kept seperate
+    //to avoid conflicts
+    private HashMap processedElementRefMap;
     private HashMap simpleTypesMap;
     private HashMap changedTypeMap;
 
@@ -129,6 +133,7 @@ public class SchemaCompiler {
         processedAnonymousComplexTypesMap = new HashMap();
         changedTypeMap = new HashMap();
         processedTypeMetaInfoMap = new HashMap();
+        processedElementRefMap = new HashMap();
 
         //load the writer a nd initiliaze the base type
         writer = SchemaPropertyLoader.getBeanWriterInstance();
@@ -255,9 +260,9 @@ public class SchemaCompiler {
 
 
             }else if (xsElt.getRefName()!= null){
-
-                // todo We need to handle the references here
-
+                //Since top level elements would not have references
+                // and we only write toplevel elements, this should
+                // not be a problem , atleast should not occur in a legal schema
             }else{
 
                 //we are going to special case the anonymous complex type. Our algorithm for dealing
@@ -296,7 +301,7 @@ public class SchemaCompiler {
      * @param isArray-  flag saying whether the elements represents an array
      * @throws SchemaCompilationException
      */
-    private void processElement(XmlSchemaElement xsElt, boolean isOuter, boolean isArray,XmlSchema parenSchema) throws SchemaCompilationException {
+    private void processElement(XmlSchemaElement xsElt, boolean isOuter, boolean isArray,XmlSchema parentSchema) throws SchemaCompilationException {
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
@@ -306,20 +311,42 @@ public class SchemaCompiler {
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
         if (schemaType != null) {
-            processSchema(xsElt, schemaType,parenSchema);
+            processSchema(xsElt, schemaType,parentSchema);
             //at this time it is not wise to directly write the class for the element
             //so we push the complete element to an arraylist and let the process
             //pass through. We'll be iterating through the elements writing them
             //later
+
+            //There can be instances where the SchemaType is null but the schemaTypeName is not
+            //this specifically happens with xsd:anyType.
+            if (!isOuter) {
+                String className = findClassName(xsElt.getSchemaTypeName(), isArray(xsElt));
+                this.processedElementMap.put(xsElt.getQName(), className);
+            }
+
+            this.processedElementList.add(xsElt.getQName());
+        }else if (xsElt.getRefName()!=null){
+
+            //process the referenced type. It could be thought that the referenced element replaces this
+            //element
+
+            XmlSchemaElement referencedElement = parentSchema.getElementByName(xsElt.getRefName());
+            processElement(referencedElement,
+                    true, //if the element is referenced, then it should be one of the outer (global) ones
+                    parentSchema);
+
+            //no outer check required here. If the element is having a ref, then it is definitely
+            //not an outer element.
+            //Also we are sure that it should have a type reference
+            String className = findClassName(referencedElement.getSchemaTypeName(), isArray(xsElt));
+            //if this element is referenced, there's no QName for this element
+            this.processedElementRefMap.put(referencedElement.getQName(), className);
+
+
         }
 
-        //There can be instances where the SchemaType is null but the schemaTypeName is not
-        //this specifically happens with xsd:anyType.
-        if (!isOuter) {
-            String className = findClassName(xsElt.getSchemaTypeName(), isArray(xsElt));
-            this.processedElementMap.put(xsElt.getQName(), className);
-        }
-        this.processedElementList.add(xsElt.getQName());
+
+
 
     }
 
@@ -541,7 +568,7 @@ public class SchemaCompiler {
     private void copyMetaInfoHierarchy(BeanWriterMetaInfoHolder metaInfHolder,
                                        QName baseTypeName,
                                        XmlSchema parentSchema)
-                                                throws SchemaCompilationException {
+            throws SchemaCompilationException {
         XmlSchemaType type = parentSchema.getTypeByName(baseTypeName);
         BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
                 processedTypeMetaInfoMap.get(baseTypeName);
@@ -566,7 +593,7 @@ public class SchemaCompiler {
                                     parentSchema);
 
                         }else  if (complexContent.getContent() instanceof XmlSchemaComplexContentRestriction){
-                            
+
                             XmlSchemaComplexContentRestriction restriction =
                                     (XmlSchemaComplexContentRestriction)complexContent.getContent();
                             //recursively call the copyMetaInfoHierarchy method
@@ -575,13 +602,15 @@ public class SchemaCompiler {
                                     parentSchema);
 
                         }else{
-                            throw new SchemaCompilationException(); //todo put the right message
+                            throw new SchemaCompilationException(
+                                    SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                         }
 
                     }else if (content instanceof XmlSchemaSimpleContent){
                         //todo
                     }else{
-                        throw new SchemaCompilationException();
+                       throw new SchemaCompilationException(
+                                    SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                     }
                 }
 
@@ -682,19 +711,12 @@ public class SchemaCompiler {
                     //hashmap with the order number
                     elementOrderMap.put(xsElt, new Integer(i));
                 }
-            } else if (item instanceof XmlSchemaComplexContent) {
-                // process the extension
-                XmlSchemaContent content = ((XmlSchemaComplexContent) item).getContent();
-
-                if (content instanceof XmlSchemaComplexContentExtension) {
-                    //todo  handle the complex content extension (at top level)
-                } else if (content instanceof XmlSchemaComplexContentRestriction) {
-                    //todo  handle complex content restriction (at top level)
-                }
 
                 //handle xsd:any ! We place an OMElement in the generated class
             } else if (item instanceof XmlSchemaAny) {
                 processAny((XmlSchemaAny) item, metainfHolder);
+            } else {
+                //there are other types to be handled
             }
 
 
@@ -705,14 +727,29 @@ public class SchemaCompiler {
         int startingItemNumberOrder = metainfHolder.getOrderStartPoint();
         while (processedElementsIterator.hasNext()) {
             XmlSchemaElement elt = (XmlSchemaElement) processedElementsIterator.next();
-            QName qName = elt.getQName();
-            String clazzName = (String) processedElementMap.get(qName);
-            metainfHolder.registerMapping(qName,
-                    elt.getSchemaTypeName()
-                    , clazzName,
-                    ((Boolean) processedElements.get(elt)).booleanValue() ?
-                            SchemaConstants.ANY_ARRAY_TYPE :
-                            SchemaConstants.ELEMENT_TYPE);
+            String clazzName;
+            QName qName = null;
+            if (elt.getQName()!=null){ //probably this is referenced
+                clazzName = (String) processedElementMap.get(elt.getQName());
+                qName = elt.getQName();
+                metainfHolder.registerMapping(qName,
+                        elt.getSchemaTypeName()
+                        , clazzName,
+                        ((Boolean) processedElements.get(elt)).booleanValue() ?
+                                SchemaConstants.ANY_ARRAY_TYPE :
+                                SchemaConstants.ELEMENT_TYPE);
+            }else{
+                clazzName = (String)processedElementRefMap.get(elt.getRefName());
+                qName = elt.getRefName();
+                metainfHolder.registerMapping(qName,
+                        parentSchema.getElementByName(elt.getRefName()).getSchemaTypeName()
+                        , clazzName,
+                        ((Boolean) processedElements.get(elt)).booleanValue() ?
+                                SchemaConstants.ANY_ARRAY_TYPE :
+                                SchemaConstants.ELEMENT_TYPE);
+            }
+
+
 
             //register the occurence counts
             metainfHolder.addMaxOccurs(qName, elt.getMaxOccurs());
