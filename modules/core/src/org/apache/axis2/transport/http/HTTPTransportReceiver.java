@@ -274,7 +274,11 @@ public class HTTPTransportReceiver {
     }
 
     public static Map getGetRequestParameters(String requestURI) {
+
         Map map = new HashMap();
+        if (requestURI == null || "".equals(requestURI)) {
+            return map;
+        }
         char[]       chars = requestURI.toCharArray();
         final int NOT_BEGUN = 1500;
         final int INSIDE_NAME = 1501;
@@ -316,7 +320,7 @@ public class HTTPTransportReceiver {
     /**
      * Returns the HTML text for the list of services deployed.
      * This can be delegated to another Class as well
-     * where it will handle more options of GET messages. 
+     * where it will handle more options of GET messages.
      *
      * @return Returns String.
      */
@@ -335,12 +339,12 @@ public class HTTPTransportReceiver {
             temp += "<h2>" + "Deployed services" + "</h2>";
 
             for (Iterator it = serviceCollection.iterator(); it.hasNext();) {
-                
-            	AxisService axisService = (AxisService) it.next();
+
+                AxisService axisService = (AxisService) it.next();
 
                 Iterator iterator = axisService.getOperations();
-                
-                temp += "<h3><a href=\""+ axisService.getName() + "?wsdl\">"+ axisService.getName() + "</a></h3>";
+
+                temp += "<h3><a href=\"" + axisService.getName() + "?wsdl\">" + axisService.getName() + "</a></h3>";
 
                 if (iterator.hasNext()) {
                     temp += "Available operations <ul>";
