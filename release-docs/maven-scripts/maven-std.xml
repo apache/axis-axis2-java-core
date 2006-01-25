@@ -336,7 +336,7 @@
             <fileset dir="modules/doom/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/addressing/target/">
-                <include name="modules/addressing.mar"/>
+                <include name="modules/addressing-${addressing_version}.mar"/>
             </fileset>
         </jar>
     </goal>
@@ -372,7 +372,7 @@
 
         <!-- copy the addressing mar -->
         <ant:copy toDir="target/temp/war/toWEB-INF/modules">
-            <ant:fileset file="modules/addressing/target/addressing.mar"/>
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
         <!-- copy the sample services -->
@@ -526,7 +526,7 @@
 
         <!-- Copy addressing mar -->
         <ant:copy toDir="${std.bin.temp.dir}/modules">
-            <ant:fileset file="modules/addressing/target/addressing.mar"/>
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
        <!-- Copy the samples -->

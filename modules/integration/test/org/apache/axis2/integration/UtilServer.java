@@ -123,7 +123,7 @@ public class UtilServer {
             AxisService service) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
-                + "/modules/addressing.mar");
+                + "/modules/addressing-SNAPSHOT-0.95.mar");
         TestCase.assertTrue(file.exists());
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(
@@ -140,7 +140,7 @@ public class UtilServer {
 
     public static ConfigurationContext createClientConfigurationContext() throws AxisFault {
         File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
-                + "/modules/addressing.mar");
+                + "/modules/addressing-SNAPSHOT-0.95.mar");
         TestCase.assertTrue(file.exists());
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
@@ -157,7 +157,7 @@ public class UtilServer {
             AxisService service, String clientHome) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
-                + "/modules/addressing.mar");
+                + "/modules/addressing-SNAPSHOT-0.95.mar");
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory

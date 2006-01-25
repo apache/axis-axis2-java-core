@@ -37,7 +37,7 @@ public class AddressingModuleTest extends TestCase {
     public void testExtractAddressingInformationFromHeaders() throws AxisFault {
         AxisConfiguration er = ConfigurationContextFactory.createConfigurationContextFromFileSystem("target", null)
                 .getAxisConfiguration();
-        File file = new File("target/addressing.mar");
+        File file = new File("target/addressing-SNAPSHOT-0.95.mar");
         assertTrue(file.exists());
         AxisModule axisModule = er.getModule(new QName("addressing"));
         assertNotNull(axisModule);

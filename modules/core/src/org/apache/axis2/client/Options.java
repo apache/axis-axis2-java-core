@@ -117,49 +117,49 @@ public class Options {
 
     public String getAction() {
         if (action == null && parent != null) {
-            action = parent.getAction();
+            return parent.getAction();
         }
         return action;
     }
 
     public EndpointReference getFaultTo() {
         if (faultTo == null && parent != null) {
-            faultTo = parent.getFaultTo();
+            return parent.getFaultTo();
         }
         return faultTo;
     }
 
     public EndpointReference getFrom() {
         if (from == null && parent != null) {
-            from = parent.getFrom();
+           return parent.getFrom();
         }
         return from;
     }
 
     public TransportListener getListener() {
         if (listener == null && parent != null) {
-            listener = parent.getListener();
+            return parent.getListener();
         }
         return listener;
     }
 
     public TransportInDescription getTransportIn() {
         if (transportIn == null && parent != null) {
-            transportIn = parent.getTransportIn();
+            return parent.getTransportIn();
         }
         return transportIn;
     }
 
     public String getTransportInProtocol() {
         if (transportInProtocol == null && parent != null) {
-            transportInProtocol = parent.getTransportInProtocol();
+            return parent.getTransportInProtocol();
         }
         return transportInProtocol;
     }
 
     public String getMessageId() {
         if (messageId == null && parent != null) {
-            messageId = parent.getMessageId();
+            return parent.getMessageId();
         }
 
         return messageId;
@@ -192,21 +192,21 @@ public class Options {
 
     public RelatesTo getRelatesTo() {
         if (relatesTo == null && parent != null) {
-            relatesTo = parent.getRelatesTo();
+            return parent.getRelatesTo();
         }
         return relatesTo;
     }
 
     public EndpointReference getReplyTo() {
         if (replyTo == null && parent != null) {
-            replyTo = parent.getReplyTo();
+            return parent.getReplyTo();
         }
         return replyTo;
     }
 
     public TransportOutDescription getTranportOut() {
         if (transportOut == null && parent != null) {
-            transportOut = parent.getTranportOut();
+            return parent.getTranportOut();
         }
 
         return transportOut;
@@ -214,7 +214,7 @@ public class Options {
 
     public String getSenderTransportProtocol() {
         if (senderTransportProtocol == null && parent != null) {
-            senderTransportProtocol = parent.getSenderTransportProtocol();
+            return parent.getSenderTransportProtocol();
         }
 
         return senderTransportProtocol;
@@ -230,7 +230,7 @@ public class Options {
 
     public String getSoapVersionURI() {
         if (soapVersionURI == null && parent != null) {
-            soapVersionURI = parent.getSoapVersionURI();
+            return parent.getSoapVersionURI();
         }
 
         return soapVersionURI == null ? SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI
@@ -245,7 +245,7 @@ public class Options {
      */
     public long getTimeOutInMilliSeconds() {
         if (timeOutInMilliSeconds == -1 && parent != null) {
-            timeOutInMilliSeconds = parent.getTimeOutInMilliSeconds();
+            return parent.getTimeOutInMilliSeconds();
         }
 
         return timeOutInMilliSeconds == -1 ? DEFAULT_TIMEOUT_MILLISECONDS
@@ -254,7 +254,7 @@ public class Options {
 
     public EndpointReference getTo() {
         if (to == null && parent != null) {
-            to = parent.getTo();
+            return parent.getTo();
         }
 
         return to;

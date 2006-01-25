@@ -12,8 +12,8 @@
 
     <postGoal name="itest:compile">
         <mkdir dir="target/itest-classes/modules"/>
-        <copy file="../addressing/target/addressing.mar"
-              tofile="target/itest-classes/modules/addressing.mar"/>
+        <copy file="../addressing/target/addressing-${addressing_version}.mar"
+              tofile="target/itest-classes/modules/addressing-${addressing_version}.mar"/>
     </postGoal>
 
     <preGoal name="test:compile">
@@ -21,8 +21,8 @@
         <ant:property name="maven.class.path" refid="maven.dependency.classpath"/>
 
         <!-- copy the mars so that they are available on the test classpath -->
-        <copy file="../addressing/target/addressing.mar"
-              tofile="target/test-classes/modules/addressing.mar"/>
+        <copy file="../addressing/target/addressing-${addressing_version}.mar"
+              tofile="target/test-classes/modules/addressing-${addressing_version}.mar"/>
         <copy file="../security/target/security.mar"
               tofile="target/test-classes/modules/security.mar"/>
 
@@ -68,12 +68,12 @@
             <mkdir dir="target/test-resources/samples/conf"/>
             <mkdir dir="target/test-resources/repository-client/modules"/>
             <mkdir dir="target/test-resources/repository-client/conf"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/samples/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/samples/modules/addressing-${addressing_version}.mar"/>
              <copy file="../core/conf/axis2.xml"
                   tofile="target/test-resources/samples/conf/axis2.xml"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/repository-client/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/repository-client/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
                   tofile="target/test-resources/repository-client/conf/axis2.xml"/>
             <mkdir dir="target/toWar/services/"/>
@@ -96,8 +96,8 @@
             <mkdir dir="target/test-resources/mail-transport-client-enabledRepository/modules"/>
             <copy file="test/org/apache/axis2/mail/mail-enabled-client-axis2.xml"
                   tofile="target/test-resources/mail-transport-client-enabledRepository/conf/axis2.xml"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/mail-transport-client-enabledRepository/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/mail-transport-client-enabledRepository/modules/addressing-${addressing_version}.mar"/>
 
             <!-- Create Mail Server transport enabled Repository -->
             <mkdir dir="target/test-resources/mail-transport-server-enabledRepository"/>
@@ -105,14 +105,14 @@
             <mkdir dir="target/test-resources/mail-transport-server-enabledRepository/modules"/>
             <copy file="test/org/apache/axis2/mail/mail-enabled-server-axis2.xml"
                   tofile="target/test-resources/mail-transport-server-enabledRepository/conf/axis2.xml"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing-${addressing_version}.mar"/>
 
             <mkdir dir="target/test-resources/MessageContextInjectionRepo"/>
             <mkdir dir="target/test-resources/integrationRepo/modules"/>
             <mkdir dir="target/test-resources/integrationRepo/conf"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/integrationRepo/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/integrationRepo/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
                   tofile="target/test-resources/integrationRepo/conf/axis2.xml"/>
 
@@ -142,8 +142,8 @@
             <mkdir dir="target/groovyRepo/modules"/>
             <ant:copy file="../samples/target/samples/groovyService.aar"
                       tofile="target/groovyRepo/services/groovyService.aar"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/groovyRepo/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/groovyRepo/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
                   tofile="target/groovyRepo/conf/axis2.xml"/>
 
@@ -155,8 +155,8 @@
             <mkdir dir="target/test-resources/default_security_client_repo/modules"/>
             <copy file="../security/target/security.mar"
                   tofile="target/test-resources/default_security_client_repo/modules/security.mar"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/default_security_client_repo/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/default_security_client_repo/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
                   tofile="target/test-resources/default_security_client_repo/conf/axis2.xml"/>
 
@@ -507,16 +507,16 @@
                   tofile="target/test-resources/complete_client_repo/conf/axis2.xml"/>
             <copy file="../security/target/security.mar"
                   tofile="target/test-resources/complete_client_repo/modules/security.mar"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/complete_client_repo/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/complete_client_repo/modules/addressing-${addressing_version}.mar"/>
 
             <!-- Test with addressing and MTOMservice repository-->
             <copy file="test-resources/security/complete.service.axis2.xml"
                   tofile="target/test-resources/complete_service_repo/conf/axis2.xml"/>
             <copy file="../security/target/security.mar"
                   tofile="target/test-resources/complete_service_repo/modules/security.mar"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/test-resources/complete_service_repo/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/complete_service_repo/modules/addressing-${addressing_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/complete.service.xml"
@@ -533,8 +533,8 @@
             <mkdir dir="target/Repository/conf"/>
             <mkdir dir="target/Repository/services"/>
             <mkdir dir="target/Repository/modules"/>
-            <copy file="../addressing/target/addressing.mar"
-                  tofile="target/Repository/modules/addressing.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/Repository/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
                   tofile="target/Repository/conf/axis2.xml"/>
 

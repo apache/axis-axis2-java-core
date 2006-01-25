@@ -345,7 +345,7 @@
             <fileset dir="modules/codegen/target/classes"/>
             <fileset dir="modules/adb/target/classes"/>
             <fileset dir="modules/addressing/target/">
-                <include name="modules/addressing.mar"/>
+                <include name="modules/addressing-${addressing_version}.mar"/>
             </fileset>
         </jar>
     </goal>
@@ -389,7 +389,7 @@
 
         <!-- copy the addressing mar -->
         <ant:copy toDir="target/temp/war/toWEB-INF/modules">
-            <ant:fileset file="modules/addressing/target/addressing.mar"/>
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
         <!-- copy the sample services -->
@@ -445,8 +445,8 @@
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:copy toFile="target/dist/addressing-${pom.currentVersion}.mar"
-                  file="modules/addressing/target/addressing.mar"/>
+        <ant:copy toFile="target/dist/addressing-${addressing_version}.mar"
+                  file="modules/addressing/target/addressing-${addressing_version}.mar"/>
 
         <ant:copy toFile="target/dist/security-${pom.currentVersion}.mar"
                   file="modules/security/target/security.mar"/>
@@ -612,7 +612,7 @@
 
         <!-- Copy addressing mar -->
         <ant:copy toDir="${std.bin.temp.dir}/modules">
-            <ant:fileset file="modules/addressing/target/addressing.mar"/>
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
         <!-- Copy the codegen jar -->
