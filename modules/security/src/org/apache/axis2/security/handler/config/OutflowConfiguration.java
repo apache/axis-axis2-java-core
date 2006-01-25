@@ -85,12 +85,15 @@ public class OutflowConfiguration {
 
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				// Create an element with the name of the key
-				OMElement elem = fac.createOMElement(key, ns);
-				// Set the text value of the element
-				elem.setText((String) action.get(key));
-				// Add the element as a child of this action element
-				actionElem.addChild(elem);
+                String value = (String) action.get(key);
+                if(value != null && value.length() > 0) {
+                    // Create an element with the name of the key
+    				OMElement elem = fac.createOMElement(key, ns);
+    				// Set the text value of the element
+                    elem.setText(value);
+    				// Add the element as a child of this action element
+    				actionElem.addChild(elem);
+                }
 			}
 			
 			propertyElement.addChild(actionElem);
@@ -514,4 +517,18 @@ public class OutflowConfiguration {
 		return (String) this.actionList[this.currentAction]
 				.get(WSSHandlerConstants.PRESERVE_ORIGINAL_ENV);
 	}
+    
+    
+    public void setSignAllHeadersAndBody() {
+        this.actionList[this.currentAction].put(WSSHandlerConstants.SIGN_ALL_HEADERS, "true");
+        this.setSignBody();
+    }
+    
+    public void setSignBody() {
+        this.actionList[this.currentAction].put(WSSHandlerConstants.SIGN_BODY, "true");
+    }
+    
+    public void setEncryptBody() {
+        this.actionList[this.currentAction].put(WSSHandlerConstants.ENCRYPT_BODY, "true");
+    }
 }

@@ -54,12 +54,15 @@ public class InflowConfiguration {
 
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
-			// Create an element with the name of the key
-			OMElement elem = fac.createOMElement(key, ns);
-			// Set the text value of the element
-			elem.setText((String) action.get(key));
-			// Add the element as a child of this action element
-			actionElem.addChild(elem);
+            String value = (String) action.get(key);
+            if(value != null && value.length() > 0) {
+                // Create an element with the name of the key
+    			OMElement elem = fac.createOMElement(key, ns);
+    			// Set the text value of the element
+                elem.setText(value);
+    			// Add the element as a child of this action element
+    			actionElem.addChild(elem);
+            }
 		}
 		
 		propertyElement.addChild(actionElem);
@@ -151,5 +154,5 @@ public class InflowConfiguration {
 		return (String) this.action
 				.get(WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION);
 	}
-	
+    
 }

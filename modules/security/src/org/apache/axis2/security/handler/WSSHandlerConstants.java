@@ -73,4 +73,8 @@ public interface WSSHandlerConstants {
 	
 	public static final String THUMBPRINT_IDENTIFIER = "Thumbprint";
 	
+    
+    public final static String SIGN_ALL_HEADERS = "signAllHeaders";
+    public final static String SIGN_BODY = "signBody";
+    public final static String ENCRYPT_BODY = "encryptBody";
 }

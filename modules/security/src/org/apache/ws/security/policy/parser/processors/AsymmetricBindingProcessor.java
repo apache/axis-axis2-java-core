@@ -17,6 +17,7 @@ package org.apache.ws.security.policy.parser.processors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.security.policy.model.Binding;
 import org.apache.ws.security.policy.parser.SecurityPolicy;
 import org.apache.ws.security.policy.parser.SecurityPolicyToken;
 import org.apache.ws.security.policy.parser.SecurityProcessorContext;
@@ -135,6 +136,9 @@ public class AsymmetricBindingProcessor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
+        if(spc.getAction() == 2) {
+            ((Binding)spc.readCurrentPolicyEngineData()).setIncludeTimestamp(true);
+        }
 		return new Boolean(true);
 	}
 

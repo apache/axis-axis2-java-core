@@ -62,7 +62,7 @@ public class WSSPolicyProcessor {
 
     SecurityProcessorContext secProcessorContext = null;
 
-    boolean setup() throws NoSuchMethodException {
+    public boolean setup() throws NoSuchMethodException {
         prdr = PolicyFactory.getPolicyReader(PolicyFactory.OM_POLICY_READER);
 
         /*
@@ -372,4 +372,16 @@ public class WSSPolicyProcessor {
             }
         }
     }
+    
+    /**
+     * @return Returns the secProcessorContext.
+     */
+    public RootPolicyEngineData getRootPED() {
+        if(this.secProcessorContext != null && this.secProcessorContext.getAction() == SecurityProcessorContext.NONE) {
+            return (RootPolicyEngineData)secProcessorContext.getPedStack().get(0);
+        } else {
+            return null;
+        }
+    }
+    
 }

@@ -20,33 +20,83 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.axis2.security.util.HandlerParameterDecoder;
+import org.apache.ws.policy.Policy;
+import org.apache.ws.security.policy.WSS4JConfig;
+import org.apache.ws.security.policy.WSS4JConfigBuilder;
+import org.apache.ws.security.policy.parser.WSSPolicyProcessor;
 
 public class SecurityModule implements Module {
 
-    /* (non-Javadoc)
-     * @see org.apache.axis2.modules.Module#engageNotify(org.apache.axis2.description.AxisDescription)
-     */
     public void engageNotify(AxisDescription axisDescription) throws AxisFault {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        Policy policy = axisDescription.getPolicyInclude().getEffectivePolicy();
+        if(axisDescription instanceof AxisOperation && policy != null) {
+//            PolicyWriter writer = PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
+//            writer.writePolicy(policy, System.out);
+            try {
+                WSSPolicyProcessor wssPolicyProcessor = new WSSPolicyProcessor();
+                wssPolicyProcessor.setup();
+                wssPolicyProcessor.processPolicy(policy);
+                
+                WSS4JConfig config = WSS4JConfigBuilder.build(wssPolicyProcessor.getRootPED().getTopLevelPEDs());
+                
+                InflowConfiguration policyInflowConfig = config.getInflowConfiguration();
+                OutflowConfiguration policyOutflowConfig = config.getOutflowConfiguration();
+                
+                Parameter inflowSecParam = axisDescription.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+                Parameter outflowSecParam = axisDescription.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+                
+                InflowConfiguration staticInflowConfig = HandlerParameterDecoder.getInflowConfiguration(inflowSecParam);
+                OutflowConfiguration staticOutflowConfig = HandlerParameterDecoder.getOutflowConfiguration(outflowSecParam);
+
+                if(staticInflowConfig == null || staticOutflowConfig == null) {
+                    throw new Exception("Static configuration not available!!!");
+                }
+                OutflowConfiguration mergedOutflowConfig = this
+                        .mergeStaticAndPolicyOutflowConfiguration(
+                                staticOutflowConfig, policyOutflowConfig);
+                
+                InflowConfiguration mergedInflowConfig = this.mergeStaticAndPolicyInflowConfiguration(staticInflowConfig, policyInflowConfig);
+                
+                axisDescription.addParameter(mergedOutflowConfig.getProperty());
+                axisDescription.addParameter(mergedInflowConfig.getProperty());
+            } catch (Exception e) {
+                throw new AxisFault(e.getMessage(),e);
+            }
+        }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axis2.modules.Module#shutdown(org.apache.axis2.engine.AxisConfiguration)
-     */
     public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        //Do nothing
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axis2.modules.Module#init(org.apache.axis2.context.ConfigurationContext, org.apache.axis2.description.AxisModule)
-     */
     public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        //DO nothing 
     }
 
+    private OutflowConfiguration mergeStaticAndPolicyOutflowConfiguration(
+            OutflowConfiguration staticConfig, OutflowConfiguration policyConfig) {
+        policyConfig.setPasswordCallbackClass(staticConfig.getPasswordCallbackClass());
+        policyConfig.setSignaturePropFile(staticConfig.getSignaturePropFile());
+        policyConfig.setEncryptionPropFile(staticConfig.getEncryptionPropFile());
+        policyConfig.setEmbeddedKeyCallbackClass(staticConfig.getEmbeddedKeyCallbackClass());
+        policyConfig.setUser(staticConfig.getUser());
+        policyConfig.setEncryptionUser(staticConfig.getEncryptionUser());
+        return policyConfig;
+    }
+    
+    private InflowConfiguration mergeStaticAndPolicyInflowConfiguration(
+            InflowConfiguration staticConfig, InflowConfiguration policyConfig) {
+        policyConfig.setPasswordCallbackClass(staticConfig.getPasswordCallbackClass());
+        policyConfig.setDecryptionPropFile(staticConfig.getDecryptionPropFile());
+        policyConfig.setSignaturePropFile(staticConfig.getSignaturePropFile());
+        return policyConfig;
+    }
 }

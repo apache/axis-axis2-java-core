@@ -18,47 +18,117 @@ package org.apache.ws.security.policy;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.policy.model.AsymmetricBinding;
 import org.apache.ws.security.policy.model.Binding;
+import org.apache.ws.security.policy.model.Header;
 import org.apache.ws.security.policy.model.PolicyEngineData;
-import org.apache.ws.security.policy.model.SymmetricBinding;
+import org.apache.ws.security.policy.model.SignedEncryptedParts;
+import org.apache.ws.security.policy.model.SymmetricAsymmetricBindingBase;
+import org.apache.ws.security.policy.model.TransportBinding;
 import org.apache.ws.security.policy.model.Wss10;
 import org.apache.ws.security.policy.model.Wss11;
 
 public class WSS4JConfigBuilder {
     
-    public static void build(ArrayList topLevelPeds) throws WSSPolicyException {
+    public static WSS4JConfig build(ArrayList topLevelPeds) throws WSSPolicyException {
         Iterator topLevelPEDIterator = topLevelPeds.iterator();
         WSS4JConfig config = new WSS4JConfig();
         while (topLevelPEDIterator.hasNext()) {
             PolicyEngineData ped = (PolicyEngineData) topLevelPEDIterator.next();
             if(ped instanceof Binding) {
-                if(ped instanceof SymmetricBinding) {
-                    processSymmetricPolicyBinding((SymmetricBinding)ped, config);
-                } else {
-                    processAsymmetricPolicyBinding((AsymmetricBinding)ped, config);
-                }
+                config.binding = (Binding)ped;
             } else if(ped instanceof Wss10) {
                 processWSS10((Wss10)ped, config);
             } else if(ped instanceof Wss11) {
                 processWSS11((Wss11)ped, config);
+            } else if (ped instanceof SignedEncryptedParts) {
+                processSignedEncryptedParts((SignedEncryptedParts)ped, config);
+            } else {
+              //Unrecognized token  
             }
+        }
+        finalizeConfig(config);
+        return config;
+    }
+
+    private static void finalizeConfig(WSS4JConfig config) throws WSSPolicyException{
+        
+        if(config.binding instanceof TransportBinding) {
+            //TODO TransportBinding
+            throw new UnsupportedOperationException("TODO TransportBinding");
+        } else {
+            //Handle common properties from SymmetricAsymmetricBindingBase
+            SymmetricAsymmetricBindingBase base = (SymmetricAsymmetricBindingBase) config.binding;
+            if(base.isEntireHeaderAndBodySignatures()) {
+                config.getOutflowConfiguration().setSignAllHeadersAndBody();
+            }
+            if (base.isSignatureProtection()) {
+                if (base.getProtectionOrder().equals(
+                        Constants.SIGN_BEFORE_ENCRYPTING)) {
+                    //Makesure encryption is on
+                    config.encryption = true;
+                    
+                    //Add a sign part pointing to the signature
+                    String encrParts = config.getOutflowConfiguration()
+                            .getEncryptionParts();
+                    boolean otherSignPartsExists = encrParts != null
+                            && encrParts.length() > 0;
+                    String part = getEncryptedPartSnippet(false, WSConstants.SIG_NS,
+                            WSConstants.SIG_LN, !otherSignPartsExists);
+                    if(otherSignPartsExists) {
+                        part = encrParts + part;
+                    }
+                    config.getOutflowConfiguration().setEncryptionParts(part);
+                } else {
+                    throw new WSSPolicyException("To enable SignatureProtection" +
+                            " the ProtectionOrder must be SignBeforeEncrypting");
+                }
+            }
+            if(base.isTokenProtection()) {
+                throw new WSSPolicyException(
+                        "TokenProtection is not supported right now " +
+                        "since there's no way to specify how to sign " +
+                        "the token that is used to sign ???");
+            }
+            
+            //Start building action items
+            String actionItems = "";
+            if(config.signature && config.encryption) {
+                if(base.getProtectionOrder().equals(Constants.SIGN_BEFORE_ENCRYPTING)) {
+                    actionItems = "Signature Encrypt";
+                } else {
+                    actionItems = "Encrypt Signature";
+                }
+            } else if(config.signature) {
+                actionItems = " Signature";
+            } else if(config.encryption) {
+                actionItems  = " Encrypt";
+            }
+            
+            if(base.isIncludeTimestamp()) {
+                //TODO: Caution: including Timestamp as the starting action item  
+                actionItems = " Timestamp " + actionItems;
+                
+            }
+            if(actionItems.length() == 0) {
+                actionItems = "NoSecurity";
+            }
+            config.getInflowConfiguration().setActionItems(actionItems.trim());
+            config.getOutflowConfiguration().setActionItems(actionItems.trim());
+        }
+        
+            
+        if(config.binding instanceof AsymmetricBinding) {
+            //TODO Handle asymmetric binding
+        } else {
+            //TODO Handle symmetric binding
         }
     }
     
-
-    private static void processSymmetricPolicyBinding(SymmetricBinding symmbinding, WSS4JConfig config) {
-        //TODO
-        throw new UnsupportedOperationException("TODO");
-    }
     
     private static void processWSS10(Wss10 wss10, WSS4JConfig config) {
-        //TODO
-        throw new UnsupportedOperationException("TODO");
-    }
-    private static void processAsymmetricPolicyBinding(AsymmetricBinding binding, WSS4JConfig config) {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        //There's nothing to populate in WSS4J Config right now
     }
     
     private static void processWSS11(Wss11 wss11, WSS4JConfig config) {
@@ -68,4 +138,55 @@ public class WSS4JConfigBuilder {
        }
     }
     
+    private static void processSignedEncryptedParts(SignedEncryptedParts parts,
+            WSS4JConfig config) {
+        if(parts.isSignedParts()) {
+            config.signature = true;
+            if(parts.isBody()) {
+                config.getOutflowConfiguration().setSignBody();
+            }
+            Iterator headersIter = parts.getHeaders().iterator();
+            String signedParts = "";
+            while (headersIter.hasNext()) {
+                Header header = (Header) headersIter.next();
+                signedParts += getSignedPartSnippet(header.getNamespace(),
+                        header.getNamespace(), signedParts.length() == 0);
+            }
+            if(signedParts.length() != 0) {
+                config.getOutflowConfiguration().setSignatureParts(signedParts);
+            }
+        } else {
+            config.encryption = true;
+            if(parts.isBody()) {
+                config.getOutflowConfiguration().setEncryptBody();
+            }
+            Iterator headersIter = parts.getHeaders().iterator();
+            String encryptedParts = "";
+            while (headersIter.hasNext()) {
+                Header header = (Header) headersIter.next();
+                encryptedParts += getEncryptedPartSnippet(false, header
+                        .getNamespace(), header.getName(), encryptedParts
+                        .length() == 0);
+            }
+            if(encryptedParts.length() != 0) {
+                config.getOutflowConfiguration().setEncryptionParts(encryptedParts);
+            }
+        }
+    }
+    
+    private static String getSignedPartSnippet(String namespace, String name,
+            boolean first) {
+        return first ? "{Element}{" + namespace + "}" + name : ";{Element}{"
+                + namespace + "}" + name;
+    }
+    
+    private static String getEncryptedPartSnippet(boolean content,
+            String namespace, String name, boolean first) {
+        String ret = "";
+        if(!first) {
+            ret=";";
+        }
+        return content ? ret + "{}{" + namespace + "}" + name : ret
+                + "{Element}{" + namespace + "}" + name;
+    }
 }

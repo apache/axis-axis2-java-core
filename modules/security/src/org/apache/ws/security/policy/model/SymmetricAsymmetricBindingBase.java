@@ -19,7 +19,7 @@ package org.apache.ws.security.policy.model;
 import org.apache.ws.security.policy.Constants;
 import org.apache.ws.security.policy.WSSPolicyException;
 
-class SymmetricAsymmetricBindingBase extends Binding {
+public class SymmetricAsymmetricBindingBase extends Binding {
 
     private String protectionOrder = Constants.SIGN_BEFORE_ENCRYPTING;
     

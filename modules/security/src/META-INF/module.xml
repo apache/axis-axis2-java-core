@@ -1,4 +1,4 @@
-<module name="security">
+<module name="security" class="org.apache.axis2.security.SecurityModule">
     <inflow>
         <handler name="SecurityInHandler" class="org.apache.axis2.security.WSDoAllReceiver">
             <order phase="Dispatch" after="RequestURIBasedDispatcher"/>

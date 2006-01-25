@@ -114,8 +114,8 @@ public class PolicyInclude {
 	
 	private PolicyInclude getParent() {
 
-		if (description != null) {
-			return description.getPolicyInclude();
+		if (description != null && description.getParent() != null) {
+			return description.getParent().getPolicyInclude();
 		}
 		return null;
 	}

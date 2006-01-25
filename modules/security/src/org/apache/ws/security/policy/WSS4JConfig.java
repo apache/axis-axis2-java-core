@@ -18,11 +18,16 @@ package org.apache.ws.security.policy;
 
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.ws.security.policy.model.Binding;
 
 public class WSS4JConfig {
 
-    private OutflowConfiguration outflowConfiguration;
-    private InflowConfiguration inflowConfiguration;
+    private OutflowConfiguration outflowConfiguration = new OutflowConfiguration();
+    private InflowConfiguration inflowConfiguration = new InflowConfiguration();
+    
+    Binding binding;
+    boolean signature;
+    boolean encryption;
     
     /**
      * @return Returns the inflowConfiguration.
@@ -30,23 +35,23 @@ public class WSS4JConfig {
     public InflowConfiguration getInflowConfiguration() {
         return inflowConfiguration;
     }
-    /**
-     * @param inflowConfiguration The inflowConfiguration to set.
-     */
-    public void setInflowConfiguration(InflowConfiguration inflowConfiguration) {
-        this.inflowConfiguration = inflowConfiguration;
-    }
+//    /**
+//     * @param inflowConfiguration The inflowConfiguration to set.
+//     */
+//    public void setInflowConfiguration(InflowConfiguration inflowConfiguration) {
+//        this.inflowConfiguration = inflowConfiguration;
+//    }
     /**
      * @return Returns the outflowConfiguration.
      */
     public OutflowConfiguration getOutflowConfiguration() {
         return outflowConfiguration;
     }
-    /**
-     * @param outflowConfiguration The outflowConfiguration to set.
-     */
-    public void setOutflowConfiguration(OutflowConfiguration outflowConfiguration) {
-        this.outflowConfiguration = outflowConfiguration;
-    }
+//    /**
+//     * @param outflowConfiguration The outflowConfiguration to set.
+//     */
+//    public void setOutflowConfiguration(OutflowConfiguration outflowConfiguration) {
+//        this.outflowConfiguration = outflowConfiguration;
+//    }
     
 }

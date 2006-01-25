@@ -19,7 +19,10 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.handler.WSHandlerConstants;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -81,7 +84,7 @@ public class HandlerParameterDecoder {
 		}
 
 		/*
-		 * Populate the ourflow parameters
+		 * Populate the outflow parameters
 		 */
 		if (outFlowSecParam != null && !inflow) {
 			OMElement outFlowParamElem = outFlowSecParam.getParameterElement();
@@ -112,8 +115,77 @@ public class HandlerParameterDecoder {
 			msgCtx.setProperty(WSSHandlerConstants.SENDER_REPEAT_COUNT,
 					new Integer(repetitionCount));
 		}
-
-
 	}
+    
+    public static OutflowConfiguration getOutflowConfiguration(Parameter outflowConfigParam) throws Exception {
+        if (outflowConfigParam != null) {
+            OMElement outflowParamElem = outflowConfigParam.getParameterElement();
+
+            OMElement actionElem = outflowParamElem
+                    .getFirstChildWithName(new QName(WSSHandlerConstants.ACTION));
+            if (actionElem == null) {
+                throw new Exception(
+                        "Inflow configurtion must contain an 'action' "
+                                + "elementas the child of 'InflowSecurity' element");
+            }
+
+            OutflowConfiguration outflowConfiguration = new OutflowConfiguration();
+            
+            Iterator childElements = actionElem.getChildElements();
+            while (childElements.hasNext()) {
+                OMElement element = (OMElement) childElements.next();
+                
+                String localName = element.getLocalName();
+                if(localName.equals(WSHandlerConstants.PW_CALLBACK_CLASS)) {
+                    outflowConfiguration.setPasswordCallbackClass(element.getText());
+                } else if(localName.equals(WSHandlerConstants.SIG_PROP_FILE)) {
+                    outflowConfiguration.setSignaturePropFile(element.getText());
+                } else if(localName.equals(WSHandlerConstants.ENC_PROP_FILE)) {
+                    outflowConfiguration.setEncryptionPropFile(element.getText());
+                } else if(localName.equals(WSHandlerConstants.ENC_CALLBACK_CLASS)) {
+                    outflowConfiguration.setEmbeddedKeyCallbackClass(element.getText());
+                } else if(localName.equals(WSHandlerConstants.USER)) {
+                    outflowConfiguration.setUser(element.getText());
+                } else if(localName.equals(WSHandlerConstants.ENCRYPTION_USER)) {
+                    outflowConfiguration.setEncryptionUser(element.getText());
+                }
+            }
+            return outflowConfiguration;
+        }
+        return null;
+    }
+    
+    public static InflowConfiguration getInflowConfiguration(Parameter inflowConfigParam) throws Exception {
+
+        if (inflowConfigParam != null) {
+            OMElement inFlowParamElem = inflowConfigParam.getParameterElement();
+
+            OMElement actionElem = inFlowParamElem
+                    .getFirstChildWithName(new QName(WSSHandlerConstants.ACTION));
+            if (actionElem == null) {
+                throw new Exception(
+                        "Inflow configurtion must contain an 'action' "
+                                + "elementas the child of 'InflowSecurity' element");
+            }
+
+            InflowConfiguration inflowConfiguration = new InflowConfiguration();
+            
+            Iterator childElements = actionElem.getChildElements();
+            while (childElements.hasNext()) {
+                OMElement element = (OMElement) childElements.next();
+                
+                String localName = element.getLocalName();
+                if(localName.equals(WSHandlerConstants.PW_CALLBACK_CLASS)) {
+                    inflowConfiguration.setPasswordCallbackClass(element.getText());
+                } else if(localName.equals(WSHandlerConstants.SIG_PROP_FILE)) {
+                    inflowConfiguration.setSignaturePropFile(element.getText());
+                } else if(localName.equals(WSHandlerConstants.DEC_PROP_FILE)) {
+                    inflowConfiguration.setDecryptionPropFile(element.getText());
+                }
+            }
+            return inflowConfiguration;
+        }
+        return null;
+    }
 
 }
