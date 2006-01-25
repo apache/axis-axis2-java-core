@@ -157,16 +157,6 @@ public class DeploymentEngine implements DeploymentConstants {
     private void addServiceGroup(AxisServiceGroup serviceGroup, ArrayList serviceList)
             throws AxisFault {
         serviceGroup.setParent(axisConfig);
-
-        // engaging globally engage module to this service group
-        Iterator itr_global_modules = axisConfig.getEngagedModules().iterator();
-
-        while (itr_global_modules.hasNext()) {
-            QName qName = (QName) itr_global_modules.next();
-
-            serviceGroup.engageModule(axisConfig.getModule(qName));
-        }
-
         // module from services.xml at serviceGroup level
         ArrayList groupModules = serviceGroup.getModuleRefs();
 
