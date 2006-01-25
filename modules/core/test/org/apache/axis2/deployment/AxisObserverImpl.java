@@ -23,6 +23,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMElement;
 
 import java.util.ArrayList;
@@ -31,9 +32,9 @@ public class AxisObserverImpl implements AxisObserver {
 
     ParameterIncludeImpl parameterimpl;
 
-    //The initilization code will go here
-    public void init() {
-        parameterimpl = new ParameterIncludeImpl();
+    // The initilization code will go here
+    public void init(AxisConfiguration axisConfig) {
+         parameterimpl = new ParameterIncludeImpl();
     }
 
     public void serviceUpdate(AxisEvent event, AxisService service) {

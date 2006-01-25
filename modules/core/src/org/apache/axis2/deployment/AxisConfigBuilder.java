@@ -229,7 +229,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 processParameters(itr, observer, axisConfig);
 
                 // initialization
-                observer.init();
+                observer.init(axisConfig);
                 axisConfig.addObservers(observer);
             } catch (ClassNotFoundException e) {
                 throw new DeploymentException(e);
