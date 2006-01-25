@@ -461,7 +461,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         String moduelName = name.getLocalPart();
         // checking whether the version string seperator is not there in the module name
-        if (moduelName.indexOf('-') < 0) {
+        if (moduelName.lastIndexOf('-') < 0) {
             String moduleName = name.getLocalPart();
             String defaultModuleVersion = getDefaultModuleVersion(moduleName);
             if (defaultModuleVersion != null) {

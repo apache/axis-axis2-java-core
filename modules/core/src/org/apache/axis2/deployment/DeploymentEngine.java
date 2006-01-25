@@ -504,6 +504,7 @@ public class DeploymentEngine implements DeploymentConstants {
             setClassLoaders(axis2repository);
             setDeploymentFeatures();
             RepositoryListener repoListener = new RepositoryListenerImpl(axis2repository, this);
+            org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
             try {
                 axisConfig.setRepository(axis2repository);
                 if (!useDefault) {

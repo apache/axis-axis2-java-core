@@ -226,7 +226,7 @@ public class Utils {
 
     public static String getModuleName(String moduleName) {
         char version_seperator = '-';
-        int version_index = moduleName.indexOf(version_seperator);
+        int version_index = moduleName.lastIndexOf(version_seperator);
         if (version_index > 0) {
             return moduleName.substring(0, version_index);
         } else {
@@ -236,7 +236,7 @@ public class Utils {
 
     public static String getModuleVersion(String moduleName) {
         char version_seperator = '-';
-        int version_index = moduleName.indexOf(version_seperator);
+        int version_index = moduleName.lastIndexOf(version_seperator);
         if (version_index > 0) {
             return moduleName.substring(version_index + 1, moduleName.length());
         } else {
