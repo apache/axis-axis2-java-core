@@ -240,43 +240,50 @@ public class SchemaCompiler {
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
 
-        if (schemaType != null) {
-            BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
-            if (schemaType.getName() != null) {
-                //this is a named type
-                QName qName = schemaType.getQName();
-                //find the class name
-                String className = findClassName(qName, isArray(xsElt));
-                //this means the schema type actually returns a different QName
-                if (changedTypeMap.containsKey(qName)) {
-                    metainf.registerMapping(xsElt.getQName(),
-                            (QName) changedTypeMap.get(qName),
-                            className);
-                } else {
-                    metainf.registerMapping(xsElt.getQName(),
-                            qName,
-                            className);
-                }
 
-
-            }else if (xsElt.getRefName()!= null){
-                //Since top level elements would not have references
-                // and we only write toplevel elements, this should
-                // not be a problem , atleast should not occur in a legal schema
-            }else{
-
-                //we are going to special case the anonymous complex type. Our algorithm for dealing
-                //with it is to generate a single object that has the complex content inside. Really the
-                //intent of the user when he declares the complexType anonymously is to use it privately
-                //First copy the schema types content into the metainf holder
-                metainf = (BeanWriterMetaInfoHolder) this.processedAnonymousComplexTypesMap.get(xsElt);
-                metainf.setAnonymous(true);
+        BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
+        if (schemaType != null && schemaType.getName() != null) {
+            //this is a named type
+            QName qName = schemaType.getQName();
+            //find the class name
+            String className = findClassName(qName, isArray(xsElt));
+            //this means the schema type actually returns a different QName
+            if (changedTypeMap.containsKey(qName)) {
+                metainf.registerMapping(xsElt.getQName(),
+                        (QName) changedTypeMap.get(qName),
+                        className);
+            } else {
+                metainf.registerMapping(xsElt.getQName(),
+                        qName,
+                        className);
             }
 
 
-            String writtenClassName = writer.write(xsElt, processedTypemap, metainf);
-            processedElementMap.put(xsElt.getQName(), writtenClassName);
+        }else if (xsElt.getRefName()!= null){
+            //Since top level elements would not have references
+            // and we only write toplevel elements, this should
+            // not be a problem , atleast should not occur in a legal schema
+        }else if (xsElt.getSchemaTypeName()!= null) {
+            QName qName = xsElt.getSchemaTypeName();
+            String className = findClassName(qName, isArray(xsElt));
+            metainf.registerMapping(xsElt.getQName(),
+                    qName,
+                    className);
+
+
+        }else{
+
+            //we are going to special case the anonymous complex type. Our algorithm for dealing
+            //with it is to generate a single object that has the complex content inside. Really the
+            //intent of the user when he declares the complexType anonymously is to use it privately
+            //First copy the schema types content into the metainf holder
+            metainf = (BeanWriterMetaInfoHolder) this.processedAnonymousComplexTypesMap.get(xsElt);
+            metainf.setAnonymous(true);
         }
+
+
+        String writtenClassName = writer.write(xsElt, processedTypemap, metainf);
+        processedElementMap.put(xsElt.getQName(), writtenClassName);
     }
 
 
@@ -317,10 +324,9 @@ public class SchemaCompiler {
             //pass through. We'll be iterating through the elements writing them
             //later
 
-            //There can be instances where the SchemaType is null but the schemaTypeName is not
-            //this specifically happens with xsd:anyType.
+
             if (!isOuter) {
-                String className = findClassName(xsElt.getSchemaTypeName(), isArray(xsElt));
+                String className = findClassName(schemaType.getQName(), isArray(xsElt));
                 this.processedElementMap.put(xsElt.getQName(), className);
             }
 
@@ -343,6 +349,14 @@ public class SchemaCompiler {
             this.processedElementRefMap.put(referencedElement.getQName(), className);
 
 
+        }else if (xsElt.getSchemaTypeName()!=null){
+            //There can be instances where the SchemaType is null but the schemaTypeName is not
+            //this specifically happens with xsd:anyType.
+            if (!isOuter) {
+                String className = findClassName(xsElt.getSchemaTypeName(), isArray(xsElt));
+                this.processedElementMap.put(xsElt.getQName(), className);
+            }
+            this.processedElementList.add(xsElt.getQName());
         }
 
 
@@ -383,7 +397,7 @@ public class SchemaCompiler {
             //property file
             className = DEFAULT_CLASS_NAME;
         }
-        
+
         if (isArray) {
             //append the square braces that say this is an array
             //hope this works for all cases!!!!!!!
@@ -610,8 +624,8 @@ public class SchemaCompiler {
                     }else if (content instanceof XmlSchemaSimpleContent){
                         //todo
                     }else{
-                       throw new SchemaCompilationException(
-                                    SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
+                        throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                     }
                 }
 

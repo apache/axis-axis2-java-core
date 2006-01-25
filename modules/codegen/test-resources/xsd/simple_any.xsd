@@ -9,7 +9,7 @@
             <element name="varFloat" type="xsd:float"/>
             <element name="varInt" type="xsd:int"/>
             <element name="varString" type="xsd:string"/>
-            <any/>
+            <any/>  <!-- note the inclusion of any here -->
         </sequence>
 
     </complexType>
