@@ -47,7 +47,7 @@ class FactoryFinder {
         //first look for a java system property
         if (systemPropertyName != null &&
             System.getProperty(systemPropertyName) != null) {
-            factoryClassName = systemPropertyName;
+            factoryClassName = System.getProperty(systemPropertyName);
         }
 
         Object factory;
