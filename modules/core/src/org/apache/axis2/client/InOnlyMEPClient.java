@@ -53,7 +53,7 @@ public class InOnlyMEPClient extends MEPClient {
         prepareInvocation(axisop, msgctx);
 
         if (msgctx.getMessageID() == null) {
-            String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
+            String messageID = String.valueOf(UUIDGenerator.getUUID());
 
             msgctx.setMessageID(messageID);
         }

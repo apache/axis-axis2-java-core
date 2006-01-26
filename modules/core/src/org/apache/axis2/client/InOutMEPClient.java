@@ -174,7 +174,7 @@ public class InOutMEPClient extends MEPClient {
             throws AxisFault {
 
         // The message ID is sent all the time
-        String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
+        String messageID = String.valueOf(UUIDGenerator.getUUID());
 
         msgctx.setMessageID(messageID);
 
@@ -308,7 +308,7 @@ public class InOutMEPClient extends MEPClient {
             checkTransport(msgctx);
 
             // Use message id all the time!
-            String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
+            String messageID = String.valueOf(UUIDGenerator.getUUID());
 
             msgctx.setMessageID(messageID);
 
