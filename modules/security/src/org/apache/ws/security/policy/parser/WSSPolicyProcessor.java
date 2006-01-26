@@ -297,14 +297,11 @@ public class WSSPolicyProcessor {
             ret = spt.invokeProcessTokenMethod(secProcessorContext);
             
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (WSSPolicyException e) {
             e.printStackTrace();
         } finally {

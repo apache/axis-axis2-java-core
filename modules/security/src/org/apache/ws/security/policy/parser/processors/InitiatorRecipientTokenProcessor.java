@@ -96,8 +96,7 @@ public class InitiatorRecipientTokenProcessor {
                     ((AsymmetricBinding)spc.readPreviousPolicyEngineData()).setInitiatorToken(initiatorToken);
 					initializedInitiatorToken = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -125,8 +124,7 @@ public class InitiatorRecipientTokenProcessor {
                     ((AsymmetricBinding)spc.readPreviousPolicyEngineData()).setRecipientToken(recipientToken);
 					initializedRecipientToken = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}

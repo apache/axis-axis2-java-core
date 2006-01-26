@@ -159,8 +159,7 @@ public class AlgorithmSuiteProcessor {
 					initializeAlgorithmSuite(spt);
 					initializedAlgorithmSuite = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -183,128 +182,113 @@ public class AlgorithmSuiteProcessor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		this.setAlgoGroup(spc);
-		return new Boolean(true);
+		return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic192(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-        return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic128(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doTripleDes(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic256Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic192Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic128Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doTripleDesRsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic256Sha256(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic192Sha256(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic128Sha256(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doTripleDesSha256(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic256Sha256Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+		return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic192Sha256Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+		return this.setAlgoGroup(spc);
 	}
 
 	public Object doBasic128Sha256Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+        
+		return this.setAlgoGroup(spc);
 	}
 
 	public Object doTripleDesSha256Rsa15(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        this.setAlgoGroup(spc);
-		return new Boolean(true);
+		return this.setAlgoGroup(spc);
 	}
 
 	public Object doInclusiveC14N(SecurityProcessorContext spc) {
@@ -312,12 +296,12 @@ public class AlgorithmSuiteProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         AlgorithmSuite algoSuite = (AlgorithmSuite)spc.readCurrentPolicyEngineData();
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 algoSuite.setC14n(Constants.C14N);
             } catch (WSSPolicyException e) {
-                // TODO Throw this out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
         }
         return new Boolean(true);
@@ -328,12 +312,12 @@ public class AlgorithmSuiteProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         AlgorithmSuite algoSuite = (AlgorithmSuite)spc.readCurrentPolicyEngineData();
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 algoSuite.setSoapNormalization(Constants.SNT);
             } catch (WSSPolicyException e) {
-                // TODO Throw this out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
         }
 		return new Boolean(true);
@@ -344,12 +328,12 @@ public class AlgorithmSuiteProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         AlgorithmSuite algoSuite = (AlgorithmSuite)spc.readCurrentPolicyEngineData();
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 algoSuite.setStrTransform(Constants.STRT10);
             } catch (WSSPolicyException e) {
-                // TODO Throw this out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
         }
 		return new Boolean(true);
@@ -360,12 +344,12 @@ public class AlgorithmSuiteProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         AlgorithmSuite algoSuite = (AlgorithmSuite)spc.readCurrentPolicyEngineData();
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 algoSuite.setXPath(Constants.XPATH);
             } catch (WSSPolicyException e) {
-                // TODO Throw this out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
         }
 		return new Boolean(true);
@@ -376,28 +360,29 @@ public class AlgorithmSuiteProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         AlgorithmSuite algoSuite = (AlgorithmSuite)spc.readCurrentPolicyEngineData();
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 algoSuite.setXPath(Constants.XPATH20);
             } catch (WSSPolicyException e) {
-                // TODO Throw this out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
         }
 		return new Boolean(true);
 	}
 
-    private void setAlgoGroup(SecurityProcessorContext spc) {
-        if(spc.getAction() == 2) {
+    private Boolean setAlgoGroup(SecurityProcessorContext spc) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 AlgorithmSuite algoSuite = (AlgorithmSuite)spc.readCurrentPolicyEngineData();
                 algoSuite.setAlgorithmSuite(spc.getAssertion().getName().getLocalPart());
                 ((AlgorithmWrapper)spc.readPreviousPolicyEngineData()).setAlgorithmSuite(algoSuite);
             } catch (WSSPolicyException e) {
-                // TODO row this out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
-        }        
+        }    
+        return new Boolean(true);
     }
     
 }

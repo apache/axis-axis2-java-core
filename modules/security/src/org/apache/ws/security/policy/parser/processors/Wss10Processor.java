@@ -87,8 +87,7 @@ public class Wss10Processor {
 					initializeWss10(spt);
 					initializedWss10 = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -110,7 +109,7 @@ public class Wss10Processor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefKeyIdentifier(true);
         }
 		return new Boolean(true);
@@ -120,7 +119,7 @@ public class Wss10Processor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefIssuerSerial(true);
         }
         return new Boolean(true);
@@ -130,7 +129,7 @@ public class Wss10Processor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefExternalURI(true);
         }
         return new Boolean(true);
@@ -140,7 +139,7 @@ public class Wss10Processor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == SecurityProcessorContext.COMMIT) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefEmbeddedToken(true);
         }
         return new Boolean(true);

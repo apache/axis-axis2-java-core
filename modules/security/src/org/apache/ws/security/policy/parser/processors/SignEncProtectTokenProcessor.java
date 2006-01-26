@@ -116,8 +116,7 @@ public class SignEncProtectTokenProcessor {
 					initializeSignatureToken(spt);
 					initializedSignatureToken = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -143,8 +142,7 @@ public class SignEncProtectTokenProcessor {
 					initializeEncryptionToken(spt);
 					initializedEncryptionToken = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -174,13 +172,12 @@ public class SignEncProtectTokenProcessor {
                         ((SymmetricBinding) spc.readPreviousPolicyEngineData())
                                 .setProtectionToken(protectionToken);
                     } catch (WSSPolicyException e) {
-                        // TODO Throw this out
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
+                        return new Boolean(false);
                     }
 					initializedProtectionToken = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}

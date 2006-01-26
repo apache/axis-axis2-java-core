@@ -93,8 +93,7 @@ public class EndorsingSupportingTokensProcessor {
 					initializeEndorsingSupportingTokens(spt);
 					initializedEndorsingSupportingTokens = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}

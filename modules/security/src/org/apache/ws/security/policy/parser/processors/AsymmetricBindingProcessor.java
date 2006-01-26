@@ -118,8 +118,7 @@ public class AsymmetricBindingProcessor {
 					initializeAsymmetricBinding(spt);
 					initializedAsymmetricBinding = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -136,7 +135,7 @@ public class AsymmetricBindingProcessor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == 2) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             ((Binding)spc.readCurrentPolicyEngineData()).setIncludeTimestamp(true);
         }
 		return new Boolean(true);

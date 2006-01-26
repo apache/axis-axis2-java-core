@@ -118,8 +118,9 @@ public abstract class InteropTestBase extends TestCase {
         AddressingConstants.Submission.WSA_NAMESPACE;
 
     private String targetEpr = "http://127.0.0.1:" +
-            // 5556 +
-            UtilServer.TESTING_PORT + "/axis2/services/PingPort";
+            5556 +
+            //UtilServer.TESTING_PORT +
+            "/axis2/services/PingPort";
 
     public InteropTestBase() {
         super();

@@ -132,13 +132,12 @@ public class X509TokenProcessor {
                         }
                         ((TokenWrapper)spc.readPreviousPolicyEngineData()).setToken(token);
                     } catch (WSSPolicyException e) {
-                        // TODO Throw this out
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
+                        return new Boolean(false);
                     }
 					initializedX509Token = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}

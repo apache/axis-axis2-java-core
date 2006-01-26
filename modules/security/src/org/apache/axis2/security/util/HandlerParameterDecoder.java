@@ -101,14 +101,33 @@ public class HandlerParameterDecoder {
 									+ "only 'action' elements can be present");
 				}
 				
-				
-				repetitionCount++;
+                boolean signAllHeaders = false;
+                boolean signBody = false;
+                boolean encryptBody = false;
+                
+                repetitionCount++;
 				Iterator paramElements = element.getChildElements();
 				while (paramElements.hasNext()) {
 					OMElement elem = (OMElement) paramElements.next();
-					msgCtx.setProperty(Axis2Util.getKey(elem.getLocalName(),
-							inflow,repetitionCount), elem.getText());	
+                    String localName = elem.getLocalName();
+                    String text = elem.getText();
+                    if(localName.equals(WSSHandlerConstants.SIGN_ALL_HEADERS)) {
+                        signAllHeaders = true;
+                    } else if(localName.equals(WSSHandlerConstants.SIGN_BODY)) {
+                        signBody = true;
+                    } else if(localName.equals(WSSHandlerConstants.ENCRYPT_BODY)) {
+                        encryptBody = true;
+                    } else {
+                        msgCtx.setProperty(Axis2Util.getKey(localName,
+							inflow,repetitionCount), text);
+                    }
 				}
+                
+                if(signAllHeaders || signBody || encryptBody) {
+                    handleSignEncrParts(signAllHeaders, signBody, encryptBody,
+                            msgCtx, repetitionCount);
+                }
+                
 				
 			}
 
@@ -188,4 +207,59 @@ public class HandlerParameterDecoder {
         return null;
     }
 
+    private static void handleSignEncrParts(boolean signAllHeaders,
+            boolean signBody, boolean encrBody, MessageContext msgCtx,
+            int repetition) {
+        String soapNs = msgCtx.getEnvelope().getNamespace().getName();
+        if(signBody) {
+            //Add body signPart
+            String sigBodySigPart = "{Element}{" + soapNs + "}Body";
+            addSigPart(sigBodySigPart, msgCtx, repetition);
+        }
+        if(encrBody) {
+            //Encrypt body content
+            String encrBodyEncrPart = "{}{" + soapNs + "}Body";
+            addEncrPart(encrBodyEncrPart, msgCtx, repetition);
+        }
+        if(signAllHeaders) {
+            Iterator children = msgCtx.getEnvelope().getHeader().getChildElements();
+            while (children.hasNext()) {
+                OMElement element = (OMElement) children.next();
+                //Sign only the quilified headers
+                //TODO check whether we can sign the unqualified header elements
+                String ns = element.getNamespace().getName();
+                if(ns != null && ns.length() > 0) {
+                    addSigPart("{Element}{" + ns + "}" + element.getLocalName(),msgCtx, repetition);
+                }
+            }
+        }
+        
+    }
+    
+    private static void addSigPart(String sigPart, MessageContext msgCtx, int repetition) {
+        String key = Axis2Util.getKey(WSHandlerConstants.SIGNATURE_PARTS, false, repetition);
+        String existingSignParts = (String) msgCtx.getProperty(key);
+        if (existingSignParts != null && existingSignParts.length() > 0) {
+            // If the part is not already there as a sign part
+            if (existingSignParts.indexOf(sigPart) != -1) {
+                msgCtx.setProperty(key, existingSignParts + ";" + sigPart);
+            }
+        } else {
+            // If there are no signed parts
+            msgCtx.setProperty(key, sigPart);
+        }
+    }
+    
+    private static void addEncrPart(String encrPart, MessageContext msgCtx, int repetition) {
+        String key = Axis2Util.getKey(WSHandlerConstants.ENCRYPTION_PARTS, false, repetition);
+        String existingEncrParts = (String) msgCtx.getProperty(key);
+        if (existingEncrParts != null && existingEncrParts.length() > 0) {
+            if (existingEncrParts.indexOf(encrPart) != -1) {
+                msgCtx.setProperty(key, existingEncrParts + ";" + encrPart);
+            }
+        } else {
+            msgCtx.setProperty(key, encrPart);
+        }
+    }
+    
 }

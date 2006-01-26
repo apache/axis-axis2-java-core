@@ -126,8 +126,7 @@ public class SymmetricBindingProcessor {
 					initializeSymmetricBinding(spt);
 					initializedSymmetricBinding = true;
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    log.error(e.getMessage(), e);
 					return new Boolean(false);
 				}
 			}
@@ -144,7 +143,7 @@ public class SymmetricBindingProcessor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == 2) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             ((Binding)spc.readCurrentPolicyEngineData()).setIncludeTimestamp(true);
         }
 		return new Boolean(true);
@@ -154,13 +153,13 @@ public class SymmetricBindingProcessor {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-        if(spc.getAction() == 2) {
+        if(spc.getAction() == SecurityProcessorContext.START) {
             try {
                 ((SymmetricBinding) spc.readCurrentPolicyEngineData()).setProtectionOrder(spc
                         .getAssertion().getName().getLocalPart());
             } catch (WSSPolicyException e) {
-                // TODO Throw this exception out
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
+                return new Boolean(false);
             }
         }
 		return new Boolean(true);
