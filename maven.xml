@@ -449,7 +449,7 @@
                   file="modules/addressing/target/addressing-${addressing_version}.mar"/>
 
         <ant:copy toFile="target/dist/security-${pom.currentVersion}.mar"
-                  file="modules/security/target/security.mar"/>
+                  file="modules/security/target/security-${security_version}.mar"/>
 
 
         <ant:delete dir="target/temp"/>

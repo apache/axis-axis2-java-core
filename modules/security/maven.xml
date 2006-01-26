@@ -45,10 +45,10 @@
         <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
         
-        <jar jarfile="target/security.mar" basedir="target/temp-mar/">
+        <jar jarfile="target/security-${security_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
-        <copy file="target/security.mar" tofile="target/modules/security.mar"/>
+        <copy file="target/security-${security_version}.mar" tofile="target/modules/security-${security_version}.mar"/>
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
         </delete>
