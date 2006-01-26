@@ -18,6 +18,7 @@ package org.apache.ws.security.policy;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.policy.model.AsymmetricBinding;
 import org.apache.ws.security.policy.model.Binding;
@@ -25,9 +26,11 @@ import org.apache.ws.security.policy.model.Header;
 import org.apache.ws.security.policy.model.PolicyEngineData;
 import org.apache.ws.security.policy.model.SignedEncryptedParts;
 import org.apache.ws.security.policy.model.SymmetricAsymmetricBindingBase;
+import org.apache.ws.security.policy.model.Token;
 import org.apache.ws.security.policy.model.TransportBinding;
 import org.apache.ws.security.policy.model.Wss10;
 import org.apache.ws.security.policy.model.Wss11;
+import org.apache.ws.security.policy.model.X509Token;
 
 public class WSS4JConfigBuilder {
     
@@ -117,27 +120,41 @@ public class WSS4JConfigBuilder {
             config.getInflowConfiguration().setActionItems(actionItems.trim());
             config.getOutflowConfiguration().setActionItems(actionItems.trim());
         }
-        
-            
+
+
         if(config.binding instanceof AsymmetricBinding) {
-            //TODO Handle asymmetric binding
+            AsymmetricBinding asymmetricBinding = (AsymmetricBinding) config.binding;
+            Token initiatorToken = asymmetricBinding.getInitiatorToken()
+                    .getInitiatorToken();
+            String initiatorInclusion = initiatorToken.getInclusion();
+            if (initiatorInclusion
+                    .equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT)
+                    || initiatorInclusion.equals(Constants.INCLUDE_ALWAYS)) {
+                config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                        WSSHandlerConstants.BST_DIRECT_REFERENCE);
+            } else {
+                if(initiatorToken instanceof X509Token) {
+                    config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                            WSSHandlerConstants.X509_KEY_IDENTIFIER);
+                }
+            }
         } else {
             //TODO Handle symmetric binding
         }
     }
-    
-    
+
+
     private static void processWSS10(Wss10 wss10, WSS4JConfig config) {
         //There's nothing to populate in WSS4J Config right now
     }
-    
+
     private static void processWSS11(Wss11 wss11, WSS4JConfig config) {
        if(wss11.isRequireSignatureConfirmation()) {
            config.getInflowConfiguration().setEnableSignatureConfirmation(true);
            config.getOutflowConfiguration().setEnableSignatureConfirmation(true);
        }
     }
-    
+
     private static void processSignedEncryptedParts(SignedEncryptedParts parts,
             WSS4JConfig config) {
         if(parts.isSignedParts()) {
@@ -173,13 +190,13 @@ public class WSS4JConfigBuilder {
             }
         }
     }
-    
+
     private static String getSignedPartSnippet(String namespace, String name,
             boolean first) {
         return first ? "{Element}{" + namespace + "}" + name : ";{Element}{"
                 + namespace + "}" + name;
     }
-    
+
     private static String getEncryptedPartSnippet(boolean content,
             String namespace, String name, boolean first) {
         String ret = "";

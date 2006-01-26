@@ -70,6 +70,7 @@ public class InflowConfiguration {
 		
 		ParameterImpl param = new ParameterImpl();
 		param.setParameterElement(paramElement);
+        param.setValue(paramElement);
         param.setName(WSSHandlerConstants.INFLOW_SECURITY);
 		
 		return param;

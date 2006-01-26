@@ -19,7 +19,7 @@ package org.apache.ws.security.policy.model;
 import org.apache.ws.security.policy.Constants;
 import org.apache.ws.security.policy.WSSPolicyException;
 
-class Token extends PolicyEngineData {
+public class Token extends PolicyEngineData {
 
     /**
      * Inclusiong property of a TokenAssertion

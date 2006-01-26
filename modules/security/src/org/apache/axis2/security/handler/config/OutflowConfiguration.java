@@ -102,6 +102,7 @@ public class OutflowConfiguration {
 		
 		ParameterImpl param = new ParameterImpl();
 		param.setParameterElement(paramElement);
+        param.setValue(paramElement);
         param.setName(WSSHandlerConstants.OUTFLOW_SECURITY);
 		return param;
 	}
