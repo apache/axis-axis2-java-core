@@ -48,6 +48,8 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private final ParameterInclude parameters = new ParameterIncludeImpl();
     private Module module;
     private ClassLoader moduleClassLoader;
+    // To keep the File that moduel came from
+    private String fileName = "";
 
     /**
      * Field name
@@ -249,5 +251,13 @@ public class AxisModule implements FlowInclude, ParameterInclude {
 
     public void setModuleDescription(String moduleDescription) {
         this.moduleDescription = moduleDescription;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

@@ -19,7 +19,6 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.modules.Module;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -459,17 +458,14 @@ public class AxisConfiguration extends AxisDescription {
         if (module != null) {
             return module;
         }
-        String moduelName = name.getLocalPart();
         // checking whether the version string seperator is not there in the module name
-        if (moduelName.lastIndexOf('-') < 0) {
-            String moduleName = name.getLocalPart();
-            String defaultModuleVersion = getDefaultModuleVersion(moduleName);
-            if (defaultModuleVersion != null) {
-                module = (AxisModule) allModules.get(
-                        Utils.getModuleName(moduleName, defaultModuleVersion));
-                if (module != null) {
-                    return module;
-                }
+        String moduleName = name.getLocalPart();
+        String defaultModuleVersion = getDefaultModuleVersion(moduleName);
+        if (defaultModuleVersion != null) {
+            module = (AxisModule) allModules.get(
+                    Utils.getModuleName(moduleName, defaultModuleVersion));
+            if (module != null) {
+                return module;
             }
         }
         return null;

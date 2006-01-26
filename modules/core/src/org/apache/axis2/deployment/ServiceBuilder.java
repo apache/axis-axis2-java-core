@@ -19,15 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -98,10 +90,9 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             OMAttribute targetNameSpace = service_element.getAttribute(new QName(TARGET_NAME_SPACE));
-            if(targetNameSpace!=null){
-               String nameSpeceVale=  targetNameSpace.getAttributeValue();
+            if (targetNameSpace != null) {
+                String nameSpeceVale = targetNameSpace.getAttributeValue();
             }
-
 
             // setting the PolicyInclude
 
@@ -184,6 +175,23 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()));
         }
         return service;
+    }
+
+
+    /**
+     * To get url and prefix from a given atribute
+     *
+     * @param value
+     * @return
+     */
+    private String[] splitAttribute(String value) {
+        int splitindex = value.indexOf(':');
+        if (splitindex > 0) {
+            return new String[]{value.substring(0, splitindex - 1),
+                    value.substring(splitindex + 1, value.length())};
+        } else {
+            return new String[]{value};
+        }
     }
 
     private void processMessages(Iterator messages, AxisOperation operation)

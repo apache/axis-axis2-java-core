@@ -422,6 +422,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
                                         this, metaData, explodedDir,
                                         axisConfig);
+                                metaData.setFileName(currentArchiveFile.getAbsolutePath());
                                 addNewModule(metaData);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                         metaData.getName().getLocalPart()));
