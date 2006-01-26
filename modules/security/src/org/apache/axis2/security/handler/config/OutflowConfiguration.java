@@ -68,8 +68,9 @@ public class OutflowConfiguration {
 		
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace ns = fac.createOMNamespace("", null);
-		OMElement propertyElement = fac.createOMElement(
-				WSSHandlerConstants.OUTFLOW_SECURITY, ns);
+        //TODO: Find the constants for "Parameter" and "name"
+        OMElement paramElement = fac.createOMElement("Parameter",ns);
+		paramElement.addAttribute(fac.createOMAttribute("name", null ,WSSHandlerConstants.OUTFLOW_SECURITY));
 
 		
 		for (int i = 0; i < this.actionList.length; i++) {
@@ -96,11 +97,12 @@ public class OutflowConfiguration {
                 }
 			}
 			
-			propertyElement.addChild(actionElem);
+			paramElement.addChild(actionElem);
 		}
 		
 		ParameterImpl param = new ParameterImpl();
-		param.setParameterElement(propertyElement);
+		param.setParameterElement(paramElement);
+        param.setName(WSSHandlerConstants.OUTFLOW_SECURITY);
 		return param;
 	}
 

@@ -43,8 +43,9 @@ public class InflowConfiguration {
 	public Parameter getProperty() {
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace ns = fac.createOMNamespace("", null);
-		OMElement propertyElement = fac.createOMElement(
-				WSSHandlerConstants.INFLOW_SECURITY, ns);
+        //TODO: Find the constants for "Parameter" and "name"
+        OMElement paramElement = fac.createOMElement("Parameter",ns);
+        paramElement.addAttribute(fac.createOMAttribute("name", null ,WSSHandlerConstants.INFLOW_SECURITY));
 		
 		OMElement actionElem = fac.createOMElement(
 				WSSHandlerConstants.ACTION, ns);
@@ -65,10 +66,11 @@ public class InflowConfiguration {
             }
 		}
 		
-		propertyElement.addChild(actionElem);
+		paramElement.addChild(actionElem);
 		
 		ParameterImpl param = new ParameterImpl();
-		param.setParameterElement(propertyElement);
+		param.setParameterElement(paramElement);
+        param.setName(WSSHandlerConstants.INFLOW_SECURITY);
 		
 		return param;
 	}

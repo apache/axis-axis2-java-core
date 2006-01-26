@@ -117,8 +117,8 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
             throws XMLStreamException {
         String prefix = reader.getPrefix();
         String nameSpaceName = reader.getNamespaceURI();
-        String writer_prefix = writer.getPrefix(nameSpaceName);
         if (nameSpaceName != null) {
+            String writer_prefix = writer.getPrefix(nameSpaceName);
             if (writer_prefix != null) {
                 writer.writeStartElement(nameSpaceName, reader.getLocalName());
             } else {
