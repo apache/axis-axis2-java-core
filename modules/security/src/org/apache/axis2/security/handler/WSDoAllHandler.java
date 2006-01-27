@@ -138,7 +138,15 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     	
     	String key = Axis2Util.getKey(axisKey,inHandler, repetition);
     	log.debug("wss4j key: " + axisKey + " Key : " + key);
-        return ((MessageContext)msgContext).getProperty(key);
+        Object property = ((MessageContext)msgContext).getProperty(key);
+        if(property == null) {
+            //Try the description hierarchy
+            Parameter parameter = ((MessageContext)msgContext).getParameter(key);
+            if(parameter != null) {
+                property = parameter.getValue();
+            }
+        }
+        return property;
     }
 
     /**
