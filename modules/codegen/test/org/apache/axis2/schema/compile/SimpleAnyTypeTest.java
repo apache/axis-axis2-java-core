@@ -22,7 +22,5 @@ public class SimpleAnyTypeTest extends AbstractSchemaCompilerTester {
         super.setUp();
     }
 
-    protected void tearDown() throws Exception {
-
-    }
+  
 }

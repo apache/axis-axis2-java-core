@@ -46,7 +46,15 @@
         org.apache.axis2.description.AxisOperation __operation;
         _operations = new org.apache.axis2.description.OutInAxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
-            __operation = new org.apache.axis2.description.OutInAxisOperation();
+            <xsl:choose>
+                <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">"
+                    __operation = new org.apache.axis2.description.OutOnlyAxisOperation();
+                </xsl:when>
+                <xsl:otherwise>
+                   __operation = new org.apache.axis2.description.OutInAxisOperation();
+                </xsl:otherwise>
+            </xsl:choose>
+
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
             _service.addOperation(__operation);
@@ -148,7 +156,7 @@
                                     <xsl:for-each select="input/param[@location='header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
