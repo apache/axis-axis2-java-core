@@ -6,6 +6,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.XMLUtils;
@@ -54,7 +55,7 @@ public class ClientUtils {
 
     public static TransportInDescription inferInTransport(AxisConfiguration ac,
                                                           Options options,
-                                                          ServiceContext serviceContext) throws AxisFault {
+                                                          MessageContext msgCtxt) throws AxisFault {
         String listenerTransportProtocol = options.getTransportInProtocol();
         TransportInDescription transportIn = null;
         if (options.isUseSeparateListener()) {
@@ -65,14 +66,13 @@ public class ClientUtils {
                     throw new AxisFault(Messages.getMessage("unknownTransport",
                             listenerTransportProtocol));
                 }
-                options.setTransportIn(transportIn);
             }
             // if separate transport is used, start the required listeners
             if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                 throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
             ListenerManager.makeSureStarted(options.getTransportInProtocol(),
-                    serviceContext.getConfigurationContext());
+                    msgCtxt.getServiceContext().getConfigurationContext());
         }
         return transportIn;
 

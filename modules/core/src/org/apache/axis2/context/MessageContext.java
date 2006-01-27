@@ -185,6 +185,7 @@ public class MessageContext extends AbstractContext {
     private SessionContext sessionContext;
 
     private transient TransportOutDescription transportOut;
+    private transient TransportInDescription transportIn;
 
     public MessageContext() {
         super(null);
@@ -420,7 +421,7 @@ public class MessageContext extends AbstractContext {
         if (configurationContext != null) {
             AxisConfiguration baseConfig = configurationContext
                     .getAxisConfiguration();
-            return  baseConfig.getParameter(key);
+            return baseConfig.getParameter(key);
         }
         return null;
     }
@@ -538,7 +539,7 @@ public class MessageContext extends AbstractContext {
      * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
-        return options.getTransportIn();
+        return transportIn;
     }
 
     /**
@@ -845,10 +846,10 @@ public class MessageContext extends AbstractContext {
      * @param in
      */
     public void setTransportIn(TransportInDescription in) {
-        options.setTransportIn(in);
+        this.transportIn = in;
 
         if (in != null) {
-            this.options.setTransportInProtocol(in.getName().getLocalPart());
+            this.transportInName = in.getName();
         }
     }
 

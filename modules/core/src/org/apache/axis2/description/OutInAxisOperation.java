@@ -231,15 +231,13 @@ class OutInAxisOperationClient implements OperationClient {
                     .getAxisConfiguration(), toEPR);
         }
         mc.setTransportOut(transportOut);
-        if (mc.getTransportIn() == null) {
-            TransportInDescription transportIn = options.getTransportIn();
-            if (transportIn == null) {
-                mc.setTransportIn(ClientUtils.inferInTransport(cc
-                        .getAxisConfiguration(), options, mc
-                        .getServiceContext()));
-            } else {
-                mc.setTransportIn(transportIn);
-            }
+
+
+        if (options.getTransportIn() == null && mc.getTransportIn() == null) {
+            mc.setTransportIn(ClientUtils.inferInTransport(cc
+                    .getAxisConfiguration(), options, mc));
+        } else if (mc.getTransportIn() == null) {
+            mc.setTransportIn(options.getTransportIn());
         }
 
         if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
@@ -255,7 +253,7 @@ class OutInAxisOperationClient implements OperationClient {
             callbackReceiver.addCallback(mc.getMessageID(), callback);
             EndpointReference replyToFromTransport = ListenerManager
                     .replyToEPR(cc, sc.getAxisService().getName() + "/"
-                            + axisOp.getName().getLocalPart(), options
+                            + axisOp.getName().getLocalPart(), mc
                             .getTransportIn().getName()
                             .getLocalPart());
 
@@ -384,9 +382,9 @@ class OutInAxisOperationClient implements OperationClient {
 
     private EndpointReference getReplyToEPR(OMElement headerElement) {
         EndpointReference epr = new EndpointReference(null);
-        if(headerElement == null)
+        if (headerElement == null)
             return null;
-        
+
         Iterator childElements = headerElement.getChildElements();
         while (childElements.hasNext()) {
             OMElement eprChildElement = (OMElement) childElements.next();
