@@ -16,39 +16,27 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axis2.description.AxisDescWSDLComponentFactory;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.wsdl.builder.wsdl4j.WSDLPump;
+import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
-import org.apache.wsdl.Component;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.ws.policy.util.PolicyWriter;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
-import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
 
-import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
 
 public class PolicyUtil {
-	
+
     public static void populatePolicy(WSDLDescription description,
                                       AxisService axisService) {
         WSDLService wsdlService = description.getService(new QName(axisService
@@ -61,9 +49,9 @@ public class PolicyUtil {
 
         AxisServiceGroup axisServiceGroup = null;
         AxisConfiguration axisConfiguration = null;
-        
+
         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-        
+
         if (axisServiceGroup != null) {
             axisConfiguration = (AxisConfiguration) axisServiceGroup.getParent();
         }
@@ -74,10 +62,10 @@ public class PolicyUtil {
 
         // Policies defined in Axis2.xml
         if (axisConfiguration != null) {
-        policyList = axisConfiguration.getPolicyInclude().getPolicyElements(
-                PolicyInclude.AXIS_POLICY);
-        addPolicyAsExtElements(description, policyList, wsdlService,
-                servicePolicyInclude);
+            policyList = axisConfiguration.getPolicyInclude().getPolicyElements(
+                    PolicyInclude.AXIS_POLICY);
+            addPolicyAsExtElements(description, policyList, wsdlService,
+                    servicePolicyInclude);
         }
 
         // Policies defined in wsdl:Service
@@ -339,6 +327,17 @@ public class PolicyUtil {
                                 .getPolicy(policyURIString)));
 
             }
+        }
+    }
+
+    public static void writePolicy(PolicyInclude policy, OutputStream out) {
+        if (policy != null) {
+            Policy pl = policy.getEffectivePolicy();
+            PolicyWriter write = PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
+            write.writePolicy(pl, out);
+        } else {
+            PrintWriter write = new PrintWriter(out);
+            write.println("no policy found");
         }
     }
 }

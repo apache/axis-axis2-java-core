@@ -307,6 +307,19 @@ public class AxisService extends AxisDescription {
         schema.write(out);
     }
 
+    public void printPolicy(OutputStream out) throws AxisFault {
+        PolicyUtil.writePolicy(getPolicyInclude(), out);
+        schema.write(out);
+    }
+
+    public void printPolicy(OutputStream out, String operationName) throws AxisFault {
+        AxisOperation axisOperation = getOperation(new QName(operationName));
+        if (axisOperation == null) {
+            throw new AxisFault("invalid operation : " + operationName);
+        }
+        PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
+    }
+
     public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
         if (getWSDLDefinition() != null) {
             printUsingWSDLDefinition(out, serviceURL);
