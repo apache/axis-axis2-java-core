@@ -25,9 +25,11 @@ import org.apache.ws.security.policy.model.Binding;
 import org.apache.ws.security.policy.model.Header;
 import org.apache.ws.security.policy.model.PolicyEngineData;
 import org.apache.ws.security.policy.model.SignedEncryptedParts;
+import org.apache.ws.security.policy.model.SupportingToken;
 import org.apache.ws.security.policy.model.SymmetricAsymmetricBindingBase;
 import org.apache.ws.security.policy.model.Token;
 import org.apache.ws.security.policy.model.TransportBinding;
+import org.apache.ws.security.policy.model.UsernameToken;
 import org.apache.ws.security.policy.model.Wss10;
 import org.apache.ws.security.policy.model.Wss11;
 import org.apache.ws.security.policy.model.X509Token;
@@ -41,6 +43,8 @@ public class WSS4JConfigBuilder {
             PolicyEngineData ped = (PolicyEngineData) topLevelPEDIterator.next();
             if(ped instanceof Binding) {
                 config.binding = (Binding)ped;
+            } if(ped instanceof SupportingToken) {
+                config.supportingToken = (SupportingToken)ped;
             } else if(ped instanceof Wss10) {
                 processWSS10((Wss10)ped, config);
             } else if(ped instanceof Wss11) {
@@ -56,90 +60,112 @@ public class WSS4JConfigBuilder {
     }
 
     private static void finalizeConfig(WSS4JConfig config) throws WSSPolicyException{
-        
-        if(config.binding instanceof TransportBinding) {
-            //TODO TransportBinding
-            throw new UnsupportedOperationException("TODO TransportBinding");
-        } else {
-            //Handle common properties from SymmetricAsymmetricBindingBase
-            SymmetricAsymmetricBindingBase base = (SymmetricAsymmetricBindingBase) config.binding;
-            if(base.isEntireHeaderAndBodySignatures()) {
-                config.getOutflowConfiguration().setSignAllHeadersAndBody();
-            }
-            if (base.isSignatureProtection()) {
-                if (base.getProtectionOrder().equals(
-                        Constants.SIGN_BEFORE_ENCRYPTING)) {
-                    //Makesure encryption is on
-                    config.encryption = true;
-                    
-                    //Add a sign part pointing to the signature
-                    String encrParts = config.getOutflowConfiguration()
-                            .getEncryptionParts();
-                    boolean otherSignPartsExists = encrParts != null
-                            && encrParts.length() > 0;
-                    String part = getEncryptedPartSnippet(false, WSConstants.SIG_NS,
-                            WSConstants.SIG_LN, !otherSignPartsExists);
-                    if(otherSignPartsExists) {
-                        part = encrParts + part;
-                    }
-                    config.getOutflowConfiguration().setEncryptionParts(part);
-                } else {
-                    throw new WSSPolicyException("To enable SignatureProtection" +
-                            " the ProtectionOrder must be SignBeforeEncrypting");
-                }
-            }
-            if(base.isTokenProtection()) {
-                throw new WSSPolicyException(
-                        "TokenProtection is not supported right now " +
-                        "since there's no way to specify how to sign " +
-                        "the token that is used to sign ???");
-            }
-            
-            //Start building action items
-            String actionItems = "";
-            if(config.signature && config.encryption) {
-                if(base.getProtectionOrder().equals(Constants.SIGN_BEFORE_ENCRYPTING)) {
-                    actionItems = "Signature Encrypt";
-                } else {
-                    actionItems = "Encrypt Signature";
-                }
-            } else if(config.signature) {
-                actionItems = " Signature";
-            } else if(config.encryption) {
-                actionItems  = " Encrypt";
-            }
-            
-            if(base.isIncludeTimestamp()) {
-                //TODO: Caution: including Timestamp as the starting action item  
-                actionItems = " Timestamp " + actionItems;
-                
-            }
-            if(actionItems.length() == 0) {
-                actionItems = "NoSecurity";
-            }
-            config.getInflowConfiguration().setActionItems(actionItems.trim());
-            config.getOutflowConfiguration().setActionItems(actionItems.trim());
-        }
-
-
-        if(config.binding instanceof AsymmetricBinding) {
-            AsymmetricBinding asymmetricBinding = (AsymmetricBinding) config.binding;
-            Token initiatorToken = asymmetricBinding.getInitiatorToken()
-                    .getInitiatorToken();
-            String initiatorInclusion = initiatorToken.getInclusion();
-            if (initiatorInclusion
-                    .equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT)
-                    || initiatorInclusion.equals(Constants.INCLUDE_ALWAYS)) {
-                config.getOutflowConfiguration().setSignatureKeyIdentifier(
-                        WSSHandlerConstants.BST_DIRECT_REFERENCE);
+        if(config.binding != null) {
+            if(config.binding instanceof TransportBinding) {
+                //TODO TransportBinding
+                throw new UnsupportedOperationException("TODO TransportBinding");
             } else {
-                if(initiatorToken instanceof X509Token) {
-                    config.getOutflowConfiguration().setSignatureKeyIdentifier(
-                            WSSHandlerConstants.X509_KEY_IDENTIFIER);
+                //Handle common properties from SymmetricAsymmetricBindingBase
+                SymmetricAsymmetricBindingBase base = (SymmetricAsymmetricBindingBase) config.binding;
+                if(base.isEntireHeaderAndBodySignatures()) {
+                    config.getOutflowConfiguration().setSignAllHeadersAndBody();
                 }
+                if (base.isSignatureProtection()) {
+                    if (base.getProtectionOrder().equals(
+                            Constants.SIGN_BEFORE_ENCRYPTING)) {
+                        //Makesure encryption is on
+                        config.encryption = true;
+                        
+                        //Add a sign part pointing to the signature
+                        String encrParts = config.getOutflowConfiguration()
+                                .getEncryptionParts();
+                        boolean otherSignPartsExists = encrParts != null
+                                && encrParts.length() > 0;
+                        String part = getEncryptedPartSnippet(false, WSConstants.SIG_NS,
+                                WSConstants.SIG_LN, !otherSignPartsExists);
+                        if(otherSignPartsExists) {
+                            part = encrParts + part;
+                        }
+                        config.getOutflowConfiguration().setEncryptionParts(part);
+                    } else {
+                        throw new WSSPolicyException("To enable SignatureProtection" +
+                                " the ProtectionOrder must be SignBeforeEncrypting");
+                    }
+                }
+                if(base.isTokenProtection()) {
+                    throw new WSSPolicyException(
+                            "TokenProtection is not supported right now " +
+                            "since there's no way to specify how to sign " +
+                            "the token that is used to sign ???");
+                }
+                
+                //Start building action items
+                String actionItems = "";
+                if(config.signature && config.encryption) {
+                    if(base.getProtectionOrder().equals(Constants.SIGN_BEFORE_ENCRYPTING)) {
+                        actionItems = "Signature Encrypt";
+                    } else {
+                        actionItems = "Encrypt Signature";
+                    }
+                } else if(config.signature) {
+                    actionItems = " Signature";
+                } else if(config.encryption) {
+                    actionItems  = " Encrypt";
+                }
+                
+                if(base.isIncludeTimestamp()) {
+                    //TODO: Caution: including Timestamp as the starting action item  
+                    actionItems = " Timestamp " + actionItems;
+                    
+                }
+                if(actionItems.length() == 0) {
+                    actionItems = "NoSecurity";
+                }
+                config.getInflowConfiguration().setActionItems(actionItems.trim());
+                config.getOutflowConfiguration().setActionItems(actionItems.trim());
             }
-        } else {
-            //TODO Handle symmetric binding
+    
+    
+            if(config.binding instanceof AsymmetricBinding) {
+                AsymmetricBinding asymmetricBinding = (AsymmetricBinding) config.binding;
+                Token recipientToken = asymmetricBinding.getRecipientToken()
+                        .getReceipientToken();
+                String initiatorInclusion = recipientToken.getInclusion();
+                if (initiatorInclusion
+                        .equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT)
+                        || initiatorInclusion.equals(Constants.INCLUDE_ALWAYS)) {
+                    config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                            WSSHandlerConstants.BST_DIRECT_REFERENCE);
+                } else {
+                    if(recipientToken instanceof X509Token) {
+                        config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                                WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+                    }
+                }
+            } else {
+                //TODO Handle symmetric binding
+            }
+        }
+        
+        if(config.supportingToken != null) {
+            if(config.supportingToken.getType() == Constants.SUPPORTING_TOKEN_SUPPORTING) {
+                ArrayList tokens = config.supportingToken.getTokens();
+                Iterator tokensIter = tokens.iterator();
+                while (tokensIter.hasNext()) {
+                    Token token = (Token) tokensIter.next();
+                    if(token instanceof UsernameToken) {
+                        String items = config.getInflowConfiguration().getActionItems();
+                        if(items == null || items.length() == 0) {
+                            config.getInflowConfiguration().setActionItems("UsernameToken");
+                        } else {
+                            items += "UsernameToken";
+                            config.getInflowConfiguration().setActionItems(items);
+                        }
+                    }
+                }
+            } else {
+                //TODO : support the other types of upporting tokens
+            }
         }
     }
 

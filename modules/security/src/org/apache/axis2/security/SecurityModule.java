@@ -56,17 +56,20 @@ public class SecurityModule implements Module {
                 InflowConfiguration staticInflowConfig = HandlerParameterDecoder.getInflowConfiguration(inflowSecParam);
                 OutflowConfiguration staticOutflowConfig = HandlerParameterDecoder.getOutflowConfiguration(outflowSecParam);
 
-                if(staticInflowConfig == null || staticOutflowConfig == null) {
-                    throw new Exception("Static configuration not available!!!");
+//                if(staticInflowConfig == null || staticOutflowConfig == null) {
+//                    throw new Exception("Static configuration not available!!!");
+//                }
+                if(staticOutflowConfig != null) {
+                    OutflowConfiguration mergedOutflowConfig = this
+                            .mergeStaticAndPolicyOutflowConfiguration(
+                                    staticOutflowConfig, policyOutflowConfig);
+                    axisDescription.addParameter(mergedOutflowConfig.getProperty());
                 }
-                OutflowConfiguration mergedOutflowConfig = this
-                        .mergeStaticAndPolicyOutflowConfiguration(
-                                staticOutflowConfig, policyOutflowConfig);
                 
-                InflowConfiguration mergedInflowConfig = this.mergeStaticAndPolicyInflowConfiguration(staticInflowConfig, policyInflowConfig);
-                
-                axisDescription.addParameter(mergedOutflowConfig.getProperty());
-                axisDescription.addParameter(mergedInflowConfig.getProperty());
+                if(staticInflowConfig != null) {
+                    InflowConfiguration mergedInflowConfig = this.mergeStaticAndPolicyInflowConfiguration(staticInflowConfig, policyInflowConfig);
+                    axisDescription.addParameter(mergedInflowConfig.getProperty());
+                }
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(),e);
             }

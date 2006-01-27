@@ -19,6 +19,7 @@ package org.apache.ws.security.policy;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
 import org.apache.ws.security.policy.model.Binding;
+import org.apache.ws.security.policy.model.SupportingToken;
 
 public class WSS4JConfig {
 
@@ -26,6 +27,12 @@ public class WSS4JConfig {
     private InflowConfiguration inflowConfiguration = new InflowConfiguration();
     
     Binding binding;
+    
+    /**
+     * Right now we support one supporting token. E.g. Usernametoken
+     */
+    SupportingToken supportingToken;
+    
     boolean signature;
     boolean encryption;
     

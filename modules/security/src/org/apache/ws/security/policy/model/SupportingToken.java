@@ -64,7 +64,7 @@ public class SupportingToken extends PolicyEngineData implements AlgorithmWrappe
     /**
      * @return Returns the token.
      */
-    public ArrayList getToken() {
+    public ArrayList getTokens() {
         return tokens;
     }
 
