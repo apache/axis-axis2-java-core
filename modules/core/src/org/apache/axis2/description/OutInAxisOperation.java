@@ -362,8 +362,10 @@ class OutInAxisOperationClient implements OperationClient {
         try {
             // Adding request reference parameters into ServiceContext , so then in the next
             // requesy automatically send them back
-            sc.setTargetEPR(getReplyToEPR(resenvelope.getHeader()
-                    .getFirstChildWithName(new QName("ReplyTo"))));
+            if (!resenvelope.getBody().hasFault()) {
+                sc.setTargetEPR(getReplyToEPR(resenvelope.getHeader()
+                        .getFirstChildWithName(new QName("ReplyTo"))));
+            }
         } catch (Exception e) {
             //NPE may occure there for need to catch this
         }
