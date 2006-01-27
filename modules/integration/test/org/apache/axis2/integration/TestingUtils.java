@@ -25,7 +25,7 @@ import org.apache.axis2.om.OMNamespace;
 public class TestingUtils {
     public static OMElement createDummyOMElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "ns1");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(

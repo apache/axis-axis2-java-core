@@ -58,7 +58,7 @@ public class WSDLClientTest extends TestCase implements TestConstants {
                     "EchoXMLServicePortType");
             OMElement payload = TestingUtils.createDummyOMElement();
             OMElement response = serviceClient.sendReceive(
-                    new QName("http://org.apache.axis2/", "echoOMElement"), payload);
+                    new QName("http://org.apache.axis2/xsd", "echoOMElement"), payload);
             assertNotNull(response);
             String textValue = response.getText();
             assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");

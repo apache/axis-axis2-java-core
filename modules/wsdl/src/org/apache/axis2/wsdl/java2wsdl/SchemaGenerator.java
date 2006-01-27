@@ -250,6 +250,7 @@ public class SchemaGenerator {
                 sequence.getItems().add(elt1);
                 if (isArryType) {
                     elt1.setMaxOccurs(Long.MAX_VALUE);
+                    elt1.setMinOccurs(0);
                 }
             } else {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
@@ -258,6 +259,7 @@ public class SchemaGenerator {
                 sequence.getItems().add(elt1);
                 if (isArryType) {
                     elt1.setMaxOccurs(Long.MAX_VALUE);
+                    elt1.setMinOccurs(0);
                 }
             }
         }
@@ -292,6 +294,7 @@ public class SchemaGenerator {
                 sequence.getItems().add(elt1);
                 if (isArryType) {
                     elt1.setMaxOccurs(Long.MAX_VALUE);
+                    elt1.setMinOccurs(0);
                 }
             } else {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
@@ -300,6 +303,7 @@ public class SchemaGenerator {
                 sequence.getItems().add(elt1);
                 if (isArryType) {
                     elt1.setMaxOccurs(Long.MAX_VALUE);
+                    elt1.setMinOccurs(0);
                 }
             }
         }

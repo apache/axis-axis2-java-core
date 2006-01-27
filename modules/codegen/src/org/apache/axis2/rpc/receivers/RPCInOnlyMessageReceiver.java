@@ -4,6 +4,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
@@ -35,7 +36,6 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
         try {
             // get the implementation class for the Web Service
-            //todo namespace   , checking
             Object obj = getTheImplementationObject(inMessage);
 
             Class ImplClass = obj.getClass();
@@ -43,12 +43,17 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
+            AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
+
+            if (!service.getSchematargetNamespace().equals(methodElement.getNamespace().getName())) {
+                throw new AxisFault("namespace mismatch require " +
+                        service.getSchematargetNamespace() +
+                        " found " + methodElement.getNamespace().getName());
+            }
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
-            //todo method validation has to be done
-            //Todo if we find the method it should be store , in AxisOperation
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];

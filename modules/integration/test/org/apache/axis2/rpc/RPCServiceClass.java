@@ -27,6 +27,7 @@ import org.apache.axis2.soap.SOAPFactory;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class RPCServiceClass {
 
@@ -157,6 +158,10 @@ public class RPCServiceClass {
         }
         com.setPersons(tems);
         return com;
+    }
+
+    public void handlAnyThing(String value1, int abc, Date date){
+
     }
 
 }

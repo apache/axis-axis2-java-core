@@ -88,13 +88,12 @@ public class AxisService extends AxisDescription {
     private boolean active = true;
 
     //to keep the service target name space
-    private QName targetNamespace = new QName(SchemaGenerator.TARGET_NAMESPACE,
-            "targetNamespace",
-            SchemaGenerator.TARGET_NAMESPACE_PREFIX);
+    private String targetNamespace = SchemaGenerator.TARGET_NAMESPACE;
+    private String targetNamespacePrefix = SchemaGenerator.TARGET_NAMESPACE_PREFIX;
+
     // to store the target namespace for the schema
-    private QName schematargetNamespace = new QName(SchemaGenerator.SCHEMA_TARGET_NAMESPACE,
-            "schematargetNamespace",
-            SchemaGenerator.SCHEMA_NAMESPACE_PRFIX);
+    private String schematargetNamespace = SchemaGenerator.SCHEMA_TARGET_NAMESPACE;
+    private String schematargetNamespacePrefix = SchemaGenerator.SCHEMA_NAMESPACE_PRFIX;
 
     /**
      * Constructor AxisService.
@@ -305,11 +304,11 @@ public class AxisService extends AxisDescription {
     }
 
     public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
-//        if (getWSDLDefinition() != null) {
-//            printUsingWSDLDefinition(out, serviceURL);
-//        } else {
-        printUsingWOM(out, serviceURL);
-//        }
+        if (getWSDLDefinition() != null) {
+            printUsingWSDLDefinition(out, serviceURL);
+        } else {
+            printUsingWOM(out, serviceURL);
+        }
     }
 
     public void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
@@ -343,8 +342,11 @@ public class AxisService extends AxisDescription {
     }
 
     public void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
-        //todo : This is a tempory hack pls imporve me : Deepal
-        AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null, serviceURL);
+        AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(),
+                this,
+                targetNamespace,
+                targetNamespacePrefix,
+                serviceURL);
         try {
             WSDLDescription desc = axisService2WOM.generateWOM();
 
@@ -617,19 +619,35 @@ public class AxisService extends AxisDescription {
         this.active = active;
     }
 
-    public QName getSchematargetNamespace() {
+    public String getSchematargetNamespace() {
         return schematargetNamespace;
     }
 
-    public void setSchematargetNamespace(QName schematargetNamespace) {
+    public void setSchematargetNamespace(String schematargetNamespace) {
         this.schematargetNamespace = schematargetNamespace;
     }
 
-    public QName getTargetNamespace() {
+    public String getSchematargetNamespacePrefix() {
+        return schematargetNamespacePrefix;
+    }
+
+    public void setSchematargetNamespacePrefix(String schematargetNamespacePrefix) {
+        this.schematargetNamespacePrefix = schematargetNamespacePrefix;
+    }
+
+    public String getTargetNamespace() {
         return targetNamespace;
     }
 
-    public void setTargetNamespace(QName targetNamespace) {
+    public void setTargetNamespace(String targetNamespace) {
         this.targetNamespace = targetNamespace;
+    }
+
+    public String getTargetNamespacePrefix() {
+        return targetNamespacePrefix;
+    }
+
+    public void setTargetNamespacePrefix(String targetNamespacePrefix) {
+        this.targetNamespacePrefix = targetNamespacePrefix;
     }
 }

@@ -67,8 +67,8 @@ public class RPCCallTest extends TestCase {
                     + "/axis/services/EchoXMLService/concat");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName("http://localhost/my", "concat");
-    protected QName transportName = new QName("http://localhost/my",
+    protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
+    protected QName transportName = new QName("http://org.apache.axis2/xsd",
             "NullTransport");
 
     protected AxisConfiguration engineRegistry;
@@ -133,11 +133,10 @@ public class RPCCallTest extends TestCase {
     private void configureSystem(String opName) throws AxisFault {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
-//                        + (5000)
                         + (UtilServer.TESTING_PORT)
                         + "/axis/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
-        operationName = new QName("http://localhost/my", opName, "req");
+        operationName = new QName("http://org.apache.axis2/xsd", opName, "req");
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
@@ -491,14 +490,14 @@ public class RPCCallTest extends TestCase {
     }
 
     private OMElement getpayLoad() throws AxisFault {
-        String str = "<handleArrayList>\n" +
+        String str = "<req:handleArrayList xmlns:req=\"http://org.apache.axis2/xsd\">\n" +
                 "  <arg0>\n" +
                 "    <item0>abc</item0>\n" +
                 "    <item0>def</item0>\n" +
                 "    <item0>ghi</item0>\n" +
                 "    <item0>klm</item0>\n" +
                 "  </arg0><arg1>10</arg1>" +
-                "</handleArrayList>";
+                "</req:handleArrayList>";
         StAXOMBuilder staxOMBuilder;
         try {
             XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new

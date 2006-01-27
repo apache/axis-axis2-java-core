@@ -89,10 +89,49 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
-            OMAttribute targetNameSpace = service_element.getAttribute(new QName(TARGET_NAME_SPACE));
+            //Setting service tratget namespace if any
+            OMAttribute targetNameSpace = service_element.
+                    getAttribute(new QName(TARGET_NAME_SPACE));
             if (targetNameSpace != null) {
                 String nameSpeceVale = targetNameSpace.getAttributeValue();
+                if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
+                    service.setTargetNamespace(nameSpeceVale);
+                }
             }
+
+            //Setting service tratget namespace prefix if any
+            OMAttribute targetNameSpaceprfix = service_element.
+                    getAttribute(new QName(TARGET_NAME_SPACE_PREFIX));
+            if (targetNameSpaceprfix != null) {
+                String prefix = targetNameSpace.getAttributeValue();
+                if (prefix != null && !"".equals(prefix)) {
+                    service.setTargetNamespacePrefix(prefix);
+                }
+            }
+
+            //Setting schema namespece if any
+            OMElement scheamElement = service_element.getFirstChildWithName(new QName(SCHEMA));
+            if (scheamElement != null) {
+                OMAttribute schemaNameSpace = service_element.
+                        getAttribute(new QName(SCHEMA_NAME_SPACE));
+                if (schemaNameSpace != null) {
+                    String nameSpeceVale = schemaNameSpace.getAttributeValue();
+                    if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
+                        service.setSchematargetNamespace(nameSpeceVale);
+                    }
+                }
+
+                OMAttribute scheamNameSpaceprfix = service_element.
+                        getAttribute(new QName(SCHEMA_NAME_SPACE_PREFIX));
+                if (scheamNameSpaceprfix != null) {
+                    String prefix = scheamNameSpaceprfix.getAttributeValue();
+                    if (prefix != null && !"".equals(prefix)) {
+                        service.setSchematargetNamespacePrefix(prefix);
+                    }
+                }
+            }
+
+            //<schema targetNamespace="http://x.y.z"/>
 
             // setting the PolicyInclude
 
@@ -175,23 +214,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()));
         }
         return service;
-    }
-
-
-    /**
-     * To get url and prefix from a given atribute
-     *
-     * @param value
-     * @return
-     */
-    private String[] splitAttribute(String value) {
-        int splitindex = value.indexOf(':');
-        if (splitindex > 0) {
-            return new String[]{value.substring(0, splitindex - 1),
-                    value.substring(splitindex + 1, value.length())};
-        } else {
-            return new String[]{value};
-        }
     }
 
     private void processMessages(Iterator messages, AxisOperation operation)

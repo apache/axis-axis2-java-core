@@ -41,7 +41,8 @@ public class ServiceCreateTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start();
         configContext = UtilServer.getConfigurationContext();
-        clinetConfigurationctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        clinetConfigurationctx = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
     }
 
     public void testServiceCreate() throws AxisFault {
@@ -69,7 +70,7 @@ public class ServiceCreateTest extends TestCase {
         args.add("100");
         args.add("200");
 
-        OMElement response = client.invokeBlocking(new QName("add"), args.toArray());
+        OMElement response = client.invokeBlocking(new QName("http://org.apache.axis2/xsd","add","ns1"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
     }
 }

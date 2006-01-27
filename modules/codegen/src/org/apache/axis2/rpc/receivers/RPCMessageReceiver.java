@@ -26,6 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -71,20 +72,24 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
         try {
             // get the implementation class for the Web Service
-            //todo namespace   , checking
             Object obj = getTheImplementationObject(inMessage);
 
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj, inMessage, null);
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
-
+            AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
+
+            OMNamespace namespace = methodElement.getNamespace();
+            if (namespace==null || !service.getSchematargetNamespace().equals(namespace.getName())) {
+                throw new AxisFault("namespace mismatch require " +
+                        service.getSchematargetNamespace() +
+                        " found " + methodElement.getNamespace().getName());
+            }
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
-            //todo method validation has to be done
-            //Todo if we find the method it should be store , in AxisOperation
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];
@@ -98,14 +103,15 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response
-            //todo NameSpace has to be taken from the AxisService
-            OMNamespace ns = fac.createOMNamespace(
-                    "http://soapenc/", "res");
+            OMNamespace ns = fac.createOMNamespace(service.getSchematargetNamespace(),
+                    service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
 
             if (resObject instanceof Object[]) {
-                QName resName = new QName("http://soapenc/", method.getName() + "Response", "res");
+                QName resName = new QName(service.getSchematargetNamespace(),
+                        method.getName() + "Response",
+                        service.getSchematargetNamespacePrefix());
                 OMElement bodyChild = getResponseElement(resName, (Object[]) resObject);
                 envelope.getBody().addChild(bodyChild);
             } else {
@@ -125,12 +131,14 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
     }
 
     private OMElement getResponseElement(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs,RETURN_WRAPPER);
+        return BeanUtil.getOMElement(resname, objs, RETURN_WRAPPER);
     }
 
-    private void processResponse(SOAPFactory fac, Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
+    private void processResponse(SOAPFactory fac, Object resObject,
+                                 OMElement bodyContent,
+                                 OMNamespace ns,
+                                 SOAPEnvelope envelope) {
         if (resObject != null) {
-            //todo first check to see where the desrilizer for the return object
             //simple type
             if (resObject instanceof OMElement) {
                 bodyContent = (OMElement) resObject;

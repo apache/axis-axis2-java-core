@@ -65,8 +65,8 @@ public class MultirefTest extends TestCase {
                     + "/axis/services/EchoXMLService/concat");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName("http://localhost/my", "concat");
-    protected QName transportName = new QName("http://localhost/my",
+    protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
+    protected QName transportName = new QName("http://org.apache.axis2/xsd",
             "NullTransport");
 
     protected AxisConfiguration engineRegistry;
@@ -92,7 +92,7 @@ public class MultirefTest extends TestCase {
                         + (UtilServer.TESTING_PORT)
                         + "/axis/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
-        operationName = new QName("http://localhost/my", opName, "req");
+        operationName = new QName("http://org.apache.axis2/xsd", opName, "req");
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
@@ -108,7 +108,7 @@ public class MultirefTest extends TestCase {
         configureSystem("echoString");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("echoString", omNs);
         OMElement value = fac.createOMElement("arg0", null);
         value.addAttribute(fac.createOMAttribute("href", null, "#1"));
@@ -152,7 +152,7 @@ public class MultirefTest extends TestCase {
         configureSystem("add");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("add", omNs);
         OMElement value = fac.createOMElement("arg0", null);
         value.addAttribute(fac.createOMAttribute("href", null, "#1"));
@@ -205,7 +205,7 @@ public class MultirefTest extends TestCase {
         configureSystem("add");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("add", omNs);
         OMElement value = fac.createOMElement("arg0", null);
         value.addAttribute(fac.createOMAttribute("href", null, "#1"));
@@ -252,7 +252,7 @@ public class MultirefTest extends TestCase {
             configureSystem("add");
             OMFactory fac = OMAbstractFactory.getOMFactory();
 
-            OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+            OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
             OMElement method = fac.createOMElement("add", omNs);
             OMElement value = fac.createOMElement("arg0", null);
             value.addAttribute(fac.createOMAttribute("href", null, "#1"));
@@ -308,7 +308,7 @@ public class MultirefTest extends TestCase {
         configureSystem("editBean");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("editBean", omNs);
         OMElement value = fac.createOMElement("arg0", null);
         value.addAttribute(fac.createOMAttribute("href", null, "#1"));
@@ -368,7 +368,7 @@ public class MultirefTest extends TestCase {
         configureSystem("beanOM");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("beanOM", omNs);
         OMElement value = fac.createOMElement("arg0", null);
         value.addAttribute(fac.createOMAttribute("href", null, "#1"));
@@ -428,7 +428,7 @@ public class MultirefTest extends TestCase {
         configureSystem("omrefs");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("omrefs", omNs);
 
         OMElement value = fac.createOMElement("arg0", null);
@@ -508,7 +508,7 @@ public class MultirefTest extends TestCase {
         configureSystem("echoEmployee");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("echoEmployee", omNs);
 
         OMElement value = fac.createOMElement("arg0", null);
@@ -562,7 +562,7 @@ public class MultirefTest extends TestCase {
         configureSystem("handleArrayList");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "my");
         OMElement method = fac.createOMElement("handleArrayList", omNs);
 
         OMElement value = fac.createOMElement("arg0", null);

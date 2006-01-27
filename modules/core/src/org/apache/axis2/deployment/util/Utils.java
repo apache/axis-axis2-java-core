@@ -3,14 +3,7 @@ package org.apache.axis2.deployment.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -157,7 +150,8 @@ public class Utils {
         String serviceClass = (String) implInfoParam.getValue();
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                serviceClass, null, null);
+                serviceClass, axisService.getSchematargetNamespace(),
+                axisService.getSchematargetNamespacePrefix());
         axisService.setSchema(schemaGenerator.generateSchema());
 
         JMethod [] method = schemaGenerator.getMethods();
@@ -237,7 +231,8 @@ public class Utils {
 
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                implClass, null, null);
+                implClass, axisService.getSchematargetNamespace(),
+                axisService.getSchematargetNamespacePrefix());
         try {
             axisService.setSchema(schemaGenerator.generateSchema());
         } catch (Exception e) {
