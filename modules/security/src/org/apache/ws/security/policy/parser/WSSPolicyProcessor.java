@@ -37,7 +37,11 @@ import org.apache.ws.security.policy.model.PolicyEngineData;
 import org.apache.ws.security.policy.model.RootPolicyEngineData;
 import org.apache.ws.security.policy.parser.processors.AsymmetricBindingProcessor;
 import org.apache.ws.security.policy.parser.processors.EncryptedPartsElementsProcessor;
+import org.apache.ws.security.policy.parser.processors.EndorsingSupportingTokensProcessor;
+import org.apache.ws.security.policy.parser.processors.SignedEndorsingSupportingTokensProcessor;
 import org.apache.ws.security.policy.parser.processors.SignedPartsElementsProcessor;
+import org.apache.ws.security.policy.parser.processors.SignedSupportingTokensProcessor;
+import org.apache.ws.security.policy.parser.processors.SupportingTokensProcessor;
 import org.apache.ws.security.policy.parser.processors.SymmetricBindingProcessor;
 import org.apache.ws.security.policy.parser.processors.Wss10Processor;
 import org.apache.ws.security.policy.parser.processors.Wss11Processor;
@@ -102,6 +106,22 @@ public class WSSPolicyProcessor {
 
         spt = SecurityPolicy.wss11.copy();
         spt.setProcessTokenMethod(new Wss11Processor());
+        topLevel.setChildToken(spt);
+        
+        spt = SecurityPolicy.supportingTokens.copy();
+        spt.setProcessTokenMethod(new SupportingTokensProcessor());
+        topLevel.setChildToken(spt);
+        
+        spt = SecurityPolicy.endorsingSupportingTokens.copy();
+        spt.setProcessTokenMethod(new EndorsingSupportingTokensProcessor());
+        topLevel.setChildToken(spt);       
+        
+        spt = SecurityPolicy.signedSupportingTokens.copy();
+        spt.setProcessTokenMethod(new SignedSupportingTokensProcessor());
+        topLevel.setChildToken(spt);
+        
+        spt = SecurityPolicy.signedEndorsingSupportingTokens.copy();
+        spt.setProcessTokenMethod(new SignedEndorsingSupportingTokensProcessor());
         topLevel.setChildToken(spt);
         
         /*

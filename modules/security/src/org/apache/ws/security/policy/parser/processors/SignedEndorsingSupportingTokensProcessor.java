@@ -17,6 +17,7 @@ package org.apache.ws.security.policy.parser.processors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.security.policy.model.PolicyEngineData;
 import org.apache.ws.security.policy.parser.SecurityPolicy;
 import org.apache.ws.security.policy.parser.SecurityPolicyToken;
 import org.apache.ws.security.policy.parser.SecurityProcessorContext;
@@ -91,6 +92,11 @@ public class SignedEndorsingSupportingTokensProcessor {
 			if (!initializedSignedEndorsingSupportingTokens) {
 				try {
 					initializeSignedEndorsingSupportingTokens(spt);
+                    PolicyEngineData ped = spc.readCurrentPolicyEngineData();
+                    if(ped != null) {
+                        //This ped must be a Binding
+                        //TODO: Support Supporting tokens in bindings
+                    }
 					initializedSignedEndorsingSupportingTokens = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
