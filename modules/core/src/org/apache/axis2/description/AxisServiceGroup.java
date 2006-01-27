@@ -134,11 +134,6 @@ public class AxisServiceGroup extends AxisDescription {
             // engaging each service
             AxisService axisService = (AxisService) srevice.next();
             try {
-                Module moduleImpl = module.getModule();
-                if (moduleImpl != null) {
-                    // notyfying module for service engagement
-                    moduleImpl.engageNotify(axisService);
-                }
                 axisService.engageModule(module, (AxisConfiguration) getParent());
             } catch (AxisFault axisFault) {
                 log.info(axisFault.getMessage());

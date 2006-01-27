@@ -266,6 +266,11 @@ public class AxisService extends AxisDescription {
             }
         }
 
+        Module moduleImpl = moduleref.getModule();
+        if (moduleImpl != null) {
+            // notyfying module for service engagement
+            moduleImpl.engageNotify(this);
+        }
         // adding module operations
         addModuleOperations(moduleref, axisConfig);
 
@@ -273,7 +278,6 @@ public class AxisService extends AxisDescription {
 
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-            Module moduleImpl = moduleref.getModule();
             if (moduleImpl != null) {
                 // notyfying module for service engagement
                 moduleImpl.engageNotify(axisOperation);
@@ -311,7 +315,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
+    private void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
         try {
             Definition wsdlDefinition = getWSDLDefinition();
             Collection services = wsdlDefinition.getServices().values();
@@ -341,7 +345,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
+    private void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
         AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(),
                 this,
                 targetNamespace,
