@@ -44,7 +44,7 @@
 
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
-        _operations = new org.apache.axis2.description.OutInAxisOperation[<xsl:value-of select="count(method)"/>];
+        _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
                 <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">"
