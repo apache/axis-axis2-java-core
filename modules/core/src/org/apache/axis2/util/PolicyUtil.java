@@ -30,6 +30,7 @@ import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
@@ -333,11 +334,25 @@ public class PolicyUtil {
     public static void writePolicy(PolicyInclude policy, OutputStream out) {
         if (policy != null) {
             Policy pl = policy.getEffectivePolicy();
-            PolicyWriter write = PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
-            write.writePolicy(pl, out);
+            if (pl != null) {
+                PolicyWriter write = PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
+                write.writePolicy(pl, out);
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                PrintWriter write = new PrintWriter(out);
+                write.write("<policy>no policy found</policy>");
+                write.flush();
+                write.close();
+            }
         } else {
             PrintWriter write = new PrintWriter(out);
-            write.println("no policy found");
+            write.write("<policy>no policy found</policy>");
+            write.flush();
+            write.close();
         }
     }
 }

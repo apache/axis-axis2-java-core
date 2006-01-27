@@ -309,7 +309,6 @@ public class AxisService extends AxisDescription {
 
     public void printPolicy(OutputStream out) throws AxisFault {
         PolicyUtil.writePolicy(getPolicyInclude(), out);
-        schema.write(out);
     }
 
     public void printPolicy(OutputStream out, String operationName) throws AxisFault {
