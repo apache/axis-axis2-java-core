@@ -54,6 +54,7 @@ public interface DeploymentConstants {
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
+    
 
     String TAG_FLOW_OUT_FAULT = "Outfaultflow";    // faultflow start tag
     String TAG_FLOW_OUT = "outflow";         // outflow start tag
@@ -68,6 +69,8 @@ public interface DeploymentConstants {
     String TAG_CLASS_NAME = "class";
     String TAG_AFTER = "after";
     String TAG_BEFORE = "before";
+    String TAG_SUPPORTED_POLICY_NAMESPACES = "supported-policy-namespaces";
+    String TAG_NAMESPACES = "namespaces";
 
     // for parameters
     String ATTRIBUTE_NAME = "name";

@@ -68,6 +68,8 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     // Small description about the module
     private String moduleDescription;
 
+    private String[] supportedPolicyNames;
+    
     /**
      * Constructor ModuleDescription.
      */
@@ -251,6 +253,14 @@ public class AxisModule implements FlowInclude, ParameterInclude {
 
     public void setModuleDescription(String moduleDescription) {
         this.moduleDescription = moduleDescription;
+    }
+    
+    public String[] getSupportedPolicyNamespaces() {
+    	return supportedPolicyNames; 
+    }
+    
+    public void setSupportedPolicyNamespaces(String[] supportedPolicyNamespaces) {
+    	this.supportedPolicyNames = supportedPolicyNamespaces;
     }
 
     public String getFileName() {

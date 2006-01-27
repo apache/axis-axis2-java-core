@@ -25,7 +25,7 @@ import org.apache.ws.policy.util.PolicyRegistry;
 
 public class PolicyInclude {
 
-	public static final String ANON_POLICY = "anonymous";
+	public static final int ANON_POLICY = 100;
 
 	public static final int AXIS_POLICY = 1;
 	
@@ -97,7 +97,9 @@ public class PolicyInclude {
 	}
 
 	public void setPolicy(Policy policy) {
-		this.policy = policy;
+		wrapperElements = new ArrayList();
+		Wrapper wrapper = new Wrapper(PolicyInclude.ANON_POLICY, policy);
+		wrapperElements.add(wrapper);
 	}
 	
 	public void setEffectivePolicy(Policy effectivePolicy) {
@@ -144,10 +146,8 @@ public class PolicyInclude {
 			result = (result == null) ? (Policy) p.normalize(reg)
 					: (Policy) result.merge(p, reg);
 		}
-		setPolicy(result);
+		this.policy = result;
 		useCacheP(true);
-		
-		calculateEffectivePolicy();
 	}
 
 	private void calculateEffectivePolicy() {
@@ -160,7 +160,13 @@ public class PolicyInclude {
 				result = getPolicy();
 				
 			} else {
-				result = (Policy) parentPolicy.merge(getPolicy(), reg);
+				
+				if (getPolicy() != null) {
+					result = (Policy) parentPolicy.merge(getPolicy(), reg);
+					
+				} else {
+					result = parentPolicy;
+				}
 			}
 			
 		} else {
@@ -182,7 +188,8 @@ public class PolicyInclude {
 	public Policy getEffectivePolicy() {
 		
 		if (! useCacheE) {
-			calculateEffectivePolicy();			
+			calculateEffectivePolicy();		
+			useCacheE(true);
 		}
 		return effectivePolicy;
 	}

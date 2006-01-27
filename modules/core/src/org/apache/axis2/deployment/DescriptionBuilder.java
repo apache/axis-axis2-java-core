@@ -202,6 +202,17 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         return flow;
     }
+    
+    protected String[] processSupportedPolicyNamespaces(OMElement supportedPolicyElements) {
+    	OMAttribute namespaces = supportedPolicyElements.getAttribute(new QName(TAG_NAMESPACES));
+    	if (namespaces != null) {
+    		String value = namespaces.getAttributeValue();
+    		if (! value.trim().equals("")) {
+    			return value.split(" ");    			
+    		}
+    	}
+    	return null;
+    }
 
     /**
      * Processes Handler element.

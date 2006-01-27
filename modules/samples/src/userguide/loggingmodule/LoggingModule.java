@@ -37,4 +37,8 @@ public class LoggingModule implements Module {
     // shutdown the module
     public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
     }
+    
+    public String[] getPolicyNamespaces() {
+    	return null;	
+    }
 }

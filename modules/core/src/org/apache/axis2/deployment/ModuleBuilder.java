@@ -155,6 +155,14 @@ public class ModuleBuilder extends DescriptionBuilder {
             if (outFaultFlow != null) {
                 module.setFaultOutFlow(processFlow(outFaultFlow, module));
             }
+            
+            OMElement supportedPolicyNamespaces = moduleElement.getFirstChildWithName(new QName(TAG_SUPPORTED_POLICY_NAMESPACES));
+            
+            if (supportedPolicyNamespaces != null) {
+            	module.setSupportedPolicyNamespaces(processSupportedPolicyNamespaces(supportedPolicyNamespaces));
+            	
+            	System.out.println("done");
+            }
 
             // processing Operations
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
