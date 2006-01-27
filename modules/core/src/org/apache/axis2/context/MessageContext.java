@@ -48,6 +48,8 @@ public class MessageContext extends AbstractContext {
 
     public final static int OUT_FLOW = 2;
 
+    public static final String REMOTE_ADDR = "REMOTE_ADDR";
+
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
 
     /**
