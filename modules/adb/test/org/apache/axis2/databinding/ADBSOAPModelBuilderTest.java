@@ -77,6 +77,9 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         SOAPEnvelope env = builder.getEnvelope();
         env.build();
         
+        //A tiny hack 
+        env.toString();
+        
         StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(env.getXMLStreamReader(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         
         SOAPEnvelope envelope = builder2.getSOAPEnvelope();
