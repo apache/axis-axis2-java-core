@@ -1555,8 +1555,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         Iterator it = MEPtoClassMap.keySet().iterator();
         while (it.hasNext()) {
             Object key = it.next();
-            System.out.println("key = " + key);
-            System.out.println("infoHolder.getProperty(key) = " + infoHolder.getProperty(key));
 
             if (Boolean.TRUE.equals(infoHolder.getProperty(key))){
                 Element elt = addElement(doc, "messagereceiver", porttypeName + MEPtoSuffixMap.get(key), rootElement);
