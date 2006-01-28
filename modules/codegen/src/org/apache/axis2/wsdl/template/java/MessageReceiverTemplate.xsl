@@ -154,16 +154,16 @@
         try {
 
         // get the implementation class for the Web Service
-        Object obj = getTheImplementationObject(msgContext);
+        Object obj = getTheImplementationObject(inMessage);
 
         //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext, newMsgContext);
+        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, inMessage);
 
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
         org.apache.axis2.soap.SOAPEnvelope envelope = null;
         //Find the axisOperation that has been set by the Dispatch phase.
-        org.apache.axis2.description.AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+        org.apache.axis2.description.AxisOperation op = inMessage.getOperationContext().getAxisOperation();
         if (op == null) {
         throw new org.apache.axis2.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
         }
@@ -192,7 +192,7 @@
                     <xsl:choose>
                         <xsl:when test="$paramCount &gt; 0"> skel.<xsl:value-of select="@name"/>(
                             <xsl:for-each select="input/param[@location='body']">
-                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(msgContext.getEnvelope().getBody().getFirstElement(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
+                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(inMessage.getEnvelope().getBody().getFirstElement(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
                             </xsl:for-each>);
                         </xsl:when>
                         <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
