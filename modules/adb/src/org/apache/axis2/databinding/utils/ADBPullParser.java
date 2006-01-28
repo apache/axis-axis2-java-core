@@ -3,7 +3,6 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.OMStAXWrapper;
 import org.apache.axis2.om.impl.llom.EmptyOMLocation;
 
 import javax.xml.namespace.NamespaceContext;
@@ -12,10 +11,10 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.lang.reflect.Array;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -649,7 +648,9 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     public char[] getTextCharacters() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+        if (accessingChildPullParser) return childPullParser.getTextCharacters();
+        String text =  parserInformation != null ? parserInformation.getText() : "";
+        return text.toCharArray();
     }
 
     public int getTextCharacters(int i, char[] chars, int i1, int i2) throws XMLStreamException {
@@ -657,12 +658,14 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     public int getTextStart() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+        return 0;
 
     }
 
     public int getTextLength() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+        if (accessingChildPullParser) return childPullParser.getTextLength();
+        String text =  parserInformation != null ? parserInformation.getText() : "";
+        return text.length();
     }
 
     public String getEncoding() {

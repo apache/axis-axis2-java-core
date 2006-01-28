@@ -180,59 +180,6 @@ public class ADBPullParserTest extends XMLTestCase {
 
     }
 
-    private String getEventString(int eventCode) {
-        String event = "";
-
-        switch (eventCode) {
-            case 1 :
-                event = "START_ELEMENT";
-                break;
-            case 2 :
-                event = "END_ELEMENT";
-                break;
-            case 3 :
-                event = "PROCESSING_INSTRUCTION";
-                break;
-            case 4 :
-                event = "CHARACTERS";
-                break;
-            case 5 :
-                event = "COMMENT";
-                break;
-            case 6 :
-                event = "SPACE";
-                break;
-            case 7 :
-                event = "START_DOCUMENT";
-                break;
-            case 8 :
-                event = "END_DOCUMENT";
-                break;
-            case 9 :
-                event = "ENTITY_REFERENCE";
-                break;
-            case 10 :
-                event = "ATTRIBUTE";
-                break;
-            case 11 :
-                event = "DTD";
-                break;
-            case 12 :
-                event = "CDATA";
-                break;
-            case 13 :
-                event = "NAMESPACE";
-                break;
-            case 14 :
-                event = "NOTATION_DECLARATION";
-                break;
-            case 15 :
-                event = "ENTITY_DECLARATION";
-                break;
-        }
-        return event;
-    }
-
     public class DummyADBBean implements ADBBean {
         ArrayList propertyList = new ArrayList();
 
