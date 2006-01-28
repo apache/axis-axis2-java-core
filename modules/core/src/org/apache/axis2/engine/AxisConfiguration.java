@@ -521,6 +521,21 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
+    /**
+     * Service can start and stop , if once stop we can not acess that ,
+     * so we need a way to get the service even if service is not active
+     *
+     * @return AxisService
+     */
+    public AxisService getServiceForActivation(String serviceName) {
+        AxisService axisService = (AxisService) allservices.get(serviceName);
+        if (axisService != null) {
+            return axisService;
+        } else {
+            return null;
+        }
+    }
+
     // the class loder that become the parent of all the services
     public ClassLoader getServiceClassLoader() {
         return this.serviceClassLoader;
