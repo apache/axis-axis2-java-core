@@ -44,7 +44,7 @@
 
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
-        _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
+        _operations = new org.apache.axis2.description.OutInAxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
                 <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
@@ -156,7 +156,7 @@
                                     <xsl:for-each select="input/param[@location='header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -319,6 +319,14 @@
                 });
                         </xsl:otherwise>
                     </xsl:choose>
+
+          //org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
+        //if ( _operations[<xsl:value-of select="position()-1"/>].getMessageReceiver()==null &amp;&amp;  _operationClient.getOptions().isUseSeparateListener()) {
+           //_callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
+           // _operations[<xsl:value-of select="position()-1"/>].setMessageReceiver(
+           //         _callbackReceiver);
+        //}
+
            //execute the operation client
            _operationClient.execute(true);
 
