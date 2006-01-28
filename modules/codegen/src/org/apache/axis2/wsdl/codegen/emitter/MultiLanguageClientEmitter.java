@@ -880,7 +880,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param binding
      */
     private boolean loadOperations(WSDLInterface boundInterface, Document doc, Element rootElement, WSDLBinding binding) {
-        return loadOperations( boundInterface, doc,  rootElement,  null,null);
+        return loadOperations( boundInterface, doc,  rootElement, binding,null);
     }
     /**
      * @param boundInterface
