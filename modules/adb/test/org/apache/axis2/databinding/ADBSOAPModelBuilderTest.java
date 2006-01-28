@@ -16,21 +16,26 @@
 
 package org.apache.axis2.databinding;
 
-import org.apache.axis2.databinding.utils.ADBPullParser;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+
+import org.apache.axis2.databinding.utils.ADBPullParser;
+import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class ADBSOAPModelBuilderTest extends XMLTestCase {
     public void testSimpleArrayList() throws Exception {
@@ -55,6 +60,29 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         Document actualDom = newDocument(root.toString());
         assertXMLEqual(actualDom, expectedDOM);
     }
+    
+    public void testConvertToDOOM() {
+        
+        CreateAccountRequest request = new CreateAccountRequest();
+        ClientInfo clientInfo = new ClientInfo();
+        clientInfo.setName("bob");
+        clientInfo.setSsn("123456789");
+        request.setClientInfo(clientInfo);
+        request.setPassword("passwd");
+        
+        ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(request
+                .getPullParser(CreateAccountRequest.MY_QNAME),
+                OMAbstractFactory.getSOAP11Factory());
+        
+        SOAPEnvelope env = builder.getEnvelope();
+        env.build();
+        
+        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(env.getXMLStreamReader(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        
+        SOAPEnvelope envelope = builder2.getSOAPEnvelope();
+        envelope.build();
+    }
+    
 
     public class DummyADBBean implements ADBBean {
         ArrayList propertyList = new ArrayList();
@@ -87,4 +115,5 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         DocumentBuilder db = dbf.newDocumentBuilder();
         return db.parse(new ByteArrayInputStream(xml.getBytes()));
     }
+    
 }
