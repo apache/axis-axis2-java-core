@@ -47,7 +47,7 @@
         _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
-                <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">"
+                <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
                     __operation = new org.apache.axis2.description.OutOnlyAxisOperation();
                 </xsl:when>
                 <xsl:otherwise>

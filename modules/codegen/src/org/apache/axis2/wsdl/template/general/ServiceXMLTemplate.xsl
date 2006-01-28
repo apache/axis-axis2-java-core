@@ -10,25 +10,28 @@
     </xsl:template>
 
     <xsl:template match="interface">
-        <xsl:variable name="receiver"><xsl:value-of select="@messagereceiver"/></xsl:variable>
         <xsl:variable name="package"><xsl:value-of select="@classpackage"/></xsl:variable>
 
         <service>
             <xsl:attribute name="name"><xsl:value-of select="@servicename"/></xsl:attribute>
             <messageReceivers>
-                <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out">
-                        <xsl:choose>
-                            <xsl:when test="$package=''">
-                                <xsl:attribute name="class"><xsl:value-of select="$receiver"/></xsl:attribute>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:attribute name="class"><xsl:value-of select="$package"/>.<xsl:value-of select="$receiver"/>
-                                </xsl:attribute>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                </messageReceiver>
+                <xsl:for-each select="messagereceiver">
+                    <xsl:if test=".">
+                        <messageReceiver>
+                            <xsl:attribute name="mep"><xsl:value-of select="@mep"/></xsl:attribute>
+                            <xsl:choose>
+                                <xsl:when test="$package=''">
+                                    <xsl:attribute name="class"><xsl:value-of select="."/></xsl:attribute>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="class"><xsl:value-of select="$package"/>.<xsl:value-of select="."/></xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </messageReceiver>
+                    </xsl:if>
+                </xsl:for-each>
+             </messageReceivers>
 
-            </messageReceivers>
             <parameter name="ServiceClass" locked="false">
                 <xsl:choose>
                     <xsl:when test="$package=''">

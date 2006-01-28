@@ -47,6 +47,7 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPHeader;
 import org.apache.wsdl.extensions.SOAPOperation;
@@ -84,6 +85,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
     private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
 
+    private static Map MEPtoClassMap;
+    private static Map MEPtoSuffixMap;
+
     /**
      * Field constructorMap
      */
@@ -118,6 +122,18 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         constructorMap.put("java.util.Calendar", "java.util.Calendar.getInstance()");
         constructorMap.put("javax.xml.namespace.QName",
                 "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
+
+
+        //populate the MEP -> class map
+        MEPtoClassMap = new HashMap();
+        MEPtoClassMap.put(WSDLConstants.MEP_URI_IN_ONLY,"org.apache.axis2.receivers.AbstractInMessageReceiver");
+        MEPtoClassMap.put(WSDLConstants.MEP_URI_IN_OUT,"org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+
+        //populate the MEP -> suffix map
+        MEPtoSuffixMap = new HashMap();
+        MEPtoSuffixMap.put(WSDLConstants.MEP_URI_IN_ONLY,MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        MEPtoSuffixMap.put(WSDLConstants.MEP_URI_IN_OUT,MESSAGE_RECEIVER_SUFFIX + "InOut");
+        //register the other types as necessary
     }
 
     //~--- fields -------------------------------------------------------------
@@ -168,6 +184,21 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void addAttribute(Document document, String AttribName, String attribValue, Element element) {
         XSLTUtils.addAttribute(document, AttribName, attribValue, element);
     }
+
+    /**
+     * Utility method to add an attribute to a given element.
+     *
+     * @param document
+     * @param eltName
+     * @param eltValue
+     * @param element
+     */
+    protected Element addElement(Document document, String eltName, String eltValue, Element element) {
+        Element elt = XSLTUtils.addChildElement(document,eltName,element);
+        elt.appendChild(document.createTextNode(eltValue));
+        return elt;
+    }
+
 
     /**
      * Adds the endpoint to the document.
@@ -575,7 +606,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         return rootElement;
     }
 
-    protected Document createDocumentForMessageReceiver() {
+    protected Document createDocumentForMessageReceiver(String mep) {
+
         WSDLBinding binding = infoHolder.getBinding();
         WSDLInterface boundInterface = infoHolder.getPorttype();
         Document doc = getEmptyDocument();
@@ -585,9 +617,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         String localPart = getCoreClassName(boundInterface);
 
-        addAttribute(doc, "name", localPart + MESSAGE_RECEIVER_SUFFIX, rootElement);
+        addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
         addAttribute(doc, "skeletonname", localPart + SERVICE_CLASS_SUFFIX, rootElement);
-        addAttribute(doc, "basereceiver", "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver", rootElement);
+        addAttribute(doc, "basereceiver", (String)MEPtoClassMap.get(mep), rootElement);
         fillSyncAttributes(doc, rootElement);
 
         // ###########################################################################################
@@ -606,8 +638,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // #############################################################################################
 
-        loadOperations(boundInterface, doc, rootElement, null);
+        boolean isOpsFound = loadOperations(boundInterface, doc, rootElement, null,mep);
 
+        //put the result in the property map
+        infoHolder.putProperty(mep,isOpsFound?Boolean.TRUE:Boolean.FALSE);
         // ///////////////////////
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
 
@@ -683,14 +717,17 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             updateMapperForMessageReceiver(wsInterface);
         }
 
+        // Note  -  thsi order is very important
         // write skeleton
         writeSkeleton();
+
+         // write a MessageReceiver for this particular service.
+        writeMessageReceiver();
 
         // write service xml
         writeServiceXml();
 
-        // write a MessageReceiver for this particular service.
-        writeMessageReceiver();
+
 
         // write the ant build if not asked for all
         if (!configuration.isGenerateAll()) {
@@ -842,43 +879,100 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param rootElement
      * @param binding
      */
-    private void loadOperations(WSDLInterface boundInterface, Document doc, Element rootElement, WSDLBinding binding) {
+    private boolean loadOperations(WSDLInterface boundInterface, Document doc, Element rootElement, WSDLBinding binding) {
+        return loadOperations( boundInterface, doc,  rootElement,  null,null);
+    }
+    /**
+     * @param boundInterface
+     * @param doc
+     * @param rootElement
+     * @param binding
+     *
+     * @return operations found
+     */
+    private boolean loadOperations(WSDLInterface boundInterface,
+                                   Document doc,
+                                   Element rootElement,
+                                   WSDLBinding binding,
+                                   String mep) {
         Collection col = boundInterface.getOperations().values();
         String portTypeName = getCoreClassName(boundInterface);
         Element methodElement;
-        WSDLOperation operation;
-
+        WSDLOperation operation = null;
+        boolean opsFound = false;
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            List soapHeaderInputParameterList = new ArrayList();
-            List soapHeaderOutputParameterList = new ArrayList();
-
             operation = (WSDLOperation) iterator.next();
-            methodElement = doc.createElement("method");
+            if (mep==null){
+                //at this point we know it's true
+                opsFound = true;
 
-            String localPart = operation.getName().getLocalPart();
+                List soapHeaderInputParameterList = new ArrayList();
+                List soapHeaderOutputParameterList = new ArrayList();
+                methodElement = doc.createElement("method");
+                String localPart = operation.getName().getLocalPart();
 
-            addAttribute(doc, "name", localPart, methodElement);
-            addAttribute(doc, "namespace", operation.getName().getNamespaceURI(), methodElement);
-            addAttribute(doc, "style", operation.getStyle(), methodElement);
-            addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
-                    methodElement);
-            addAttribute(doc, "mep", operation.getMessageExchangePattern(), methodElement);
+                addAttribute(doc, "name", localPart, methodElement);
+                addAttribute(doc, "namespace", operation.getName().getNamespaceURI(), methodElement);
+                addAttribute(doc, "style", operation.getStyle(), methodElement);
+                addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                        methodElement);
 
-            if (null != binding) {
-                WSDLBindingOperation bindingOperation = binding.getBindingOperation(operation.getName());
+                addAttribute(doc, "mep", operation.getMessageExchangePattern(), methodElement);
 
-                // todo This can be a prob !!!!!
-                if (bindingOperation != null) {
-                    addSOAPAction(doc, methodElement, bindingOperation);
-                    addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
-                    addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
+                if (null != binding) {
+                    WSDLBindingOperation bindingOperation = binding.getBindingOperation(operation.getName());
+
+                    // todo This can be a prob !!!!!
+                    if (bindingOperation != null) {
+                        addSOAPAction(doc, methodElement, bindingOperation);
+                        addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
+                        addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
+                    }
+                }
+
+                methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));
+                methodElement.appendChild(getOutputElement(doc, operation, soapHeaderOutputParameterList));
+                rootElement.appendChild(methodElement);
+                //////////////////////
+            }else{
+                //mep is present - we move ahead only if the given mep matches the mep of this operation
+
+                if (mep.equals(operation.getMessageExchangePattern())){
+                    //at this point we know it's true
+                    opsFound = true;
+                    List soapHeaderInputParameterList = new ArrayList();
+                    List soapHeaderOutputParameterList = new ArrayList();
+                    methodElement = doc.createElement("method");
+                    String localPart = operation.getName().getLocalPart();
+
+                    addAttribute(doc, "name", localPart, methodElement);
+                    addAttribute(doc, "namespace", operation.getName().getNamespaceURI(), methodElement);
+                    addAttribute(doc, "style", operation.getStyle(), methodElement);
+                    addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                            methodElement);
+
+                    addAttribute(doc, "mep", operation.getMessageExchangePattern(), methodElement);
+
+                    if (null != binding) {
+                        WSDLBindingOperation bindingOperation = binding.getBindingOperation(operation.getName());
+
+                        // todo This can be a prob !!!!!
+                        if (bindingOperation != null) {
+                            addSOAPAction(doc, methodElement, bindingOperation);
+                            addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
+                            addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
+                        }
+                    }
+
+                    methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));
+                    methodElement.appendChild(getOutputElement(doc, operation, soapHeaderOutputParameterList));
+                    rootElement.appendChild(methodElement);
+                    //////////////////////
                 }
             }
-
-            methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));
-            methodElement.appendChild(getOutputElement(doc, operation, soapHeaderOutputParameterList));
-            rootElement.appendChild(methodElement);
         }
+
+        return opsFound;
     }
 
     /**
@@ -1144,12 +1238,20 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected void writeMessageReceiver() throws Exception {
         if (configuration.isWriteMessageReceiver()) {
-            Document classModel = createDocumentForMessageReceiver();
-            MessageReceiverWriter writer =
-                    new MessageReceiverWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
-                            this.configuration.getOutputLanguage());
+            //loop through the meps and generate code for each mep
+            Iterator it = MEPtoClassMap.keySet().iterator();
+            while (it.hasNext()) {
+                String mep = (String) it.next();
+                Document classModel = createDocumentForMessageReceiver(mep);
+                //write the class only if any methods are found
+                if (infoHolder.getProperty(mep).equals(Boolean.TRUE)) {
+                    MessageReceiverWriter writer =
+                            new MessageReceiverWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
+                                    this.configuration.getOutputLanguage());
 
-            writeClass(classModel, writer);
+                    writeClass(classModel, writer);
+                }
+            }
         }
     }
 
@@ -1441,16 +1543,30 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @return Returns Element.
      */
     private Element getServiceElement(String serviceName, String porttypeName, Document doc,
-                                      WSDLInterface boundInterface, WSDLBinding axisBinding) {
+                                      WSDLInterface boundInterface, WSDLBinding axisBinding
+    ) {
         Element rootElement = doc.createElement("interface");
 
         addAttribute(doc, "package", "", rootElement);
         addAttribute(doc, "classpackage", configuration.getPackageName(), rootElement);
         addAttribute(doc, "name", porttypeName + SERVICE_CLASS_SUFFIX, rootElement);
         addAttribute(doc, "servicename", serviceName, rootElement);
-        addAttribute(doc, "messagereceiver", porttypeName + MESSAGE_RECEIVER_SUFFIX, rootElement);
-        fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement, axisBinding);
+
+        Iterator it = MEPtoClassMap.keySet().iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+            System.out.println("key = " + key);
+            System.out.println("infoHolder.getProperty(key) = " + infoHolder.getProperty(key));
+
+            if (Boolean.TRUE.equals(infoHolder.getProperty(key))){
+                Element elt = addElement(doc, "messagereceiver", porttypeName + MEPtoSuffixMap.get(key), rootElement);
+                addAttribute(doc,"mep",key.toString(),elt);
+            }
+
+        }
+
+//        fillSyncAttributes(doc, rootElement);
+//        loadOperations(boundInterface, doc, rootElement, axisBinding);
 
         return rootElement;
     }
@@ -1493,6 +1609,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         private WSDLInterface porttype;
         private WSDLService service;
 
+        private HashMap propertyMap = new HashMap();
+
+        public void putProperty(Object key,Object val){
+            propertyMap.put(key,val);
+        }
+
+        public Object getProperty(Object key){
+            return propertyMap.get(key);
+        }
         //~--- get methods ----------------------------------------------------
 
         public WSDLBinding getBinding() {
@@ -1529,4 +1654,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             this.service = service;
         }
     }
+
+
 }
