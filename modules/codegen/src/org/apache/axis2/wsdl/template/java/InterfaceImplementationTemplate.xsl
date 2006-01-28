@@ -320,12 +320,12 @@
                         </xsl:otherwise>
                     </xsl:choose>
 
-          //org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
-        //if ( _operations[<xsl:value-of select="position()-1"/>].getMessageReceiver()==null &amp;&amp;  _operationClient.getOptions().isUseSeparateListener()) {
-           //_callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-           // _operations[<xsl:value-of select="position()-1"/>].setMessageReceiver(
-           //         _callbackReceiver);
-        //}
+          org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
+        if ( _operations[<xsl:value-of select="position()-1"/>].getMessageReceiver()==null &amp;&amp;  _operationClient.getOptions().isUseSeparateListener()) {
+           _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
+          _operations[<xsl:value-of select="position()-1"/>].setMessageReceiver(
+                    _callbackReceiver);
+        }
 
            //execute the operation client
            _operationClient.execute(true);
