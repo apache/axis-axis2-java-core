@@ -30,7 +30,9 @@ public class ADBSOAPModelBuilder extends StAXOMBuilder {
         body.setBuilder(this);
         lastNode = body;
 
+        ((OMNodeEx)envelope).setComplete(false);
         ((OMNodeEx)body).setComplete(false);
+        
     }
 
     long count = -1;
@@ -45,6 +47,7 @@ public class ADBSOAPModelBuilder extends StAXOMBuilder {
             if(!parser.hasNext()) {
                 done = true;
                 ((OMNodeEx)body).setComplete(true);
+                ((OMNodeEx)envelope).setComplete(true);
             }
         } catch (XMLStreamException e) {
             throw new OMException(e);
