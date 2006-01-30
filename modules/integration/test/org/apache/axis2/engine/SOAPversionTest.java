@@ -19,9 +19,13 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -31,7 +35,9 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 
@@ -61,59 +67,90 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
     public void testSOAP11() throws AxisFault {
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
+        ConfigurationContext configCtx = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient client = new ServiceClient(configCtx, null);
+
+
         Options options = new Options();
-        inOutMEPClient.setClientOptions(options);
+        client.setOptions(options);
         options.setSoapVersionURI(
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        SOAPEnvelope result =
-                inOutMEPClient.invokeBlockingWithEnvelopeOut(
-                        operationName.getLocalPart(), payload);
+        OperationClient opClinet = client.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.addMessageContext(prepareTheSOAPEnvelope(payload, options));
+        opClinet.execute(true);
+
+        SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         assertEquals("SOAP Version received is not compatible",
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                 result.getNamespace().getName());
-        inOutMEPClient.close();
     }
 
     public void testSOAP12() throws AxisFault {
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
+        ConfigurationContext configCtx = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient client = new ServiceClient(configCtx, null);
         Options options = new Options();
-        inOutMEPClient.setClientOptions(options);
         options.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        client.setOptions(options);
 
-        SOAPEnvelope result =
-                inOutMEPClient.invokeBlockingWithEnvelopeOut(
-                        operationName.getLocalPart(), payload);
+        OperationClient opClinet = client.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.addMessageContext(prepareTheSOAPEnvelope(payload, options));
+        opClinet.execute(true);
+
+        SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         assertEquals("SOAP Version received is not compatible",
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                 result.getNamespace().getName());
+    }
 
+    private MessageContext prepareTheSOAPEnvelope(OMElement toSend, Options options) throws AxisFault {
+        MessageContext msgctx = new MessageContext();
+        SOAPFactory sf = getSOAPFactory(options);
+        SOAPEnvelope se = sf.getDefaultEnvelope();
+        if (toSend != null) {
+            se.getBody().addChild(toSend);
+        }
+        msgctx.setEnvelope(se);
+        return msgctx;
+    }
 
-        inOutMEPClient.close();
+    private SOAPFactory getSOAPFactory(Options options) {
+        String soapVersionURI = options.getSoapVersionURI();
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
+            return OMAbstractFactory.getSOAP12Factory();
+        } else {
+            // if its not SOAP 1.2 just assume SOAP 1.1
+            return OMAbstractFactory.getSOAP11Factory();
+        }
     }
 
     public void testSOAPfault() throws AxisFault {
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
+        ConfigurationContext configCtx = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient client = new ServiceClient(configCtx, null);
         Options options = new Options();
-        inOutMEPClient.setClientOptions(options);
+        client.setOptions(options);
         options.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        inOutMEPClient.invokeBlockingWithEnvelopeOut(
-                operationName.getLocalPart(), payload);
+        OperationClient opClinet = client.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClinet.addMessageContext(prepareTheSOAPEnvelope(payload, options));
+        opClinet.execute(true);
+
+        opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
 //        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
 
-        inOutMEPClient.close();
     }
 
     private OMElement createEnvelope() {

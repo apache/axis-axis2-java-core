@@ -19,16 +19,17 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.engine.util.MyInOutMEPClient;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.*;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -36,11 +37,9 @@ import java.io.File;
 public class FaultHandlingTest extends TestCase implements TestConstants {
 
     protected String testResourceDir = "test-resources";
-    private MyInOutMEPClient inOutMEPClient;
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        inOutMEPClient = getMyInOutMEPClient();
     }
 
     public void testTwoHeadersSOAPMessage() throws AxisFault, XMLStreamException {
@@ -82,8 +81,21 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
     }
 
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
-        inOutMEPClient.getClientOptions().setExceptionToBeThrownOnSOAPFault(false);
-        return inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
+        ConfigurationContext confctx = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient client = new ServiceClient(confctx, null);
+        Options options = new Options();
+        client.setOptions(options);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setExceptionToBeThrownOnSOAPFault(false);
+        MessageContext msgctx = new MessageContext();
+        msgctx.setEnvelope(inEnvelope);
+        OperationClient opClient = client.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClient.addMessageContext(msgctx);
+        opClient.execute(true);
+        return opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
     }
 
     private SOAPEnvelope getTwoHeadersSOAPEnvelope(SOAPFactory fac) {
@@ -94,23 +106,12 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         return soapEnvelope;
     }
 
-    private MyInOutMEPClient getMyInOutMEPClient() throws AxisFault {
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
-        Options options = new Options();
-        inOutMEPClient.setClientOptions(options);
-        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        return inOutMEPClient;
-    }
-
     public File getTestResourceFile(String relativePath) {
         return new File(testResourceDir, relativePath);
     }
 
     protected void tearDown() throws Exception {
         UtilServer.stop();
-        inOutMEPClient.close();
     }
 
 }

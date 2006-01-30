@@ -25,11 +25,13 @@ public class InOnlyAxisOperation extends AxisOperation {
     public InOnlyAxisOperation() {
         super();
         createMessage();
+        setMessageExchangePattern(WSDLConstants.MEP_URI_IN_ONLY);
     }
 
     public InOnlyAxisOperation(QName name) {
         super(name);
         createMessage();
+        setMessageExchangePattern(WSDLConstants.MEP_URI_IN_ONLY);
     }
 
     public void addMessage(AxisMessage message, String label) {

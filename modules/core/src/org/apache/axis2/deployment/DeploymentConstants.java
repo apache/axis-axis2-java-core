@@ -75,8 +75,6 @@ public interface DeploymentConstants {
     // for parameters
     String ATTRIBUTE_NAME = "name";
     String TARGET_NAME_SPACE = "targetNamespace";
-    String TARGET_NAME_SPACE_PREFIX = "namespacePrefix";
-    String SCHEMA_NAME_SPACE_PREFIX = "namespacePrefix";
     String SCHEMA_NAME_SPACE = "schemaNamespace";
     String SCHEMA = "schema";
 

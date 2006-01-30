@@ -110,7 +110,8 @@ public class Java2WSDLBuilder {
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
-        SchemaGenerator sg = new SchemaGenerator(classLoader, className, schemaTargetNamespace, schemaTargetNamespacePrefix);
+        SchemaGenerator sg = new SchemaGenerator(classLoader, className,
+                schemaTargetNamespace, schemaTargetNamespacePrefix);
         XmlSchema schema = sg.generateSchema();
         WSDLDescription wommodel = new Java2WOMBuilder(
                 sg.getTypeTable(),

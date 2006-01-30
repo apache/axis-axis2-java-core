@@ -1,9 +1,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.OperationClient;
@@ -14,13 +11,16 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 public class OutOnlyAxisOperation extends AxisOperation {
     private AxisMessage inFaultMessage;
@@ -35,11 +35,13 @@ public class OutOnlyAxisOperation extends AxisOperation {
     public OutOnlyAxisOperation() {
         super();
         createMessage();
+        setMessageExchangePattern(WSDLConstants.MEP_URI_OUT_ONLY);
     }
 
     public OutOnlyAxisOperation(QName name) {
         super(name);
         createMessage();
+        setMessageExchangePattern(WSDLConstants.MEP_URI_OUT_ONLY);
     }
 
     public void addMessage(AxisMessage message, String label) {

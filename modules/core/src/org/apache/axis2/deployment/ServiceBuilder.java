@@ -98,17 +98,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setTargetNamespace(nameSpeceVale);
                 }
             }
-
-            //Setting service tratget namespace prefix if any
-            OMAttribute targetNameSpaceprfix = service_element.
-                    getAttribute(new QName(TARGET_NAME_SPACE_PREFIX));
-            if (targetNameSpaceprfix != null) {
-                String prefix = targetNameSpace.getAttributeValue();
-                if (prefix != null && !"".equals(prefix)) {
-                    service.setTargetNamespacePrefix(prefix);
-                }
-            }
-
             //Setting schema namespece if any
             OMElement scheamElement = service_element.getFirstChildWithName(new QName(SCHEMA));
             if (scheamElement != null) {
@@ -118,15 +107,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String nameSpeceVale = schemaNameSpace.getAttributeValue();
                     if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
                         service.setSchematargetNamespace(nameSpeceVale);
-                    }
-                }
-
-                OMAttribute scheamNameSpaceprfix = service_element.
-                        getAttribute(new QName(SCHEMA_NAME_SPACE_PREFIX));
-                if (scheamNameSpaceprfix != null) {
-                    String prefix = scheamNameSpaceprfix.getAttributeValue();
-                    if (prefix != null && !"".equals(prefix)) {
-                        service.setSchematargetNamespacePrefix(prefix);
                     }
                 }
             }
