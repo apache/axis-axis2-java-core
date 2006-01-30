@@ -6,6 +6,7 @@ import org.apache.axis2.wsdl.util.WSDL2JavaOptionsValidator;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.Java2WSDLCodegenEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -32,21 +33,32 @@ public class Java2WSDL {
         try {
             new Java2WSDLCodegenEngine(commandLineOptionParser.getAllOptions()).generate();
         } catch (CodeGenerationException e) {
-            e.printStackTrace();
-            System.out.println("An error occured during codegen");//todo i18n this
+            System.out.println(CodegenMessages.getMessage("java2wsdl.generalError") + e.getMessage());
         }
     }
 
     public static void printUsage(){
-        //todo fill this
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg1"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg2"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg3"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg4"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg5"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg6"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg7"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg8"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg9"));
+        System.out.println(CodegenMessages.getMessage("java2wsdl.arg10"));
+
+        System.exit(0);
     }
 
 
     private static void validateCommandLineOptions(
-               CommandLineOptionParser parser) {
-           if (parser.getInvalidOptions(new Java2WSDLOptionsValidator()).size() > 0)
-               printUsage();
+            CommandLineOptionParser parser) {
+        if (parser.getInvalidOptions(new Java2WSDLOptionsValidator()).size() > 0){
+            printUsage();
+        }
 
-       }
+    }
 
 }

@@ -3,6 +3,7 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.wsdl.builder.Java2WSDLBuilder;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -46,14 +47,14 @@ public class Java2WSDLCodegenEngine implements CommandLineOptionConstants {
         if (!outputFolder.exists()){
             outputFolder.mkdir();
         }else  if(!outputFolder.isDirectory()){
-            throw new CodeGenerationException(""); //todo put the messages here - not a folder
+            throw new CodeGenerationException(CodegenMessages.getMessage("java2wsdl.notAFolder",outputFolderName));
         }
 
         option = loadOption(Java2WSDLConstants.CLASSNAME_OPTION,Java2WSDLConstants.CLASSNAME_OPTION_LONG,optionsMap);
         String className =option==null?null:option.getOptionValue();
 
         if (className==null || className.equals("")){
-            throw new CodeGenerationException(""); //todo put the messages here - a class is a must
+            throw new CodeGenerationException(CodegenMessages.getMessage("java2wsdl.classIsMust"));
         }
 
         option = loadOption(Java2WSDLConstants.OUTPUT_FILENAME_OPTION,

@@ -26,7 +26,6 @@ public class Java2WSDLOptionsValidator implements OptionsValidator,CommandLineOp
         } else{
             invalid = !((Java2WSDLConstants.CLASSNAME_OPTION).equalsIgnoreCase(optionType) ||
                        Java2WSDLConstants.OUTPUT_LOCATION_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.CLASSNAME_OPTION.equalsIgnoreCase(optionType) ||
                        Java2WSDLConstants.CLASSPATH_OPTION.equalsIgnoreCase(optionType) ||
                        Java2WSDLConstants.TARGET_NAMESPACE_OPTION.equalsIgnoreCase(optionType) ||
                        Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION.equalsIgnoreCase(optionType) ||
