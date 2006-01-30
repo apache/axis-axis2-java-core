@@ -17,6 +17,7 @@
 package org.apache.axis2.databinding;
 
 import org.apache.axis2.databinding.utils.ADBPullParser;
+import org.apache.axis2.databinding.utils.PrintEvents;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.DOOMAbstractFactory;
@@ -32,8 +33,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 public class ADBSOAPModelBuilderTest extends XMLTestCase {
@@ -59,50 +63,79 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         Document actualDom = newDocument(root.toString());
         assertXMLEqual(actualDom, expectedDOM);
     }
-    
-    public void testConvertToDOOM() throws Exception {
-        
-        CreateAccountRequest request = new CreateAccountRequest();
-        ClientInfo clientInfo = new ClientInfo();
-        clientInfo.setName("bob");
-        clientInfo.setSsn("123456789");
-        request.setClientInfo(clientInfo);
-        request.setPassword("passwd");
-        
-        ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(request
-                .getPullParser(CreateAccountRequest.MY_QNAME),
-                OMAbstractFactory.getSOAP11Factory());
-        
-        SOAPEnvelope env = builder.getEnvelope();
-        env.build();
-        
-        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(env.getXMLStreamReader(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        SOAPEnvelope envelope = builder2.getSOAPEnvelope();
-        envelope.build();
-        
-        envelope.serialize(System.out);
+
+    public void testPrintEvents() throws Exception {
+        XMLStreamReader r = getTestEnvelope().getXMLStreamReader();
+        PrintEvents.print(r);
     }
     
-    public void testConvertToDOOM2() throws Exception {
+    public void testPrintEvents2() throws Exception {
+        //TODO: FIXME. Check the output difference between this method and the testPrintEvents method
+        XMLStreamReader r = getTestEnvelope().getXMLStreamReaderWithoutCaching();
+        PrintEvents.print(r);
+    }
+
+    public void testConvertToDOOM() throws Exception {
+        String xml = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><ns1:createAccountRequest xmlns:ns1=\"http://www.wso2.com/types\"><ns1:clientinfo><name xmlns=\"\">bob</name><ssn xmlns=\"\">123456789</ssn></ns1:clientinfo><password xmlns=\"\">passwd</password></ns1:createAccountRequest></soapenv:Body></soapenv:Envelope>";
+
+        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(getTestEnvelope().getXMLStreamReader(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        SOAPEnvelope envelope = builder2.getSOAPEnvelope();
+        envelope.build();
         
+        StringWriter writer = new StringWriter();
+        envelope.serialize(writer);
+        writer.flush();
+        
+        XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(writer.toString()));
+        PrintEvents.print(r);
+        
+        assertXMLEqual(writer.toString(),xml);
+    }
+
+    private SOAPEnvelope getTestEnvelope() {
         CreateAccountRequest request = new CreateAccountRequest();
         ClientInfo clientInfo = new ClientInfo();
         clientInfo.setName("bob");
         clientInfo.setSsn("123456789");
         request.setClientInfo(clientInfo);
         request.setPassword("passwd");
-        
+
         ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(request
                 .getPullParser(CreateAccountRequest.MY_QNAME),
                 OMAbstractFactory.getSOAP11Factory());
-        
+
+        return builder.getEnvelope();
+    }
+
+    public void testConvertToDOOM2() throws Exception {
+        String xml = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><ns1:createAccountRequest xmlns:ns1=\"http://www.wso2.com/types\"><ns1:clientinfo><name xmlns=\"\">bob</name><ssn xmlns=\"\">123456789</ssn></ns1:clientinfo><password xmlns=\"\">passwd</password></ns1:createAccountRequest></soapenv:Body></soapenv:Envelope>";
+
+        CreateAccountRequest request = new CreateAccountRequest();
+        ClientInfo clientInfo = new ClientInfo();
+        clientInfo.setName("bob");
+        clientInfo.setSsn("123456789");
+        request.setClientInfo(clientInfo);
+        request.setPassword("passwd");
+
+        ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(request
+                .getPullParser(CreateAccountRequest.MY_QNAME),
+                OMAbstractFactory.getSOAP11Factory());
+
         SOAPEnvelope env = builder.getEnvelope();
-        
-        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(env.getXMLStreamReaderWithoutCaching(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
+        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(getTestEnvelope().getXMLStreamReaderWithoutCaching(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         SOAPEnvelope envelope = builder2.getSOAPEnvelope();
         envelope.build();
-        
-        envelope.serialize(System.out);
+
+        StringWriter writer = new StringWriter();
+        envelope.serialize(writer);
+        writer.flush();
+
+        XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(writer.toString()));
+        PrintEvents.print(r);
+
+        //TODO: FIXME. Simpler test in testPrintEvents2 
+        //assertXMLEqual(writer.toString(),xml);
     }
 
     public class DummyADBBean implements ADBBean {
