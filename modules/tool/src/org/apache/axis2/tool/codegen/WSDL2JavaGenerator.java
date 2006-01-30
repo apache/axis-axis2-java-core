@@ -67,66 +67,66 @@ public class WSDL2JavaGenerator {
     {
        Map optionMap = new HashMap();
        //WSDL file name
-       optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, new CommandLineOption(
-          CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, getStringArray(WSDLURI)));
+       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION, new CommandLineOption(
+    		   CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION, getStringArray(WSDLURI)));
        
        //Async only
        if (isAyncOnly)
        {
-          optionMap.put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION, new CommandLineOption(
-             CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION, new String[0]));
+          optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION, new CommandLineOption(
+        		  CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION, new String[0]));
        }
        //sync only
        if (isSyncOnly)
        {
-          optionMap.put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION, new CommandLineOption(
-             CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION, new String[0]));
+          optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION, new CommandLineOption(
+        		  CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION, new String[0]));
        }
        //serverside
        if (isServerSide)
        {
-          optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION, new CommandLineOption(
-             CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION, new String[0]));
+          optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION, new CommandLineOption(
+        		  CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION, new String[0]));
           //server xml
           if (isServerXML)
           {
-             optionMap.put(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new CommandLineOption(
-                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new String[0]));
+             optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new CommandLineOption(
+            		 CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new String[0]));
           }
           if (isGenerateAll){
-              optionMap.put(CommandLineOptionConstants.GENERATE_ALL_OPTION, new CommandLineOption(
-                      CommandLineOptionConstants.GENERATE_ALL_OPTION, new String[0]));
+              optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION, new CommandLineOption(
+            		  CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION, new String[0]));
           }
        }
        //test case
        if (isTestCase)
        {
-          optionMap.put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION, new CommandLineOption(
-             CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION, new String[0]));
+          optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, new CommandLineOption(
+        		  CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, new String[0]));
        }
        //package name
-       optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION, new CommandLineOption(
-          CommandLineOptionConstants.PACKAGE_OPTION, getStringArray(packageName)));
+       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION, new CommandLineOption(
+    		   CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION, getStringArray(packageName)));
        //selected language
-       optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION, new CommandLineOption(
-          CommandLineOptionConstants.STUB_LANGUAGE_OPTION, getStringArray(mapLanguagesWithCombo(selectedLanguage))));
+       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION, new CommandLineOption(
+    		   CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION, getStringArray(mapLanguagesWithCombo(selectedLanguage))));
        //output location
-       optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, new CommandLineOption(
-          CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, getStringArray(outputLocation)));
+       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, new CommandLineOption(
+    		   CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, getStringArray(outputLocation)));
        
       //databinding
-       optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
-               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(databindingName)));
+       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
+    		   CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, getStringArray(databindingName)));
        
        //port name
        if (portName!=null){
-	       optionMap.put(CommandLineOptionConstants.PORT_NAME_OPTION, new CommandLineOption(
-	               CommandLineOptionConstants.PORT_NAME_OPTION, getStringArray(portName)));
+	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION, new CommandLineOption(
+	    		   CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION, getStringArray(portName)));
        }
        //service name
        if (serviceName!= null){
-	       optionMap.put(CommandLineOptionConstants.SERVICE_NAME_OPTION, new CommandLineOption(
-	               CommandLineOptionConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
+	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, new CommandLineOption(
+	    		   CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
        }
        return optionMap;
        
@@ -156,7 +156,6 @@ public class WSDL2JavaGenerator {
     } catch (WSDLException e) {
        throw e;
     } catch (Exception e){
-        e.printStackTrace();
         throw new RuntimeException(e);
     }
     
