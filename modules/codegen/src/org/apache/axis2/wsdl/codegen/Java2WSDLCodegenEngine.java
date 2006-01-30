@@ -5,7 +5,13 @@ import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 
 import java.util.Map;
+import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,12 +31,11 @@ import java.io.File;
 public class Java2WSDLCodegenEngine implements CommandLineOptionConstants {
 
     private Java2WSDLBuilder java2WsdlBuilder;
+    public static final String WSDL_FILENAME_SUFFIX = ".wsdl";
 
     public Java2WSDLCodegenEngine(Map optionsMap) throws CodeGenerationException {
-
-
         //create a new  Java2WSDLBuilder and populate it
-        File outputFolder = null;
+        File outputFolder;
 
         CommandLineOption option = loadOption(Java2WSDLConstants.OUTPUT_LOCATION_OPTION,
                 Java2WSDLConstants.OUTPUT_LOCATION_OPTION_LONG,optionsMap);
@@ -38,46 +43,132 @@ public class Java2WSDLCodegenEngine implements CommandLineOptionConstants {
 
 
         outputFolder = new File(outputFolderName);
-        if(!outputFolder.isDirectory()){
+        if (!outputFolder.exists()){
+            outputFolder.mkdir();
+        }else  if(!outputFolder.isDirectory()){
             throw new CodeGenerationException(""); //todo put the messages here - not a folder
         }
 
         option = loadOption(Java2WSDLConstants.CLASSNAME_OPTION,Java2WSDLConstants.CLASSNAME_OPTION_LONG,optionsMap);
         String className =option==null?null:option.getOptionValue();
+
         if (className==null || className.equals("")){
-             throw new CodeGenerationException(""); //todo put the messages here - a class is a must
+            throw new CodeGenerationException(""); //todo put the messages here - a class is a must
         }
 
         option = loadOption(Java2WSDLConstants.OUTPUT_FILENAME_OPTION,
                 Java2WSDLConstants.OUTPUT_FILENAME_OPTION_LONG,optionsMap);
         String outputFileName = option==null?null:option.getOptionValue();
-        //derive a file name from the class name
+        //derive a file name from the class name if the filename is not specified
         if (outputFileName==null){
-         outputFileName = getSimpleClassName(className);
+            outputFileName = getSimpleClassName(className)+WSDL_FILENAME_SUFFIX;
         }
 
         //first create a file in the given location
         File outputFile = new File(outputFolder,outputFileName);
+        FileOutputStream out;
+        try {
+            if (!outputFile.exists()){
+                outputFile.createNewFile();
+            }
+            out = new FileOutputStream(outputFile);
+        } catch (IOException e) {
+            throw new CodeGenerationException(e);
+        }
 
         //if the class path is present, create a URL class loader with those
-        //class path entries present. if not just take the
+        //class path entries present. if not just take the  TCCL
+        option = loadOption(Java2WSDLConstants.CLASSPATH_OPTION,
+                Java2WSDLConstants.CLASSPATH_OPTION_LONG,optionsMap);
 
+        ClassLoader classLoader;
+
+        if (option != null){
+            ArrayList optionValues = option.getOptionValues();
+            URL[] urls= new URL[optionValues.size()];
+            String[] classPathEntries = (String[])optionValues.toArray(new String[optionValues.size()]);
+
+            try {
+                for (int i = 0; i < classPathEntries.length; i++) {
+                    String classPathEntry = classPathEntries[i];
+                    //this should be a file(or a URL)
+                    if (isURL(classPathEntry)) {
+                        urls[i] = new URL(classPathEntry);
+                    }else{
+                        urls[i]= new File(classPathEntry).toURL();
+                    }
+                }
+            } catch (MalformedURLException e) {
+                throw new CodeGenerationException(e);
+            }
+
+            classLoader = new URLClassLoader(urls);
+
+        }else{
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+
+        //Now we are done with loading the basic values - time to create the builder
+       java2WsdlBuilder = new Java2WSDLBuilder(out,
+                                               className,
+                                               classLoader);
+
+
+        //set the other parameters to the builder
+        option  = loadOption(Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION,
+                Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION_LONG,optionsMap);
+        java2WsdlBuilder.setSchemaTargetNamespace(option==null?null:option.getOptionValue());
+
+        option  = loadOption(Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,
+                Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION_LONG,optionsMap);
+        java2WsdlBuilder.setSchemaTargetNamespacePrefix(option==null?null:option.getOptionValue());
+
+        option  = loadOption(Java2WSDLConstants.TARGET_NAMESPACE_OPTION,
+                Java2WSDLConstants.TARGET_NAMESPACE_OPTION_LONG,optionsMap);
+        java2WsdlBuilder.setTargetNamespace(option==null?null:option.getOptionValue());
+
+        option  = loadOption(Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION,
+                Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION_LONG,optionsMap);
+        java2WsdlBuilder.setTargetNamespacePrefix(option==null?null:option.getOptionValue());
+
+          option  = loadOption(Java2WSDLConstants.SERVICE_NAME_OPTION,
+                Java2WSDLConstants.SERVICE_NAME_OPTION_LONG,optionsMap);
+        java2WsdlBuilder.setServiceName(option==null?getSimpleClassName(className):option.getOptionValue());
 
     }
 
     public void generate() throws CodeGenerationException {
-
+        try {
+            java2WsdlBuilder.generateWSDL();
+        } catch (Exception e) {
+            throw new CodeGenerationException(e);
+        }
     }
 
+    /**
+     * check the entry for a URL. This is a simple check and need to be improved
+     * @param entry
+     * @return
+     */
 
+    private boolean isURL(String entry){
+          return entry.startsWith("http://");
+    }
+    /**
+     *
+     * @param shortOption
+     * @param longOption
+     * @param options
+     * @return
+     */
     private  CommandLineOption loadOption(String shortOption, String longOption,Map options) {
         //short option gets precedence
         CommandLineOption option = null;
         if (longOption!=null){
-           option =(CommandLineOption)options.get(longOption);
-           if (option!=null) {
-               return option;
-           }
+            option =(CommandLineOption)options.get(longOption);
+            if (option!=null) {
+                return option;
+            }
         }
         if (shortOption!= null){
             option = (CommandLineOption)options.get(shortOption);
@@ -86,7 +177,7 @@ public class Java2WSDLCodegenEngine implements CommandLineOptionConstants {
         return option;
     }
 
-     /**
+    /**
      * A method to strip the fully qualified className to a simple classname
      * @param qualifiedName
      * @return

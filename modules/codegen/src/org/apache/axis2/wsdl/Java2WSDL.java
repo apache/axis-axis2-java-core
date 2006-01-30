@@ -32,6 +32,7 @@ public class Java2WSDL {
         try {
             new Java2WSDLCodegenEngine(commandLineOptionParser.getAllOptions()).generate();
         } catch (CodeGenerationException e) {
+            e.printStackTrace();
             System.out.println("An error occured during codegen");//todo i18n this
         }
     }

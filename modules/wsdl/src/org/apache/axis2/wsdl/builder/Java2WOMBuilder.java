@@ -61,6 +61,8 @@ public class Java2WOMBuilder {
     public static final String BINDING_NAME_SUFFIX = "Binding";
     public static final String PORT_TYPE_SUFFIX = "PortType";
     public static final String PORT_NAME_SUFFIX = "Port";
+    public static final String DEFAULT_TARGET_NAMESPACE = "http://ws.apache.org/axis2";
+    public static final String DEFAULT_TARGET_NAMESPACE_PREFIX = "axis2";
 
     public Java2WOMBuilder(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName,
                            String targetNamespace,
@@ -72,9 +74,13 @@ public class Java2WOMBuilder {
 
         if (targetNamespace != null && !targetNamespace.trim().equals("")) {
             this.targetNamespace = targetNamespace;
+        }else{
+             this.targetNamespace = DEFAULT_TARGET_NAMESPACE ;
         }
         if (targetNamespacePrefix != null && !targetNamespacePrefix.trim().equals("")) {
             this.targetNamespacePrefix = targetNamespacePrefix;
+        }else{
+            this.targetNamespacePrefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
         }
 
     }
