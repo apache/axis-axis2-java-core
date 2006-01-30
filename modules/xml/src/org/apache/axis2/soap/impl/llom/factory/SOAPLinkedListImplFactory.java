@@ -39,10 +39,15 @@ import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPMessageImpl;
 
 public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implements SOAPFactory {
+    public String getSoapVersionURI() {
+        throw new UnsupportedOperationException();
+    }
+
     public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
         return new SOAPMessageImpl(builder);
     }
 
+    
     public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
         return new SOAPMessageImpl(envelope, parserWrapper);
     }

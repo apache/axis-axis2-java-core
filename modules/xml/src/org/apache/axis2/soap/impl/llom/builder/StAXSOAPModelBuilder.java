@@ -134,7 +134,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         parseHeaders();
     }
 
-    private void identifySOAPVersion(String soapVersionURIFromTransport) {
+    protected void identifySOAPVersion(String soapVersionURIFromTransport) {
 
         SOAPEnvelope soapEnvelope = getSOAPEnvelope();
         if (soapEnvelope == null) {
@@ -164,7 +164,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         }
     }
 
-    private void parseHeaders() {
+    protected void parseHeaders() {
         // by the time execution comes here the nullity of SOAPEnvelope has been cheched in the
         // identifySOAPVersion() method. So not checking getSOAPEnvelope() == null here
         SOAPHeader soapHeader = getSOAPEnvelope().getHeader();

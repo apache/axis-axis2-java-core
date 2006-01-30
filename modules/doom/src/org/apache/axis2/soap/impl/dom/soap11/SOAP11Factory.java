@@ -48,7 +48,11 @@ public class SOAP11Factory extends DOMSOAPFactory {
 	public SOAP11Factory(DocumentImpl doc) {
 		super(doc);
 	}
-	
+
+    public String getSoapVersionURI() {
+        return SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+    }
+
     public SOAPEnvelope createSOAPEnvelope() {
         return new SOAPEnvelopeImpl(
                 new NamespaceImpl(

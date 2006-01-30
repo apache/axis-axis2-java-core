@@ -22,6 +22,9 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 
 
 public interface SOAPFactory extends OMFactory {
+    
+    public String getSoapVersionURI();
+    
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

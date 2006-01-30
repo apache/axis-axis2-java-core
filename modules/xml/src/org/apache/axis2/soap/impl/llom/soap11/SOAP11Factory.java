@@ -42,6 +42,10 @@ public class SOAP11Factory extends SOAPLinkedListImplFactory {
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
+    public String getSoapVersionURI() {
+        return SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+    }
+
     public SOAPEnvelope createSOAPEnvelope() {
         return new SOAPEnvelopeImpl(
                 new OMNamespaceImpl(

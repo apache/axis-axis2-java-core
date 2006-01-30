@@ -1,61 +1,87 @@
 package org.apache.axis2.databinding;
 
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPConstants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamException;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 /**
  * Builds a SOAPEnvelope around an ADB pull parser
  */
-public class ADBSOAPModelBuilder extends StAXOMBuilder {
-    private SOAPBody body;
-    private SOAPEnvelope envelope;
-    
+public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
     public ADBSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
-        super(factory, parser);
-
-        document = factory.createSOAPMessage(this);
-        envelope = factory.getDefaultEnvelope();
-        document.addChild(envelope);
-        body = envelope.getBody();
-
-        envelope.setBuilder(this);
-        envelope.getHeader().setBuilder(this);
-        body.setBuilder(this);
-        lastNode = body;
-
-        ((OMNodeEx)envelope).setComplete(false);
-        ((OMNodeEx)body).setComplete(false);
-        
-    }
-
-    long count = -1;
-    public int next() throws OMException {
-        count++;
-        if(count == 0)
-            return 0;
-        
-        int ret = super.next();
-        try {
-            // Peek to see if the parser has any more and set the done flag.
-            if(!parser.hasNext()) {
-                done = true;
-                ((OMNodeEx)body).setComplete(true);
-                ((OMNodeEx)envelope).setComplete(true);
-            }
-        } catch (XMLStreamException e) {
-            throw new OMException(e);
-        }
-        return ret;
+        super(new Envelope(parser).getPullParser(new QName(factory.getSoapVersionURI(), SOAPConstants.SOAPENVELOPE_LOCAL_NAME, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX)),
+                factory,
+                factory.getSoapVersionURI());
     }
 
     public SOAPEnvelope getEnvelope() {
-        return envelope;
+        return getSOAPEnvelope();
+    }
+
+    public static class Envelope
+            implements org.apache.axis2.databinding.ADBBean {
+        Body body;
+
+        Envelope(XMLStreamReader parser) {
+            body = new Body(parser);
+        }
+
+        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
+            java.util.ArrayList elementList = new java.util.ArrayList();
+            elementList.add(new QName(qName.getNamespaceURI(), "Header", SOAPConstants.BODY_NAMESPACE_PREFIX));
+            elementList.add(new Header());
+            elementList.add(new QName(qName.getNamespaceURI(), "Body", SOAPConstants.BODY_NAMESPACE_PREFIX));
+            elementList.add(body);
+            return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), null);
+        }
+    }
+    
+    protected void parseHeaders() {
+        //Do nothing        
+    }
+    
+    protected void identifySOAPVersion(String soapVersionURIFromTransport) {
+        //Do nothing
+    }
+
+    public static class Body
+            implements org.apache.axis2.databinding.ADBBean {
+        Child child;
+
+        Body(XMLStreamReader parser) {
+            child = new Child(parser);
+        }
+
+        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
+            java.util.ArrayList elementList = new java.util.ArrayList();
+            elementList.add(qName);
+            elementList.add(child);
+            return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), null);
+        }
+    }
+
+    public static class Header
+            implements org.apache.axis2.databinding.ADBBean {
+        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
+            java.util.ArrayList elementList = new java.util.ArrayList();
+            return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), null);
+        }
+    }
+
+    public static class Child
+            implements org.apache.axis2.databinding.ADBBean {
+        XMLStreamReader parser;
+
+        Child(XMLStreamReader parser) {
+            this.parser = parser;
+        }
+
+        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
+            return parser;
+        }
     }
 }

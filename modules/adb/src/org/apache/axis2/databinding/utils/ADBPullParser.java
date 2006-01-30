@@ -643,7 +643,7 @@ public class ADBPullParser implements XMLStreamReader {
         try {
             return next();
         } catch (XMLStreamException e) {
-            throw new RuntimeException("FIXME");
+            throw new RuntimeException(e);
         }
     }
 

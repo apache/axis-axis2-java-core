@@ -45,12 +45,16 @@ public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 	public DOMSOAPFactory(DocumentImpl doc) {
 		super(doc);
 	}
-	
-	public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
-		SOAPMessageImpl messageImpl = new SOAPMessageImpl(builder);
-		this.document = messageImpl;
-		return messageImpl;
-	}
+
+    public String getSoapVersionURI() {
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
+        SOAPMessageImpl messageImpl = new SOAPMessageImpl(builder);
+        this.document = messageImpl;
+        return messageImpl;
+    }
 
 	public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
 		SOAPMessageImpl messageImpl = new SOAPMessageImpl(envelope, parserWrapper);
