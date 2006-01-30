@@ -1,4 +1,4 @@
-package org.apache.axis2.wsdl.java2wsdl;
+package org.apache.axis2.wsdl.builder;
 
 import org.apache.axis2.om.OMElement;
 

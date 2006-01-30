@@ -24,6 +24,11 @@ import java.util.Map;
 
 public class CommandLineOptionParser implements CommandLineOptionConstants {
 
+    //states
+    private static int STARTED = 0;
+    private static int NEW_OPTION = 1;
+    private static int SUB_PARAM_OF_OPTION = 2;
+
     private Map commandLineOptions;
 
     public CommandLineOptionParser(Map commandLineOptions) {
@@ -51,31 +56,31 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
         //State 1 means earlier one was a new -option
         //State 2 means earlier one was a sub param of a -option
 
-        int state = 0;
+        int state = STARTED;
         ArrayList optionBundle = null;
         String optionType = null;
         CommandLineOption commandLineOption;
 
         for (int i = 0; i < args.length; i++) {
 
-            if (args[i].substring(0, 1).equals("-")) {
-                if (0 == state) {
+            if (args[i].startsWith("-")) {
+                if (STARTED == state) {
                     // fresh one
-                    state = 1;
+                    state = NEW_OPTION;
                     optionType = args[i];
-                } else if (2 == state || 1 == state) {
+                } else if (SUB_PARAM_OF_OPTION == state || NEW_OPTION == state) {
                     // new one but old one should be saved
                     commandLineOption =
                             new CommandLineOption(optionType, optionBundle);
                     commandLineOptions.put(commandLineOption.getOptionType(),
                             commandLineOption);
-                    state = 1;
+                    state = NEW_OPTION;
                     optionType = args[i];
                     optionBundle = null;
 
                 }
             } else {
-                if (0 == state) {
+                if (STARTED == state) {
                     commandLineOption =
                             new CommandLineOption(
                                     CommandLineOptionConstants.SOLE_INPUT,
@@ -84,12 +89,12 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                             commandLineOption);
                     return commandLineOptions;
 
-                } else if (1 == state) {
+                } else if (NEW_OPTION == state) {
                     optionBundle = new ArrayList();
                     optionBundle.add(args[i]);
-                    state = 2;
+                    state = SUB_PARAM_OF_OPTION;
 
-                } else if (2 == state) {
+                } else if (SUB_PARAM_OF_OPTION == state) {
                     optionBundle.add(args[i]);
                 }
 
@@ -107,13 +112,13 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
         return this.commandLineOptions;
     }
 
-    public List getInvalidOptions() {
+    public List getInvalidOptions(OptionsValidator validator) {
         List faultList = new ArrayList();
         Iterator iterator = this.commandLineOptions.values().iterator();
         while (iterator.hasNext()) {
             CommandLineOption commandLineOption = ((CommandLineOption) (iterator
                     .next()));
-            if (OptionValidator.isInvalid(commandLineOption)) {
+            if (validator.isInvalid(commandLineOption)) {
                 faultList.add(commandLineOption);
             }
         }

@@ -347,9 +347,9 @@ public class WSDL2JavaTest extends TestCase{
     private Map fillOptionMap(String wsdlFileName,String outputLocation) {
         Map optionMap = new HashMap();
         optionMap.put(
-                CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                         new String[]{wsdlFileName}));
 
         //use default sync option - No option is given
@@ -358,30 +358,30 @@ public class WSDL2JavaTest extends TestCase{
         //output location - code_gen_output
 
         optionMap.put(
-                CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                         new String[]{outputLocation}));
         //server side option is on
         optionMap.put(
-                CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
                         new String[0]));
         // descriptor option is on
         optionMap.put(
-                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                new CommandLineOption(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                         new String[0]));
          // db is xmlbeans option is on
         optionMap.put(
-                CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
-                new CommandLineOption(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
+                new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
                         new String[]{TestConstants.Databinding.XML_BEANS}));
 
          optionMap.put(
-                CommandLineOptionConstants.GENERATE_ALL_OPTION,
-                new CommandLineOption(CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
+                new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                         new String[0]));
         //todo Make this work
         //test case option is on

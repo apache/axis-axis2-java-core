@@ -25,7 +25,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
+import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;

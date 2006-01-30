@@ -1,6 +1,6 @@
-package org.apache.axis2.wsdl.java2wsdl;
+package org.apache.axis2.wsdl.builder;
 
-import org.apache.axis2.wsdl.java2wsdl.bytecode.MethodTable;
+import org.apache.axis2.wsdl.builder.bytecode.MethodTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.*;

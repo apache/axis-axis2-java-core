@@ -1,4 +1,4 @@
-package org.apache.axis2.wsdl.java2wsdl.bytecode;
+package org.apache.axis2.wsdl.builder.bytecode;
 
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;

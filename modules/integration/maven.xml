@@ -29,7 +29,7 @@
         <j:set var="axis2.home" value="${basedir}/target"/>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
             <classpath refid="maven.dependency.classpath"/>
-            <arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -t -ss -sd -uri test/samples/wsdl/perf/perf.wsdl"/>
+            <arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -t -ss -sd -g -uri test/samples/wsdl/perf/perf.wsdl"/>
         </java>
         <ant:copy overwrite="yes" todir="target/perf/test/samples/perf">
             <ant:fileset dir="test/samples/wsdl/perf">
@@ -46,7 +46,7 @@
 
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
             <classpath refid="maven.dependency.classpath"/>
-            <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -t -ss -sd -uri test/samples/wsdl/perf2/perf.wsdl"/>
+            <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -t -ss -sd -g -uri test/samples/wsdl/perf2/perf.wsdl"/>
         </java>
         <ant:copy overwrite="yes" todir="target/perf2/test/samples/perf2">
             <ant:fileset dir="test/samples/wsdl/perf2">

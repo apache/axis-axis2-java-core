@@ -82,80 +82,80 @@ public class AntCodegenTask extends Task {
         ////////////////////////////////////////////////////////////////
         //WSDL file name
         optionMap.put(
-                CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                         getStringArray(WSDLFileName)));
         //output location
         optionMap.put(
-                CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                         getStringArray(output)));
         //////////////////////////////////////////////////////////////////
         // Databinding type
         optionMap.put(
-                CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
                         getStringArray(databindingName)));
 
         // Async only option - forcing to generate async methods only
         if (asyncOnly) {
             optionMap.put(
-                    CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                    CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION,
                     new CommandLineOption(
-                            CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                            CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION,
                             new String[0]));
         }
         // Sync only option - forcing to generate Sync methods only
         if (syncOnly) {
             optionMap.put(
-                    CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                    CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION,
                     new CommandLineOption(
-                            CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                            CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION,
                             new String[0]));
         }
 
         //Package
         optionMap.put(
-                CommandLineOptionConstants.PACKAGE_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.PACKAGE_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION,
                         getStringArray(packageName)));
 
         //stub language
         optionMap.put(
-                CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION,
                         getStringArray(language)));
 
 
         //server side and generate services.xml options
         if (serverSide) {
             optionMap.put(
-                    CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                    CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
                     new CommandLineOption(
-                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                            CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
                             new String[0]));
 
             //services XML generation - effective only when specified as the server side
             if (generateServiceXml) {
                 optionMap.put(
-                        CommandLineOptionConstants
+                        CommandLineOptionConstants.WSDL2JavaConstants
                                 .GENERATE_SERVICE_DESCRIPTION_OPTION,
                         new CommandLineOption(
-                                CommandLineOptionConstants
+                                CommandLineOptionConstants.WSDL2JavaConstants
                                         .GENERATE_SERVICE_DESCRIPTION_OPTION,
                                 new String[0]));
             }
             //generate all option - Only valid when generating serverside code
             if (generateAllClasses) {
                 optionMap.put(
-                        CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                         new CommandLineOption(
-                                CommandLineOptionConstants.GENERATE_ALL_OPTION,
+                                CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                                 new String[0]));
             }
 
@@ -164,9 +164,9 @@ public class AntCodegenTask extends Task {
         //generate the test case
         if (testcase) {
             optionMap.put(
-                    CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                    CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION,
                     new CommandLineOption(
-                            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                            CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION,
                             new String[0]));
         }
 
@@ -174,22 +174,22 @@ public class AntCodegenTask extends Task {
         //or gets generates as seperate classes
         if (unpackClasses) {
             optionMap.put(
-                    CommandLineOptionConstants.UNPACK_CLASSES_OPTION,
+                    CommandLineOptionConstants.WSDL2JavaConstants.UNPACK_CLASSES_OPTION,
                     new CommandLineOption(
-                            CommandLineOptionConstants.UNPACK_CLASSES_OPTION,
+                            CommandLineOptionConstants.WSDL2JavaConstants.UNPACK_CLASSES_OPTION,
                             new String[0]));
         }
 
         optionMap.put(
-                CommandLineOptionConstants.SERVICE_NAME_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.SERVICE_NAME_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
                         new String[]{serviceName}));
 
         optionMap.put(
-                CommandLineOptionConstants.PORT_NAME_OPTION,
+                CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
                 new CommandLineOption(
-                        CommandLineOptionConstants.PORT_NAME_OPTION,
+                        CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
                         new String[]{portName}));
         return optionMap;
     }

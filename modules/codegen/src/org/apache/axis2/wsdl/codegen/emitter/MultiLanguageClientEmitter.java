@@ -670,10 +670,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 throw new Exception(CodegenMessages.getMessage("emitter.unknownStyle", codegenStyle + ""));
             }
 
-            // Call the emit stub method to generate the client side too
-            if (configuration.isGenerateAll()) {
-                emitStub();
-            }
+            
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }

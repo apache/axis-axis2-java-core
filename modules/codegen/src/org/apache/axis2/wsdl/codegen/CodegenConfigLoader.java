@@ -27,7 +27,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
 
     public static void loadConfig(CodeGenConfiguration config, Map optionMap){
         String outputLocation = "."; //default output directory is the current working directory
-        CommandLineOption outputLocationOption = loadOption(OUTPUT_LOCATION_OPTION,OUTPUT_LOCATION_OPTION_LONG,optionMap);
+        CommandLineOption outputLocationOption = loadOption(WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG,optionMap);
 
         if (outputLocationOption != null) {
             outputLocation = outputLocationOption.getOptionValue();
@@ -44,16 +44,16 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             outputLocationFile.mkdirs();
         }
 
-        config.setServerSide(loadOption(SERVER_SIDE_CODE_OPTION,SERVER_SIDE_CODE_OPTION_LONG,optionMap) != null);
-        config.setGenerateDeployementDescriptor(loadOption(GENERATE_SERVICE_DESCRIPTION_OPTION,
-                GENERATE_SERVICE_DESCRIPTION_OPTION_LONG,optionMap) !=
+        config.setServerSide(loadOption(WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION, WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION_LONG,optionMap) != null);
+        config.setGenerateDeployementDescriptor(loadOption(WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION_LONG,optionMap) !=
                 null);
-        config.setWriteTestCase(loadOption(GENERATE_TEST_CASE_OPTION,GENERATE_TEST_CASE_OPTION,optionMap) != null);
+        config.setWriteTestCase(loadOption(WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION,optionMap) != null);
 
         boolean asyncFlagPresent =
-                (loadOption(CODEGEN_ASYNC_ONLY_OPTION,CODEGEN_ASYNC_ONLY_OPTION_LONG,optionMap) !=  null);
+                (loadOption(WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION, WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION_LONG,optionMap) !=  null);
         boolean syncFlagPresent =
-                (loadOption(CODEGEN_SYNC_ONLY_OPTION,CODEGEN_SYNC_ONLY_OPTION_LONG,optionMap) !=   null);
+                (loadOption(WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION, WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION_LONG,optionMap) !=   null);
         if (asyncFlagPresent) {
             config.setAsyncOn(true);
             config.setSyncOn(false);
@@ -63,35 +63,35 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setSyncOn(true);
         }
 
-        CommandLineOption packageOption = loadOption(PACKAGE_OPTION,PACKAGE_OPTION_LONG,optionMap);
+        CommandLineOption packageOption = loadOption(WSDL2JavaConstants.PACKAGE_OPTION, WSDL2JavaConstants.PACKAGE_OPTION_LONG,optionMap);
         if (packageOption != null) {
             config.setPackageName(packageOption.getOptionValue());
         }
 
-        CommandLineOption langOption = loadOption(STUB_LANGUAGE_OPTION,STUB_LANGUAGE_OPTION_LONG,optionMap);
+        CommandLineOption langOption = loadOption(WSDL2JavaConstants.STUB_LANGUAGE_OPTION, WSDL2JavaConstants.STUB_LANGUAGE_OPTION_LONG,optionMap);
         //The language here
         if (langOption != null) {
             config.setOutputLanguage(langOption.getOptionValue());
         }
 
-        CommandLineOption dataBindingOption = loadOption(DATA_BINDING_TYPE_OPTION,DATA_BINDING_TYPE_OPTION_LONG,optionMap);
+        CommandLineOption dataBindingOption = loadOption(WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION_LONG,optionMap);
         if (dataBindingOption != null) {
             config.setDatabindingType(dataBindingOption.getOptionValue());
         }
 
-        CommandLineOption unwrapClassesOption = loadOption(UNPACK_CLASSES_OPTION,UNPACK_CLASSES_OPTION_LONG,optionMap);
+        CommandLineOption unwrapClassesOption = loadOption(WSDL2JavaConstants.UNPACK_CLASSES_OPTION, WSDL2JavaConstants.UNPACK_CLASSES_OPTION_LONG,optionMap);
         if (unwrapClassesOption != null) {
             config.setPackClasses(false);
         }
 
-        CommandLineOption portNameOption = loadOption(PORT_NAME_OPTION,PORT_NAME_OPTION_LONG,optionMap);
+        CommandLineOption portNameOption = loadOption(WSDL2JavaConstants.PORT_NAME_OPTION, WSDL2JavaConstants.PORT_NAME_OPTION_LONG,optionMap);
         config.setPortName(portNameOption!=null?portNameOption.getOptionValue():null);
 
-        CommandLineOption serviceNameOption = loadOption(SERVICE_NAME_OPTION,SERVICE_NAME_OPTION_LONG,optionMap);
+        CommandLineOption serviceNameOption = loadOption(WSDL2JavaConstants.SERVICE_NAME_OPTION, WSDL2JavaConstants.SERVICE_NAME_OPTION_LONG,optionMap);
         config.setServiceName(serviceNameOption!=null?serviceNameOption.getOptionValue():null);
 
 
-        CommandLineOption generateAllOption = loadOption(GENERATE_ALL_OPTION,GENERATE_ALL_OPTION_LONG,optionMap);
+        CommandLineOption generateAllOption = loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION, WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG,optionMap);
         if (generateAllOption != null) {
             config.setGenerateAll(true);
         }
@@ -102,9 +102,9 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         while (keyIterator.hasNext()) {
             Object key = keyIterator.next();
             CommandLineOption option = (CommandLineOption) optionMap.get(key);
-            if (key.toString().startsWith(EXTRA_OPTIONTYPE_PREFIX)) {
+            if (key.toString().startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)) {
                 //add this to the property map
-                config.getProperties().put(key.toString().replaceFirst(EXTRA_OPTIONTYPE_PREFIX, ""), option.getOptionValue());
+                config.getProperties().put(key.toString().replaceFirst(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX, ""), option.getOptionValue());
             }
         }
 

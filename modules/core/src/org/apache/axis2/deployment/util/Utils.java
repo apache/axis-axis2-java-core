@@ -7,8 +7,8 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
-import org.apache.axis2.wsdl.java2wsdl.TypeTable;
+import org.apache.axis2.wsdl.builder.SchemaGenerator;
+import org.apache.axis2.wsdl.builder.TypeTable;
 import org.apache.wsdl.WSDLConstants;
 import org.codehaus.jam.JMethod;
 

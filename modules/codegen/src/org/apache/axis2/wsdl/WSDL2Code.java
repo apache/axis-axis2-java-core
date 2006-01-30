@@ -20,6 +20,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
+import org.apache.axis2.wsdl.util.WSDL2JavaOptionsValidator;
 
 public class WSDL2Code {
 
@@ -51,11 +52,11 @@ public class WSDL2Code {
 
     private static void validateCommandLineOptions(
             CommandLineOptionParser parser) {
-        if (parser.getInvalidOptions().size() > 0)
+        if (parser.getInvalidOptions(new WSDL2JavaOptionsValidator()).size() > 0)
             printUsage();
         if (null ==
                 parser.getAllOptions().get(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION))
+                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION))
             printUsage();
     }
 

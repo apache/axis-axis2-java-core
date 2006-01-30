@@ -1,4 +1,4 @@
-package org.apache.axis2.wsdl.java2wsdl;
+package org.apache.axis2.wsdl.builder;
 
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -47,28 +47,34 @@ import java.util.Iterator;
 *
 */
 
-public class Java2WOM {
+public class Java2WOMBuilder {
 
     private TypeTable table;
     private JMethod method [];
     private XmlSchema schema;
     private String serviceName;
-    private String targentNamespece;
-    private String targetNamespecheprefix;
+    private String targetNamespace;
+    private String targetNamespacePrefix;
 
-    public Java2WOM(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName,
-                    String targentNamespece,
-                    String targetNamespecheprefix) {
+    public static final String DEFAULT_SOAP_NAMESPACE_PREFIX = "soap";
+    public static final String DEFAULT_SCHEMA_NAMESPACE_PREFIX = "xs";
+    public static final String BINDING_NAME_SUFFIX = "Binding";
+    public static final String PORT_TYPE_SUFFIX = "PortType";
+    public static final String PORT_NAME_SUFFIX = "Port";
+
+    public Java2WOMBuilder(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName,
+                           String targetNamespace,
+                           String targetNamespacePrefix) {
         this.table = table;
         this.method = method;
         this.schema = schema;
         this.serviceName = serviceName;
 
-        if (targentNamespece != null && !targentNamespece.trim().equals("")) {
-            this.targentNamespece = targentNamespece;
+        if (targetNamespace != null && !targetNamespace.trim().equals("")) {
+            this.targetNamespace = targetNamespace;
         }
-        if (targetNamespecheprefix != null && !targetNamespecheprefix.trim().equals("")) {
-            this.targetNamespecheprefix = targetNamespecheprefix;
+        if (targetNamespacePrefix != null && !targetNamespacePrefix.trim().equals("")) {
+            this.targetNamespacePrefix = targetNamespacePrefix;
         }
 
     }
@@ -77,33 +83,35 @@ public class Java2WOM {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
         StringWriter writer = new StringWriter();
-        schema.write(writer);
-        writer.flush();
+
+        writeSchema(writer);
+
         Document doc = domBuilder.parse(new ByteArrayInputStream(writer.toString().getBytes()));
         Element documentElement = doc.getDocumentElement();
         WSDLDescription womDescription;
         WSDLComponentFactory wsdlComponentFactory = new WSDLDescriptionImpl();
         womDescription = wsdlComponentFactory.createDescription();
-        HashMap namspaceMap = new HashMap();
-        namspaceMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namspaceMap.put(targetNamespecheprefix, targentNamespece);
-        namspaceMap.put("ns1", "http://org.apache.axis2/xsd");
-        namspaceMap.put("xs", "http://www.w3.org/2001/XMLSchema");
+        HashMap namspaceMap = loadNamespaces();
         womDescription.setNamespaces(namspaceMap);
-        womDescription.setTargetNameSpace(targentNamespece);
+        womDescription.setTargetNameSpace(targetNamespace);
 
         //generating port type
         WSDLInterface portType = generatePortType(womDescription, wsdlComponentFactory, documentElement);
         womDescription.addInterface(portType);
 
-        QName bindingName = new QName(targentNamespece, serviceName + "Binding"
-                , targetNamespecheprefix);
-        //generating binding
+        QName bindingName = new QName(targetNamespace, serviceName + BINDING_NAME_SUFFIX
+                , targetNamespacePrefix);
+
+        //generating binding. Our bidings are strictly doc/lit, atleast for now
         WSDLBinding binding = generateBinding(wsdlComponentFactory,
                 portType,
                 bindingName,
-                "document", "literal", "http://schemas.xmlsoap.org/soap/http",
-                "http://www.org.apache.axis2");
+                //todo these need to be constants
+                "document",
+                "literal",
+                "http://schemas.xmlsoap.org/soap/http",
+                targetNamespace);
+
         womDescription.addBinding(binding);
 
         //generating service
@@ -112,7 +120,34 @@ public class Java2WOM {
         return womDescription;
     }
 
+    /**
+     * Loads the namespaces
+     * @return
+     */
+    private HashMap loadNamespaces() {
+        HashMap namspaceMap = new HashMap();
+        namspaceMap.put(DEFAULT_SOAP_NAMESPACE_PREFIX, "http://schemas.xmlsoap.org/wsdl/soap/");
+        namspaceMap.put(targetNamespacePrefix, targetNamespace);
+        namspaceMap.put(DEFAULT_SCHEMA_NAMESPACE_PREFIX, "http://www.w3.org/2001/XMLSchema");
+        return namspaceMap;
+    }
 
+    /**
+     * write the schema
+     */
+
+    private void writeSchema(StringWriter writer) {
+        schema.write(writer);
+        writer.flush();
+    }
+
+    /**
+     * Generate the porttypes
+     * @param womDescription
+     * @param wsdlComponentFactory
+     * @param documentElement
+     * @return
+     */
     public WSDLInterface generatePortType(WSDLDescription womDescription,
                                           WSDLComponentFactory wsdlComponentFactory,
                                           Element documentElement) {
@@ -126,7 +161,7 @@ public class Java2WOM {
         womDescription.setTypes(wsdlTypes);
 
         WSDLInterface portType = womDescription.createInterface();
-        portType.setName(new QName(serviceName + "Port"));
+        portType.setName(new QName(serviceName + PORT_TYPE_SUFFIX));
 
         //adding message refs
         for (int i = 0; i < method.length; i++) {
@@ -154,6 +189,14 @@ public class Java2WOM {
         return portType;
     }
 
+    /**
+     * Generate the service
+     * @param wsdlComponentFactory
+     * @param womDescription
+     * @param binding
+     * @param ServiceName
+     * @return
+     */
     public WSDLService generateService(WSDLComponentFactory wsdlComponentFactory,
                                        WSDLDescription womDescription,
                                        WSDLBinding binding, String ServiceName) {
@@ -161,28 +204,39 @@ public class Java2WOM {
         service.setName(new QName(ServiceName));
         WSDLEndpoint endpoints = wsdlComponentFactory.createEndpoint();
         endpoints.setBinding(binding);
-        endpoints.setName(new QName(ServiceName + "PortType"));
+        endpoints.setName(new QName(ServiceName + PORT_NAME_SUFFIX));
         SOAPAddressImpl address = new SOAPAddressImpl();
-        address.setLocationURI("http://127.0.0.1:8080:/axis2/services/" + ServiceName);
+        address.setLocationURI("http://127.0.0.1:8080/axis2/services/" + ServiceName);  // ???
         endpoints.addExtensibilityElement(address);
         service.setEndpoint(endpoints);
         return service;
     }
 
 
+    /**
+     * Generate the bindings
+     * @param wsdlComponentFactory
+     * @param portType
+     * @param bindingName
+     * @param style
+     * @param use
+     * @param transportURI
+     * @param namespaceURI
+     * @return
+     */
     private WSDLBinding generateBinding(WSDLComponentFactory wsdlComponentFactory,
                                         WSDLInterface portType, QName bindingName,
                                         String style,
                                         String use,
-                                        String trsportURI,
-                                        String namespeceURI) {
+                                        String transportURI,
+                                        String namespaceURI) {
         WSDLBinding binding = wsdlComponentFactory.createBinding();
         binding.setBoundInterface(portType);
         binding.setName(bindingName);
 
         SOAPBindingImpl soapbindingImpl = new SOAPBindingImpl();
         soapbindingImpl.setStyle(style);
-        soapbindingImpl.setTransportURI(trsportURI);
+        soapbindingImpl.setTransportURI(transportURI);
         binding.addExtensibilityElement(soapbindingImpl);
 
         Iterator op_itr = portType.getOperations().keySet().iterator();
@@ -208,7 +262,7 @@ public class Java2WOM {
                 SOAPBodyImpl requestSoapbody = new SOAPBodyImpl();
                 requestSoapbody.setUse(use);
                 //todo need to fix this
-                requestSoapbody.setNamespaceURI(namespeceURI);
+                requestSoapbody.setNamespaceURI(namespaceURI);
                 bindingInMessage.addExtensibilityElement(requestSoapbody);
             }
 
@@ -220,7 +274,7 @@ public class Java2WOM {
                 bindingoperation.setOutput(bindingOutMessage);
                 SOAPBodyImpl resSoapbody = new SOAPBodyImpl();
                 resSoapbody.setUse(use);
-                resSoapbody.setNamespaceURI(namespeceURI);
+                resSoapbody.setNamespaceURI(namespaceURI);
                 bindingOutMessage.addExtensibilityElement(resSoapbody);
             }
         }

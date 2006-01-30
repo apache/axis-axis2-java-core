@@ -37,7 +37,7 @@ import java.util.Map;
 public class CodeGenerationEngine {
     private Log log = LogFactory.getLog(getClass());
 
-    private List moduleEndpoints = new ArrayList();
+    private List extensions = new ArrayList();
 
 
     private CodeGenConfiguration configuration;
@@ -52,7 +52,7 @@ public class CodeGenerationEngine {
         Map allOptions = parser.getAllOptions();
         try {
 
-            CommandLineOption option = (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION);
+            CommandLineOption option = (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
             wom = this.getWOM(option.getOptionValue());
         } catch (WSDLException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
@@ -75,15 +75,15 @@ public class CodeGenerationEngine {
     private void addExtension(CodeGenExtension ext) {
         if(ext != null) {
             ext.init(configuration);
-            moduleEndpoints.add(ext);
+            extensions.add(ext);
         }
     }
 
 
     public void generate() throws CodeGenerationException {
         try {
-            for (int i = 0; i < moduleEndpoints.size(); i++) {
-                ((CodeGenExtension) moduleEndpoints.get(i)).engage();
+            for (int i = 0; i < extensions.size(); i++) {
+                ((CodeGenExtension) extensions.get(i)).engage();
             }
 
             Emitter emitter;
@@ -99,7 +99,7 @@ public class CodeGenerationEngine {
             }
 
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
-            String className = emitterMap.get(configuration.getOutputLanguage()).toString();
+            String className = (String)emitterMap.get(configuration.getOutputLanguage());
             if (className != null) {
                 emitter = (Emitter) getObjectFromClassName(className);
                 emitter.setCodeGenConfiguration(configuration);
@@ -109,13 +109,20 @@ public class CodeGenerationEngine {
             }
 
 
+
             if (configuration.isServerSide()) {
                 emitter.emitSkeleton();
-            }
+                //if the users want both client and server, it would be in the 
+                // generate all option
 
-            if (!configuration.isServerSide() || configuration.isWriteTestCase()) {
+                if (configuration.isGenerateAll()) {
+                    emitter.emitStub();
+                }
+            }else{
                 emitter.emitStub();
             }
+
+
 
         } catch (ClassCastException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wrongEmitter"), e);

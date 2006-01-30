@@ -39,7 +39,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
 
         //for options that start with the extra prefix, don't do any change for the
         //case
-        if (!type.startsWith(EXTRA_OPTIONTYPE_PREFIX)){
+        if (!type.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)){
             type = type.toLowerCase();
         }
         this.type = type;
