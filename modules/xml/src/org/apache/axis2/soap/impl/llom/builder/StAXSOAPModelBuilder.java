@@ -112,7 +112,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
             document.setCharsetEncoding(parser.getCharacterEncodingScheme());
         }
         identifySOAPVersion(soapVersion);
-        parseHeaders();
     }
 
     /**
@@ -131,7 +130,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         soapMessage = soapFactory.createSOAPMessage(this);
         this.document = soapMessage;
         identifySOAPVersion(soapVersion);
-        parseHeaders();
     }
 
     protected void identifySOAPVersion(String soapVersionURIFromTransport) {
@@ -163,19 +161,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 	        }
         }
     }
-
-    protected void parseHeaders() {
-        // by the time execution comes here the nullity of SOAPEnvelope has been cheched in the
-        // identifySOAPVersion() method. So not checking getSOAPEnvelope() == null here
-        SOAPHeader soapHeader = getSOAPEnvelope().getHeader();
-
-        if (soapHeader != null) {
-            while (!soapHeader.isComplete()) {
-                next();
-            }
-        } 
-    }
-
 
     /**
      * Method getSOAPEnvelope.

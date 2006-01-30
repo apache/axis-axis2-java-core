@@ -40,10 +40,6 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
         }
     }
     
-    protected void parseHeaders() {
-        //Do nothing        
-    }
-    
     protected void identifySOAPVersion(String soapVersionURIFromTransport) {
         //Do nothing
     }
