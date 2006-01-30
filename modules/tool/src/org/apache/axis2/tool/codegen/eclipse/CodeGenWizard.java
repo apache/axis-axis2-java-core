@@ -263,35 +263,8 @@ public class CodeGenWizard extends Wizard implements INewWizard {
 
                 try {
                     monitor.worked(1);
-                    String classLocation = javaSourceSelectionPage
-                            .getClassLocation();
-                    monitor.worked(1);
-                    String className = javaSourceSelectionPage.getClassName();
-                    monitor.worked(1);
-                    String locationURL = java2wsdlOptionsPage.getLocationURL();
-                    monitor.worked(1);
-                    String inputWSDLName = java2wsdlOptionsPage
-                            .getInputWSDLName();
-                    monitor.worked(1);
-                    String bindingName = java2wsdlOptionsPage.getBindingName();
-                    monitor.worked(1);
-                    String portypeName = java2wsdlOptionsPage.getPortypeName();
-                    monitor.worked(1);
-                    String style = java2wsdlOptionsPage.getStyle();
-                    monitor.worked(1);
-                    String fullFileName = java2wsdlOutputLocationPage
-                            .getFullFileName();
-                    monitor.worked(1);
-                    int mode = java2wsdlOptionsPage.getMode();
-                    monitor.worked(1);
-                    Vector selectedMethods = javaSourceSelectionPage
-                            .getSelectedMethods();
-                    monitor.worked(1);
-                    new Java2WSDLGenerator().emit(classLocation, className,
-                            locationURL, inputWSDLName, bindingName,
-                            portypeName, style, fullFileName, mode,
-                            selectedMethods);
-                    monitor.worked(1);
+                    //TODO - fill here
+                    
                 } catch (Throwable e) {
                     throw new RuntimeException(e);
                 }

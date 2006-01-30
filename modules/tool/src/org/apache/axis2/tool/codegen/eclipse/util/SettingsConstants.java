@@ -97,13 +97,13 @@ public interface SettingsConstants {
     
     // ##################################################################################
     // Java2wsdl options selection page
-    static final String PREF_JAVA_INPUT_WSDL_NAME = "INPUT_WSDL";
+    static final String PREF_JAVA_TARGET_NS = "INPUT_WSDL";
     
-    static final String PREF_JAVA_LOCATION = "LOCATION_URL";
-    static final String PREF_JAVA_BINDING_NAME = "BINDING_NAME";
-    static final String PREF_JAVA_MODE_INDEX = "MODE_INDEX";
+    static final String PREF_JAVA_TARGET_NS_PREF = "LOCATION_URL";
+    static final String PREF_JAVA_SCHEMA_TARGET_NS = "BINDING_NAME";
+    static final String PREF_JAVA_SERVICE_NAME = "MODE_INDEX";
     static final String PREF_JAVA_STYLE_INDEX = "STYLE_INDEX";
-    static final String PREF_JAVA_PORTYPE_NAME = "PORTYPE_NAME";
+    static final String PREF_JAVA_SCHEMA_TARGET_NS_PREF = "PORTYPE_NAME";
     
     // ##################################################################################
     //output page

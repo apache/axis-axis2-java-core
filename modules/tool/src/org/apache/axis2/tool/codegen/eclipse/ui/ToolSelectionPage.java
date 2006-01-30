@@ -20,7 +20,6 @@ import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -54,8 +53,7 @@ public void createControl(Composite parent) {
         layout.numColumns = 1;
         layout.verticalSpacing = 9;
 
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        
+              
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin.getResourceString("page0.options.desc"));
              
@@ -82,8 +80,7 @@ public void createControl(Composite parent) {
         });
         
         ///////////////////////////////////////
-        ///  The java2WSDL is disabled  ///
-        java2WSDLRadioButton.setEnabled(false);
+        //java2WSDLRadioButton.setEnabled(false);
         //////////////////////////////////////
         
         handleCheckboxSelection();

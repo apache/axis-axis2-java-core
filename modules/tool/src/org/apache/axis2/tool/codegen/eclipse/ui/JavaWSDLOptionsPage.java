@@ -19,65 +19,32 @@ import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * -I, --input <argument>input WSDL filename -o, --output <argument>output
- * WSDL filename -l, --location <argument>service location url -P,
- * --portTypeName <argument>portType name (obtained from class-of-portType if
- * not specif ied) -b, --bindingName <argument>binding name (--servicePortName
- * value + "SOAPBinding" if not specified) -S, --serviceElementName <argument>
- * service element name (defaults to --servicePortName value + "Service") -s,
- * --servicePortName <argument>service port name (obtained from --location if
- * not specified ) -n, --namespace <argument>target namespace -p, --PkgtoNS
- * <argument>= <value>package=namespace, name value pairs -m, --methods
- * <argument>space or comma separated list of methods to export -a, --all look
- * for allowed methods in inherited class -w, --outputWsdlMode <argument>output
- * WSDL mode: All, Interface, Implementation -L, --locationImport <argument>
- * location of interface wsdl -N, --namespaceImpl <argument>target namespace
- * for implementation wsdl -O, --outputImpl <argument>output Implementation
- * WSDL filename, setting this causes --o utputWsdlMode to be ignored -i,
- * --implClass <argument>optional class that contains implementation of methods
- * in cl ass-of-portType. The debug information in the class is used to obtain
- * the method parameter names, which are used to set the WSDL part names. -x,
- * --exclude <argument>space or comma separated list of methods not to export
- * -c, --stopClasses <argument>space or comma separated list of class names
- * which will stop inheritance search if --all switch is given -T,
- * --typeMappingVersion <argument>indicate 1.1 or 1.2. The default is 1.1 (SOAP
- * 1.1 JAX-RPC c ompliant 1.2 indicates SOAP 1.1 encoded.) -A, --soapAction
- * <argument>value of the operation's soapAction field. Values are DEFAUL T,
- * OPERATION or NONE. OPERATION forces soapAction to the nam e of the operation.
- * DEFAULT causes the soapAction to be set according to the operation's meta
- * data (usually ""). NONE forces the soapAction to "". The default is DEFAULT.
- * -y, --style <argument>The style of binding in the WSDL, either DOCUMENT,
- * RPC, or W RAPPED. -u, --use <argument>The use of items in the binding,
- * either LITERAL or ENCODED -e, --extraClasses <argument>A space or comma
- * separated list of class names to be added t o the type section. -C,
- * --importSchema A file or URL to an XML Schema that should be physically imp
- * orted into the generated WSDL -X, --classpath additional classpath elements
- */
+/*
+Usage java2wsdl -cn <fully qualified class name> : class file name
+-o <output Location> : output file location
+-cp <class path uri> : list of classpath entries - (urls)
+-tn <target namespace> : target namespace
+-tp <target namespace prefix> : target namespace prefix
+-stn <schema target namespace> : target namespace for schema
+-stp <schema target namespace prefix> : target namespace prefix for schema
+-sn <service name> : service name
+-of <output file name> : output file name for the WSDL
+*/
 public class JavaWSDLOptionsPage extends AbstractWizardPage {
 
-    private Text inputWSDLNameTextBox;
+    private Text targetNamespaceText;
+    private Text targetNamespacePrefixText;
+    private Text schemaTargetNamepaceText;
+    private Text schemaTargetNamespacePrefixText;
+    private Text serviceNameText;
 
-    private Text serviceLocationURLTextBox;
-
-    private Text portTypeNameTextBox;
-
-    private Text bindingTextBox;
-
-    private Combo modeSelectionCombo;
-    
-    private Combo styleSelectionCombo;
-
-
+   
     //TODO need more here
 
     /*
@@ -86,12 +53,12 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
      * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
      */
     protected void initializeDefaultSettings() {
-       settings.put(PREF_JAVA_INPUT_WSDL_NAME,"");
-       settings.put(PREF_JAVA_LOCATION,"http://localhost:8080");
-       settings.put(PREF_JAVA_BINDING_NAME,"");
-       settings.put(PREF_JAVA_PORTYPE_NAME,"");
-       settings.put(PREF_JAVA_MODE_INDEX,0);
-       settings.put(PREF_JAVA_STYLE_INDEX,0);
+       settings.put(PREF_JAVA_TARGET_NS,"");
+       settings.put(PREF_JAVA_TARGET_NS_PREF,"");
+       settings.put(PREF_JAVA_SCHEMA_TARGET_NS,"");
+       settings.put(PREF_JAVA_SCHEMA_TARGET_NS_PREF,"");
+       settings.put(PREF_JAVA_SERVICE_NAME,"");
+
     }
 
     /**
@@ -126,29 +93,59 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                .getResourceString("page5.inputwsdl.label"));
+                .getResourceString("page5.targetNamespace.label"));
 
-        inputWSDLNameTextBox = new Text(container, SWT.BORDER | SWT.SINGLE);
-        inputWSDLNameTextBox.setLayoutData(gd);
-        inputWSDLNameTextBox.setText(settings.get(PREF_JAVA_INPUT_WSDL_NAME));
-        inputWSDLNameTextBox.addModifyListener(new ModifyListener() {
+        targetNamespaceText = new Text(container, SWT.BORDER | SWT.SINGLE);
+        targetNamespaceText.setLayoutData(gd);
+        targetNamespaceText.setText(settings.get(PREF_JAVA_TARGET_NS));
+        targetNamespaceText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_INPUT_WSDL_NAME, inputWSDLNameTextBox.getText());
+                settings.put(PREF_JAVA_TARGET_NS, targetNamespaceText.getText());
                 //dialogChanged();
             }
         });
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                .getResourceString("page5.servicelocation.label"));
+                .getResourceString("page5.targetNamespacePrefix.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        serviceLocationURLTextBox = new Text(container, SWT.BORDER);
-        serviceLocationURLTextBox.setLayoutData(gd);
-        serviceLocationURLTextBox.setText(settings.get(PREF_JAVA_LOCATION));
-        serviceLocationURLTextBox.addModifyListener(new ModifyListener() {
+        targetNamespacePrefixText = new Text(container, SWT.BORDER);
+        targetNamespacePrefixText.setLayoutData(gd);
+        targetNamespacePrefixText.setText(settings.get(PREF_JAVA_TARGET_NS_PREF));
+        targetNamespacePrefixText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_LOCATION, serviceLocationURLTextBox.getText());
+                settings.put(PREF_JAVA_TARGET_NS_PREF, targetNamespacePrefixText.getText());
+                //dialogChanged();
+            }
+        });
+        
+        label = new Label(container, SWT.NULL);
+        label.setText(CodegenWizardPlugin
+                .getResourceString("page5.schemaTargetNs.label"));
+
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        schemaTargetNamepaceText = new Text(container, SWT.BORDER);
+        schemaTargetNamepaceText.setLayoutData(gd);
+        schemaTargetNamepaceText.setText(settings.get(PREF_JAVA_SCHEMA_TARGET_NS_PREF));
+        schemaTargetNamepaceText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                settings.put(PREF_JAVA_SCHEMA_TARGET_NS_PREF, schemaTargetNamepaceText.getText());
+                //dialogChanged();
+            }
+        });
+        
+        label = new Label(container, SWT.NULL);
+        label.setText(CodegenWizardPlugin
+                .getResourceString("page5.schemaTargetNsPrefix.label"));
+
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        schemaTargetNamespacePrefixText = new Text(container, SWT.BORDER);
+        schemaTargetNamespacePrefixText.setLayoutData(gd);
+        schemaTargetNamespacePrefixText.setText(settings.get(PREF_JAVA_SCHEMA_TARGET_NS));
+        schemaTargetNamespacePrefixText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                settings.put(PREF_JAVA_SCHEMA_TARGET_NS, schemaTargetNamespacePrefixText.getText());
                 //dialogChanged();
             }
         });
@@ -158,113 +155,41 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
                 .getResourceString("page5.binding.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        bindingTextBox = new Text(container, SWT.BORDER);
-        bindingTextBox.setLayoutData(gd);
-        bindingTextBox.setText(settings.get(PREF_JAVA_BINDING_NAME));
-        bindingTextBox.addModifyListener(new ModifyListener() {
+        schemaTargetNamespacePrefixText = new Text(container, SWT.BORDER);
+        schemaTargetNamespacePrefixText.setLayoutData(gd);
+        schemaTargetNamespacePrefixText.setText(settings.get(PREF_JAVA_SCHEMA_TARGET_NS));
+        schemaTargetNamespacePrefixText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_BINDING_NAME, bindingTextBox.getText());
+                settings.put(PREF_JAVA_SCHEMA_TARGET_NS, schemaTargetNamespacePrefixText.getText());
                 //dialogChanged();
             }
         });
-        
-        label = new Label(container, SWT.NULL);
-        label.setText(CodegenWizardPlugin
-                .getResourceString("page5.porttype.label"));
-
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        portTypeNameTextBox = new Text(container, SWT.BORDER);
-        portTypeNameTextBox.setLayoutData(gd);
-        portTypeNameTextBox.setText(settings.get(PREF_JAVA_PORTYPE_NAME));
-        portTypeNameTextBox.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_PORTYPE_NAME, portTypeNameTextBox.getText());
-                //dialogChanged();
-            }
-        });
-
-        // #####################################################
-        label = new Label(container, SWT.NULL);
-        label
-                .setText(CodegenWizardPlugin
-                        .getResourceString("page5.mode.label"));
-
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        modeSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-        modeSelectionCombo.setLayoutData(gd);
-       // modeSelectionCombo.
-        populateModeCombo();
-        modeSelectionCombo.addSelectionListener(new SelectionListener(){
-            public void widgetSelected(SelectionEvent e){
-                settings.put(PREF_JAVA_MODE_INDEX,modeSelectionCombo.getSelectionIndex());
-            }
-            public void widgetDefaultSelected(SelectionEvent e){}
-        });
-        
-        // #####################################################
-        label = new Label(container, SWT.NULL);
-        label
-                .setText(CodegenWizardPlugin
-                        .getResourceString("page5.style.label"));
-
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        styleSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-        styleSelectionCombo.setLayoutData(gd);
-        populateStyleCombo();
-        styleSelectionCombo.addSelectionListener(new SelectionListener(){
-            public void widgetSelected(SelectionEvent e){
-                settings.put(PREF_JAVA_STYLE_INDEX,styleSelectionCombo.getSelectionIndex());
-            }
-            public void widgetDefaultSelected(SelectionEvent e){}
-        });
-        
         
         setControl(container);
 
     }
 
-    private void populateModeCombo() {
-        modeSelectionCombo.add(WSDL_ALL);
-        modeSelectionCombo.add(WSDL_INTERFACE_ONLY);
-        modeSelectionCombo.add(WSDL_IMPLEMENTATION_ONLY);
-
-        modeSelectionCombo.select(settings.getInt(PREF_JAVA_MODE_INDEX));
+    
+   
+    
+    public String getTargetNamespace() {
+        return this.targetNamespacePrefixText.getText();
     }
 
-    private void populateStyleCombo() {
-        styleSelectionCombo.add(WSDL_STYLE_DOCUMENT);
-        styleSelectionCombo.add(WSDL_STYLE_RPC);
-        styleSelectionCombo.add(WSDL_STYLE_WRAPPED);
-
-        styleSelectionCombo.select(settings.getInt(PREF_JAVA_STYLE_INDEX));
+    public String getTargetNamespacePrefix() {
+        return this.targetNamespaceText.getText();
     }
-    public int getMode(){
-        return 0;
+
+    public String getSchemaTargetNamespace() {
+        return this.schemaTargetNamepaceText.getText();
+    }
+
+    public String getSchemaTargetNamespacePrefix() {
+        return this.schemaTargetNamespacePrefixText.getText();
     }
     
-
-    
-    public String getStyle(){
-        return this.styleSelectionCombo.getItem(styleSelectionCombo.getSelectionIndex()).toUpperCase();
-    }
-    public String getLocationURL() {
-        return this.serviceLocationURLTextBox.getText();
-    }
-
-    public String getInputWSDLName() {
-        return this.inputWSDLNameTextBox.getText();
-    }
-
-    public String getPortypeName() {
-        return this.portTypeNameTextBox.getText();
-    }
-
-    public String getBindingName() {
-        return this.bindingTextBox.getText();
-    }
-    
-   private String getgetClassFileLocation(){
-       return null;
+   private String getServiceName(){
+       return this.serviceNameText.getText();
    }
     
    
