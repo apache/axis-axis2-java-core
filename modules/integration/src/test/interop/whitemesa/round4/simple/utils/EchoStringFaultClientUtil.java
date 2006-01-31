@@ -18,29 +18,34 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-
-public class EchoStringFaultClientUtil implements WhitemesaR4ClientUtil {
-
-    public OMElement getEchoOMElement() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
 
-        OMElement method = fac.createOMElement("echoStringFault", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
-        
-        OMElement value = fac.createOMElement("param", null);
+public class EchoStringFaultClientUtil implements SunClientUtil {
+    public SOAPEnvelope getEchoSoapEnvelope() {
 
+        SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
-        value.addChild(fac.createText(value, "Axis2 Echo String "));
+        OMNamespace omNs = omfactory.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsi");
 
-        method.addChild(value);
+        OMElement operation = omfactory.createOMElement("echoStringFault", omNs);
+        operation.declareNamespace(envNs);
+        reqEnv.getBody().addChild(operation);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
-        return method;
+        OMElement part = omfactory.createOMElement("param", null);
+        part.declareNamespace(typeNs);
+        part.addAttribute("type", "xsd:string", typeNs);
+        part.addChild(omfactory.createText("String"));
+
+        operation.addChild(part);
+
+        return reqEnv;
     }
-
-
 }

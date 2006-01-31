@@ -22,9 +22,9 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
-import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
+import test.interop.whitemesa.SunClientUtil;
 
-public class WMRound2Soap12GroupcBooleanUtil implements SunRound2ClientUtil {
+public class WMRound2Soap12GroupcBooleanUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 

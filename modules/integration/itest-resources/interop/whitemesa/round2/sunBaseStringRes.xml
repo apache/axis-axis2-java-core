@@ -1,1 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://soapinterop.org/" xmlns:ns1="http://soapinterop.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><env:Body><ns0:echoStringResponse env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><return xsi:type="xsd:string">String Argument</return></ns0:echoStringResponse></env:Body></env:Envelope>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:xsd="http://www.w3.org/1999/XMLSchema" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+<SOAP-ENV:Body>
+<m:echoStringResponse xmlns:m="http://soapinterop.org/">
+<return xmlns="" xsi:type="xsd:string">String Argument</return>
+</m:echoStringResponse>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

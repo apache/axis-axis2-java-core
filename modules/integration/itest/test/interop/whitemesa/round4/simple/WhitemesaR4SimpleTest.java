@@ -16,107 +16,94 @@
 
 package test.interop.whitemesa.round4.simple;
 
-import junit.framework.TestCase;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import test.interop.util.XMLComparatorInterop;
-import test.interop.whitemesa.round4.simple.utils.EchoEmptyFaultClientUtil;
-import test.interop.whitemesa.round4.simple.utils.EchoIntArrayFaultClientUtil;
-import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults1ClientUtil;
-import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults2ClientUtil;
-import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults3Clientutil;
-import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults4ClientUtil;
-import test.interop.whitemesa.round4.simple.utils.EchoStringFaultClientUtil;
-import test.interop.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
+import test.interop.whitemesa.round4.simple.utils.*;
+import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.SunClient;
+import test.interop.whitemesa.SunClientUtil;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
-public class WhitemesaR4SimpleTest extends TestCase {
+/**
+ * Class WhitemesaR4SimpleTest
+ * Group H - simple-rpc-encoded
+ * WSDL:-
+ * http://soapinterop.java.sun.com/round4/grouph/simplerpcenc?WSDL
+ */
 
+public class WhitemesaR4SimpleTest extends WhiteMesaIneterop {
 
-    EchoBlockingClient client = null;
-    OMElement retEle = null;
-    WhitemesaR4ClientUtil util=null;
+    SunClient client = new SunClient();
+    SOAPEnvelope retEnv = null;
+    SunClientUtil util = null;
     String soapAction = "";
+    String url = "http://soapinterop.java.sun.com:80/round4/grouph/simplerpcenc";
 
-
-
-
-    public void setUp(){
-        client = new EchoBlockingClient();
-        retEle = null;
-        util=null;
-    }
-
-    private boolean compare(OMElement retEle,String filePath) throws XMLStreamException,
-            XMLComparisonException {
-        boolean compare = false;
-        if(retEle!=null) {
-            InputStream stream = Thread.currentThread().
-                    getContextClassLoader().getResourceAsStream(filePath);
-            javax.xml.stream.XMLStreamReader parser =
-                    XMLInputFactory.newInstance().createXMLStreamReader(stream);
-            OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-            SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
-            OMElement resElementtobe = resEnv.getBody().getFirstElement();
-            XMLComparatorInterop comparator = new XMLComparatorInterop();
-            compare = comparator.compare(retEle,resElementtobe);
-
+    //Operation - echoEmptyFault
+    public void testEchoEmptyFault() {
+        try {
+            util = new EchoEmptyFaultClientUtil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
         }
-        return compare;
     }
 
-
-    public void testEchoEmptyFault()  throws Exception{
-        util=new EchoEmptyFaultClientUtil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"interop/whitemesa/round4/res/resEmptyFault.xml"));
+    //Operation - echoStringFault
+    public void testEchoStringFault() {
+        try {
+            util = new EchoStringFaultClientUtil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
+        }
     }
 
-    public void testEchoStringFault() throws Exception{
-        //echoStringFault
-        util=new EchoStringFaultClientUtil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"interop/whitemesa/round4/res/resStringFault.xml"));
-
+    //Operation - echoIntArrayFault
+    public void testEchoIntArrayFault() {
+        try {
+            util = new EchoIntArrayFaultClientUtil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
+        }
     }
 
-    //todo the messages are received right but the comparison changes. Have to check the comparator
-
-    public void testEchoIntArrayFault() throws Exception{
-        util=new EchoIntArrayFaultClientUtil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"interop/whitemesa/round4/res/resIntArray.xml"));
-
-
+    //Operation - echoMultipleFaults1
+    public void testEchoMultipleFaults1() {
+        try {
+            util = new EchoMultipleFaults1ClientUtil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
+        }
     }
 
-    public void testEchoMultipleFaults1() throws Exception{
-        util=new EchoMultipleFaults1ClientUtil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"interop/whitemesa/round4/res/resMultipleFaults1.xml"));
-
-    }
-    public void testEchoMultipleFaults2() throws Exception{
-        util=new EchoMultipleFaults2ClientUtil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"interop/whitemesa/round4/res/resMultiplefaults2.xml"));
-
-    }
-    public void testEchoMultipleFaults3() throws Exception{
-        util=new EchoMultipleFaults3Clientutil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"interop/whitemesa/round4/res/resMultipleFaults3.xml"));
-    }
-    public void testEchoMultipleFaults4() throws Exception{
-        util=new EchoMultipleFaults4ClientUtil();
-        retEle =client.sendMsg(util,soapAction);
-        assertTrue( compare(retEle,"interop/whitemesa/round4/res/resMultipleFaults4.xml"));
+    //Operation - echoMultipleFaults2
+    public void testEchoMultipleFaults2() {
+        try {
+            util = new EchoMultipleFaults2ClientUtil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
+        }
     }
 
+    //Operation - echoMultipleFaults3
+    public void testEchoMultipleFaults3() {
+        try {
+            util = new EchoMultipleFaults3Clientutil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
+        }
+    }
+
+    //Operation - echoMultipleFaults4
+    public void testEchoMultipleFaults4() {
+        try {
+            util = new EchoMultipleFaults4ClientUtil();
+            retEnv = client.sendMsg(util, url, soapAction);
+            fail("Internal Server Error");
+        } catch (Exception e) {
+        }
+    }
 }
-

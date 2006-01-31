@@ -20,8 +20,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GDImport2EchoStructUtil implements SunRound3ClientUtil{
+public class GDImport2EchoStructUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
@@ -32,8 +33,8 @@ public class GDImport2EchoStructUtil implements SunRound3ClientUtil{
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/main/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://soapinterop/","ns1");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        reqEnv.declareNamespace("http://soapinterop/", "ns1");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
         OMElement operation = omfactory.createOMElement("echoStruct", "http://soapinterop/", null);
         reqEnv.getBody().addChild(operation);

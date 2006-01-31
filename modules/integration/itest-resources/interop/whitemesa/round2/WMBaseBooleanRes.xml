@@ -1,7 +1,1 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body>
-         <m:echoBooleanResponse SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:m="http://soapinterop.org/">
-            <return>1</return>
-         </m:echoBooleanResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Body><m:echoBooleanResponse xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><return xmlns="">1</return></m:echoBooleanResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>

@@ -20,8 +20,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GDRpcVoidUtil implements SunRound3ClientUtil{
+public class GDRpcVoidUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
@@ -33,7 +34,7 @@ public class GDRpcVoidUtil implements SunRound3ClientUtil{
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://soapinterop.org/WSDLInteropTestRpcEnc", "tns");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
         OMElement operation = omfactory.createOMElement("echoVoid", "http://soapinterop.org/WSDLInteropTestRpcEnc", null);
         reqEnv.getBody().addChild(operation);

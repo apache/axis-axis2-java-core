@@ -15,48 +15,53 @@
  */
 
 package test.interop.whitemesa.round2.util;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupbEcho2DStringArrayUtil implements SunRound2ClientUtil{
+public class GroupbEcho2DStringArrayUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
-            SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-            SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-            reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-            //reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "xmlns");
-            reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
-            reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-            reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-            reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-            reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-            reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
-            reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
+
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        reqEnv.declareNamespace("http://soapinterop.org/", "tns");
+        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
         OMElement operation = omfactory.createOMElement("echo2DStringArray", "http://soapinterop.org/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        reqEnv.getBody().addChild(operation);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
-        OMElement part = omfactory.createOMElement("input2DStringArray", "", null);
-        part.addAttribute("xsi:type", "SOAP-ENC:Array", null);
-        part.addAttribute("SOAP-ENC:arrayType", "xsd:string[2,2]", null);
+        OMElement part = omfactory.createOMElement("input2DStringArray", null);
+        part.declareNamespace(typeNs);
+        part.declareNamespace(encNs);
+        part.addAttribute("type", "SOAP-ENC:Array", typeNs);
+        part.addAttribute("arrayType", "xsd:string[2,2]", encNs);
 
-        OMElement value0 = omfactory.createOMElement("varString", "", null);
-        value0.addAttribute("xsi:type", "xsd:string", null);
+        OMElement value0 = omfactory.createOMElement("varString", null);
+        value0.declareNamespace(typeNs);
+        value0.addAttribute("type", "xsd:string", typeNs);
         value0.addChild(omfactory.createText("strss fdfing1"));
-        OMElement value1 = omfactory.createOMElement("varString", "", null);
-        value1.addAttribute("xsi:type", "xsd:string", null);
+        OMElement value1 = omfactory.createOMElement("varString", null);
+        value1.declareNamespace(typeNs);
+        value1.addAttribute("type", "xsd:string", typeNs);
         value1.addChild(omfactory.createText("sdfsdf25"));
-        OMElement value2 = omfactory.createOMElement("varString", "", null);
-        value2.addAttribute("xsi:type", "xsd:string", null);
+        OMElement value2 = omfactory.createOMElement("varString", null);
+        value2.declareNamespace(typeNs);
+        value2.addAttribute("type", "xsd:string", typeNs);
         value2.addChild(omfactory.createText("25dsasd dfasdas23"));
-        OMElement value3 = omfactory.createOMElement("varString", "", null);
-        value3.addAttribute("xsi:type", "xsd:string", null);
+        OMElement value3 = omfactory.createOMElement("varString", null);
+        value3.declareNamespace(typeNs);
+        value3.addAttribute("type", "xsd:string", typeNs);
         value3.addChild(omfactory.createText("25dsasd dfasdas23"));
 
         part.addChild(value0);
@@ -66,19 +71,7 @@ public class GroupbEcho2DStringArrayUtil implements SunRound2ClientUtil{
 
         operation.addChild(part);
 
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
     }
 
 }
-/**
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:m0="http://schemas.xmlsoap.org/soap/encoding/">
-	<SOAP-ENV:Body>
-		<m:echo2DStringArray xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<input2DStringArray xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="m0:string[1]">
-				<m0:item0 xsi:type="m0:string" id="" href=""/>
-			</input2DStringArray>
-		</m:echo2DStringArray>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
-*/

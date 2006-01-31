@@ -17,32 +17,33 @@
 package test.interop.whitemesa.round1.util;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class Round1IntegerUtil implements Round1ClientUtil{
+public class Round1IntegerUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
+
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
 
         OMElement operation = omfactory.createOMElement("echoInteger", "http://soapinterop.org/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        reqEnv.getBody().addChild(operation);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
         OMElement part = omfactory.createOMElement("inputInteger", "", null);
-        part.addAttribute("xsi:type", "xsd:int", null);
+        part.declareNamespace(typeNs);
+        part.addAttribute("type", "xsd:int", typeNs);
         part.addChild(omfactory.createText("52"));
         operation.addChild(part);
         return reqEnv;

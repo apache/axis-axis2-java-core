@@ -18,52 +18,73 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoMultipleFaults2ClientUtil implements WhitemesaR4ClientUtil{
+public class EchoMultipleFaults2ClientUtil implements SunClientUtil {
 
-    public OMElement getEchoOMElement() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+    public SOAPEnvelope getEchoSoapEnvelope() {
+
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "m0");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
 
+        OMElement operation = fac.createOMElement("echoMultipleFaults2", omNs);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
+        reqEnv.getBody().addChild(operation);
 
-        OMElement method = fac.createOMElement("echoMultipleFaults2", omNs);
-        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",null);
+        OMElement wfault = fac.createOMElement("whichFault", null);
+        wfault.declareNamespace(typeNs);
+        wfault.addAttribute("type", "xsd:int", typeNs);
+        OMElement para1 = fac.createOMElement("param1", null);
+        para1.declareNamespace(typeNs);
+        para1.addAttribute("type", "xsd:string", typeNs);
+        OMElement para2 = fac.createOMElement("param2", null);
+        para2.declareNamespace(typeNs);
+        para2.addAttribute("type", "xsd:float", typeNs);
+        OMElement para3 = fac.createOMElement("param3", null);
+        para3.declareNamespace(typeNs);
+        para3.declareNamespace(encNs);
+        para3.addAttribute("type", "SOAP-ENC:Array", typeNs);
+        para3.addAttribute("arrayType", "xsd:string[3]", encNs);
 
-        OMElement value = fac.createOMElement("whichFault", null);
-        OMElement value1 = fac.createOMElement("param1", null);
-        OMElement value2 = fac.createOMElement("param2", null);
-        OMElement value3 = fac.createOMElement("param3", null);
+        OMElement item0 = fac.createOMElement("Item", null);
+        OMElement item1 = fac.createOMElement("Item", null);
+        OMElement item2 = fac.createOMElement("Item", null);
 
-        OMElement value4 = fac.createOMElement("Item", null);
-        OMElement value5 = fac.createOMElement("Item", null);
-       OMElement value6 = fac.createOMElement("Item", null);
+        item0.declareNamespace(typeNs);
+        item1.declareNamespace(typeNs);
+        item2.declareNamespace(typeNs);
+        item0.addAttribute("type", "xsd:string", typeNs);
+        item1.addAttribute("type", "xsd:string", typeNs);
+        item2.addAttribute("type", "xsd:string", typeNs);
 
-        value3.addAttribute("xmlns:nsa","http://www.w3.org/2001/XMLSchema",null);
-        value3.addAttribute("soapenc:arrayType","nsa:string[3]", null);
-        value3.addAttribute("soapenc:offset","[0]", null);
-        value3.addAttribute("xmlns:soapenc","http://schemas.xmlsoap.org/soap/encoding/" , null);
+        wfault.addChild(fac.createText(wfault, "10"));
+        para1.addChild(fac.createText(para1, "String"));
+        para2.addChild(fac.createText(para2, "1.2365"));
+        item0.addChild(fac.createText(item0, "StringValue0"));
+        item1.addChild(fac.createText(item1, "StringValue1"));
+        item2.addChild(fac.createText(item2, "StringValue2"));
 
-        value.addChild(fac.createText(value, "10"));
-        value1.addChild(fac.createText(value1, "hi"));
-        value2.addChild(fac.createText(value3, "0.236"));
-        value4.addChild(fac.createText(value4, "String1"));
-        value5.addChild(fac.createText(value5, "String2"));
-        value6.addChild(fac.createText(value6, "String3"));
+        para3.addChild(item0);
+        para3.addChild(item1);
+        para3.addChild(item2);
 
-        value3.addChild(value4);
-        value3.addChild(value5);
-        value3.addChild(value6);
+        operation.addChild(wfault);
+        operation.addChild(para1);
+        operation.addChild(para2);
+        operation.addChild(para3);
 
-        method.addChild(value);
-        method.addChild(value1);
-        method.addChild(value2);
-        method.addChild(value3);
-
-
-        return method;
+        return reqEnv;
     }
 
 }

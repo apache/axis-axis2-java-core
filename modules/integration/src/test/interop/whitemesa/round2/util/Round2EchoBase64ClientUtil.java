@@ -15,12 +15,14 @@
  */
 
 package test.interop.whitemesa.round2.util;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class Round2EchoBase64ClientUtil implements SunRound2ClientUtil {
+public class Round2EchoBase64ClientUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
@@ -31,7 +33,7 @@ public class Round2EchoBase64ClientUtil implements SunRound2ClientUtil {
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
         OMElement operation = omfactory.createOMElement("echoBase64", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
@@ -39,19 +41,13 @@ public class Round2EchoBase64ClientUtil implements SunRound2ClientUtil {
 
         OMElement part = omfactory.createOMElement("inputBase64", "", null);
         part.addAttribute("xsi:type", "xsd:base64Binary", null);
-        part.addChild(omfactory.createText("UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi"));
+//        DataHandler data = new DataHandler(new ByteArrayDataSource("WebServices".getBytes()));
+//        OMText base64EncodedText = omfactory.createText(data, true );
+//        part.addChild(base64EncodedText);
+        part.addChild(omfactory.createText("SGVsbG8gV29ybGQ="));
 
         operation.addChild(part);
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }
 }
-/**
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<SOAP-ENV:Body>
-		<m:echoBase64 xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<inputBase64 xsi:type="xsd:base64Binary">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</inputBase64>
-		</m:echoBase64>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>*/

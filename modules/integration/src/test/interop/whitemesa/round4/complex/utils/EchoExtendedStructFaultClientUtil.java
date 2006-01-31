@@ -18,50 +18,45 @@ package test.interop.whitemesa.round4.complex.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoExtendedStructFaultClientUtil implements WhitemesaR4ClientUtil{
-    
-    public OMElement getEchoOMElement() {
+public class EchoExtendedStructFaultClientUtil implements SunClientUtil {
+    public SOAPEnvelope getEchoSoapEnvelope() {
 
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
 
         OMElement method = fac.createOMElement("echoExtendedStructFault", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
+        method.declareNamespace(envNs);
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
+        reqEnv.getBody().addChild(method);
 
+        OMElement param = fac.createOMElement("param", null);
+        OMElement floatMsg = fac.createOMElement("floatMessage", null);
+        OMElement shortMsg = fac.createOMElement("shortMessage", null);
+        OMElement stringMsg = fac.createOMElement("stringMessage", null);
+        OMElement intMsg = fac.createOMElement("intMessage", null);
+        OMElement anotherMsg = fac.createOMElement("anotherIntMessage", null);
 
-        OMElement value1 = fac.createOMElement("param", null);
-        OMElement value2=fac.createOMElement("floatMessage",null);
-        OMElement value3=fac.createOMElement("shortMessage",null);
-        OMElement value4=fac.createOMElement("stringMessage",null);
-        OMElement value5=fac.createOMElement("intMessage",null);
-        OMElement value6=fac.createOMElement("anotherIntMessage",null);
+        floatMsg.addChild(fac.createText(floatMsg, "2.023"));
+        shortMsg.addChild(fac.createText(shortMsg, "13"));
+        stringMsg.addChild(fac.createText(stringMsg, "String"));
+        intMsg.addChild(fac.createText(intMsg, "6"));
+        anotherMsg.addChild(fac.createText(anotherMsg, "10"));
 
+        param.addChild(floatMsg);
+        param.addChild(shortMsg);
+        param.addChild(stringMsg);
+        param.addChild(intMsg);
+        param.addChild(anotherMsg);
 
+        method.addChild(param);
 
-        value2.addChild(fac.createText(value2, ".023"));
-        value3.addChild(fac.createText(value3, "1.3"));
-        value4.addChild(fac.createText(value4, "hi"));
-        value5.addChild(fac.createText(value5, "6"));
-        value6.addChild(fac.createText(value6, "78"));
-
-
-
-        value1.addChild(value2);
-        value1.addChild(value3);
-        value1.addChild(value4);
-        value1.addChild(value5);
-        value1.addChild(value6);
-
-        method.addChild(value1);
-
-
-        return method;
+        return reqEnv;
     }
-
-
-
-
 }

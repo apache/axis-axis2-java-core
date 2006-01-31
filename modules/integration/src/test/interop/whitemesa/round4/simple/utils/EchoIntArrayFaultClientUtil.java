@@ -18,51 +18,51 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoIntArrayFaultClientUtil implements WhitemesaR4ClientUtil {
+public class EchoIntArrayFaultClientUtil implements SunClientUtil {
+    public SOAPEnvelope getEchoSoapEnvelope() {
 
+        SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
-    public OMElement getEchoOMElement() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = omfactory.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "m0");
 
-        OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMElement operation = omfactory.createOMElement("echoIntArrayFault", omNs);
+        operation.declareNamespace(envNs);
+        reqEnv.getBody().addChild(operation);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
-        OMElement method = fac.createOMElement("echoIntArrayFault", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
-       
+        OMElement part = omfactory.createOMElement("param", null);
+        part.declareNamespace(encNs);
+        part.declareNamespace(typeNs);
+        part.addAttribute("arrayType", "m0:int[3]", encNs);
+        part.addAttribute("type", "SOAP-ENC:Array", typeNs);
+        OMElement item0 = omfactory.createOMElement("item0", null);
+        item0.declareNamespace(typeNs);
+        item0.addAttribute("type", "m0:int", typeNs);
+        item0.addChild(omfactory.createText("451"));
+        OMElement item1 = omfactory.createOMElement("item1", null);
+        item1.declareNamespace(typeNs);
+        item1.addAttribute("type", "m0:int", typeNs);
+        item1.addChild(omfactory.createText("425"));
+        OMElement item2 = omfactory.createOMElement("item2", null);
+        item2.declareNamespace(typeNs);
+        item2.addAttribute("type", "m0:int", typeNs);
+        item2.addChild(omfactory.createText("2523"));
 
-        OMElement value1 = fac.createOMElement("param", null);
-        OMElement value2=fac.createOMElement("Item",null);
-        OMElement value3=fac.createOMElement("Item",null);
-        OMElement value4=fac.createOMElement("Item",null);
+        part.addChild(item0);
+        part.addChild(item1);
+        part.addChild(item2);
 
-
-        value1.addAttribute("soapenc:arrayType","nsa:int[3]",null);
-         value1.addAttribute("soapenc:offset","[0]",null);
-        value1.addAttribute("xmlns:soapenc","http://schemas.xmlsoap.org/soap/encoding/",null);
-       value1.addAttribute("xmlns:nsa","http://www.w3.org/2001/XMLSchema",null);
-
-
-        value2.addChild(fac.createText(value2, "10"));
-        value3.addChild(fac.createText(value3, "11"));
-        value4.addChild(fac.createText(value4, "1"));
-
-        value1.addChild(value2);
-        value1.addChild(value3);
-        value1.addChild(value4);
-
-
-
-        method.addChild(value1);
-
-
-
-        return method;
+        operation.addChild(part);
+        return reqEnv;
     }
-
-
-
-
 }

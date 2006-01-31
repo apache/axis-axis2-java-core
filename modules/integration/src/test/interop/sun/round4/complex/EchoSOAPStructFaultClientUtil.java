@@ -53,7 +53,7 @@ public class EchoSOAPStructFaultClientUtil implements SunGroupHClientUtil{
         value1.addChild(value2);
         value3.addChild(fac.createText(value3, "10"));
         value4.addChild(fac.createText(value4, "0.568"));
-        value5.addChild(fac.createText(value5, "Hi"));
+        value5.addChild(fac.createText(value5, "String"));
 
         return method;
     }

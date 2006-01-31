@@ -24,8 +24,9 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupcBooleanUtil implements SunRound2ClientUtil {
+public class GroupcBooleanUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 

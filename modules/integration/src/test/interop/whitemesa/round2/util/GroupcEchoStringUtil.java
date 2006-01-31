@@ -15,6 +15,7 @@
  */
 
 package test.interop.whitemesa.round2.util;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -23,80 +24,66 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupcEchoStringUtil implements SunRound2ClientUtil {
+public class GroupcEchoStringUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC"); //xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://soapinterop.org/","m");
+        reqEnv.declareNamespace("http://soapinterop.org/", "m");
 
         SOAPHeader header = omfactory.createSOAPHeader(reqEnv);
-        OMNamespace hns= reqEnv.declareNamespace("http://soapinterop.org/echoheader/","hns"); //xmlns:m0="http://soapinterop.org/echoheader/
-        SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest",hns);
-        block1.addAttribute("xsi:type","xsd:string",null);
+        OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns");
+        SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
+        block1.declareNamespace(typeNs);
+        block1.addAttribute("type", "xsd:string", typeNs);
         block1.addChild(omfactory.createText("string"));
-       // header.addChild(headerChild);
         header.addChild(block1);
 
-        SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest",hns);
-        block2.addAttribute("xsi:type","s:SOAPStruct",null);
+        SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest", hns);
+        block2.declareNamespace(typeNs);
+        block2.addAttribute("type", "s:SOAPStruct", typeNs);
 
-        OMElement h2Val1=omfactory.createOMElement("varString",null);
-        h2Val1.addAttribute("xsi:type","xsd:string",null);
+        OMElement h2Val1 = omfactory.createOMElement("varString", null);
+        h2Val1.declareNamespace(typeNs);
+        h2Val1.addAttribute("type", "xsd:string", typeNs);
         h2Val1.addChild(omfactory.createText("string"));
 
-        OMElement h2Val2=omfactory.createOMElement("varInt",null);
-        h2Val2.addAttribute("xsi:type","xsd:int",null);
+        OMElement h2Val2 = omfactory.createOMElement("varInt", null);
+        h2Val2.declareNamespace(typeNs);
+        h2Val2.addAttribute("type", "xsd:int", typeNs);
         h2Val2.addChild(omfactory.createText("150"));
 
-        OMElement h2Val3=omfactory.createOMElement("varFloat",null);
-        h2Val3.addAttribute("xsi:type","xsd:float",null);
+        OMElement h2Val3 = omfactory.createOMElement("varFloat", null);
+        h2Val3.declareNamespace(typeNs);
+        h2Val3.addAttribute("type", "xsd:float", typeNs);
         h2Val3.addChild(omfactory.createText("456.321"));
 
         block2.addChild(h2Val1);
         block2.addChild(h2Val2);
         block2.addChild(h2Val3);
 
-        OMElement operation = omfactory.createOMElement("echoString","http://soapinterop.org/",  null);
+        OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
 
-        //operation.setNamespace(ns);
         SOAPBody body = omfactory.createSOAPBody(reqEnv);
         body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
         OMElement part = omfactory.createOMElement("inputString", null);
-        part.addAttribute("xsi:type", "xsd:string", null);
+        part.declareNamespace(typeNs);
+        part.addAttribute("type", "xsd:string", typeNs);
         part.addChild(omfactory.createText("strssfdfing1"));
 
         operation.addChild(part);
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }
-    /**
-     * <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:m0="http://soapinterop.org/echoheader/" xmlns:m1="http://soapinterop.org/xsd">
-	<SOAP-ENV:Header>
-		<echoMeStringRequest xsi:type="xsd:string">String</echoMeStringRequest>
-		<m0:echoMeStructRequest xsi:type="m1:SOAPStruct">
-			<varString xsi:type="xsd:string">String</varString>
-			<varInt xsi:type="xsd:int">0</varInt>
-			<varFloat xsi:type="xsd:float">3.14159E0</varFloat>
-		</m0:echoMeStructRequest>
-	</SOAP-ENV:Header>
-	<SOAP-ENV:Body>
-		<m:echoString xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<inputString xsi:type="xsd:string">String</inputString>
-		</m:echoString>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
-     */
-
-
 }

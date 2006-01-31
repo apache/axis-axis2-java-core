@@ -19,6 +19,8 @@ package test.interop.whitemesa.round3;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.SunClient;
+import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.round3.util.*;
 
 /**
@@ -28,17 +30,13 @@ import test.interop.whitemesa.round3.util.*;
 
 public class SunRound3InteropTest extends WhiteMesaIneterop {
 
-    SunRound3Client client = null;
+    SunClient client = new SunClient();
     SOAPEnvelope retEnv = null;
     String url = "";
     String soapAction = "";
     String resFilePath = "interop/whitemesa/round3/";
     String tempPath = "";
-    SunRound3ClientUtil util = null;
-
-    public void setUp() {
-        client = new SunRound3Client();
-    }
+    SunClientUtil util = null;
 
     /**
      * Round 3

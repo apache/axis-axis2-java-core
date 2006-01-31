@@ -18,6 +18,7 @@ package test.interop.sun.round4.simple;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -35,7 +36,7 @@ public class EchoBlockingClient {
             options.setExceptionToBeThrownOnSOAPFault(false);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapAction(soapAction);
-            //Blocking invocation
+            options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
 
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);

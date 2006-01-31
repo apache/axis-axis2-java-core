@@ -15,34 +15,34 @@
  */
 
 package test.interop.whitemesa.round2.util;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupcFloatUtil implements SunRound2ClientUtil {
+public class GroupcFloatUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
+
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC"); //xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://soapinterop.org/", "m");
 
         SOAPHeader header = omfactory.createSOAPHeader(reqEnv);
-        OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns"); //xmlns:m0="http://soapinterop.org/echoheader/
+        OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns");
         SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
         block1.addAttribute("xsi:type", "xsd:string", null);
         block1.addChild(omfactory.createText("string"));
-        // header.addChild(headerChild);
         header.addChild(block1);
 
         SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest", hns);
@@ -65,8 +65,7 @@ public class GroupcFloatUtil implements SunRound2ClientUtil {
         block2.addChild(h2Val3);
 
         OMElement operation = omfactory.createOMElement("echoFloat", "http://soapinterop.org/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
+        reqEnv.getBody().addChild(operation);
         operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
 
         OMElement part = omfactory.createOMElement("inputFloat", "", null);
@@ -74,7 +73,6 @@ public class GroupcFloatUtil implements SunRound2ClientUtil {
         part.addChild(omfactory.createText("50.25"));
 
         operation.addChild(part);
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }

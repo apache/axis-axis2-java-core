@@ -20,9 +20,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupbSoap12EchoNestedStructUtil implements SunRound2ClientUtil {
+public class GroupbSoap12EchoNestedStructUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 

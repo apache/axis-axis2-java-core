@@ -18,29 +18,34 @@ package test.interop.whitemesa.round2.util;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
 
-public class Round2EchoStringclientUtil implements SunRound2ClientUtil {
+public class Round2EchoStringclientUtil implements SunClientUtil {
 
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
-        
+
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("Server.echoString", "http://soapinterop.org/", null);
+        OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
-        OMElement part = omfactory.createOMElement("inputString", "", null);
-        part.addAttribute("xsi:type", "xsd:string", null);
+        OMElement part = omfactory.createOMElement("inputString", null);
+        part.declareNamespace(typeNs);
+        part.addAttribute("type", "xsd:string", typeNs);
         part.addChild(omfactory.createText("String Argument"));
 
         operation.addChild(part);

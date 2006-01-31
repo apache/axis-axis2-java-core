@@ -20,8 +20,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupbEchoNestedStructUtil implements SunRound2ClientUtil {
+public class GroupbEchoNestedStructUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
@@ -32,7 +33,7 @@ public class GroupbEchoNestedStructUtil implements SunRound2ClientUtil {
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
         OMElement operation = omfactory.createOMElement("echoNestedStruct", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
@@ -55,8 +56,6 @@ public class GroupbEchoNestedStructUtil implements SunRound2ClientUtil {
         value2.addChild(omfactory.createText("25.23"));
 
         OMElement value3 = omfactory.createOMElement("varStruct", "", null);
-
-        //OMElement part31 = omfactory.createOMElement("inputStruct", "", null);
 
         OMElement value30 = omfactory.createOMElement("varString", "", null);
         value30.addAttribute("xsi:type", "xsd:string", null);
@@ -82,7 +81,6 @@ public class GroupbEchoNestedStructUtil implements SunRound2ClientUtil {
 
         operation.addChild(part);
 
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }

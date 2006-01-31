@@ -18,39 +18,41 @@ package test.interop.whitemesa.round4.complex.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoBaseStructFaultClientutil implements WhitemesaR4ClientUtil{
+public class EchoBaseStructFaultClientutil implements SunClientUtil {
 
-    public OMElement getEchoOMElement() {
+    public SOAPEnvelope getEchoSoapEnvelope() {
 
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
 
         OMElement method = fac.createOMElement("echoBaseStructFault", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
-        method.addAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance",null);
-        method.addAttribute("xmlns:xsd","http://www.w3.org/2001/XMLSchema",null);
+        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        method.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance", null);
+        method.addAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema", null);
         method.addAttribute("xmlns:ns2", "http://soapinterop.org/types", null);
         method.addAttribute("xmlns:wsdl", "http://schemas.xmlsoap.org/wsdl/", null);
 
+        reqEnv.getBody().addChild(method);
 
-        OMElement value1 = fac.createOMElement("param", null);
-        OMElement value2=fac.createOMElement("floatMessage",null);
-        OMElement value3=fac.createOMElement("shortMessage ",null);
+        OMElement para = fac.createOMElement("param", null);
+        OMElement floatMsg = fac.createOMElement("floatMessage", null);
+        OMElement shortMsg = fac.createOMElement("shortMessage ", null);
 
-        value2.addChild(fac.createText(value2, "10.3"));
-        value3.addChild(fac.createText(value3, "1.55"));
+        floatMsg.addChild(fac.createText(floatMsg, "10.3"));
+        shortMsg.addChild(fac.createText(shortMsg, "10"));
 
+        para.addChild(floatMsg);
+        para.addChild(shortMsg);
+        method.addChild(para);
 
-        value1.addChild(value2);
-        value1.addChild(value3);
-        method.addChild(value1);
-
-
-        return method;
+        return reqEnv;
     }
 
 }

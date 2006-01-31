@@ -18,46 +18,56 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoMultipleFaults1ClientUtil implements WhitemesaR4ClientUtil {
+public class EchoMultipleFaults1ClientUtil implements SunClientUtil {
+    public SOAPEnvelope getEchoSoapEnvelope() {
 
-    public OMElement getEchoOMElement() {
+        SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "m0");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        OMNamespace omNs = omfactory.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace encNs1 = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
-        OMElement method = fac.createOMElement("echoMultipleFaults1", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
+        OMElement operation = omfactory.createOMElement("echoMultipleFaults1", omNs);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
+        reqEnv.getBody().addChild(operation);
 
+        OMElement wfault = omfactory.createOMElement("whichFault", null);
+        OMElement param1 = omfactory.createOMElement("param1", null);
+        OMElement param2 = omfactory.createOMElement("param2", null);
+        OMElement item0 = omfactory.createOMElement("item0", null);
 
-        OMElement value = fac.createOMElement("whichFault", null);
-        OMElement value1 = fac.createOMElement("param1", null);
-        OMElement value2 = fac.createOMElement("param2", null);
-        OMElement value3 = fac.createOMElement("Item", null);
-        OMElement value4 = fac.createOMElement("Item", null);
-        OMElement value5 = fac.createOMElement("Item", null);
+        wfault.declareNamespace(typeNs);
+        param1.declareNamespace(typeNs);
+        param2.declareNamespace(typeNs);
+        param2.declareNamespace(encNs1);
+        item0.declareNamespace(typeNs);
 
+        wfault.addAttribute("type", "xsd:int", typeNs);
+        param1.addAttribute("type", "xsd:string", typeNs);
+        param2.addAttribute("type", "SOAP-ENC:Array", typeNs);
+        param2.addAttribute("arrayType", "xsd:float[1]", encNs1);
+        item0.addAttribute("type", "xsd:float", typeNs);
 
+        wfault.addChild(omfactory.createText(wfault, "0"));
+        param1.addChild(omfactory.createText(param1, "String"));
+        item0.addChild(omfactory.createText(item0, "1.3456"));
+        param2.addChild(item0);
 
-        value.addChild(fac.createText(value, "10"));
-        value1.addChild(fac.createText(value1, "hi"));
-        value3.addChild(fac.createText(value3, "1.0"));
-        value4.addChild(fac.createText(value4, "20.6"));
-        value5.addChild(fac.createText(value5, "2.6"));
+        operation.addChild(wfault);
+        operation.addChild(param1);
+        operation.addChild(param2);
 
-        value2.addChild(value3);
-        value2.addChild(value4);
-        value2.addChild(value5);
+        return reqEnv;
 
-        method.addChild(value);
-        method.addChild(value1);
-        method.addChild(value2);
-
-
-        return method;
     }
-
-
 }

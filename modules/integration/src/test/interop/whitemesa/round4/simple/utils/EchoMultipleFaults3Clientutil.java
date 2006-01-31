@@ -18,38 +18,42 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoMultipleFaults3Clientutil implements WhitemesaR4ClientUtil{
-    public OMElement getEchoOMElement() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+public class EchoMultipleFaults3Clientutil implements SunClientUtil {
+    public SOAPEnvelope getEchoSoapEnvelope() {
+
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
 
-        OMElement method = fac.createOMElement("echoMultipleFaults3", omNs);
-        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",null);
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "m0");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
+        OMElement operation = fac.createOMElement("echoMultipleFaults3", omNs);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
+        reqEnv.getBody().addChild(operation);
 
-        OMElement value = fac.createOMElement("whichFault", null);
-        OMElement value1 = fac.createOMElement("param1", null);
-        OMElement value2 = fac.createOMElement("param2", null);
+        OMElement wfault = fac.createOMElement("whichFault", null);
+        OMElement para1 = fac.createOMElement("param1", null);
+        OMElement para2 = fac.createOMElement("param2", null);
 
+        wfault.addChild(fac.createText(wfault, "10"));
+        para1.addChild(fac.createText(para1, "String Value1"));
+        para2.addChild(fac.createText(para2, "String Value2"));
 
+        operation.addChild(wfault);
+        operation.addChild(para1);
+        operation.addChild(para2);
 
-
-        value.addChild(fac.createText(value, "10"));
-        value1.addChild(fac.createText(value1, "hi"));
-        value2.addChild(fac.createText(value2, "hello"));
-
-        method.addChild(value);
-        method.addChild(value1);
-        method.addChild(value2);
-
-
-
-        return method;
+        return reqEnv;
     }
-
-
 }

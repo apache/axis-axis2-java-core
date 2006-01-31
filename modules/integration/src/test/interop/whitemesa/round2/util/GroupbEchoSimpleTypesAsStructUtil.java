@@ -15,12 +15,15 @@
  */
 
 package test.interop.whitemesa.round2.util;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupbEchoSimpleTypesAsStructUtil implements SunRound2ClientUtil {
+public class GroupbEchoSimpleTypesAsStructUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
@@ -28,31 +31,32 @@ public class GroupbEchoSimpleTypesAsStructUtil implements SunRound2ClientUtil {
         SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
         OMElement operation = omfactory.createOMElement("echoSimpleTypesAsStruct", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
-        OMElement part0 = omfactory.createOMElement("inputString", "", null);
+        OMElement part0 = omfactory.createOMElement("inputString", null);
         part0.addAttribute("xsi:type", "xsd:string", null);
         part0.addChild(omfactory.createText("45ascasc  acasa asd52"));
 
-        OMElement part1 = omfactory.createOMElement("inputInteger", "", null);
+        OMElement part1 = omfactory.createOMElement("inputInteger", null);
         part1.addAttribute("xsi:type", "xsd:int", null);
         part1.addChild(omfactory.createText("4552"));
 
-        OMElement part2 = omfactory.createOMElement("inputFloat", "", null);
+        OMElement part2 = omfactory.createOMElement("inputFloat", null);
         part2.addAttribute("xsi:type", "xsd:float", null);
         part2.addChild(omfactory.createText("450.52"));
 
         operation.addChild(part0);
         operation.addChild(part1);
-        operation.addChild(part2); //reqEnv.getBody().addChild(method);
-
+        operation.addChild(part2);
         return reqEnv;
     }
 }

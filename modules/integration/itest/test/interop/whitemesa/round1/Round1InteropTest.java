@@ -19,7 +19,8 @@ package test.interop.whitemesa.round1;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.WhiteMesaIneterop;
-import test.interop.whitemesa.round1.util.Round1ClientUtil;
+import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.round1.util.Round1FloatArrayUtil;
 import test.interop.whitemesa.round1.util.Round1FloatUtil;
 import test.interop.whitemesa.round1.util.Round1IntArrayUtil;
@@ -37,12 +38,8 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     String soapAction = "urn:soapinterop";
     String resFilePath = "interop/whitemesa/round1/";
     String tempPath = "";
-    Round1ClientUtil util;
-    Round1Client client = null;
-
-    public void setUp() {
-        client = new Round1Client();
-    }
+    SunClientUtil util;
+    SunClient client = new SunClient();
 
     public void testEchoString() throws AxisFault {
         util = new Round1StringUtil();

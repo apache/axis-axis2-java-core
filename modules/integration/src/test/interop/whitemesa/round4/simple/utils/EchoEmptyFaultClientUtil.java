@@ -18,20 +18,26 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoEmptyFaultClientUtil implements WhitemesaR4ClientUtil {
+public class EchoEmptyFaultClientUtil implements SunClientUtil {
 
-    public OMElement getEchoOMElement() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+    public SOAPEnvelope getEchoSoapEnvelope() {
+
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
-        OMElement method = fac.createOMElement("echoEmptyFault", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
+        OMElement operation = fac.createOMElement("echoEmptyFault", omNs);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
+        reqEnv.getBody().addChild(operation);
 
-        return method;
+        return reqEnv;
     }
-
 }

@@ -18,10 +18,12 @@ package test.interop.whitemesa.round2.util;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class GroupbEchoNestedArrayUtil implements SunRound2ClientUtil {
+public class GroupbEchoNestedArrayUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
@@ -29,48 +31,50 @@ public class GroupbEchoNestedArrayUtil implements SunRound2ClientUtil {
         SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
         OMElement operation = omfactory.createOMElement("echoNestedArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
-        OMElement part = omfactory.createOMElement("inputStruct", "", null);
+        OMElement part = omfactory.createOMElement("inputStruct", null);
         part.addAttribute("xsi:type", "s:SOAPStruct", null);
 
 
-        OMElement value0 = omfactory.createOMElement("varString", "", null);
+        OMElement value0 = omfactory.createOMElement("varString", null);
         value0.addAttribute("xsi:type", "xsd:string", null);
         value0.addChild(omfactory.createText("strss fdfing1"));
 
-        OMElement value1 = omfactory.createOMElement("varInt", "", null);
+        OMElement value1 = omfactory.createOMElement("varInt", null);
         value1.addAttribute("xsi:type", "xsd:int", null);
         value1.addChild(omfactory.createText("25"));
 
-        OMElement value2 = omfactory.createOMElement("varFloat", "", null);
+        OMElement value2 = omfactory.createOMElement("varFloat", null);
         value2.addAttribute("xsi:type", "xsd:float", null);
         value2.addChild(omfactory.createText("25.23"));
 
-        OMElement value3 = omfactory.createOMElement("varArray", "", null);
+        OMElement value3 = omfactory.createOMElement("varArray", null);
         part.addAttribute("xsi:type", "s:SOAPArrayStruct", null);
-        value3.addAttribute("SOAP-ENC:arrayType", "xsd:string[3]", null);
+        value3.declareNamespace(encNs);
+        value3.addAttribute("arrayType", "xsd:string[3]", encNs);
 
-        OMElement value30 = omfactory.createOMElement("item", "", null);
+        OMElement value30 = omfactory.createOMElement("item", null);
         value30.addAttribute("xsi:type", "xsd:string", null);
         value30.addChild(omfactory.createText("strss fdfing1"));
 
-        OMElement value31 = omfactory.createOMElement("item", "", null);
+        OMElement value31 = omfactory.createOMElement("item", null);
         value31.addAttribute("xsi:type", "xsd:string", null);
         value31.addChild(omfactory.createText("strss fdfing2"));
 
-        OMElement value32 = omfactory.createOMElement("item", "", null);
+        OMElement value32 = omfactory.createOMElement("item", null);
         value32.addAttribute("xsi:type", "xsd:string", null);
         value32.addChild(omfactory.createText("strss fdfing3"));
-
-
 
         value3.addChild(value30);
         value3.addChild(value31);
@@ -81,10 +85,8 @@ public class GroupbEchoNestedArrayUtil implements SunRound2ClientUtil {
         part.addChild(value2);
         part.addChild(value3);
 
-
         operation.addChild(part);
 
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }

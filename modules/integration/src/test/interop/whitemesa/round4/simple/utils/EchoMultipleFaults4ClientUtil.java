@@ -18,17 +18,27 @@ package test.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoMultipleFaults4ClientUtil implements WhitemesaR4ClientUtil{
-    public OMElement getEchoOMElement() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+public class EchoMultipleFaults4ClientUtil implements SunClientUtil {
+    public SOAPEnvelope getEchoSoapEnvelope() {
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "m0");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
-        OMElement method = fac.createOMElement("echoMultipleFaults4", omNs);
-        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",null);
+        OMElement operation = fac.createOMElement("echoMultipleFaults4", omNs);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
+        reqEnv.getBody().addChild(operation);
 
         OMElement value = fac.createOMElement("whichFault", null);
         OMElement value1 = fac.createOMElement("param1", null);
@@ -38,16 +48,10 @@ public class EchoMultipleFaults4ClientUtil implements WhitemesaR4ClientUtil{
         value1.addChild(fac.createText(value1, "11"));
         value2.addChild(fac.createText(value2, "1"));
 
+        operation.addChild(value);
+        operation.addChild(value1);
+        operation.addChild(value2);
 
-        method.addChild(value);
-        method.addChild(value1);
-        method.addChild(value2);
-
-
-
-        return method;
+        return reqEnv;
     }
-
-
-
 }

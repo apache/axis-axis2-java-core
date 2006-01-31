@@ -23,6 +23,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAP12Constants;
 import test.interop.util.BodyElements;
@@ -44,6 +45,7 @@ public class MTOMEchoTestSingleTest extends TestCase {
     public void runTest(boolean optimized) throws Exception {
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
         options.setProperty(Constants.Configuration.ENABLE_MTOM,
                 Constants.VALUE_TRUE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);

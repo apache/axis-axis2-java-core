@@ -18,45 +18,58 @@ package test.interop.whitemesa.round4.complex.utils;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class EchoSOAPStructFaultClientUtil implements WhitemesaR4ClientUtil{
+public class EchoSOAPStructFaultClientUtil implements SunClientUtil {
 
-    public OMElement getEchoOMElement() {
+    public SOAPEnvelope getEchoSoapEnvelope() {
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = reqEnv.declareNamespace("http://soapinterop.org/wsdl", "m");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
-        OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        reqEnv.declareNamespace("http://soapinterop.org/types", "m0");
 
         OMElement method = fac.createOMElement("echoSOAPStructFault", omNs);
-        method.addAttribute("soapenv:encodingStyle","http://schemas.xmlsoap.org/soap/encoding/",null);
-        method.addAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance",null);
+        OMNamespace soapEnvNs = method.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNs);
 
-        method.addAttribute("xmlns:ns2", "http://soapinterop.org/types", null);
-        method.addAttribute("xmlns:wsdl", "http://schemas.xmlsoap.org/wsdl/", null);
+        reqEnv.getBody().addChild(method);
 
-        OMElement value1 = fac.createOMElement("param", null);
-        OMElement value2 = fac.createOMElement("soapStruct", null);
-        OMElement value3 = fac.createOMElement("varString", null);
-        OMElement value4 = fac.createOMElement("varInt", null);
-        OMElement value5 = fac.createOMElement("varFloat", null);
+        OMElement param = fac.createOMElement("param", null);
+        OMElement sstruct = fac.createOMElement("soapStruct", null);
+        OMElement vstring = fac.createOMElement("varString", null);
+        OMElement vint = fac.createOMElement("varInt", null);
+        OMElement vfloat = fac.createOMElement("varFloat", null);
 
+        param.declareNamespace(typeNs);
+        sstruct.declareNamespace(typeNs);
+        vstring.declareNamespace(typeNs);
+        vint.declareNamespace(typeNs);
+        vfloat.declareNamespace(typeNs);
 
-        value3.addChild(fac.createText(value3, "hi"));
-        value4.addChild(fac.createText(value4, "10"));
-        value5.addChild(fac.createText(value5, "5.3"));
+        param.addAttribute("type", "m0:SOAPStructFault", typeNs);
+        sstruct.addAttribute("type", "m0:SOAPStruct", typeNs);
+        vstring.addAttribute("type", "xsd:string", typeNs);
+        vint.addAttribute("type", "xsd:int", typeNs);
+        vfloat.addAttribute("type", "xsd:float", typeNs);
 
-                                  
-        value2.addChild(value5);
-        value2.addChild(value4);
-        value2.addChild(value3);
-        value1.addChild(value2);
-        method.addChild(value1);
+        vstring.addChild(fac.createText(vstring, "String"));
+        vint.addChild(fac.createText(vint, "0"));
+        vfloat.addChild(fac.createText(vfloat, "3.14159E0"));
 
+        sstruct.addChild(vstring);
+        sstruct.addChild(vint);
+        sstruct.addChild(vfloat);
+        param.addChild(sstruct);
+        method.addChild(param);
 
-        return method;
+        return reqEnv;
     }
-
-
 }

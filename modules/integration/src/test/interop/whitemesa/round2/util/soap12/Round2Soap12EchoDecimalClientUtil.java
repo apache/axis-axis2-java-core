@@ -20,9 +20,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
+import test.interop.whitemesa.SunClientUtil;
 
-public class Round2Soap12EchoDecimalClientUtil implements SunRound2ClientUtil {
+public class Round2Soap12EchoDecimalClientUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 

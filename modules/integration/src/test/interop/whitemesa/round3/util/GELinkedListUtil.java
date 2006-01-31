@@ -21,9 +21,10 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPBody;
+import test.interop.whitemesa.SunClientUtil;
 
 
-public class GELinkedListUtil implements SunRound3ClientUtil {
+public class GELinkedListUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 

@@ -17,42 +17,47 @@
 package test.interop.whitemesa.round1.util;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import test.interop.whitemesa.SunClientUtil;
 
-public class Round1StringArrayUtil implements Round1ClientUtil{
+public class Round1StringArrayUtil implements SunClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
+        SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
+
+        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
+        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAPENC");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAPENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
 
         OMElement operation = omfactory.createOMElement("echoStringArray", "http://soapinterop.org/", null);
-        SOAPBody body = omfactory.createSOAPBody(reqEnv);
-        body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        reqEnv.getBody().addChild(operation);
+        operation.declareNamespace(envNs);
+        operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
         OMElement part = omfactory.createOMElement("inputStringArray", null);
-        part.addAttribute("xsi:type", "SOAPENC:Array", null);
-        part.addAttribute("SOAPENC:arrayType", "xsd:string[3]", null);
+        part.declareNamespace(typeNs);
+        part.declareNamespace(encNs);
+        part.addAttribute("type", "SOAPENC:Array", typeNs);
+        part.addAttribute("arrayType", "xsd:string[3]", encNs);
 
         OMElement value0 = omfactory.createOMElement("item", "", null);
-        value0.addAttribute("xsi:type", "xsd:string", null);
+        value0.declareNamespace(typeNs);
+        value0.addAttribute("type", "xsd:string", typeNs);
         value0.addChild(omfactory.createText("Apache Axis2"));
         OMElement value1 = omfactory.createOMElement("item", "", null);
-        value1.addAttribute("xsi:type", "xsd:string", null);
+        value1.declareNamespace(typeNs);
+        value1.addAttribute("type", "xsd:string", typeNs);
         value1.addChild(omfactory.createText("Lanka Software Foundation"));
         OMElement value2 = omfactory.createOMElement("item", "", null);
-        value2.addAttribute("xsi:type", "xsd:string", null);
+        value2.declareNamespace(typeNs);
+        value2.addAttribute("type", "xsd:string", typeNs);
         value2.addChild(omfactory.createText("www.opensource.lk"));
 
         part.addChild(value0);
@@ -60,7 +65,6 @@ public class Round1StringArrayUtil implements Round1ClientUtil{
         part.addChild(value2);
 
         operation.addChild(part);
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
     }
 }
