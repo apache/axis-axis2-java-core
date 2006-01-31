@@ -31,7 +31,7 @@
   <target name="init" >
     <!--macro for maven -->
     <presetdef name="maven">
-      <exec failonerror="true" executable="maven">
+      <exec failonerror="true" os="Windows 2000,Windows 2003,Windows XP" executable="maven.bat">
       </exec>
     </presetdef>
 
@@ -72,6 +72,12 @@
     </maven>
   </target>
 
+  <target name="create-lib" depends="init"
+      description="creates the libraries">
+    <maven>
+      <arg value="create-lib" />
+    </maven>
+  </target>
 
   <!-- inline creation of a very minimal (zero dependency) pom -->
   <target name="m2-pom" depends="init" xmlns:m2="antlib:org.apache.maven.artifact.ant">
@@ -131,11 +137,11 @@
     </m2:deploy>
   </target>
 
-  <target name="quick" depends="init"
+  <target name="quick" depends="create-lib"
       description="make a distribution">
     <mkdir dir="${basedir}/target/classes/"/>
     <path id="classpath">
-      <fileset dir="${lib.dir}">
+      <fileset dir="${basedir}/target/lib">
         <include name="**/*.jar"/>
       </fileset>
     </path>
