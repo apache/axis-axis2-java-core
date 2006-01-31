@@ -86,7 +86,7 @@ public class ArchiveFileData {
     }
 
     public static boolean isModuleArchiveFile(String filename) {
-        return ((filename.endsWith(".jar")) || (filename.endsWith(".mar")));
+        return (filename.endsWith(".mar"));
     }
 
     /**

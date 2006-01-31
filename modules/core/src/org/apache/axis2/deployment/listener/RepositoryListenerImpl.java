@@ -45,7 +45,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * First, it initializes the system, by loading all the modules in the /modules directory
      * and then creates a WSInfoList to store information about available modules and services.
      *
-     * @param folderName    path to parent directory that the listener should listen to
+     * @param folderName       path to parent directory that the listener should listen to
      * @param deploymentEngine reference to engine registry for updates
      */
     public RepositoryListenerImpl(String folderName, DeploymentEngine deploymentEngine) {
@@ -53,6 +53,13 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
         wsInfoList = new WSInfoList(deploymentEngine);
         this.deploymentEngine = deploymentEngine;
         init();
+        loadClassPathModules();
+    }
+
+    //The constructor , which loads moduls from class path
+    public RepositoryListenerImpl(DeploymentEngine deploymentEngine) {
+        this.deploymentEngine = deploymentEngine;
+        loadClassPathModules();
     }
 
     /**
@@ -80,6 +87,58 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
         }
     }
 
+    private void loadClassPathModules() {
+        String classPath = getLocation();
+        System.out.println("classpath1" + classPath);
+        int lstindex = classPath.lastIndexOf(File.separatorChar);
+        if (lstindex > 0) {
+            classPath = classPath.substring(0, lstindex);
+        } else {
+            classPath = ".";
+        }
+        System.out.println("classptah = " + classPath);
+        File root = new File(classPath);
+        File[] files = root.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                if (!file.isDirectory()) {
+                    if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
+                        //adding moduls in the class path
+                        wsInfoList.addWSInfoItem(file, TYPE_MODULE);
+                        System.out.println("added a module: " + file.getName());
+                    }
+                }
+            }
+        }
+        deploymentEngine.doDeploy();
+    }
+
+    /**
+     * To get the location of the Axis2.jar from that I can drive the location of class path
+     *
+     * @return String (location of the axis2 jar)
+     */
+    private String getLocation() {
+        try {
+            Class clazz = Class.forName("org.apache.axis2.engine.AxisEngine");
+            java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
+            String location = url.toString();
+            if (location.startsWith("jar")) {
+                url = ((java.net.JarURLConnection) url.openConnection()).getJarFileURL();
+                location = url.toString();
+            }
+            if (location.startsWith("file")) {
+                java.io.File file = new java.io.File(url.getFile());
+                return file.getAbsolutePath();
+            } else {
+                return url.toString();
+            }
+        } catch (Throwable t) {
+            return "an unknown location";
+        }
+    }
+
     /**
      * Finds a list of services in the folder and adds to wsInfoList.
      */
@@ -101,7 +160,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * Searches a given folder for jar files and adds them to a list in the 
+     * Searches a given folder for jar files and adds them to a list in the
      * WSInfolist class.
      */
     private void findServicesInDirectory(String folderName) {

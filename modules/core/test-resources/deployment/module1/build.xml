@@ -31,14 +31,14 @@
         </copy>
 
         <mkdir dir="${jar.dir}"/>
-        <jar jarfile="${jar.dir}/module1.jar" basedir="${build.classes}">
+        <jar jarfile="${jar.dir}/module1.mar" basedir="${build.classes}">
             <include name="**"/>
         </jar>
         <delete dir="${build}"/>
     </target>
 
     <target name="init">
-        <uptodate property="jars.uptodate" targetfile="${jar.dir}/module1.jar">
+        <uptodate property="jars.uptodate" targetfile="${jar.dir}/module1.mar">
             <srcfiles dir="${src}">
                 <include name="**/*.java"/>
                 <include name="**/*.xml"/>
