@@ -60,6 +60,8 @@ public class URLProcessor {
         hostname = hostname.replace('-', '_');
         path = path.replace('-', '_');
 
+        path = path.replace(':', '_');
+
         // chomp off last forward slash in path, if necessary
         if ((path.length() > 0) && (path.charAt(path.length() - 1) == '/')) {
             path = path.substring(0, path.length() - 1);
