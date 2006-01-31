@@ -856,15 +856,20 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 } catch (Exception e) {
                     throw new XMLStreamException("problem accessing the parser", e);
                 }
-                // Initialize the depth
-                depth = 0;
-                // We should throw an END_DOCUMENT as well
+
+                // We should throw an END_DOCUMENT
                 needToThrowEndDocument = true;
                 if ((currentEvent == START_DOCUMENT) &&
                         (currentEvent == parser.getEventType())) {
                     currentEvent = parser.next();
                 } else {
                     currentEvent = parser.getEventType();
+                }
+
+                if(currentEvent == START_ELEMENT) {
+                    depth = 0;
+                } else if(currentEvent == END_ELEMENT) {
+                    depth ++;
                 }
                 updateCompleteStatus();
                 break;
