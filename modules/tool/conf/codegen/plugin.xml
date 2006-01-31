@@ -3,7 +3,7 @@
 <plugin
    id="Axis2_Codegen_Wizard"
    name="Axis2 Codegen Wizard Plug-in"
-   version="1.0.0"
+   version="1.1.0"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin">
 
@@ -11,7 +11,7 @@
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-0.94.jar">
+      <library name="lib/axis2-0.95-SNAPSHOT.jar">
          <export name="*"/>
       </library>
       <library name="lib/axis-wsdl4j-1.2.jar">
@@ -42,6 +42,9 @@
          <export name="*"/>
       </library>
       <library name="lib/jdom.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/annogen-0.1.0.jar">
          <export name="*"/>
       </library>
    </runtime>
