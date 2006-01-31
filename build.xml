@@ -49,6 +49,7 @@
     <property name="artifact.title" value="${project.id}-${project.currentVersion}" />
     <property name="target.jar" location="${target.dir}/${artifact.title}.jar"/>
     <property name="target.pom" location="${target.dir}/${artifact.title}.pom"/>
+    <available file="${basedir}/target/lib/axis-wsdl4j-1.2.jar" property="jars.present"/>
 
   </target>
 
@@ -72,7 +73,7 @@
     </maven>
   </target>
 
-  <target name="create-lib" depends="init"
+  <target name="create-lib" unless="jars.present" depends="init"
       description="creates the libraries">
     <maven>
       <arg value="create-lib" />
