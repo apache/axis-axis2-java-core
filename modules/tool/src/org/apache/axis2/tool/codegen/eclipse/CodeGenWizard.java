@@ -1,10 +1,9 @@
 package org.apache.axis2.tool.codegen.eclipse;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
-import org.apache.axis2.tool.codegen.Java2WSDLGenerator;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage;
@@ -18,12 +17,14 @@ import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.Java2WSDLCodegenEngine;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -36,7 +37,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * The main wizard for the codegen wizard
  */
 
-public class CodeGenWizard extends Wizard implements INewWizard {
+public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptionConstants.Java2WSDLConstants {
     private ToolSelectionPage toolSelectionPage;
 
     private WSDLFileSelectionPage wsdlSelectionPage;
@@ -55,7 +56,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                                                                         // change
                                                                         // this
 
-    private ISelection selection;
+    
 
    
 
@@ -144,7 +145,8 @@ public class CodeGenWizard extends Wizard implements INewWizard {
             case SettingsConstants.UNSPECIFIED_TYPE:
                 break; //Do nothing
             default:
-                throw new RuntimeException("Invalid state!");
+                throw new RuntimeException(CodegenWizardPlugin.
+                		getResourceString("general.invalid.state"));
             }
         } catch (Exception e) {
             MessageDialog.openError(getShell(), 
@@ -259,14 +261,58 @@ public class CodeGenWizard extends Wizard implements INewWizard {
                  * monitor.worked(amount)
                  */
                 monitor.beginTask(CodegenWizardPlugin
-                        .getResourceString("generator.generating"), 2);
+                        .getResourceString("generator.generating"), 3);
 
                 try {
                     monitor.worked(1);
-                    //TODO - fill here
+                    //fill the option map
+                    Map optionsMap = new HashMap();
+                    CommandLineOption option = new CommandLineOption(
+                    		CLASSNAME_OPTION,new String[]{javaSourceSelectionPage.getClassName()});
+                    optionsMap.put(CLASSNAME_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		CLASSPATH_OPTION,javaSourceSelectionPage.getClassPathList());
+                    optionsMap.put(CLASSPATH_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		TARGET_NAMESPACE_OPTION,
+                    		new String[]{java2wsdlOptionsPage.getTargetNamespace()});
+                    optionsMap.put(TARGET_NAMESPACE_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		TARGET_NAMESPACE_PREFIX_OPTION,
+                    		new String[]{java2wsdlOptionsPage.getTargetNamespacePrefix()});
+                    optionsMap.put(TARGET_NAMESPACE_PREFIX_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		SCHEMA_TARGET_NAMESPACE_OPTION,
+                    		new String[]{java2wsdlOptionsPage.getSchemaTargetNamespace()});
+                    optionsMap.put(SCHEMA_TARGET_NAMESPACE_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,
+                    		new String[]{java2wsdlOptionsPage.getSchemaTargetNamespacePrefix()});
+                    optionsMap.put(SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		OUTPUT_LOCATION_OPTION,new String[]{java2wsdlOutputLocationPage.getOutputLocation()});
+                    optionsMap.put(OUTPUT_LOCATION_OPTION,option);
+                    
+                    option = new CommandLineOption(
+                    		OUTPUT_FILENAME_OPTION,new String[]{java2wsdlOutputLocationPage.getOutputWSDLName()});
+                    optionsMap.put(OUTPUT_FILENAME_OPTION,option);
+                    
+                    
+                    monitor.worked(1);
+                    
+                    new Java2WSDLCodegenEngine(optionsMap).generate();
+                    
+                    monitor.worked(1);
+                    
                     
                 } catch (Throwable e) {
-                    throw new RuntimeException(e);
+                	    throw new RuntimeException(e);
                 }
 
                 monitor.done();
@@ -278,7 +324,8 @@ public class CodeGenWizard extends Wizard implements INewWizard {
         } catch (InvocationTargetException e1) {
             throw new RuntimeException(e1);
         } catch (InterruptedException e1) {
-            throw new RuntimeException("User Aborted!");
+            throw new RuntimeException(CodegenWizardPlugin.
+            		getResourceString("general.useraborted.state"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -292,7 +339,7 @@ public class CodeGenWizard extends Wizard implements INewWizard {
      * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
      */
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-        this.selection = selection;
+        //do nothing
     }
 
     /**
@@ -324,5 +371,9 @@ public class CodeGenWizard extends Wizard implements INewWizard {
      */
     public void populateOptions(){
     	optionsPage.populateServiceAndPort();
+    }
+    
+    public void setDefaultNamespaces(String fullyQualifiedClassName){
+    	java2wsdlOptionsPage.setNamespaceDefaults(fullyQualifiedClassName);
     }
 }

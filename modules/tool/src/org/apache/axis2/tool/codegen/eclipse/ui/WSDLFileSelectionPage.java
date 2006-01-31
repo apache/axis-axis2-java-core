@@ -2,7 +2,6 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -24,7 +23,6 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
 
     private Text fileText;
 
-    private ISelection selection;
 
    
     /**

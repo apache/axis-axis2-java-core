@@ -17,7 +17,11 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import org.apache.axis2.tool.codegen.eclipse.util.ClassFileReader;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -38,6 +42,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
    
     private Text javaClassNameBox;
     private List javaClasspathList;
+    private Label statusLabel;
 
     public JavaSourceSelectionPage() {  
         super("page4");
@@ -45,7 +50,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
 
     protected void initializeDefaultSettings() {
         settings.put(JAVA_CLASS_NAME, "");
-        settings.put(JAVA_CLASS_NAME, "");
+        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{});
     }
 
     /*
@@ -126,16 +131,49 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
                 .getResourceString("page4.removeEntry.label"));
         removeEntryButton.addMouseListener(new MouseAdapter(){
         	public void mouseUp(MouseEvent e) {
-        		//handle the remove click here
+        		handleRemove();
         	}
         });
         
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 3;
-        gd.verticalSpan = 4;
+        gd.verticalSpan = 7;
         javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER);
         javaClasspathList.setLayoutData(gd);
+        javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
         
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        Button tryLoadButton = new Button(container,SWT.PUSH);
+        tryLoadButton.setLayoutData(gd);
+        tryLoadButton.setText(CodegenWizardPlugin
+                .getResourceString("page4.tryLoad.label"));
+        tryLoadButton.addMouseListener(new MouseAdapter(){
+        	public void mouseUp(MouseEvent e) {
+        		java.util.List errorListener = new ArrayList();
+        		if (!ClassFileReader.tryLoadingClass(getClassName(),
+        				getClassPathList(),
+        				errorListener)){
+        			Iterator it = errorListener.iterator();
+        			while(it.hasNext()){
+        				Object nextObject = it.next();
+        				String errorMessage = nextObject==null?CodegenWizardPlugin
+				                .getResourceString("page4.unknownError.label"):nextObject.toString();
+						updateStatus(errorMessage);
+						updateStatusTextField(false,errorMessage);
+        			}
+        			
+        		}else{
+        			updateStatus(null);
+        			updateStatusTextField(true,CodegenWizardPlugin
+			                .getResourceString("page4.successLoading.label"));
+        		}
+        	}
+        });
+        
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        statusLabel = new Label(container,SWT.NULL);
+        statusLabel.setLayoutData(gd);
         
         setPageComplete(false);
         
@@ -157,8 +195,23 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         String dirName = fileDialog.open();
         if (dirName != null) {
         	javaClasspathList.add(dirName);
+        	updateListEntries();
         }
-
+        updateStatusTextField(false,"");
+    }
+    
+    
+    /**
+     * Pops up the file browse dialog box
+     *  
+     */
+    private void handleRemove() {
+        int[] selectionIndices = javaClasspathList.getSelectionIndices();
+        for (int i=0;i<selectionIndices.length;i++){
+        	javaClasspathList.remove(selectionIndices[i]);
+        }
+        updateListEntries();
+        updateStatusTextField(false,"");
     }
     
    
@@ -172,10 +225,25 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         String fileName = fileDialog.open();
         if (fileName != null) {
         	javaClasspathList.add(fileName);
+        	updateListEntries();
         }
+        updateStatusTextField(false,"");
 
     }
     
+    private void updateStatusTextField(boolean success,String text){
+    	if (success){
+    		getCodegenWizard().setDefaultNamespaces(javaClassNameBox.getText());
+    	}
+    	statusLabel.setText(text);
+    }
+    private void updateListEntries(){
+    	settings.put(JAVA_CLASS_PATH_ENTRIES,javaClasspathList.getItems());
+    }
+    /**
+     * 
+     *
+     */
     private void handleClassNameTextChange(){
         String className = javaClassNameBox.getText();
         settings.put(JAVA_CLASS_NAME,className);
@@ -186,14 +254,23 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
             updateStatus(CodegenWizardPlugin
                     .getResourceString("page4.error.ClassNameNotTerminated"));
         }else{
-            updateStatus(null);
+        	//just leave it
+            //updateStatus(null);
         }
     }
     
+    /**
+     * 
+     * @return
+     */
     public String getClassName(){
         return javaClassNameBox.getText();
     }
     
+    /**
+     * 
+     * @return
+     */
     public String[] getClassPathList(){
         return javaClasspathList.getItems();
     }

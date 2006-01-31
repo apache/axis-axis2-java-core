@@ -92,23 +92,22 @@ public interface SettingsConstants {
     // ##################################################################################
     // Java source file selection page
     static final String JAVA_CLASS_NAME = "JAVA_CLASS_NAME";
-
-    static final String JAVA_CLASS_LOCATION_NAME = "JAVA_CLASS_LOCATION_NAME";
+    static final String JAVA_CLASS_PATH_ENTRIES = "JAVA_CLASS_PATH_NAME";
     
     // ##################################################################################
     // Java2wsdl options selection page
-    static final String PREF_JAVA_TARGET_NS = "INPUT_WSDL";
-    
-    static final String PREF_JAVA_TARGET_NS_PREF = "LOCATION_URL";
-    static final String PREF_JAVA_SCHEMA_TARGET_NS = "BINDING_NAME";
-    static final String PREF_JAVA_SERVICE_NAME = "MODE_INDEX";
+    static final String PREF_JAVA_TARGET_NS = "TARGET_NS";
+    static final String PREF_JAVA_TARGET_NS_PREF = "TARGET_NS_PREF";
+    static final String PREF_JAVA_SCHEMA_TARGET_NS = "SCHEMA_TARGET_NS";
+    static final String PREF_JAVA_SERVICE_NAME = "SCHEMA_SERVICE";
     static final String PREF_JAVA_STYLE_INDEX = "STYLE_INDEX";
-    static final String PREF_JAVA_SCHEMA_TARGET_NS_PREF = "PORTYPE_NAME";
+    static final String PREF_JAVA_SCHEMA_TARGET_NS_PREF = "SCHEMA_TARGET_NS_PREF";
     
     // ##################################################################################
     //output page
     static final String JAVA_OUTPUT_WSDL_NAME = "OUTPUT_WSDL";
     static final String PREF_JAVA_OUTPUT_WSDL_LOCATION = "OUTPUT_WSDL_LOCATION";
+    static final String PREF_JAVA_OUTPUT_SELECTION = "OUTPUT_WSDL_LOCATION_SELECT";
     // ##################################################################################
     // Page constants
      static final int WSDL_2_JAVA_TYPE = 1;

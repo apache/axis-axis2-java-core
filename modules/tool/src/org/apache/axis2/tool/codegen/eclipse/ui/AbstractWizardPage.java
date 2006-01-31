@@ -55,7 +55,7 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
     }
 
     protected void updateStatus(String message) {
-        setErrorMessage(message);
+    	setErrorMessage(message);
         setPageComplete(message == null);
     }
 
