@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
-import org.apache.axis2.om.OMTestCase;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.om.OMTestCase;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 public class SOAPMessageTest extends OMTestCase {
 

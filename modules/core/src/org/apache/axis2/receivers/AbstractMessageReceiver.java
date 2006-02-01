@@ -24,10 +24,10 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";

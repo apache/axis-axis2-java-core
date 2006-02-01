@@ -26,9 +26,9 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.*;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.*;
 import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;

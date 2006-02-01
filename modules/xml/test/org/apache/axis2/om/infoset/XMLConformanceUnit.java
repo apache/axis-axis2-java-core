@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om.infoset;
+package org.apache.ws.commons.om.infoset;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMDocument;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMDocument;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;

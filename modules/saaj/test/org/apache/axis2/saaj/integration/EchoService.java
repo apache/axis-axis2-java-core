@@ -15,17 +15,9 @@
  */
 package org.apache.axis2.saaj.integration;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.MTOMConstants;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.attachments.MIMEHelper;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
 
 /**
  * 

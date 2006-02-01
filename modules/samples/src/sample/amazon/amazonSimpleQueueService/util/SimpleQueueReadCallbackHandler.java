@@ -18,9 +18,9 @@ package sample.amazon.amazonSimpleQueueService.util;
 
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.soap.SOAPBody;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.soap.SOAPBody;
 
 import javax.swing.*;
 import java.util.Iterator;

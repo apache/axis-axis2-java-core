@@ -1,8 +1,8 @@
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

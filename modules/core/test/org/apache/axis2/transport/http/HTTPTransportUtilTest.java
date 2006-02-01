@@ -17,11 +17,11 @@
 package org.apache.axis2.transport.http;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
 

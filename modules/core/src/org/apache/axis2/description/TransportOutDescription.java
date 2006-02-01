@@ -19,7 +19,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.Phase;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportSender;
 

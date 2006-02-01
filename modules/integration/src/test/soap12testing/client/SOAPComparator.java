@@ -21,10 +21,10 @@
 
 package test.soap12testing.client;
 
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFault;
+import org.apache.ws.commons.om.impl.llom.exception.XMLComparisonException;
+import org.apache.ws.commons.om.impl.llom.util.XMLComparator;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFault;
 
 public class SOAPComparator extends XMLComparator {
 

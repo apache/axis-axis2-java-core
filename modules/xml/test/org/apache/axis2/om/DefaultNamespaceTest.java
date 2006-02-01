@@ -1,4 +1,4 @@
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 

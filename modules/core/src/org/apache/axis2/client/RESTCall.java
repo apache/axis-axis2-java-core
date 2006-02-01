@@ -19,8 +19,8 @@ package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
 
 public class RESTCall extends ServiceClient {
     public RESTCall() throws AxisFault {

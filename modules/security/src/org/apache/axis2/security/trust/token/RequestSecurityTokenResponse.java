@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.security.trust.TrustException;
 
 import javax.xml.namespace.QName;
@@ -43,7 +43,7 @@ public class RequestSecurityTokenResponse extends CompositeToken {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.trust.token.AbstractToken#deserializeChildElement(org.apache.axis2.om.OMElement)
+	 * @see org.apache.axis2.security.trust.token.AbstractToken#deserializeChildElement(org.apache.ws.commons.om.OMElement)
 	 */
 	protected void deserializeChildElement(OMElement element)
 			throws TrustException {

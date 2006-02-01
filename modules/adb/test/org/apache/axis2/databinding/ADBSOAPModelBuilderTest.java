@@ -18,12 +18,12 @@ package org.apache.axis2.databinding;
 
 import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.databinding.utils.PrintEvents;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

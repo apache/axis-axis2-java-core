@@ -27,8 +27,8 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.*;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.soap.*;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamException;

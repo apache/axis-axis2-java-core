@@ -17,7 +17,7 @@
 
 package org.apache.axis2.fault;
 
-import org.apache.axis2.soap.SOAPFault;
+import org.apache.ws.commons.soap.SOAPFault;
 
 import java.util.Iterator;
 

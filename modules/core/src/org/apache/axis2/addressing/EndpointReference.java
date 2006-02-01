@@ -17,8 +17,8 @@
 
 package org.apache.axis2.addressing;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;

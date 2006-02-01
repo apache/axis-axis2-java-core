@@ -71,7 +71,7 @@
                 targetEndpoint));
         <xsl:if test="$soapVersion='1.2'">
             //Set the soap version
-            _serviceClient.getOptions().setSoapVersionURI(org.apache.axis2.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            _serviceClient.getOptions().setSoapVersionURI(org.apache.ws.commons.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
 
     }
@@ -135,7 +135,7 @@
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
-              org.apache.axis2.soap.SOAPEnvelope env = null;
+              org.apache.ws.commons.soap.SOAPEnvelope env = null;
                     <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -202,7 +202,7 @@
                         <xsl:otherwise>
                            org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(
                                                        org.apache.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                            org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+                            org.apache.ws.commons.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
                             <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
                             <xsl:choose>
                                 <xsl:when test="$style='doc'">
@@ -241,7 +241,7 @@
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
-              org.apache.axis2.soap.SOAPEnvelope env;
+              org.apache.ws.commons.soap.SOAPEnvelope env;
                     <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -347,7 +347,7 @@
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-                org.apache.axis2.soap.SOAPEnvelope env;
+                org.apache.ws.commons.soap.SOAPEnvelope env;
 
                 <xsl:choose>
                     <!-- test the number of input parameters

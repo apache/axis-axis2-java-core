@@ -19,8 +19,8 @@ package org.apache.axis2.xpath;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.xpath.DocumentNavigator;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.xpath.DocumentNavigator;
 import org.jaxen.FunctionCallException;
 import org.jaxen.Navigator;
 

@@ -17,9 +17,9 @@
  For more information: www.smartfrog.org
 
  */
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
-import org.apache.axis2.om.util.ElementHelper;
+import org.apache.ws.commons.om.util.ElementHelper;
 
 import javax.xml.namespace.QName;
 

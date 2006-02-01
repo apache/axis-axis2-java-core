@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
-import org.apache.axis2.om.OMNamespace;
+import org.apache.ws.commons.om.OMNamespace;
 
 public class SOAPHeaderTestCase extends SOAPTestCase {
     protected SOAPHeader soap11Header;

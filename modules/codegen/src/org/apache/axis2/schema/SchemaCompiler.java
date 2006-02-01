@@ -1,6 +1,6 @@
 package org.apache.axis2.schema;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;

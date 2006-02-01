@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
+import org.apache.axis2.doom.dom.ElementImpl;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.soap.Name;
@@ -28,12 +28,12 @@ import java.util.Locale;
 
 public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
-    private org.apache.axis2.soap.SOAPBody omSOAPBody;
+    private org.apache.ws.commons.soap.SOAPBody omSOAPBody;
 
     /**
      * @param omSOAPBody
      */
-    public SOAPBodyImpl(org.apache.axis2.soap.SOAPBody omSOAPBody) {
+    public SOAPBodyImpl(org.apache.ws.commons.soap.SOAPBody omSOAPBody) {
         super((ElementImpl) omSOAPBody);
         this.omSOAPBody = omSOAPBody;
     }

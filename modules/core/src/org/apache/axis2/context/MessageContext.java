@@ -30,9 +30,9 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

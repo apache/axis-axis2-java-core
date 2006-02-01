@@ -31,8 +31,8 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public class OneWayRawXMLTest extends TestCase implements TestConstants {
 

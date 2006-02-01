@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.custommonkey.xmlunit.Diff;

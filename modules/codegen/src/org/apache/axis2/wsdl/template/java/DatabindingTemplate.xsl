@@ -16,21 +16,21 @@
 
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
-                private  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
-                org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-                (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
+                private  org.apache.ws.commons.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder
+                (org.apache.ws.commons.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
-                org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
+                org.apache.ws.commons.om.OMElement documentElement = builder.getDocumentElement();
                 <xsl:if test="$base64">
                          optimizeContent(documentElement,qNameArray);
                 </xsl:if>
 
-                  ((org.apache.axis2.om.impl.OMNodeEx)documentElement).setParent(null);
+                  ((org.apache.ws.commons.om.impl.OMNodeEx)documentElement).setParent(null);
                   return documentElement;
                 }
 
-                private org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
-                    org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+                private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                    org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     envelope.getBody().addChild(toOM(param));
                     return envelope;
                 }
@@ -38,7 +38,7 @@
 
         </xsl:for-each>
 
-        public org.apache.xmlbeans.XmlObject fromOM(org.apache.axis2.om.OMElement param,
+        public org.apache.xmlbeans.XmlObject fromOM(org.apache.ws.commons.om.OMElement param,
         java.lang.Class type){
         try{
         <xsl:for-each select="param">
@@ -56,24 +56,24 @@
 
     <!-- Generate the base 64 optimize methods only if the base64 items are present -->    
    <xsl:if test="$base64">
-   private void optimizeContent(org.apache.axis2.om.OMElement element, javax.xml.namespace.QName[] qNames){
+   private void optimizeContent(org.apache.ws.commons.om.OMElement element, javax.xml.namespace.QName[] qNames){
         for (int i = 0; i &lt; qNames.length; i++) {
             markElementsAsOptimized(qNames[i],element);
         }
     }
 
-    private void markElementsAsOptimized(javax.xml.namespace.QName qName,org.apache.axis2.om.OMElement rootElt){
+    private void markElementsAsOptimized(javax.xml.namespace.QName qName,org.apache.ws.commons.om.OMElement rootElt){
         if (rootElt.getQName().equals(qName)){
             //get the text node and mark it
-            org.apache.axis2.om.OMNode node = rootElt.getFirstOMChild();
-            if (node.getType()==org.apache.axis2.om.OMNode.TEXT_NODE){
-                ((org.apache.axis2.om.OMText)node).setOptimize(true);
+            org.apache.ws.commons.om.OMNode node = rootElt.getFirstOMChild();
+            if (node.getType()==org.apache.ws.commons.om.OMNode.TEXT_NODE){
+                ((org.apache.ws.commons.om.OMText)node).setOptimize(true);
             }
 
         }
         java.util.Iterator childElements = rootElt.getChildElements();
         while (childElements.hasNext()) {
-            markElementsAsOptimized(qName,(org.apache.axis2.om.OMElement)childElements.next());
+            markElementsAsOptimized(qName,(org.apache.ws.commons.om.OMElement)childElements.next());
         }
     }
     </xsl:if>
@@ -91,11 +91,11 @@
             };
         </xsl:if>
 
-        private org.apache.axis2.om.OMElement toOM(Object param) {
+        private org.apache.ws.commons.om.OMElement toOM(Object param) {
             try {
                 javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(param.getClass().getPackage()
                                                                                             .getName());
-                org.apache.axis2.om.impl.llom.builder.SAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.SAXOMBuilder();
+                org.apache.ws.commons.om.impl.llom.builder.SAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.SAXOMBuilder();
                 javax.xml.bind.Marshaller marshaller = ctx.createMarshaller();
                 marshaller.marshal(param, builder);
                 return builder.getRootElement();
@@ -104,15 +104,15 @@
             }
         }
 
-        private org.apache.axis2.soap.SOAPEnvelope toEnvelope(
-            org.apache.axis2.soap.SOAPFactory factory, Object param) {
-            org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(
+            org.apache.ws.commons.soap.SOAPFactory factory, Object param) {
+            org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
             envelope.getBody().addChild(toOM(param));
 
             return envelope;
         }
 
-        public java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
+        public java.lang.Object fromOM(org.apache.ws.commons.om.OMElement param,
         java.lang.Class type){
             try{
                 javax.xml.transform.Source source =
@@ -127,24 +127,24 @@
         }
     <!-- Generate the base 64 optimize methods only if the base64 items are present -->    
    <xsl:if test="$base64">
-   private void optimizeContent(org.apache.axis2.om.OMElement element, javax.xml.namespace.QName[] qNames){
+   private void optimizeContent(org.apache.ws.commons.om.OMElement element, javax.xml.namespace.QName[] qNames){
         for (int i = 0; i &lt; qNames.length; i++) {
             markElementsAsOptimized(qNames[i],element);
         }
     }
 
-    private void markElementsAsOptimized(javax.xml.namespace.QName qName,org.apache.axis2.om.OMElement rootElt){
+    private void markElementsAsOptimized(javax.xml.namespace.QName qName,org.apache.ws.commons.om.OMElement rootElt){
         if (rootElt.getQName().equals(qName)){
             //get the text node and mark it
-            org.apache.axis2.om.OMNode node = rootElt.getFirstOMChild();
-            if (node.getType()==org.apache.axis2.om.OMNode.TEXT_NODE){
-                ((org.apache.axis2.om.OMText)node).setOptimize(true);
+            org.apache.ws.commons.om.OMNode node = rootElt.getFirstOMChild();
+            if (node.getType()==org.apache.ws.commons.om.OMNode.TEXT_NODE){
+                ((org.apache.ws.commons.om.OMText)node).setOptimize(true);
             }
 
         }
         java.util.Iterator childElements = rootElt.getChildElements();
         while (childElements.hasNext()) {
-            markElementsAsOptimized(qName,(org.apache.axis2.om.OMElement)childElements.next());
+            markElementsAsOptimized(qName,(org.apache.ws.commons.om.OMElement)childElements.next());
         }
     }
     </xsl:if>
@@ -164,12 +164,12 @@
 
             <xsl:for-each select="param">
                 <xsl:if test="@type!=''">
-                    private  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                    private  org.apache.ws.commons.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-                            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
-                            org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
-                            ((org.apache.axis2.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
+                            org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder
+                            (org.apache.ws.commons.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
+                            org.apache.ws.commons.om.OMElement documentElement = builder.getDocumentElement();
+                            ((org.apache.ws.commons.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
                             return documentElement;
                         }else{
                            <!-- treat this as a plain bean. use the reflective bean converter -->
@@ -178,7 +178,7 @@
                         }
                     }
 
-                    private  org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                    private  org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
                                     org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME),
@@ -193,7 +193,7 @@
                 </xsl:if>
             </xsl:for-each>
 
-            private  java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
+            private  java.lang.Object fromOM(org.apache.ws.commons.om.OMElement param,
             java.lang.Class type){
 
                 try {
@@ -215,16 +215,16 @@
        <!-- #################################################################################  -->
        <!-- ############################   none template!!!   ##############################  -->
        <xsl:template match="databinders[@dbtype='none']">
-           private  org.apache.axis2.om.OMElement fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type){
+           private  org.apache.ws.commons.om.OMElement fromOM(org.apache.ws.commons.om.OMElement param, java.lang.Class type){
               return param;
            }
 
-           private  org.apache.axis2.om.OMElement  toOM(org.apache.axis2.om.OMElement param){
+           private  org.apache.ws.commons.om.OMElement  toOM(org.apache.ws.commons.om.OMElement param){
                return param;
            }
 
-           private org.apache.axis2.soap.SOAPEnvelope toEnvelope(org.apache.axis2.soap.SOAPFactory factory, org.apache.axis2.om.OMElement param){
-                org.apache.axis2.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, org.apache.ws.commons.om.OMElement param){
+                org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                 envelope.getBody().addChild(param);
                 return envelope;
            }

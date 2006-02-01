@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap.impl.llom;
+package org.apache.ws.commons.soap.impl.llom;
 import junit.framework.TestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutputFormat;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMOutputFormat;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;

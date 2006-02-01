@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
 import org.apache.axis2.security.trust.TrustException;
 
 /**
@@ -38,7 +38,7 @@ public abstract class ValueToken extends AbstractToken {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.trust.token.AbstractToken#deserializeChildElement(org.apache.axis2.om.OMElement)
+	 * @see org.apache.axis2.security.trust.token.AbstractToken#deserializeChildElement(org.apache.ws.commons.om.OMElement)
 	 */
 	protected void deserializeChildElement(OMElement element)
 			throws TrustException {
@@ -52,7 +52,7 @@ public abstract class ValueToken extends AbstractToken {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.trust.token.AbstractToken#setElementTextValue(org.apache.axis2.om.OMText)
+	 * @see org.apache.axis2.security.trust.token.AbstractToken#setElementTextValue(org.apache.ws.commons.om.OMText)
 	 */
 	protected void setElementTextValue(OMText textNode) {
 		this.valueText = textNode;

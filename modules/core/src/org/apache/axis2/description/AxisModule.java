@@ -20,7 +20,7 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

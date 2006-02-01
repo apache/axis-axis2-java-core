@@ -34,13 +34,13 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.axis2.util.Utils;
 
 public class SoapProcessingModelTest extends TestCase implements TestConstants {

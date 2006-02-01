@@ -27,9 +27,9 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutputFormat;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMOutputFormat;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 
 import javax.xml.namespace.QName;

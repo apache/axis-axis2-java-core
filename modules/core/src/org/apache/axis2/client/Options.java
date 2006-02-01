@@ -8,8 +8,8 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.axis2.transport.TransportListener;
 
 import javax.xml.namespace.QName;

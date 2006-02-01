@@ -1,9 +1,9 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.EmptyOMLocation;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;

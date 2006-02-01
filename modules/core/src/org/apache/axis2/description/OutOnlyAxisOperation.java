@@ -11,9 +11,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPHeader;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

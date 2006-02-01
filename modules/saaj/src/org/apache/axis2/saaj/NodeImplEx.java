@@ -15,11 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.apache.ws.commons.om.OMContainer;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMException;
+import org.apache.axis2.doom.dom.NodeImpl;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Attr;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om.infoset;
+package org.apache.ws.commons.om.infoset;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

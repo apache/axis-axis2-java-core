@@ -44,7 +44,7 @@
 
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
-        org.apache.axis2.soap.SOAPEnvelope envelope = null;
+        org.apache.ws.commons.soap.SOAPEnvelope envelope = null;
         //Find the axisOperation that has been set by the Dispatch phase.
         org.apache.axis2.description.AxisOperation op = msgContext.getOperationContext().getAxisOperation();
         if (op == null) {
@@ -161,7 +161,7 @@
 
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
-        org.apache.axis2.soap.SOAPEnvelope envelope = null;
+        org.apache.ws.commons.soap.SOAPEnvelope envelope = null;
         //Find the axisOperation that has been set by the Dispatch phase.
         org.apache.axis2.description.AxisOperation op = inMessage.getOperationContext().getAxisOperation();
         if (op == null) {

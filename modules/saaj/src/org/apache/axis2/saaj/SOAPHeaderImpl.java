@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
-import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.axis2.doom.dom.ElementImpl;
+import org.apache.axis2.doom.dom.NamespaceImpl;
+import org.apache.ws.commons.soap.SOAPHeaderBlock;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
@@ -31,14 +31,14 @@ import java.util.Iterator;
 
 public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 
-    private org.apache.axis2.soap.SOAPHeader omSOAPHeader;
+    private org.apache.ws.commons.soap.SOAPHeader omSOAPHeader;
 
     /**
      * Constructor
      *
      * @param header
      */
-    public SOAPHeaderImpl(org.apache.axis2.soap.SOAPHeader header) {
+    public SOAPHeaderImpl(org.apache.ws.commons.soap.SOAPHeader header) {
         super((ElementImpl) header);
         omSOAPHeader = header;
     }

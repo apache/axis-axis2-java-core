@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
 import junit.framework.TestCase;
-import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.om.impl.MIMEOutputUtils;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.ws.commons.attachments.ByteArrayDataSource;
+import org.apache.ws.commons.om.impl.MIMEOutputUtils;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -46,7 +46,7 @@ public class MIMEOutputUtilsTest extends TestCase {
         OMOutputFormat omOutput = new OMOutputFormat();
         boundary = omOutput.getMimeBoundary();
 
-        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils
+        String contentType = org.apache.ws.commons.om.impl.MIMEOutputUtils
 				.getContentTypeForMime(boundary, omOutput.getRootContentId(),
 						omOutput.getCharSetEncoding(),SOAP12Constants.SOAP_12_CONTENT_TYPE);
         DataHandler dataHandler;

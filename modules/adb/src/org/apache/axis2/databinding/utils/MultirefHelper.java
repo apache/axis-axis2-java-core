@@ -19,10 +19,10 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;

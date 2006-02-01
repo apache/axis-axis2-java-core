@@ -24,10 +24,10 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPHeader;
+import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

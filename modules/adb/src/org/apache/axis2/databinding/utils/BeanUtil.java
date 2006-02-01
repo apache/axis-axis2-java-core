@@ -19,12 +19,12 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;

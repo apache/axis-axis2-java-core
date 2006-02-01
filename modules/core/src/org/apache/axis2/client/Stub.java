@@ -18,16 +18,16 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.stream.XMLStreamReader;

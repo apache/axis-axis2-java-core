@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap.impl.llom;
+package org.apache.ws.commons.soap.impl.llom;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMTestCase;
-import org.apache.axis2.om.OMTestUtils;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMTestCase;
+import org.apache.ws.commons.om.OMTestUtils;
+import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPHeader;
+import org.apache.ws.commons.soap.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

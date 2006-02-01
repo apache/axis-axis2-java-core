@@ -17,7 +17,7 @@ package org.apache.axis2.security.util;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;

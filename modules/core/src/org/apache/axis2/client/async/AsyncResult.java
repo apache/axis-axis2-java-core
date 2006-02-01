@@ -18,7 +18,7 @@
 package org.apache.axis2.client.async;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 /**
  * This class represents the results of an asynchronous invocation. The axis engine

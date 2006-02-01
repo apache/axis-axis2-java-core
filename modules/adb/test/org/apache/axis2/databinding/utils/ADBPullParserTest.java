@@ -2,12 +2,12 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.custommonkey.xmlunit.XMLTestCase;

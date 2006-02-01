@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
-import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
 
 public class SOAPFaultTestCase extends SOAPBodyTestCase {
     protected SOAPFault soap11Fault;

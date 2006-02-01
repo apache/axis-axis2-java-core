@@ -16,11 +16,11 @@
 
 package test.interop.sun.round4.complex;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAP11Constants;
 
 public class EchoSOAPStructFaultClientUtil implements SunGroupHClientUtil{
 

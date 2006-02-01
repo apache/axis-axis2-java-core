@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.attachments;
+package org.apache.ws.commons.attachments;
 
 import junit.framework.TestCase;
 import org.apache.axis2.util.Base64;

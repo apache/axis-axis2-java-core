@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMText;
 
 import java.util.Iterator;
 

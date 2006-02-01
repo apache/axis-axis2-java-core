@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

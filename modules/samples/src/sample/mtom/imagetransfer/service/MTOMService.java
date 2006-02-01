@@ -16,12 +16,12 @@
 
 package sample.mtom.imagetransfer.service;
 
-import org.apache.axis2.attachments.utils.ImageIO;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.ws.commons.attachments.utils.ImageIO;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMText;
 
 import javax.activation.DataHandler;
 import java.awt.*;

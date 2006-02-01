@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om.impl.llom.mtom;
+package org.apache.ws.commons.om.impl.llom.mtom;
 
-import org.apache.axis2.attachments.MIMEHelper;
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.ws.commons.attachments.MIMEHelper;
+import org.apache.ws.commons.om.AbstractTestCase;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAP12Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLInputFactory;

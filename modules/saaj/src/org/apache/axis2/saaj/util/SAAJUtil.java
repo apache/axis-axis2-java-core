@@ -16,13 +16,13 @@
 
 package org.apache.axis2.saaj.util;
 
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,12 +36,12 @@ import java.io.ByteArrayOutputStream;
 public class SAAJUtil {
 
     /**
-     * Create a DOM Document using the org.apache.axis2.soap.SOAPEnvelope
+     * Create a DOM Document using the org.apache.ws.commons.soap.SOAPEnvelope
      *
-     * @param env An org.apache.axis2.soap.SOAPEnvelope instance
+     * @param env An org.apache.ws.commons.soap.SOAPEnvelope instance
      * @return the DOM Document of the given SOAP Envelope
      */
-    public static Document getDocumentFromSOAPEnvelope(org.apache.axis2.soap.SOAPEnvelope env) {
+    public static Document getDocumentFromSOAPEnvelope(org.apache.ws.commons.soap.SOAPEnvelope env) {
         env.build();
 
         //Check the namespace and find SOAP version and factory
@@ -64,13 +64,13 @@ public class SAAJUtil {
     }
 
      /**
-     * Create a DOM Document using the org.apache.axis2.soap.SOAPEnvelope
+     * Create a DOM Document using the org.apache.ws.commons.soap.SOAPEnvelope
      *
-     * @param env An org.apache.axis2.soap.SOAPEnvelope instance
-     * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
+     * @param env An org.apache.ws.commons.soap.SOAPEnvelope instance
+     * @return the org.apache.axis.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
      */
-    public static org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl
-             toDOOMSOAPEnvelope(org.apache.axis2.soap.SOAPEnvelope env) {
+    public static org.apache.axis.soap.impl.dom.SOAPEnvelopeImpl
+             toDOOMSOAPEnvelope(org.apache.ws.commons.soap.SOAPEnvelope env) {
         env.build();
 
         //Check the namespace and find SOAP version and factory
@@ -89,10 +89,10 @@ public class SAAJUtil {
         SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
         envelope.build();
 
-        return (org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl) envelope;
+        return (org.apache.axis.soap.impl.dom.SOAPEnvelopeImpl) envelope;
     }
 
-    public static org.apache.axis2.soap.SOAPEnvelope
+    public static org.apache.ws.commons.soap.SOAPEnvelope
             getSOAPEnvelopeFromDOOMDocument(org.w3c.dom.Document doc) {
 
         OMElement docElem = (OMElement) doc.getDocumentElement();
@@ -102,7 +102,7 @@ public class SAAJUtil {
     }
 
 
-    public static org.apache.axis2.soap.SOAPEnvelope
+    public static org.apache.ws.commons.soap.SOAPEnvelope
             toOMSOAPEnvelope(org.w3c.dom.Element elem) {
 
         OMElement docElem = (OMElement) elem;

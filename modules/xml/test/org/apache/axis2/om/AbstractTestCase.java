@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
 import junit.framework.TestCase;
 

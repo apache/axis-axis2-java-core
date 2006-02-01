@@ -24,7 +24,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;

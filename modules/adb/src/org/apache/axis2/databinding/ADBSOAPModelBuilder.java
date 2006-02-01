@@ -1,9 +1,9 @@
 package org.apache.axis2.databinding;
 
-import org.apache.axis2.soap.SOAPConstants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.SOAPConstants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;

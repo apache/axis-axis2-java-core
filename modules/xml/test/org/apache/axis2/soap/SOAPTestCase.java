@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.om.AbstractTestCase;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

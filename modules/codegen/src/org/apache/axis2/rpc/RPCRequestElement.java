@@ -17,9 +17,9 @@
 package org.apache.axis2.rpc;
 
 import org.apache.axis2.databinding.SerializationContext;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.OMElementImpl;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.OMOutputImpl;
+import org.apache.ws.commons.om.impl.llom.OMElementImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap;
+package org.apache.ws.commons.soap;
 
 public class SOAPFaultNodeTest extends SOAPFaultTestCase {
     protected SOAPFaultNode soap11FaultNode;

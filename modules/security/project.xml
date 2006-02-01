@@ -27,9 +27,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-xml</artifactId>
-            <version>${pom.currentVersion}</version>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom</artifactId>
+            <version>${axiom.version}</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>

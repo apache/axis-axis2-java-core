@@ -26,7 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.wsdl.WSDLConstants;
 
 import java.net.URL;

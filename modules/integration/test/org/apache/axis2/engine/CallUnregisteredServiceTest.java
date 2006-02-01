@@ -27,10 +27,10 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 public class CallUnregisteredServiceTest extends TestCase {
 

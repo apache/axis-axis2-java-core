@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.ws.security.message.token.SecurityTokenReference;
@@ -65,7 +65,7 @@ public class CancelRequestSecurityToken extends RequestSecurityToken {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.security.trust.token.RequestSecurityToken#handleSpecificChildren(org.apache.axis2.om.OMElement)
+	 * @see org.apache.axis2.security.trust.token.RequestSecurityToken#handleSpecificChildren(org.apache.ws.commons.om.OMElement)
 	 */
 	protected void handleSpecificChildren(OMElement element) throws TrustException {
 		QName el =  new QName(element.getNamespace().getName(), element.getLocalName());

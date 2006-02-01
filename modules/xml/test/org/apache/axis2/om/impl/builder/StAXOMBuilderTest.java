@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om.impl.builder;
+package org.apache.ws.commons.om.impl.builder;
 
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.ws.commons.om.AbstractTestCase;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import java.io.FileReader;

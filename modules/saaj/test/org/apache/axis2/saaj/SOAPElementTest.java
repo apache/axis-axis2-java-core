@@ -16,7 +16,7 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.apache.axis2.doom.dom.NodeImpl;
 
 import javax.xml.soap.SOAPElement;
 import java.util.List;

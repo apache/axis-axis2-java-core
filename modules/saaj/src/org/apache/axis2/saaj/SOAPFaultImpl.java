@@ -1,16 +1,16 @@
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPFaultRole;
-import org.apache.axis2.soap.SOAPFaultText;
-import org.apache.axis2.soap.SOAPFaultValue;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
+import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.axis2.doom.dom.ElementImpl;
+import org.apache.ws.commons.soap.SOAPFaultCode;
+import org.apache.ws.commons.soap.SOAPFaultReason;
+import org.apache.ws.commons.soap.SOAPFaultRole;
+import org.apache.ws.commons.soap.SOAPFaultText;
+import org.apache.ws.commons.soap.SOAPFaultValue;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultTextImpl;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
@@ -20,12 +20,12 @@ import java.util.Locale;
 
 public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
-    protected org.apache.axis2.soap.SOAPFault fault;
+    protected org.apache.ws.commons.soap.SOAPFault fault;
 
     /**
      * @param element
      */
-    public SOAPFaultImpl(org.apache.axis2.soap.SOAPFault element) {
+    public SOAPFaultImpl(org.apache.ws.commons.soap.SOAPFault element) {
         super((ElementImpl) element);
         fault = element;
     }
@@ -46,7 +46,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #getFaultCode() getFaultCode()
      */
     public void setFaultCode(String faultCode) throws SOAPException {
-        org.apache.axis2.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+        org.apache.ws.commons.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
         SOAPFaultCode fCode = soapFactory.createSOAPFaultCode(fault);
         SOAPFaultValue fValue = soapFactory.createSOAPFaultValue(fCode);
         fCode.setValue(fValue);
@@ -119,7 +119,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 reason.setSOAPText(text);
             }
         } else {
-            org.apache.axis2.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+            org.apache.ws.commons.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
             SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
             SOAPFaultText fText = soapFactory.createSOAPFaultText(fReason);
             fText.setText(faultString);

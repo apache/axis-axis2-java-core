@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om.impl.llom;
+package org.apache.ws.commons.om.impl.llom;
 
-import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutputFormat;
+import org.apache.ws.commons.attachments.ByteArrayDataSource;
+import org.apache.ws.commons.om.AbstractTestCase;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMOutputFormat;
 
 import javax.activation.DataHandler;
 import java.io.File;

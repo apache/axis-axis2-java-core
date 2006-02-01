@@ -24,8 +24,8 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

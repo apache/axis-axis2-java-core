@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om.impl.llom;
+package org.apache.ws.commons.om.impl.llom;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMDocument;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutputFormat;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMDocument;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMOutputFormat;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;

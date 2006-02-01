@@ -1,7 +1,5 @@
 package org.apache.axis2.description;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.OMElement;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.impl.MessageReferenceImpl;
 

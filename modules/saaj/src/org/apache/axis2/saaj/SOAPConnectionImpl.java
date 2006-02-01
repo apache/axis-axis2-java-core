@@ -22,11 +22,11 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.OperationClient;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.wsdl.WSDLConstants;
@@ -152,7 +152,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @return the SAAJ SOAPMessage
      * @throws SOAPException If an exception occurs during this conversion
      */
-    private SOAPMessage getSOAPMessage(org.apache.axis2.soap.SOAPEnvelope respOMSoapEnv)
+    private SOAPMessage getSOAPMessage(org.apache.ws.commons.soap.SOAPEnvelope respOMSoapEnv)
             throws SOAPException {
 
         // Create the basic SOAP Message
@@ -168,8 +168,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
              hbIter.hasNext();) {
 
             // Converting a single OM SOAP HeaderBlock to a SAAJ SOAP HeaderBlock
-            org.apache.axis2.soap.SOAPHeaderBlock hb =
-                    (org.apache.axis2.soap.SOAPHeaderBlock) hbIter.next();
+            org.apache.ws.commons.soap.SOAPHeaderBlock hb =
+                    (org.apache.ws.commons.soap.SOAPHeaderBlock) hbIter.next();
             final QName hbQName = hb.getQName();
             final SOAPHeaderElement headerEle =
                     header.addHeaderElement(env.createName(hbQName.getLocalPart(),
@@ -269,10 +269,10 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @return
      * @throws SOAPException
      */
-    protected org.apache.axis2.soap.SOAPEnvelope toOMSOAPEnvelope(SOAPMessage saajSOAPMsg)
+    protected org.apache.ws.commons.soap.SOAPEnvelope toOMSOAPEnvelope(SOAPMessage saajSOAPMsg)
             throws SOAPException {
 
-        final org.apache.axis2.soap.SOAPEnvelope omSOAPEnv =
+        final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv =
                 SAAJUtil.toOMSOAPEnvelope(saajSOAPMsg.getSOAPPart().getDocumentElement());
 
         Map attachmentMap = new HashMap();
@@ -351,7 +351,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         return null;
     }
 
-    private void printOMSOAPEnvelope(final org.apache.axis2.soap.SOAPEnvelope omSOAPEnv) {
+    private void printOMSOAPEnvelope(final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             omSOAPEnv.serialize(baos);

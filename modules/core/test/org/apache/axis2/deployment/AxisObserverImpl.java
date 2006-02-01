@@ -24,7 +24,7 @@ import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 
 import java.util.ArrayList;
 

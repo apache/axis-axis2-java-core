@@ -30,11 +30,9 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.util.Base64;
 
 import javax.xml.namespace.QName;

@@ -22,12 +22,12 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.Deserializer;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;

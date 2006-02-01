@@ -16,7 +16,7 @@
 
 package org.apache.axis2.security.trust.service;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 
 /**
  * SecurityTokenService

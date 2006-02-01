@@ -16,13 +16,13 @@
 
 package org.apache.axis2.swa;
 
-import org.apache.axis2.attachments.MIMEHelper;
+import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.MTOMConstants;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.impl.MTOMConstants;
+import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;

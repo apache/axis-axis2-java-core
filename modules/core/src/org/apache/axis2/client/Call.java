@@ -27,8 +27,8 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

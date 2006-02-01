@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap.impl.llom;
+package org.apache.ws.commons.soap.impl.llom;
 
-import org.apache.axis2.om.OMTestCase;
-import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.ws.commons.om.OMTestCase;
+import org.apache.ws.commons.om.impl.llom.OMNamespaceImpl;
+import org.apache.ws.commons.soap.SOAPHeader;
+import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import java.util.Iterator;
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.om;
+package org.apache.ws.commons.om;
 
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public class BadInputTest extends OMTestCase {
 

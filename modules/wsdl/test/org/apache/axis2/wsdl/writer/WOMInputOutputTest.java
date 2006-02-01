@@ -1,8 +1,8 @@
 package org.apache.axis2.wsdl.writer;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;

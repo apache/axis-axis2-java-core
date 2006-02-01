@@ -16,10 +16,10 @@
 
 package test.interop.util;
 
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis.soap.impl.dom.soap11.SOAP11Factory;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;

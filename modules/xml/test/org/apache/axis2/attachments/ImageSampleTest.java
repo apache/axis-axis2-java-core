@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.attachments;
+package org.apache.ws.commons.attachments;
 
-import org.apache.axis2.attachments.utils.ImageDataSource;
-import org.apache.axis2.attachments.utils.ImageIO;
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutputFormat;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.OMElementImpl;
-import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
-import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.ws.commons.attachments.utils.ImageDataSource;
+import org.apache.ws.commons.attachments.utils.ImageIO;
+import org.apache.ws.commons.om.AbstractTestCase;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMOutputFormat;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.impl.llom.OMElementImpl;
+import org.apache.ws.commons.om.impl.llom.OMNamespaceImpl;
+import org.apache.ws.commons.om.impl.llom.OMTextImpl;
+import org.apache.ws.commons.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLInputFactory;

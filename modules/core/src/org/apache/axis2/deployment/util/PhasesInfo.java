@@ -23,7 +23,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 

@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.TextImpl;
+import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.ws.commons.om.OMContainer;
+import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.impl.OMOutputImpl;
+import org.apache.axis2.doom.dom.TextImpl;
 import org.w3c.dom.DOMException;
 
 import javax.xml.soap.Text;
@@ -34,7 +34,7 @@ public class TextImplEx extends NodeImplEx implements Text {
     public TextImplEx(String data) {
         textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
     }
-    
+
     /**
      * Retrieves whether this <CODE>Text</CODE> object
      * represents a comment.
@@ -221,35 +221,35 @@ public class TextImplEx extends NodeImplEx implements Text {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.om.impl.OMNodeEx#setParent(org.apache.axis2.om.OMContainer)
+      * @see org.apache.ws.commons.om.impl.OMNodeEx#setParent(org.apache.ws.commons.om.OMContainer)
       */
     public void setParent(OMContainer element) {
         textNode.setParent(element);
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.om.OMNode#getParent()
+      * @see org.apache.ws.commons.om.OMNode#getParent()
       */
     public OMContainer getParent() {
         return textNode.getParent();
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.om.OMNode#discard()
+      * @see org.apache.ws.commons.om.OMNode#discard()
       */
     public void discard() throws OMException {
         textNode.discard();
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.impl.OMOutputImpl)
+      * @see org.apache.ws.commons.om.OMNode#serialize(org.apache.ws.commons.om.impl.OMOutputImpl)
       */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         textNode.serialize(omOutput);
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.om.OMNode#serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
+      * @see org.apache.ws.commons.om.OMNode#serializeAndConsume(org.apache.ws.commons.om.impl.OMOutputImpl)
       */
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         textNode.serializeAndConsume(omOutput);

@@ -19,10 +19,10 @@ package org.apache.axis2;
 
 import org.apache.axis2.fault.FaultCode;
 import org.apache.axis2.fault.FaultReasonList;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPHeader;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.ws.commons.soap.SOAPFaultCode;
+import org.apache.ws.commons.soap.SOAPHeader;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;

@@ -16,10 +16,10 @@
 
 package org.apache.axis2.security.util;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.xpath.AXIOMXPath;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.xpath.AXIOMXPath;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.jaxen.JaxenException;

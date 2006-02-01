@@ -18,16 +18,16 @@ package sample.mtom.imagetransfer.client;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.attachments.utils.ImageDataSource;
-import org.apache.axis2.attachments.utils.ImageIO;
+import org.apache.ws.commons.attachments.utils.ImageDataSource;
+import org.apache.ws.commons.attachments.utils.ImageIO;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.soap.SOAP11Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;

@@ -23,16 +23,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.axis2.doom.dom.DocumentImpl;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -45,7 +45,7 @@ public class Axis2Util {
 
 	/**
 	 * Creates a DOM Document using the SOAP Envelope.
-	 * @param env An org.apache.axis2.soap.SOAPEnvelope instance 
+	 * @param env An org.apache.ws.commons.soap.SOAPEnvelope instance
 	 * @return Returns the DOM Document of the given SOAP Envelope.
 	 * @throws Exception
 	 */
