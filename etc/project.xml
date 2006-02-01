@@ -46,9 +46,9 @@
 	<siteDirectory>/www/ws.apache.org/axis2/</siteDirectory>
 	<distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
 	<!-- repository>
-<connection>scm|svn|http://svn.apache.org/repos/asf/webservices/axis/trunk</connection>
-<developerConnection>scm|svn|https://svn.apache.org/repos/asf/webservices/axis/trunk</developerConnection>
-<url>http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN</url>
+<connection>scm|svn|http://svn.apache.org/repos/asf/webservices/axis2/trunk</connection>
+<developerConnection>scm|svn|https://svn.apache.org/repos/asf/webservices/axis2/trunk</developerConnection>
+<url>http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN</url>
 </repository -->
 	<mailingLists>
 		<mailingList>

@@ -97,7 +97,7 @@ public class EchoTest extends TestCase {
 //                AddressingConstants.WSA_TO,
 //                "http://127.0.0.1:"
 //                    + (org.apache.axis2.integration.Constants.TESTING_PORT)
-//                    + "/axis/services/echo/echoString");
+//                    + "/axis2/services/echo/echoString");
 //
 //        OMElement returnelement = fac.createOMElement("param1", ns);
 //        returnelement.setBuilder(
@@ -123,7 +123,7 @@ public class EchoTest extends TestCase {
 //                AddressingConstants.WSA_TO,
 //                "http://127.0.0.1:"
 //                    + (org.apache.axis2.integration.Constants.TESTING_PORT)
-//                    + "/axis/services/echo/echoStringArray");
+//                    + "/axis2/services/echo/echoStringArray");
 //
 //        OMElement returnelement = fac.createOMElement("param1", ns);
 //
@@ -149,7 +149,7 @@ public class EchoTest extends TestCase {
 //                AddressingConstants.WSA_TO,
 //                "http://127.0.0.1:"
 //                    + (org.apache.axis2.integration.Constants.TESTING_PORT)
-//                    + "/axis/services/echo/echoEchoStruct");
+//                    + "/axis2/services/echo/echoEchoStruct");
 //
 //        String[] messages =
 //            new String[] {
@@ -218,7 +218,7 @@ public class EchoTest extends TestCase {
 //                AddressingConstants.WSA_TO,
 //                "http://127.0.0.1:"
 //                    + (org.apache.axis2.integration.Constants.TESTING_PORT)
-//                    + "/axis/services/echo/echoEchoStructArray");
+//                    + "/axis2/services/echo/echoEchoStructArray");
 //
 //        Object[] objs = new Object[10];
 //        Class clasname = Class.forName("encoding.sample1.EchoStruct", true, cl);

@@ -44,7 +44,7 @@ public class GroovyServiceTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
-                    + "/axis/services/groovyService/echo");
+                    + "/axis2/services/groovyService/echo");
     private QName serviceName = new QName("groovyService");
     private QName operationName = new QName("echo");
 

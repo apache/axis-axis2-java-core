@@ -327,16 +327,16 @@ Copyright 2001, 2002 BEA Systems and IBM Corporation and Microsoft Corporation. 
 <wsdl:service name="xxx">
 <!--
    		<wsdl:port binding="wsat:CompletionCoordinatorPortTypeBinding" name="CompletionCoordinator">
-      			<soap:address location="http://localhost:8081/axis/services/CompletionCoordinator"/>
+      			<soap:address location="http://localhost:8081/axis2/services/CompletionCoordinator"/>
     		</wsdl:port>
 		<wsdl:port binding="wsat:CompletionInitiatorPortTypeBinding" name="CompletionInitiator">
-      			<soap:address location="http://localhost:8081/axis/services/CompletionInitiator"/>
+      			<soap:address location="http://localhost:8081/axis2/services/CompletionInitiator"/>
     		</wsdl:port>
 		<wsdl:port binding="wsat:CoordinatorPortTypeBinding" name="Coordinator">
-      			<soap:address location="http://localhost:8081/axis/services/Coordinator"/>
+      			<soap:address location="http://localhost:8081/axis2/services/Coordinator"/>
     		</wsdl:port>
 		<wsdl:port binding="wsat:ParticipantPortTypeBinding" name="Participant">
-      			<soap:address location="http://localhost:8081/axis/services/Participant"/>
+      			<soap:address location="http://localhost:8081/axis2/services/Participant"/>
     		</wsdl:port>
 -->    		
 		<wsdl:port binding="wsat:ParticipantPortTypeRPCBinding" name="ParticipantRPC">

@@ -16,7 +16,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.saaj.util.IDGenerator;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.w3c.dom.Attr;

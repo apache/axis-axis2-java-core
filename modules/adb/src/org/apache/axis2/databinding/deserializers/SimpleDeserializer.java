@@ -228,8 +228,8 @@ public class SimpleDeserializer implements Deserializer {
         }
 
 /*
-        if (javaType == org.apache.axis.types.URI.class) {
-            return new org.apache.axis.types.URI(source);
+        if (javaType == org.apache.axis2.types.URI.class) {
+            return new org.apache.axis2.types.URI(source);
         }
 */
 

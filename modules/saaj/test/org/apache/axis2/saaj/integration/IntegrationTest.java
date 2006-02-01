@@ -110,7 +110,7 @@ public class IntegrationTest extends TestCase {
         request.addAttachmentPart(textAttach);
 
         //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename = "test-resources/axis.jpg";
+        String jpgfilename = "test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler imageDH = new DataHandler(fds);

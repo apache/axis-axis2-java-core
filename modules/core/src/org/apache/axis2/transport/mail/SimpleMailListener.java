@@ -38,7 +38,7 @@ import java.io.File;
 
 /**
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP
- * requests via Apache's xml-axis. This is not intended for production use. Its
+ * requests via Apache's xml-axis2. This is not intended for production use. Its
  * intended uses are for demos, debugging, and performance profiling.
  */
 

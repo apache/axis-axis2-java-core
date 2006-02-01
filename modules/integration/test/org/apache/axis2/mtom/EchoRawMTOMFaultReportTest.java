@@ -85,7 +85,7 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
 
         PostMethod httppost = new PostMethod("http://127.0.0.1:"
                 + (UtilServer.TESTING_PORT)
-                + "/axis/services/EchoService/mtomSample");
+                + "/axis2/services/EchoService/mtomSample");
 
         HttpMethodRetryHandler myretryhandler = new HttpMethodRetryHandler() {
             public boolean retryMethod(final HttpMethod method,

@@ -71,7 +71,7 @@ public class AttachmentSerializationTest extends TestCase {
         msg.addAttachmentPart(ap);
 
         // Second attachment
-        String jpgfilename = "test-resources/axis.jpg";
+        String jpgfilename = "test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler dh = new DataHandler(fds);

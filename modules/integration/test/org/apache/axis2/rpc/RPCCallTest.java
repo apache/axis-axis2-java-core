@@ -64,7 +64,7 @@ public class RPCCallTest extends TestCase {
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/concat");
+                    + "/axis2/services/EchoXMLService/concat");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
@@ -134,7 +134,7 @@ public class RPCCallTest extends TestCase {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
                         + (UtilServer.TESTING_PORT)
-                        + "/axis/services/EchoXMLService/" + opName);
+                        + "/axis2/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
         operationName = new QName("http://org.apache.axis2/xsd", opName, "req");
         AxisService service = new AxisService(serviceName.getLocalPart());

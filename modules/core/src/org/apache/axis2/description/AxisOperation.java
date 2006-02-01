@@ -254,7 +254,7 @@ public abstract class AxisOperation extends AxisDescription
         }
 
         if (temp == MEP_CONSTANT_INVALID) {
-            throw new AxisError("Could not Map the MEP URI to a axis MEP constant value");
+            throw new AxisError("Could not Map the MEP URI to a axis2 MEP constant value");
         }
 
         this.mep = temp;

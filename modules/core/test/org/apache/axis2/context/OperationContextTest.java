@@ -67,9 +67,9 @@ public class OperationContextTest extends AbstractTestCase {
         MessageContext messageContext = new MessageContext();
         messageContext.setConfigurationContext(configContext);
         messageContext.setTransportIn(new TransportInDescription(
-                new QName("axis")));
+                new QName("axis2")));
         messageContext.setTransportOut(new TransportOutDescription(new QName(
-                "axis")));
+                "axis2")));
 
         return messageContext;
 

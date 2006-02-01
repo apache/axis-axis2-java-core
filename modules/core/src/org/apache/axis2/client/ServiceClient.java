@@ -153,7 +153,7 @@ public class ServiceClient {
      * @return the minted anonymous service
      */
     private AxisService createAnonymousService() {
-        // now add anonymous operations to the axis service for use with the
+        // now add anonymous operations to the axis2 service for use with the
         // shortcut client API. NOTE: We only add the ones we know we'll use
         // later in the convenience API; if you use
         // this constructor then you can't expect any magic!

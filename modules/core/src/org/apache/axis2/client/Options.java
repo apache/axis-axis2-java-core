@@ -35,7 +35,7 @@ import java.util.Map;
 
 /**
  * The proposal related for this is here :
- * http://marc.theaimsgroup.com/?l=axis-dev&m=113320384108037&w=2 Client can
+ * http://marc.theaimsgroup.com/?l=axis2-dev&m=113320384108037&w=2 Client can
  * fill this options and give to any class extending from MEPClient. All those
  * classes will be getting parameters using this.
  */

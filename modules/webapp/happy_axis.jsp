@@ -45,7 +45,7 @@ IP=request.getRequestURL().toString();
 %>
 <%!
     /*
-    * Happiness tests for axis. These look at the classpath and warn if things
+    * Happiness tests for axis2. These look at the classpath and warn if things
     * are missing. Normally addng this much code in a JSP page is mad
     * but here we want to validate JSP compilation too, and have a drop-in
     * page for easy re-use
@@ -363,7 +363,7 @@ IP=request.getRequestURL().toString();
             "axis2-0.9.jar",
             "Apache-Axis",
             "Axis2 will not work",
-            "http://xml.apache.org/axis/");
+            "http://xml.apache.org/axis2/");
     needed+=needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-Commons Logging",
@@ -403,13 +403,13 @@ IP=request.getRequestURL().toString();
     //is everythng we need here
     if(needed==0) {
         //yes, be happy
-        out.write("<i>The core axis libraries are present. </i>");
+        out.write("<i>The core axis2 libraries are present. </i>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         out.write("<i>"
                 +needed
-                +" core axis librar"
+                +" core axis2 librar"
                 +(needed==1?"y is":"ies are")
                 +" missing</i>");
     }
@@ -508,7 +508,7 @@ IP=request.getRequestURL().toString();
 %>
 <%!
     /*
-    * Happiness tests for axis. These look at the classpath and warn if things
+    * Happiness tests for axis2. These look at the classpath and warn if things
     * are missing. Normally addng this much code in a JSP page is mad
     * but here we want to validate JSP compilation too, and have a drop-in
     * page for easy re-use
@@ -826,7 +826,7 @@ IP=request.getRequestURL().toString();
             "axis2-0.9.jar",
             "Apache-Axis",
             "Axis2 will not work",
-            "http://xml.apache.org/axis/");
+            "http://xml.apache.org/axis2/");
     needed+=needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-Commons Logging",
@@ -866,13 +866,13 @@ IP=request.getRequestURL().toString();
     //is everythng we need here
     if(needed==0) {
         //yes, be happy
-        out.write("<i>The core axis libraries are present. </i>");
+        out.write("<i>The core axis2 libraries are present. </i>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         out.write("<i>"
                 +needed
-                +" core axis librar"
+                +" core axis2 librar"
                 +(needed==1?"y is":"ies are")
                 +" missing</i>");
     }

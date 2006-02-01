@@ -202,7 +202,7 @@ public class Utils {
             throw new Exception("repository directory " + file.getAbsolutePath()
                     + " does not exists");
         }
-        File axis2xml = new File(file, "axis.xml");
+        File axis2xml = new File(file, "axis2.xml");
         String axis2xmlString = null;
         if (axis2xml.exists()) {
             axis2xmlString = axis2xml.getName();

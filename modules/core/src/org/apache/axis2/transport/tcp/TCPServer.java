@@ -155,6 +155,6 @@ public class TCPServer extends TransportListener implements Runnable {
 
         // todo this has to fix
         return new EndpointReference("tcp://127.0.0.1:" + (serversocket.getLocalPort())
-                + "/axis/services/" + serviceName);
+                + "/axis2/services/" + serviceName);
     }
 }

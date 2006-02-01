@@ -16,7 +16,7 @@
 
 package org.apache.axis2.soap12testing.webservices;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 
 public class SOAP12TestWebServiceDefault {
     public OMElement echo(OMElement element) {

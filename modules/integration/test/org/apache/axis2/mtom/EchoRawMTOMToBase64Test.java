@@ -48,7 +48,7 @@ import javax.xml.namespace.QName;
 public class EchoRawMTOMToBase64Test extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoMTOMtoBase64");
+            + "/axis2/services/EchoXMLService/echoMTOMtoBase64");
 
     private Log log = LogFactory.getLog(getClass());
 

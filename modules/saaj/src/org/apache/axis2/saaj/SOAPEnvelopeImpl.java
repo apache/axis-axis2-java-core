@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.doom.dom.DocumentImpl;
-import org.apache.axis2.doom.dom.ElementImpl;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11BodyImpl;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11HeaderImpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11BodyImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.soap.Name;

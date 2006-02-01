@@ -16,7 +16,7 @@
 
 package org.apache.axis2.saaj.util;
 
-import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
@@ -67,9 +67,9 @@ public class SAAJUtil {
      * Create a DOM Document using the org.apache.ws.commons.soap.SOAPEnvelope
      *
      * @param env An org.apache.ws.commons.soap.SOAPEnvelope instance
-     * @return the org.apache.axis.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
+     * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
      */
-    public static org.apache.axis.soap.impl.dom.SOAPEnvelopeImpl
+    public static org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl
              toDOOMSOAPEnvelope(org.apache.ws.commons.soap.SOAPEnvelope env) {
         env.build();
 
@@ -89,7 +89,7 @@ public class SAAJUtil {
         SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
         envelope.build();
 
-        return (org.apache.axis.soap.impl.dom.SOAPEnvelopeImpl) envelope;
+        return (org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl) envelope;
     }
 
     public static org.apache.ws.commons.soap.SOAPEnvelope

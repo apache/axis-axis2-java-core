@@ -604,7 +604,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Retrieves service name from the archive file name.
-     * If the archive file name is service1.aar , then axis service name would be service1
+     * If the archive file name is service1.aar , then axis2 service name would be service1
      *
      * @param fileName
      * @return Returns String.

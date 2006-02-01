@@ -23,9 +23,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis.om.DOOMAbstractFactory;
+import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.axis2.doom.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.commons.soap.SOAP11Constants;

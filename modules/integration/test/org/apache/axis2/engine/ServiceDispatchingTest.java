@@ -84,7 +84,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         payload.addChild(value);
         Options options = new Options();
         options.setTo(
-                new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
+                new EndpointReference("http://127.0.0.1:5555/axis2/services/EchoXMLService/"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapAction("echoOMElement");
         ConfigurationContext configContext =
@@ -100,7 +100,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMNamespace omNs = fac.createOMNamespace(
-                "http://127.0.0.1:5555/axis/services/EchoXMLService", "my");
+                "http://127.0.0.1:5555/axis2/services/EchoXMLService", "my");
         OMElement payload = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(

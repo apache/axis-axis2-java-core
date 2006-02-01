@@ -134,7 +134,7 @@ public class RB {
         } else {
             // Try the shared default properties file...
             if (name.indexOf("/") == -1) {
-                name = "org/apache/axis/default-resource";
+                name = "org/apache/axis2/default-resource";
             }
         }
 

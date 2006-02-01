@@ -38,7 +38,7 @@ public class InvokerThread extends Thread {
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoOMElement");
+                    + "/axis2/services/EchoXMLService/echoOMElement");
     protected QName operationName = new QName("echoOMElement");
     protected Log log = LogFactory.getLog(getClass());
     private Exception thrownException = null;

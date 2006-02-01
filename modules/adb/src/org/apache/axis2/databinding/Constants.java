@@ -40,14 +40,14 @@ public class Constants {
     public static final String NS_PREFIX_XML        = "xml";
 
     // Axis Namespaces
-    public static final String NS_URI_AXIS = "http://xml.apache.org/axis/";
+    public static final String NS_URI_AXIS = "http://xml.apache.org/axis2/";
     public static final String NS_URI_XMLSOAP = "http://xml.apache.org/xml-soap";
 
     // Special namespace URI to indicate an "automatically" serialized Java
     // type.  This allows us to use types without needing explicit mappings,
     // such that Java classes like "org.foo.Bar" map to QNames like
-    // {http://xml.apache.org/axis/java}org.foo.Bar
-    public static final String NS_URI_JAVA = "http://xml.apache.org/axis/java";
+    // {http://xml.apache.org/axis2/java}org.foo.Bar
+    public static final String NS_URI_JAVA = "http://xml.apache.org/axis2/java";
 
 
     //
@@ -70,17 +70,17 @@ public class Constants {
     // The enterprise category is for stuff that an enterprise product might
     // want to track, but in a simple environment (like the AXIS build) would
     // be nothing more than a nuisance.
-    public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis.enterprise";
+    public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis2.enterprise";
 
     /**
      * Time logged stuff.
      */
-    public static final String TIME_LOG_CATEGORY = "org.apache.axis.TIME";
+    public static final String TIME_LOG_CATEGORY = "org.apache.axis2.TIME";
 
     /**
      * Servlet exceptions. Axis faults are logged at debug level here.
      */
-    public static final String EXCEPTION_LOG_CATEGORY = "org.apache.axis.EXCEPTIONS";
+    public static final String EXCEPTION_LOG_CATEGORY = "org.apache.axis2.EXCEPTIONS";
 
     /** The name of the field which accepts xsd:any content in Beans. */
     public static final String ANYCONTENT = "_any";
@@ -90,7 +90,7 @@ public class Constants {
     public static final int HTTP_TXR_BUFFER_SIZE = 8 * 1024;
     
     /** Basic Profile 1.1 compatibility flag */
-    public static final String WSIBP11_COMPAT_PROPERTY = "axis.ws-i.bp11.compatibility";
+    public static final String WSIBP11_COMPAT_PROPERTY = "axis2.ws-i.bp11.compatibility";
 
     /**
      * Returns true if the string is the SOAP_ENV namespace.
@@ -597,12 +597,12 @@ public class Constants {
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
 
     /**
-     * QName of stack trace element in an axis fault detail.
+     * QName of stack trace element in an axis2 fault detail.
      */
     public static final QName QNAME_FAULTDETAIL_STACKTRACE = new QName(NS_URI_AXIS,"stackTrace");
 
     /**
-     * QName of exception name element in an axis fault detail.
+     * QName of exception name element in an axis2 fault detail.
      * Do not use - this is for pre-1.0 server->client exceptions.
      */
     public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
@@ -614,17 +614,17 @@ public class Constants {
     public static final QName QNAME_FAULTDETAIL_RUNTIMEEXCEPTION = new QName(NS_URI_AXIS, "isRuntimeException");
 
     /**
-     * QName of HTTP Error code element in an axis fault detail. 
+     * QName of HTTP Error code element in an axis2 fault detail.
      */
     public static final QName QNAME_FAULTDETAIL_HTTPERRORCODE = new QName(NS_URI_AXIS, "HttpErrorCode");
 
     /**
-     * QName of a nested fault in an axis fault detail.
+     * QName of a nested fault in an axis2 fault detail.
      */
     public static final QName QNAME_FAULTDETAIL_NESTEDFAULT = new QName(NS_URI_AXIS, "nestedFault");
 
     /**
-     * QName of a hostname in an axis fault detail.
+     * QName of a hostname in an axis2 fault detail.
      */
     public static final QName QNAME_FAULTDETAIL_HOSTNAME = new QName(NS_URI_AXIS, "hostname");
 
@@ -643,7 +643,7 @@ public class Constants {
     // Where we're rooted
     public static final String MC_HOME_DIR = "home.dir";
 
-    // Relative path of the request URL (ie. http://.../axis/a.jws = /a.jws
+    // Relative path of the request URL (ie. http://.../axis2/a.jws = /a.jws
     public static final String MC_RELATIVE_PATH = "path";
 
     // MessageContext param for the engine's path
@@ -656,7 +656,7 @@ public class Constants {
     // ServletEndpointContext object.  This is where it lives.
     public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
 
-    // If we're SOAP 1.2, the default behavior in org.apache.axis.message.BodyBuilder
+    // If we're SOAP 1.2, the default behavior in org.apache.axis2.message.BodyBuilder
     // is to throw a ProcedureNotPresent fault if we can't dispatch to an
     // OperationDesc during deserialization.  Set this property to any non-null
     // value to prevent this behavior (only used by test.soap12.
@@ -664,7 +664,7 @@ public class Constants {
 
     // This property indicates we're supporting only a single SOAP version.
     // If set (by the service or engine), we'll only accept envelopes of the
-    // specified version.  Value should be an org.apache.axis.soap.SOAPConstants
+    // specified version.  Value should be an org.apache.axis2.soap.SOAPConstants
     public static final String MC_SINGLE_SOAP_VERSION = "SingleSOAPVersion";
 
     /**

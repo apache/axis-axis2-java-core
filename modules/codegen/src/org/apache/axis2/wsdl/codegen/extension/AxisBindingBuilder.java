@@ -38,7 +38,7 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension{
 
     public static final QName AXIS_BINDING_QNAME = new QName(AXIS_NAMESPACE,
             "codeGenerationBinding",
-            "axis");
+            "axis2");
 
 
     public AxisBindingBuilder() {

@@ -35,7 +35,7 @@ import javax.xml.namespace.QName;
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;
     private AxisConfiguration engineRegistry;
-    private QName serviceName = new QName("axis/services/NullService");
+    private QName serviceName = new QName("axis2/services/NullService");
     private QName operationName = new QName("NullOperation");
     private AxisService service;
     private ConfigurationContext configContext;
@@ -93,7 +93,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
     public void testServerReceive() throws Exception {
         mc.setTo(
-                new EndpointReference("axis/services/NullService"));
+                new EndpointReference("axis2/services/NullService"));
         AxisEngine engine = new AxisEngine(configContext);
         mc.setServerSide(true);
         engine.receive(mc);

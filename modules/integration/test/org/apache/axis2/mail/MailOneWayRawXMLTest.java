@@ -41,7 +41,7 @@ import javax.xml.namespace.QName;
 public class MailOneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("mailto:foo@127.0.0.1" +
-                    "/axis/services/EchoXMLService/echoOMElement");
+                    "/axis2/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 

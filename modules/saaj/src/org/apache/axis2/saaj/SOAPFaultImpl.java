@@ -1,16 +1,16 @@
 package org.apache.axis2.saaj;
 
-import org.apache.axis.om.DOOMAbstractFactory;
-import org.apache.axis2.doom.dom.ElementImpl;
+import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPFaultRole;
 import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPFaultValue;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11FaultTextImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;

@@ -21,7 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 
 /**
- * This class represents the results of an asynchronous invocation. The axis engine
+ * This class represents the results of an asynchronous invocation. The axis2 engine
  * reports back the results in this object via the callback function.
  */
 public class AsyncResult {

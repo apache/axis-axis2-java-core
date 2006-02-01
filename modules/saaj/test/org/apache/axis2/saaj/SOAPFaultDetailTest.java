@@ -26,7 +26,7 @@ public class SOAPFaultDetailTest extends TestCase {
     	"   <faultstring></faultstring>" +
     	"   <detail>" +
     	"    <tickerSymbol xsi:type=\"xsd:string\">MACR</tickerSymbol>" +
-    	"   <ns1:exceptionName xmlns:ns1=\"http://xml.apache.org/axis/\">test.wsdl.faults.InvalidTickerFaultMessage</ns1:exceptionName>" +
+    	"   <ns1:exceptionName xmlns:ns1=\"http://xml.apache.org/axis2/\">test.wsdl.faults.InvalidTickerFaultMessage</ns1:exceptionName>" +
     	"   </detail>" +
     	"  </soapenv:Fault>" +
     	" </soapenv:Body>" +

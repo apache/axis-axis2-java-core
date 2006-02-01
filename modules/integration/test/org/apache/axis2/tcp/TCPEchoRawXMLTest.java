@@ -54,7 +54,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("tcp://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoOMElement");
+                    + "/axis2/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 

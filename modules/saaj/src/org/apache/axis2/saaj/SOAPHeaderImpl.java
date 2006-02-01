@@ -16,10 +16,10 @@
 package org.apache.axis2.saaj;
 
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.axis2.doom.dom.ElementImpl;
-import org.apache.axis2.doom.dom.NamespaceImpl;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
-import org.apache.axis.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;

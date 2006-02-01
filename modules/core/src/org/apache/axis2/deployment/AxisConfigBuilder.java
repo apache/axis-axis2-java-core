@@ -400,7 +400,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                         DeploymentErrorMsgs.OUTFLOW_NOT_ALLOWED_IN_TRS_IN, name));
                     }
 
-                    // adding to axis config
+                    // adding to axis2 config
                     axisConfig.addTransportIn(transportIN);
                 } catch (AxisFault axisFault) {
                     throw new DeploymentException(axisFault);
@@ -479,7 +479,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         transportout.setFaultFlow(processFlow(outFaultFlow, axisConfig));
                     }
 
-                    // adding to axis config
+                    // adding to axis2 config
                     axisConfig.addTransportOut(transportout);
                 } catch (ClassNotFoundException e) {
                     throw new DeploymentException(e);

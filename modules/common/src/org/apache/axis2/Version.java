@@ -19,7 +19,7 @@ package org.apache.axis2;
 import org.apache.axis2.i18n.Messages;
 
 /**
- * Little utility to get the version and build date of the axis.jar.
+ * Little utility to get the version and build date of the axis2.jar.
  * <p/>
  * The messages referenced here are automatically kept up-to-date by the
  * build.xml.
@@ -28,7 +28,7 @@ public class Version {
     /**
      * Get the version of this AXIS.
      *
-     * @return the version of this axis
+     * @return the version of this axis2
      */
     public static String getVersion() {
         return Messages.getMessage("axisVersion") + "\n" +
@@ -40,7 +40,7 @@ public class Version {
      * <p/>
      * Example output: 1.1 Jul 08, 2003 (09:00:12 EDT)
      *
-     * @return the full version of this axis
+     * @return the full version of this axis2
      */
     public static String getVersionText() {
         return Messages.getMessage("axisVersionRaw") + " " + Messages.getMessage("axisBuiltOnRaw");
@@ -50,7 +50,7 @@ public class Version {
      * Entry point.
      * <p/>
      * Calling this with no arguments returns the version of the client-side
-     * axis.jar.
+     * axis2.jar.
      */
     public static void main(String[] args) {
         System.out.println(getVersion());

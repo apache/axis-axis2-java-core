@@ -52,7 +52,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class MailRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("foo@127.0.0.1"
-            + "/axis/services/EchoXMLService/echoOMElement");
+            + "/axis2/services/EchoXMLService/echoOMElement");
 
     private Log log = LogFactory.getLog(getClass());
 

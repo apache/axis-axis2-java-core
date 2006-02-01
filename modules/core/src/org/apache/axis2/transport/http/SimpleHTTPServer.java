@@ -37,7 +37,7 @@ import java.net.SocketException;
 
 /**
  * This is a simple implementation of an HTTP server for processing
- * SOAP requests via Apache's xml-axis.  This is not intended for production
+ * SOAP requests via Apache's xml-axis2.  This is not intended for production
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
  * Note this classes uses static objects to provide a thread pool, so you should
