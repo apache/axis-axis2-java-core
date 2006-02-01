@@ -16,11 +16,18 @@
 
 package test.interop.whitemesa.round4.simple;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import test.interop.whitemesa.round4.simple.utils.*;
-import test.interop.whitemesa.WhiteMesaIneterop;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.round4.simple.utils.EchoEmptyFaultClientUtil;
+import test.interop.whitemesa.round4.simple.utils.EchoIntArrayFaultClientUtil;
+import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults1ClientUtil;
+import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults2ClientUtil;
+import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults3Clientutil;
+import test.interop.whitemesa.round4.simple.utils.EchoMultipleFaults4ClientUtil;
+import test.interop.whitemesa.round4.simple.utils.EchoStringFaultClientUtil;
 
 /**
  * Class WhitemesaR4SimpleTest

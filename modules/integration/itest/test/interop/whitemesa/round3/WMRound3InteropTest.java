@@ -17,11 +17,18 @@
 package test.interop.whitemesa.round3;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.soap.SOAPEnvelope;
-import test.interop.whitemesa.WhiteMesaIneterop;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
-import test.interop.whitemesa.round3.util.*;
+import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.round3.util.GDImport1EchoStringUtil;
+import test.interop.whitemesa.round3.util.GDImport2EchoStructUtil;
+import test.interop.whitemesa.round3.util.GDImport3StructArrayUtil;
+import test.interop.whitemesa.round3.util.GDRpcStringArrayUtil;
+import test.interop.whitemesa.round3.util.GDRpcStringUtil;
+import test.interop.whitemesa.round3.util.GDRpcStructUtil;
+import test.interop.whitemesa.round3.util.GDRpcVoidUtil;
 
 /**
  * class MsAsmxRound3InteropTest

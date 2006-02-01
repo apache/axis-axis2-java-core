@@ -17,7 +17,10 @@
 package org.apache.axis2.rest;
 
 
+import javax.xml.stream.XMLOutputFactory;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -29,13 +32,11 @@ import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.util.Utils;
-
-import javax.xml.stream.XMLOutputFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
 
 
 public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {

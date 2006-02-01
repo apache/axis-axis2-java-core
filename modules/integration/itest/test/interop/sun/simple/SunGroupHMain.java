@@ -1,12 +1,19 @@
 
 package test.interop.sun.simple;
 
+import java.io.InputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+
 import junit.framework.TestCase;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.om.impl.llom.exception.XMLComparisonException;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+
 import test.interop.sun.round4.simple.EchoBlockingClient;
 import test.interop.sun.round4.simple.util.EchoEmptyFaultClientUtil;
 import test.interop.sun.round4.simple.util.EchoIntArrayFaultClientUtil;
@@ -17,10 +24,6 @@ import test.interop.sun.round4.simple.util.EchoMultipleFaults4ClientUtil;
 import test.interop.sun.round4.simple.util.EchoStringFaultClientUtil;
 import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 import test.interop.util.XMLComparatorInterop;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
 
 public class SunGroupHMain extends TestCase{
 

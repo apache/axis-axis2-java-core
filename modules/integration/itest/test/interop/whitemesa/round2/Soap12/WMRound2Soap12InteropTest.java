@@ -16,11 +16,14 @@
 
 package test.interop.whitemesa.round2.Soap12;
 
+import java.io.File;
+
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.soap.SOAPEnvelope;
-import test.interop.whitemesa.WhiteMesaIneterop;
-import test.interop.whitemesa.SunClientUtil;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+
 import test.interop.whitemesa.SunClient;
+import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.util.soap12.GroupbSoap12Echo2DStringArrayUtil;
 import test.interop.whitemesa.round2.util.soap12.GroupbSoap12EchoNestedArrayUtil;
 import test.interop.whitemesa.round2.util.soap12.GroupbSoap12EchoNestedStructUtil;
@@ -52,8 +55,6 @@ import test.interop.whitemesa.round2.util.soap12.WMRound2Soap12GroupcStringArray
 import test.interop.whitemesa.round2.util.soap12.WMRound2Soap12GroupcStructArrayUtil;
 import test.interop.whitemesa.round2.util.soap12.WMRound2Soap12GroupcStructUtil;
 import test.interop.whitemesa.round2.util.soap12.WMRound2Soap12GroupcVoidUtil;
-
-import java.io.File;
 
 /**
  * class
