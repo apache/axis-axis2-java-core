@@ -137,7 +137,15 @@ public class AxisConfiguration extends AxisDescription {
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
         notifyObservers(AxisEvent.MODULE_DEPLOY, module);
-        allModules.put(module.getName(), module);
+
+        String moduleName = module.getName().getLocalPart();
+        if (moduleName.endsWith("SNAPSHOT")) {
+            QName moduleQName = new QName(moduleName.substring(0, moduleName.indexOf("SNAPSHOT") - 1));
+            module.setName(moduleQName);
+            allModules.put(moduleQName, module);
+        } else {
+            allModules.put(module.getName(), module);
+        }
     }
 
     /**
