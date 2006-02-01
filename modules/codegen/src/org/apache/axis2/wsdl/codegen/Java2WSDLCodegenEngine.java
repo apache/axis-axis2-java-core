@@ -103,7 +103,7 @@ public class Java2WSDLCodegenEngine implements CommandLineOptionConstants {
                 throw new CodeGenerationException(e);
             }
 
-            classLoader = new URLClassLoader(urls);
+            classLoader = new URLClassLoader(urls,Thread.currentThread().getContextClassLoader());
 
         }else{
             classLoader = Thread.currentThread().getContextClassLoader();

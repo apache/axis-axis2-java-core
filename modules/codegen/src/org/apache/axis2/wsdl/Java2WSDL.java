@@ -47,7 +47,7 @@ public class Java2WSDL {
         System.out.println(CodegenMessages.getMessage("java2wsdl.arg7"));
         System.out.println(CodegenMessages.getMessage("java2wsdl.arg8"));
         System.out.println(CodegenMessages.getMessage("java2wsdl.arg9"));
-        System.out.println(CodegenMessages.getMessage("java2wsdl.arg10"));
+      
 
         System.exit(0);
     }
