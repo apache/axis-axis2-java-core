@@ -56,6 +56,23 @@ public abstract class AbstractHTTPSender {
         this.chunked = chunked;
     }
 
+    public void setHttpVersion(String version) throws AxisFault {
+        if (version != null) {
+            if (HTTPConstants.HEADER_PROTOCOL_11.equals(version)) {
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+            } else
+            if (HTTPConstants.HEADER_PROTOCOL_10.equals(version)) {
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+                // chunked is not possible with HTTP/1.0
+                this.chunked = false;
+            } else {
+                throw new AxisFault(
+                        "Parameter " + HTTPConstants.PROTOCOL_VERSION
+                                + " Can have values only HTTP/1.0 or HTTP/1.1");
+            }
+        }
+    }
+
     /**
      * Helper method to Proxy and NTLM authentication
      *

@@ -278,6 +278,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                         MessageContextConstants.CHUNKED));
             }
 
+            sender.setHttpVersion(httpVersion);
             sender.setChunked(chunked);
             sender.setFormat(format);
 
