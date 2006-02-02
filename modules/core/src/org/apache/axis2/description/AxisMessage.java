@@ -1,10 +1,13 @@
 package org.apache.axis2.description;
 
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.impl.MessageReferenceImpl;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,12 +32,13 @@ import java.util.ArrayList;
  */
 public class AxisMessage extends AxisDescription {
     private ArrayList handlerChain;
-    
+
     //to keep data in WSDL message refference and to keep the Java2WSDL data
     // such as SchemaElementName , direction etc.
     private MessageReference messageReference;
-    
+
     private PolicyInclude policyInclude;
+
 
     public AxisMessage() {
         handlerChain = new ArrayList();
@@ -82,8 +86,23 @@ public class AxisMessage extends AxisDescription {
     public void setElementQName(QName element) {
         messageReference.setElementQName(element);
     }
-    
+
     public Object getKey() {
-    	return getElementQName();
+        return getElementQName();
+    }
+
+    public XmlSchemaElement getSchemaElement() {
+        AxisService service = (AxisService) getParent().getParent();
+        XmlSchema schema = service.getSchema();
+        if (schema != null) {
+            Iterator scheamItms = schema.getItems().getIterator();
+            while (scheamItms.hasNext()) {
+                XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) scheamItms.next();
+                if (xmlSchemaElement.getName().equals(getElementQName().getLocalPart())) {
+                    return xmlSchemaElement;
+                }
+            }
+        }
+        return null;
     }
 }

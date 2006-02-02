@@ -31,6 +31,7 @@ import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
@@ -665,5 +666,12 @@ public class AxisService extends AxisDescription {
 
     public void setTargetNamespacePrefix(String targetNamespacePrefix) {
         this.targetNamespacePrefix = targetNamespacePrefix;
+    }
+
+    public XmlSchemaElement getSchemaElement(QName elementQName) {
+        if (schema != null) {
+            return schema.getElementByName(elementQName);
+        }
+        return null;
     }
 }

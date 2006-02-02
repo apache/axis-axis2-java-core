@@ -8,10 +8,13 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.rpc.client.RPCServiceClient;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class ServiceCreateTest extends TestCase {
         UtilServer.start();
         configContext = UtilServer.getConfigurationContext();
         clinetConfigurationctx = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
     }
 
     public void testServiceCreate() throws AxisFault {
@@ -51,7 +54,12 @@ public class ServiceCreateTest extends TestCase {
         assertNotNull(service);
         axisConfig.addService(service);
         assertEquals("MyService", service.getName());
-        assertNotNull(service.getOperation(new QName("add")));
+        AxisOperation axisOperation = service.getOperation(new QName("add"));
+        assertNotNull(axisOperation);
+        AxisMessage messge = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        // messge.getSchemaElement().toString()
+        assertNotNull(messge);
+        assertNotNull(messge.getSchemaElement());
         assertNotNull(service.getOperation(new QName("putValue")));
         assertNotNull(axisConfig.getService("MyService"));
         service.printWSDL(System.out, "http://127.0.0.1:8080/axis2/services/");
@@ -70,7 +78,7 @@ public class ServiceCreateTest extends TestCase {
         args.add("100");
         args.add("200");
 
-        OMElement response = client.invokeBlocking(new QName("http://org.apache.axis2/xsd","add","ns1"), args.toArray());
+        OMElement response = client.invokeBlocking(new QName("http://org.apache.axis2/xsd", "add", "ns1"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
     }
 }
