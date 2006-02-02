@@ -202,7 +202,7 @@ public class Utils {
             throw new Exception("repository directory " + file.getAbsolutePath()
                     + " does not exists");
         }
-        File axis2xml = new File(file, "axis2.xml");
+        File axis2xml = new File(file, "axis.xml");
         String axis2xmlString = null;
         if (axis2xml.exists()) {
             axis2xmlString = axis2xml.getName();
@@ -281,8 +281,12 @@ public class Utils {
     }
 
     public static boolean isLatest(String moduleVersion, String currentDefaultVersion) {
-        float m_version = Float.parseFloat(moduleVersion);
-        float m_c_vresion = Float.parseFloat(currentDefaultVersion);
-        return m_version > m_c_vresion;
+        if ("SNAPSHOT".equals(moduleVersion)) {
+            return true;
+        } else {
+            float m_version = Float.parseFloat(moduleVersion);
+            float m_c_vresion = Float.parseFloat(currentDefaultVersion);
+            return m_version > m_c_vresion;
+        }
     }
 }

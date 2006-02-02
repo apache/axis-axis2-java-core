@@ -89,14 +89,12 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
 
     private void loadClassPathModules() {
         String classPath = getLocation();
-        System.out.println("classpath1" + classPath);
         int lstindex = classPath.lastIndexOf(File.separatorChar);
         if (lstindex > 0) {
             classPath = classPath.substring(0, lstindex);
         } else {
             classPath = ".";
         }
-        System.out.println("classptah = " + classPath);
         File root = new File(classPath);
         File[] files = root.listFiles();
         if (files != null) {
@@ -106,7 +104,6 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
                     if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
                         //adding moduls in the class path
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
-                        System.out.println("added a module: " + file.getName());
                     }
                 }
             }
