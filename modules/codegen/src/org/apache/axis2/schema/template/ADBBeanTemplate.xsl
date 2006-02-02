@@ -230,7 +230,8 @@
 
         }
 
-    /** Factory class that keeps the parse method
+    /**
+      *  Factory class that keeps the parse method
       */
     public static class Factory{
         /**
