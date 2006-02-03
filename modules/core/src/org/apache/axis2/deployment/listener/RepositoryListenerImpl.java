@@ -59,6 +59,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     //The constructor , which loads moduls from class path
     public RepositoryListenerImpl(DeploymentEngine deploymentEngine) {
         this.deploymentEngine = deploymentEngine;
+        wsInfoList = new WSInfoList(deploymentEngine);
         loadClassPathModules();
     }
 
