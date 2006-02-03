@@ -212,7 +212,7 @@ public class Utils {
      * @return return created AxisSrevice
      */
     public static AxisService createService(String implClass,
-                                            AxisConfiguration axisConfig) throws AxisFault {
+                                            AxisConfiguration axisConfig, Class messageReceiverClass) throws AxisFault {
         Parameter parameter = new ParameterImpl(Constants.SERVICE_CLASS, implClass);
         AxisService axisService = new AxisService();
         axisService.setUseDefaultChains(false);
@@ -254,17 +254,13 @@ public class Utils {
 
             // loading message recivers
             try {
-                Class clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
-                MessageReceiver messageReceiver = (MessageReceiver) clazz.newInstance();
+                MessageReceiver messageReceiver = (MessageReceiver) messageReceiverClass.newInstance();
                 operation.setMessageReceiver(messageReceiver);
-            } catch (ClassNotFoundException e) {
-                throw new AxisFault("ClassNotFoundException occurd during message receiver loading"
-                        + e.getMessage());
             } catch (IllegalAccessException e) {
-                throw new AxisFault("IllegalAccessException occurd during message receiver loading"
+                throw new AxisFault("IllegalAccessException occured during message receiver loading"
                         + e.getMessage());
             } catch (InstantiationException e) {
-                throw new AxisFault("InstantiationException occurd during message receiver loading"
+                throw new AxisFault("InstantiationException occured during message receiver loading"
                         + e.getMessage());
             }
 
@@ -272,6 +268,20 @@ public class Utils {
             axisService.addOperation(operation);
         }
         return axisService;
+
+    }
+
+    public static AxisService createService(String implClass,
+                                            AxisConfiguration axisConfig) throws AxisFault {
+        Class clazz;
+        try {
+            clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+        } catch (ClassNotFoundException e) {
+             throw new AxisFault("ClassNotFoundException occured during message receiver loading"
+                        + e.getMessage());
+        }
+
+        return createService(implClass, axisConfig, clazz);
 
     }
 

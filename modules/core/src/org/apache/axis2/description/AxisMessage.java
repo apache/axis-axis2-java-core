@@ -94,6 +94,7 @@ public class AxisMessage extends AxisDescription {
     public XmlSchemaElement getSchemaElement() {
         AxisService service = (AxisService) getParent().getParent();
         XmlSchema schema = service.getSchema();
+
         if (schema != null) {
             Iterator scheamItms = schema.getItems().getIterator();
             while (scheamItms.hasNext()) {
