@@ -724,7 +724,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         // write service xml
         writeServiceXml();
 
-
+        // write the test classes
+        writeTestClasses();
 
         // write the ant build if not asked for all
         if (!configuration.isGenerateAll()) {
