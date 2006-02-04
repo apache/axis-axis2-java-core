@@ -20,6 +20,8 @@
         </jar>
         <copy file="target/addressing-${addressing_version}.mar"
             tofile="target/modules/addressing-${addressing_version}.mar"/>
+        <copy file="target/addressing-${addressing_version}.mar" 
+            tofile="${maven.repo.local}/axis2/mars/addressing-${addressing_version}.mar"/>
     </postGoal>
     <preGoal name="itest:compile">
         <u:file var="file" name="${maven.itest.src}"/>
