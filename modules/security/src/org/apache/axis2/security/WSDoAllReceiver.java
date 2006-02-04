@@ -68,31 +68,31 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 		String originalDOcumentBuilderFactory = System.getProperty(DocumentBuilderFactory.class.getName());
 		System.setProperty(DocumentBuilderFactory.class.getName(),DocumentBuilderFactoryImpl.class.getName());
 
-    	//populate the properties
-    	try {
-    		HandlerParameterDecoder.processParameters(msgContext,true);
-    	} catch (Exception e) {
-    		throw new AxisFault("Configureation error", e);
-    	}
-    	/**
-    	 * Cannot do the following right now since we cannot access the req 
-    	 * mc when this handler runs in the client side.
-    	 */
-    	
-    	//Copy the WSHandlerConstants.SEND_SIGV over to the new message 
-    	//context - if it exists
-    	if(!msgContext.isServerSide()) {//To make sure this is a response message 
-    		OperationContext opCtx = msgContext.getOperationContext();
-    		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-    		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
-    	}
-    	
-        if (doDebug) {
-            log.debug("WSDoAllReceiver: enter invoke() ");
-        }
-        reqData = new RequestData();
-        
         try {
+        	//populate the properties
+        	try {
+        		HandlerParameterDecoder.processParameters(msgContext,true);
+        	} catch (Exception e) {
+        		throw new AxisFault("Configureation error", e);
+        	}
+        	/**
+        	 * Cannot do the following right now since we cannot access the req 
+        	 * mc when this handler runs in the client side.
+        	 */
+        	
+        	//Copy the WSHandlerConstants.SEND_SIGV over to the new message 
+        	//context - if it exists
+        	if(!msgContext.isServerSide()) {//To make sure this is a response message 
+        		OperationContext opCtx = msgContext.getOperationContext();
+        		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+        		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
+        	}
+        	
+            if (doDebug) {
+                log.debug("WSDoAllReceiver: enter invoke() ");
+            }
+            reqData = new RequestData();
+        
         	reqData.setMsgContext(msgContext);
         	
         	//Figureout if the handler should run

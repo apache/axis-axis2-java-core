@@ -58,51 +58,50 @@ public class WSDoAllSender extends WSDoAllHandler {
     }
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
-		
-		//Set the DOM impl to DOOM
-		String originalDOcumentBuilderFactory = System.getProperty(DocumentBuilderFactory.class.getName());
-		System.setProperty(DocumentBuilderFactory.class.getName(),DocumentBuilderFactoryImpl.class.getName());
-		
-        boolean doDebug = log.isDebugEnabled();
-        
-        try {
-        	HandlerParameterDecoder.processParameters(msgContext,false);
-        } catch (Exception e) {
-    		throw new AxisFault("Configureation error", e);
-    	}
-        
-        if (doDebug) {
-            log.debug("WSDoAllSender: enter invoke()");
-        }
-    	
-        /*
-         * Copy the RECV_RESULTS over to the current message context
-         * - IF available 
-         */
-        OperationContext opCtx = msgContext.getOperationContext();
-        MessageContext inMsgCtx;
-        if(opCtx != null && 
-        		(inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
-        	msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
-        			inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
-        }
-        
-        reqData = new RequestData();
-        
-        reqData.setNoSerialization(false);
-        reqData.setMsgContext(msgContext);
-        
-    	//Figureout if the handler should run
-    	Object outFlowSecurity;
-    	if((outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
-    		outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
-    	}
+        //Set the DOM impl to DOOM
+        String originalDOcumentBuilderFactory = System.getProperty(DocumentBuilderFactory.class.getName());
+        System.setProperty(DocumentBuilderFactory.class.getName(),DocumentBuilderFactoryImpl.class.getName());
 
-    	if(outFlowSecurity == null) {
-    		return;
-    	}
-    	
         try {
+            boolean doDebug = log.isDebugEnabled();
+            
+            try {
+            	HandlerParameterDecoder.processParameters(msgContext,false);
+            } catch (Exception e) {
+        		throw new AxisFault("Configureation error", e);
+        	}
+            
+            if (doDebug) {
+                log.debug("WSDoAllSender: enter invoke()");
+            }
+        	
+            /*
+             * Copy the RECV_RESULTS over to the current message context
+             * - IF available 
+             */
+            OperationContext opCtx = msgContext.getOperationContext();
+            MessageContext inMsgCtx;
+            if(opCtx != null && 
+            		(inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
+            	msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
+            			inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
+            }
+            
+            reqData = new RequestData();
+            
+            reqData.setNoSerialization(false);
+            reqData.setMsgContext(msgContext);
+            
+        	//Figureout if the handler should run
+        	Object outFlowSecurity;
+        	if((outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
+        		outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
+        	}
+    
+        	if(outFlowSecurity == null) {
+        		return;
+        	}
+    	
 	        Vector actions = new Vector();
 	        String action = null;
             if ((action = (String) getOption(WSSHandlerConstants.ACTION_ITEMS)) == null) {
