@@ -31,11 +31,11 @@ public class DerivedTypeUnsignedShortPopulateTest extends AbstractDerivedPopulat
     };
 
     private String xmlString[] = {
-            "<DerivedUnsignedShort>"+values[0]+"</DerivedUnsignedShort>",
-            "<DerivedUnsignedShort>"+values[1]+"</DerivedUnsignedShort>",
-            "<DerivedUnsignedShort>"+values[2]+"</DerivedUnsignedShort>",
-            "<DerivedUnsignedShort>"+values[3]+"</DerivedUnsignedShort>",
-            "<DerivedUnsignedShort>"+values[4]+"</DerivedUnsignedShort>"
+            "<DerivedUnsignedShort xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort xmlns=\"http://soapinterop.org/xsd\" >"+values[2]+"</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedUnsignedShort>"
     };
 
 

@@ -172,7 +172,8 @@
                             elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:when test="@array">
-                            elementList.add("<xsl:value-of select="$propertyName"/>");
+                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
                             elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:otherwise>
@@ -241,134 +242,202 @@
         <xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();
         try {
         int event = reader.getEventType();
-        int count = 0;
-        int argumentCount = <xsl:value-of select="count(property)"/> ;
-        boolean done =false;
+
         //event better be a START_ELEMENT. if not we should go up to the start element here
         while (!reader.isStartElement()){
-        event = reader.next();
+             reader.next();
         }
-        <!-- First loop creates arrayLists for handling arrays -->
-        <xsl:for-each select="property">
-            <xsl:if test="@array">
-                java.util.ArrayList list<xsl:value-of select="position()"></xsl:value-of> = new java.util.ArrayList(5000);
-            </xsl:if>
+
+        <xsl:if test="not(@type)">
+        if (!MY_QNAME.equals(reader.getName())){
+                    throw new Exception("Wrong QName");
+        }
+        </xsl:if>
+
+        <!-- populate attributes here!!!. The attributes are part of an element, not part of a
+             type -->
+        <xsl:for-each select="property[@attribute]">
+            <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+            <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
+            <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
+            <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
+            <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+
+
+           object.set<xsl:value-of select="$javaName"/>(
+                   org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+           reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")));
+
         </xsl:for-each>
-        while(!done){
-        if (javax.xml.stream.XMLStreamConstants.START_ELEMENT==event){
-        <!-- Now reloop and populate the code -->
-        <xsl:for-each select="property">
+
+        <!-- Now reloop and populate the code for non-attribute values-->
+        <xsl:for-each select="property[not(@attribute)]">
             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
             <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
             <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
             <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
             <xsl:variable name="listName">list<xsl:value-of select="position()"/></xsl:variable>
             <xsl:variable name="loopBoolName">loopDone<xsl:value-of select="position()"/></xsl:variable>
+            <xsl:variable name="startQname">startQname<xsl:value-of select="position()"/></xsl:variable>
+            <xsl:variable name="stateMachineName">stateMachine<xsl:value-of select="position()"/></xsl:variable>
+            <xsl:variable name="builderName">builder<xsl:value-of select="position()"/></xsl:variable>
+            <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
+            <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
 
-            if ("<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
+
             <xsl:choose>
+                <!-- Start of array handling code -->
                 <xsl:when test="@array">
-                    <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
-                            //loop until we find a start element that is not part of this array
-                            boolean <xsl:value-of select="$loopBoolName"/> = false;
-                            while(!<xsl:value-of select="$loopBoolName"/>){
-                            //loop to the end element
-                            while (!reader.isEndElement()){
-                            event = reader.next();
-                            }
-                            //step one event
-                            event = reader.next();
-                            if (reader.isEndElement() &amp;&amp;  !"<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
-                            //two continuous end elements means we are exiting the xml structure
-                            <xsl:value-of select="$loopBoolName"/> = true;
-                            }else if (reader.isStartElement()){
-                            if ("<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
-                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
-                            }else{
-                            <xsl:value-of select="$loopBoolName"/> = true;
-                            }
-                            }
-                            }
+                               <!-- Somebody put the magic number 5000 here. I wonder who did that! -->
+                             java.util.ArrayList <xsl:value-of select="$listName"/> = new java.util.ArrayList();
+                            <!-- Start of Array handling of ADB classes -->
+                             boolean <xsl:value-of select="$loopBoolName"/>=false;
+                             javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
+                                    "<xsl:value-of select="$namespace"/>",
+                                    "<xsl:value-of select="$propertyName"/>");
 
+                                while (!<xsl:value-of select="$loopBoolName"/>){
+                                    event = reader.getEventType();
+                                    if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                            &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                    } else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event &amp;&amp;
+                                        <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                        <xsl:value-of select="$loopBoolName"/> = true;
+                                    }else{
+                                        reader.next();
+                                    }
 
-                            // call the converter utility  to convert and set the array
+                                }
+
                             object.set<xsl:value-of select="$javaName"/>(
-                            (<xsl:value-of select="$propertyType"/>)
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                            <xsl:value-of select="$basePropertyType"/>.class,
-                            <xsl:value-of select="$listName"/>));
+                                (<xsl:value-of select="$propertyType"/>)
+                               org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                               <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
 
-                            count++;
+                            //move to the next event, probably past the last end_element event
+                            reader.next();
                         </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="$listName"/>.add(reader.getElementText());
-                            //loop until we find a start element that is not part of this array
-                            boolean <xsl:value-of select="$loopBoolName"/> = false;
-                            while(!<xsl:value-of select="$loopBoolName"/>){
-                            //loop to the end element
-                            while (!reader.isEndElement()){
-                            event = reader.next();
-                            }
-                            //step one event
-                            event = reader.next();
-                            if (reader.isEndElement() &amp;&amp;  !"<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
-                            //two continuous end elements means we are exiting the xml structure
-                            <xsl:value-of select="$loopBoolName"/> = true;
-                            }else if (reader.isStartElement()){
-                            if ("<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
-                            <xsl:value-of select="$listName"/>.add(reader.getElementText());
-                            }else{
-                            <xsl:value-of select="$loopBoolName"/> = true;
-                            }
-                            }
-                            }
+                        <xsl:when test="@default">
+                             <!-- Somebody put the magic number 5000 here. I wonder who did that! -->
+                             java.util.ArrayList <xsl:value-of select="$listName"/> = new java.util.ArrayList();
+                             boolean <xsl:value-of select="$loopBoolName"/>=false;
+                             javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
+                                    "<xsl:value-of select="$namespace"/>",
+                                    "<xsl:value-of select="$propertyName"/>");
+                            <xsl:variable name="internalLoopVar"><xsl:value-of select="$loopBoolName"/>_internal</xsl:variable>
+                                    boolean <xsl:value-of select="$internalLoopVar"/> = false;
 
-                            // call the converter utility  to convert and set the array
+                                    while(!<xsl:value-of select="$internalLoopVar"/>){
+                                        if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                            <xsl:value-of select="$internalLoopVar"/> = true;
+                                        }else{
+                                            reader.next();
+                                        }
+                                }
+
+                                while (!<xsl:value-of select="$loopBoolName"/>){
+                                    event = reader.getEventType();
+                                    if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                            &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+
+                                    // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
+                                    org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                                            new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
+                                   <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
+
+                                    } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
+                                        !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                        <xsl:value-of select="$loopBoolName"/> = true;
+                                    }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event &amp;&amp;
+                                        !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                        <xsl:value-of select="$loopBoolName"/> = true;
+                                    }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
+                                        <xsl:value-of select="$loopBoolName"/> = true;
+                                    }else{
+                                        reader.next();
+                                    }
+
+                                }
+
                             object.set<xsl:value-of select="$javaName"/>(
-                            (<xsl:value-of select="$propertyType"/>)
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                            <xsl:value-of select="$basePropertyType"/>.class,
-                            <xsl:value-of select="$listName"/>));
-                            count++;
+                                (<xsl:value-of select="$propertyType"/>)
+                               org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                               <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+
+                        </xsl:when>
+                        <!-- End of Array handling of ADB classes -->
+                        <xsl:otherwise>
+                           <!-- Start of Array handling of simple types -->
+                            org.apache.axis2.databinding.utils.SimpleArrayReaderStateMachine <xsl:value-of select="$stateMachineName"/> = new
+                                                            org.apache.axis2.databinding.utils.SimpleArrayReaderStateMachine();
+                            <xsl:value-of select="$stateMachineName"/>.setElementNameToTest(new javax.xml.namespace.QName(
+                            "<xsl:value-of select="$namespace"/>",
+                            "<xsl:value-of select="$propertyName"/>"));
+                            <xsl:value-of select="$stateMachineName"/>.read(reader);
+                            String[] textArray = <xsl:value-of select="$stateMachineName"/>.getTextArray();
+                            object.set<xsl:value-of select="$javaName"/>(
+                             (<xsl:value-of select="$propertyType"/>)
+                               org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                               <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$stateMachineName"/>.getTextArray()));
+
+                           <!-- end of Array handling of simple types -->
                         </xsl:otherwise>
                     </xsl:choose>
-                </xsl:when>
-                <xsl:when test="@ours">
-                    object.set<xsl:value-of select="$javaName"/>(
-                    <xsl:value-of select="$propertyType"/>.Factory.parse(reader));
-                    count++;
-                </xsl:when>
-                <xsl:when test="@any">
-                    //do nothing yet!!!!
-                </xsl:when>
-                <xsl:otherwise>
-                    String content = reader.getElementText();
-                    object.set<xsl:value-of select="$javaName"/>(
-                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-                    count++;
-                </xsl:otherwise>
+             </xsl:when>
+             <!--  end of array handling -->
+
+              <xsl:when test="@ours">
+                  object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(
+                                        reader));
+              </xsl:when>
+              <!-- end of adb type handling code -->
+              <!-- start of OMelement handling -->
+               <xsl:when test="@default">
+                boolean <xsl:value-of select="$loopBoolName"/> = false;
+                javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
+                                                       "<xsl:value-of select="$namespace"/>",
+                                                       "<xsl:value-of select="$propertyName"/>");
+
+                while(!<xsl:value-of select="$loopBoolName"/>){
+                    if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                        <xsl:value-of select="$loopBoolName"/> = true;
+                    }else{
+                        reader.next();
+                    }
+                }
+
+                // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
+                org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                        new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
+                object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement());
+
+                //step one more event from the current position
+                reader.next();
+              </xsl:when>
+              <!-- end of OMelement handling -->
+              <!-- start of the simple types handling -->
+              <xsl:otherwise>
+                org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine <xsl:value-of select="$stateMachineName"/>
+                  = new org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine();
+                javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
+                                     "<xsl:value-of select="$namespace"/>",
+                                    "<xsl:value-of select="$propertyName"/>");
+                <xsl:value-of select="$stateMachineName"/>.setElementNameToTest(<xsl:value-of select="$startQname"/>);
+                <xsl:value-of select="$stateMachineName"/>.read(reader);
+                object.set<xsl:value-of select="$javaName"/>(
+                   org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                   <xsl:value-of select="$stateMachineName"/>.getText()));
+              </xsl:otherwise>
+               <!-- end of simple type handling -->
+
             </xsl:choose>
 
-            }
-
-        </xsl:for-each>
-        }
-
-        if (argumentCount==count){
-        done=true;
-        }
-
-        if (!done){
-        event = reader.next();
-        }
-
-        }
-
+         </xsl:for-each>
         } catch (javax.xml.stream.XMLStreamException e) {
-        throw new java.lang.Exception(e);
+             throw new java.lang.Exception(e);
         }
 
         return object;

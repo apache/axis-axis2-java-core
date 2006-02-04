@@ -17,8 +17,8 @@ package org.apache.axis2.schema.populate.simple;
 
 public class SimpleTypeQNamePopulateTest extends AbstractSimplePopulater{
     private String xmlString[] = {
-            "<qNameParam>university</qNameParam>",
-            "<qNameParam xmlns:ns1=\"http://ws.apache.org/axis2\">ns1:axis2</qNameParam>"
+            "<qNameParam xmlns=\"http://soapinterop.org/xsd\">university</qNameParam>",
+            "<qNameParam xmlns=\"http://soapinterop.org/xsd\" xmlns:ns1=\"http://ws.apache.org/axis2\">ns1:axis2</qNameParam>"
             //"<qNameParam>http://mail.google.com/mail/?auth=DQAAAHEAAAC041</qNameParam>"
     };
     // force others to implement this method

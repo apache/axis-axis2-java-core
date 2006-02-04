@@ -28,9 +28,9 @@ public class SimpleTypeFloatPopulateTest extends AbstractSimplePopulater{
 
 
     private String xmlString[] = {
-            "<floatParam>"+values[0]+"</floatParam>",
-            "<floatParam>"+values[1]+"</floatParam>",
-            "<floatParam>"+values[2]+"</floatParam>"
+            "<floatParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</floatParam>",
+            "<floatParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</floatParam>",
+            "<floatParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</floatParam>"
     };
 
     protected void setUp() throws Exception {

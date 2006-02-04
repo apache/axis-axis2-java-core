@@ -26,9 +26,9 @@ public class SimpleTypeMonthDayPopulateTest extends AbstractSimplePopulater{
             "--12-31"
     };
     private String xmlString[] = {
-            "<monthDayParam>"+values[0]+"</monthDayParam>",
-            "<monthDayParam>"+values[1]+"</monthDayParam>",
-            "<monthDayParam>"+values[2]+"</monthDayParam>"
+            "<monthDayParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</monthDayParam>",
+            "<monthDayParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</monthDayParam>",
+            "<monthDayParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</monthDayParam>"
     };
 
     protected void setUp() throws Exception {

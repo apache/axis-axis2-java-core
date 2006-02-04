@@ -33,14 +33,26 @@ public class SimpleElementReaderStateMachine implements States{
     private int currentState = INIT_STATE;
     private String text="";
 
+    /**
+     *
+     * @return
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * the Qname of the element to be tested
+     * @param elementNameToTest
+     */
     public void setElementNameToTest(QName elementNameToTest) {
         this.elementNameToTest = elementNameToTest;
     }
 
+    /**
+     * Resets the state machine. Once the reset is called
+     * the state machine is good enough for a fresh run
+     */
     public void reset(){
         elementNameToTest = null;
         currentState = INIT_STATE;
@@ -73,6 +85,10 @@ public class SimpleElementReaderStateMachine implements States{
     }
 
 
+    /**
+     * Updates the state depending on the parser
+     * @param reader
+     */
     private void updateState(XMLStreamReader reader){
         int event = reader.getEventType();
 

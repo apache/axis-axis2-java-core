@@ -31,8 +31,22 @@ public class SimpleArrayReaderStateMachine implements States {
     private int currentState = INIT_STATE;
     private List list = new ArrayList();
 
+    /**
+     * @return an array of strings
+     */
     public String[] getTextArray() {
         return (String[])list.toArray(new String[list.size()]);
+    }
+
+
+    /**
+     * Resets the state machine. Once the reset is called
+     * the state machine is good enough for a fresh run
+     */
+    public void reset(){
+        elementNameToTest = null;
+        currentState = INIT_STATE;
+        list=new ArrayList();
     }
 
     public void setElementNameToTest(QName elementNameToTest) {
@@ -48,9 +62,11 @@ public class SimpleArrayReaderStateMachine implements States {
         do{
             updateState(reader);
             if (currentState==TEXT_FOUND_STATE){
-                //read the text value and store it
+                //read the text value and store it in the list
                 list.add(reader.getText());
             }
+            //increment the parser only if the  state is
+            //not finished
              if (currentState!=FINISHED_STATE
                 && currentState!= ILLEGAL_STATE){
                reader.next();

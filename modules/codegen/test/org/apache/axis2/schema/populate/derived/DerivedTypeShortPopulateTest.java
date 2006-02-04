@@ -30,11 +30,11 @@ public class DerivedTypeShortPopulateTest extends AbstractDerivedPopulater{
     };
 
     private String xmlString[] = {
-            "<DerivedShort>"+values[0]+"</DerivedShort>",
-            "<DerivedShort>"+values[1]+"</DerivedShort>",
-            "<DerivedShort>"+values[2]+"</DerivedShort>",
-            "<DerivedShort>"+values[3]+"</DerivedShort>",
-            "<DerivedShort>"+values[4]+"</DerivedShort>"
+            "<DerivedShort xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedShort>",
+            "<DerivedShort xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedShort>",
+            "<DerivedShort xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedShort>",
+            "<DerivedShort xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedShort>",
+            "<DerivedShort xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedShort>"
     };
 
 

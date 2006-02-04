@@ -1,4 +1,4 @@
-package org.apache.axis2.schema.populate;
+package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
 
@@ -8,8 +8,9 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -26,63 +27,43 @@ import java.lang.reflect.Method;
  * limitations under the License.
  */
 
-public class PopulateArrayTest extends TestCase {
-    private String xmlString = "<myobject>" +
-            "<varFloat>3.3</varFloat>" +
-            "<varInt>5</varInt>" +
+public class PopulateAnonComplexTypeTest extends TestCase {
+    private String xmlString = "<tempElt xmlns=\"http://soapinterop.org1/types\">" +
             "<varString>Hello</varString>" +
-            "<varString>Hello2</varString>" +
-            "<varString>Hello3</varString>" +
-            "</myobject>";
+            "<varInt>5</varInt>" +
+            "<varFloat>3.3</varFloat>" +
+            "</tempElt>";
 
     public void testPopulate() throws Exception{
 
         XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlString.getBytes()));
-        Class clazz = Class.forName("org2.soapinterop.xsd.Myobject");
+        Class clazz = Class.forName("org1.soapinterop.types.TempElt");
         Class innerClazz = clazz.getDeclaredClasses()[0];
         Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});
         Object obj = parseMethod.invoke(null,new Object[]{reader});
 
-        Object soapStruct = null;
+
         BeanInfo beanInfo =  Introspector.getBeanInfo(obj.getClass());
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         Method readMethod;
         for (int i = 0; i < propertyDescriptors.length; i++) {
             PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
-            if ("myobject".equals(propertyDescriptor.getDisplayName())){
-                readMethod = propertyDescriptor.getReadMethod();
-                soapStruct = readMethod.invoke(obj,null);
-                break;
-            }
-        }
-
-        assertNotNull(soapStruct);
-
-        BeanInfo structBeanInfo =  Introspector.getBeanInfo(soapStruct.getClass());
-        PropertyDescriptor[] structPropertyDescriptors = structBeanInfo.getPropertyDescriptors();
-        for (int i = 0; i < structPropertyDescriptors.length; i++) {
-            PropertyDescriptor propertyDescriptor = structPropertyDescriptors[i];
             if ("varInt".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals("varInt is not properly set",new Integer(5),readMethod.invoke(soapStruct,null));
+                assertEquals(new Integer(5),readMethod.invoke(obj,null));
             } else if ("varFloat".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals("varFloat is not properly set",new Float(3.3),readMethod.invoke(soapStruct,null));
+                assertEquals(new Float(3.3),readMethod.invoke(obj,null));
             }  else if ("varString".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertTrue("String array is not set",readMethod.getReturnType().isArray());
-                Object array = readMethod.invoke(soapStruct, null);
-                int length = Array.getLength(array);
-                assertEquals("Array length is not correct",length,3);
-
-                //check the items here
+                assertEquals("Hello",readMethod.invoke(obj,null));
             }
 
         }
-
 
     }
 
 
 
 }
+

@@ -22,9 +22,9 @@ public class SimpleTypeAnyURIPopulateTest extends AbstractSimplePopulater{
             "ftp://grad/education/mas/229.html",
             "http://mail.google.com/mail/?auth=DQAAAHEAAAC041"};
     private String xmlString[] = {
-            "<anyURIParam>" + values[0]+"</anyURIParam>",
-            "<anyURIParam>" + values[1]+"</anyURIParam>",
-            "<anyURIParam>" + values[2]+"</anyURIParam>"
+            "<anyURIParam xmlns=\"http://soapinterop.org/xsd\">" + values[0]+"</anyURIParam>",
+            "<anyURIParam xmlns=\"http://soapinterop.org/xsd\">" + values[1]+"</anyURIParam>",
+            "<anyURIParam xmlns=\"http://soapinterop.org/xsd\">" + values[2]+"</anyURIParam>"
     };
 
     protected void setUp() throws Exception {

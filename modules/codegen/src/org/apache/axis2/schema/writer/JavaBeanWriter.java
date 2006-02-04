@@ -488,7 +488,8 @@ public class JavaBeanWriter implements BeanWriter {
      * @return
      */
     private boolean isDefault(String javaClassNameForElement) {
-        return SchemaCompiler.DEFAULT_CLASS_NAME.equals(javaClassNameForElement);
+        return SchemaCompiler.DEFAULT_CLASS_NAME.equals(javaClassNameForElement)||
+                SchemaCompiler.DEFAULT_CLASS_ARRAY_NAME.equals(javaClassNameForElement);
     }
 
 

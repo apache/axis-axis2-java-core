@@ -25,9 +25,9 @@ public class SimpleTypeDayPopulateTest extends AbstractSimplePopulater{
                         "---12"
     };
     private String xmlString[] = {
-            "<dayParam>"+values[0]+"</dayParam>",
-            "<dayParam>"+values[1]+"</dayParam>",
-            "<dayParam>"+values[2]+"</dayParam>"
+            "<dayParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</dayParam>",
+            "<dayParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</dayParam>",
+            "<dayParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</dayParam>"
     };
 
     protected void setUp() throws Exception {

@@ -26,9 +26,9 @@ public class SimpleTypeDurationPopulateTest extends AbstractSimplePopulater{
     };
 
     private String xmlString[] = {
-            "<durationParam>"+values[0]+"</durationParam>",
-            "<durationParam>"+values[1]+"</durationParam>",
-            "<durationParam>"+values[2]+"</durationParam>"
+            "<durationParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</durationParam>",
+            "<durationParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</durationParam>",
+            "<durationParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</durationParam>"
     };
 
     protected void setUp() throws Exception {

@@ -92,6 +92,7 @@ public class SchemaCompiler {
     private static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.ws.commons.om.OMElement[]";
 
 
     /**
@@ -685,17 +686,17 @@ public class SchemaCompiler {
      */
     private void processParticle(XmlSchemaParticle particle, //particle being processed
                                  BeanWriterMetaInfoHolder metainfHolder // metainf holder
-            ,XmlSchema parenSchema) throws SchemaCompilationException {
+            ,XmlSchema parentSchema) throws SchemaCompilationException {
         if (particle instanceof XmlSchemaSequence) {
             XmlSchemaObjectCollection items = ((XmlSchemaSequence) particle).getItems();
-            process(items, metainfHolder, true,parenSchema);
+            process(items, metainfHolder, true,parentSchema);
         } else if (particle instanceof XmlSchemaAll) {
             XmlSchemaObjectCollection items = ((XmlSchemaAll) particle).getItems();
-            process(items, metainfHolder, false,parenSchema);
+            process(items, metainfHolder, false,parentSchema);
         } else if (particle instanceof XmlSchemaChoice) {
             XmlSchemaObjectCollection items = ((XmlSchemaChoice) particle).getItems();
             metainfHolder.setChoice(true);
-            process(items, metainfHolder, false,parenSchema);
+            process(items, metainfHolder, false,parentSchema);
 
         }
     }

@@ -115,7 +115,7 @@ public class BeanWriterMetaInfoHolder {
         return extension;
     }
 
-    
+
 
     /**
      * Sets the extension status.
@@ -332,12 +332,21 @@ public class BeanWriterMetaInfoHolder {
         Arrays.sort(keys);
 
         //Now refill the Ordered QName Array
-        QName[] returnQNames = new QName[count];
+        List returnQNames = new ArrayList();
         for (int i = 0; i < keys.length; i++) {
-            returnQNames[i] = (QName) qNameOrderMap.get(keys[i]);
-
+            returnQNames.add(qNameOrderMap.get(keys[i]));
         }
-        return returnQNames;
+
+        //we've missed the attributes, so if there are attributes
+        //add them explicitly to the end of this list
+        QName[] allNames = getQNameArray();
+        for (int i = 0; i < allNames.length; i++) {
+            if(getAttributeStatusForQName(allNames[i])){
+              returnQNames.add(allNames[i]);
+            }
+        }
+
+        return (QName[])returnQNames.toArray(new QName[returnQNames.size()]);
     }
 
     /**
@@ -345,7 +354,7 @@ public class BeanWriterMetaInfoHolder {
      * @return the starting number for the sequence
      */
     public int getOrderStartPoint(){
-          return qNameOrderMap.size();
+        return qNameOrderMap.size();
     }
 
 

@@ -26,9 +26,9 @@ public class DerivedTypeBytePopulateTest extends AbstractDerivedPopulater{
             "2"
     };
     private String xmlString[] = {
-            "<DerivedByte>"+values[0]+"</DerivedByte>",
-            "<DerivedByte>"+values[1]+"</DerivedByte>",
-            "<DerivedByte>"+values[2]+"</DerivedByte>"
+            "<DerivedByte xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedByte>",
+            "<DerivedByte xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedByte>",
+            "<DerivedByte xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedByte>"
     };
 
     protected void setUp() throws Exception {

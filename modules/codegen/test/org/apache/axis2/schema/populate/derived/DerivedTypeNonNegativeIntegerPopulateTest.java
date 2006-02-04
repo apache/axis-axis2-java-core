@@ -31,11 +31,11 @@ public class DerivedTypeNonNegativeIntegerPopulateTest extends AbstractDerivedPo
     };
 
     private String xmlString[] = {
-            "<DerivedNonNegativeInteger>"+values[0]+"</DerivedNonNegativeInteger>",
-            "<DerivedNonNegativeInteger>"+values[1]+"</DerivedNonNegativeInteger>",
-            "<DerivedNonNegativeInteger>"+values[2]+"</DerivedNonNegativeInteger>",
-            "<DerivedNonNegativeInteger>"+values[3]+"</DerivedNonNegativeInteger>",
-            "<DerivedNonNegativeInteger>"+values[4]+"</DerivedNonNegativeInteger>"
+            "<DerivedNonNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedNonNegativeInteger>",
+            "<DerivedNonNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedNonNegativeInteger>",
+            "<DerivedNonNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedNonNegativeInteger>",
+            "<DerivedNonNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedNonNegativeInteger>",
+            "<DerivedNonNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedNonNegativeInteger>"
     };
 
 

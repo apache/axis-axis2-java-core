@@ -28,9 +28,9 @@ public class DerivedTypeIntegerPopulateTest extends AbstractDerivedPopulater{
             "-2344556"
     };
     private String xmlString[] = {
-            "<DerivedInteger>"+values[0]+"</DerivedInteger>",
-            "<DerivedInteger>"+values[1]+"</DerivedInteger>",
-            "<DerivedInteger>"+values[2]+"</DerivedInteger>"
+            "<DerivedInteger xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedInteger>",
+            "<DerivedInteger xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedInteger>",
+            "<DerivedInteger xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedInteger>"
     };
 
     protected void setUp() throws Exception {

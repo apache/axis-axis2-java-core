@@ -24,9 +24,9 @@ public class SimpleTypeDoublePopulateTest extends AbstractSimplePopulater{
             "66733.0060604343"
     };
     private String xmlString[] = {
-            "<doubleParam>"+values[0]+"</doubleParam>",
-            "<doubleParam>"+values[1]+"</doubleParam>",
-            "<doubleParam>"+values[2]+"</doubleParam>"
+            "<doubleParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</doubleParam>",
+            "<doubleParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</doubleParam>",
+            "<doubleParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</doubleParam>"
     };
 
     protected void setUp() throws Exception {

@@ -27,9 +27,9 @@ public class DerivedTypeIntPopulateTest extends AbstractDerivedPopulater{
 
 
     private String xmlString[] = {
-            "<DerivedInt>"+values[0]+"</DerivedInt>",
-            "<DerivedInt>"+values[1]+"</DerivedInt>",
-            "<DerivedInt>"+values[2]+"</DerivedInt>"
+            "<DerivedInt xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedInt>",
+            "<DerivedInt xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedInt>",
+            "<DerivedInt xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedInt>"
     };
 
     protected void setUp() throws Exception {

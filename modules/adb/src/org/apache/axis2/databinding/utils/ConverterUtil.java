@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.ArrayList;
 import java.io.ByteArrayInputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -613,6 +614,18 @@ public class ConverterUtil {
     }
 
     /* list to array conversion methods */
+
+    public static Object convertToArray(Class baseArrayClass, String[] valueArray) {
+          //create a list using the string array
+        List valuesList = new ArrayList(valueArray.length);
+        for (int i = 0; i < valueArray.length; i++) {
+            valuesList.add(valueArray[i]);
+
+        }
+
+        return convertToArray(baseArrayClass, valuesList);
+    }
+
 
     /**
      * @param baseArrayClass

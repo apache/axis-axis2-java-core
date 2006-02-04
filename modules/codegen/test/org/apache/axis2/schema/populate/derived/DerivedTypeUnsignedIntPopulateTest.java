@@ -31,11 +31,11 @@ public class DerivedTypeUnsignedIntPopulateTest extends AbstractDerivedPopulater
     };
 
     private String xmlString[] = {
-            "<DerivedUnsignedInt>"+values[0]+"</DerivedUnsignedInt>",
-            "<DerivedUnsignedInt>"+values[1]+"</DerivedUnsignedInt>",
-            "<DerivedUnsignedInt>"+values[2]+"</DerivedUnsignedInt>",
-            "<DerivedUnsignedInt>"+values[3]+"</DerivedUnsignedInt>",
-            "<DerivedUnsignedInt>"+values[4]+"</DerivedUnsignedInt>"
+            "<DerivedUnsignedInt xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedUnsignedInt>",
+            "<DerivedUnsignedInt xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedUnsignedInt>",
+            "<DerivedUnsignedInt xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedUnsignedInt>",
+            "<DerivedUnsignedInt xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedUnsignedInt>",
+            "<DerivedUnsignedInt xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedUnsignedInt>"
     };
 
 

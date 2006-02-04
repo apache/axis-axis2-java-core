@@ -25,9 +25,9 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
             "2002-10-10T07:00:00Z"
     };
     private String xmlString[] = {
-            "<dateTimeParam>"+values[0]+"</dateTimeParam>",
-            "<dateTimeParam>"+values[1]+"</dateTimeParam>",
-            "<dateTimeParam>"+values[2]+"</dateTimeParam>"
+            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</dateTimeParam>",
+            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</dateTimeParam>",
+            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</dateTimeParam>"
     };
     // force others to implement this method
     public void testPopulate() throws Exception {

@@ -4,11 +4,11 @@ import junit.framework.TestCase;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
 import java.io.StringReader;
 
 import org.apache.ws.commons.om.OMElement;
+import org.apache.axis2.util.StreamWrapper;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -27,7 +27,7 @@ import org.apache.ws.commons.om.OMElement;
 
 public class NamedStaxOMBuilderTest extends TestCase {
 
-    public void testNamedOMBulder() throws Exception{
+    public void testNamedOMBuilder() throws Exception{
 
         String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
         XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
@@ -37,9 +37,45 @@ public class NamedStaxOMBuilderTest extends TestCase {
         OMElement elt = sm.getOMElement();
 
         assertNotNull(elt);
+        assertEquals(elt.getLocalName(),"wrapper");
+
 
 
 
     }
+
+    public void testNamedOMBuilder1() throws Exception{
+
+        String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+                new StringReader(xmlDoc));
+
+        //move upto the  myIntVal start element first
+        boolean done = false;
+        QName nameToMatch = new QName("myIntVal");
+        while(!done){
+            if (reader.isStartElement() && nameToMatch.equals(reader.getName())){
+                done = true;
+            }else{
+                reader.next();
+            }
+        }
+
+        //we need the wrapper here - it is the nature of the builders that
+        //they expect the *next* event to be the start element (not the
+        //current one) So we need the wrapper to simulate a full fledged
+        //
+        NamedStaxOMBuilder  sm = new NamedStaxOMBuilder(
+                new StreamWrapper(reader),nameToMatch);
+        OMElement elt = sm.getOMElement();
+
+        assertNotNull(elt);
+        assertEquals(elt.getLocalName(),"myIntVal");
+
+
+
+
+    }
+
 
 }

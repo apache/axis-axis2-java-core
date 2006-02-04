@@ -28,9 +28,9 @@ public class SimpleTypegMonthPopulateTest  extends AbstractSimplePopulater {
 
 
     private String xmlString[] = {
-            "<monthParam>"+values[0]+"</monthParam>",
-            "<monthParam>"+values[1]+"</monthParam>",
-            "<monthParam>"+values[2]+"</monthParam>"
+            "<monthParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</monthParam>",
+            "<monthParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</monthParam>",
+            "<monthParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</monthParam>"
     };
 
 

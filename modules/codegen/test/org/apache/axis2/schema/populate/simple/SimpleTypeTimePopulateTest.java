@@ -24,8 +24,8 @@ public class SimpleTypeTimePopulateTest extends AbstractSimplePopulater{
             "23:59:59"
     };
     private String xmlString[] = {
-            "<timeParam>"+values[0]+"</timeParam>",
-            "<timeParam>"+values[1]+"</timeParam>",
+            "<timeParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</timeParam>",
+            "<timeParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</timeParam>",
     };
 
     protected void setUp() throws Exception {

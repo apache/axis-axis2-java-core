@@ -23,8 +23,8 @@ public class SimpleTypeBooleanPopulateTest extends AbstractSimplePopulater{
     };
 
     private String xmlString[] = {
-            "<booleanParam>"+ values[0] +"</booleanParam>",
-            "<booleanParam>"+ values[1] +"</booleanParam>",
+            "<booleanParam xmlns=\"http://soapinterop.org/xsd\">"+ values[0] +"</booleanParam>",
+            "<booleanParam xmlns=\"http://soapinterop.org/xsd\">"+ values[1] +"</booleanParam>",
     };
 
     protected void setUp() throws Exception {

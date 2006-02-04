@@ -31,11 +31,11 @@ public class DerivedTypePositveIntegerPopulateTest extends AbstractDerivedPopula
     };
 
     private String xmlString[] = {
-            "<DerivedPositiveInteger>"+values[0]+"</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>"+values[1]+"</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>"+values[2]+"</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>"+values[3]+"</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>"+values[4]+"</DerivedPositiveInteger>"
+            "<DerivedPositiveInteger xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedPositiveInteger>"
     };
 
 

@@ -1,4 +1,4 @@
-package org.apache.axis2.schema.populate;
+package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
 
@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  */
 
 public class PopulateArrayInArrayTest extends TestCase{
-    private String xmlString = "<myobject>" +
+    private String xmlString = "<myobject xmlns=\"http://soapinterop.org/xsd\">" +
             "<soapStructures>" +
             "<varFloat>3.3</varFloat>" +
             "<varInt>5</varInt>" +

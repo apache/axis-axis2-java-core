@@ -26,9 +26,9 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
                 "2002-02-28"
     } ;
     private String xmlString[] = {
-            "<dateParam>"+values[0]+"</dateParam>",
-            "<dateParam>"+values[1]+"</dateParam>",
-            "<dateParam>"+values[2]+"</dateParam>"
+            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</dateParam>",
+            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</dateParam>",
+            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</dateParam>"
     };
 
     protected void setUp() throws Exception {

@@ -18,8 +18,8 @@ package org.apache.axis2.schema.populate.simple;
 
 public class SimpleTypeBase64BinPopulateTest extends AbstractSimplePopulater{
     private String xmlString[] = {
-            "<base64BinParam>abcdABCD</base64BinParam>",
-            "<base64BinParam>abcdABCD09rT</base64BinParam>",
+            "<base64BinParam xmlns=\"http://soapinterop.org/xsd\">abcdABCD</base64BinParam>",
+            "<base64BinParam xmlns=\"http://soapinterop.org/xsd\">abcdABCD09rT</base64BinParam>",
     };
 
      protected void setUp() throws Exception {

@@ -29,11 +29,11 @@ public class DerivedTypeNegativeIntegerPopulateTest extends AbstractDerivedPopul
             "0",
     };
     private String xmlString[] = {
-            "<DerivedNegativeInteger>"+values[0]+"</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>"+values[1]+"</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>"+values[2]+"</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>"+values[3]+"</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>"+values[4]+"</DerivedNegativeInteger>"
+            "<DerivedNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedNegativeInteger>"
     };
 
     protected void setUp() throws Exception {

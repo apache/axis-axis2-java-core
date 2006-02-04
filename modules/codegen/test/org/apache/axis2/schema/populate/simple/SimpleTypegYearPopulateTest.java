@@ -26,9 +26,9 @@ public class SimpleTypegYearPopulateTest extends AbstractSimplePopulater{
             "1978"
     };
     private String xmlString[] = {
-            "<yearParam>"+values[0]+"</yearParam>",
-            "<yearParam>"+values[1]+"</yearParam>",
-            "<yearParam>"+values[2]+"</yearParam>"
+            "<yearParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</yearParam>",
+            "<yearParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</yearParam>",
+            "<yearParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</yearParam>"
     };
 
     protected void setUp() throws Exception {

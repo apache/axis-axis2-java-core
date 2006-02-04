@@ -26,9 +26,9 @@ public class SimpleTypeHexBinaryPopulateTest extends AbstractSimplePopulater{
             "1978"
     };
     private String xmlString[] = {
-            "<hexBinParam>"+values[0]+"</hexBinParam>",
-            "<hexBinParam>"+values[1]+"</hexBinParam>",
-            "<hexBinParam>"+values[2]+"</hexBinParam>"
+            "<hexBinParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</hexBinParam>",
+            "<hexBinParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</hexBinParam>",
+            "<hexBinParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</hexBinParam>"
     };
 
     protected void setUp() throws Exception {
