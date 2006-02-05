@@ -80,9 +80,11 @@ public class SchemaCompiler {
     // of types
     private HashMap processedTypeMetaInfoMap;
 
-
+    //
     private ArrayList processedElementList;
 
+    //
+    private List nillableElementList;
 
     private BeanWriter writer = null;
 
@@ -135,6 +137,7 @@ public class SchemaCompiler {
         changedTypeMap = new HashMap();
         processedTypeMetaInfoMap = new HashMap();
         processedElementRefMap = new HashMap();
+        nillableElementList = new ArrayList();
 
         //load the writer a nd initiliaze the base type
         writer = SchemaPropertyLoader.getBeanWriterInstance();
@@ -248,6 +251,7 @@ public class SchemaCompiler {
             QName qName = schemaType.getQName();
             //find the class name
             String className = findClassName(qName, isArray(xsElt));
+
             //this means the schema type actually returns a different QName
             if (changedTypeMap.containsKey(qName)) {
                 metainf.registerMapping(xsElt.getQName(),
@@ -261,7 +265,7 @@ public class SchemaCompiler {
 
 
         }else if (xsElt.getRefName()!= null){
-            //Since top level elements would not have references
+            // Since top level elements would not have references
             // and we only write toplevel elements, this should
             // not be a problem , atleast should not occur in a legal schema
         }else if (xsElt.getSchemaTypeName()!= null) {
@@ -282,23 +286,17 @@ public class SchemaCompiler {
             metainf.setAnonymous(true);
         }
 
+        if (nillableElementList.contains(xsElt.getQName())){
+            metainf.registerNillableQName(xsElt.getQName());
+        }
+
 
         String writtenClassName = writer.write(xsElt, processedTypemap, metainf);
         processedElementMap.put(xsElt.getQName(), writtenClassName);
     }
 
 
-    /**
-     * Process the element
-     *
-     * @param xsElt
-     * @param isOuter - We need to know this since the treatment of outer elements is different that
-     *                inner elements
-     * @throws SchemaCompilationException
-     */
-    private void processElement(XmlSchemaElement xsElt, boolean isOuter,XmlSchema parenSchema) throws SchemaCompilationException {
-        processElement(xsElt, isOuter, false, parenSchema);
-    }
+
 
     /**
      * Process and Element
@@ -309,7 +307,8 @@ public class SchemaCompiler {
      * @param isArray-  flag saying whether the elements represents an array
      * @throws SchemaCompilationException
      */
-    private void processElement(XmlSchemaElement xsElt, boolean isOuter, boolean isArray,XmlSchema parentSchema) throws SchemaCompilationException {
+    private void processElement(XmlSchemaElement xsElt, boolean isOuter,XmlSchema parentSchema) throws SchemaCompilationException {
+
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
@@ -324,7 +323,6 @@ public class SchemaCompiler {
             //so we push the complete element to an arraylist and let the process
             //pass through. We'll be iterating through the elements writing them
             //later
-
 
             if (!isOuter) {
                 String className = findClassName(schemaType.getQName(), isArray(xsElt));
@@ -360,8 +358,10 @@ public class SchemaCompiler {
             this.processedElementList.add(xsElt.getQName());
         }
 
-
-
+        //add this elements QName to the nillable group if it has the  nillable attribute
+        if (xsElt.isNillable()){
+            this.nillableElementList.add(xsElt.getQName());
+        }
 
     }
 
@@ -637,7 +637,8 @@ public class SchemaCompiler {
     }
 
     private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder){
-        XmlSchemaContent content = simpleContent.getContent();
+        XmlSchemaContent content;
+        content = simpleContent.getContent();
         if (content instanceof XmlSchemaSimpleContentExtension){
             //todo - handle simple type extension here
         }else if (content instanceof XmlSchemaSimpleContentRestriction){
@@ -723,7 +724,7 @@ public class SchemaCompiler {
                 XmlSchemaElement xsElt = (XmlSchemaElement) item;
 
                 boolean isArray = isArray(xsElt);
-                processElement(xsElt, false, isArray,parentSchema); //we know for sure this is not an outer type
+                processElement(xsElt, false,parentSchema); //we know for sure this is not an outer type
                 processedElements.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
                 if (order) {
                     //we need to keep the order of the elements. So push the elements to another
@@ -735,7 +736,8 @@ public class SchemaCompiler {
             } else if (item instanceof XmlSchemaAny) {
                 processAny((XmlSchemaAny) item, metainfHolder);
             } else {
-                //there are other types to be handled
+                //there may be other types to be handled here. Add them
+                //when we are ready
             }
 
 
@@ -747,7 +749,8 @@ public class SchemaCompiler {
         while (processedElementsIterator.hasNext()) {
             XmlSchemaElement elt = (XmlSchemaElement) processedElementsIterator.next();
             String clazzName;
-            QName qName = null;
+            QName qName;
+
             if (elt.getQName()!=null){ //probably this is referenced
                 clazzName = (String) processedElementMap.get(elt.getQName());
                 qName = elt.getQName();
@@ -779,6 +782,11 @@ public class SchemaCompiler {
                 Integer integer = (Integer) elementOrderMap.get(elt);
                 metainfHolder.registerQNameIndex(qName,
                         startingItemNumberOrder + integer.intValue());
+            }
+
+            //get the nillable state and register that on the metainf holder
+            if (nillableElementList.contains(elt.getQName())){
+                metainfHolder.registerNillableQName(elt.getQName());
             }
 
         }

@@ -46,6 +46,8 @@ public class BeanWriterMetaInfoHolder {
     protected Map qNameMinOccursCountMap = new HashMap();
     protected Map qNameOrderMap = new HashMap();
 
+    protected List nillableQNameList  = new ArrayList();
+
 
 
     //the parent metainfo holder, useful in handling extensions and
@@ -153,6 +155,27 @@ public class BeanWriterMetaInfoHolder {
      */
     public void registerMapping(QName qName, QName schemaName, String javaClassName) {
         registerMapping(qName, schemaName, javaClassName, SchemaConstants.ELEMENT_TYPE);
+    }
+
+
+    /* Registers a Qname as nillable
+     * The qName better be of an element
+     *
+     * @param qName
+     * @param schemaName
+     * @param javaClassName
+     */
+    public void registerNillableQName(QName eltQName) {
+        nillableQNameList.add(eltQName);
+    }
+
+    /**
+     * Returns whether a QName is nillable or not
+     * @param eltQName
+     * @return
+     */
+    public boolean isNillable(QName eltQName) {
+        return nillableQNameList.contains(eltQName);
     }
 
     /**
@@ -342,7 +365,7 @@ public class BeanWriterMetaInfoHolder {
         QName[] allNames = getQNameArray();
         for (int i = 0; i < allNames.length; i++) {
             if(getAttributeStatusForQName(allNames[i])){
-              returnQNames.add(allNames[i]);
+                returnQNames.add(allNames[i]);
             }
         }
 

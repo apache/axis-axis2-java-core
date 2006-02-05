@@ -352,6 +352,9 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "choice", "yes", rootElt);
         }
 
+        if (metainf.isOrdered()) {
+            XSLTUtils.addAttribute(model, "ordered", "yes", rootElt);
+        }
 
         //populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap,false);
@@ -431,6 +434,10 @@ public class JavaBeanWriter implements BeanWriter {
 
             if (metainf.getAttributeStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "attribute", "yes", property);
+            }
+
+            if (metainf.isNillable(name)){
+                XSLTUtils.addAttribute(model, "nillable", "yes", property);
             }
 
             String shortTypeName = "";
