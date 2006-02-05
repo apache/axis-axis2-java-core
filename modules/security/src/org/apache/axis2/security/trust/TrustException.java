@@ -15,8 +15,6 @@
  */
 package org.apache.axis2.security.trust;
 
-import org.apache.ws.sandbox.security.trust.TrustConstants;
-
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -136,7 +134,7 @@ public class TrustException extends Exception {
      * @return Returns String.
      */
 	public String getFaultCode() {
-		return TrustConstants.WST_PREFIX + faultCode;
+		return Constants.WST_PREFIX + faultCode;
 	}
 	
 	/**
