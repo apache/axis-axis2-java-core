@@ -418,8 +418,8 @@ public class DescriptionBuilder implements DeploymentConstants {
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
 
         while (policyElements.hasNext()) {
-//            Policy p = reader.readPolicy((OMElement) policyElements.next());
-//            policyInclude.addPolicyElement(type, p);
+            Policy p = reader.readPolicy((OMElement) policyElements.next());
+            policyInclude.addPolicyElement(type, p);
         }
     }
 
@@ -429,9 +429,9 @@ public class DescriptionBuilder implements DeploymentConstants {
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
 
         while (policyRefElements.hasNext()) {
-//            PolicyReference policyReference = reader
-//                    .readPolicyReference((OMElement) policyRefElements.next());
-//            policyInclude.addPolicyRefElement(type, policyReference);
+            PolicyReference policyReference = reader
+                    .readPolicyReference((OMElement) policyRefElements.next());
+            policyInclude.addPolicyRefElement(type, policyReference);
         }
     }
     
