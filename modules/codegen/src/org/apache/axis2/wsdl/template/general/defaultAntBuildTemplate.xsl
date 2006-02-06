@@ -39,6 +39,11 @@
                 <mkdir>
                     <xsl:attribute name="dir">${lib}</xsl:attribute>
                 </mkdir>
+                <xsl:if test="not(@testOmit)">
+                    <mkdir>
+                        <xsl:attribute name="dir">${test}</xsl:attribute>
+                    </mkdir>
+                </xsl:if>
             </target>
 
             <target name="pre.compile.test" depends="init">
@@ -55,15 +60,15 @@
 
                 <xsl:comment>Print out the availabilities</xsl:comment>
                 <echo>
-                     <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
+                    <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
                 </echo>
                 <echo>
-                     <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
+                    <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
                 </echo>
 
             </target>
 
-            <target name="compile.all" depends="pre.compile.test">
+            <target name="compile.src" depends="echo.classpath.problem">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <javac debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
@@ -77,11 +82,8 @@
                 </javac>
             </target>
 
-            <target name="compile.test" depends="pre.compile.test,compile.all">
+            <target name="compile.test" depends="compile.src">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
-                <mkdir>
-                    <xsl:attribute name="dir">${test}</xsl:attribute>
-                </mkdir>
                 <javac debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${test}</xsl:attribute>
@@ -103,16 +105,17 @@
                 "></echo>
             </target>
 
-            <!--<target name="jar.all" depends="compile.all,echo.classpath.problem">
-                <xsl:attribute name="if">jars.ok</xsl:attribute>
-                <jar>
-                    <xsl:attribute name="basedir">${classes}</xsl:attribute>
-                    <xsl:attribute name="destfile">${lib}/${name}.jar</xsl:attribute>
-                </jar>
-            </target>-->
 
-            <target name="jar.client" depends="compile.test,echo.classpath.problem" if="jars.ok">
-               <jar>
+            <target name="jar.client"  if="jars.ok">
+                 <xsl:choose>
+                    <xsl:when test="@testOmit">
+                        <xsl:attribute name="depends">compile.src</xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="depends">compile.test</xsl:attribute>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <jar>
                     <xsl:attribute name="destfile">${lib}/${name}-client.jar</xsl:attribute>
                     <fileset>
                         <xsl:attribute name="dir">${classes}</xsl:attribute>
@@ -132,31 +135,11 @@
                 </jar>
             </target>
 
-            <target name="jar.client.test.omit" depends="compile.all,echo.classpath.problem" if="jars.ok">
-                <jar>
-                    <xsl:attribute name="destfile">${lib}/${name}-client.jar</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${classes}</xsl:attribute>
-                        <exclude>
-                            <xsl:attribute name="name">**/META-INF/*.*</xsl:attribute>
-                        </exclude>
-                        <exclude>
-                            <xsl:attribute name="name">**/lib/*.*</xsl:attribute>
-                        </exclude>
-                        <exclude>
-                            <xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute>
-                        </exclude>
-                        <exclude>
-                            <xsl:attribute name="name">**/*Skeleton.class</xsl:attribute>
-                        </exclude>
-                        <exclude>
-                            <xsl:attribute name="name">**/*Test.class</xsl:attribute>
-                        </exclude>
-                    </fileset>
-                </jar>
-            </target>
 
-            <target name="jar.server" depends="compile.all,echo.classpath.problem">
+
+
+
+            <target name="jar.server" depends="compile.src,echo.classpath.problem">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <copy>
                     <xsl:attribute name="toDir">${classes}/META-INF</xsl:attribute>

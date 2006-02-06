@@ -63,9 +63,12 @@
                 <mkdir>
                     <xsl:attribute name="dir">${lib}</xsl:attribute>
                 </mkdir>
-                <mkdir>
-                    <xsl:attribute name="dir">${test}</xsl:attribute>
-                </mkdir>
+                <xsl:if test="not(@testOmit)">
+                    <mkdir>
+                        <xsl:attribute name="dir">${test}</xsl:attribute>
+                    </mkdir>
+                </xsl:if>
+
             </target>
 
             <target name="jar.xbeans">
@@ -92,18 +95,18 @@
 
                 <xsl:comment>Print out the availabilities</xsl:comment>
                 <echo>
-                     <xsl:attribute name="message">XmlBeans Availability = ${xbeans.available}</xsl:attribute>
+                    <xsl:attribute name="message">XmlBeans Availability = ${xbeans.available}</xsl:attribute>
                 </echo>
                 <echo>
-                     <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
+                    <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
                 </echo>
                 <echo>
-                     <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
+                    <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
                 </echo>
 
             </target>
 
-            <target name="compile.all" depends="pre.compile.test">
+            <target name="compile.src" depends="pre.compile.test" >
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <javac debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
@@ -116,22 +119,26 @@
                     </classpath>
                 </javac>
             </target>
-            <target name="compile.test" depends="pre.compile.test">
+
+
+            <target name="compile.test" depends="compile.src">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <javac debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
-                    <src>
-                        <xsl:attribute name="path">${src}</xsl:attribute>
-                    </src>
+
                     <src>
                         <xsl:attribute name="path">${test}</xsl:attribute>
                     </src>
+
                     <classpath>
                         <xsl:attribute name="location">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     </classpath>
                     <classpath>
                         <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
+
+                    <!-- todo -->
+
                 </javac>
             </target>
 
@@ -146,7 +153,7 @@
             </target>
             <target name="jar.all" depends="jar.server, jar.client">
             </target>
-            <target name="jar.server" depends="compile.all,echo.classpath.problem">
+            <target name="jar.server" depends="compile.src,echo.classpath.problem">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <copy>
                     <xsl:attribute name="toDir">${classes}/META-INF</xsl:attribute>
@@ -169,7 +176,21 @@
                     </fileset>
                 </jar>
             </target>
-            <target depends="compile.test" name="jar.client" if="jars.ok">
+
+
+
+            <target  name="jar.client" if="jars.ok">
+                <!--set the correct depends target-->
+                <xsl:choose>
+                    <xsl:when test="@testOmit">
+                        <xsl:attribute name="depends">compile.src</xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="depends">compile.test</xsl:attribute>
+                    </xsl:otherwise>
+                </xsl:choose>
+
+
                 <jar>
                     <xsl:attribute name="destfile">${lib}/${name}-test-client.jar</xsl:attribute>
                     <fileset>
@@ -178,6 +199,7 @@
                         <exclude><xsl:attribute name="name">**/lib/*.*</xsl:attribute></exclude>
                         <exclude><xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute></exclude>
                         <exclude><xsl:attribute name="name">**/*Skeleton.class</xsl:attribute></exclude>
+
                     </fileset>
                     <fileset>
                         <xsl:attribute name="dir">${resources}</xsl:attribute>
@@ -186,24 +208,12 @@
                     </fileset>
                 </jar>
             </target>
-            <target depends="compile.test" name="jar.client.test.omit" if="jars.ok">
-                <jar>
-                    <xsl:attribute name="destfile">${lib}/${name}-test-client.jar</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${classes}</xsl:attribute>
-                        <exclude><xsl:attribute name="name">**/META-INF/*.*</xsl:attribute></exclude>
-                        <exclude><xsl:attribute name="name">**/lib/*.*</xsl:attribute></exclude>
-                        <exclude><xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute></exclude>
-                        <exclude><xsl:attribute name="name">**/*Skeleton.class</xsl:attribute></exclude>
-                        <exclude><xsl:attribute name="name">**/*Test.class</xsl:attribute></exclude>
-                    </fileset>
-                    <fileset>
-                        <xsl:attribute name="dir">${resources}</xsl:attribute>
-                        <exclude><xsl:attribute name="name">**/*.wsdl</xsl:attribute></exclude>
-                        <exclude><xsl:attribute name="name">**/*.xml</xsl:attribute></exclude>
-                    </fileset>
-                </jar>
-            </target>
+
+
+
+
+
+
             <target depends="jar.server" name="make.repo" if="jars.ok">
                 <mkdir>
                     <xsl:attribute name="dir">${build}/repo/</xsl:attribute>
@@ -255,9 +265,9 @@
                 </junit>
             </target>
             <target name="clean">
-              <delete>
-                <xsl:attribute name="dir">${build}</xsl:attribute>
-              </delete>
+                <delete>
+                    <xsl:attribute name="dir">${build}</xsl:attribute>
+                </delete>
             </target>
         </project>
     </xsl:template>

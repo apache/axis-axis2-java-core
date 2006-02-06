@@ -1548,6 +1548,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc, "package", "", rootElement);
         addAttribute(doc, "classpackage", configuration.getPackageName(), rootElement);
         addAttribute(doc, "name", porttypeName + SERVICE_CLASS_SUFFIX, rootElement);
+        if (!configuration.isWriteTestCase()){
+             addAttribute(doc, "testOmit", "true", rootElement);
+        }
         addAttribute(doc, "servicename", serviceName, rootElement);
 
         Iterator it = MEPtoClassMap.keySet().iterator();
@@ -1561,8 +1564,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         }
 
-//        fillSyncAttributes(doc, rootElement);
-//        loadOperations(boundInterface, doc, rootElement, axisBinding);
+
 
         return rootElement;
     }
