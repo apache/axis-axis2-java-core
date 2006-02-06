@@ -378,7 +378,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         addAttribute(doc, "package", configuration.getPackageName(), rootElement);
         addAttribute(doc, "name", localPart, rootElement);
-        addAttribute(doc, "callbackname", wsdlInterface.getName().getLocalPart() + CALL_BACK_HANDLER_SUFFIX,
+        addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(wsdlInterface, doc, rootElement, axisBinding);
