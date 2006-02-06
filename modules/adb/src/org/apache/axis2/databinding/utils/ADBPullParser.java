@@ -3,6 +3,7 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
 
 import javax.xml.namespace.NamespaceContext;
@@ -123,50 +124,50 @@ public class ADBPullParser implements XMLStreamReader {
      * @param properties - this should contain all the stuff that stax events should be generated.
      *                   Lets take an example of a bean.
      *                   <pre>
-     *                                         <Person>
-     *                                             <DependentOne>
-     *                                                <Name>FooTwo</Name>
-     *                                                <Age>25</Age>
-     *                                                <Sex>Male</Sex>
-     *                                                </DependentOne>
-     *                                        </Person>
+     *                                                           <Person>
+     *                                                               <DependentOne>
+     *                                                                  <Name>FooTwo</Name>
+     *                                                                  <Age>25</Age>
+     *                                                                  <Sex>Male</Sex>
+     *                                                                  </DependentOne>
+     *                                                          </Person>
      *                   <p/>
      *                   <p/>
-     *                                    so the mapping bean for this is
-     *                                    class Person {
-     *                                       String Name;
-     *                                       Dependent dependentOne;
-     *                                    }
+     *                                                      so the mapping bean for this is
+     *                                                      class Person {
+     *                                                         String Name;
+     *                                                         Dependent dependentOne;
+     *                                                      }
      *                   <p/>
      *                   <p/>
-     *                                                                                                                                                                                       }
+     *                                                                                                                                                                                                         }
      *                   <p/>
      *                   <p/>
-     *                                    So if one needs to generate pull events out of a Person bean, the array he needs
-     *                                    to pass is like this.
-     *                                    ---------------------------------------------------------------------------------------------------
-     *                                    | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
-     *                                    ---------------------------------------------------------------------------------------------------
-     *                                    This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
-     *                                    We directly get the pull parser from that. If not we create a reflection based
-     *                   pull parser for that java bean.
+     *                                                      So if one needs to generate pull events out of a Person bean, the array he needs
+     *                                                      to pass is like this.
+     *                                                      ---------------------------------------------------------------------------------------------------
+     *                                                      | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
+     *                                                      ---------------------------------------------------------------------------------------------------
+     *                                                      This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
+     *                                                      We directly get the pull parser from that. If not we create a reflection based
+     *                                     pull parser for that java bean.
      *                   <p/>
      *                   <p/>
      *                   <p/>
-     *                   This is the how the passed array should look like
-     *                                             Key             Value
-     *                                           String          String
-     *                                           QName           ADBBean, OMElement, Bean, String
-     *                   String          String[]
-     *                   QName           Object[] - this contains only one type of objects
+     *                                     This is the how the passed array should look like
+     *                                                               Key             Value
+     *                                                             String          String
+     *                                                             QName           ADBBean, OMElement, Bean, String, null
+     *                                     String          String[]
+     *                                     QName           Object[] - this contains only one type of objects
      *                   <p/>
      *                   <p/>
-     *                   This is how the passed attribute array should look like
-     *                   Key             Value
-     *                   null            OMAttribute[]
-     *                   QName           String
-     *                   String          String
-     *                   </pre>
+     *                                     This is how the passed attribute array should look like
+     *                                     Key             Value
+     *                                     null            OMAttribute[]
+     *                                     QName           String
+     *                                     String          String
+     *                                     </pre>
      * @return XMLStreamReader
      */
     public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
@@ -275,6 +276,13 @@ public class ADBPullParser implements XMLStreamReader {
                 } else if (object instanceof String) {
                     processingADBNameValuePair = true;
                     return processADBNameValuePair((QName) o, (String) object);
+                } else if (object == null) {
+                    OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement((QName) o, null);
+                    omElement.addAttribute("nil", "true", null);
+                    childPullParser = omElement.getXMLStreamReader();
+
+                    // here we are injecting one additional element. So need to accomodate that.
+//                    currentIndex --;
                 } else {
                     getPullParser(object, (QName) o);
                 }
@@ -649,7 +657,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     public char[] getTextCharacters() {
         if (accessingChildPullParser) return childPullParser.getTextCharacters();
-        String text =  parserInformation != null ? parserInformation.getText() : "";
+        String text = parserInformation != null ? parserInformation.getText() : "";
         return text.toCharArray();
     }
 
@@ -664,7 +672,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     public int getTextLength() {
         if (accessingChildPullParser) return childPullParser.getTextLength();
-        String text =  parserInformation != null ? parserInformation.getText() : "";
+        String text = parserInformation != null ? parserInformation.getText() : "";
         return text.length();
     }
 

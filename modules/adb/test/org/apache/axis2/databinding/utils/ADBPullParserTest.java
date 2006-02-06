@@ -101,6 +101,38 @@ public class ADBPullParserTest extends XMLTestCase {
 
     }
 
+    public void testNullableAttribute() {
+        try {
+
+            /*
+            This is what I expect :
+
+            */
+            String exptectedXML = "<Person xmlns=\"\"><Name xmlns=\"\">FooOne</Name><DependentOne xmlns=\"\" nil=\"true\" />" +
+                    "</Person>";
+
+            ArrayList propertyList = new ArrayList();
+            propertyList.add("Name");
+            propertyList.add("FooOne");
+            propertyList.add(new QName("DependentOne"));
+            propertyList.add(null);
+
+            QName projectQName = new QName("Person");
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
+
+            Document actualDom = newDocument(getStringXML(pullParser));
+            Document expectedDocument = newDocument(exptectedXML);
+            assertXMLEqual(actualDom, expectedDocument);
+        } catch (ParserConfigurationException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (SAXException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (IOException e) {
+            fail("Exception in parsing documents " + e);
+        }
+
+    }
+
     public void testComplexArrayList() {
         try {
 
