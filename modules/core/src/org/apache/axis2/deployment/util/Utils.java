@@ -249,6 +249,8 @@ public class Utils {
             if (!jmethod.isPublic()) {
                 // no need to expose , private and protected methods
                 continue;
+            } else if ("init".equals(jmethod.getSimpleName())) {
+                continue;
             }
             AxisOperation operation = getAxisOperationforJmethod(jmethod, table);
 
@@ -263,7 +265,6 @@ public class Utils {
                 throw new AxisFault("InstantiationException occured during message receiver loading"
                         + e.getMessage());
             }
-
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
         }
@@ -277,8 +278,8 @@ public class Utils {
         try {
             clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         } catch (ClassNotFoundException e) {
-             throw new AxisFault("ClassNotFoundException occured during message receiver loading"
-                        + e.getMessage());
+            throw new AxisFault("ClassNotFoundException occured during message receiver loading"
+                    + e.getMessage());
         }
 
         return createService(implClass, axisConfig, clazz);
@@ -289,6 +290,9 @@ public class Utils {
                                                             TypeTable table) throws AxisFault {
         AxisOperation operation;
         String opName = jmethod.getSimpleName();
+        if ("init".equals(opName)) {
+            return null;
+        }
         if (jmethod.getReturnType().isVoidType()) {
             operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
         } else {
