@@ -15,16 +15,8 @@ package org.apache.axis2.databinding.utils;
  * limitations under the License.
  */
 
-public interface States {
+public interface Constants {
 
-    static int INIT_STATE = -1;
-    static int STARTED_STATE = 0;
-    static int START_ELEMENT_FOUND_STATE = 1;
-    static int TEXT_FOUND_STATE = 2;
-    static int END_ELEMENT_FOUND_STATE = 3;
-    static int FINISHED_STATE = 4;
-    static int ILLEGAL_STATE = 5;
-    static int CONTENT_FOUND_STATE = 6;
-    static int NULLED_STATE = 7;
-
+    static  String NIL="nil";
+    static  String TRUE="true"; 
 }

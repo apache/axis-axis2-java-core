@@ -122,12 +122,12 @@
             <xsl:if test="@array">
                 <xsl:if test="not(@unbound)">
                     if (param.length &gt; <xsl:value-of select="@maxOccurs"></xsl:value-of>){
-                    throw new java.lang.RuntimeException();
+                     throw new java.lang.RuntimeException();
                     }
                 </xsl:if>
                 <xsl:if test="@minOccurs">
                     if (param.length &lt; <xsl:value-of select="@minOccurs"></xsl:value-of>){
-                    throw new java.lang.RuntimeException();
+                     throw new java.lang.RuntimeException();
                     }
                 </xsl:if>
             </xsl:if>
@@ -219,7 +219,7 @@
                 </xsl:for-each>
 
                 return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), attribList.toArray());
-            <!-- end of when for type & anon -->    
+            <!-- end of when for type & anon -->
             </xsl:when>
             <!-- Not a type and not anon. So it better be only one inclusion-->
             <xsl:otherwise>
@@ -259,9 +259,9 @@
         try {
         int event = reader.getEventType();
 
-        //event better be a START_ELEMENT. if not we should go up to the start element here
-        while (!reader.isStartElement()){
-             reader.next();
+       //event better be a START_ELEMENT. if not we should go up to the start element here
+        while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
+            event = reader.next();
         }
 
         <xsl:if test="not(@type)">
@@ -270,19 +270,29 @@
         }
         </xsl:if>
 
+        <xsl:if test="@nillable">
+           if ("true".equals(reader.getAttributeValue("","nil"))){
+                 return null;
+           }
+        </xsl:if>
+
         <!-- populate attributes here!!!. The attributes are part of an element, not part of a
-             type -->
+       type -->
         <xsl:for-each select="property[@attribute]">
             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
             <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
             <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
             <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+            <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
 
-
-           object.set<xsl:value-of select="$javaName"/>(
+            String <xsl:value-of select="$attribName"/> =
+              reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")
+           if (<xsl:value-of select="$attribName"/>!=null){
+                 object.set<xsl:value-of select="$javaName"/>(
                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
-           reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")));
+                        <xsl:value-of select="$attribName"/>));
+            }
 
         </xsl:for-each>
 
@@ -359,12 +369,18 @@
                                     if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
                                             &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
 
-                                    <!-- todo put the code here for nillable -->
-
+                                    <!-- if-block that handles nillable -->
+                                    <xsl:if test="@nillable">
+                                       if ("true".equals(reader.getAttributeValue("","nil"))){
+                                            object.set<xsl:value-of select="$javaName"/>(null);
+                                       }else{
+                                    </xsl:if>
 
                                     // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
-                                    org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                            new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
+                                    org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
+                                       = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                                            new org.apache.axis2.util.StreamWrapper(reader), <xsl:value-of select="$startQname"/>);
+
                                    <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
 
                                     } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
@@ -386,6 +402,8 @@
                                org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
 
+                             <!-- closing bracket for the if statement above -->
+                             <xsl:if test="@nillable">}</xsl:if>
                         </xsl:when>
                         <!-- End of Array handling of ADB classes -->
                         <xsl:otherwise>
@@ -395,6 +413,9 @@
                             <xsl:value-of select="$stateMachineName"/>.setElementNameToTest(new javax.xml.namespace.QName(
                             "<xsl:value-of select="$namespace"/>",
                             "<xsl:value-of select="$propertyName"/>"));
+                            <xsl:if test="@nillable">
+                               <xsl:value-of select="$stateMachineName"/>.setNillable();
+                            </xsl:if>
                             <xsl:value-of select="$stateMachineName"/>.read(reader);
                             String[] textArray = <xsl:value-of select="$stateMachineName"/>.getTextArray();
                             object.set<xsl:value-of select="$javaName"/>(
@@ -407,10 +428,11 @@
                     </xsl:choose>
              </xsl:when>
              <!--  end of array handling -->
-
               <xsl:when test="@ours">
-                  object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(
-                                        reader));
+                  <!--No concerns of being nillable here. if it's ours and if the nillable attribute was present
+                      we would have outputted a null already-->
+                   object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(
+                          reader));
               </xsl:when>
               <!-- end of adb type handling code -->
               <!-- start of OMelement handling -->
@@ -447,10 +469,23 @@
                                      "<xsl:value-of select="$namespace"/>",
                                     "<xsl:value-of select="$propertyName"/>");
                 <xsl:value-of select="$stateMachineName"/>.setElementNameToTest(<xsl:value-of select="$startQname"/>);
+                <xsl:if test="@nillable">
+                        <xsl:value-of select="$stateMachineName"/>.setNillable();
+                </xsl:if>
                 <xsl:value-of select="$stateMachineName"/>.read(reader);
                 object.set<xsl:value-of select="$javaName"/>(
-                   org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
-                   <xsl:value-of select="$stateMachineName"/>.getText()));
+                  <xsl:choose>
+                      <xsl:when test="@nillable">
+                           <xsl:value-of select="$stateMachineName"/>.getText()==null?null:
+                             org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                           <xsl:value-of select="$stateMachineName"/>.getText()));
+                      </xsl:when>
+                      <xsl:otherwise>
+                     org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                           <xsl:value-of select="$stateMachineName"/>.getText()));
+                      </xsl:otherwise>
+                  </xsl:choose>
+
               </xsl:otherwise>
                <!-- end of simple type handling -->
 

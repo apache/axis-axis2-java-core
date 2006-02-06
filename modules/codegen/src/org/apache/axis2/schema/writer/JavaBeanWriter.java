@@ -356,6 +356,10 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "ordered", "yes", rootElt);
         }
 
+        if (isElement && metainf.isNillable(qName)) {
+            XSLTUtils.addAttribute(model, "nillable", "yes", rootElt);
+        }
+
         //populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap,false);
 
