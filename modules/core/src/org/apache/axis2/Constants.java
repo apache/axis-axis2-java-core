@@ -75,9 +75,10 @@ public class Constants {
     public static final String SCOPE_TRANSPORT_SESSION = "transportsession";
     public static final String SCOPE_REQUEST = "request";
 
-    public static final String HOME_AXIS2 = "axis2.home";
-    public static final String CONF_AXIS2 = "axis2.xml";
-    public static final String HOME_USER = "user.home";
+    public static final String AXIS2_HOME = "axis2.home";
+    public static final String AXIS2_REPO = "axis2.repo";
+    public static final String AXIS2_CONF = "axis2.xml";
+    public static final String USER_HOME = "user.home";
 
     /**
      * Field TRANSPORT_TCP

@@ -18,6 +18,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.listener.RepositoryListener;
 import org.apache.axis2.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
@@ -89,10 +90,17 @@ public class DeploymentEngine implements DeploymentConstants {
             throws DeploymentException {
         if ((repositoryName == null || "".equals(repositoryName.trim())) &&
                 (xmlFile == null || "".equals(xmlFile.trim()))) {
-            useDefault = true;
-            axis2repository = null;
-            log.debug("neither repository location nor axis2.xml are given ," +
-                    " so system will continue using default configuration (using default_axis2.xml)");
+            String axis2_home = System.getProperty(Constants.AXIS2_HOME);
+            if (axis2_home != null && !"".equals("")) {
+                useDefault = false;
+                axis2repository = axis2_home;
+            } else {
+                useDefault = true;
+                axis2repository = null;
+                log.debug("neither repository location nor axis2.xml are given ," +
+                        " so system will continue using default configuration (using default_axis2.xml)");
+            }
+
         } else if (!(repositoryName == null || "".equals(repositoryName.trim()))) {
             axis2repository = repositoryName.trim();
             File axisRepo = new File(axis2repository);

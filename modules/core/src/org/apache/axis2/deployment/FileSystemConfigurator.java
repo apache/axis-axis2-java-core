@@ -40,10 +40,10 @@ public class FileSystemConfigurator implements AxisConfigurator {
     public FileSystemConfigurator(String repoLocation, String axis2xml) {
         if (repoLocation == null) {
             //checking wether user has set the system property
-            repoLocation = System.getProperty(Constants.HOME_AXIS2);
+            repoLocation = System.getProperty(Constants.AXIS2_REPO);
         }
         if (axis2xml == null) {
-            axis2xml  = System.getProperty(Constants.CONF_AXIS2);
+            axis2xml  = System.getProperty(Constants.AXIS2_CONF);
         }
         this.repoLocation = repoLocation;
         this.axis2xml = axis2xml;

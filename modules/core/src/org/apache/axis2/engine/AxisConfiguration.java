@@ -653,9 +653,9 @@ public class AxisConfiguration extends AxisDescription {
 
     public static String getAxis2HomeDirectory() {
         // if user has set the axis2 home variable try to get that from System properties
-        String axis2home = System.getProperty(Constants.HOME_AXIS2);
+        String axis2home = System.getProperty(Constants.AXIS2_HOME);
         if (axis2home == null) {
-            axis2home = System.getProperty(Constants.HOME_USER);
+            axis2home = System.getProperty(Constants.USER_HOME);
             if (axis2home != null) {
                 axis2home = axis2home + '/' + DeploymentConstants.DIRECTORY_AXIS2_HOME;
             }
