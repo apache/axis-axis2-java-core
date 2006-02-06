@@ -52,7 +52,7 @@
                     </include>
                 </fileset>
             </path>
-            
+
             <target name="init">
                 <mkdir>
                     <xsl:attribute name="dir">${build}</xsl:attribute>
@@ -62,6 +62,9 @@
                 </mkdir>
                 <mkdir>
                     <xsl:attribute name="dir">${lib}</xsl:attribute>
+                </mkdir>
+                <mkdir>
+                    <xsl:attribute name="dir">${test}</xsl:attribute>
                 </mkdir>
             </target>
 
@@ -152,11 +155,29 @@
                         <exclude><xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute></exclude>
                         <exclude><xsl:attribute name="name">**/*Skeleton.class</xsl:attribute></exclude>
                     </fileset>
-                    <fileset>
+                    <!--<fileset>
                         <xsl:attribute name="dir">${resources}</xsl:attribute>
                         <exclude><xsl:attribute name="name">**/*.wsdl</xsl:attribute></exclude>
                         <exclude><xsl:attribute name="name">**/*.xml</xsl:attribute></exclude>
+                    </fileset>-->
+                </jar>
+            </target>
+            <target name="jar.client.test.omit" depends="compile.test" if="jars.ok">
+                <jar>
+                    <xsl:attribute name="destfile">${lib}/${name}-test-client.jar</xsl:attribute>
+                    <fileset>
+                        <xsl:attribute name="dir">${classes}</xsl:attribute>
+                        <exclude><xsl:attribute name="name">**/META-INF/*.*</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/lib/*.*</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*Skeleton.class</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*Test.class</xsl:attribute></exclude>
                     </fileset>
+                   <!-- <fileset>
+                        <xsl:attribute name="dir">${resources}</xsl:attribute>
+                        <exclude><xsl:attribute name="name">**/*.wsdl</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*.xml</xsl:attribute></exclude>
+                    </fileset>-->
                 </jar>
             </target>
             <target depends="jar.server" name="make.repo" if="jars.ok">
@@ -206,7 +227,7 @@
                                 <xsl:attribute name="name">**/*Test*.java</xsl:attribute>
                             </include>
                         </fileset>
-                    </batchtest>			
+                    </batchtest>
                 </junit>
             </target>
             <target name="clean">
