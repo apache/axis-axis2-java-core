@@ -47,7 +47,7 @@ public class AddressingInHandler extends AddressingHandler {
         ArrayList addressingHeaders;
         try {
             addressingHeaders = header.getHeaderBlocksWithNSURI(Submission.WSA_NAMESPACE);
-            if (addressingHeaders != null) {
+            if (addressingHeaders != null && addressingHeaders.size() > 0) {
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 extractCommonAddressingParameters(
                         header,
@@ -55,7 +55,7 @@ public class AddressingInHandler extends AddressingHandler {
                         addressingHeaders, Submission.WSA_NAMESPACE);
             } else {
                 addressingHeaders = header.getHeaderBlocksWithNSURI(Final.WSA_NAMESPACE);
-                if (addressingHeaders != null) {
+                if (addressingHeaders != null && addressingHeaders.size() > 0) {
                     addressingNamespace = Final.WSA_NAMESPACE;
                     extractCommonAddressingParameters(
                             header,
@@ -111,9 +111,8 @@ public class AddressingInHandler extends AddressingHandler {
         Iterator headerBlocks = header.getChildren();
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
-            if (Final.WSA_TYPE_ATTRIBUTE_VALUE.equals(soapHeaderBlock.getAttribute(
-                                            new QName(Final.WSA_NAMESPACE,
-                                                    Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE)).getAttributeValue())) {
+            OMAttribute attribute = soapHeaderBlock.getAttribute(new QName(Final.WSA_NAMESPACE, Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE));
+            if (attribute != null && Final.WSA_TYPE_ATTRIBUTE_VALUE.equals(attribute.getAttributeValue())) {
                 messageContextOptions.addReferenceParameter(soapHeaderBlock);
             }
         }
