@@ -17,7 +17,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.*;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -84,10 +84,6 @@ public class AxisServiceBuilder {
     private static final String AXIS2WRAPPED = "axis2wrapped";
 
     private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
-
-    private static final String WSA_NS_URI = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
-
-    private static final String WSA_ACTION = "Action";
 
     private Log logger = LogFactory.getLog(this.getClass().getName());
 
@@ -884,8 +880,12 @@ public class AxisServiceBuilder {
     }
 
     private String getWsaAction(Map extAttributes) {
-        Object wsaAction = extAttributes.get(new QName(WSA_NS_URI, WSA_ACTION));
-
+        Object wsaAction = extAttributes.get(new QName(AddressingConstants.Submission.WSA_NAMESPACE, AddressingConstants.WSA_ACTION));
+        if (wsaAction != null) {
+            return ((QName) wsaAction).getLocalPart();
+        }
+        
+        wsaAction = extAttributes.get(new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION));
         if (wsaAction != null) {
             return ((QName) wsaAction).getLocalPart();
         }
