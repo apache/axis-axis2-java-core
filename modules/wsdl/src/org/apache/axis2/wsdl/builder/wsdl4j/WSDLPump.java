@@ -182,14 +182,20 @@ public class WSDLPump {
         }
 
         //////////////////(1.5)s/////////////////////////////
-//        create a new Schema extensions element
-        Element schemaElement = generateWrapperSchema(wsdl4JDefinition);
-        if (schemaElement!=null){
-            ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
-            org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
-                    ExtensionConstants.SCHEMA);
-            wsdlTypes.addExtensibilityElement(schemaExtensibilityElement);
-            schemaExtensibilityElement.setElement(schemaElement);
+        // create a new Schema extensions element
+        Element[] schemaElements = generateWrapperSchema(wsdl4JDefinition);
+        if (schemaElements!=null && schemaElements.length>0){
+            for (int i = 0; i < schemaElements.length; i++) {
+                Element schemaElement = schemaElements[i];
+                if (schemaElement!=null){
+                    ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
+                    org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
+                            ExtensionConstants.SCHEMA);
+                    wsdlTypes.addExtensibilityElement(schemaExtensibilityElement);
+                    schemaExtensibilityElement.setElement(schemaElement);
+                }
+            }
+
         }
 
 
@@ -208,9 +214,7 @@ public class WSDLPump {
         while (portTypeIterator.hasNext()) {
             wsdlInterface = this.wsdlComponentFactory.createInterface();
             portType = (PortType) portTypeIterator.next();
-            //////////////////////////
             this.populateInterfaces(wsdlInterface, portType);
-            /////////////////////////
             this.copyExtensibilityAttribute(portType.getExtensionAttributes(),
                     wsdlInterface);
             wsdlDefinition.addInterface(wsdlInterface);
@@ -294,7 +298,7 @@ public class WSDLPump {
     }
 
     /**
-     * The intention of this procudure is to process the imports.
+     * The intention of this procedure is to process the imports.
      * When processing the imports the imported documents will be
      * populating the items in the main document recursivley
      * @param wsdl4JDefinition
@@ -348,18 +352,17 @@ public class WSDLPump {
 
     /**
      *
-
+     * Finds whether a given message is wrappable
      * @return
      */
     private boolean findWrapppable(Message message) {
 
 // ********************************************************************************************
 // Note
-// We will not use the binding to set the wrappable/unwrappable state. instead we'll look at the
+// We will not use the binding to set the wrappable/unwrappable state here. instead we'll look at the
 // Messages for the following features
 // 1. Messages with multiple parts -> We have no choice but to wrap
-// 2. Messages with at least one part having a type attribute -> Again we have no choice but to
-// wrap
+// 2. Messages with one part having a type attribute -> Again we have no choice but to wrap
 
 // ********************************************************************************************
         Map partsMap = message.getParts();
@@ -561,8 +564,65 @@ public class WSDLPump {
      * @param wsdl4jDefinition
      * @return
      */
-    private Element generateWrapperSchema(Definition wsdl4jDefinition) {
+    private Element[] generateWrapperSchema(Definition wsdl4jDefinition) {
 
+
+        List schemaElementList = new ArrayList();
+        String targetNamespaceUri = wsdl4jDefinition.getTargetNamespace();
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // if there are any bindings present then we have to process them. we have to generate a schema
+        // per binding (that is the safest option). if not we just resolve to the good old port type
+        // list, in which case we'll generate a schema per porttype
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Map bindingsMap = wsdl4jDefinition.getBindings();
+        Map porttypeMap = wsdl4jDefinition.getPortTypes();
+
+        if (bindingsMap!=null && !bindingsMap.isEmpty()){
+            Binding[] bindings = (Binding[])bindingsMap.values().toArray(new Binding[bindingsMap.size()]);
+            Binding binding;
+            for (int i = 0; i < bindings.length; i++) {
+                binding = bindings[i];
+                schemaElementList.add(
+                        createSchemaForPorttype(binding.getPortType(),targetNamespaceUri,
+                                findWrapForceable(binding)));
+            }
+        }else{
+            PortType[] porttypesArray = (PortType[])porttypeMap.values().toArray(new PortType[porttypeMap.size()]);
+            for (int i = 0; i < porttypesArray.length; i++) {
+                schemaElementList.add(
+                        createSchemaForPorttype(porttypesArray[i],targetNamespaceUri,false));
+            }
+
+        }
+
+        return (Element[])schemaElementList.toArray(new Element[schemaElementList.size()]);
+    }
+
+
+    private boolean findWrapForceable(Binding binding){
+       List extElements = binding.getExtensibilityElements();
+        for (int i = 0; i < extElements.size(); i++) {
+            if (extElements.get(i) instanceof SOAPBinding){
+               SOAPBinding soapBinding = (SOAPBinding)extElements.get(i);
+               if ("rpc".equals(soapBinding.getStyle())){
+                   //oops - we've found a SOAPBinding that has a rpc style
+                   //we better force the wrapping then
+                    return true;
+               }
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Creates a schema given the porttype
+     * @return
+     */
+    private Element createSchemaForPorttype(PortType porttype,String targetNamespaceUri,boolean forceWrapping){
 
         //loop through the messages. We'll populate this map with the relevant messages
         //from the operations
@@ -579,60 +639,70 @@ public class WSDLPump {
         List elementElementsList = new ArrayList();
         //list namespace prefix map. This map will include uri -> prefix
         Map namespacePrefixMap = new HashMap();
-        ///////////////////////
-        String targetNamespaceUri = wsdl4jDefinition.getTargetNamespace();
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // First thing is to populate the message map with the messages to process.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        Map porttypeMap = wsdl4jDefinition.getPortTypes();
-        PortType[] porttypesArray = (PortType[])porttypeMap.values().toArray(new PortType[porttypeMap.size()]);
-        for (int j = 0; j < porttypesArray.length; j++) {
-            //we really need to do this for a single porttype!
-            List operations = porttypesArray[j].getOperations();
-            Operation op;
-            for (int k = 0; k < operations.size(); k++) {
-                op = (Operation)operations.get(k);
-                Input input = op.getInput();
-                Message message ;
-                if (input!=null){
-                    message = input.getMessage();
-                    messagesMap.put(message.getQName(),message);
-                    inputOperationsMap.put(op.getName(),message);
 
-                }
 
-                Output output = op.getOutput();
-                if (output!=null){
-                    message = output.getMessage();
-                    messagesMap.put(message.getQName(),message);
-                    outputOperationsMap.put(op.getName(),message);
-                }
-                //todo also handle the faults here
+        //we really need to do this for a single porttype!
+        List operations = porttype.getOperations();
+        Operation op;
+        for (int k = 0; k < operations.size(); k++) {
+            op = (Operation)operations.get(k);
+            Input input = op.getInput();
+            Message message ;
+            if (input!=null){
+                message = input.getMessage();
+                messagesMap.put(message.getQName(),message);
+                inputOperationsMap.put(op.getName(),message);
+
             }
 
+            Output output = op.getOutput();
+            if (output!=null){
+                message = output.getMessage();
+                messagesMap.put(message.getQName(),message);
+                outputOperationsMap.put(op.getName(),message);
+            }
+            //todo also handle the faults here
         }
+
+
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //check whether there are messages that are wrappable. If there are no messages that are wrappable we'll
-        //just return null and endup this process
+        //just return null and endup this process. However we need to take the force flag into account here
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        QName[] keys = (QName[])messagesMap.keySet().toArray(new QName[messagesMap.size()]);
-        boolean noMessagesTobeProcessed = true;
-        for (int i = 0; i < keys.length; i++) {
-            if (findWrapppable((Message)messagesMap.get(keys[i]))){
-                noMessagesTobeProcessed = false;
-                break;
-            }
-        }
 
-        if (noMessagesTobeProcessed){
-            return null;
+        QName[] keys;
+        if(forceWrapping){
+             //just take all the messages and wrap them, we've been told to force wrapping!
+             keys = (QName[])messagesMap.keySet().toArray(new QName[messagesMap.size()]);
+        } else{
+            //
+            QName[] allKeys = (QName[])messagesMap.keySet().toArray(new QName[messagesMap.size()]);
+            List wrappableMessageNames = new ArrayList();
+            boolean noMessagesTobeProcessed = true;
+            for (int i = 0; i < allKeys.length; i++) {
+                if (findWrapppable((Message)messagesMap.get(allKeys[i]))){
+                    noMessagesTobeProcessed = false;
+                    //add that message to the list
+                    wrappableMessageNames.add(allKeys[i]);
+                }
+            }
+            if (noMessagesTobeProcessed){
+                return null;
+            }
+
+            keys = (QName[])wrappableMessageNames.toArray(new QName[wrappableMessageNames.size()]);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Now we have the message list to process - Process the whole list of messages at once
-        //since
+        // since we need to generate one single schema
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         List resolvedMessageQNames = new ArrayList();
         //find the xsd prefix
         String xsdPrefix = findSchemaPrefix();
@@ -641,7 +711,7 @@ public class WSDLPump {
         Document document = getDOMDocumentBuilder().newDocument();
         for (int i = 0; i < keys.length; i++) {
             wsdl4jMessage = (Message)messagesMap.get(keys[i]);
-            //No need to chack the wrappable
+            //No need to check the wrappable,
 
             //This message is wrappabel. However we need to see whether the message is already
             //resolved!
@@ -713,7 +783,7 @@ public class WSDLPump {
                 complexTypeElementsMap.put(wsdl4jMessage.getQName(),newComplexType);
                 resolvedMessageQNames.add(wsdl4jMessage.getQName());
             }
-          
+
         }
 
         Element elementDeclaration;
@@ -768,7 +838,7 @@ public class WSDLPump {
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////
-        // Now we are done with processing  the messages and generating the right schema
+        // Now we are done with processing  the messages and generating the right schema object model
         // time to write out the schema
         //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -818,8 +888,6 @@ public class WSDLPump {
 
         return schemaElement;
     }
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Generates a referenceQName
@@ -1075,19 +1143,19 @@ public class WSDLPump {
                     Element element = unknown.getElement();
                     soapAddressExtensibiltyElement.setLocationURI(element.getAttribute("location"));
                     component.addExtensibilityElement(soapAddressExtensibiltyElement);
-                    
+
                 } else if (ExtensionConstants.POLICY.equals(unknown.getElementType())) {
                     PolicyExtensibilityElement policyExtensibilityElement = (PolicyExtensibilityElement) extensionFactory.getExtensionElement(wsdl4jElement.getElementType());
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory.getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    policyExtensibilityElement.setPolicyElement(policyReader.readPolicy(unknown.getElement()));                    
+                    policyExtensibilityElement.setPolicyElement(policyReader.readPolicy(unknown.getElement()));
                     component.addExtensibilityElement(policyExtensibilityElement);
-                    
+
                 } else if (ExtensionConstants.POLICY_REFERENCE.equals(unknown.getElementType())) {
                     PolicyExtensibilityElement policyExtensibilityElement = (PolicyExtensibilityElement) extensionFactory.getExtensionElement(wsdl4jElement.getElementType());
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory.getPolicyReader(PolicyFactory.DOM_POLICY_READER);
                     policyExtensibilityElement.setPolicyElement(policyReader.readPolicyReference(unknown.getElement()));
-                    component.addExtensibilityElement(policyExtensibilityElement);                   
-                    
+                    component.addExtensibilityElement(policyExtensibilityElement);
+
                 }else{
 
                     DefaultExtensibilityElement defaultExtensibilityElement = (DefaultExtensibilityElement) extensionFactory
