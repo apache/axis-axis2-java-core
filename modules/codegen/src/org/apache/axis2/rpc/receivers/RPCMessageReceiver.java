@@ -131,7 +131,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
     }
 
     private OMElement getResponseElement(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs, RETURN_WRAPPER, null, null);
+        return BeanUtil.getOMElement(resname, objs, RETURN_WRAPPER);
     }
 
     private void processResponse(SOAPFactory fac, Object resObject,

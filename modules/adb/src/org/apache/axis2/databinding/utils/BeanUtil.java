@@ -344,16 +344,14 @@ public class BeanUtil {
         return retObjs;
     }
 
-    public static OMElement getOMElement(QName opName, Object [] args, String partName,
-                                         String nameSpace,
-                                         String nameSpaceprefix) {
+    public static OMElement getOMElement(QName opName, Object [] args, String partName) {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;
-        QName elemntName = null;
-        if (partName != null) {
-            elemntName = new QName(nameSpace, partName, nameSpaceprefix);
-        }
+//        QName elemntName = null;
+//        if (partName != null) {
+//            elemntName = new QName(nameSpace, partName, nameSpaceprefix);
+//        }
 
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
@@ -364,26 +362,27 @@ public class BeanUtil {
             //way to do that , to solve that problem we need to have RPCRequestParameter
             //note that The value of request parameter can either be simple type or JavaBean
             if (SimpleTypeMapper.isSimpleType(arg)) {
-                if (elemntName == null) {
+                if (partName == null) {
                     objects.add("arg" + argCount);
                 } else {
-                    objects.add(elemntName);
+                    objects.add(new QName(opName.getNamespaceURI(), partName, opName.getPrefix()));
                 }
                 objects.add(arg.toString());
             } else {
-                if (elemntName == null) {
+                if (partName == null) {
                     objects.add(new QName("arg" + argCount));
                 } else {
-                    objects.add(elemntName);
+                    objects.add(new QName(opName.getNamespaceURI(), partName, opName.getPrefix()));
                 }
                 if (arg instanceof OMElement) {
                     OMFactory fac = OMAbstractFactory.getOMFactory();
                     OMElement wrappingElement;
-                    if (elemntName == null) {
+                    if (partName == null) {
                         wrappingElement = fac.createOMElement("arg" + argCount, null);
                         wrappingElement.addChild((OMElement) arg);
                     } else {
-                        wrappingElement = fac.createOMElement(partName, nameSpace, nameSpaceprefix);
+                        wrappingElement = fac.createOMElement(opName.getNamespaceURI(),
+                                partName, opName.getPrefix());
                         wrappingElement.addChild((OMElement) arg);
                     }
                     objects.add(wrappingElement);
