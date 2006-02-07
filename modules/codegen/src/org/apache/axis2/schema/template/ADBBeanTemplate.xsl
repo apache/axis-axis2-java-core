@@ -184,7 +184,6 @@
                                       elementList.add(<xsl:value-of select="$varName"/>);
                                      </xsl:otherwise>
                                    </xsl:choose>
-                            elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:otherwise>
                              elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
