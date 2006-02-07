@@ -28,6 +28,7 @@ public abstract class AddressingHandler extends AbstractHandler implements Addre
     protected boolean isAddressingOptional = true;
 
     protected String addressingNamespace = null;
+    protected String addressingVersion = null;
 
     protected Log logger = LogFactory.getLog(getClass());
 

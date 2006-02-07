@@ -15,9 +15,6 @@
         <wsa:Action>http://ws.apache.org/tests/action</wsa:Action>
         <wsa:ReplyTo>
             <wsa:Address>http://example.com/fabrikam/acct</wsa:Address>
-            <wsa:Metadata>
-                <InterfaceName>fabrikam:Inventory</InterfaceName>
-            </wsa:Metadata>
             <wsa:ReferenceParameters>
                 <fabrikam:CustomerKey>123456789</fabrikam:CustomerKey>
                 <fabrikam:ShoppingCart>ABCDEFG</fabrikam:ShoppingCart>

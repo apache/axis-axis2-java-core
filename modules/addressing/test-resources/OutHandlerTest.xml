@@ -10,7 +10,6 @@
         <wsa:MessageID>123456-7890</wsa:MessageID>
         <myRef:Reference4>Value 400</myRef:Reference4>
         <myRef:Reference3>Value 300</myRef:Reference3>
-        <wsa:PortType>portNS:Port</wsa:PortType>
         <wsa:Action>http://www.actions.org/action</wsa:Action>
         <wsa:ReplyTo>
             <wsa:Address>http://www.replyTo.org/service/</wsa:Address>

@@ -50,7 +50,7 @@ public class AddressingInHandlerTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        inHandler = new AddressingInHandler();
+        inHandler = new AddressingFinalInHandler();
     }
 
 
@@ -61,7 +61,7 @@ public class AddressingInHandlerTest extends TestCase {
 
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             Options options =
-                    inHandler.extractCommonAddressingParameters(header,
+                    inHandler.extractAddressingInformation(header,
                             new Options(),
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Submission.WSA_NAMESPACE),
@@ -100,7 +100,7 @@ public class AddressingInHandlerTest extends TestCase {
             inHandler.addressingNamespace = AddressingConstants.Final.WSA_NAMESPACE;
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             Options options =
-                    inHandler.extractCommonAddressingParameters(header,
+                    inHandler.extractAddressingInformation(header,
                             new Options(),
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Final.WSA_NAMESPACE),

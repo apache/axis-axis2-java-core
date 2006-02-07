@@ -1,5 +1,15 @@
 package org.apache.axis2.handlers.addressing;
 
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPHeader;
+import org.apache.ws.commons.soap.SOAPHeaderBlock;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
@@ -19,6 +29,48 @@ package org.apache.axis2.handlers.addressing;
 
 public class AddressingFinalInHandler extends AddressingInHandler {
 
-	private static final long serialVersionUID = -4020680449342946484L;
+    private static final long serialVersionUID = -4020680449342946484L;
+
+    public AddressingFinalInHandler() {
+        addressingNamespace = Final.WSA_NAMESPACE;
+        addressingVersion = "WS-Addressing Final";
+    }
+
+
+    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header) {
+        Iterator headerBlocks = header.getChildElements();
+        while (headerBlocks.hasNext()) {
+            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
+            OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(addressingNamespace, "IsReferenceParameter"));
+            if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
+                toEPR.addReferenceParameter(soapHeaderBlock.getQName(), soapHeaderBlock.getText());
+            }
+        }
+    }
+
+    protected void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr, String addressingNamespace) {
+
+        Iterator childElements = headerBlock.getChildElements();
+        while (childElements.hasNext()) {
+            OMElement eprChildElement = (OMElement) childElements.next();
+            if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS),
+                    eprChildElement.getQName())) {
+                epr.setAddress(eprChildElement.getText());
+            } else
+            if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_REFERENCE_PARAMETERS)
+                    , eprChildElement.getQName())) {
+
+                Iterator referenceParameters = eprChildElement.getChildElements();
+                while (referenceParameters.hasNext()) {
+                    OMElement element = (OMElement) referenceParameters.next();
+                    epr.addReferenceParameter(element);
+                }
+            } else
+            if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName()))
+            {
+                epr.setMetaData(eprChildElement);
+            }
+        }
+    }
 
 }

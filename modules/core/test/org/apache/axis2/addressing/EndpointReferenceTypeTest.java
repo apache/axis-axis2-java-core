@@ -53,32 +53,6 @@ public class EndpointReferenceTypeTest extends TestCase {
                 endpointReference.getAddress());
     }
 
-    public void testGetAndSetPortType() {
-        QName portType = new QName("www.someport.com", "port");
-        endpointReference.setPortType(portType);
-        assertEquals("PortType not set/get properly",
-                portType,
-                endpointReference.getPortType());
-    }
-
-    public void testGetAndSetReferenceProperties() {
-        for (int i = 0; i < 10; i++) {
-            endpointReference.addReferenceProperty(
-                    new QName("http://www.opensouce.lk/" + i, "" + i),
-                    "value " + i * 100);
-        }
-
-        Map retrievedReferenceProperties = endpointReference.getAllReferenceProperties();
-        for (int i = 0; i < 10; i++) {
-            OMElement referenceProperty = (OMElement) retrievedReferenceProperties.get(new QName("http://www.opensouce.lk/" + i, "" + i));
-            assertEquals(
-                    "Input value differs from what is taken out from AnyContentType",
-                    referenceProperty.getText(),
-                    "value " + i * 100);
-        }
-
-    }
-
     public void testGetAndSetReferenceParameters() {
         for (int i = 0; i < 10; i++) {
             endpointReference.addReferenceParameter(

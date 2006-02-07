@@ -70,9 +70,7 @@ public interface AddressingConstants {
         public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE = "wsa:Reply";
         public static final String WSA_ANONYMOUS_URL =
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
-        public static final String EPR_SERVICE_NAME_PORT_NAME = "PortName";
 
         public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
-        public static final String EPR_PORT_TYPE = "PortType";
     }
 }

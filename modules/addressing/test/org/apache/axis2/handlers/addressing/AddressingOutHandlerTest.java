@@ -41,7 +41,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     protected void setUp() throws Exception {
         super.setUp();
-        outHandler = new AddressingOutHandler();
+        outHandler = new AddressingFinalOutHandler();
         testUtil = new TestUtil();
 
     }
@@ -49,10 +49,6 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     public void testAddToSOAPHeader() throws Exception {
         EndpointReference replyTo = new EndpointReference("http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous");
         EndpointReference epr = new EndpointReference("http://www.to.org/service/");
-        epr.setPortType(
-                new QName("http://www.from.org/service/port/",
-                        "Port",
-                        "portNS"));
 
         for (int i = 0; i < 5; i++) {
             epr.addReferenceParameter(
@@ -96,10 +92,6 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 new QName("http://reference.org", "Reference3", "myRef"),
                 "Value 300");
 
-        epr.setPortType(
-                new QName("http://www.from.org/service/port/",
-                        "Port",
-                        "portNS"));
         msgCtxt.setTo(epr);
 
         epr =

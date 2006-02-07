@@ -24,29 +24,36 @@ import javax.xml.namespace.QName;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Class EndpointReference
- * Contents of this class differs between WS-A Submission and WS-Final. Without having a
- * inheritance hierarchy for this small difference, lets have all the properties in the same class.
+ * This class models the WS-A EndpointReferenceType. But this can be used without any WS-A handlers as well
+ * Since the models for this in Submission and Final versions are different, lets make this to comply with
+ * WS-A Final version. So any information found with WS-A submission will be "pumped" in to this model.
  */
 public class EndpointReference implements Serializable {
 
-	private static final long serialVersionUID = 5278892171162372439L;
-
-	// Commons properties
-    private String address;
-
-    // Properties from WS-A Final
-    private OMElement metaData;
-    private OMElement policy;
-    private QName portType;
-    private Map referenceParameters;
-
-    // Properties from WS-A Submission version
-    private Map referenceProperties;
+    private static final long serialVersionUID = 5278892171162372439L;
 
     /**
+     * <EndpointReference>
+     * <Address>xs:anyURI</Address>
+     * <ReferenceParameters>xs:any*</ReferenceParameters>
+     * <MetaData>xs:any*</MetaData>
+     * <!-- In addition to this, EPR can contain any number of OMElements -->
+     * </EndpointReference>
+     */
+
+
+    private String address;
+    private OMElement metaData;
+    private Map referenceParameters;
+    private ArrayList omElements;
+
+
+    /**
+     * 
      * @param address
      */
     public EndpointReference(String address) {
@@ -60,11 +67,9 @@ public class EndpointReference implements Serializable {
         if (omElement == null) {
             return;
         }
-
         if (referenceParameters == null) {
             referenceParameters = new HashMap();
         }
-
         referenceParameters.put(omElement.getQName(), omElement);
     }
 
@@ -77,52 +82,9 @@ public class EndpointReference implements Serializable {
         if (qname == null) {
             return;
         }
-
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(qname, null);
-
         omElement.setText(value);
         addReferenceParameter(omElement);
-    }
-
-    /**
-     * Remember that reference properties are only supported in WS-A Submission version.
-     *
-     * @param omElement
-     */
-    public void addReferenceProperty(OMElement omElement) {
-        if (omElement == null) {
-            return;
-        }
-
-        if (referenceProperties == null) {
-            referenceProperties = new HashMap();
-        }
-
-        referenceProperties.put(omElement.getQName(), omElement);
-    }
-
-    /**
-     * Remember that reference properties are only supported in WS-A Submission version.
-     *
-     * @param qname
-     * @param value
-     */
-    public void addReferenceProperty(QName qname, String value) {
-        if (qname == null) {
-            return;
-        }
-
-        OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(qname, null);
-
-        omElement.setText(value);
-        addReferenceProperty(omElement);
-    }
-
-    /**
-     * Method getAddress
-     */
-    public String getAddress() {
-        return address;
     }
 
     /**
@@ -136,48 +98,36 @@ public class EndpointReference implements Serializable {
         return referenceParameters;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
     /**
-     * This will return a Map of reference properties with QName as the key and an OMElement
-     * as the value
      *
-     * @return - map of the reference parameters, where the key is the QName of the reference parameter
-     *         and the value is an OMElement
+     * @param address - xs:anyURI
      */
-    public Map getAllReferenceProperties() {
-        return referenceProperties;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public ArrayList getOmElements() {
+        return omElements;
+    }
+
+    /**
+     * {any}
+     * @param omElements
+     */
+    public void setOmElements(ArrayList omElements) {
+        this.omElements = omElements;
     }
 
     public OMElement getMetaData() {
         return metaData;
     }
 
-    public OMElement getPolicy() {
-        return policy;
-    }
-
-    public QName getPortType() {
-        return portType;
-    }
-
-    /**
-     * Method setAddress
-     *
-     * @param address
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public void setMetaData(OMElement metaData) {
         this.metaData = metaData;
-    }
-
-    public void setPolicy(OMElement policy) {
-        this.policy = policy;
-    }
-
-    public void setPortType(QName portType) {
-        this.portType = portType;
     }
 
     /**
@@ -190,13 +140,4 @@ public class EndpointReference implements Serializable {
         this.referenceParameters = referenceParameters;
     }
 
-    /**
-     * Set a Map with QName as the key and an OMElement
-     * as the value
-     *
-     * @param referenceProperties
-     */
-    public void setReferenceProperties(HashMap referenceProperties) {
-        this.referenceProperties = referenceProperties;
-    }
 }
