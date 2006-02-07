@@ -278,8 +278,14 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                         MessageContextConstants.CHUNKED));
             }
 
-            sender.setHttpVersion(httpVersion);
+            if (msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION) != null) {
+                httpVersion = (String)msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION);
+            }
+
+            // Following order needed to be preserved because,
+            // HTTP/1.0 does not support chunk encoding
             sender.setChunked(chunked);
+            sender.setHttpVersion(httpVersion);
             sender.setFormat(format);
 
             sender.send(msgContext, dataout, url, soapActionString);

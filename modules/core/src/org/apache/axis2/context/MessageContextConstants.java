@@ -21,4 +21,5 @@ public interface MessageContextConstants {
     // this will contain the keys of all the properties that will be in the message context
     public static final String TRANSPORT_URL = "TransportURL";
     public static final String CHUNKED="__CHUNKED__";
+    String HTTP_PROTOCOL_VERSION = "__HTTP_PROTOCOL_VERSION__";
 }
