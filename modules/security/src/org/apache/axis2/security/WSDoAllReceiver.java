@@ -326,8 +326,10 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         } catch (AxisFault axisFault) {
             throw axisFault;
         } finally {
-            reqData.clear();
-            reqData = null;
+            if(reqData != null) {
+                reqData.clear();
+                reqData = null;
+            }
             
             /**
              * Temporary solution until DOOM's DocumentBuilder module is done.
