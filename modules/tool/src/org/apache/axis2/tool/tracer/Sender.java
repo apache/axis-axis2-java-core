@@ -196,8 +196,6 @@ class Sender extends JPanel {
         }
     }
     
-    //String xslt = "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" + "  <!-- Mark A. Ziesemer, www.ziesemer.com, 9-11-2005 -->\n" + "  \n" + "  <xsl:param name=\"indent\" select=\"'&#x9;'\"/>\n" + "  <xsl:param name=\"newline\" select=\"'&#xA;'\"/>\n" + " \n" + "  <xsl:template match=\"node()\">\n" + "    <xsl:param name=\"indent-sum\"/>\n" + "    <!-- Indent begin tag. -->\n" + "    <xsl:value-of select=\"$newline\"/>\n" + "    <xsl:value-of select=\"$indent-sum\"/>\n" + "    <xsl:copy>\n" + "      <xsl:copy-of select=\"@*\"/>\n" + "      <!-- This if allows for self-closing tags. -->\n" + "      <xsl:if test=\"count(node())\">\n" + "        <xsl:apply-templates>\n" + "          <xsl:with-param name=\"indent-sum\" \n" + "            select=\"concat($indent, $indent-sum)\"/>\n" + "        </xsl:apply-templates>\n" + "        <xsl:if test=\"count(node()) > count(text())\">\n" + "          <!-- Indent end tag. -->\n" + "          <xsl:value-of select=\"$newline\"/>\n" + "          <xsl:value-of select=\"$indent-sum\"/>\n" + "        </xsl:if>\n" + "      </xsl:if>\n" + "    </xsl:copy>\n" + "  </xsl:template>\n" + "  <xsl:template match=\"text()[normalize-space(.)=''] | comment()[normalize-space(.)='']\"/>\n" + "  <xsl:template match=\"text()\">\n" + "    <xsl:value-of select=\"normalize-space(.)\"/>\n" + "  </xsl:template>\n" + "</xsl:stylesheet>";
-    
     public String prettyXML(String input) throws Exception {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         try {transformerFactory.setAttribute("indent-number", new Integer(2)); } catch (Exception e){}
