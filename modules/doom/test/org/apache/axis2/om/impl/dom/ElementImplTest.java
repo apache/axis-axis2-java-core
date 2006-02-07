@@ -108,6 +108,7 @@ public class ElementImplTest extends TestCase {
 			String childTextValue = "text value of the child text node";
 			
 			//Apending am Element node
+            DocumentBuilderFactoryImpl.setDOOMRequired(true);
 			Document doc = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder().newDocument();
 			Element elem = doc.createElement(elementName);
 			Element childElem = doc.createElement(childElemName);
@@ -129,7 +130,9 @@ public class ElementImplTest extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		}
+		} finally {
+            DocumentBuilderFactoryImpl.setDOOMRequired(false);      
+        }
 	}
 	
 	/**
@@ -139,6 +142,8 @@ public class ElementImplTest extends TestCase {
 		try {
 			String childElementLN = "Child";
 			
+            DocumentBuilderFactoryImpl.setDOOMRequired(true);
+            
 			Document doc = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder().newDocument();
 			Element docElem = doc.getDocumentElement();
 			assertNull("The document element shoudl be null", docElem);
@@ -159,7 +164,9 @@ public class ElementImplTest extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		}
+		} finally {
+            DocumentBuilderFactoryImpl.setDOOMRequired(false);      
+        }
 	}
 	
 	public void testGetElementsbyTagNameNS() {
@@ -167,6 +174,7 @@ public class ElementImplTest extends TestCase {
 			String childElementLN = "test:Child";
 			String childElementNS = "http://ws.apache.org/ns/axis2/dom";
 			
+            DocumentBuilderFactoryImpl.setDOOMRequired(true);
 			Document doc = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder().newDocument();
 			Element docElem = doc.getDocumentElement();
 			assertNull("The document element shoudl be null", docElem);
@@ -188,6 +196,8 @@ public class ElementImplTest extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		}
+		} finally {
+            DocumentBuilderFactoryImpl.setDOOMRequired(false);      
+        }
 	}	
 }

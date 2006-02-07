@@ -32,8 +32,10 @@ public class DOMImplementationTest extends TestCase {
 	
 	public void testDOMImpl() {
 		try {
-			System.setProperty("javax.xml.parsers.DocumentBuilderFactory",DocumentBuilderFactoryImpl.class.getName());
-			
+//			System.setProperty("javax.xml.parsers.DocumentBuilderFactory",DocumentBuilderFactoryImpl.class.getName());
+		    
+            DocumentBuilderFactoryImpl.setDOOMRequired(true);
+            
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = fac.newDocumentBuilder();
 			Document doc = builder.newDocument();
@@ -41,10 +43,12 @@ public class DOMImplementationTest extends TestCase {
 			assertEquals("Incorrect DocumentBuilderFactory instance", DocumentBuilderFactoryImpl.class.getName(),fac.getClass().getName());
 			assertEquals("Incorrect DocumentBuilder instance", DocumentBuilderImpl.class.getName(),builder.getClass().getName());
 			assertEquals("Incorrect Document instance", DocumentImpl.class.getName(),doc.getClass().getName());
-			
+            
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		}
+		} finally {
+            DocumentBuilderFactoryImpl.setDOOMRequired(false);
+        }
 	}
 }
