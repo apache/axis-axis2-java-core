@@ -26,7 +26,6 @@
 
         <!-- Put the MTOM enable flag -->
 
-
         /*
         *  <xsl:value-of select="@name"/> java implementation
         */
@@ -44,7 +43,7 @@
 
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
-        _operations = new org.apache.axis2.description.OutInAxisOperation[<xsl:value-of select="count(method)"/>];
+        _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
                 <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
@@ -195,50 +194,50 @@
         //execute the operation client
         _operationClient.execute(true);
 
-                     <xsl:choose>
-                        <xsl:when test="$outputtype=''">
-                            return;
-                        </xsl:when>
-                        <xsl:otherwise>
-                           org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(
-                                                       org.apache.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                            org.apache.ws.commons.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
-                            <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
-                            <xsl:choose>
-                                <xsl:when test="$style='doc'">
-                                       java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
-                                       return (<xsl:value-of select="$outputtype"/>)object;
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    //Unsupported style!! No code is generated
-                                    throw java.lang.UnsupportedOperationException("Unsupported Style");
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:otherwise>
-                    </xsl:choose>
+         <xsl:choose>
+            <xsl:when test="$outputtype=''">
+                return;
+            </xsl:when>
+            <xsl:otherwise>
+               org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(
+                                           org.apache.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                org.apache.ws.commons.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+                <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
+                <xsl:choose>
+                    <xsl:when test="$style='doc'">
+                           java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+                           return (<xsl:value-of select="$outputtype"/>)object;
+                    </xsl:when>
+                    <xsl:otherwise>
+                        //Unsupported style!! No code is generated
+                        throw java.lang.UnsupportedOperationException("Unsupported Style");
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
 
                     }
-                </xsl:if>
-                <!-- Async method generation -->
-                <xsl:if test="$isAsync='1'">
-                    /**
-                    * Auto generated method signature for Asynchronous Invocations
-                    * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#start<xsl:value-of select="@name"/>
-                    <xsl:for-each select="input/param[@type!='']">
-                        * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
-                    </xsl:text></xsl:for-each>
-                    */
-                    public  void start<xsl:value-of select="@name"/>(
-                    <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
-                    <xsl:for-each select="input/param[@type!='']">
-                        <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
-                    <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
+            </xsl:if>
+            <!-- Async method generation -->
+            <xsl:if test="$isAsync='1'">
+                /**
+                * Auto generated method signature for Asynchronous Invocations
+                * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#start<xsl:value-of select="@name"/>
+                <xsl:for-each select="input/param[@type!='']">
+                    * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
+                </xsl:text></xsl:for-each>
+                */
+                public  void start<xsl:value-of select="@name"/>(
+                <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
+                <xsl:for-each select="input/param[@type!='']">
+                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
+                <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
-                    org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
-              _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
-              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
+          _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+          _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
-              <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
+          <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
               org.apache.ws.commons.soap.SOAPEnvelope env;
