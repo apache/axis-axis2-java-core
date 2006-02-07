@@ -11,6 +11,9 @@
             <property name="axis2.home">
                 <xsl:attribute name="value">${env.AXIS2_HOME}</xsl:attribute>
             </property>
+            <property name="project.base.dir">
+                <xsl:attribute name="value">.</xsl:attribute>
+            </property>
             <property name="maven.class.path">
                 <xsl:attribute name="value"></xsl:attribute>
             </property>
@@ -18,13 +21,13 @@
                 <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
             </property>
             <property name="src">
-                <xsl:attribute name="value">${basedir}/src</xsl:attribute>
+                <xsl:attribute name="value">${project.base.dir}/src</xsl:attribute>
             </property>
             <property name="test">
-                <xsl:attribute name="value">${basedir}/test</xsl:attribute>
+                <xsl:attribute name="value">${project.base.dir}/test</xsl:attribute>
             </property>
             <property name="build">
-                <xsl:attribute name="value">${basedir}/build</xsl:attribute>
+                <xsl:attribute name="value">${project.base.dir}/build</xsl:attribute>
             </property>
             <property name="classes">
                 <xsl:attribute name="value">${build}/classes</xsl:attribute>
@@ -33,7 +36,7 @@
                 <xsl:attribute name="value">${build}/lib</xsl:attribute>
             </property>
             <property name="resources">
-                <xsl:attribute name="value">${basedir}/resources</xsl:attribute>
+                <xsl:attribute name="value">${project.base.dir}/resources</xsl:attribute>
             </property>
 
             <property name="jars.ok" value=""></property>
