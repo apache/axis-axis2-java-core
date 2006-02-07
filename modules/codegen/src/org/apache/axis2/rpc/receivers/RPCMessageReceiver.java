@@ -131,7 +131,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
     }
 
     private OMElement getResponseElement(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs, RETURN_WRAPPER);
+        return BeanUtil.getOMElement(resname, objs, RETURN_WRAPPER, null, null);
     }
 
     private void processResponse(SOAPFactory fac, Object resObject,
@@ -145,7 +145,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement child = fac.createOMElement(RETURN_WRAPPER, null);
+                OMElement child = fac.createOMElement(RETURN_WRAPPER, ns);
                 child.addChild(fac.createText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
@@ -153,7 +153,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                         method.getName() + "Response", ns);
                 // Java Beans
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
-                        new QName(RETURN_WRAPPER));
+                        new QName(ns.getName(),RETURN_WRAPPER,ns.getPrefix()));
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), xr);

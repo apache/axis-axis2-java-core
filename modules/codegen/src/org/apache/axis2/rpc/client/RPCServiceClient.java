@@ -56,7 +56,7 @@ public class RPCServiceClient extends ServiceClient {
      * @return Response OMElement
      */
     public OMElement invokeBlocking(QName opName, Object [] args) throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args,null);
+        OMElement omElement = BeanUtil.getOMElement(opName, args,null, null, null);
         return super.sendReceive(omElement);
     }
 
@@ -77,7 +77,7 @@ public class RPCServiceClient extends ServiceClient {
      */
 
     public Object[]  invokeBlocking(QName opName, Object [] args, Object [] returnTypes) throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args,null);
+        OMElement omElement = BeanUtil.getOMElement(opName, args,null, null, null);
         OMElement response = super.sendReceive(omElement);
         return BeanUtil.deserialize(response, returnTypes);
     }
@@ -96,7 +96,7 @@ public class RPCServiceClient extends ServiceClient {
                                   Object [] args,
                                   Callback callback)
             throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args,null);
+        OMElement omElement = BeanUtil.getOMElement(opName, args,null, null, null);
         //call the underline implementation
         super.sendReceiveNonblocking(omElement, callback);
     }
