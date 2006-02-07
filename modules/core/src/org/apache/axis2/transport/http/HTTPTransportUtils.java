@@ -245,6 +245,10 @@ public class HTTPTransportUtils {
                                     xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             envelope = (SOAPEnvelope) builder.getDocumentElement();
                         }
+                    } else {
+                        builder = new StAXSOAPModelBuilder(
+                                xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                        envelope = (SOAPEnvelope) builder.getDocumentElement();
                     }
                 }
             }
