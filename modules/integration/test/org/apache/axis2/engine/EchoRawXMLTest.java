@@ -21,14 +21,12 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -139,6 +137,24 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient sender = new ServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        OMElement result = sender.sendReceive(payload);
+
+        TestingUtils.campareWithCreatedOMElement(result);
+    }
+
+    public void testEchoXMLSyncHttpVersion() throws Exception {
+
+        OMElement payload = TestingUtils.createDummyOMElement();
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION, HTTPConstants.HEADER_PROTOCOL_10);
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
