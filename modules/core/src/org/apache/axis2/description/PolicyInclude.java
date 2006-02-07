@@ -17,8 +17,10 @@
 package org.apache.axis2.description;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.apache.ws.commons.om.util.UUIDGenerator;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyRegistry;
@@ -67,11 +69,13 @@ public class PolicyInclude {
 
 	private AxisDescription description;
 	
-	private ArrayList wrapperElements = new ArrayList();
+	// private ArrayList wrapperElements = new ArrayList();
 
 	private boolean useCacheP = false;
 	
 	private boolean useCacheE = false;
+	
+	private Hashtable wrapperElements = new Hashtable();
 
 	public PolicyInclude() {
 		reg = new PolicyRegistry();
@@ -97,9 +101,29 @@ public class PolicyInclude {
 	}
 
 	public void setPolicy(Policy policy) {
-		wrapperElements = new ArrayList();
+		wrapperElements.clear();
+		
+		if (policy.getPolicyURI() != null && policy.getPolicyURI().equals("")) {
+			policy.setId(UUIDGenerator.getUUID());
+		}
+		
 		Wrapper wrapper = new Wrapper(PolicyInclude.ANON_POLICY, policy);
-		wrapperElements.add(wrapper);
+		wrapperElements.put(policy.getPolicyURI(), wrapper);
+		
+		useCacheP = false;
+	}
+	
+	public void updatePolicy(Policy policy) {
+		String policyURI = policy.getPolicyURI();
+		
+		if (policyURI == null && policyURI.equals("")) {
+			throw new RuntimeException("Policy Id is either null or empty");
+		}
+		
+		Wrapper wrapper = (Wrapper) wrapperElements.get(policyURI);
+		wrapper.value = policy;
+		
+		useCacheP = false;		
 	}
 	
 	public void setEffectivePolicy(Policy effectivePolicy) {
@@ -125,7 +149,7 @@ public class PolicyInclude {
 	private void calculatePolicy() {
 
 		Policy result = null;
-		Iterator iterator = wrapperElements.iterator();
+		Iterator iterator = wrapperElements.values().iterator();
 
 		while (iterator.hasNext()) {
 			Object policyElement = ((Wrapper) iterator.next()).getValue();
@@ -196,7 +220,7 @@ public class PolicyInclude {
 
 	public ArrayList getPolicyElements() {
 		ArrayList policyElementsList = new ArrayList();
-		Iterator policyElementIterator = wrapperElements.iterator();
+		Iterator policyElementIterator = wrapperElements.values().iterator();
 
 		while (policyElementIterator.hasNext()) {
 			policyElementsList
@@ -207,7 +231,7 @@ public class PolicyInclude {
 
 	public ArrayList getPolicyElements(int type) {
 		ArrayList policyElementList = new ArrayList();
-		Iterator wrapperElementIterator = wrapperElements.iterator();
+		Iterator wrapperElementIterator = wrapperElements.values().iterator();
 		Wrapper wrapper;
 
 		while (wrapperElementIterator.hasNext()) {
@@ -229,8 +253,12 @@ public class PolicyInclude {
 	}
 
 	public void addPolicyElement(int type, Policy policy) {
+		String u = policy.getPolicyURI();
+		if (policy.getPolicyURI() == null || policy.getPolicyURI().equals("")) {
+			policy.setId(UUIDGenerator.getUUID());
+		}
 		Wrapper wrapper = new Wrapper(type, policy);
-		wrapperElements.add(wrapper);
+		wrapperElements.put(policy.getPolicyURI(), wrapper);
 
 		if (policy.getPolicyURI() != null) {
 			reg.register(policy.getPolicyURI(), policy);
@@ -239,7 +267,7 @@ public class PolicyInclude {
 
 	public void addPolicyRefElement(int type, PolicyReference policyReference) {
 		Wrapper wrapper = new Wrapper(type, policyReference);
-		wrapperElements.add(wrapper);
+		wrapperElements.put(policyReference.getPolicyURIString(), wrapper);
 	}
 
 	public void invalidate() {
@@ -296,5 +324,9 @@ public class PolicyInclude {
 		Object getValue() {
 			return value;
 		}
+	}
+	
+	public void removePolicyElement(String policyURI) {
+		wrapperElements.remove(policyURI);
 	}
 }
