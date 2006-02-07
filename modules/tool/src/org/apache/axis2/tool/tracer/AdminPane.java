@@ -401,6 +401,8 @@ class AdminPane extends JPanel {
             }
         });
         notebook.addTab(name, this);
+        
+        new Sender(noteb);
         notebook.repaint();
         notebook.setSelectedIndex(notebook.getTabCount() - 1);
     }
