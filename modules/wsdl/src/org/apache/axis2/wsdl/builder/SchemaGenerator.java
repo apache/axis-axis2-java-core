@@ -69,7 +69,7 @@ public class SchemaGenerator {
         XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 
         schema = new XmlSchema(this.schemaTargetNameSpace, schemaCollection);
-        schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
+//        schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
         schema.setPrefixToNamespaceMap(prefixmap);
         this.typeTable = new TypeTable();
 

@@ -145,7 +145,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement child = fac.createOMElement(RETURN_WRAPPER, ns);
+                OMElement child = fac.createOMElement(RETURN_WRAPPER, null);
                 child.addChild(fac.createText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
@@ -153,7 +153,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                         method.getName() + "Response", ns);
                 // Java Beans
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
-                        new QName(ns.getName(),RETURN_WRAPPER,ns.getPrefix()));
+                        new QName(RETURN_WRAPPER));
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), xr);

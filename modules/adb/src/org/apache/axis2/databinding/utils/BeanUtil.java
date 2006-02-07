@@ -60,23 +60,20 @@ public class BeanUtil {
                 }
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
-                    object.add(new QName(beanName.getNamespaceURI(),
-                            propDesc.getName(), beanName.getPrefix()));
+                    object.add(propDesc.getName());
                     object.add(value.toString());
                 } else if (ptype.isArray()) {
                     Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject, null);
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            object.add(new QName(beanName.getNamespaceURI(),
-                                    propDesc.getName(), beanName.getPrefix()));
+                            object.add(propDesc.getName());
                             object.add(o.toString());
                         }
                     } else {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            object.add(new QName(beanName.getNamespaceURI(),
-                                    propDesc.getName(), beanName.getPrefix()));
+                            object.add(new QName(propDesc.getName()));
                             object.add(o);
                         }
                     }
@@ -91,12 +88,10 @@ public class BeanUtil {
                         for (int j = 0; j < objList.size(); j++) {
                             Object o = objList.get(j);
                             if (SimpleTypeMapper.isSimpleType(o)) {
-                                object.add(new QName(beanName.getNamespaceURI(),
-                                        propDesc.getName(), beanName.getPrefix()));
-                                object.add(o.toString());
+                                object.add(propDesc.getName());
+                                object.add(o);
                             } else {
-                                object.add(new QName(beanName.getNamespaceURI(),
-                                        propDesc.getName(), beanName.getPrefix()));
+                                object.add(new QName(propDesc.getName()));
                                 object.add(o);
                             }
                         }
@@ -149,7 +144,7 @@ public class BeanUtil {
             Iterator elements = beanElement.getChildren();
             while (elements.hasNext()) {
                 OMElement parts = (OMElement) elements.next();
-                // if parts/@href != null then need to find element with id and deserialize. 
+                // if parts/@href != null then need to find element with id and deserialize.
                 // before that first check whether we already have it in the hashtable
                 String partsLocalName = parts.getLocalName();
                 PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName.toLowerCase());
@@ -348,11 +343,6 @@ public class BeanUtil {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;
-//        QName elemntName = null;
-//        if (partName != null) {
-//            elemntName = new QName(nameSpace, partName, nameSpaceprefix);
-//        }
-
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if (arg == null) {
@@ -365,14 +355,14 @@ public class BeanUtil {
                 if (partName == null) {
                     objects.add("arg" + argCount);
                 } else {
-                    objects.add(new QName(opName.getNamespaceURI(), partName, opName.getPrefix()));
+                    objects.add(partName);
                 }
                 objects.add(arg.toString());
             } else {
                 if (partName == null) {
                     objects.add(new QName("arg" + argCount));
                 } else {
-                    objects.add(new QName(opName.getNamespaceURI(), partName, opName.getPrefix()));
+                    objects.add(new QName(partName));
                 }
                 if (arg instanceof OMElement) {
                     OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -381,8 +371,7 @@ public class BeanUtil {
                         wrappingElement = fac.createOMElement("arg" + argCount, null);
                         wrappingElement.addChild((OMElement) arg);
                     } else {
-                        wrappingElement = fac.createOMElement(opName.getNamespaceURI(),
-                                partName, opName.getPrefix());
+                        wrappingElement = fac.createOMElement(partName, null);
                         wrappingElement.addChild((OMElement) arg);
                     }
                     objects.add(wrappingElement);
