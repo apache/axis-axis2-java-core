@@ -19,6 +19,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.SessionUtils;
@@ -27,11 +28,7 @@ import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -84,8 +81,16 @@ public class ConfigurationContext extends AbstractContext {
         // by this time service group context id must have a value. Either from transport or from addressing
         ServiceGroupContext serviceGroupContext;
         ServiceContext serviceContext = messageContext.getServiceContext();
+
+        AxisService axisService = messageContext.getAxisService();
+
         if (serviceContext == null) {
-            if (!isNull(serviceGroupContextId)
+            if (Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
+                serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTabale.get(
+                        ((AxisServiceGroup) axisService.getParent()).getServiceGroupName());
+                serviceContext = serviceGroupContext.getServiceContext(axisService);
+
+            } else if (!isNull(serviceGroupContextId)
                     && (getServiceGroupContext(serviceGroupContextId, messageContext) != null)) {
 
                 // SGC is already there
@@ -130,13 +135,13 @@ public class ConfigurationContext extends AbstractContext {
                 sessionContext.addServiceContext(serviceContext);
             }
             messageContext.setServiceContext(serviceContext);
-            if(Constants.SCOPE_REQUEST.equals(maxScope)) {
+            if (Constants.SCOPE_REQUEST.equals(maxScope)) {
                 messageContext.setServiceGroupContextId(null);
             } else {
                 messageContext.setServiceGroupContext(serviceGroupContext);
             }
         }
-        if(sessionContext != null) {
+        if (sessionContext != null) {
             // when you come here operation context MUST already been assigned to the message context
             serviceContext.setProperty(Constants.COOKIE_STRING, sessionContext.getCookieID());
         }
@@ -169,7 +174,8 @@ public class ConfigurationContext extends AbstractContext {
 
     private synchronized void addServiceGroupContextintoApplicatoionScopeTable(
             ServiceGroupContext serviceGroupContext) {
-        applicationSessionServiceGroupContextTabale.put(serviceGroupContext.getId(), serviceGroupContext);
+        applicationSessionServiceGroupContextTabale.put(
+                serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
     }
 
     public AxisConfiguration getAxisConfiguration() {
@@ -217,8 +223,15 @@ public class ConfigurationContext extends AbstractContext {
                     serviceGroupContextId);
         }
         if (serviceGroupContext == null) {
-            serviceGroupContext = (ServiceGroupContext)
-                    applicationSessionServiceGroupContextTabale.get(serviceGroupContextId);
+            AxisService axisService = msgContext.getAxisService();
+            if (axisService != null) {
+                AxisServiceGroup asg = (AxisServiceGroup) axisService.getParent();
+                if (asg != null) {
+                    serviceGroupContext = (ServiceGroupContext)
+                            applicationSessionServiceGroupContextTabale.get(asg.getServiceGroupName());
+                }
+            }
+
         }
 
         return serviceGroupContext;

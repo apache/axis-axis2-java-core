@@ -80,6 +80,10 @@ public class BeanUtil {
                 JProperty property = properties[i];
                 PropertyDescriptor propDesc = (PropertyDescriptor) propertMap.get(
                         SchemaGenerator.getCorrectName(property.getSimpleName()));
+                if (propDesc == null) {
+                    // JAM does bad thing so I need to add this
+                    continue;
+                }
                 Class ptype = propDesc.getPropertyType();
                 if (propDesc.getName().equals("class")) {
                     continue;
