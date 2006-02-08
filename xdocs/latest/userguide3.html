@@ -14,11 +14,9 @@
 <i>User Feedback: <a
 href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></i>
 
-<p align="right">Pages: <a href="userguide.html"
-target="_blank">Content</a>, <a href="userguide1.html" target="_blank">1</a>,
-<a href="userguide2.html" target="_blank">2</a>, <b>3</b>, <a
-href="userguide4.html" target="_blank">4</a>, <a href="userguide5.html"
-target="_blank">5</a></p>
+<p align="right">Pages: <a href="userguide.html">Content</a>, <a
+href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <b>3</b>, <a
+href="userguide4.html">4</a>, <a href="userguide5.html">5</a></p>
 
 <p><b><font size="4">Note (on samples):</font></b> In this page of the user's
 guide we will look at how to write Web Service Clients using Axis2. All the
@@ -26,7 +24,8 @@ user's guide samples are located at the <b><font
 color="#000000">"samples/userguide/src"</font></b> directory of the binary
 distribution. So... let's explore the samples.</p>
 
-<h2><a name="Web_Service_Clients_Using_Axis2">Web Service Clients Using Axis2</a></h2>
+<h2><a name="Web_Service_Clients_Using_Axis2">Web Service Clients Using
+Axis2</a></h2>
 
 <p>Now let's see how we can write a Web Service Client to use this Web
 Service.</p>
@@ -138,10 +137,12 @@ Services.</p>
 <p>Below we describe how to write Web Services Clients using Axis2. This can
 be done in two methods:</p>
 <ol>
-  <li><a href="#Writing_Web_Service_Clients_using_Axis2's_Primary_APIs">Using the Axis2's primary APIs</a></li>
-  <li><p><a href="#Writing_Web_Service_Clients_using_Code_Generation_with_Data_Binding_Support">Using stubs generated with data binding
-    support</a>, making the life easy for developers writing Web Service
-    client applications</p>
+  <li><a href="#Writing_Web_Service_Clients_using_Axis2's_Primary_APIs">Using
+    the Axis2's primary APIs</a></li>
+  <li><p><a
+    href="#Writing_Web_Service_Clients_using_Code_Generation_with_Data_Binding_Support">Using
+    stubs generated with data binding support</a>, making the life easy for
+    developers writing Web Service client applications</p>
   </li>
 </ol>
 
@@ -155,18 +156,20 @@ ranging from pure blocking single channel invocations to a non-blocking dual
 channel invocations. Let's first see how we can write a client to invoke
 "echo" operation of "MyService" using the simplest blocking invocation. The
 client code you need to write is as follows.</p>
+<source>
 <pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-<font color="#33cc00">            Options options = new Options();
+            <span style="color: #24C113">            
+            Options options = new Options();
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(false);
 
             ServiceClient serviceClient = new ServiceClient();
-            serviceClient.setOptions(options);</font>
+            serviceClient.setOptions(options);
 
-<font color="#33cc00">            OMElement result = sender.sendReceive(payload);</font>
-
+            OMElement result = sender.sendReceive(payload);
+            </span>
             StringWriter writer = new StringWriter();
             result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
             writer.flush();
@@ -179,6 +182,7 @@ client code you need to write is as follows.</p>
             e.printStackTrace();
         }
 }</pre>
+</source>
 
 <p>The green lines shows the set of operations that you need to perform
 inorder to invoke a web service. The rest is used to create the OMElement
@@ -191,9 +195,9 @@ have successfully tested the client. </p>
 <h4><a name="PingClient">PingClient</a></h4>
 
 <p>In the Web Service "MyService" we had a IN-ONLY operation with the name
-"ping" (see <a href="userguide2.html#Web_Services_Using_Axis2" tareget="_blank">Web Services Using
-Axis2</a>). Let's write a client to invoke this operation. The client code is
-as follows:</p>
+"ping" (see <a href="userguide2.html#Web_Services_Using_Axis2">Web Services
+Using Axis2</a>). Let's write a client to invoke this operation. The client
+code is as follows:</p>
 <pre> try {
        OMElement payload = ClientUtil.getPingOMElement();
        Options options = new Options();
@@ -321,7 +325,7 @@ asynchrony!!</strong></p>
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
-          <font color="#33cc00">serviceClinet.finalizeInvoke();</font>
+            serviceClinet.finalizeInvoke();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
@@ -496,13 +500,12 @@ Operation</a></h4>
     e.printStackTrace();
 }</pre>
 
-<p align="right"><a href="userguide2.html" target="_blank"><img
-src="images/arrow_left.gif"> Previous</a> | <a href="userguide4.html"
-target="_blank">Next <img src="images/arrow_right.gif"></a></p>
+<p align="right"><a href="userguide2.html"><img src="images/arrow_left.gif">
+Previous</a> | <a href="userguide4.html">Next <img
+src="images/arrow_right.gif"></a></p>
 
-<p>Pages: <a href="userguide.html" target="_blank">Content</a>, <a
-href="userguide1.html" target="_blank">1</a>, <a href="userguide2.html"
-target="_blank">2</a>, <b>3</b>, <a href="userguide4.html"
-target="_blank">4</a>, <a href="userguide5.html" target="_blank">5</a></p>
+<p>Pages: <a href="userguide.html">Content</a>, <a
+href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <b>3</b>, <a
+href="userguide4.html">4</a>, <a href="userguide5.html">5</a></p>
 </body>
 </html>

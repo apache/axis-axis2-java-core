@@ -54,12 +54,12 @@ options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
 <p>There is an example named, userguide.clients.RESTClient.java which
 demonstrates the usage of the above, using the "echo"operation of the
-<source></p>
+    </p>
 <pre>userguide.example1.MyService </pre>
 
 <p>of the samples.The class source will be as follows:</p>
 
-<p><source></p>
+<source>
 <pre>public class RESTClient {
 
     private static String toEpr = "http://localhost:8080/axis2/services/MyService";
@@ -111,9 +111,9 @@ are converted in to XML and put in to the SOAP Body.</p>
 <source><pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
 </source>
 <p>Result can be shown in the browser as follows:</p>
-<img src="images/userguide/http-get-ws.png">
+<img src="images/userguide/http-get-ws.png" alt="" />
 
-<p>For example, the following request, <source></p>
+<p>For example, the following request, </p><source>
 <pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
 </source>will be converted to the following SOAP Message for processing by
 Axis2.<source>
@@ -124,5 +124,7 @@ Axis2.<source>
       &lt;/soapenv:Body&gt;
    &lt;/soapenv:Envelope&gt;
     </pre>
-</source></body>
+</source>
+
+</body>
 </html>

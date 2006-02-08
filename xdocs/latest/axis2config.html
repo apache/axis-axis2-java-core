@@ -18,7 +18,8 @@ is to configure a service and the third one is to configure a module.</p>
   (module.xml)</a></li>
 </ul>
 
-<h2><a name="Global_Configuration">Global Configuration</a></h2>
+<a name="Global_Configuration"/>
+<h2>Global Configuration</h2>
 <ul>
   <li>Writing axis2.xml</li>
 </ul>
@@ -37,20 +38,22 @@ and those can be listed as follows;</p>
   <li>Listeners (Observers)</li>
 </ul>
 
-<p><b>Parameter </b> <br>
+<p><b>Parameter </b> <br/>
 In axis2 a parameter is nothing but name value pair, each and every top level
 parameter available in the axis2.xml (direct sub elements of root element)
 will be transformed into properties in AxisConfiguration. Therefore the top
 level parameters in configuration document can be accessed via
 AxisConfiguration in the running system. The correct way of defining a
-parameter looks like what is shown below; <source></p>
+parameter looks like what is shown below;</p>
+<source>
 <pre> 
   &lt;parameter name="name of the parameter" &gt;parameter value &lt;/parameter&gt;</pre>
 </source>
-<p><b>Transport Receiver</b><br>
+
+<p><b>Transport Receiver</b><br/>
 Depending on the underline transport that axis going to be run , need to have
 different transport receivers so the way of adding them to the system can be
-done as follows; <source></p>
+done as follows; <p><source>
 <pre> 
 &lt;transportReceiver name="http" class="org.apache.axis2.transport.http.SimpleHTTPServer"&gt;
         &lt;parameter name="port" &gt;6060&lt;/parameter&gt;
@@ -66,12 +69,12 @@ transport. Any transport can have zero or more parameters, and if there are
 any, then those parameters can be accessed via the corresponding transport
 receiver.
 
-<p><b>Transport Senders</b><br>
+<p><b>Transport Senders</b><br/>
 As same as transport receivers it is possible to register transport senders
 in the system, and latter at the run time those senders can be used to send
 the messages. As an example consider Axis2 running under tomcat, then axis
 can use TCP transport senders to send message rather than HTTP. The way of
-specifying transport senders is as follows: <source></p>
+specifying transport senders is as follows: <p><source>
 <pre> 
 &lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
         &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.0&lt;/parameter&gt;
@@ -83,9 +86,9 @@ transport. As same as transport receivers, transport senders can have zero or
 more parameters, and if there is any then it can be accessed via
 corresponding transport sender.
 
-<p><b>Phase Order</b><br>
+<p><b>Phase Order</b><br/>
 The specifying order of phases in execution chain has to be done using phase
-order element and it will be look like below; <source></p>
+order element and it will be look like below; <p><source>
 <pre>&lt;phaseOrder type="inflow"&gt;
          &lt;phase name="TransportIn"/&gt;
          .
@@ -156,9 +159,9 @@ one of the following
 
 <p>In addition to that only child element allowed inside pahseOrder is phase
 element, which represents available phases in the execution chain. The way of
-specifying phase inside phaseOrder has to be done as follows; <source></p>
+specifying phase inside phaseOrder has to be done as follows; <p><source>
 <pre> &lt;phase name="TransportIn"/&gt;</pre>
-</source>name: Name of the phase. <br>
+</source>name: Name of the phase. <br/>
 There are number of things that one has to keep in mind when changing
 pahseOrder,
 <ul>
@@ -171,9 +174,9 @@ pahseOrder,
 <ol>
   If you closely look at the default axis2.xml can clearly identify that.</ol>
 
-<p><b>Module References</b><br>
+<p><b>Module References</b><br/>
 If you want to engage a module system wide you can do it by adding top level
-module element in axis2.xml.  It should be look like following: <source></p>
+module element in axis2.xml.  It should be look like following: <p><source>
 <pre>&lt;module ref="addressing"/&gt;  </pre>
 </source>ref: the module name which is going to be engage, system wide.
 Listeners (Observers) In Axis2 AxisConfiguration is observable so that one
@@ -195,8 +198,8 @@ way of registering observers should be like below; <source>
 be note that the implementation class should implement AxisObserver
 interface, and the class has to be available in the classpath.
 
-<h2><font><a name="Service_Configuration">Service
-Configuration</a></font></h2>
+<a name="Service_Configuration"/>
+<h2><font>Service Configuration</font></h2>
 <ul>
   <li><font>Writing services.xml</font></li>
 </ul>
@@ -204,8 +207,10 @@ Configuration</a></font></h2>
 <p><font>The description of service is specified using services.xml, each
 service archive file need to have services.xml in order to be a valid
 service. And which has to be available in META-INF directory of the archive
-file. <br>
-A very simple services.xml is shown below: </font><font><source></font></p>
+file. <br/>
+A very simple services.xml is shown below: </font>
+    </p>
+    <source>
 <pre><font>&lt;service &gt;
     &lt;description&gt; The description of the service  &lt;/description&gt;
 
@@ -216,69 +221,70 @@ A very simple services.xml is shown below: </font><font><source></font></p>
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
   &lt;/service&gt;
-</font><font></source></font></pre>
+</font></pre></source>
+
 <font>service name: the service name will be the name of the archive file.
-<br>
+<br/>
 description: This is an optional element if you want to display any
 description about the service via Axis2 web-admin module then the description
 can be specified here.</font>
 
-<p><b>Parameter:</b><br>
+<p><b>Parameter:</b><br/>
 services.xml can have any number of top level parameters and all the
 specified parameters will be transformed into service properties in
 corresponding ServiceDescrption. There is a compulsory parameter in a
 services.xml called ServiceClass which specify the java class which really
 does the job and the class will be loaded by MessageReceiver.</p>
 
-<p><b>Handler</b><br>
+<p><b>Handler</b><br/>
 Handler element consists of compulsory and optional attribute and the way of
-defining a handler will be look like follows; <source></p>
+defining a handler will be look like follows; <p><source>
 <pre>&lt;handler name="handler1" class="handlerClass "&gt;
             &lt;order phase="userphase1" /&gt;
  &lt;/handler&gt;
-</source></pre>
-<b><i>Compulsory attributes</i></b> <br>
-name: name of the handler<br>
-nlass: handler implementation class<br>
+</pre></source>
+<b><i>Compulsory attributes</i></b> <br/>
+name: name of the handler<br/>
+nlass: handler implementation class<br/>
 phase: name of the phase that the handler should stay in the execution chain
-<br>
-<br>
-<i><b>Optional attributes :</b></i><br>
-phaseLast: to indicate the handler is last handler of the phase<br>
-phaseFirst: to indicate the handler is first handler of the phase.<br>
+<br/>
+<br/>
+<i><b>Optional attributes :</b></i><br/>
+phaseLast: to indicate the handler is last handler of the phase<br/>
+phaseFirst: to indicate the handler is first handler of the phase.<br/>
 before : the handler should be invoked before the handler specified by before
-handler<br>
+handler<br/>
 after:  the handler should be invoked after the handler specified by after
-handler<br>
+handler<br/>
 
 
-<p><b>Operations</b><br>
+<p><b>Operations</b><br/>
 All the operations you are going to exposeby the service has to be indicated
 in the services.xml and the correct way of specifying that should be as
-follows: <source></p>
+follows: <p><source>
 <pre>    &lt;operation name="echoString"&gt;
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
-</source></pre>
+</pre></source>
 Only compulsory attribute here is name, which represent the operation name
 that is going to be exposed. Any operation can contains module references,
 any number of parameters. The most interesting is that one can register
 custom message receiver per operation, then the registered message receiver
 will be the message receiver for the corresponding operation. If one does not
 specify the message receiver then the default message receiver will do the
-job. <br>
+job. <br/>
 
-
-<h2><a name="Module_Configuration">Module Configuration</a></h2>
+<a name="Module_Configuration"/>
+<h2>Module Configuration</h2>
 <ul>
   <li>Writing module.xml</li>
 </ul>
 
 <p>The description of module is specified using module.xml, each module
 archive file need to have module.xml in order to be a valid module. And which
-has to be available in META-INF directory of the archive file. <br>
-A very simple module.xml is shown below: <source></p>
+has to be available in META-INF directory of the archive file. <br/>
+A very simple module.xml is shown below: <p><source>
 <pre>&lt;module name="module1" class="org.apache.module.Module1Impl"&gt;
     &lt;inflow&gt;
         .
@@ -304,9 +310,9 @@ A very simple module.xml is shown below: <source></p>
         &lt;parameter name="para1" locked="xsd:true"&gt;10&lt;/parameter&gt;
     &lt;/operation&gt;
 &lt;/module&gt;
-</source></pre>
+</pre></source>
 name: This is a compulsory attribute and which indicates the name of the
-module <br>
+module <br/>
 class: This is an optional attribute which indicate module implementation
 class, a module may or may not contain module implementation class since the
 module can also be a collection of handlers. If a module contains an
@@ -317,16 +323,16 @@ inteface where at the deployment time its init(); method will be called.
 listed parameters in the module.xml will be transformed into corresponding
 ModuleDescription of the module.</p>
 
-<p><b>Flow :</b><br>
+<p><b>Flow :</b><br/>
 It is possible to add handlers into a flow directly form services.xml rather
 than engaging a modules and the way of doing that is through flow elements.
 It is possible to add any number of handlers into a flow and those handlers
 will be available in corresponding operations flows in the service (inflow
 consist of two parts, one part is up to post dispatch phase and other part is
-consisting of operation handlers) <br>
+consisting of operation handlers) <br/>
 There are four types of valid flows that can be available in services.xml,
 and the adding the handles into them can be done by following the above
-procedure. <br>
+procedure. <br/>
 Valid flows:</p>
 <ul>
   <li>Inflow</li>
@@ -338,6 +344,6 @@ Valid flows:</p>
 <p><b>operations</b> If a module wants to add an operation when it is engaged
 into a service it can be done by adding operation tag in module.xml and the
 way of specifying the operation is same as operation in services.xml.</p>
-<br>
+<br/>
 </body>
 </html>
