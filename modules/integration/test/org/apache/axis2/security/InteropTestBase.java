@@ -115,7 +115,7 @@ public abstract class InteropTestBase extends TestCase {
     protected static final String WSU_NS = WSConstants.WSU_NS;
 
     protected static final String ADDR_NS =
-            AddressingConstants.Submission.WSA_NAMESPACE;
+            AddressingConstants.Final.WSA_NAMESPACE;
 
     private String targetEpr = "http://127.0.0.1:" +
 //            5556 +

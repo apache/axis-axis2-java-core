@@ -40,6 +40,7 @@ public interface AddressingConstants {
     public static final String WSA_DEFAULT_PREFIX = "wsa";
     public static final String PARAM_SERVICE_GROUP_CONTEXT_ID =
             "ServiceGroupContextIdFromAddressing";
+    public static final String IS_ADDR_INFO_ALREADY_PROCESSED = "IsAddressingProcessed";
 
     public interface Final {
 

@@ -16,7 +16,6 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -30,6 +29,8 @@ import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.TestCase;
+
 public class AddressingOutHandlerTest extends TestCase implements AddressingConstants {
     private AddressingOutHandler outHandler;
     private MessageContext msgCtxt;
@@ -41,7 +42,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     protected void setUp() throws Exception {
         super.setUp();
-        outHandler = new AddressingFinalOutHandler();
+        outHandler = new AddressingOutHandler();
         testUtil = new TestUtil();
 
     }
@@ -52,7 +53,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         for (int i = 0; i < 5; i++) {
             epr.addReferenceParameter(
-                    new QName(Submission.WSA_NAMESPACE, "Reference" + i),
+                    new QName(Submission.WSA_NAMESPACE, "Reference" + i, AddressingConstants.WSA_DEFAULT_PREFIX),
                     "Value " + i * 100);
 
         }
@@ -61,19 +62,21 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
 
-        defaultEnvelope.getHeader().declareNamespace(Submission.WSA_NAMESPACE,
-                "wsa");
         MessageContext msgCtxt = new MessageContext();
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
         msgCtxt.setTo(epr);
         msgCtxt.setReplyTo(replyTo);
         msgCtxt.setEnvelope(defaultEnvelope);
         outHandler.invoke(msgCtxt);
 
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");
+
         XMLComparator xmlComparator = new XMLComparator();
+
         assertTrue(
                 xmlComparator.compare(omBuilder.getDocumentElement(),
                         defaultEnvelope));
+
     }
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
@@ -93,6 +96,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 "Value 300");
 
         msgCtxt.setTo(epr);
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
 
         epr =
                 new EndpointReference("http://www.replyTo.org/service/");

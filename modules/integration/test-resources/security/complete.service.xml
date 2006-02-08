@@ -22,7 +22,7 @@
         <signatureKeyIdentifier>SKIKeyIdentifier</signatureKeyIdentifier>
         <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
         <encryptionUser>alice</encryptionUser>
-        <signatureParts>{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}To;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}ReplyTo;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}MessageID;{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp</signatureParts>
+        <signatureParts>{Element}{http://www.w3.org/2005/08/addressing}To;{Element}{http://www.w3.org/2005/08/addressing}ReplyTo;{Element}{http://www.w3.org/2005/08/addressing}MessageID;{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp</signatureParts>
 
         <optimizeParts>//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</optimizeParts>
       </action>

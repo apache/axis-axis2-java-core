@@ -138,7 +138,6 @@
                 <module>true</module>
             </properties>
         </dependency>
-
     </dependencies>
 
     <reports/>

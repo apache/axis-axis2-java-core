@@ -1,4 +1,7 @@
 <module name="addressing">
+    <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission
+    version (2004/08) and Candidate Recommendation (2005/08). This is not complete as far as the fault handling
+    is concerned. But we are working on that. </Description>
     <inflow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
             <order phase="PreDispatch"/>
@@ -9,10 +12,8 @@
     </inflow>
 
     <outflow>
-        <handler name="AddressingFinalOutHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalOutHandler">
-            <order phase="MessageOut"/>
-        </handler>
-        <handler name="AddressingOutHandler" class="org.apache.axis2.handlers.addressing.AddressingSubmissionOutHandler">
+        <!-- We don't need to have two handlers to handle these two version. So lets handle both of them in one. -->
+        <handler name="AddressingOutHandler" class="org.apache.axis2.handlers.addressing.AddressingOutHandler">
             <order phase="MessageOut"/>
         </handler>
     </outflow>

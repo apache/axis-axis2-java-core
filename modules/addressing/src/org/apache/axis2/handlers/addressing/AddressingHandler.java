@@ -27,8 +27,10 @@ public abstract class AddressingHandler extends AbstractHandler implements Addre
     // this parameter has to be set by the module deployer.
     protected boolean isAddressingOptional = true;
 
-    protected String addressingNamespace = null;
+    protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
     protected String addressingVersion = null;
+    protected String anonymousURI = Final.WSA_ANONYMOUS_URL;   // defaulting to final version
+
 
     protected Log logger = LogFactory.getLog(getClass());
 

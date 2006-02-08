@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
@@ -36,12 +37,15 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ArrayList;
 
-public abstract class AddressingOutHandler extends AddressingHandler {
+public class AddressingOutHandler extends AddressingHandler {
 
     private static final long serialVersionUID = -2623986992336863995L;
 
     private Log log = LogFactory.getLog(getClass());
+
+    protected OMNamespace addressingNamespaceObject;
 
 
     public void invoke(MessageContext msgContext) throws AxisFault {
@@ -53,8 +57,7 @@ public abstract class AddressingOutHandler extends AddressingHandler {
             log.info("Addressing is disbaled .....");
             return;
         }
-        OMNamespace addressingNamespaceObject;
-        String addressingNamespace = null;
+
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (addressingVersionFromCurrentMsgCtxt != null) {
@@ -63,27 +66,23 @@ public abstract class AddressingOutHandler extends AddressingHandler {
             // we always defaults to Submission.WSA_NAMESPACE. Hope this is fine.
             addressingNamespace = Final.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt)
                     ? Final.WSA_NAMESPACE : Submission.WSA_NAMESPACE;
-        } else if (msgContext.getOperationContext() != null) { // check for a IN message context, else default to WSA Submission
+        } else if (msgContext.getOperationContext() != null)
+        { // check for a IN message context, else default to WSA Final
             MessageContext inMessageContext = msgContext.getOperationContext()
                     .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (inMessageContext == null) {
-                addressingNamespace = Submission.WSA_NAMESPACE; // setting Submission version as the default addressing namespace
-            } else {
+            if (inMessageContext != null) {
                 addressingNamespace =
                         (String) inMessageContext.getProperty(
                                 WS_ADDRESSING_VERSION);
-                if (addressingNamespace == null) {
-                    addressingNamespace = Submission.WSA_NAMESPACE; // Addressing version has not been set in the IN path
-                }
             }
         }
 
         if (addressingNamespace == null || "".equals(addressingNamespace)) {
-            addressingNamespace = Submission.WSA_NAMESPACE;
+            addressingNamespace = Final.WSA_NAMESPACE;
         }
-        addressingNamespaceObject =
-                OMAbstractFactory.getOMFactory().createOMNamespace(
-                        addressingNamespace, WSA_DEFAULT_PREFIX);
+        addressingNamespaceObject = OMAbstractFactory.getOMFactory().createOMNamespace(
+                addressingNamespace, WSA_DEFAULT_PREFIX);
+        anonymousURI = addressingNamespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
 
 
         Options messageContextOptions = msgContext.getOptions();
@@ -96,67 +95,45 @@ public abstract class AddressingOutHandler extends AddressingHandler {
         // define that in the Header itself.
         envelope.declareNamespace(addressingNamespaceObject);
 
+        EndpointReference epr;
+
         // processing WSA To
-        EndpointReference epr = messageContextOptions.getTo();
-        if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject)) {
+        processToEPR(messageContextOptions, envelope);
 
-            String address = epr.getAddress();
-            if (!"".equals(address) && address != null) {
-                SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
-                toHeaderBlock.setText(address);
-            }
+        // processing WSA replyTo
+        processReplyTo(envelope, messageContextOptions, msgContext);
 
-            processReferenceInformation(epr.getAllReferenceParameters(), soapHeader, addressingNamespaceObject);
+        // processing WSA From
+        processFromEPR(messageContextOptions, envelope);
 
+        // processing WSA FaultTo
+        processFaultToEPR(messageContextOptions, envelope);
+
+        String messageID = messageContextOptions.getMessageId();
+        if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope,
+                addressingNamespaceObject)) {//optional
+            processStringInfo(messageID, WSA_MESSAGE_ID, envelope);
         }
 
         // processing WSA Action
         String action = messageContextOptions.getAction();
-        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope, addressingNamespaceObject)) {
-            processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
+                addressingNamespaceObject)) {
+            processStringInfo(action, WSA_ACTION, envelope);
         }
 
-        // processing WSA replyTo
-        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject)) {
-            epr = messageContextOptions.getReplyTo();
-            if (epr == null) {//optional
+        // processing WSA RelatesTo
+        processRelatesTo(envelope, messageContextOptions);
 
-                if (msgContext.getServiceContext() != null && msgContext.getServiceContext().getMyEPRAddress() != null) {
-                    epr = new EndpointReference(msgContext.getServiceContext().getMyEPRAddress());
-                } else {
-                    // setting anonymous URI. Defaulting to Final.
-                    String anonymousURI = Final.WSA_ANONYMOUS_URL;
-                    if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
-                        anonymousURI = Submission.WSA_ANONYMOUS_URL;
-                    }
-                    epr = new EndpointReference(anonymousURI);
-                }
-            }
-            // add the service group id as a reference parameter
-            String serviceGroupContextId = msgContext.getServiceGroupContextId();
-            if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
-                epr.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
-                        Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
-            }
-            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, addressingNamespace);
-        }
+        // We are done, cleanup the references
+        addressingNamespaceObject = null;
+        addressingNamespace = null;
 
-        epr = messageContextOptions.getFrom();
-        if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope, addressingNamespaceObject, addressingNamespace);
-        }
+    }
 
-        epr = messageContextOptions.getFaultTo();
-        if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope, addressingNamespaceObject, addressingNamespace);
-        }
-
-        String messageID = messageContextOptions.getMessageId();
-        if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope, addressingNamespaceObject)) {//optional
-            processStringInfo(messageID, WSA_MESSAGE_ID, envelope, addressingNamespaceObject);
-        }
-
-        if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject)) {
+    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions) {
+        if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject))
+        {
             RelatesTo relatesTo = messageContextOptions.getRelatesTo();
             OMElement relatesToHeader = null;
 
@@ -164,7 +141,7 @@ public abstract class AddressingOutHandler extends AddressingHandler {
                 relatesToHeader =
                         processStringInfo(relatesTo.getValue(),
                                 WSA_RELATES_TO,
-                                envelope, addressingNamespaceObject);
+                                envelope);
             }
 
             if (relatesToHeader != null)
@@ -178,16 +155,66 @@ public abstract class AddressingOutHandler extends AddressingHandler {
                             addressingNamespaceObject);
                 }
         }
+    }
 
-        // We are done, cleanup the references
-        addressingNamespaceObject = null;
-        addressingNamespace = null;
+    private void processFaultToEPR(Options messageContextOptions, SOAPEnvelope envelope) {
+        EndpointReference epr;
+        epr = messageContextOptions.getFaultTo();
+        if (epr != null) {//optional
+            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope);
+        }
+    }
+
+    private void processFromEPR(Options messageContextOptions, SOAPEnvelope envelope) {
+        EndpointReference epr;
+        epr = messageContextOptions.getFrom();
+        if (epr != null) {//optional
+            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope);
+        }
+    }
+
+    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext) {
+        EndpointReference epr;
+        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject))
+        {
+            epr = messageContextOptions.getReplyTo();
+            if (epr == null) {//optional
+
+                if (msgContext.getServiceContext() != null && msgContext.getServiceContext().getMyEPRAddress() != null)
+                {
+                    epr = new EndpointReference(msgContext.getServiceContext().getMyEPRAddress());
+                } else {
+                    // setting anonymous URI. Defaulting to Final.
+                    epr = new EndpointReference(anonymousURI);
+                }
+            }
+            // add the service group id as a reference parameter
+            String serviceGroupContextId = msgContext.getServiceGroupContextId();
+            if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
+                epr.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
+                        Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
+            }
+            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope);
+        }
+    }
+
+    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope) {
+        EndpointReference epr = messageContextOptions.getTo();
+        if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject))
+        {
+            String address = epr.getAddress();
+            if (!"".equals(address) && address != null) {
+                SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
+                toHeaderBlock.setText(address);
+            }
+            processReferenceInformation(epr.getAllReferenceParameters(), envelope.getHeader());
+        }
     }
 
 
     private OMElement processStringInfo(String value,
                                         String type,
-                                        SOAPEnvelope soapEnvelope, OMNamespace addressingNamespaceObject) {
+                                        SOAPEnvelope soapEnvelope) {
         if (!"".equals(value) && value != null) {
             SOAPHeaderBlock soapHeaderBlock =
                     soapEnvelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
@@ -200,58 +227,78 @@ public abstract class AddressingOutHandler extends AddressingHandler {
 
     protected void addToSOAPHeader(EndpointReference epr,
                                    String type,
-                                   SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, String addressingNamespace) {
-        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject)) {
+                                   SOAPEnvelope envelope) {
+        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject))
+        {
             return;
         }
 
         SOAPHeaderBlock soapHeaderBlock =
                 envelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
 
+        // add epr address
         String address = epr.getAddress();
         if (!"".equals(address) && address != null) {
-            OMElement addressElement =
-                    OMAbstractFactory.getOMFactory().createOMElement(
-                            EPR_ADDRESS,
-                            addressingNamespaceObject);
-            soapHeaderBlock.addChild(addressElement);
+            OMElement addressElement = OMAbstractFactory.getOMFactory().createOMElement(EPR_ADDRESS,addressingNamespaceObject, soapHeaderBlock);
             addressElement.setText(address);
         }
 
+        // add reference parameters
         Map referenceParameters = epr.getAllReferenceParameters();
         if (referenceParameters != null) {
             OMElement reference =
                     OMAbstractFactory.getOMFactory().createOMElement(
                             EPR_REFERENCE_PARAMETERS,
-                            addressingNamespaceObject);
-            soapHeaderBlock.addChild(reference);
-            processReferenceInformation(referenceParameters, reference, addressingNamespaceObject);
+                            addressingNamespaceObject, soapHeaderBlock);
+            processReferenceInformation(referenceParameters, reference);
+
+        }
+
+        // add xs:any
+        ArrayList omElements = epr.getOmElements();
+        if (omElements != null) {
+            for (int i = 0; i < omElements.size(); i++) {
+                soapHeaderBlock.addChild((OMElement) omElements.get(i));
+            }
+        }
+
+        // add metadata
+        OMElement metaData = epr.getMetaData();
+        if (metaData != null) {
+            OMElement metadata =
+                    OMAbstractFactory.getOMFactory().createOMElement(
+                            Final.WSA_METADATA,
+                            addressingNamespaceObject, soapHeaderBlock);
 
         }
 
     }
+
 
     /**
      * This will add reference parameters and/or reference properties in to the message
      *
      * @param referenceInformation
      */
-    private void processReferenceInformation(Map referenceInformation, OMElement parent, OMNamespace addressingNamespaceObject) {
+    private void processReferenceInformation(Map referenceInformation, OMElement parent) {
+
+        boolean processingWSAFinal = Final.WSA_NAMESPACE.equals(addressingNamespace);
         if (referenceInformation != null && parent != null) {
             Iterator iterator = referenceInformation.keySet().iterator();
             while (iterator.hasNext()) {
                 QName key = (QName) iterator.next();
                 OMElement omElement = (OMElement) referenceInformation.get(key);
+                parent.addChild(omElement);
 
-                if (Final.WSA_NAMESPACE.equals(addressingNamespace)) {
+                if (processingWSAFinal) {
                     omElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE, Final.WSA_TYPE_ATTRIBUTE_VALUE,
                             addressingNamespaceObject);
 
                 }
-                parent.addChild(omElement);
             }
         }
     }
+
 
     private boolean isAddressingHeaderAlreadyAvailable(String name, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject) {
         return envelope.getHeader().getFirstChildWithName(new QName(addressingNamespaceObject.getName(), name, addressingNamespaceObject.getPrefix())) != null;
