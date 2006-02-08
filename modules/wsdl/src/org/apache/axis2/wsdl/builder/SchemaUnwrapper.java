@@ -77,7 +77,6 @@ public class SchemaUnwrapper {
                 operation = operations[i];
                 //process Schema
                 XmlSchemaElement elt = operation.getInputMessage().getElementSchema();
-                System.out.println("elt = " + elt);
             }
         }
 
