@@ -96,13 +96,16 @@ public class AxisEngine {
 
                 // if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
                 // it to be NEXT
-                if ((role != null) && !SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
+                if (role != null) {
+                    if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
+                        throw new AxisFault("Must Understand check failed",
+                                SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
+                    }
+                } else {
+                    // This is the ultimate receiver, throw an error.
                     throw new AxisFault("Must Understand check failed",
                             SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
-
-                // TODO what should be do with the Ultimate Receiver? Axis2 is ultimate Receiver most of the time
-                // should we support that as well
             } else {
 
                 // if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
