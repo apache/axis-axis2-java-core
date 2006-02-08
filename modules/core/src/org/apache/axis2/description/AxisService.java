@@ -17,8 +17,7 @@
 
 package org.apache.axis2.description;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import com.ibm.wsdl.extensions.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -26,18 +25,17 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
+import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.*;
+import org.apache.wsdl.extensions.*;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
@@ -328,9 +326,112 @@ public class AxisService extends AxisDescription {
         }
     }
 
+    private WSDLBinding generateBinding(WSDLComponentFactory wsdlComponentFactory,
+                                        WSDLInterface portType, QName bindingName,
+                                        String style,
+                                        String use,
+                                        String trsportURI,
+                                        String namespeceURI) {
+        WSDLBinding binding = wsdlComponentFactory.createBinding();
+
+        ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
+
+        binding.setBoundInterface(portType);
+        binding.setName(bindingName);
+
+        SOAPBinding soapbindingImpl = (SOAPBinding) extensionFactory.getExtensionElement(
+                ExtensionConstants.SOAP_11_BINDING);
+        soapbindingImpl.setStyle(style);
+        soapbindingImpl.setTransportURI(trsportURI);
+        binding.addExtensibilityElement(soapbindingImpl);
+
+        Iterator op_itr = portType.getOperations().keySet().iterator();
+        while (op_itr.hasNext()) {
+            String opName = (String) op_itr.next();
+            WSDLOperation wsdlOperation = portType.getOperation(opName);
+            MessageReference inMessage = wsdlOperation.getInputMessage();
+
+            WSDLBindingOperation bindingoperation = wsdlComponentFactory.createWSDLBindingOperation();
+            bindingoperation.setName(new QName(opName));
+            bindingoperation.setOperation(wsdlOperation);
+            binding.addBindingOperation(bindingoperation);
+
+            SOAPOperation soapOpimpl = (SOAPOperation) extensionFactory.getExtensionElement(
+                    ExtensionConstants.SOAP_11_OPERATION);
+            soapOpimpl.setStyle(style);
+            //to do heve to set a proper SOAPAction
+            soapOpimpl.setSoapAction(opName);
+            bindingoperation.addExtensibilityElement(soapOpimpl);
+            if (inMessage != null) {
+                WSDLBindingMessageReference bindingInMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
+                bindingInMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                bindingoperation.setInput(bindingInMessage);
+
+                SOAPBody requestSoapbody = (SOAPBody) extensionFactory.getExtensionElement(
+                        ExtensionConstants.SOAP_11_BODY);
+                requestSoapbody.setUse(use);
+                //todo need to fix this
+                requestSoapbody.setNamespaceURI(namespeceURI);
+                bindingInMessage.addExtensibilityElement(requestSoapbody);
+            }
+
+            MessageReference outMessage = wsdlOperation.getOutputMessage();
+            if (outMessage != null) {
+                WSDLBindingMessageReference bindingOutMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
+
+                bindingOutMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                bindingoperation.setOutput(bindingOutMessage);
+                SOAPBody resSoapbody = (SOAPBody) extensionFactory.getExtensionElement(
+                        ExtensionConstants.SOAP_11_BODY);
+                resSoapbody.setUse(use);
+                resSoapbody.setNamespaceURI(namespeceURI);
+                bindingOutMessage.addExtensibilityElement(resSoapbody);
+            }
+        }
+        return binding;
+    }
+
+
     private void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
         try {
             Definition wsdlDefinition = getWSDLDefinition();
+            Iterator itr_bindings = wsdlDefinition.getBindings().values().iterator();
+            while (itr_bindings.hasNext()) {
+                Binding binding = (Binding) itr_bindings.next();
+                binding.getExtensibilityElements().clear();
+                javax.wsdl.extensions.soap.SOAPBinding soapBinding = new SOAPBindingImpl();
+                soapBinding.setStyle("document");
+                soapBinding.setTransportURI("http://schemas.xmlsoap.org/soap/http");
+                binding.addExtensibilityElement(soapBinding);
+
+                Iterator bin_ops = binding.getBindingOperations().iterator();
+                while (bin_ops.hasNext()) {
+                    BindingOperation bindingOperation = (BindingOperation) bin_ops.next();
+                    bindingOperation.getExtensibilityElements().clear();
+                    javax.wsdl.extensions.soap.SOAPOperation soapOperation = new SOAPOperationImpl();
+                    soapOperation.setStyle("document");
+                    soapOperation.setSoapActionURI(bindingOperation.getName());
+                    bindingOperation.addExtensibilityElement(soapOperation);
+
+                    BindingInput input = bindingOperation.getBindingInput();
+                    if (input != null) {
+                        input.getExtensibilityElements().clear();
+                        javax.wsdl.extensions.soap.SOAPBody soapBody = new SOAPBodyImpl();
+                        soapBody.setUse("literal");
+                        soapBody.setNamespaceURI(getTargetNamespace());
+                        input.addExtensibilityElement(soapBody);
+                    }
+                    BindingOutput output = bindingOperation.getBindingOutput();
+                    if (output != null) {
+                        output.getExtensibilityElements().clear();
+                        javax.wsdl.extensions.soap.SOAPBody soapBody = new SOAPBodyImpl();
+                        soapBody.setUse("literal");
+                        soapBody.setNamespaceURI(getTargetNamespace());
+                        output.addExtensibilityElement(soapBody);
+                    }
+                }
+            }
+
             Collection services = wsdlDefinition.getServices().values();
 
             for (Iterator iterator = services.iterator(); iterator.hasNext();) {
@@ -339,8 +440,6 @@ public class AxisService extends AxisDescription {
 
                 for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
                     Port port = (Port) iterator1.next();
-
-                    service.setQName(new QName(this.getName()));
 
                     SOAPAddress soapAddress = new SOAPAddressImpl();
 

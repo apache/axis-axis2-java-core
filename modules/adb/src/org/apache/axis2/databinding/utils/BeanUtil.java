@@ -19,12 +19,14 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
+import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -49,11 +51,35 @@ public class BeanUtil {
      */
     public static XMLStreamReader getPullParser(Object beanObject, QName beanName) {
         try {
+            JamServiceFactory factory = JamServiceFactory.getInstance();
+            JamServiceParams jam_service_parms = factory.createServiceParams();
+            //setting the classLoder
+//        jam_service_parms.setParentClassLoader(factory.createJamClassLoader(classLoader));
+            //it can posible to add the classLoader as well
+            jam_service_parms.addClassLoader(beanObject.getClass().getClassLoader());
+            jam_service_parms.includeClass(beanObject.getClass().getName());
+            JamService service = factory.createService(jam_service_parms);
+            JamClassIterator jClassIter = service.getClasses();
+            JClass jClass = null;
+            while (jClassIter.hasNext()) {
+                jClass = (JClass) jClassIter.next();
+
+            }
+            // properties from JAM
+            JProperty properties [] = jClass.getDeclaredProperties();
+
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
-            ArrayList object = new ArrayList();
+            HashMap propertMap = new HashMap();
             for (int i = 0; i < propDescs.length; i++) {
                 PropertyDescriptor propDesc = propDescs[i];
+                propertMap.put(propDesc.getName(), propDesc);
+            }
+            ArrayList object = new ArrayList();
+            for (int i = 0; i < properties.length; i++) {
+                JProperty property = properties[i];
+                PropertyDescriptor propDesc = (PropertyDescriptor) propertMap.get(
+                        SchemaGenerator.getCorrectName(property.getSimpleName()));
                 Class ptype = propDesc.getPropertyType();
                 if (propDesc.getName().equals("class")) {
                     continue;
@@ -104,11 +130,7 @@ public class BeanUtil {
                 }
             }
             return ADBPullParser.createPullParser(beanName, object.toArray(), null);
-            // TODO : Deepal fix this. I added another parameter to the above method in the ADBPullPrser
-            // to get the attributes array. For the time being I passed null. Pass attributes array here.
-
         } catch (Exception e) {
-            //todo has to throw this exeception
             return null;
         }
     }

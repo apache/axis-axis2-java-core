@@ -317,7 +317,7 @@ public class SchemaGenerator {
      * @param wrongName
      * @return
      */
-    private String getCorrectName(String wrongName) {
+    public static String getCorrectName(String wrongName) {
         if (wrongName.length() > 1) {
             return wrongName.substring(0, 1).toLowerCase() + wrongName.substring(1, wrongName.length());
         } else {
@@ -365,7 +365,6 @@ public class SchemaGenerator {
                     if (isArryType) {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
                         elt1.setMinOccurs(0);
-//                        elt1.setMinOccurs(2);
                     }
                 } else {
                     if (isArryType) {
