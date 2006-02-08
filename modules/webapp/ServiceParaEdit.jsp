@@ -55,7 +55,7 @@
 
                  ArrayList op_paras ;
                         operations = axisService.getOperations();
-                 for (operations.hasNext()) {
+                 while (operations.hasNext()) {
                      AxisOperation axisOperation = (AxisOperation) operations.next();
                      String operationName = axisOperation.getName().getLocalPart();
                      %>
