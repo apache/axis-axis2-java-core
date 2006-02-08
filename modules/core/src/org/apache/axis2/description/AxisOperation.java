@@ -23,14 +23,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public abstract class AxisOperation extends AxisDescription
-        implements  WSDLConstants {
+        implements WSDLConstants {
     public static final String STYLE_RPC = "rpc";
     public static final String STYLE_MSG = "msg";
     public static final String STYLE_DOC = "doc";
     private Log log = LogFactory.getLog(getClass());
     private int mep = MEP_CONSTANT_INVALID;
 
-    public static final String SOAP_ACTION ="soapaction";
+    public static final String SOAP_ACTION = "soapaction";
 
     // to store engaged modules
     private ArrayList engagedModules = new ArrayList();
@@ -51,7 +51,7 @@ public abstract class AxisOperation extends AxisDescription
     private QName name;
 
     private ArrayList wsamappingList;
-    
+
     public AxisOperation() {
         mepURI = MEP_URI_IN_OUT;
         modulerefs = new ArrayList();
@@ -118,9 +118,20 @@ public abstract class AxisOperation extends AxisDescription
                 needToadd = false;
             }
         }
+        // adding control operations
+        ((AxisService) getParent()).addModuleOperations(moduleref, axisConfig);
+        PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
+        phaseResolver.engageModuleToOperation(this, moduleref);
 
-        new PhaseResolver(axisConfig).engageModuleToOperation(this, moduleref);
+        HashMap map = moduleref.getOperations();
+        Collection col = map.values();
 
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            AxisOperation axisOperation = (AxisOperation) iterator.next();
+            AxisOperation serviceop =
+                    ((AxisService) getParent()).getOperation(axisOperation.getName());
+            phaseResolver.engageModuleToOperation(serviceop, moduleref);
+        }
         if (needToadd) {
             engagedModules.add(moduleref);
         }
@@ -161,7 +172,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     /**
-     * Finds a MEPContext for an incoming message. An incoming message can be 
+     * Finds a MEPContext for an incoming message. An incoming message can be
      * of two states.
      * <p/>
      * 1)This is a new incomming message of a given MEP. 2)This message is a
@@ -224,7 +235,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     /**
-     * Maps the String URI of the Message exchange pattern to a integer. 
+     * Maps the String URI of the Message exchange pattern to a integer.
      * Further, in the first lookup, it will cache the looked
      * up value so that the subsequent method calls are extremely efficient.
      */
@@ -367,14 +378,15 @@ public abstract class AxisOperation extends AxisDescription
     public void setWsamappingList(ArrayList wsamappingList) {
         this.wsamappingList = wsamappingList;
     }
+
     /**
      * 
      */
-    public OperationClient createClient (ServiceContext sc, Options options){
-        throw new UnsupportedOperationException ("The MEP you are using (" + mepURI + ") has not implemented createClient().");
+    public OperationClient createClient(ServiceContext sc, Options options) {
+        throw new UnsupportedOperationException("The MEP you are using (" + mepURI + ") has not implemented createClient().");
     }
-    
+
     public Object getKey() {
-    	return getName();
+        return getName();
     }
 }
