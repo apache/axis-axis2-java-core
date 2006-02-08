@@ -145,7 +145,8 @@ public class AxisEngine {
         } 
         
         if (faultTo == null || AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
-                    || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())) {
+                    || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
+                    || AddressingConstants.Final.WSA_NONE_URI.equals(faultTo.getAddress())) {
             Object writer = processingContext.getProperty(MessageContext.TRANSPORT_OUT);
             if (writer != null) {
                 faultContext.setProperty(MessageContext.TRANSPORT_OUT, writer);
