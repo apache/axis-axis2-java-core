@@ -99,12 +99,12 @@ public class AxisEngine {
                 if (role != null) {
                     if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
                         throw new AxisFault("Must Understand check failed",
-                                SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
+                                SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                     }
                 } else {
                     // This is the ultimate receiver, throw an error.
                     throw new AxisFault("Must Understand check failed",
-                            SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
+                            SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             } else {
 
@@ -112,7 +112,7 @@ public class AxisEngine {
                 // it to be NEXT
                 if ((role != null) && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
                     throw new AxisFault("Must Understand check failed",
-                            SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
+                            SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             }
         }
