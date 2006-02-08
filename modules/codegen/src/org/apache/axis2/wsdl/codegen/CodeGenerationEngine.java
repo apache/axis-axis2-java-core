@@ -199,7 +199,8 @@ public class CodeGenerationEngine {
         String baseURI= null;
         if(currentURI.startsWith("http://")){
            // current URI is a remote one
-           baseURI = currentURI.substring(0,currentURI.lastIndexOf("/"));
+           String uriFrag = currentURI.substring(0,currentURI.lastIndexOf("/"));
+        baseURI = uriFrag + (uriFrag.endsWith("/") ? "" : "/");
         }else{
            // the uri should be a file
           baseURI =  new File(currentURI).getParentFile().getAbsolutePath();
