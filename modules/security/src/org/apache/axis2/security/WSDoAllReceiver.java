@@ -23,6 +23,8 @@ import java.util.Vector;
 import javax.security.auth.callback.CallbackHandler;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
@@ -78,19 +80,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             } catch (Exception e) {
                 throw new AxisFault("Configuration error", e);
             }
-            /**
-             * Cannot do the following right now since we cannot access the req 
-             * mc when this handler runs in the client side.
-             */
-            
-            //Copy the WSHandlerConstants.SEND_SIGV over to the new message 
-            //context - if it exists
-            if(!msgContext.isServerSide()) {//To make sure this is a response message 
-                OperationContext opCtx = msgContext.getOperationContext();
-                MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
-            }
-            
+                        
             if (doDebug) {
                 log.debug("WSDoAllReceiver: enter invoke() ");
             }
@@ -150,7 +140,26 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 cbHandler = getPasswordCB(reqData);
             }
             
+            //Copy the WSHandlerConstants.SEND_SIGV over to the new message 
+            //context - if it exists, if signatureConfirmation in the response msg
+            String sigConfEnabled  = null;
+            if ((sigConfEnabled = (String) getOption(WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION)) == null) {
+                sigConfEnabled = (String) getProperty(msgContext, WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION);
+            }
             
+
+            //To handle sign confirmation of a sync response
+            //TODO Async response
+            if(!msgContext.isServerSide() && !"false".equalsIgnoreCase(sigConfEnabled)) { 
+                OperationContext opCtx = msgContext.getOperationContext();
+                MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if(outMsgCtx != null) {
+                    msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
+                } else {
+                    throw new WSSecurityException("Cannot obtain request message context");
+                }
+            }
+
             
             /*
              * Get and check the Signature specific parameters first because
