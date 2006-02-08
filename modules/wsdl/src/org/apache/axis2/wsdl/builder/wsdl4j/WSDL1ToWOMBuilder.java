@@ -20,6 +20,7 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
+import org.apache.axis2.wsdl.builder.SchemaUnwrapper;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.w3c.dom.Document;
@@ -75,8 +76,6 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         Definition wsdl1Definition = this.readInTheWSDLFile(in);
         WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
         pump.pump();
-
-
 
 
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
@@ -144,7 +143,14 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         reader.setFeature("javax.wsdl.importDocuments", true);
 
         File file = new File(uri);
-        String baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
+        String baseURI;
+        
+        if (uri.startsWith("http://")){
+             baseURI = uri;
+        } else{
+            baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
+        }
+
 
         Document doc;
         try {

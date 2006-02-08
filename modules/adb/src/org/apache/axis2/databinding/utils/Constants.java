@@ -14,7 +14,7 @@ package org.apache.axis2.databinding.utils;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+                                              
 public interface Constants {
 
     static  String NIL="nil";

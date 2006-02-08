@@ -33,6 +33,8 @@ import javax.wsdl.WSDLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.net.URI;
+import java.io.File;
 
 public class CodeGenerationEngine {
     private Log log = LogFactory.getLog(getClass());
@@ -42,23 +44,36 @@ public class CodeGenerationEngine {
 
     private CodeGenConfiguration configuration;
 
+    /**
+     * 
+     * @param configuration
+     * @throws CodeGenerationException
+     */
     public CodeGenerationEngine(CodeGenConfiguration configuration) throws CodeGenerationException {
         this.configuration = configuration;
         loadExtensions();
     }
 
+    /**
+     *
+     * @param parser
+     * @throws CodeGenerationException
+     */
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
         WSDLDescription wom;
         Map allOptions = parser.getAllOptions();
+        String wsdlUri;
         try {
 
             CommandLineOption option = (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
-            wom = this.getWOM(option.getOptionValue());
+            wsdlUri = option.getOptionValue();
+            wom = this.getWOM(wsdlUri);
         } catch (WSDLException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
 
         configuration = new CodeGenConfiguration(wom, allOptions);
+        configuration.setBaseURI(getBaseURI(wsdlUri));
         loadExtensions();
     }
 
@@ -135,9 +150,15 @@ public class CodeGenerationEngine {
     }
 
 
+    /**
+     *
+     * @param uri
+     * @return
+     * @throws WSDLException
+     */
     private WSDLDescription getWOM(String uri) throws WSDLException {
         //assume that the builder is always WSDL 1.1 - later we'll have to edit this to allow
-        //WSDL ersion to be passed
+        //WSDL version to be passed
         return WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(uri)
                 .getDescription();
     }
@@ -166,5 +187,23 @@ public class CodeGenerationEngine {
             throw new CodeGenerationException(e);
         }
 
+    }
+
+    /**
+     * calculates the base URI
+     * Needs improvement but works fine for now ;)
+     * @param currentURI
+     * @return
+     */
+    private String getBaseURI(String currentURI){
+        String baseURI= null;
+        if(currentURI.startsWith("http://")){
+           // current URI is a remote one
+           baseURI = currentURI.substring(0,currentURI.lastIndexOf("/"));
+        }else{
+           // the uri should be a file
+          baseURI =  new File(currentURI).getParentFile().getAbsolutePath();
+        }
+        return baseURI;
     }
 }

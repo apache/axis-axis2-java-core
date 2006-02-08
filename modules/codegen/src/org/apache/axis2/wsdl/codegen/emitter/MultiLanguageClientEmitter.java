@@ -35,6 +35,7 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
+import org.apache.axis2.wsdl.builder.SchemaUnwrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.MessageReference;
@@ -142,7 +143,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     /**
      * This information holder keeps the necessary information of
-     * what to codegen. The service, port, binding (and the porttype)
+     * what to codegen. The service, port, binding (and the WSDLinterface)
      * if the service and binding tags are missing then only the
      * portype wil be there
      * This will get populated before executing any code generation
@@ -151,6 +152,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
     protected URIResolver resolver;
+
+
+    protected MultiLanguageClientEmitter() {
+         // put whatever is needed here
+    }
 
     //~--- methods ------------------------------------------------------------
 
@@ -321,7 +327,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * Creates the DOM tree for the Ant build. Uses the interface.
      */
     protected Document createDOMDocumentForAntBuild() {
-        WSDLInterface wsdlInterface = infoHolder.getPorttype();
+        WSDLInterface wsdlInterface = infoHolder.getWSDLinterface();
         WSDLService service = infoHolder.getService();
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("ant");
@@ -349,7 +355,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected Document createDOMDocumentForCallbackHandler() {
         Document doc = getEmptyDocument();
-        WSDLInterface boundInterface = infoHolder.getPorttype();
+        WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding axisBinding = infoHolder.getBinding();
         Element rootElement = doc.createElement("callback");
 
@@ -371,7 +377,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected Document createDOMDocumentForInterface(boolean writeDatabinders) {
         Document doc = getEmptyDocument();
-        WSDLInterface wsdlInterface = infoHolder.getPorttype();
+        WSDLInterface wsdlInterface = infoHolder.getWSDLinterface();
         WSDLBinding axisBinding = infoHolder.getBinding();
         Element rootElement = doc.createElement("interface");
         String localPart = getCoreClassName(wsdlInterface);
@@ -409,7 +415,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * Creates the DOM tree for implementations.
      */
     protected Document createDOMDocumentForInterfaceImplementation() throws Exception {
-        WSDLInterface boundInterface = infoHolder.getPorttype();
+        WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding binding = infoHolder.getBinding();
         String packageName = configuration.getPackageName();
         String localPart = getCoreClassName(boundInterface);
@@ -466,7 +472,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     protected Document createDOMDocumentForServiceXML() {
-        WSDLInterface boundInterface = infoHolder.getPorttype();
+        WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding axisBinding = infoHolder.getBinding();
         WSDLService service = infoHolder.getService();
         Document doc = getEmptyDocument();
@@ -478,7 +484,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     axisBinding));
         } else {
 
-            // service is missing. However we can derive a service name from the porttype
+            // service is missing. However we can derive a service name from the WSDLinterface
             doc.appendChild(getServiceElement(boundInterface.getName().getLocalPart(), coreClassName, doc,
                     boundInterface, axisBinding));
         }
@@ -494,7 +500,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected Document createDOMDocumentForSkeleton() {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        WSDLInterface boundInterface = infoHolder.getPorttype();
+        WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding axisBinding = infoHolder.getBinding();
 
         // name the skeleton after the binding's name !
@@ -512,7 +518,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     protected Document createDOMDocumentForTestCase() {
-        WSDLInterface boundInterface = infoHolder.getPorttype();
+        WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding binding = infoHolder.getBinding();
         String localPart = getCoreClassName(boundInterface);
         Document doc = getEmptyDocument();
@@ -609,7 +615,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected Document createDocumentForMessageReceiver(String mep) {
 
         WSDLBinding binding = infoHolder.getBinding();
-        WSDLInterface boundInterface = infoHolder.getPorttype();
+        WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
 
@@ -699,7 +705,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         axisBinding = infoHolder.getBinding();
 
-        WSDLInterface wsInterface = infoHolder.getPorttype();
+        WSDLInterface wsInterface = infoHolder.getWSDLinterface();
 
         if (axisBinding == null) {
 
@@ -751,6 +757,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitStub()
      */
     public void emitStub() throws CodeGenerationException {
+
+        SchemaUnwrapper.unwrap(configuration.getWom());
+        
         try {
 
             // get the interface
@@ -792,7 +801,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @throws Exception
      */
     private void emitStubBinding() throws Exception {
-        WSDLInterface axisInterface = infoHolder.getPorttype();
+        WSDLInterface axisInterface = infoHolder.getWSDLinterface();
 
         // see the comment at updateMapperClassnames for details and reasons for
         // calling this method
@@ -830,7 +839,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @throws Exception
      */
     private void emitStubInterface() throws Exception {
-        WSDLInterface axisInterface = infoHolder.getPorttype();
+        WSDLInterface axisInterface = infoHolder.getWSDLinterface();
 
         if (mapper.isObjectMappingPresent()) {
             updateMapperForInterface(axisInterface);
@@ -1062,7 +1071,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 WSDLBinding binding = selectedEndpoint.getBinding();
 
                 infoHolder.setBinding(binding);
-                infoHolder.setPorttype(binding.getBoundInterface());
+                infoHolder.setWSDLinterface(binding.getBoundInterface());
             } else {
 
                 // having no endpoints?? this is surely an exception
@@ -1089,7 +1098,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
             Iterator porttypeIterator = wsdlInterfaces.values().iterator();
 
-            info.setPorttype((WSDLInterface) porttypeIterator.next());
+            info.setWSDLinterface((WSDLInterface) porttypeIterator.next());
         }
     }
 
@@ -1599,12 +1608,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     /**
      * A simple class for keeping the information of the
-     * relevant service/port/binding/porttype combination
+     * relevant service/port/binding/WSDLinterface combination
      */
     private class InformationHolder {
         private WSDLBinding binding;
         private WSDLEndpoint port;
-        private WSDLInterface porttype;
+        private WSDLInterface WSDLinterface;
         private WSDLService service;
 
         private HashMap propertyMap = new HashMap();
@@ -1626,8 +1635,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             return port;
         }
 
-        public WSDLInterface getPorttype() {
-            return porttype;
+        public WSDLInterface getWSDLinterface() {
+            return WSDLinterface;
         }
 
         public WSDLService getService() {
@@ -1644,8 +1653,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             this.port = port;
         }
 
-        public void setPorttype(WSDLInterface porttype) {
-            this.porttype = porttype;
+        public void setWSDLinterface(WSDLInterface WSDLinterface) {
+            this.WSDLinterface = WSDLinterface;
         }
 
         public void setService(WSDLService service) {

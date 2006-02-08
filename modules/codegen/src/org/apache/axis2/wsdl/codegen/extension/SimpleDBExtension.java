@@ -43,6 +43,9 @@ import java.util.Vector;
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
+    /**
+     * 
+     */
     public void engage() {
         //test the databinding type. If not just fall through
         if (testFallThrough(configuration.getDatabindingType())) {
@@ -63,6 +66,13 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             WSDLExtensibilityElement extensiblityElt;
             Vector xmlSchemaTypeVector = new Vector();
             XmlSchemaCollection schemaColl = new XmlSchemaCollection();
+            //add the base uri
+            if (configuration.getBaseURI()!=null){
+                 schemaColl.setBaseUri(configuration.getBaseURI());
+            }
+
+
+
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
 
@@ -154,6 +164,10 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
     }
 
+    /**
+     *
+     * @param options
+     */
     private void setUserparameters(CompilerOptions options){
         Map propertyMap = configuration.getProperties();
         if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES)){
@@ -178,6 +192,10 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
     }
 
 
+    /**
+     *
+     * @param options
+     */
     private void setDefaultOptions(CompilerOptions options) {
         File outputDir = new File(configuration.getOutputLocation(), "src");
         if(!outputDir.exists()) {

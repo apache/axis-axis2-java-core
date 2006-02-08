@@ -31,6 +31,24 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private WSDLDescription wom;
 
+    private String baseURI;
+
+    public String getBaseURI() {
+        return baseURI;
+    }
+
+    public void setBaseURI(String baseURI) {
+        this.baseURI = baseURI;
+    }
+
+    public Map getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    public void setConfigurationProperties(Map configurationProperties) {
+        this.configurationProperties = configurationProperties;
+    }
+
     public void setWom(WSDLDescription wom) {
         this.wom = wom;
     }
