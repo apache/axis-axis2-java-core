@@ -73,6 +73,11 @@
             <version>${XmlSchema.version}</version>
         </dependency>
         <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom</artifactId>
+            <version>${axiom.version}</version>
+        </dependency>
+        <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-activation</artifactId>
             <version>${geronimo.spec.activation.version}</version>
