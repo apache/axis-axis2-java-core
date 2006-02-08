@@ -137,6 +137,15 @@ public class AxisFault extends RemoteException {
     }
 
     /**
+     * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
+     * @param faultCode   - this will appear as the Value in the Code information item of SOAP Fault
+     */
+    public AxisFault(String messageText, QName faultCode) {
+        this(messageText);
+        setFaultCode(faultCode);
+    }
+
+    /**
      * @param message
      * @param cause
      */

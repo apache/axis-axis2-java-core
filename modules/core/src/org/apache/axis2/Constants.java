@@ -185,7 +185,7 @@ public class Constants {
     //to set and get the property from service context
     public static final String COOKIE_STRING = "Cookie";
 
-    //See
+    public static final String NS_URI_AXIS2 = "http://ws.apache.org/axis2/";
 
     /**
      * Addressing Constants

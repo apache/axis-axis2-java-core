@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -137,12 +139,14 @@ public class AxisEngine {
         faultContext.setTransportOut(processingContext.getTransportOut());
 
         faultContext.setProcessingFault(true);
-
-        if (processingContext.getFaultTo() != null) {
+        EndpointReference faultTo = processingContext.getFaultTo();
+        if (faultTo != null) {
             faultContext.setFaultTo(processingContext.getFaultTo());
-        } else {
+        } 
+        
+        if (faultTo == null || AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
+                    || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())) {
             Object writer = processingContext.getProperty(MessageContext.TRANSPORT_OUT);
-
             if (writer != null) {
                 faultContext.setProperty(MessageContext.TRANSPORT_OUT, writer);
             } else {
