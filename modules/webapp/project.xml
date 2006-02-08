@@ -193,7 +193,7 @@
         </dependency>
         <dependency>
             <groupId>ws-commons</groupId>
-            <artifactId>ws-policy</artifactId>
+            <artifactId>policy</artifactId>
             <version>${policy.version}</version>
             <properties>
                 <module>true</module>
