@@ -112,14 +112,43 @@ public class XSLTTemplateProcessor {
                              InputStream xsltStream,
                              URIResolver customResolver)
             throws TransformerFactoryConfigurationError, TransformerException {
+        parse(out, document, xsltStream, customResolver, false);
+    }
+
+    /**
+     * @param out
+     * @param document
+     * @param xsltStream
+     * @throws TransformerFactoryConfigurationError
+     *
+     * @throws TransformerException
+     */
+    public static void parse(OutputStream out,
+                             Document document,
+                             InputStream xsltStream,
+                             URIResolver customResolver,
+                             boolean pretty)
+            throws TransformerFactoryConfigurationError, TransformerException {
         Source xsltSource = new StreamSource(xsltStream);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        if(pretty) {
+            try {
+                transformerFactory.setAttribute("indent-number", new Integer(2));
+            } catch (Exception e) {
+            }
+        }
         if (customResolver!=null){
              transformerFactory.setURIResolver(customResolver);
         }
        
         Transformer transformer = transformerFactory
                 .newTransformer(xsltSource);
+        if(pretty) {
+            try {
+                transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2");
+            } catch (Exception e) {
+            }
+        }
 
         parse(out, document, transformer);
 

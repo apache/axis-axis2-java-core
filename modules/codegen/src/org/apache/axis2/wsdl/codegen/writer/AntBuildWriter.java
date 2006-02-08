@@ -1,8 +1,11 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.FileWriter;
+import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.URIResolver;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Iterator;
@@ -78,5 +81,22 @@ public class AntBuildWriter extends ClassWriter {
         }
 
         return templateName;
+    }
+
+    /**
+     * Writes the output file.
+     *
+     * @param doc
+     * @throws Exception
+     */
+    public void parse(Document doc, URIResolver resolver) throws Exception {
+        if (!fileExists) {
+            XSLTTemplateProcessor.parse(this.stream,
+                    doc,
+                    this.xsltStream,
+                    resolver);
+            this.stream.flush();
+            this.stream.close();
+        }
     }
 }
