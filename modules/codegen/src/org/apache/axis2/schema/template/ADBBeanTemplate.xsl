@@ -308,6 +308,7 @@
             <xsl:variable name="builderName">builder<xsl:value-of select="position()"/></xsl:variable>
             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+            <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
 
 
             <xsl:choose>
@@ -330,6 +331,15 @@
                                             &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
                                        //we are at the first element
                                         <xsl:value-of select="$loopBoolName"/> = true;
+                                   <xsl:if test="$min=0">
+                                     }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event
+                                          &amp;&amp;  !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                        //we've found an end element that does not belong to this type
+                                        //since this can occur zero times, this may well be empty.So return
+                                        //the empty object
+                                        return object;
+
+                                   </xsl:if>
                                     }else{
                                         reader.next();
                                     }
@@ -425,11 +435,11 @@
                         <!-- End of Array handling of ADB classes -->
                         <xsl:otherwise>
                             <xsl:if test="position()>1">
-                                // Move to a start element
-                                event = reader.getEventType();
-                                while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
-                                    event = reader.next();
-                                }
+                            // Move to a start element
+                            event = reader.getEventType();
+                            while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
+                                event = reader.next();
+                            }
                             </xsl:if>
                            <!-- Start of Array handling of simple types -->
                             org.apache.axis2.databinding.utils.SimpleArrayReaderStateMachine <xsl:value-of select="$stateMachineName"/> = new
