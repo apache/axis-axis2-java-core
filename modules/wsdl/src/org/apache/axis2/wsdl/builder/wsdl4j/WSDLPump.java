@@ -193,6 +193,9 @@ public class WSDLPump {
                             ExtensionConstants.SCHEMA);
                     wsdlTypes.addExtensibilityElement(schemaExtensibilityElement);
                     schemaExtensibilityElement.setElement(schemaElement);
+
+
+
                 }
             }
 
@@ -489,11 +492,11 @@ public class WSDLPump {
 
             Message message = wsdl4jInputMessage.getMessage();
             if (null != message) {
-                //wrapping has to be done on per message basis
-
                 wsdlInputMessage.setElementQName(
-                        this.generateReferenceQname(wrappedInputName
-                                ,message,findWrapppable(message)));
+                        this.generateReferenceQname(
+                                wrappedInputName
+                                ,message,
+                                findWrapppable(message)));
                 this.copyExtensibleElements(
                         (message).getExtensibilityElements(),
                         wsdlInputMessage, null);

@@ -33,6 +33,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
     private int currentState = INIT_STATE;
     private boolean nillable = false;
     private String text="";
+    private String errorMessage = "";
 
     /**
      *
@@ -54,6 +55,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
      */
     public void setElementNameToTest(QName elementNameToTest) {
         this.elementNameToTest = elementNameToTest;
+        
     }
 
     /**
@@ -65,6 +67,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
         currentState = INIT_STATE;
         nillable = false;
         text="";
+        errorMessage = "";
     }
     /**
      * public read method - reads a given reader to extract the text value
@@ -98,7 +101,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
                 && currentState!= ILLEGAL_STATE);
 
         if (currentState==ILLEGAL_STATE){
-            throw new RuntimeException("Illegal state!");
+            throw new RuntimeException("Illegal state!" + errorMessage);
         }
 
     }
@@ -126,19 +129,32 @@ public class SimpleElementReaderStateMachine implements States,Constants{
             if (elementNameToTest.equals(reader.getName())){
                 currentState = START_ELEMENT_FOUND_STATE;
             }
-            //characteres found after starting
+            //characteres found after start element
         }else if (event==XMLStreamConstants.CHARACTERS && currentState==START_ELEMENT_FOUND_STATE){
             currentState  = TEXT_FOUND_STATE;
+
+            //characters found - if this is a characters event that was in the correct place then
+            //it would have been handled already. we need to check whether this is a ignorable
+            //whitespace and if not push the state machine to a illegal state.
+        }else if (event==XMLStreamConstants.CHARACTERS){
+            if (reader.getText().trim().length()==0){
+                //the text is empty - don't change the state
+            }else{
+                //we do NOT handle mixed content
+                currentState = ILLEGAL_STATE;
+                errorMessage = "Mixed Content " +reader.getText();  //todo I18n this
+            }
 
             //End element  found after starting This means we've found an empty element like <foo/>
         }else if (event==XMLStreamConstants.END_ELEMENT && currentState==START_ELEMENT_FOUND_STATE){
             //force the text to be empty!
             text = "";
-            
+
             if (elementNameToTest.equals(reader.getName())){
                 currentState = END_ELEMENT_FOUND_STATE;
             }else{
                 currentState = ILLEGAL_STATE;
+                errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
             }
 
             // end element found after characters
@@ -147,6 +163,8 @@ public class SimpleElementReaderStateMachine implements States,Constants{
                 currentState = END_ELEMENT_FOUND_STATE;
             }else{
                 currentState = ILLEGAL_STATE;
+                //set the error message
+                errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
             }
 
             //end has been reached
@@ -165,6 +183,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
 
         }else{
             currentState = ILLEGAL_STATE;
+            errorMessage = "Current state is " + currentState ;  //todo I18n this
         }
     }
 

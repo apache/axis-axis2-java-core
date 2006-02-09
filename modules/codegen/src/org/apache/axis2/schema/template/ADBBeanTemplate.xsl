@@ -323,13 +323,31 @@
                                     "<xsl:value-of select="$namespace"/>",
                                     "<xsl:value-of select="$propertyName"/>");
 
+                             // Find the first element
+                             while (!<xsl:value-of select="$loopBoolName"/>){
+                                    event = reader.getEventType();
+                                    if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                            &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                       //we are at the first element
+                                        <xsl:value-of select="$loopBoolName"/> = true;
+                                    }else{
+                                        reader.next();
+                                    }
+
+                                }
+
+                                //Now loop and populate the array
+                                <xsl:value-of select="$loopBoolName"/> = false;
                                 while (!<xsl:value-of select="$loopBoolName"/>){
                                     event = reader.getEventType();
                                     if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
                                             &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
                                        <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
-                                    } else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event &amp;&amp;
-                                        <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                    }else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                            &amp;&amp; !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                       <xsl:value-of select="$loopBoolName"/> = true;
+                                    }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event &amp;&amp;
+                                        !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
                                         <xsl:value-of select="$loopBoolName"/> = true;
                                     }else{
                                         reader.next();
@@ -406,6 +424,13 @@
                         </xsl:when>
                         <!-- End of Array handling of ADB classes -->
                         <xsl:otherwise>
+                            <xsl:if test="position()>1">
+                                // Move to a start element
+                                event = reader.getEventType();
+                                while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
+                                    event = reader.next();
+                                }
+                            </xsl:if>
                            <!-- Start of Array handling of simple types -->
                             org.apache.axis2.databinding.utils.SimpleArrayReaderStateMachine <xsl:value-of select="$stateMachineName"/> = new
                                                             org.apache.axis2.databinding.utils.SimpleArrayReaderStateMachine();
@@ -430,8 +455,10 @@
               <xsl:when test="@ours">
                   <!--No concerns of being nillable here. if it's ours and if the nillable attribute was present
                       we would have outputted a null already-->
-                   object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(
-                          reader));
+                  object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(
+                  reader));
+
+
               </xsl:when>
               <!-- end of adb type handling code -->
               <!-- start of OMelement handling -->
@@ -462,6 +489,13 @@
               <!-- end of OMelement handling -->
               <!-- start of the simple types handling -->
               <xsl:otherwise>
+                  <xsl:if test="position()>1">
+                      // Move to a start element
+                      event = reader.getEventType();
+                      while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
+                        event = reader.next();
+                      }
+                  </xsl:if>
                 org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine <xsl:value-of select="$stateMachineName"/>
                   = new org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine();
                 javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(

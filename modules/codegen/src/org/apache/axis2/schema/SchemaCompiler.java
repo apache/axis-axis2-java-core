@@ -65,9 +65,13 @@ public class SchemaCompiler {
     private CompilerOptions options;
     private HashMap processedTypemap;
 
-    //The processedElementMap and the processedElementList have a subtle difference
-    //The writing to the processedElementList happens when an outer element is processed.
+    //the list of processedElements for the outer elements
     private HashMap processedElementMap;
+
+    // keeps a list of child element references per outer element. the content of this
+    // map would be a QName and another hashmap
+    private HashMap processedElementChildrenMap;
+
     private HashMap processedAnonymousComplexTypesMap;
     //we need this map to keep the referenced elements. these elements need to be kept seperate
     //to avoid conflicts
@@ -138,6 +142,7 @@ public class SchemaCompiler {
         processedTypeMetaInfoMap = new HashMap();
         processedElementRefMap = new HashMap();
         nillableElementList = new ArrayList();
+        processedElementChildrenMap = new HashMap();
 
         //load the writer a nd initiliaze the base type
         writer = SchemaPropertyLoader.getBeanWriterInstance();
@@ -200,7 +205,7 @@ public class SchemaCompiler {
             //this is the set of outer elements so we need to generate classes
             //The outermost elements do not contain occurence counts (!) so we do not need
             //to check for arraytypes
-            processElement((XmlSchemaElement) xmlSchemaElement1Iterator.next(), true, schema);
+            processElement((XmlSchemaElement) xmlSchemaElement1Iterator.next(), schema);
         }
 
 
@@ -295,9 +300,26 @@ public class SchemaCompiler {
         processedElementMap.put(xsElt.getQName(), writtenClassName);
     }
 
+    /**
+     * For inner elements
+     * @param xsElt
+     * @param innerElementMap
+     * @param parentSchema
+     * @throws SchemaCompilationException
+     */
+    private void processElement(XmlSchemaElement xsElt,Map innerElementMap,List localNillableList,XmlSchema parentSchema) throws SchemaCompilationException {
+        processElement(xsElt,false,innerElementMap,localNillableList,parentSchema);
+    }
 
-
-
+    /**
+     * For outer elements
+     * @param xsElt
+     * @param parentSchema
+     * @throws SchemaCompilationException
+     */
+    private void processElement(XmlSchemaElement xsElt,XmlSchema parentSchema) throws SchemaCompilationException {
+        processElement(xsElt,true,null,null,parentSchema);
+    }
     /**
      * Process and Element
      *
@@ -307,7 +329,7 @@ public class SchemaCompiler {
      * @param isArray-  flag saying whether the elements represents an array
      * @throws SchemaCompilationException
      */
-    private void processElement(XmlSchemaElement xsElt, boolean isOuter,XmlSchema parentSchema) throws SchemaCompilationException {
+    private void processElement(XmlSchemaElement xsElt, boolean isOuter,Map innerElementMap,List localNillableList, XmlSchema parentSchema) throws SchemaCompilationException {
 
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
@@ -326,19 +348,20 @@ public class SchemaCompiler {
 
             if (!isOuter) {
                 String className = findClassName(schemaType.getQName(), isArray(xsElt));
-                this.processedElementMap.put(xsElt.getQName(), className);
+                //since this is a inner element we should add it to the inner element map
+                innerElementMap.put(xsElt.getQName(), className);
+            }else{
+                this.processedElementList.add(xsElt.getQName());
             }
 
-            this.processedElementList.add(xsElt.getQName());
         }else if (xsElt.getRefName()!=null){
 
             //process the referenced type. It could be thought that the referenced element replaces this
             //element
 
             XmlSchemaElement referencedElement = parentSchema.getElementByName(xsElt.getRefName());
-            processElement(referencedElement,
-                    true, //if the element is referenced, then it should be one of the outer (global) ones
-                    parentSchema);
+            //if the element is referenced, then it should be one of the outer (global) ones
+            processElement(referencedElement, parentSchema);
 
             //no outer check required here. If the element is having a ref, then it is definitely
             //not an outer element.
@@ -353,14 +376,20 @@ public class SchemaCompiler {
             //this specifically happens with xsd:anyType.
             if (!isOuter) {
                 String className = findClassName(xsElt.getSchemaTypeName(), isArray(xsElt));
-                this.processedElementMap.put(xsElt.getQName(), className);
+                innerElementMap.put(xsElt.getQName(), className);
+            }else{
+                this.processedElementList.add(xsElt.getQName());
             }
-            this.processedElementList.add(xsElt.getQName());
+
         }
 
         //add this elements QName to the nillable group if it has the  nillable attribute
         if (xsElt.isNillable()){
-            this.nillableElementList.add(xsElt.getQName());
+            if (isOuter){
+                this.nillableElementList.add(xsElt.getQName());
+            }else{
+                localNillableList.add(xsElt.getQName());
+            }
         }
 
     }
@@ -713,7 +742,10 @@ public class SchemaCompiler {
                          boolean order,
                          XmlSchema parentSchema) throws SchemaCompilationException {
         int count = items.getCount();
-        Map processedElements = new HashMap();
+        Map processedElementArrayStatusMap = new HashMap();
+        Map processedElementTypeMap = new HashMap();
+        List localNillableList = new ArrayList();
+
         Map elementOrderMap = new HashMap();
 
         for (int i = 0; i < count; i++) {
@@ -724,8 +756,8 @@ public class SchemaCompiler {
                 XmlSchemaElement xsElt = (XmlSchemaElement) item;
 
                 boolean isArray = isArray(xsElt);
-                processElement(xsElt, false,parentSchema); //we know for sure this is not an outer type
-                processedElements.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
+                processElement(xsElt, processedElementTypeMap,localNillableList,parentSchema); //we know for sure this is not an outer type
+                processedElementArrayStatusMap.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
                 if (order) {
                     //we need to keep the order of the elements. So push the elements to another
                     //hashmap with the order number
@@ -744,29 +776,29 @@ public class SchemaCompiler {
         }
 
         // loop through the processed items and add them to the matainf object
-        Iterator processedElementsIterator = processedElements.keySet().iterator();
+        Iterator processedElementsIterator = processedElementArrayStatusMap.keySet().iterator();
         int startingItemNumberOrder = metainfHolder.getOrderStartPoint();
         while (processedElementsIterator.hasNext()) {
             XmlSchemaElement elt = (XmlSchemaElement) processedElementsIterator.next();
             String clazzName;
             QName qName;
 
-            if (elt.getQName()!=null){ //probably this is referenced
-                clazzName = (String) processedElementMap.get(elt.getQName());
+            if (elt.getQName()!=null){
+                clazzName = (String) processedElementTypeMap.get(elt.getQName());
                 qName = elt.getQName();
                 metainfHolder.registerMapping(qName,
                         elt.getSchemaTypeName()
                         , clazzName,
-                        ((Boolean) processedElements.get(elt)).booleanValue() ?
+                        ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
                                 SchemaConstants.ANY_ARRAY_TYPE :
                                 SchemaConstants.ELEMENT_TYPE);
-            }else{
+            }else{ //probably this is referenced
                 clazzName = (String)processedElementRefMap.get(elt.getRefName());
                 qName = elt.getRefName();
                 metainfHolder.registerMapping(qName,
                         parentSchema.getElementByName(elt.getRefName()).getSchemaTypeName()
                         , clazzName,
-                        ((Boolean) processedElements.get(elt)).booleanValue() ?
+                        ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
                                 SchemaConstants.ANY_ARRAY_TYPE :
                                 SchemaConstants.ELEMENT_TYPE);
             }
@@ -785,7 +817,7 @@ public class SchemaCompiler {
             }
 
             //get the nillable state and register that on the metainf holder
-            if (nillableElementList.contains(elt.getQName())){
+            if (localNillableList.contains(elt.getQName())){
                 metainfHolder.registerNillableQName(elt.getQName());
             }
 
