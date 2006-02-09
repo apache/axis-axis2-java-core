@@ -28,16 +28,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class AddressingOutHandler extends AddressingHandler {
 
@@ -88,6 +88,10 @@ public class AddressingOutHandler extends AddressingHandler {
         Options messageContextOptions = msgContext.getOptions();
         SOAPEnvelope envelope = msgContext.getEnvelope();
         SOAPHeader soapHeader = envelope.getHeader();
+        if (soapHeader == null) {
+            SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
+            soapHeader = soapFac.createSOAPHeader(envelope);
+        }
 
         // by this time, we definitely have some addressing information to be sent. This is because,
         // we have tested at the start of this whether messageInformationHeaders are null or not.
@@ -239,7 +243,7 @@ public class AddressingOutHandler extends AddressingHandler {
         // add epr address
         String address = epr.getAddress();
         if (!"".equals(address) && address != null) {
-            OMElement addressElement = OMAbstractFactory.getOMFactory().createOMElement(EPR_ADDRESS,addressingNamespaceObject, soapHeaderBlock);
+            OMElement addressElement = OMAbstractFactory.getOMFactory().createOMElement(EPR_ADDRESS, addressingNamespaceObject, soapHeaderBlock);
             addressElement.setText(address);
         }
 

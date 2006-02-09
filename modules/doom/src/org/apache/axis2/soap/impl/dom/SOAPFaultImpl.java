@@ -16,15 +16,14 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.ParentNode;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
-import org.apache.axis2.om.impl.dom.ParentNode;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP12Constants;
@@ -161,7 +160,7 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 		}
 		OMElement faultDetailEnty = new ElementImpl((ParentNode) this,
 				SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY,
-				(NamespaceImpl) this.namespace);
+				null);
 		faultDetailEnty.setText(sw.getBuffer().toString());
 	}
 
