@@ -329,4 +329,8 @@ public class PolicyInclude {
 	public void removePolicyElement(String policyURI) {
 		wrapperElements.remove(policyURI);
 	}
+
+    public void removeAllPolicyElements(){
+        wrapperElements.clear();
+    }
 }
