@@ -1,7 +1,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.OperationClient;
@@ -14,14 +13,13 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPHeader;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.CallbackReceiver;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -248,7 +246,7 @@ class OutInAxisOperationClient implements OperationClient {
                 mc.setSoapAction((String) soapaction.getValue());
             }
         }
-        addReferenceParameters(mc.getEnvelope());
+        addReferenceParameters(mc);
         if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
@@ -309,17 +307,17 @@ class OutInAxisOperationClient implements OperationClient {
         }
     }
 
-    private void addReferenceParameters(SOAPEnvelope env) {
+    private void addReferenceParameters(MessageContext msgctx) {
+        EndpointReference to = msgctx.getTo();
         if (options.isManageSession()) {
             EndpointReference tepr = sc.getTargetEPR();
             if (tepr != null) {
                 Map map = tepr.getAllReferenceParameters();
                 Iterator valuse = map.values().iterator();
-                SOAPHeader sh = env.getHeader();
                 while (valuse.hasNext()) {
                     Object refparaelement = valuse.next();
                     if (refparaelement instanceof OMElement) {
-                        sh.addChild((OMElement) refparaelement);
+                        to.addReferenceParameter((OMElement) refparaelement);
                     }
                 }
             }
@@ -361,50 +359,19 @@ class OutInAxisOperationClient implements OperationClient {
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                 responseMessageContext, msgctx.getEnvelope().getNamespace()
                 .getName());
-        try {
-            // Adding request reference parameters into ServiceContext , so then in the next
-            // requesy automatically send them back
-            if (!resenvelope.getBody().hasFault()) {
-                sc.setTargetEPR(getReplyToEPR(resenvelope.getHeader()
-                        .getFirstChildWithName(new QName("ReplyTo"))));
-            }
-        } catch (Exception e) {
-            //NPE may occure there for need to catch this
-        }
-
         if (resenvelope != null) {
             responseMessageContext.setEnvelope(resenvelope);
             engine = new AxisEngine(msgctx.getConfigurationContext());
             engine.receive(responseMessageContext);
+            if (!resenvelope.getBody().hasFault()) {
+                sc.setTargetEPR(responseMessageContext.getReplyTo());
+            }
         } else {
             throw new AxisFault(Messages
                     .getMessage("blockingInvocationExpectsResponse"));
         }
 
         return responseMessageContext;
-    }
-
-    private EndpointReference getReplyToEPR(OMElement headerElement) {
-        EndpointReference epr = new EndpointReference(null);
-        if (headerElement == null)
-            return null;
-
-        Iterator childElements = headerElement.getChildElements();
-        while (childElements.hasNext()) {
-            OMElement eprChildElement = (OMElement) childElements.next();
-            if (AddressingConstants.EPR_ADDRESS.equals(eprChildElement.getLocalName())) {
-            } else if (AddressingConstants.EPR_REFERENCE_PARAMETERS.equals(eprChildElement.getLocalName())) {
-
-                Iterator referenceParameters = eprChildElement.getChildElements();
-                while (referenceParameters.hasNext()) {
-                    OMElement element = (OMElement) referenceParameters.next();
-                    epr.addReferenceParameter(element);
-                }
-            } else if (AddressingConstants.Final.WSA_METADATA.equals(eprChildElement.getLocalName())) {
-                epr.setMetaData(eprChildElement);
-            }
-        }
-        return epr;
     }
 
     /**

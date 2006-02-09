@@ -11,10 +11,10 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPHeader;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -256,17 +256,17 @@ class OutOnlyAxisOperationClient implements OperationClient {
         mc.setMessageID(messageId);
     }
 
-    private void addReferenceParameters(SOAPEnvelope env) {
+     private void addReferenceParameters(MessageContext msgctx) {
+        EndpointReference to = msgctx.getTo();
         if (options.isManageSession()) {
             EndpointReference tepr = sc.getTargetEPR();
             if (tepr != null) {
                 Map map = tepr.getAllReferenceParameters();
                 Iterator valuse = map.values().iterator();
-                SOAPHeader sh = env.getHeader();
                 while (valuse.hasNext()) {
                     Object refparaelement = valuse.next();
                     if (refparaelement instanceof OMElement) {
-                        sh.addChild((OMElement) refparaelement);
+                        to.addReferenceParameter((OMElement) refparaelement);
                     }
                 }
             }
@@ -318,7 +318,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         // create the operation context for myself
         OperationContext oc = new OperationContext(axisOp, sc);
         oc.addMessageContext(mc);
-        addReferenceParameters(mc.getEnvelope());
+        addReferenceParameters(mc);
         // ship it out
         AxisEngine engine = new AxisEngine(cc);
         engine.send(mc);
