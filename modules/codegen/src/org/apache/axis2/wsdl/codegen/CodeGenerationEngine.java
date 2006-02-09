@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.net.URI;
+import java.net.MalformedURLException;
 import java.io.File;
 
 public class CodeGenerationEngine {
@@ -197,14 +198,16 @@ public class CodeGenerationEngine {
      */
     private String getBaseURI(String currentURI){
         String baseURI= null;
-        if(currentURI.startsWith("http://")){
-           // current URI is a remote one
-           String uriFrag = currentURI.substring(0,currentURI.lastIndexOf("/"));
-        baseURI = uriFrag + (uriFrag.endsWith("/") ? "" : "/");
-        }else{
-           // the uri should be a file
-          baseURI =  new File(currentURI).getParentFile().getAbsolutePath();
+        if (!currentURI.startsWith("http://")) {
+            // the uri should be a file
+            try {
+                currentURI = new File(currentURI).toURL().toString();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Cannot find baseuri for :" + currentURI);
+            }
         }
+        String uriFrag = currentURI.substring(0, currentURI.lastIndexOf("/"));
+        baseURI = uriFrag + (uriFrag.endsWith("/") ? "" : "/");
         return baseURI;
     }
 }
