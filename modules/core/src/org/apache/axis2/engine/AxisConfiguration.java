@@ -169,7 +169,6 @@ public class AxisConfiguration extends AxisDescription {
      */
     public synchronized void addService(AxisService service) throws AxisFault {
         AxisServiceGroup axisServiceGroup = new AxisServiceGroup();
-
         axisServiceGroup.setServiceGroupName(service.getName());
         axisServiceGroup.setParent(this);
         axisServiceGroup.addService(service);
@@ -194,6 +193,12 @@ public class AxisConfiguration extends AxisDescription {
 
         services = axisServiceGroup.getServices();
 
+        Iterator enModule = engagedModules.iterator();
+
+        while (enModule.hasNext()) {
+            QName moduleName = (QName) enModule.next();
+            axisServiceGroup.engageModule(getModule(moduleName));
+        }
         while (services.hasNext()) {
             description = (AxisService) services.next();
             if (description.isUseDefaultChains()) {
@@ -205,13 +210,6 @@ public class AxisConfiguration extends AxisDescription {
             }
             allservices.put(description.getName(), description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
-        }
-
-        Iterator enModule = engagedModules.iterator();
-
-        while (enModule.hasNext()) {
-            QName moduleName = (QName) enModule.next();
-            axisServiceGroup.engageModule(getModule(moduleName));
         }
 
 //        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
