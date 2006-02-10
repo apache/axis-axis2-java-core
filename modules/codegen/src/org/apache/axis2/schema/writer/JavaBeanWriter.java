@@ -7,6 +7,7 @@ import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
+import org.apache.axis2.schema.util.PrimitiveTypeFinder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XSLTTemplateProcessor;
@@ -427,6 +428,9 @@ public class JavaBeanWriter implements BeanWriter {
 
             XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
 
+            if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)){
+                XSLTUtils.addAttribute(model, "primitive", "yes", property);
+            }
             //add an attribute that says the type is default
             if (isDefault(javaClassNameForElement)){
                 XSLTUtils.addAttribute(model, "default", "yes", property);

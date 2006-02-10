@@ -172,29 +172,32 @@
                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
                                                                       "<xsl:value-of select="$propertyName"/>"));
                             <!-- Arraylist can handle null's -->
-                                 <xsl:choose>
-                                    <xsl:when test="@nillable">
-                                     elementList.add(<xsl:value-of select="$varName"/>==null?null:
-                                     <xsl:value-of select="$varName"/>);
-                                     </xsl:when>
-                                     <xsl:otherwise>
-                                      if (<xsl:value-of select="$varName"/>==null){
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                      }
-                                      elementList.add(<xsl:value-of select="$varName"/>);
-                                     </xsl:otherwise>
-                                   </xsl:choose>
+                            <xsl:choose>
+                                <xsl:when test="@nillable">
+                                    elementList.add(<xsl:value-of select="$varName"/>==null?null:
+                                    <xsl:value-of select="$varName"/>);
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                    throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                    elementList.add(<xsl:value-of select="$varName"/>);
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
                              elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
                                                                       "<xsl:value-of select="$propertyName"/>"));
-                             <!-- for some primitive types - there's no concept of a null, say for int. hence we
-                                  are unbale to test for null unless a supporting parameter is supplied to say
-                                  whether a type is primitive or not -->
-
-                            elementList.add(
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-
+                            <xsl:choose>
+                                <xsl:when test="@nillable and not(@primitive)">
+                                    elementList.add(<xsl:value-of select="$varName"/>==null?null:
+                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                </xsl:when>
+                                <xsl:otherwise>
+                                elementList.add(
+                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:if test="$min=0 or $choice">}</xsl:if>
