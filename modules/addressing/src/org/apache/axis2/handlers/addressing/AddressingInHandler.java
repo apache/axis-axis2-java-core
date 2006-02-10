@@ -120,7 +120,7 @@ public abstract class AddressingInHandler extends AddressingHandler {
             ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
                     getServiceGroupContext(groupId, msgContext);
             if (serviceGroupContext == null) {
-                handleNoServiceGroupContextIDCase(msgContext);
+//                handleNoServiceGroupContextIDCase(msgContext);
                 throw new AxisFault("Invalid Service Group Id." + groupId);
             }
             msgContext.setServiceGroupContextId(serviceGroupId.getText());
