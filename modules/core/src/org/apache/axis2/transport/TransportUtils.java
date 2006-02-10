@@ -106,6 +106,12 @@ public class TransportUtils {
                 builder.setOmbuilderFactory(soapFactory);
                 envelope = soapFactory.getDefaultEnvelope();
                 envelope.getBody().addChild(builder.getDocumentElement());
+                
+                // We now have the message inside an envolope. However, this is 
+                // only an OM; We need to build a SOAP model from it.
+
+                builder = new StAXSOAPModelBuilder(envelope.getXMLStreamReader(), soapNamespaceURI);
+                envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else {
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(inStream, charSetEnc);
