@@ -19,14 +19,14 @@ package org.apache.wsdl.extensions.impl;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
-public class PolicyExtensitbilityElementImpl extends WSDLExtensibilityElementImpl implements PolicyExtensibilityElement {
+public class PolicyExtensibilityElementImpl extends WSDLExtensibilityElementImpl implements PolicyExtensibilityElement {
     private Object policyElement;
     
-    public PolicyExtensitbilityElementImpl() {
+    public PolicyExtensibilityElementImpl() {
     }
     
     
-    public PolicyExtensitbilityElementImpl(Object policyElement) {
+    public PolicyExtensibilityElementImpl(Object policyElement) {
         setPolicyElement(policyElement);
     }
     
