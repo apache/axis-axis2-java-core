@@ -185,6 +185,7 @@ public class DeploymentEngine implements DeploymentConstants {
         Iterator services = serviceList.iterator();
 
         while (services.hasNext()) {
+            ArrayList contolops = new ArrayList();
             AxisService axisService = (AxisService) services.next();
             axisService.setUseDefaultChains(false);
 
@@ -216,7 +217,11 @@ public class DeploymentEngine implements DeploymentConstants {
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
-                        opDesc.engageModule(module, axisConfig);
+                        ArrayList controlops = opDesc.engageModule(module, axisConfig);
+                        for (int j = 0; j < controlops.size(); j++) {
+                            AxisOperation axisOperation = (AxisOperation) controlops.get(j);
+                            contolops.add(axisOperation);
+                        }
                     } else {
                         throw new DeploymentException(
                                 Messages.getMessage(
@@ -225,6 +230,11 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 }
             }
+            for (int i = 0; i < contolops.size(); i++) {
+                AxisOperation axisOperation = (AxisOperation) contolops.get(i);
+                axisService.addOperation(axisOperation);
+            }
+            contolops.clear();
         }
 
         axisConfig.addServiceGroup(serviceGroup);

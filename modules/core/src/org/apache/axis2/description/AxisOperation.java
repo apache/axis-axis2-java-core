@@ -99,10 +99,10 @@ public abstract class AxisOperation extends AxisDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public final void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
+    public final ArrayList engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
             throws AxisFault {
         if (moduleref == null) {
-            return;
+            return null;
         }
 
         boolean needToadd = true;
@@ -118,24 +118,79 @@ public abstract class AxisOperation extends AxisDescription
                 needToadd = false;
             }
         }
-        // adding control operations
-        ((AxisService) getParent()).addModuleOperations(moduleref, axisConfig);
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
         phaseResolver.engageModuleToOperation(this, moduleref);
 
-        HashMap map = moduleref.getOperations();
-        Collection col = map.values();
-
-        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            AxisOperation axisOperation = (AxisOperation) iterator.next();
-            AxisOperation serviceop =
-                    ((AxisService) getParent()).getOperation(axisOperation.getName());
-            phaseResolver.engageModuleToOperation(serviceop, moduleref);
-        }
         if (needToadd) {
             engagedModules.add(moduleref);
         }
+        return addModuleOperations(moduleref, axisConfig, (AxisService) getParent());
     }
+
+
+    /**
+     * Adds an operation to a service if a module is required to do so.
+     *
+     * @param module
+     */
+    public ArrayList addModuleOperations(AxisModule module, AxisConfiguration axisConfig,
+                                         AxisService service)
+            throws AxisFault {
+        HashMap map = module.getOperations();
+        Collection col = map.values();
+        PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
+        //this arry list is retun , to avoid concurrent modifications , in the deployment engine
+        ArrayList ops = new ArrayList();
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
+            ArrayList wsamappings = axisOperation.getWsamappingList();
+
+            for (int j = 0; j < wsamappings.size(); j++) {
+                Parameter parameter = (Parameter) wsamappings.get(j);
+
+                service.mapActionToOperation((String) parameter.getValue(), axisOperation);
+            }
+            if (service.getOperation(axisOperation.getName()) == null) {
+                // this opration is a control operation.
+                axisOperation.setControlOperation(true);
+                phaseResolver.engageModuleToOperation(axisOperation, module);
+                ops.add(axisOperation);
+            }
+        }
+        return ops;
+    }
+
+    /**
+     * Gets a copy from module operation.
+     *
+     * @param axisOperation
+     * @return Returns AxisOperation.
+     * @throws AxisFault
+     */
+    private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
+        AxisOperation operation =
+                AxisOperationFactory.getOperationDescription(axisOperation.getMessageExchangePattern());
+
+        operation.setMessageReceiver(axisOperation.getMessageReceiver());
+        operation.setName(axisOperation.getName());
+
+        Iterator parameters = axisOperation.getParameters().iterator();
+
+        while (parameters.hasNext()) {
+            Parameter parameter = (Parameter) parameters.next();
+
+            operation.addParameter(parameter);
+        }
+
+        operation.setWsamappingList(axisOperation.getWsamappingList());
+        operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
+        operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
+        operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
+        operation.setPhasesOutFlow(axisOperation.getPhasesOutFlow());
+
+        return operation;
+    }
+
 
     /**
      * Creates a new operation context if there is not one already.
