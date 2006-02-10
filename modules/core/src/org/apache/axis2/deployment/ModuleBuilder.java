@@ -160,8 +160,6 @@ public class ModuleBuilder extends DescriptionBuilder {
             
             if (supportedPolicyNamespaces != null) {
             	module.setSupportedPolicyNamespaces(processSupportedPolicyNamespaces(supportedPolicyNamespaces));
-            	
-            	System.out.println("done");
             }
 
             // processing Operations

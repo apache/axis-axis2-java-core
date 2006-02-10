@@ -19,6 +19,8 @@ package org.apache.axis2.wsdl.codegen.emitter;
 //~--- non-JDK imports --------------------------------------------------------
 
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.PolicyAttachmentUtil;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
@@ -38,6 +40,7 @@ import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
 import org.apache.axis2.wsdl.builder.SchemaUnwrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.policy.Policy;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingOperation;
@@ -60,7 +63,13 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -152,6 +161,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
     protected URIResolver resolver;
+    
+    protected PolicyAttachmentUtil attachmentUtil;
 
 
     protected MultiLanguageClientEmitter() {
@@ -214,15 +225,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void addEndpoint(Document doc, Element rootElement) throws Exception {
         WSDLEndpoint endpoint = infoHolder.getPort();
-
-        // attach the policy for this endpoint here
-        //            String policyFileResourceName = null;
-        //            Policy policy =  (Policy)endpointPolicyMap.get(endpoint.getName());
-        //            if (policy!=null){
-        //                //process the policy for this end point
-        //                 policyFileResourceName = processPolicy(policy,endpoint.getName().getLocalPart());
-        //
-        //            }
+        
+        Policy endpointPolicy = attachmentUtil.getPolicyForEndPoint(endpoint.getName());
+        
+        if (endpointPolicy != null) {
+        	String policyString = PolicyUtil.getPolicyAsString(endpointPolicy);
+        	addAttribute(doc, "servicePolicy", policyString, rootElement);
+        }
+        
         Element endpointElement = doc.createElement("endpoint");
         org.apache.wsdl.extensions.SOAPAddress address = null;
         Iterator iterator = endpoint.getExtensibilityElements().iterator();
@@ -240,9 +250,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 ? address.getLocationURI()
                 : "");
 
-//      if (policyFileResourceName!=null){
-//          addAttribute(doc,"policyRef",policyFileResourceName,endpointElement);
-//      }
         endpointElement.appendChild(text);
         rootElement.appendChild(endpointElement);
     }
@@ -429,7 +436,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc, "namespace", boundInterface.getName().getNamespaceURI(), rootElement);
         addAttribute(doc, "interfaceName", localPart, rootElement);
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
-
+        
+        // add the wrapper for Policy Strings
+        if (attachmentUtil.hasPolicies()) {
+        	addAttribute(doc, "isPolicyEnabled", "yes", rootElement);
+        }
+                
         // add the wrap classes flag
         if (configuration.isPackClasses()) {
             addAttribute(doc, "wrapped", "yes", rootElement);
@@ -437,6 +449,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // add SOAP version
         addSoapVersion(binding, doc, rootElement);
+        
+        
 
         // add the end point
         addEndpoint(doc, rootElement);
@@ -467,7 +481,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
         doc.appendChild(rootElement);
-
+        
         return doc;
     }
 
@@ -1239,7 +1253,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
-
+        
         writeClass(interfaceImplModel, writer);
     }
 
@@ -1588,10 +1602,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.configuration = configuration;
+        attachmentUtil = new PolicyAttachmentUtil(configuration.getWom());
         resolver = new XSLTIncludeResolver(this.configuration.getProperties());
 
         // select necessary information from the WOM
         populateInformationHolder();
+        
     }
 
     /**
@@ -1615,7 +1631,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         private WSDLEndpoint port;
         private WSDLInterface WSDLinterface;
         private WSDLService service;
-
+        
+        private PolicyAttachmentUtil util;
+        
+        
         private HashMap propertyMap = new HashMap();
 
         public void putProperty(Object key,Object val){
@@ -1630,19 +1649,19 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         public WSDLBinding getBinding() {
             return binding;
         }
-
+        
         public WSDLEndpoint getPort() {
             return port;
         }
-
+        
         public WSDLInterface getWSDLinterface() {
             return WSDLinterface;
         }
-
+       
         public WSDLService getService() {
             return service;
         }
-
+        
         //~--- set methods ----------------------------------------------------
 
         public void setBinding(WSDLBinding binding) {

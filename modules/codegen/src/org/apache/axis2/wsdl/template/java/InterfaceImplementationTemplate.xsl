@@ -35,12 +35,28 @@
         //default axis home being null forces the system to pick up the mars from the axis2 library
         public static final String AXIS2_HOME = null;
         protected static org.apache.axis2.description.AxisOperation[] _operations;
-
+	
+	<xsl:if test="(@servicePolicy)">
+	protected static String _service_policy_string;
+	</xsl:if>
+	
         static{
 
         //creating the Service
         _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");
-
+	
+	
+	<xsl:if test="(@servicePolicy)"> 
+	////////////////////////////////////////////////////////////////////////
+	
+	 _service_policy_string = "<xsl:value-of select="@servicePolicy"/>";
+	 org.apache.axis2.description.PolicyInclude servicePolicyInclude = _service.getPolicyInclude();
+	 servicePolicyInclude.addPolicyElement(org.apache.axis2.description.PolicyInclude.SERVICE_POLICY, 
+	 				getPolicyFromString(_service_policy_string));
+					
+	////////////////////////////////////////////////////////////////////////
+	</xsl:if>
+	
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
         _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
@@ -64,7 +80,29 @@
 
      public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext, String targetEndpoint)
         throws java.lang.Exception {
-
+	
+	<xsl:if test="@isPolicyEnabled">
+	
+	////////////////////////////////////////////////////////////////////////
+		
+	org.apache.axis2.engine.AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+	java.util.Collection modules = axisConfiguration.getModules().values();
+		
+	for (java.util.Iterator iterator = modules.iterator(); iterator.hasNext(); iterator.next()) {
+		org.apache.axis2.description.AxisModule axisModule = (org.apache.axis2.description.AxisModule) iterator.next();
+		String[] namespaces = axisModule.getSupportedPolicyNamespaces();
+			
+		if (namespaces != null) {
+			for (int i = 0; i &lt; namespaces.length; i++) {
+				ns2Modules.put(namespaces[i], axisModule);
+			}
+		}
+	}
+				
+	////////////////////////////////////////////////////////////////////////
+		
+	</xsl:if>
+	
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
                 targetEndpoint));
@@ -72,6 +110,11 @@
             //Set the soap version
             _serviceClient.getOptions().setSoapVersionURI(org.apache.ws.commons.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
+	
+	<xsl:if test="@isPolicyEnabled">
+	engage(_service, configurationContext.getAxisConfiguration());
+	</xsl:if>
+	
 
     }
 
@@ -402,6 +445,96 @@
            }
             </xsl:if>
         </xsl:for-each>
+	
+	<xsl:if test="(@isPolicyEnabled)">
+	
+	/** */
+	private java.util.HashMap ns2Modules = new java.util.HashMap();
+	
+	////////////////////////////////////////////////////////////////////////
+	
+	private static org.apache.ws.policy.Policy getPolicyFromString (String policyString) {
+		org.apache.ws.policy.util.PolicyReader prdr 
+			= org.apache.ws.policy.util.PolicyFactory.getPolicyReader(
+					org.apache.ws.policy.util.PolicyFactory.OM_POLICY_READER);
+		try {
+			if (policyString != null 
+				&amp;&amp; !policyString.trim().equals("")) {
+					return prdr.readPolicy(
+						new java.io.ByteArrayInputStream(
+						policyString.getBytes()));
+			}
+		
+		} catch (Exception e) {
+			throw new RuntimeException(
+				"cannot convert "+ policyString	+ " to policy", e);
+		}
+		return null;
+	}
+	
+	// /////////////////////////////////////////////////////////////////
+	
+	private java.util.ArrayList getModules(java.util.List termsList) {
+		java.util.ArrayList arrayList = new java.util.ArrayList();
+		java.util.Iterator iterator = termsList.iterator();
+		
+		org.apache.ws.policy.PrimitiveAssertion pa;
+		String namespace;
+		org.apache.axis2.description.AxisModule axisModule;
+		
+		while (iterator.hasNext()) {
+			pa = (org.apache.ws.policy.PrimitiveAssertion) iterator.next();
+			namespace = pa.getName().getNamespaceURI();
+			axisModule = (org.apache.axis2.description.AxisModule) ns2Modules.get(namespace);
+			
+			if (axisModule == null) {
+				// TODO
+				System.err.println("Warning: cannot find a module for process PrimitiveAssertion" + pa.getName());
+			}			
+			arrayList.add(axisModule);
+		}
+		
+		return arrayList;
+	}
+	
+	private void engage(org.apache.axis2.description.AxisDescription axisDescription, org.apache.axis2.engine.AxisConfiguration axisConfiguration) throws AxisFault {
+		
+		org.apache.axis2.description.PolicyInclude policyInclude = axisDescription.getPolicyInclude();
+		org.apache.ws.policy.Policy policy = policyInclude.getEffectivePolicy();
+		
+		if (policy == null) {
+			return;
+		}
+		
+		if (! policy.isNormalized()) {
+			policy = (org.apache.ws.policy.Policy) policy.normalize();
+		}
+		
+		org.apache.ws.policy.XorCompositeAssertion xor = (org.apache.ws.policy.XorCompositeAssertion) policy.getTerms().get(0);
+		if (xor.isEmpty()) {
+			// TODO
+			throw new RuntimeException("No policy alternative found");
+		}
+		org.apache.ws.policy.AndCompositeAssertion anAlternative = (org.apache.ws.policy.AndCompositeAssertion) xor.getTerms().get(0);
+		java.util.List moduleList = getModules(anAlternative.getTerms());
+		
+		if (axisDescription instanceof org.apache.axis2.description.AxisService) {
+			for (java.util.Iterator iterator = moduleList.iterator(); iterator.hasNext();) {
+				((org.apache.axis2.description.AxisService) axisDescription).engageModule((org.apache.axis2.description.AxisModule) iterator.next(), axisConfiguration);
+			}
+		} else if (axisDescription instanceof org.apache.axis2.description.AxisOperation) {
+			for (java.util.Iterator iterator = moduleList.iterator(); iterator.hasNext();) {
+				((org.apache.axis2.description.AxisOperation) axisDescription).engageModule((org.apache.axis2.description.AxisModule) iterator.next(), axisConfiguration);
+			}
+		}
+	}
+
+	
+	////////////////////////////////////////////////////////////////////////
+	
+	
+	</xsl:if>
+
 
         //<xsl:apply-templates/>
 
