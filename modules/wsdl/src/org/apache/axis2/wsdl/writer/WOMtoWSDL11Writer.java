@@ -669,7 +669,6 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     protected void writeSOAPOpextensibilityElement(SOAPOperation soapop) throws IOException, XMLStreamException {
         writer.writeStartElement(soapNsPrefix, BINDING_OPERATION, WSDL1_1_SOAP_NAMESPACE_URI);
-        writer.writeAttribute("name", soapop.getType().getLocalPart());
         writer.writeAttribute("soapAction", soapop.getSoapAction());
         writer.writeAttribute("style", soapop.getStyle());
         writer.writeEndElement();
