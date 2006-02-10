@@ -24,18 +24,27 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.i18n.Messages;
+import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPFaultReason;
+import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public abstract class AddressingInHandler extends AddressingHandler {
 
     private static final long serialVersionUID = 3907988439637261572L;
+
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         SOAPHeader header = msgContext.getEnvelope().getHeader();
@@ -74,6 +83,8 @@ public abstract class AddressingInHandler extends AddressingHandler {
                                                    ArrayList addressingHeaders, String addressingNamespace)
             throws AddressingException {
 
+        Map alreadyFoundAddrHeader = new HashMap(7); // its seven, coz frequently used 
+
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
@@ -109,10 +120,21 @@ public abstract class AddressingInHandler extends AddressingHandler {
             ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
                     getServiceGroupContext(groupId, msgContext);
             if (serviceGroupContext == null) {
+                handleNoServiceGroupContextIDCase(msgContext);
                 throw new AxisFault("Invalid Service Group Id." + groupId);
             }
             msgContext.setServiceGroupContextId(serviceGroupId.getText());
         }
+    }
+
+    private void handleNoServiceGroupContextIDCase(MessageContext msgContext) {
+        SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
+        SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason(null);
+        SOAPFaultText soapFaultText = soapFac.createSOAPFaultText(soapFaultReason);
+        soapFaultText.setLang("en");
+        soapFaultText.setText(Messages.getMessage("serviceGroupIDNotFound"));
+
+        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
     }
 
 
