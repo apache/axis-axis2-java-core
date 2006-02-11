@@ -36,29 +36,29 @@
         public static final String AXIS2_HOME = null;
         protected static org.apache.axis2.description.AxisOperation[] _operations;
 	
-	<xsl:if test="(@servicePolicy)">
-	protected static String _service_policy_string;
-	</xsl:if>
-	
-        static{
+	static{
 
         //creating the Service
-        _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");
-	
-	
-	<xsl:if test="(@servicePolicy)"> 
-	////////////////////////////////////////////////////////////////////////
-	
-	 _service_policy_string = "<xsl:value-of select="@servicePolicy"/>";
-	 org.apache.axis2.description.PolicyInclude servicePolicyInclude = _service.getPolicyInclude();
-	 servicePolicyInclude.addPolicyElement(org.apache.axis2.description.PolicyInclude.SERVICE_POLICY, 
-	 				getPolicyFromString(_service_policy_string));
-					
-	////////////////////////////////////////////////////////////////////////
+        _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");	
+	<xsl:if test="@policy"> 
+	/*
+	 * setting the endpont policy
+	 */
+	 String _service_policy_string = "<xsl:value-of select="@policy"/>";
+	 org.apache.axis2.description.PolicyInclude servicePolicyInclude 
+	 	= _service.getPolicyInclude();
+	 servicePolicyInclude.addPolicyElement(
+	 		org.apache.axis2.description.PolicyInclude.SERVICE_POLICY, 
+	 		getPolicyFromString(_service_policy_string));
 	</xsl:if>
 	
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
+	<xsl:if test="//method[@policy]">
+	String __operation_policy_string;
+	</xsl:if>
+	
+	
         _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
@@ -71,6 +71,18 @@
             </xsl:choose>
 
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
+	    
+	    <xsl:if test="@policy">
+	    __operation_policy_string = "<xsl:value-of select="@policy"/>";
+	    org.apache.ws.policy.Policy __operation_policy
+	    		= getPolicyFromString(__operation_policy_string);
+	    org.apache.axis2.description.PolicyInclude include
+	    		= __operation.getPolicyInclude();
+	    include.addPolicyElement(org.apache.axis2.description.PolicyInclude.ANON_POLICY,
+	    		__operation_policy);
+	    
+	    </xsl:if>
+	    
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
             _service.addOperation(__operation);
         </xsl:for-each>
@@ -81,7 +93,7 @@
      public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext, String targetEndpoint)
         throws java.lang.Exception {
 	
-	<xsl:if test="@isPolicyEnabled">
+	<xsl:if test="//@policy">
 	
 	////////////////////////////////////////////////////////////////////////
 		
@@ -111,11 +123,19 @@
             _serviceClient.getOptions().setSoapVersionURI(org.apache.ws.commons.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
 	
-	<xsl:if test="@isPolicyEnabled">
-	engage(_service, configurationContext.getAxisConfiguration());
-	</xsl:if>
+	<xsl:if test="//@policy">
+	////////////////////////////////////////////////////////////////////////
 	
-
+	org.apache.axis2.description.AxisOperation axisOperation;
+        
+	for (java.util.Iterator iterator = _service.getChildren(); iterator.hasNext(); ){
+    		// Engaging the modules per AxisOperation 
+		axisOperation = (org.apache.axis2.description.AxisOperation) iterator.next();
+		engage(axisOperation, configurationContext.getAxisConfiguration());
+	}	
+    
+	///////////////////////////////////////////////////////////////////////
+	</xsl:if>
     }
 
     /**
@@ -131,9 +151,6 @@
                     //this("<xsl:value-of select="."/>" );
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:if test="@policyRef">
-                //this has a policy ! The policy is written to the following file<xsl:value-of select="@policyRef"></xsl:value-of>
-            </xsl:if>
         </xsl:for-each>
     }
 
@@ -446,7 +463,7 @@
             </xsl:if>
         </xsl:for-each>
 	
-	<xsl:if test="(@isPolicyEnabled)">
+	<xsl:if test="//@policy">
 	
 	/** */
 	private java.util.HashMap ns2Modules = new java.util.HashMap();
@@ -472,6 +489,12 @@
 		return null;
 	}
 	
+	private static org.apache.ws.policy.Policy merge(String policyString1,
+		String policyString2) {
+		return (org.apache.ws.policy.Policy) getPolicyFromString(policyString1)
+			.merge(getPolicyFromString(policyString2));
+	}
+	
 	// /////////////////////////////////////////////////////////////////
 	
 	private java.util.ArrayList getModules(java.util.List termsList) {
@@ -489,7 +512,7 @@
 			
 			if (axisModule == null) {
 				// TODO
-				System.err.println("Warning: cannot find a module for process PrimitiveAssertion" + pa.getName());
+				System.err.println("Warning: cannot find a module for process PrimitiveAssertion - " + pa.getName());
 			}			
 			arrayList.add(axisModule);
 		}

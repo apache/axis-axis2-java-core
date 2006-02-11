@@ -97,6 +97,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     private static Map MEPtoClassMap;
     private static Map MEPtoSuffixMap;
+    
 
     /**
      * Field constructorMap
@@ -230,7 +231,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         
         if (endpointPolicy != null) {
         	String policyString = PolicyUtil.getPolicyAsString(endpointPolicy);
-        	addAttribute(doc, "servicePolicy", policyString, rootElement);
+        	addAttribute(doc, "policy", policyString, rootElement);
         }
         
         Element endpointElement = doc.createElement("endpoint");
@@ -437,11 +438,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc, "interfaceName", localPart, rootElement);
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
         
-        // add the wrapper for Policy Strings
-        if (attachmentUtil.hasPolicies()) {
-        	addAttribute(doc, "isPolicyEnabled", "yes", rootElement);
-        }
-                
         // add the wrap classes flag
         if (configuration.isPackClasses()) {
             addAttribute(doc, "wrapped", "yes", rootElement);
@@ -950,7 +946,21 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                         addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
                     }
                 }
-
+                
+                /*
+                 * Setting the policy of the operation
+                 */
+                WSDLEndpoint endpoint = infoHolder.getPort();
+                
+                if (endpoint != null) {
+                	Policy policy = attachmentUtil.getOperationPolicy(endpoint.getName(), operation.getName());
+                	
+                	if (policy != null) {
+                		addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
+                	}
+                }	
+                
+                               
                 methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));
                 methodElement.appendChild(getOutputElement(doc, operation, soapHeaderOutputParameterList));
                 rootElement.appendChild(methodElement);
@@ -983,6 +993,16 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                             addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
                             addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
                         }
+                    }
+                    
+                    /*
+                     * Setting the policy of the operation
+                     */
+                    WSDLEndpoint endpoint = infoHolder.getPort();
+                    Policy policy = attachmentUtil.getOperationPolicy(endpoint.getName(), operation.getName());
+                    
+                    if (policy != null) {
+                    	addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
                     }
 
                     methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));
