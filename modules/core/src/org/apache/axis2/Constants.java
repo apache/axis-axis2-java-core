@@ -215,5 +215,6 @@ public class Constants {
         public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
 
         public static final String TRANSPORT_IN_URL = "TransportInURL";
+        String URL_PARAMETER_LIST = "URLParameterList";
     }
 }

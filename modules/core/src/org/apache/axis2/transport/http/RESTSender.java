@@ -38,16 +38,19 @@ public class RESTSender extends AbstractHTTPSender {
         ArrayList paraList = new ArrayList();
         ArrayList urlList = new ArrayList();
 
-        // TODO: s is ALWAYS EMPTY. so what gets added to urllist????
-        String[]  s = new String[]{};
+        // urlParameterList contains the parameters which go in the URL
+        String[] urlParameterList = new String[0];
+        if (msgContext.getProperty(Constants.Configuration.URL_PARAMETER_LIST)!=null){
+           urlParameterList = (String[])msgContext.getProperty(Constants.Configuration.URL_PARAMETER_LIST);
+        }
         OMElement bodypara = OMAbstractFactory.getOMFactory().createOMElement("temp", null);
 
         while (iter1.hasNext()) {
             OMElement ele = (OMElement) iter1.next();
             boolean has = false;
 
-            for (int i = 0; i < s.length; i++) {
-                if (s[i].equals(ele.getLocalName())) {
+            for (int i = 0; i < urlParameterList.length; i++) {
+                if (urlParameterList[i].equals(ele.getLocalName())) {
                     has = true;
 
                     break;
