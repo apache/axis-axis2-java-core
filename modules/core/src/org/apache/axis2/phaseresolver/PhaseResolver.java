@@ -17,10 +17,10 @@
 
 package org.apache.axis2.phaseresolver;
 
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;

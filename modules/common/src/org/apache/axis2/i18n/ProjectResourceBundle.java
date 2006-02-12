@@ -330,9 +330,9 @@ public class ProjectResourceBundle extends ResourceBundle {
     /**
      * Clears the internal cache
      */
-    public static void clearCache() {
-        bundleCache.clear();
-    }
+//    public static void clearCache() {
+//        bundleCache.clear();
+//    }
 
     public String toString() {
         return resourceName;

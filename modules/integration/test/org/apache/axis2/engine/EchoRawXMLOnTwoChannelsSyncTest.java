@@ -25,11 +25,11 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.util.Utils;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 

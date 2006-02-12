@@ -22,7 +22,8 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.soap.SOAPBody;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
 import java.util.Iterator;
 
 /**

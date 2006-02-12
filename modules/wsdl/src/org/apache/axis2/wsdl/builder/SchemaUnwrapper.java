@@ -1,10 +1,10 @@
 package org.apache.axis2.wsdl.builder;
 
-import org.apache.wsdl.WSDLDescription;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
-import org.apache.ws.commons.schema.XmlSchemaElement;
 
 import java.util.Map;
 /*

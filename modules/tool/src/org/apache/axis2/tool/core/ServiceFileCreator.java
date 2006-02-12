@@ -1,9 +1,9 @@
 package org.apache.axis2.tool.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,11 +14,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

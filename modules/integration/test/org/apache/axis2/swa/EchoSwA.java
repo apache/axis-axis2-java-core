@@ -16,8 +16,8 @@
 
 package org.apache.axis2.swa;
 
-import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.axis2.context.MessageContext;
+import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMText;

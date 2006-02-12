@@ -13,10 +13,6 @@
 
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
@@ -33,6 +29,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import javax.xml.namespace.QName;
+import java.util.List;
 
 /**
  * Options Page lets the user change general settings on the code generation. It

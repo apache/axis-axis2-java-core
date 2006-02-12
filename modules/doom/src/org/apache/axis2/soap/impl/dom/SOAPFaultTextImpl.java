@@ -16,11 +16,11 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axis2.om.impl.dom.AttrImpl;
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.dom.AttrImpl;
-import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPFaultText;

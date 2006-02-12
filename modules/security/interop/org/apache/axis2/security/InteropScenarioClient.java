@@ -24,7 +24,6 @@ import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
-import org.xmlsoap.ping.*;
 
 /**
  * Client for the interop service

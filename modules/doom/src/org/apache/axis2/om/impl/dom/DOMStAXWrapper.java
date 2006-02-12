@@ -24,8 +24,8 @@ import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.llom.exception.OMStreamingException;
 import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
+import org.apache.ws.commons.om.impl.llom.exception.OMStreamingException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 

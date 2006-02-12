@@ -5,7 +5,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;

@@ -16,11 +16,11 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import org.apache.axis2.soap.impl.dom.SOAPFaultNodeImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPFaultNodeImpl;
 
 public class SOAP11FaultNodeImpl extends SOAPFaultNodeImpl {
 

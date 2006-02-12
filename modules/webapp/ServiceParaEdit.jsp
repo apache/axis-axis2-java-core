@@ -3,9 +3,7 @@
                  org.apache.axis2.description.AxisService,
                  org.apache.axis2.description.Parameter,
                  java.util.ArrayList,
-                 java.util.Collection"%>
-<%@ page import="java.util.HashMap"%>
-<%@ page import="java.util.Iterator"%>
+                 java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Edit Service Parameters</h1>

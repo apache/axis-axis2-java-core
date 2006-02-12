@@ -15,8 +15,6 @@
  */
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import java.io.File;
-
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,6 +33,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+
+import java.io.File;
 
 public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
     

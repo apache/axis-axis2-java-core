@@ -29,12 +29,12 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.transport.mail.SimpleMailListener;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.axis2.transport.mail.SimpleMailListener;
 
 import javax.xml.namespace.QName;
 

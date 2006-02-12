@@ -2,20 +2,18 @@
                  org.apache.axis2.Constants,
                  org.apache.axis2.addressing.EndpointReference,
                  org.apache.ws.commons.om.OMAbstractFactory,
-            org.apache.ws.commons.oms2.om.OMElement,
-            org.apache.ws.commons.oms2.om.OMFactory,
-                 org.apache.ws.commons.om.OMNamespace,
-                 javax.servlet.ServletContext,
+            org.apache.ws.commons.om.OMNamespace,
+            javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
                  javax.servlet.jsp.JspWriter,
                  javax.xml.namespace.QName,
                  javax.xml.parsers.SAXParser,
                  javax.xml.parsers.SAXParserFactory,
-                 javax.xml.stream.XMLOutputFactory"
+                 javax.xml.stream.XMLOutputFactory,
+                 javax.xml.stream.XMLStreamException,
+                 java.io.IOException"
    session="false" %>
-<%@ page import="javax.xml.stream.XMLStreamException"%>
-<%@ page import="java.io.IOException"%>
 <%@ page import="java.io.InputStream"%>
 <%@ page import="java.io.StringWriter"%>
 <%

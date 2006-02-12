@@ -16,13 +16,6 @@
 
 package org.apache.ws.security.policy.parser;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.AndCompositeAssertion;
@@ -45,6 +38,13 @@ import org.apache.ws.security.policy.parser.processors.SupportingTokensProcessor
 import org.apache.ws.security.policy.parser.processors.SymmetricBindingProcessor;
 import org.apache.ws.security.policy.parser.processors.Wss10Processor;
 import org.apache.ws.security.policy.parser.processors.Wss11Processor;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

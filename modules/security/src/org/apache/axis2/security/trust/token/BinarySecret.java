@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.security.trust.token;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
 
 import javax.xml.namespace.QName;
 

@@ -26,14 +26,14 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;

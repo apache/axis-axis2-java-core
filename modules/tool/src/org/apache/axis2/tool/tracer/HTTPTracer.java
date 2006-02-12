@@ -16,7 +16,10 @@
 
 package org.apache.axis2.tool.tracer;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import java.util.ResourceBundle;
 
 /**

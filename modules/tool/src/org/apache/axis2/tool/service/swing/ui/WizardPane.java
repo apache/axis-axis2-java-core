@@ -16,9 +16,13 @@
 
 package org.apache.axis2.tool.service.swing.ui;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
-import java.awt.*;
+import java.awt.LayoutManager;
 import java.io.File;
 
 public abstract class WizardPane extends JPanel {

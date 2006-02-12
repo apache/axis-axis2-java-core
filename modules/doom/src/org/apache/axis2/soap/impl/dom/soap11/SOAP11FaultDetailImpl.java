@@ -16,6 +16,7 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import org.apache.axis2.soap.impl.dom.SOAPFaultDetailImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
@@ -23,7 +24,6 @@ import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandler
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPFaultDetailImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

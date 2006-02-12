@@ -17,6 +17,7 @@
 package org.apache.axis2.om.impl.dom;
 
 import junit.framework.TestCase;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
@@ -24,7 +25,6 @@ import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

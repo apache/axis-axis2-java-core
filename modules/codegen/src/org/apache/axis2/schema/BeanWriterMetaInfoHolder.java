@@ -1,13 +1,13 @@
 package org.apache.axis2.schema;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

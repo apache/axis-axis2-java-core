@@ -1,11 +1,11 @@
 package org.apache.axis2.databinding.utils;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamConstants;
-import java.util.List;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

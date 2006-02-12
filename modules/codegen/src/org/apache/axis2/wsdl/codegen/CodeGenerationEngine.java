@@ -25,17 +25,16 @@ import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.wsdl.WSDLDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.net.URI;
-import java.net.MalformedURLException;
-import java.io.File;
 
 public class CodeGenerationEngine {
     private Log log = LogFactory.getLog(getClass());

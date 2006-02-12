@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
 public class ServiceArchiveCreator extends AnAction {
     private ImageIcon myIcon;

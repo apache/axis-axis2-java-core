@@ -31,14 +31,14 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 import javax.xml.stream.XMLOutputFactory;
 import java.util.ArrayList;

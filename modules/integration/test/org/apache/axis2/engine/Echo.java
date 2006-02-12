@@ -16,10 +16,10 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMText;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
 
 /**
  * @version $Rev: $ $Date: $

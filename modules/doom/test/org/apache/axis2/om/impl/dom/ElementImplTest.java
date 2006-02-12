@@ -16,10 +16,10 @@
 package org.apache.axis2.om.impl.dom;
 
 import junit.framework.TestCase;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMText;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

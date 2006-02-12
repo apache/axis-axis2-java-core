@@ -19,11 +19,12 @@ package org.apache.axis2.transport;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.impl.MTOMConstants;
 import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
@@ -34,7 +35,6 @@ import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.ws.commons.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;

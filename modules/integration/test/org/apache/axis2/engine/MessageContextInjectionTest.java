@@ -29,15 +29,15 @@ import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
+import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.apache.axis2.transport.local.LocalTransportSender;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.axis2.transport.local.LocalTransportReceiver;
-import org.apache.axis2.transport.local.LocalTransportSender;
 
 import javax.xml.namespace.QName;
 

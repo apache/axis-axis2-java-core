@@ -27,6 +27,9 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
@@ -34,9 +37,6 @@ import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 

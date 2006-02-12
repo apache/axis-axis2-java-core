@@ -16,10 +16,10 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.ws.commons.om.OMText;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.ws.commons.om.OMText;
 
 import javax.activation.DataHandler;
 import javax.activation.UnsupportedDataTypeException;

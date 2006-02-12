@@ -1,9 +1,6 @@
 package org.apache.axis2.tool.codegen.eclipse.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.apache.axis2.util.URLProcessor;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -11,8 +8,10 @@ import javax.wsdl.Service;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
-
-import org.apache.axis2.util.URLProcessor;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 

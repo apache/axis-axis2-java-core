@@ -16,11 +16,11 @@
 
 package org.apache.axis2.soap.impl.dom.soap12;
 
+import org.apache.axis2.soap.impl.dom.SOAPFaultTextImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPFaultTextImpl;
 
 public class SOAP12FaultTextImpl extends SOAPFaultTextImpl {
     public SOAP12FaultTextImpl(SOAPFaultReason parent) throws SOAPProcessingException {

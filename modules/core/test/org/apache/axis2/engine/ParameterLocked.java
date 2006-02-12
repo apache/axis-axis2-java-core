@@ -22,8 +22,8 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.deployment.ServiceBuilder;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;

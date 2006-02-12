@@ -18,9 +18,9 @@ package org.apache.axis2.databinding;
 
 import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.databinding.utils.PrintEvents;
+import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -32,12 +32,12 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 public class ADBSOAPModelBuilderTest extends XMLTestCase {

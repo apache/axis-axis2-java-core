@@ -13,8 +13,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

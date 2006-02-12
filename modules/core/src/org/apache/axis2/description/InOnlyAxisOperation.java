@@ -4,7 +4,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.impl.WDSLPropertyImpl;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

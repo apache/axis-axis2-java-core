@@ -1,10 +1,10 @@
 package org.apache.axis2;
 
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisDescription;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

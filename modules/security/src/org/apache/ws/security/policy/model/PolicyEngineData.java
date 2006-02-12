@@ -16,13 +16,13 @@
 
 package org.apache.ws.security.policy.model;
 
-import javax.xml.namespace.QName;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.policy.Constants;
 import org.apache.ws.security.policy.WSSPolicyException;
 import org.apache.ws.security.policy.parser.SecurityPolicy;
+
+import javax.xml.namespace.QName;
 
 public class PolicyEngineData {
 

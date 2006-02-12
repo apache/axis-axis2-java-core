@@ -16,6 +16,7 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import org.apache.axis2.soap.impl.dom.SOAPHeaderBlockImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
@@ -23,7 +24,6 @@ import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPConstants;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPHeaderBlockImpl;
 
 public class SOAP11HeaderBlockImpl extends SOAPHeaderBlockImpl {
     /**

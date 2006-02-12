@@ -20,9 +20,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.phaseresolver.PhaseException;
 
 import javax.xml.namespace.QName;

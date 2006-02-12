@@ -17,7 +17,6 @@
 package test.interop.whitemesa.round4.complex;
 
 import org.apache.ws.commons.soap.SOAPEnvelope;
-
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;

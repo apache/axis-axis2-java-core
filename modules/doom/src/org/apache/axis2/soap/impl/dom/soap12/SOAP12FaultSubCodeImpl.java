@@ -16,6 +16,7 @@
 
 package org.apache.axis2.soap.impl.dom.soap12;
 
+import org.apache.axis2.soap.impl.dom.SOAPFaultSubCodeImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
@@ -23,7 +24,6 @@ import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultSubCode;
 import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPFaultSubCodeImpl;
 
 public class SOAP12FaultSubCodeImpl extends SOAPFaultSubCodeImpl {
     //changed

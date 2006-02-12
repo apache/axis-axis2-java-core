@@ -1,13 +1,13 @@
 package org.apache.axis2.wsdl.writer;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

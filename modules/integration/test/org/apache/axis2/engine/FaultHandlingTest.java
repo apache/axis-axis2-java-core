@@ -28,7 +28,11 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.soap.*;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamException;

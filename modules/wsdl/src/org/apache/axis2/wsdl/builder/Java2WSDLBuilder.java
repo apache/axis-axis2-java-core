@@ -2,7 +2,6 @@ package org.apache.axis2.wsdl.builder;
 
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
-import org.apache.axis2.wsdl.builder.Java2WOMBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.WSDLDescription;
 

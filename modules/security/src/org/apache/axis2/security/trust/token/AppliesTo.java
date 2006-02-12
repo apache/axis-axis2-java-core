@@ -16,9 +16,9 @@
 
 package org.apache.axis2.security.trust.token;
 
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;

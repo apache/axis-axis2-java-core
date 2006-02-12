@@ -18,10 +18,10 @@ package sample.mtom.imagetransfer.client;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.ws.commons.attachments.utils.ImageDataSource;
-import org.apache.ws.commons.attachments.utils.ImageIO;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.ws.commons.attachments.utils.ImageDataSource;
+import org.apache.ws.commons.attachments.utils.ImageIO;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
@@ -31,7 +31,7 @@ import org.apache.ws.commons.soap.SOAP11Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import java.awt.*;
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 

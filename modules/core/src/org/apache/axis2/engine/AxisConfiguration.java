@@ -23,7 +23,15 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.HostConfiguration;
@@ -33,7 +41,12 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class AxisConfigurationImpl

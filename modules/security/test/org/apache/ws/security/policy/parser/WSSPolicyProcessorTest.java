@@ -16,17 +16,16 @@
 
 package org.apache.ws.security.policy.parser;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import junit.framework.TestCase;
-
 import org.apache.ws.security.policy.Constants;
 import org.apache.ws.security.policy.model.PolicyEngineData;
 import org.apache.ws.security.policy.model.RootPolicyEngineData;
 import org.apache.ws.security.policy.model.SignedEncryptedParts;
 import org.apache.ws.security.policy.model.SymmetricBinding;
 import org.apache.ws.security.policy.model.Wss11;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class WSSPolicyProcessorTest extends TestCase {
 

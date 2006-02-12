@@ -1,7 +1,7 @@
 package org.apache.axis2.schema.util;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

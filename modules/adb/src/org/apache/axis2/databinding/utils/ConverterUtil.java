@@ -30,26 +30,26 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.util.Base64;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.ArrayList;
-import java.io.ByteArrayInputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

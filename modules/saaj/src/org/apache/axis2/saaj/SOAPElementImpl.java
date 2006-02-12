@@ -15,15 +15,15 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.TextImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;

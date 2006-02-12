@@ -1,7 +1,7 @@
 package org.apache.axis2.description;
 
-import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
+import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;

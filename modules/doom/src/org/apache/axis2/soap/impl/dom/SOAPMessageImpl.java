@@ -16,10 +16,10 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPMessage;
 import org.apache.ws.commons.soap.SOAPProcessingException;

@@ -20,13 +20,13 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.security.trust.token.RequestSecurityToken;
 import org.apache.axis2.security.trust.token.RequestSecurityTokenResponse;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 

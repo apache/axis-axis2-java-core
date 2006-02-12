@@ -28,8 +28,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.util.Utils;
+import org.apache.ws.commons.om.OMElement;
 
 public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
 

@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMElement;
@@ -25,7 +26,6 @@ import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.impl.llom.traverse.OMChildElementIterator;

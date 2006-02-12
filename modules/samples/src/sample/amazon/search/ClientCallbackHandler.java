@@ -18,11 +18,11 @@ package sample.amazon.search;
 
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;

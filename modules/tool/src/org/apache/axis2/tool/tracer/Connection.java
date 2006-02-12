@@ -16,7 +16,9 @@
 
 package org.apache.axis2.tool.tracer;
 
-import javax.swing.*;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;

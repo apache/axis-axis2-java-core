@@ -16,12 +16,12 @@
 
 package org.apache.axis2.soap.impl.dom.soap12;
 
+import org.apache.axis2.soap.impl.dom.SOAPFaultRoleImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPFaultRoleImpl;
 
 public class SOAP12FaultRoleImpl extends SOAPFaultRoleImpl {
     public SOAP12FaultRoleImpl(SOAPFault parent) throws SOAPProcessingException {

@@ -2,8 +2,18 @@ package org.apache.ideaplugin.frames;
 
 import org.apache.axis2.tools.idea.Java2CodeFrame;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*

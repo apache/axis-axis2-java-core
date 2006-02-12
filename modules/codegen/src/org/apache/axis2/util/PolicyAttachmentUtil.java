@@ -16,18 +16,7 @@
 
 package org.apache.axis2.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
-
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.ws.policy.Assertion;
@@ -51,12 +40,20 @@ import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.DefaultExtensibilityElement;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

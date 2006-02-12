@@ -16,6 +16,10 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
@@ -23,8 +27,6 @@ import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;
@@ -33,8 +35,6 @@ import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

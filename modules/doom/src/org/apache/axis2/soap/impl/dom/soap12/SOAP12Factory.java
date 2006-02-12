@@ -16,10 +16,12 @@
 
 package org.apache.axis2.soap.impl.dom.soap12;
 
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
+import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPEnvelope;
@@ -35,8 +37,6 @@ import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
-import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
 
 public class SOAP12Factory extends DOMSOAPFactory {
 	

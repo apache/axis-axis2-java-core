@@ -2,11 +2,11 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

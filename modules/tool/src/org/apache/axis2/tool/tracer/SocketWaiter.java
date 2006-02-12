@@ -16,8 +16,8 @@
 
 package org.apache.axis2.tool.tracer;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import java.awt.Color;
 import java.net.ServerSocket;
 import java.net.Socket;
 

@@ -17,21 +17,21 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.saaj.util.IDGenerator;
+import org.apache.axis2.saaj.util.SAAJUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.impl.llom.OMTextImpl;
-import org.apache.axis2.saaj.util.SAAJUtil;
-import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -39,19 +39,19 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.io.ByteArrayOutputStream;
 
 /**
  *

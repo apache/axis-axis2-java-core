@@ -16,11 +16,11 @@
 
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;

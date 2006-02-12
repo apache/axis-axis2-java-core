@@ -2,8 +2,8 @@ package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 /*

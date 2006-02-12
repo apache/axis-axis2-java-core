@@ -16,14 +16,14 @@
 
 package org.apache.axis2.security.trust.token;
 
+import org.apache.axis2.security.trust.Constants;
+import org.apache.axis2.security.trust.TrustException;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMText;
-import org.apache.axis2.security.trust.Constants;
-import org.apache.axis2.security.trust.TrustException;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;

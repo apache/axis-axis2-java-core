@@ -25,7 +25,9 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.ws.commons.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * This will create the Excutable code which runs separately of GUI interations

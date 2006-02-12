@@ -31,12 +31,12 @@ import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.HostConfiguration;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

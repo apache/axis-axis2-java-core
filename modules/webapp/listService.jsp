@@ -1,7 +1,7 @@
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.AxisOperation"%>
+                 org.apache.axis2.description.AxisModule"%>
+<%@ page import="org.apache.axis2.description.AxisOperation"%>
 <%@ page import="org.apache.axis2.description.AxisService"%>
-<%@ page import="org.apache.axis2.description.AxisModule"%>
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Enumeration"%>
 <%@ page import="java.util.HashMap"%>

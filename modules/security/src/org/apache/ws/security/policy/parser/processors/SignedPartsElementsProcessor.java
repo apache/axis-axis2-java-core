@@ -16,8 +16,6 @@
 
 package org.apache.ws.security.policy.parser.processors;
 
-import javax.xml.namespace.QName;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.PrimitiveAssertion;
@@ -29,6 +27,8 @@ import org.apache.ws.security.policy.model.SupportingToken;
 import org.apache.ws.security.policy.parser.SecurityPolicy;
 import org.apache.ws.security.policy.parser.SecurityPolicyToken;
 import org.apache.ws.security.policy.parser.SecurityProcessorContext;
+
+import javax.xml.namespace.QName;
 
 
 /**

@@ -17,11 +17,12 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -34,7 +35,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
-import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.UserDataHandler;
 
 import javax.xml.soap.SOAPEnvelope;

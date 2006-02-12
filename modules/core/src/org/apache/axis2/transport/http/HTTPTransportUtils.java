@@ -24,6 +24,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.util.Utils;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMNamespace;
@@ -40,8 +42,6 @@ import org.apache.ws.commons.soap.SOAPProcessingException;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.ws.commons.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.ws.commons.soap.impl.llom.soap12.SOAP12Factory;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.Utils;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;

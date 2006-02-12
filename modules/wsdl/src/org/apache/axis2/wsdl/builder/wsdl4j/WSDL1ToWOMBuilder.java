@@ -20,7 +20,6 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
-import org.apache.axis2.wsdl.builder.SchemaUnwrapper;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.w3c.dom.Document;

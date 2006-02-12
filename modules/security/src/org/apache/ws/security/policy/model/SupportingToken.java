@@ -16,9 +16,9 @@
 
 package org.apache.ws.security.policy.model;
 
-import java.util.ArrayList;
-
 import org.apache.ws.security.policy.WSSPolicyException;
+
+import java.util.ArrayList;
 
 public class SupportingToken extends PolicyEngineData implements AlgorithmWrapper, TokenWrapper {
 

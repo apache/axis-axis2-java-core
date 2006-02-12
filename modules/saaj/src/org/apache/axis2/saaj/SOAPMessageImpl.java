@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.ws.commons.om.OMOutputFormat;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.ws.commons.om.OMOutputFormat;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;

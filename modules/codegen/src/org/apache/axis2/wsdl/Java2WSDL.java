@@ -1,12 +1,10 @@
 package org.apache.axis2.wsdl;
 
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.Java2WSDLCodegenEngine;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.Java2WSDLOptionsValidator;
-import org.apache.axis2.wsdl.util.WSDL2JavaOptionsValidator;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.codegen.Java2WSDLCodegenEngine;
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

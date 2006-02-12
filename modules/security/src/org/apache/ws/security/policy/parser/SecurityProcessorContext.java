@@ -15,11 +15,11 @@
  */
 package org.apache.ws.security.policy.parser;
 
-import java.util.ArrayList;
-
 import org.apache.ws.policy.PrimitiveAssertion;
 import org.apache.ws.security.policy.model.PolicyEngineData;
 import org.apache.ws.security.policy.model.RootPolicyEngineData;
+
+import java.util.ArrayList;
 
 public class SecurityProcessorContext {
 	

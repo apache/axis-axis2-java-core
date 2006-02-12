@@ -25,12 +25,12 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 

@@ -19,7 +19,11 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;

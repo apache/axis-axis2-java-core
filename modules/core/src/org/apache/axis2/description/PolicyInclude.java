@@ -16,14 +16,14 @@
 
 package org.apache.axis2.description;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-
 import org.apache.ws.commons.om.util.UUIDGenerator;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyRegistry;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 public class PolicyInclude {
 

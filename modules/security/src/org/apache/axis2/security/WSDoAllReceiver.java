@@ -16,15 +16,7 @@
 
 package org.apache.axis2.security;
 
-import java.security.cert.X509Certificate;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.security.auth.callback.CallbackHandler;
-
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
@@ -49,6 +41,11 @@ import org.apache.ws.security.message.token.Timestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
+
+import javax.security.auth.callback.CallbackHandler;
+import java.security.cert.X509Certificate;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class WSDoAllReceiver extends WSDoAllHandler {
     

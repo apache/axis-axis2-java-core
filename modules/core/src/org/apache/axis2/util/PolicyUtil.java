@@ -16,7 +16,12 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisDescWSDLComponentFactory;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
@@ -24,14 +29,22 @@ import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.util.PolicyWriter;
 import org.apache.ws.policy.util.StAXPolicyWriter;
-import org.apache.wsdl.*;
+import org.apache.wsdl.Component;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLInterface;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 import org.apache.wsdl.impl.WSDLProcessingException;
 
 import javax.xml.namespace.QName;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;

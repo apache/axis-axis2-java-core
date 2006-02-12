@@ -1,11 +1,11 @@
 package org.apache.axis2.databinding.utils;
 
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

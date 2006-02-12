@@ -16,6 +16,7 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -28,8 +29,6 @@ import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
 
 public class AddressingOutHandlerTest extends TestCase implements AddressingConstants {
     private AddressingOutHandler outHandler;

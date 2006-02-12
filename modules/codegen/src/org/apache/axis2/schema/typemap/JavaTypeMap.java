@@ -30,8 +30,8 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.schema.SchemaConstants;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;

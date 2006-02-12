@@ -22,9 +22,9 @@ import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * Class EndpointReference

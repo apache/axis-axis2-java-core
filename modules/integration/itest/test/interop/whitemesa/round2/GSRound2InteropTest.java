@@ -16,11 +16,8 @@
 
 package test.interop.whitemesa.round2;
 
-import java.io.File;
-
 import org.apache.axis2.AxisFault;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -36,6 +33,8 @@ import test.interop.whitemesa.round2.util.Round2EchoIntegerClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoStringArrayClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoStringclientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
+
+import java.io.File;
 
 /**
  * class GSRound2InteropTest

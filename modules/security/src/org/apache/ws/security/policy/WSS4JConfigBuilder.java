@@ -15,9 +15,6 @@
  */
 package org.apache.ws.security.policy;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.policy.model.AsymmetricBinding;
@@ -33,6 +30,9 @@ import org.apache.ws.security.policy.model.UsernameToken;
 import org.apache.ws.security.policy.model.Wss10;
 import org.apache.ws.security.policy.model.Wss11;
 import org.apache.ws.security.policy.model.X509Token;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class WSS4JConfigBuilder {
     

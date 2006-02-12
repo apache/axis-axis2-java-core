@@ -1,18 +1,18 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.wsdl.builder.Java2WSDLBuilder;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.CommandLineOption;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
-import java.util.Map;
-import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
 import java.io.FileOutputStream;
-import java.net.URL;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

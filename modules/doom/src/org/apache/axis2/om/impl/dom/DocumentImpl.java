@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.util.XMLChar;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMDocument;
@@ -24,7 +25,6 @@ import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMOutputFormat;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.axis2.util.XMLChar;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;

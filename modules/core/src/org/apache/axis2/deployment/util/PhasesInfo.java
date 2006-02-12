@@ -23,9 +23,9 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

@@ -21,9 +21,9 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.commons.om.OMElement;
 
 import java.util.ArrayList;

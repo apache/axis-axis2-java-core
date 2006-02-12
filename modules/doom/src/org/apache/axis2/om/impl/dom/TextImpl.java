@@ -15,6 +15,9 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.util.Base64;
+import org.apache.axis2.util.UUIDGenerator;
+import org.apache.ws.commons.attachments.DataHandlerUtils;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
@@ -23,9 +26,6 @@ import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
-import org.apache.ws.commons.attachments.DataHandlerUtils;
-import org.apache.axis2.util.Base64;
-import org.apache.axis2.util.UUIDGenerator;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
