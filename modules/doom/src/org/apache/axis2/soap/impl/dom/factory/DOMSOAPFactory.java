@@ -207,4 +207,69 @@ public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
         return defaultEnvelope;
 	}
 
+    public SOAPMessage createSOAPMessage() {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPHeader createSOAPHeader() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns) throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFault createSOAPFault() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPBody createSOAPBody() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultCode createSOAPFaultCode() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultValue createSOAPFaultValue() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultSubCode createSOAPFaultSubCode() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultReason createSOAPFaultReason() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultText createSOAPFaultText() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultNode createSOAPFaultNode() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+         throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultRole createSOAPFaultRole() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
+    public SOAPFaultDetail createSOAPFaultDetail() throws SOAPProcessingException {
+        //TODO Ruchith FIx me
+        throw new UnsupportedOperationException();
+    }
+
 }

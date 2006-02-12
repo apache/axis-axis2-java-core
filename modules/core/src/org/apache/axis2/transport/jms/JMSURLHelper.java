@@ -19,6 +19,7 @@ package org.apache.axis2.transport.jms;
 
 import org.apache.commons.httpclient.URI;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,19 +43,17 @@ public class JMSURLHelper {
 
     // required properties
     private Vector requiredProperties;
-    private URI url;
 
     public JMSURLHelper(String url) throws Exception {
         this(new URI(url), null);
     }
 
-    public JMSURLHelper(URI url) throws java.net.MalformedURLException {
+    public JMSURLHelper(URI url) throws MalformedURLException {
         this(url, null);
     }
 
     public JMSURLHelper(URI url, String[] requiredProperties)
-            throws java.net.MalformedURLException {
-        this.url = url;
+            throws MalformedURLException {
         properties = new HashMap();
         appProperties = new Vector();
 
@@ -161,7 +160,7 @@ public class JMSURLHelper {
         return getURLString();
     }
 
-    private void validateURL() throws java.net.MalformedURLException {
+    private void validateURL() throws MalformedURLException {
         Vector required = getRequiredProperties();
 
         if (required == null) {
@@ -172,7 +171,7 @@ public class JMSURLHelper {
             String key = (String) required.elementAt(i);
 
             if (properties.get(key) == null) {
-                throw new java.net.MalformedURLException();
+                throw new MalformedURLException();
             }
         }
     }
