@@ -24,6 +24,11 @@ import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.xmlsoap.ping.TicketType;
+import org.xmlsoap.ping.PingDocument;
+import org.xmlsoap.ping.Ping;
+import org.xmlsoap.ping.PingResponseDocument;
+import org.xmlsoap.ping.PingResponse;
 
 /**
  * Client for the interop service
