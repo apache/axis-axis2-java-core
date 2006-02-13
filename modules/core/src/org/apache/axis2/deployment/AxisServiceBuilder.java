@@ -372,11 +372,15 @@ public class AxisServiceBuilder {
                     addPolicyElements(PolicyInclude.OUTPUT_POLICY,
                             outputPolicies, outputPolicyInclude);
 
-                    // BindingOutput
-                    outputPolicies = getPoliciesAsExtElements(wsdl4jBindingOutput
-                            .getExtensibilityElements());
-                    addPolicyElements(PolicyInclude.BINDING_OUTPUT_POLICY,
-                            outputPolicies, outputPolicyInclude);
+                    if (wsdl4jBindingOutput != null) {
+                        // BindingOutput
+                        outputPolicies = getPoliciesAsExtElements(wsdl4jBindingOutput
+                                .getExtensibilityElements());
+                        if (outputPolicies != null) {
+                            addPolicyElements(PolicyInclude.BINDING_OUTPUT_POLICY, 
+                                    outputPolicies, outputPolicyInclude);
+                        }
+                    }
 
                     // wsdl:Message
                     outputPolicies = getPoliciesAsExtElements(wsdl4jOutputMessage
