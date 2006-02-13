@@ -18,6 +18,7 @@ package org.apache.axis2.wsdl.builder.wsdl4j;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
+import org.apache.axis2.namespace.Constants;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.wsdl.Component;
@@ -84,7 +85,7 @@ import java.util.Vector;
 
 public class WSDLPump {
 
-    private static final String XMLSCHEMA_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
+    private static final String XMLSCHEMA_NAMESPACE_URI = Constants.URI_2001_SCHEMA_XSD;
     private static final String XMLSCHEMA_NAMESPACE_PREFIX = "xs";
     private static final String XML_SCHEMA_LOCAL_NAME = "schema";
     private static final String XML_SCHEMA_SEQUENCE_LOCAL_NAME = "sequence";

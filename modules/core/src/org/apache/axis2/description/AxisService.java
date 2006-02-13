@@ -349,7 +349,7 @@ public class AxisService extends AxisDescription {
                 binding.getExtensibilityElements().clear();
                 javax.wsdl.extensions.soap.SOAPBinding soapBinding = new SOAPBindingImpl();
                 soapBinding.setStyle("document");
-                soapBinding.setTransportURI("http://schemas.xmlsoap.org/soap/http");
+                soapBinding.setTransportURI(Constants.URI_SOAP11_HTTP);
                 binding.addExtensibilityElement(soapBinding);
 
                 Iterator bin_ops = binding.getBindingOperations().iterator();

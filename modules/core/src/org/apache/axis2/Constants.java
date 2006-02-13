@@ -172,9 +172,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final char METHOD_NAME_ESCAPE_CHARACTER = '?';
     public static final String LOGGED = "Logged";
     public static final String CONTAINER_MANAGED = "ContainerManaged";
-    public static final String AXIS2_NAMESPACE_URI =
-            "http://ws.apache.org/namespaces/axis2";
-    public static final String AXIS2_NAMESPACE_PREFIX = "axis2";
+
     public static final String ADDRESSING_TO = "WS-Addressing:To";
     public static final String ADDRESSING_REPLY_TO = "WS-Addressing:ReplyTo";
     public static final String ADDRESSING_RELATES_TO = "WS-Addressing:RelatesTo";

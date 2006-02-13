@@ -16,16 +16,18 @@
 
 package org.apache.wsdl;
 
+import org.apache.axis2.namespace.Constants;
+
 public interface WSDLConstants {
     /**
      * Field WSDL2_0_NAMESPACE
      */
-    public static final String WSDL2_0_NAMESPACE = "http://www.w3.org/2004/03/wsdl";
+    public static final String WSDL2_0_NAMESPACE = Constants.NS_URI_WSDL20;
 
     /**
      * Field WSDL1_1_NAMESPACE
      */
-    public static final String WSDL1_1_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
+    public static final String WSDL1_1_NAMESPACE = Constants.NS_URI_WSDL11;
 
 
     /**

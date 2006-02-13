@@ -1,5 +1,7 @@
 package org.apache.axis2.schema;
 
+import org.apache.axis2.namespace.Constants;
+
 import javax.xml.namespace.QName;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -23,7 +25,7 @@ import javax.xml.namespace.QName;
 public class SchemaConstants {
 
 
-    public static final String URI_DEFAULT_SCHEMA_XSD = "http://www.w3.org/2001/XMLSchema";
+    public static final String URI_DEFAULT_SCHEMA_XSD = Constants.URI_2001_SCHEMA_XSD;
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");
     public static final QName XSD_BOOLEAN = new QName(URI_DEFAULT_SCHEMA_XSD, "boolean");
     public static final QName XSD_DOUBLE = new QName(URI_DEFAULT_SCHEMA_XSD, "double");

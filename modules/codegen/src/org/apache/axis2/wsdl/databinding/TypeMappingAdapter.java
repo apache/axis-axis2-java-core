@@ -16,6 +16,8 @@
 
 package org.apache.axis2.wsdl.databinding;
 
+import org.apache.axis2.namespace.Constants;
+
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +25,7 @@ import java.util.Map;
 public abstract class TypeMappingAdapter implements TypeMapper {
 
     //todo get this from a constant
-    protected static final String XSD_SCHEMA_URL = "http://www.w3.org/2001/XMLSchema";
+    protected static final String XSD_SCHEMA_URL = Constants.URI_2001_SCHEMA_XSD;
 
     //hashmap that contains the type mapping names
     protected HashMap qName2NameMap = new HashMap();

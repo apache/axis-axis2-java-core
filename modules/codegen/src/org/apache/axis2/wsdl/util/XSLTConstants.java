@@ -16,17 +16,14 @@
 
 package org.apache.axis2.wsdl.util;
 
-import javax.xml.namespace.QName;
- //todo rename this
+//todo rename this
 public interface XSLTConstants {
-    QName BASE_64_CONTENT_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "base64Binary");
-    QName XMIME_CONTENT_TYPE_QNAME = new QName("http://www.w3.org/2004/06/xmlmime", "contentType");
 
-    String BASE_64_PROPERTY_KEY = "base64map";
+     String BASE_64_PROPERTY_KEY = "base64map";
 
     String EXTERNAL_TEMPLATE_PROPERTY_KEY = "externalTemplate";
     String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY = "databindsupporter";
-    String XSLT_INCLUDE_TEST_OBJECT_HREF_KEY = "testObject"; 
+    String XSLT_INCLUDE_TEST_OBJECT_HREF_KEY = "testObject";
 
 
     public interface CodegenStyle {

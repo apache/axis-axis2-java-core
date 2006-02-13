@@ -127,7 +127,7 @@ public class AxisService2WOM {
 		// generating binding
 		WSDLBinding binding = generateBinding(wsdlComponentFactory, portType,
 				bindingName, "document", "literal",
-				"http://schemas.xmlsoap.org/soap/http",
+				Constants.URI_SOAP11_HTTP,
 				"http://www.org.apache.axis2");
 		womDescription.addBinding(binding);
 

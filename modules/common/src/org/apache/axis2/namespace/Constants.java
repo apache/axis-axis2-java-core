@@ -20,24 +20,10 @@ import javax.xml.namespace.QName;
 
 public class Constants {
 
-    /** The namespace identifier for the SOAP envelope. */
-    public static final String URI_NS_SOAP_ENVELOPE =
-        "http://schemas.xmlsoap.org/soap/envelope/";
-
-    /**
-     * The namespace identifier for the SOAP encoding (see section 5 of
-     * the SOAP 1.1 specification).
-     */
-    public static final String URI_NS_SOAP_ENCODING =
-        "http://schemas.xmlsoap.org/soap/encoding/";
-
-    /**
-     * The URI identifying the first application processing a SOAP request as the intended
-     * actor for a SOAP header entry (see section 4.2.2 of the SOAP 1.1 specification).
-     */
-    public static final String URI_SOAP_ACTOR_NEXT =
-        "http://schemas.xmlsoap.org/soap/actor/next";
-
+    public static final String AXIS2_NAMESPACE_URI =
+            "http://ws.apache.org/namespaces/axis2";
+    public static final String AXIS2_NAMESPACE_PREFIX = "axis2";
+    
     // Namespace Prefix Constants
     //////////////////////////////////////////////////////////////////////////
     public static final String NS_PREFIX_SOAP_ENV   = "soapenv";
@@ -46,7 +32,6 @@ public class Constants {
     public static final String NS_PREFIX_SCHEMA_XSD = "xsd" ;
     public static final String NS_PREFIX_WSDL       = "wsdl" ;
     public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
-    public static final String NS_PREFIX_XMLSOAP    = "apachesoap";
     public static final String NS_PREFIX_XML        = "xml";
     public static final String NS_PREFIX_XOP        = "xop";
 
@@ -127,6 +112,9 @@ public class Constants {
      */
     public static final String NS_URI_WSDL11 =
                                  "http://schemas.xmlsoap.org/wsdl/";
+
+    public static final String NS_URI_WSDL20 =
+                                 "http://www.w3.org/2004/03/wsdl";
 
     //
     // WSDL extensions for SOAP in DIME
@@ -351,11 +339,6 @@ public class Constants {
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
 
-    /**
-     * MIME Content Types
-     * 
-     * @since Axis1.2
-     */
     public static final String MIME_CT_APPLICATION_OCTETSTREAM     = "application/octet-stream";
     public static final String MIME_CT_TEXT_PLAIN         = "text/plain";
     public static final String MIME_CT_IMAGE_JPEG        = "image/jpeg";
@@ -363,4 +346,8 @@ public class Constants {
     public static final String MIME_CT_TEXT_XML            = "text/xml";
     public static final String MIME_CT_APPLICATION_XML        = "application/xml";
     public static final String MIME_CT_MULTIPART_PREFIX        = "multipart/";
+    
+    public static final QName BASE_64_CONTENT_QNAME = new QName(URI_2001_SCHEMA_XSD, "base64Binary");
+    public static final QName XMIME_CONTENT_TYPE_QNAME = new QName("http://www.w3.org/2004/06/xmlmime", "contentType");
+    public static final String URI_SECURITYPOLICY = "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy";
 }

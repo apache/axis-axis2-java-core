@@ -1,6 +1,7 @@
 package org.apache.axis2.wsdl.builder;
 
 import org.apache.ws.commons.om.OMElement;
+import org.apache.axis2.namespace.Constants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -38,56 +39,56 @@ public class TypeTable {
     private void populateSimpleTypes() {
         //todo pls use the types from org.apache.ws.commons.schema.constants.Constants
         simpleTypetoxsd.put("int",
-                new QName("http://www.w3.org/2001/XMLSchema", "int", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "int", "xs"));
         simpleTypetoxsd.put("java.lang.String",
-                new QName("http://www.w3.org/2001/XMLSchema", "string", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "string", "xs"));
         simpleTypetoxsd.put("boolean",
-                new QName("http://www.w3.org/2001/XMLSchema", "boolean", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "boolean", "xs"));
         simpleTypetoxsd.put("float",
-                new QName("http://www.w3.org/2001/XMLSchema", "float", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "float", "xs"));
         simpleTypetoxsd.put("double",
-                new QName("http://www.w3.org/2001/XMLSchema", "double", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "double", "xs"));
         simpleTypetoxsd.put("short",
-                new QName("http://www.w3.org/2001/XMLSchema", "short", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "short", "xs"));
         simpleTypetoxsd.put("long",
-                new QName("http://www.w3.org/2001/XMLSchema", "long", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "long", "xs"));
         simpleTypetoxsd.put("byte",
-                new QName("http://www.w3.org/2001/XMLSchema", "byte", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "byte", "xs"));
         simpleTypetoxsd.put("char",
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put("java.lang.Integer",
-                new QName("http://www.w3.org/2001/XMLSchema", "int", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "int", "xs"));
         simpleTypetoxsd.put("java.lang.Double",
-                new QName("http://www.w3.org/2001/XMLSchema", "double", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "double", "xs"));
         simpleTypetoxsd.put("java.lang.Float",
-                new QName("http://www.w3.org/2001/XMLSchema", "float", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "float", "xs"));
         simpleTypetoxsd.put("java.lang.Long",
-                new QName("http://www.w3.org/2001/XMLSchema", "long", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "long", "xs"));
         simpleTypetoxsd.put("java.lang.Character",
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put("java.lang.Boolean",
-                new QName("http://www.w3.org/2001/XMLSchema", "boolean", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "boolean", "xs"));
         simpleTypetoxsd.put("java.lang.Byte",
-                new QName("http://www.w3.org/2001/XMLSchema", "byte", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "byte", "xs"));
         simpleTypetoxsd.put("java.lang.Short",
-                new QName("http://www.w3.org/2001/XMLSchema", "short", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "short", "xs"));
         simpleTypetoxsd.put("java.util.Date",
-                new QName("http://www.w3.org/2001/XMLSchema", "dateTime", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
         simpleTypetoxsd.put("java.util.Calendar",
-                new QName("http://www.w3.org/2001/XMLSchema", "dateTime", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
 
         simpleTypetoxsd.put("java.lang.Object",
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
 
         // Any types
         simpleTypetoxsd.put(OMElement.class.getName(),
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(ArrayList.class.getName(),
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(Vector.class.getName(),
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(List.class.getName(),
-                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
     }
 
     public QName getSimpleSchemaTypeName(String typename) {

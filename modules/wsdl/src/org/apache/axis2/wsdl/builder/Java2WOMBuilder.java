@@ -115,7 +115,7 @@ public class Java2WOMBuilder {
                 //todo these need to be constants
                 "document",
                 "literal",
-                "http://schemas.xmlsoap.org/soap/http",
+                Constants.URI_SOAP11_HTTP,
                 targetNamespace);
 
         womDescription.addBinding(binding);

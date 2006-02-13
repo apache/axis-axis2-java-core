@@ -77,7 +77,7 @@ import java.util.Map;
  */
 public class AxisServiceBuilder {
 
-    private static final String XMLSCHEMA_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
+    private static final String XMLSCHEMA_NAMESPACE_URI = Constants.URI_2001_SCHEMA_XSD;
 
     private static final String XMLSCHEMA_NAMESPACE_PREFIX = "xs";
 

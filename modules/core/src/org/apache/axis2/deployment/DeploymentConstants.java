@@ -17,6 +17,8 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.Constants;
+
 /**
  * Constants used during service/module deployment.
  */
@@ -54,7 +56,7 @@ public interface DeploymentConstants {
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
-    
+
 
     String TAG_FLOW_OUT_FAULT = "Outfaultflow";    // faultflow start tag
     String TAG_FLOW_OUT = "outflow";         // outflow start tag
@@ -103,7 +105,7 @@ public interface DeploymentConstants {
     char SEPARATOR_DOT = '.';
     char SEPARATOR_COLON = ':';
 
-    String POLICY_NS_URI = "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    String POLICY_NS_URI = Constants.URI_POLICY;
     String TAG_POLICY = "Policy";
     String TAG_POLICY_REF = "PolicyReference";
 

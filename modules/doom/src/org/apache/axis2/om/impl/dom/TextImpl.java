@@ -17,6 +17,7 @@ package org.apache.axis2.om.impl.dom;
 
 import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.namespace.Constants;
 import org.apache.ws.commons.attachments.DataHandlerUtils;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
@@ -58,7 +59,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
      * Field nameSpace is used when serializing Binary stuff as MTOM optimized.
      */
     protected OMNamespace ns = new NamespaceImpl(
-            "http://www.w3.org/2004/08/xop/include", "xop");
+            Constants.URI_XOP_INCLUDE, "xop");
 
     /**
      * Field localName is used when serializing Binary stuff as MTOM optimized.

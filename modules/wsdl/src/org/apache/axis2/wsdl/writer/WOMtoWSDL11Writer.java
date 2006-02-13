@@ -72,7 +72,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     private String encoding = "UTF-8"; //default encoding is UTF-8
     private String defaultWSDLPrefix = "wsdl11";
     private String targetNamespacePrefix = "tns";
-    private static final String WSDL1_1_NAMESPACE_URI = "http://schemas.xmlsoap.org/wsdl/";
+    private static final String WSDL1_1_NAMESPACE_URI = Constants.NS_URI_WSDL11;
     private static final String WSDL1_1_SOAP_NAMESPACE_URI = Constants.URI_WSDL11_SOAP;
     private static final String DEFINITION_NAME = "definitions";
     private static final String IMPORT_NAME = "import";

@@ -23,6 +23,7 @@ import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.util.XSLTConstants;
+import org.apache.axis2.namespace.Constants;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
@@ -251,13 +252,13 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             SchemaType sType = (SchemaType) allSeenTypes.get(i);
 
             if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
-                if (XSLTConstants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
+                if (Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
                     outerType = sType.getOuterType();
                     //check the outer type further to see whether it has the contenttype attribute from
                     //XMime namespace
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
-                        if (XSLTConstants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
+                        if (Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
                             base64ElementQNamesList.add(outerType.getDocumentElementName());
                             break;
                         }

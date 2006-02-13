@@ -38,6 +38,7 @@ import org.apache.ws.security.policy.parser.processors.SupportingTokensProcessor
 import org.apache.ws.security.policy.parser.processors.SymmetricBindingProcessor;
 import org.apache.ws.security.policy.parser.processors.Wss10Processor;
 import org.apache.ws.security.policy.parser.processors.Wss11Processor;
+import org.apache.axis2.namespace.Constants;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -236,7 +237,7 @@ public class WSSPolicyProcessor {
                  */
                 PrimitiveAssertion pa = (PrimitiveAssertion) assertion;
                 if (!(pa.getName().getNamespaceURI()
-                        .equals("http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"))) {
+                        .equals(Constants.URI_SECURITYPOLICY))) {
                     log.debug("Got a unexpected assertion: "
                             + pa.getName().getLocalPart());
                     continue;
