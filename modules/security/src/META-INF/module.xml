@@ -10,4 +10,5 @@
             <order phase="MessageOut"/>
         </handler>
     </outflow>
+    <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
 </module>

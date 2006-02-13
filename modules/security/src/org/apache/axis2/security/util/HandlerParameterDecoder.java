@@ -47,6 +47,8 @@ public class HandlerParameterDecoder {
 	public static void processParameters(MessageContext msgCtx, boolean inflow)
 			throws Exception {
 
+        //TODO: check whether policy is available 
+        
 		Parameter inFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.INFLOW_SECURITY);
 		
 		Parameter outFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.OUTFLOW_SECURITY);
