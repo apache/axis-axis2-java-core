@@ -63,7 +63,16 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -163,27 +172,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected MultiLanguageClientEmitter() {
          // put whatever is needed here
     }
-
-    //~--- methods ------------------------------------------------------------
-
-    /**
-     * Commented for now for the
-     * @param policy
-     * @return the file name and the package of this policy
-     */
-
-//  private String processPolicy(Policy policy,String name) throws Exception{
-//      PolicyFileWriter writer = new PolicyFileWriter(configuration.getOutputLocation());
-//      String fileName = name + "_policy";
-//      writer.createOutFile(configuration.getPackageName(),fileName);
-//      FileOutputStream stream = writer.getStream();
-//      if (stream!=null) WSPolicyParser.getInstance().printModel(policy,stream);
-//
-//      String packageName = configuration.getPackageName();
-//      String fullFileName = "\\" + packageName.replace('.','\\') +"\\"+fileName+ ".xml";
-//      return fullFileName;
-//
-//  }
 
     /**
      * Utility method to add an attribute to a given element.
@@ -1267,6 +1255,23 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
+        // TODO
+        try {
+            // Prepare the DOM document for writing
+            Source source = new DOMSource(interfaceImplModel);
+    
+            // Prepare the output file
+            File file = new File("/home/sanka/Desktop/test1.xml");
+            Result result = new StreamResult(file);
+    
+            // Write the DOM document to the file
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            xformer.transform(source, result);
+        } catch (TransformerConfigurationException e) {
+        } catch (TransformerException e) {
+        }
+        
+        
         
         writeClass(interfaceImplModel, writer);
     }

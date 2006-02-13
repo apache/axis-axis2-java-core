@@ -32,6 +32,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private WSDLDescription wom;
 
     private String baseURI;
+    
+    private String repositoryPath;
 
     public String getBaseURI() {
         return baseURI;
@@ -347,5 +349,13 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public void setWriteMessageReceiver(boolean writeMessageReceiver) {
         this.writeMessageReceiver = writeMessageReceiver;
+    }
+    
+    public void setRepositoryPath(String repositoryPath) {
+    	this.repositoryPath = repositoryPath;    	
+    }
+    
+    public String getRepositoryPath() {
+    	return repositoryPath;    	
     }
 }
