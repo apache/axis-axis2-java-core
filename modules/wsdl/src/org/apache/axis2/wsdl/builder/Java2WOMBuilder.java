@@ -18,6 +18,7 @@ import org.apache.wsdl.extensions.impl.SOAPBindingImpl;
 import org.apache.wsdl.extensions.impl.SOAPBodyImpl;
 import org.apache.wsdl.extensions.impl.SOAPOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
+import org.apache.axis2.namespace.Constants;
 import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -131,9 +132,9 @@ public class Java2WOMBuilder {
      */
     private HashMap loadNamespaces() {
         HashMap namspaceMap = new HashMap();
-        namspaceMap.put(DEFAULT_SOAP_NAMESPACE_PREFIX, "http://schemas.xmlsoap.org/wsdl/soap/");
+        namspaceMap.put(DEFAULT_SOAP_NAMESPACE_PREFIX, Constants.URI_WSDL11_SOAP);
         namspaceMap.put(targetNamespacePrefix, targetNamespace);
-        namspaceMap.put(DEFAULT_SCHEMA_NAMESPACE_PREFIX, "http://www.w3.org/2001/XMLSchema");
+        namspaceMap.put(DEFAULT_SCHEMA_NAMESPACE_PREFIX, Constants.URI_2001_SCHEMA_XSD);
         return namspaceMap;
     }
 

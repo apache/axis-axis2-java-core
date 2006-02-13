@@ -16,6 +16,8 @@
 
 package org.apache.wsdl.extensions;
 
+import org.apache.axis2.namespace.Constants;
+
 import javax.xml.namespace.QName;
 
 public interface ExtensionConstants {
@@ -24,36 +26,36 @@ public interface ExtensionConstants {
      * The Type name for the SOAP Address defined in the Port/Endpoint
      */
     public static final QName SOAP_11_ADDRESS = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap/", "address");
+            Constants.URI_WSDL11_SOAP, "address");
     public static final QName SOAP_12_ADDRESS = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap12/", "address");
+            Constants.URI_WSDL12_SOAP, "address");
 
 
     public static final QName SOAP_11_OPERATION = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap/", "operation");
+            Constants.URI_WSDL11_SOAP, "operation");
      public static final QName SOAP_12_OPERATION = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap12/", "operation");
+            Constants.URI_WSDL12_SOAP, "operation");
 
     public static final QName SCHEMA = new QName(
-            "http://www.w3.org/2001/XMLSchema", "schema");
+            Constants.URI_2001_SCHEMA_XSD, "schema");
 
     public static final QName SOAP_11_BODY = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap/", "body");
+            Constants.URI_WSDL11_SOAP, "body");
     public static final QName SOAP_12_BODY = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap12/", "body");
+            Constants.URI_WSDL12_SOAP, "body");
     
     public static final QName SOAP_11_HEADER = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap/", "header");
+            Constants.URI_WSDL11_SOAP, "header");
      public static final QName SOAP_12_HEADER = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap12/", "header");
+            Constants.URI_WSDL12_SOAP, "header");
 
     public static final QName SOAP_11_BINDING = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap/", "binding");
+            Constants.URI_WSDL11_SOAP, "binding");
      public static final QName SOAP_12_BINDING = new QName(
-            "http://schemas.xmlsoap.org/wsdl/soap12/", "binding");
+            Constants.URI_WSDL12_SOAP, "binding");
      
      public static final QName POLICY = new QName(
-             "http://schemas.xmlsoap.org/ws/2004/09/policy", "Policy");
+             Constants.URI_POLICY, "Policy");
      public static final QName POLICY_REFERENCE = new QName(
-             "http://schemas.xmlsoap.org/ws/2004/09/policy", "PolicyReference");
+             Constants.URI_POLICY, "PolicyReference");
 }

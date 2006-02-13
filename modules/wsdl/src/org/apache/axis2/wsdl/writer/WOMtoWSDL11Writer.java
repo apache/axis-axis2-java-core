@@ -2,6 +2,7 @@ package org.apache.axis2.wsdl.writer;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.namespace.Constants;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
@@ -72,7 +73,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     private String defaultWSDLPrefix = "wsdl11";
     private String targetNamespacePrefix = "tns";
     private static final String WSDL1_1_NAMESPACE_URI = "http://schemas.xmlsoap.org/wsdl/";
-    private static final String WSDL1_1_SOAP_NAMESPACE_URI = "http://schemas.xmlsoap.org/wsdl/soap/";
+    private static final String WSDL1_1_SOAP_NAMESPACE_URI = Constants.URI_WSDL11_SOAP;
     private static final String DEFINITION_NAME = "definitions";
     private static final String IMPORT_NAME = "import";
     private static final String TYPES_NAME = "types";

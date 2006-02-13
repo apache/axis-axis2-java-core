@@ -23,6 +23,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -948,6 +949,17 @@ public class AxisServiceBuilder {
 
                 if (extElement instanceof SOAPBinding) {
                     return port;
+                } else if (extElement instanceof UnknownExtensibilityElement) {
+                    // TODO: After WSDL4J supports soap12, change this code
+                    UnknownExtensibilityElement unkElement =
+                            (UnknownExtensibilityElement) extElement;
+                    QName name =
+                            unkElement.getElementType();
+
+                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
+                            && name.getLocalPart().equals("binding")) {
+                        return port;
+                    }                    
                 }
             }
         }

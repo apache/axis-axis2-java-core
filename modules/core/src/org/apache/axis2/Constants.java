@@ -20,7 +20,7 @@ package org.apache.axis2;
 /**
  * Class Constants
  */
-public class Constants {
+public class Constants extends org.apache.axis2.namespace.Constants {
 
     /**
      * Field SOAP_STYLE_RPC_ENCODED
@@ -184,8 +184,6 @@ public class Constants {
 
     //to set and get the property from service context
     public static final String COOKIE_STRING = "Cookie";
-
-    public static final String NS_URI_AXIS2 = "http://ws.apache.org/axis2/";
 
     /**
      * Addressing Constants

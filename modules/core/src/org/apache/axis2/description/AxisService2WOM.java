@@ -2,6 +2,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
+import org.apache.axis2.Constants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
@@ -109,10 +110,10 @@ public class AxisService2WOM {
 		WSDLComponentFactory wsdlComponentFactory = new WSDLDescriptionImpl();
 		womDescription = wsdlComponentFactory.createDescription();
 		HashMap namespaceMap = new HashMap();
-		namespaceMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+		namespaceMap.put("soap", Constants.URI_WSDL11_SOAP);
 		namespaceMap.put(targetNamespecheprefix, targetNamespece);
 		namespaceMap.put("ns1", "http://org.apache.axis2/xsd");
-		namespaceMap.put("xs", "http://www.w3.org/2001/XMLSchema");
+		namespaceMap.put("xs", Constants.URI_2001_SCHEMA_XSD);
 		womDescription.setNamespaces(namespaceMap);
 		womDescription.setTargetNameSpace(targetNamespece);
 
