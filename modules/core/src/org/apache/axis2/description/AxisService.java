@@ -48,7 +48,12 @@ import javax.wsdl.Service;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -58,9 +63,11 @@ import java.util.Iterator;
 /**
  * Class AxisService
  */
-public class AxisService extends AxisDescription {
+public class AxisService extends AxisDescription implements Serializable {
 
-    private Definition definition = null;
+	private static final long serialVersionUID = 4528303251915455363L;
+
+	private Definition definition = null;
     private Log log = LogFactory.getLog(getClass());
     private String fileName = "";
 
@@ -720,5 +727,13 @@ public class AxisService extends AxisDescription {
             return schema.getElementByName(elementQName);
         }
         return null;
+    }
+    
+    private void readObject(ObjectInputStream stream)  throws IOException, ClassNotFoundException {
+    	// Do nothing. Service has nothing serializable.
+    }
+
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+    	// Do nothing. Service has nothing serializable.
     }
 }
