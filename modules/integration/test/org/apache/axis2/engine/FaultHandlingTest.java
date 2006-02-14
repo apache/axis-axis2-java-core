@@ -25,9 +25,13 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
@@ -37,6 +41,7 @@ import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
+import java.util.ArrayList;
 
 public class FaultHandlingTest extends TestCase implements TestConstants {
 
@@ -44,6 +49,32 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
+    }
+
+    public void testFaultHandling() throws AxisFault {
+        ConfigurationContext configurationContext = UtilServer.getConfigurationContext();
+        ArrayList inPhasesUptoAndIncludingPostDispatch = configurationContext.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
+        Phase phaseOne = (Phase) inPhasesUptoAndIncludingPostDispatch.get(0);
+        phaseOne.addHandler(new FaultHandler());
+
+
+        OMElement payload = TestingUtils.createDummyOMElement();
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setExceptionToBeThrownOnSOAPFault(false);
+        options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer(60000 *5));
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient sender = new ServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        OMElement result = sender.sendReceive(payload);
+
+        System.out.println("result = " + result);
+
+
     }
 
     public void testTwoHeadersSOAPMessage() throws AxisFault, XMLStreamException {

@@ -246,9 +246,9 @@ public class SimpleHTTPServer extends TransportListener {
      *
      * @param serviceName
      * @return an EndpointReference
-     * @see org.apache.axis2.transport.TransportListener#getReplyToEPR(String)
+     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String)
      */
-    public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
+    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
         String hostAddress ;
         try {
             hostAddress = SimpleHttpServerConnection.getIpAddress();

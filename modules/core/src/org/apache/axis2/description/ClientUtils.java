@@ -62,6 +62,8 @@ public class ClientUtils {
                 transportIn = ac.getTransportIn(new QName(listenerTransportProtocol));
 
                 if (transportIn == null) {
+                    // TODO : User should not be mandated to give an IN transport. If it is not given, we should
+                    // ask from the ListenerManager to give any available transport for this client.
                     throw new AxisFault(Messages.getMessage("unknownTransport",
                             listenerTransportProtocol));
                 }

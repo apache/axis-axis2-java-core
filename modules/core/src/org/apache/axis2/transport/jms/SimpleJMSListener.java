@@ -250,7 +250,7 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
         return properties;
     }
 
-    public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
+    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
         try {
             JMSURLHelper url = new JMSURLHelper("jms:/" + destination);
             url.getProperties().putAll(properties);

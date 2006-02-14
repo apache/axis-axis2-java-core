@@ -35,5 +35,5 @@ public abstract class TransportListener {
 
     public abstract void stop() throws AxisFault;
 
-    public abstract EndpointReference getReplyToEPR(String serviceName) throws AxisFault;
+    public abstract EndpointReference getEPRForService(String serviceName) throws AxisFault;
 }

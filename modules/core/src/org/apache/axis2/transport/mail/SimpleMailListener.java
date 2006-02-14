@@ -286,7 +286,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      *  (non-Javadoc)
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
-    public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
+    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
         return new EndpointReference(replyTo + "/services/" + serviceName);
     }
 
