@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
  */
 public interface TestConstants {
     public static final EndpointReference targetEPR = new EndpointReference(
+//            "http://127.0.0.1:" + 5556
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
                     + "/axis2/services/EchoXMLService/echoOMElement");
 

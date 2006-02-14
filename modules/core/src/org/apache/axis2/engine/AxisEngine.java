@@ -145,11 +145,11 @@ public class AxisEngine {
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null) {
             faultContext.setFaultTo(processingContext.getFaultTo());
-        } 
-        
+        }
+
         if (faultTo == null || AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
-                    || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
-                    || AddressingConstants.Final.WSA_NONE_URI.equals(faultTo.getAddress())) {
+                || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
+                || AddressingConstants.Final.WSA_NONE_URI.equals(faultTo.getAddress())) {
             Object writer = processingContext.getProperty(MessageContext.TRANSPORT_OUT);
             if (writer != null) {
                 faultContext.setProperty(MessageContext.TRANSPORT_OUT, writer);
@@ -262,6 +262,7 @@ public class AxisEngine {
 
         if (faultReason != null) {
             fault.setReason((SOAPFaultReason) faultReason);
+            message = fault.getReason().getSOAPText().getText();
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (e instanceof AxisFault) {
@@ -278,33 +279,28 @@ public class AxisEngine {
 
         if (faultRole != null) {
             fault.getRole().setText((String) faultRole);
-        } else {
-
-            // TODO : get the role of this server and assign it here
-            fault.getRole().setText("http://myAxisServer/role/default");
         }
 
         Object faultNode = context.getProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
 
         if (faultNode != null) {
             fault.getNode().setText((String) faultNode);
-        } else {
-
-            // TODO : get the node of this server and assign it here
-            fault.getNode().setText("http://myAxisServer/role/default");
         }
 
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
 
         if (faultDetail != null) {
             fault.setDetail((SOAPFaultDetail) faultDetail);
-        } else if (fault.getException() == null) {
+        }
+
+        if (fault.getException() == null) {
             if (e instanceof Exception) {
                 fault.setException((Exception) e);
             } else {
                 fault.setException(new Exception(e));
             }
         }
+
     }
 
     /**

@@ -63,7 +63,8 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setExceptionToBeThrownOnSOAPFault(false);
-        options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer(60000 *5));
+        options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer(60000 *20));
+        options.setProperty(HTTPConstants.SO_TIMEOUT, new Integer(60000 *20));
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
