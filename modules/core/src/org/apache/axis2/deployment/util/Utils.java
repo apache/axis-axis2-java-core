@@ -3,19 +3,15 @@ package org.apache.axis2.deployment.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.builder.TypeTable;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.wsdl.WSDLConstants;
 import org.codehaus.jam.JMethod;
 
@@ -221,6 +217,8 @@ public class Utils {
     public static AxisService createService(String implClass,
                                             AxisConfiguration axisConfig, Class messageReceiverClass) throws AxisFault {
         Parameter parameter = new ParameterImpl(Constants.SERVICE_CLASS, implClass);
+        OMElement paraElement = getParameter(Constants.SERVICE_CLASS, implClass, false);
+        parameter.setParameterElement(paraElement);
         AxisService axisService = new AxisService();
         axisService.setUseDefaultChains(false);
         axisService.addParameter(parameter);
@@ -317,5 +315,14 @@ public class Utils {
                     SchemaGenerator.METHOD_REQUEST_WRAPPER));
         }
         return operation;
+    }
+
+    public static OMElement getParameter(String name, String value, boolean locked) {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMElement parameter = fac.createOMElement("parameter", null);
+        parameter.addAttribute("name", name, null);
+        parameter.addAttribute("locked", Boolean.toString(locked), null);
+        parameter.setText(value);
+        return parameter;
     }
 }

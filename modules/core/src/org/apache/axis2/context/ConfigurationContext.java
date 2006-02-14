@@ -28,11 +28,7 @@ import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -92,6 +88,14 @@ public class ConfigurationContext extends AbstractContext {
             if (Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
                 serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTabale.get(
                         ((AxisServiceGroup) axisService.getParent()).getServiceGroupName());
+                if (serviceGroupContext == null) {
+                    AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
+                    if (axisServiceGroup == null) {
+                        axisServiceGroup = (AxisServiceGroup) messageContext.getAxisService().getParent();
+                    }
+                    serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
+                            axisServiceGroup);
+                }
                 serviceContext = serviceGroupContext.getServiceContext(axisService);
 
             } else if (!isNull(serviceGroupContextId)
