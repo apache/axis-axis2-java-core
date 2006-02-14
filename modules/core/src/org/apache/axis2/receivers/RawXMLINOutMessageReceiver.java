@@ -20,6 +20,7 @@ package org.apache.axis2.receivers;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -122,6 +123,10 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 }
 
                 OMElement result = (OMElement) method.invoke(obj, args);
+                AxisService service = msgContext.getAxisService();
+                service.getTargetNamespace();
+                result.declareNamespace(service.getTargetNamespace(),
+                        service.getTargetNamespacePrefix());
                 OMElement bodyContent;
 
                 SOAPFactory fac = getSOAPFactory(msgContext);
