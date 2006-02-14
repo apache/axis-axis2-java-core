@@ -519,8 +519,7 @@
 		
 		return arrayList;
 	}
-	
-	private void engage(org.apache.axis2.description.AxisDescription axisDescription, org.apache.axis2.engine.AxisConfiguration axisConfiguration) throws AxisFault {
+	private void engage(org.apache.axis2.description.AxisDescription axisDescription, org.apache.axis2.engine.AxisConfiguration axisConfiguration) throws org.apache.axis2.AxisFault {
 		
 		org.apache.axis2.description.PolicyInclude policyInclude = axisDescription.getPolicyInclude();
 		org.apache.ws.policy.Policy policy = policyInclude.getEffectivePolicy();
