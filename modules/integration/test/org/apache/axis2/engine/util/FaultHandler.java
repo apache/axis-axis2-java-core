@@ -29,22 +29,24 @@ import org.apache.ws.commons.soap.SOAPFaultText;
  */
 
 public class FaultHandler extends AbstractHandler {
+    public static final String FAULT_REASON = "This is a test fault message which happened suddenly";
+    public static final String DETAIL_MORE_INFO = "This error is a result due to a fake problem in Axis2 engine. Do not worry ;)";
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         // this handler will be used to check the fault handling of Axis2.
         // this will create some dummy faults and send
 
-        SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP11Factory();
+        SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
 
         // I have a sudden fake error ;)
         SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
         soapFaultText.setLang("en");
-        soapFaultText.setText("This is a test fault message which happened suddenly");
+        soapFaultText.setText(FAULT_REASON);
         SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason();
         soapFaultReason.setSOAPText(soapFaultText);
 
         OMElement detailEntry = soapFac.createOMElement("MoreInfo", null);
-        detailEntry.setText("This error is a result due to a fake problem in Axis2 engine. Do not worry ;)");
+        detailEntry.setText(DETAIL_MORE_INFO);
         SOAPFaultDetail faultDetail = soapFac.createSOAPFaultDetail();
         faultDetail.addDetailEntry(detailEntry);
 

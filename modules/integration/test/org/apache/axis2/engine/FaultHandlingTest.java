@@ -29,7 +29,6 @@ import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
@@ -57,24 +56,37 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         Phase phaseOne = (Phase) inPhasesUptoAndIncludingPostDispatch.get(0);
         phaseOne.addHandler(new FaultHandler());
 
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        ServiceClient sender = new ServiceClient(configContext, null);
 
         OMElement payload = TestingUtils.createDummyOMElement();
+
+        // test with SOAP 1.2
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setExceptionToBeThrownOnSOAPFault(false);
-        options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, new Integer(60000 *20));
-        options.setProperty(HTTPConstants.SO_TIMEOUT, new Integer(60000 *20));
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-        ServiceClient sender = new ServiceClient(configContext, null);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         sender.setOptions(options);
 
-        OMElement result = sender.sendReceive(payload);
+        String result = sender.sendReceive(payload).toString();
 
-        System.out.println("result = " + result);
+        assertTrue(result.indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
+        assertTrue(result.indexOf(FaultHandler.FAULT_REASON) > -1);
 
+        // test with SOAP 1.1
+        options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setExceptionToBeThrownOnSOAPFault(false);
+        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        sender.setOptions(options);
+
+        result = sender.sendReceive(payload).toString();
+
+        assertTrue(result.indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
+        assertTrue(result.indexOf(FaultHandler.FAULT_REASON) > -1);
 
     }
 
