@@ -29,6 +29,8 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.modules.PolicyExtension;
+import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.ws.policy.AndCompositeAssertion;
@@ -45,9 +47,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * 
+ *
  * @author Sanka Samaranayake (sanka@apache.org)
- * 
+ *
  */
 public class PolicyEvaluator implements CodeGenExtension {
 
@@ -67,13 +69,13 @@ public class PolicyEvaluator implements CodeGenExtension {
 		util = new PolicyAttachmentUtil(configuration.getWom());
 
 		String repository = configuration.getRepositoryPath();
-		
+
 		if (repository == null) {
 			System.err.println("Warning: repository is not specified");
 			System.err.println("policy will not be supported");
-			return;			
+			return;
 		}
-		
+
 
 		try {
 			ConfigurationContext configurationCtx = ConfigurationContextFactory
@@ -100,8 +102,8 @@ public class PolicyEvaluator implements CodeGenExtension {
 			System.err
 					.println("cannot create repository : policy will not be supported");
 		}
-		
-		// 
+
+		//
 		configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
 	}
 
@@ -181,9 +183,9 @@ public class PolicyEvaluator implements CodeGenExtension {
 			// TODO exception ?
 			return;
 		}
-		
+
 		// TODO wsdl:portType processing..
-		
+
 	}
 
 	private void processPolicies(Document document, Element rootElement,
@@ -230,17 +232,17 @@ public class PolicyEvaluator implements CodeGenExtension {
 						+ namespace + "type assertions");
 				continue;
 			}
-			
+
 			Module module = axisModule.getModule();
 
-			if (!(module instanceof CodeGenPolicyExtension)) {
+			if (!(module instanceof ModulePolicyExtension)) {
 				System.err
 						.println(axisModule.getName()
 								+ " module doesnt provde a PolicyExtension to process policies");
 				continue;
 			}
 
-			PolicyExtension policyExtension = ((CodeGenPolicyExtension) module)
+			PolicyExtension policyExtension = ((ModulePolicyExtension) module)
 					.getPolicyExtension();
 
 			Policy nPolicy = new Policy();

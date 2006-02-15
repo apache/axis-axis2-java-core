@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.codegen.extension;
+package org.apache.axis2.modules;
 
+import org.apache.ws.policy.Policy;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * 
- * @author Sanka Samaranayake (sanka@apache.org)
  *
+ * @author Sanka Samaranayake (sanka@apache.org)
  */
-public interface CodeGenPolicyExtension {
-	
-	public PolicyExtension getPolicyExtension();
+public interface PolicyExtension {
+	public void addMethodsToStub(Document document, Element element, Policy policy);
 
 }
