@@ -510,18 +510,17 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected Document createDOMDocumentForTestCase() {
         WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding binding = infoHolder.getBinding();
-        String localPart = getCoreClassName(boundInterface);
+        String coreClassName = getCoreClassName(boundInterface);
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "package", configuration.getPackageName(), rootElement);
-        addAttribute(doc, "name", localPart + TEST_SUFFIX, rootElement);
+        addAttribute(doc, "name", coreClassName + TEST_SUFFIX, rootElement);
         addAttribute(doc, "namespace", boundInterface.getName().getNamespaceURI(), rootElement);
-        addAttribute(doc, "interfaceName", localPart, rootElement);
-        addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
-        addAttribute(doc, "stubname", localPart + STUB_SUFFIX, rootElement);
-        addAttribute(doc, "dbsupportpackage", configuration.getPackageName() + DATABINDING_PACKAGE_NAME_SUFFIX,
-                rootElement);
+        addAttribute(doc, "interfaceName", coreClassName, rootElement);
+        addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
+
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
 
@@ -529,6 +528,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
         doc.appendChild(rootElement);
+
+        System.out.println("rootElement = " + rootElement);
 
         return doc;
     }
@@ -748,8 +749,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     public void emitStub() throws CodeGenerationException {
 
-        SchemaUnwrapper.unwrap(configuration.getWom());
-        
         try {
 
             // get the interface

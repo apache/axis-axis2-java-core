@@ -98,6 +98,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setGenerateAll(true);
         }
 
+        
         //loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();

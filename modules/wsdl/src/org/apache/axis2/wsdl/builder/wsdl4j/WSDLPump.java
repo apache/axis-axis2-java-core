@@ -21,6 +21,8 @@ import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.axis2.namespace.Constants;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
@@ -151,17 +153,16 @@ public class WSDLPump {
 
         //get the namespace map
         this.declaredNameSpaces = wsdl4JDefinition.getNamespaces();
-        ////////////////////////////////////////////////////////////////
 
-        /////////////////////////////////////////////////////////////////////
-        // Order of the following items shouldn't be changed unless you //
+        /////////////////////////////////////////////////////////////////// //
+        // Order of the following items shouldn't be changed unless you     //
         // really know what you are doing. Reason being the components that //
         // are copied(pumped) towards the end depend on the components that //
-        // has already being pumped. Following Lists some of the //
-        // dependencies. //
-        //1) The Binding refers to the Interface //
-        //2) The Endpoint refers to the Bindings //
-        // .... //
+        // has already being pumped. Following Lists some of the            //
+        // dependencies.                                                    //
+        //  1) The Binding refers to the Interface                          //
+        //  2) The Endpoint refers to the Bindings                          //
+        // ....                                                             //
         //																   	//
         //////////////////////////////////////////////////////////////////////
 
@@ -170,7 +171,7 @@ public class WSDLPump {
         // These schemas are needed for code generation
         processImports(wsdl4JDefinition);
 
-        //////////////////(1)First Copy the Types/////////////////////////////
+        //////////////////(1.1)First Copy the Types/////////////////////////////
         //Types may get changed inside the Operation pumping.
 
         Types wsdl4jTypes = wsdl4JDefinition.getTypes();
@@ -182,8 +183,8 @@ public class WSDLPump {
                     wsdlTypes, null);
         }
 
-        //////////////////(1.5)s/////////////////////////////
-        // create a new Schema extensions element
+        //////////////////(1.2) /////////////////////////////
+        // create new Schema extensions element for wrapping
         Element[] schemaElements = generateWrapperSchema(wsdl4JDefinition);
         if (schemaElements!=null && schemaElements.length>0){
             for (int i = 0; i < schemaElements.length; i++) {
@@ -194,22 +195,38 @@ public class WSDLPump {
                             ExtensionConstants.SCHEMA);
                     wsdlTypes.addExtensibilityElement(schemaExtensibilityElement);
                     schemaExtensibilityElement.setElement(schemaElement);
-
-
-
                 }
             }
+        }
 
+        ////////////////////// (1.3) ////////////////////////////
+        // get all the schema elements (as DOM elements) and read them
+        // into  commons XMLSchema objects. This comes in handy when we
+        // need to populate the message references
+        List typeExtensibilityElements = wsdlTypes.getExtensibilityElements();
+        XmlSchemaCollection commonsSchemaReader = new XmlSchemaCollection();
+        Map namespacesMap = wsdlDefinition.getNamespaces();
+        String[] prefixes = (String[])namespacesMap.keySet().toArray(new String[namespacesMap.size()]);
+        for (int i = 0; i < prefixes.length; i++) {
+            commonsSchemaReader.mapNamespace(prefixes[i],(String)namespacesMap.get(prefixes[i]));
+        }
+
+        XmlSchema schema;
+        for (int i = 0; i < typeExtensibilityElements.size(); i++) {
+            Object extElement =  typeExtensibilityElements.get(i);
+            if (extElement instanceof org.apache.wsdl.extensions.Schema){
+                org.apache.wsdl.extensions.Schema schemaExtesnsibilityElement = ((org.apache.wsdl.extensions.Schema) extElement);
+                schema = commonsSchemaReader.read(schemaExtesnsibilityElement.getElement());
+                //attach this schema in the extensibility element
+                schemaExtesnsibilityElement.setSchema(schema);
+            }
         }
 
 
-        //schemaExtensibilityElement.setImportedSchemaStack();
-//        generateWrapperSchema(wsdl4JDefinition);
 
         ///////////////////(2)Copy the Interfaces///////////////////////////
         //copy the Interfaces: Get the PortTypes from WSDL4J parse OM and
-        // copy it to the
-        //WOM's WSDLInterface Components
+        // copy it to the  WOM's WSDLInterface Components
 
         Iterator portTypeIterator = wsdl4JDefinition.getPortTypes().values()
                 .iterator();
@@ -218,7 +235,7 @@ public class WSDLPump {
         while (portTypeIterator.hasNext()) {
             wsdlInterface = this.wsdlComponentFactory.createInterface();
             portType = (PortType) portTypeIterator.next();
-            this.populateInterfaces(wsdlInterface, portType);
+            this.populateInterfaces(wsdlInterface, portType,womDefinition);
             this.copyExtensibilityAttribute(portType.getExtensionAttributes(),
                     wsdlInterface);
             wsdlDefinition.addInterface(wsdlInterface);
@@ -263,8 +280,7 @@ public class WSDLPump {
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    ////////////////////////// Top level Components Copying
-    // ////////////////////
+    //////////////////////// Top level Components Copying ////////////////////////
 
     /**
      * Simply Copy information.
@@ -275,7 +291,8 @@ public class WSDLPump {
     // FIXME Evaluate a way of injecting features and priperties with a general
     // formatted input
     private void populateInterfaces(WSDLInterface wsdlInterface,
-                                    PortType wsdl4jPortType) {
+                                    PortType wsdl4jPortType,
+                                    WSDLDescription desc) {
 
         //Copy the Attribute information items
         //Copied with the Same QName so it will require no Query in Binding
@@ -292,7 +309,8 @@ public class WSDLPump {
 
             this.populateOperations(wsdloperation,
                     wsdl4jOperation,
-                    wsdl4jPortType.getQName().getNamespaceURI());
+                    wsdl4jPortType.getQName().getNamespaceURI(),
+                    desc.getTypes());
 
             this.copyExtensibleElements(
                     wsdl4jOperation.getExtensibilityElements(), wsdloperation, null);
@@ -467,8 +485,8 @@ public class WSDLPump {
     //////////////////////////// Internal Component Copying ///////////////////
     public void populateOperations(WSDLOperation wsdlOperation,
                                    Operation wsdl4jOperation,
-                                   String nameSpaceOfTheOperation
-    ) {
+                                   String nameSpaceOfTheOperation,
+                                   WSDLTypes wsdlTypes) {
         //Copy Name Attribute
         wsdlOperation.setName(new QName(nameSpaceOfTheOperation,
                 wsdl4jOperation.getName()));
@@ -502,10 +520,14 @@ public class WSDLPump {
                         (message).getExtensibilityElements(),
                         wsdlInputMessage, null);
             }
+
             this.copyExtensibilityAttribute(
                     wsdl4jInputMessage.getExtensionAttributes(),
                     wsdlInputMessage);
             wsdlOperation.setInputMessage(wsdlInputMessage);
+
+            // attach the right schema element
+            findSchemaElement(wsdlInputMessage,wsdlTypes);
         }
 
         //Create an output message and add
@@ -517,6 +539,7 @@ public class WSDLPump {
                     WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
             wsdlOutputMessage.setMessageLabel(
                     WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+
 
             Message outputMessage = wsdl4jOutputMessage.getMessage();
             if (null != outputMessage) {
@@ -530,6 +553,10 @@ public class WSDLPump {
                     wsdl4jOutputMessage.getExtensionAttributes(),
                     wsdlOutputMessage);
             wsdlOperation.setOutputMessage(wsdlOutputMessage);
+
+            // attach the right schema element
+            findSchemaElement(wsdlOutputMessage,wsdlTypes);
+
         }
 
         Map faults = wsdl4jOperation.getFaults();
@@ -562,6 +589,28 @@ public class WSDLPump {
 
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Utility method to populate a schema
+     * @param messageRef
+     * @param types
+     */
+    private void findSchemaElement(MessageReference messageRef,WSDLTypes types){
+        QName elementQName = messageRef.getElementQName();
+        List typeExtensibilityElements = types.getExtensibilityElements();
+        XmlSchema schema;
+        for (int i = 0; i < typeExtensibilityElements.size(); i++) {
+            Object extElement =  typeExtensibilityElements.get(i);
+            if (extElement instanceof org.apache.wsdl.extensions.Schema){
+                org.apache.wsdl.extensions.Schema schemaExtesnsibilityElement = ((org.apache.wsdl.extensions.Schema) extElement);
+                schema = schemaExtesnsibilityElement.getSchema();
+                if (schema.getElementByName(elementQName)!=null){
+                    messageRef.setElementSchema(schema.getElementByName(elementQName));
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      *
@@ -606,15 +655,15 @@ public class WSDLPump {
 
 
     private boolean findWrapForceable(Binding binding){
-       List extElements = binding.getExtensibilityElements();
+        List extElements = binding.getExtensibilityElements();
         for (int i = 0; i < extElements.size(); i++) {
             if (extElements.get(i) instanceof SOAPBinding){
-               SOAPBinding soapBinding = (SOAPBinding)extElements.get(i);
-               if ("rpc".equals(soapBinding.getStyle())){
-                   //oops - we've found a SOAPBinding that has a rpc style
-                   //we better force the wrapping then
+                SOAPBinding soapBinding = (SOAPBinding)extElements.get(i);
+                if ("rpc".equals(soapBinding.getStyle())){
+                    //oops - we've found a SOAPBinding that has a rpc style
+                    //we better force the wrapping then
                     return true;
-               }
+                }
             }
         }
 
@@ -681,8 +730,8 @@ public class WSDLPump {
 
         QName[] keys;
         if(forceWrapping){
-             //just take all the messages and wrap them, we've been told to force wrapping!
-             keys = (QName[])messagesMap.keySet().toArray(new QName[messagesMap.size()]);
+            //just take all the messages and wrap them, we've been told to force wrapping!
+            keys = (QName[])messagesMap.keySet().toArray(new QName[messagesMap.size()]);
         } else{
             //
             QName[] allKeys = (QName[])messagesMap.keySet().toArray(new QName[messagesMap.size()]);

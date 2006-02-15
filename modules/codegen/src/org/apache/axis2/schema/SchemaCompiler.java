@@ -68,11 +68,7 @@ public class SchemaCompiler {
     //the list of processedElements for the outer elements
     private HashMap processedElementMap;
 
-    // keeps a list of child element references per outer element. the content of this
-    // map would be a QName and another hashmap
-    private HashMap processedElementChildrenMap;
-
-    private HashMap processedAnonymousComplexTypesMap;
+     private HashMap processedAnonymousComplexTypesMap;
     //we need this map to keep the referenced elements. these elements need to be kept seperate
     //to avoid conflicts
     private HashMap processedElementRefMap;
@@ -142,7 +138,6 @@ public class SchemaCompiler {
         processedTypeMetaInfoMap = new HashMap();
         processedElementRefMap = new HashMap();
         nillableElementList = new ArrayList();
-        processedElementChildrenMap = new HashMap();
 
         //load the writer a nd initiliaze the base type
         writer = SchemaPropertyLoader.getBeanWriterInstance();

@@ -19,6 +19,7 @@ package org.apache.wsdl.extensions.impl;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -30,6 +31,7 @@ public class SchemaImpl extends WSDLExtensibilityElementImpl implements Extensio
     private Element element;
     private QName name;
     private Stack importedSchemaStack= new Stack();
+    private XmlSchema schema;
 
     public SchemaImpl() {
         type = SCHEMA;
@@ -68,5 +70,21 @@ public class SchemaImpl extends WSDLExtensibilityElementImpl implements Extensio
         if (importedSchemaStack.isEmpty()){
             importedSchemaStack.push(elelment);
         }
+    }
+
+    /**
+     * @see org.apache.wsdl.extensions.Schema#getSchema()
+     * @return
+     */
+    public XmlSchema getSchema() {
+        return schema;
+    }
+
+    /**
+     * @see Schema#setSchema(org.apache.ws.commons.schema.XmlSchema) 
+     * @param s
+     */
+    public void setSchema(XmlSchema s) {
+        schema = s;
     }
 }

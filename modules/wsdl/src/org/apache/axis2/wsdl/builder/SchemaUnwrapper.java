@@ -5,6 +5,12 @@ import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.MessageReference;
+import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import java.util.Map;
 /*
@@ -31,6 +37,10 @@ import java.util.Map;
  */
 public class SchemaUnwrapper {
 
+    /**
+     * Unwraps a given WSDLDescription
+     * @param description
+     */
     public static void unwrap(WSDLDescription description){
         //first start with the bindings (if present), else we
         //switch back to the interfaces list
@@ -42,7 +52,7 @@ public class SchemaUnwrapper {
         if (bindings != null && !bindings.isEmpty()){
             //process bindings
             WSDLBinding[] bindingsArray = (WSDLBinding[])
-                 bindings.values().toArray(new WSDLBinding[bindings.size()]);
+                    bindings.values().toArray(new WSDLBinding[bindings.size()]);
             for (int i = 0; i < bindingsArray.length; i++) {
                 unwrapSchemaForInterface(bindingsArray[i].getBoundInterface(),description);
 
@@ -51,9 +61,9 @@ public class SchemaUnwrapper {
         }else if (interfaces!=null && !interfaces.isEmpty()){
             //process the interfaces (porttypes)
             WSDLInterface[] interfacesArray = (WSDLInterface[])
-                            interfaces.values().toArray(new WSDLInterface[interfaces.size()]);
+                    interfaces.values().toArray(new WSDLInterface[interfaces.size()]);
             for (int i = 0; i < interfacesArray.length; i++) {
-                 unwrapSchemaForInterface(interfacesArray[i],description);
+                unwrapSchemaForInterface(interfacesArray[i],description);
             }
 
 
@@ -67,20 +77,61 @@ public class SchemaUnwrapper {
      * @param decription
      */
     private static void unwrapSchemaForInterface(WSDLInterface wsdlInterface,WSDLDescription decription){
-
         Map operationsMap = wsdlInterface.getOperations();
         if (!operationsMap.isEmpty()){
-             WSDLOperation[] operations = (WSDLOperation[])
+            WSDLOperation[] operations = (WSDLOperation[])
                     operationsMap.values().toArray(new WSDLOperation[operationsMap.size()]);
             WSDLOperation operation;
             for (int i = 0; i < operations.length; i++) {
                 operation = operations[i];
                 //process Schema
-                XmlSchemaElement elt = operation.getInputMessage().getElementSchema();
+                MessageReference inputMessage = operation.getInputMessage();
+                processMessageReference(inputMessage);
             }
         }
 
 
+    }
+
+    /**
+     * Processes a message reference,
+     * What we do is to store the relevant message elements inside
+     * the metadata bag for further use
+     * @param messageReference
+     */
+
+    private static void processMessageReference(MessageReference messageReference) {
+        XmlSchemaElement elt = messageReference.getElementSchema();
+        if (elt!=null){
+            XmlSchemaType schemaType = elt.getSchemaType();
+            // if the schema is a complex type then we are interested!
+            if (schemaType instanceof XmlSchemaComplexType) {
+                XmlSchemaComplexType complexType = (XmlSchemaComplexType)schemaType;
+                if (complexType.getParticle()!=null){
+                    XmlSchemaParticle particle = complexType.getParticle();
+                    if (particle instanceof XmlSchemaSequence){
+                        //fine! We have a sequence. so we need to traverse through this
+                        //and find the nested elements
+                        XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
+                        XmlSchemaElement internalElement;
+                        XmlSchemaObjectCollection items = sequence.getItems();
+                        for (int i = 0; i < items.getCount(); i++) {
+                             if (items.getItem(i) instanceof XmlSchemaElement){
+                                 internalElement = (XmlSchemaElement)items.getItem(i);
+                                 //attach this element to the metadatabag of the message reference
+                                  messageReference.getMetadataBag().put(
+                                          internalElement.getQName(),
+                                          internalElement);
+                             }
+
+
+                        }
+
+                    }
+
+                }
+            }
+        }
     }
 
 }

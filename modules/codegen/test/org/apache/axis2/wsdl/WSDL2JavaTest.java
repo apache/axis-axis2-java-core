@@ -201,14 +201,14 @@ public class WSDL2JavaTest extends TestCase{
      * Test for the modified ping wsdl. it will be the test for the detached schema with only an import
      * statement
      */
-    public void testCodeGenerationPingModified(){
-
-        try {
-            generateAndCompile("ping-modified.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
-        }
-    }
+//    public void testCodeGenerationPingModified(){
+//
+//        try {
+//            generateAndCompile("ping-modified.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+//        } catch (CodeGenerationException e) {
+//            fail("Exception while code generation test!"+ e.getMessage());
+//        }
+//    }
 
     /**
      * Test for the modified ping-unboond wsdl. The binding is removed in this wsdl

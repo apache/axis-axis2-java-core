@@ -35,6 +35,21 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     
     private String repositoryPath;
 
+    /**
+     * Determines whether the parameters are wrappedor unwrapped
+     * false by default
+     */
+    private boolean parametersWrapped = false;
+
+
+    public boolean isParametersWrapped() {
+        return parametersWrapped;
+    }
+
+    public void setParametersWrapped(boolean parametersWrapped) {
+        this.parametersWrapped = parametersWrapped;
+    }
+
     public String getBaseURI() {
         return baseURI;
     }

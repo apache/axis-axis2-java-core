@@ -17,6 +17,7 @@
 package org.apache.wsdl.extensions;
 
 import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -55,5 +56,17 @@ public interface Schema extends WSDLExtensibilityElement {
      * @param importedSchemaStack
      */
     public void setImportedSchemaStack(Stack importedSchemaStack) ;
+
+    /**
+     * gets the commons XMLSchema object associated 
+     * @return
+     */
+    public XmlSchema getSchema();
+
+    /**
+     *
+     * @param s
+     */
+    public void setSchema(XmlSchema s);
 
 }
