@@ -8,6 +8,8 @@
          URI resolver during the xslt transformations
      -->
     <xsl:include href="externalTemplate"/>
+    
+    <xsl:include href="policyExtensionTemplate"/>
 
     <xsl:template match="/class">
         <xsl:variable name="interfaceName"><xsl:value-of select="@interfaceName"/></xsl:variable>

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.axis2.wsdl.codegen.extension;
 
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.ws.policy.AndCompositeAssertion;
@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
 /**
  * 
  * @author Sanka Samaranayake (sanka@apache.org)
- *
+ * 
  */
 public class PolicyEvaluator implements CodeGenExtension {
 
@@ -56,18 +56,24 @@ public class PolicyEvaluator implements CodeGenExtension {
 	HashMap ns2modules = new HashMap();
 
 	PolicyAttachmentUtil util;
-	
+
 	Element rootElement;
-	
+
 	public PolicyEvaluator() {
 	}
 
 	public void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;
 		util = new PolicyAttachmentUtil(configuration.getWom());
-		
+
 		String repository = configuration.getRepositoryPath();
-		repository = "/home/sanka/jakarta-tomcat-4.1.30/webapps/axis2/WEB-INF"; // configuration.getRepository;
+		
+		if (repository == null) {
+			System.err.println("Warning: repository is not specified");
+			System.err.println("policy will not be supported");
+			return;			
+		}
+		
 
 		try {
 			ConfigurationContext configurationCtx = ConfigurationContextFactory
@@ -80,44 +86,111 @@ public class PolicyEvaluator implements CodeGenExtension {
 				AxisModule axisModule = (AxisModule) iterator.next();
 				String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 
+				if (namespaces == null) {
+					continue;
+				}
+
 				for (int i = 0; i < namespaces.length; i++) {
 					ns2modules.put(namespaces[i], axisModule);
 				}
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err
-					.println("cannot locate repository : policy will not be supported");
+					.println("cannot create repository : policy will not be supported");
 		}
+		
+		// 
+		configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
 	}
 
 	public void engage() {
-		WSDLDescription womDescription = configuration.getWom();
-
-		String serviceName = configuration.getServiceName();
-		WSDLService wsdlService = womDescription.getService(new QName(
-				serviceName));
-
-		String port = configuration.getPortName();
-		WSDLEndpoint wsdlEndpoint = wsdlService.getEndpoint(new QName(port));
-
-		WSDLBinding wsdlBinding = wsdlEndpoint.getBinding();
-		WSDLInterface wsdlInterface = wsdlBinding.getBoundInterface();
-		
-		Element rootElement = getRootElement();
-
-		for (Iterator iterator = wsdlInterface.getOperations().values()
-				.iterator(); iterator.hasNext();) {
-			WSDLOperation wsdlOperation = (WSDLOperation) iterator.next();
-			Policy policy = util.getOperationPolicy(wsdlEndpoint.getName(),
-					wsdlOperation.getName());
-			
-			processPolicies(policy, wsdlEndpoint, wsdlOperation, rootElement);
+		if (ns2modules.isEmpty()) {
+			System.err.println("Any policy supported module not found");
+			return;
 		}
+		WSDLDescription womDescription = configuration.getWom();
+		String serviceName = configuration.getServiceName();
+
+		Document document = getEmptyDocument();
+		Element rootElement = document.createElement("stubMethods");
+
+		WSDLService wsdlService = null;
+		WSDLInterface wsdlInterface = null;
+
+		if (serviceName != null) {
+			wsdlService = womDescription.getService(new QName(serviceName));
+		} else {
+			for (Iterator iterator = womDescription.getServices().values()
+					.iterator(); iterator.hasNext();) {
+				wsdlService = (WSDLService) iterator.next();
+				serviceName = wsdlService.getName().getLocalPart();
+				configuration.setServiceName(serviceName);
+				break;
+			}
+		}
+
+		if (wsdlService != null) {
+
+			String port = configuration.getPortName();
+			WSDLEndpoint wsdlEndpoint = null;
+
+			if (port == null) {
+				for (Iterator iterator = wsdlService.getEndpoints().values()
+						.iterator(); iterator.hasNext();) {
+					wsdlEndpoint = (WSDLEndpoint) iterator.next();
+					port = wsdlEndpoint.getName().getLocalPart();
+					configuration.setPortName(port);
+					break;
+
+				}
+			} else {
+				wsdlEndpoint = wsdlService.getEndpoint(new QName(port));
+			}
+			if (wsdlEndpoint == null) {
+				System.err.println("no wsdl:port found for the service");
+				return;
+			}
+
+			WSDLBinding wsdlBinding = wsdlEndpoint.getBinding();
+			wsdlInterface = wsdlBinding.getBoundInterface();
+
+			for (Iterator iterator = wsdlInterface.getOperations().values()
+					.iterator(); iterator.hasNext();) {
+				WSDLOperation wsdlOperation = (WSDLOperation) iterator.next();
+				Policy policy = util.getOperationPolicy(wsdlEndpoint.getName(),
+						wsdlOperation.getName());
+
+				if (policy != null) {
+					processPolicies(document, rootElement, policy,
+							wsdlEndpoint, wsdlOperation);
+				}
+			}
+
+		}
+
+		for (Iterator iterator = womDescription.getWsdlInterfaces().values()
+				.iterator(); iterator.hasNext();) {
+			wsdlInterface = (WSDLInterface) iterator.next();
+			break;
+		}
+
+		if (wsdlInterface == null) {
+			System.err.println("cannot find a wsdl:Service or a wsdl:portType");
+			// TODO exception ?
+			return;
+		}
+		
+		// TODO wsdl:portType processing..
+		
 	}
 
-	private void processPolicies(Policy policy, WSDLEndpoint wsdlEndpoint,
-			WSDLOperation operation, Element element) {
+	private void processPolicies(Document document, Element rootElement,
+			Policy policy, WSDLEndpoint wsdlEndpoint, WSDLOperation operation) {
+		if (!policy.isNormalized()) {
+			policy = (Policy) policy.normalize();
+		}
 
 		HashMap map = new HashMap();
 
@@ -132,6 +205,7 @@ public class PolicyEvaluator implements CodeGenExtension {
 			PrimitiveAssertion pa = (PrimitiveAssertion) iterator.next();
 
 			String namespace = pa.getName().getNamespaceURI();
+			nAND.addTerm(pa);
 
 			while (iterator.hasNext()) {
 				pa = (PrimitiveAssertion) iterator.next();
@@ -143,6 +217,8 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 			map.put(namespace, nAND);
 			AND.getTerms().removeAll(nAND.getTerms());
+
+			iterator = AND.getTerms().iterator();
 		}
 
 		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
@@ -154,15 +230,17 @@ public class PolicyEvaluator implements CodeGenExtension {
 						+ namespace + "type assertions");
 				continue;
 			}
+			
+			Module module = axisModule.getModule();
 
-			if (!(axisModule instanceof CodeGenPolicyExtension)) {
+			if (!(module instanceof CodeGenPolicyExtension)) {
 				System.err
 						.println(axisModule.getName()
 								+ " module doesnt provde a PolicyExtension to process policies");
 				continue;
 			}
 
-			PolicyExtension policyExtension = ((CodeGenPolicyExtension) axisModule)
+			PolicyExtension policyExtension = ((CodeGenPolicyExtension) module)
 					.getPolicyExtension();
 
 			Policy nPolicy = new Policy();
@@ -173,17 +251,12 @@ public class PolicyEvaluator implements CodeGenExtension {
 					.get(namespace);
 			nXOR.addTerm(nAND);
 
-			policyExtension.addMethodsToStub(nPolicy, element);
+			policyExtension.addMethodsToStub(document, rootElement, nPolicy);
 		}
 
-		configuration.putProperty("stubMethods", element);
+		configuration.putProperty("stubMethods", rootElement);
 	}
 
-	private Element getRootElement() {
-		Document document = getEmptyDocument();
-		return document.createElement("stubMethods");		
-	}
-	
 	private Document getEmptyDocument() {
 		try {
 			DocumentBuilder documentBuilder = DocumentBuilderFactory

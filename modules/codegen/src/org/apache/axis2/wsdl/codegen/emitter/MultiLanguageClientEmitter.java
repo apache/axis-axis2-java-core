@@ -18,6 +18,21 @@ package org.apache.axis2.wsdl.codegen.emitter;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.URIResolver;
+
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.util.PolicyUtil;
@@ -58,29 +73,6 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 //~--- classes ----------------------------------------------------------------
 
@@ -458,8 +450,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         // add the databind supporters. Now the databind supporters are completly contained inside
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
-        doc.appendChild(rootElement);
         
+        Object stubMethods;
+        
+        if ((stubMethods = configuration.getProperty("stubMethods")) != null) {
+        	rootElement.appendChild(doc.importNode((Element) stubMethods, true));
+        }
+        
+        doc.appendChild(rootElement);
         return doc;
     }
 
@@ -645,9 +643,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // ///////////////////////
         doc.appendChild(rootElement);
-
+        
         return doc;
-    }
+    }    
 
     /**
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitSkeleton()
@@ -1255,23 +1253,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
-        // TODO
-        try {
-            // Prepare the DOM document for writing
-            Source source = new DOMSource(interfaceImplModel);
-    
-            // Prepare the output file
-            File file = new File("/home/sanka/Desktop/test1.xml");
-            Result result = new StreamResult(file);
-    
-            // Write the DOM document to the file
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            xformer.transform(source, result);
-        } catch (TransformerConfigurationException e) {
-        } catch (TransformerException e) {
-        }
-        
-        
         
         writeClass(interfaceImplModel, writer);
     }

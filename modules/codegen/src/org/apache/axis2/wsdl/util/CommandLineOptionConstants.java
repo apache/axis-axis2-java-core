@@ -35,6 +35,8 @@ public interface CommandLineOptionConstants {
         String GENERATE_ALL_OPTION = "g";
         String PORT_NAME_OPTION = "pn";
         String SERVICE_NAME_OPTION = "sn";
+        String REPOSITORY_PATH_OPTION = "r";
+        
         //long option constants
         String OUTPUT_LOCATION_OPTION_LONG = "output";
         String SERVER_SIDE_CODE_OPTION_LONG = "server-side";
@@ -51,6 +53,7 @@ public interface CommandLineOptionConstants {
         String SERVICE_NAME_OPTION_LONG = "service-name";
         String INVALID_OPTION = "INVALID_OPTION";
         String EXTRA_OPTIONTYPE_PREFIX = "E";
+        String REPOSITORY_PATH_OPTION_LONG = "repository-path";
     }
 
     interface Java2WSDLConstants{

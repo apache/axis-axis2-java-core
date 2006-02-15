@@ -89,8 +89,10 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
 
         CommandLineOption serviceNameOption = loadOption(WSDL2JavaConstants.SERVICE_NAME_OPTION, WSDL2JavaConstants.SERVICE_NAME_OPTION_LONG,optionMap);
         config.setServiceName(serviceNameOption!=null?serviceNameOption.getOptionValue():null);
-
-
+        
+        CommandLineOption repositoryPathOption = loadOption(WSDL2JavaConstants.REPOSITORY_PATH_OPTION, WSDL2JavaConstants.REPOSITORY_PATH_OPTION_LONG, optionMap);
+        config.setRepositoryPath(repositoryPathOption != null ? repositoryPathOption.getOptionValue(): null);
+        
         CommandLineOption generateAllOption = loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION, WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG,optionMap);
         if (generateAllOption != null) {
             config.setGenerateAll(true);

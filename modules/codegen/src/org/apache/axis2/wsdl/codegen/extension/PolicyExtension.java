@@ -17,6 +17,7 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.ws.policy.Policy;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -24,6 +25,6 @@ import org.w3c.dom.Element;
  * @author Sanka Samaranayake (sanka@apache.org)
  */
 public interface PolicyExtension {
-	public void addMethodsToStub(Policy policy, Element element);
+	public void addMethodsToStub(Document document, Element element, Policy policy);
 
 }
