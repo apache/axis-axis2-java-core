@@ -11,7 +11,6 @@
     <xsl:variable name="stubname"><xsl:value-of select="@stubname"/></xsl:variable>
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
-    <xsl:variable name="dbpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
 
     /**
      * <xsl:value-of select="@name"/>.java
@@ -20,9 +19,9 @@
      * by the Apache Axis2 version: #axisVersion# #today#
      */
     package <xsl:value-of select="$package"/>;
-    
+
     /*
-     *  <xsl:value-of select="@name"/> Junit test case 
+     *  <xsl:value-of select="@name"/> Junit test case
     */
 
     public class <xsl:value-of select="@name"/> extends junit.framework.TestCase{
@@ -46,7 +45,7 @@
                                                         </xsl:text>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class);
                     // todo Fill in the <xsl:value-of select="@name"/> here
                 </xsl:for-each>
-                 
+
                 <xsl:choose>
                     <xsl:when test="$outputtype=''">
                     <!-- for now think there is only one input element -->
@@ -130,6 +129,42 @@
       </xsl:if>
       <!-- end of in-out mep -->
       </xsl:if>
+      <!-- start of in-only mep-->
+      <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
+          /**
+          * Auto generated test method
+          */
+          public  void test<xsl:value-of select="@name"/>() throws java.lang.Exception{
+
+          <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/> stub =
+          new <xsl:value-of select="$package"/>.<xsl:value-of select="$stubname"/>();//the default implementation should point to the right endpoint
+          <xsl:choose>
+              <xsl:when test="count(input/param)>0">
+                  <xsl:for-each select="input/param[@type!='']">
+                      <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text>=
+                  </xsl:text>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class);
+                      // todo Fill in the <xsl:value-of select="@name"/> here
+                  </xsl:for-each>
+
+                  //There is no output to be tested!
+                  stub.<xsl:value-of select="@name"/>(
+                  <xsl:for-each select="input/param">
+                      <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:if>
+                  </xsl:for-each>);
+
+              </xsl:when>
+              <xsl:otherwise>
+
+
+                  //There is no output to be tested!
+                  stub.<xsl:value-of select="@name"/>();
+
+
+              </xsl:otherwise>
+          </xsl:choose>
+          }
+      </xsl:if>
+
      </xsl:for-each>
 
        <!-- generate the test object -->
