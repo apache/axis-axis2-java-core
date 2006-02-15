@@ -221,7 +221,7 @@ public class ArchiveReader implements DeploymentConstants {
                 zin = new ZipInputStream(new FileInputStream(filename));
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
-                    if (entry.getName().equals(SERVICES_XML)) {
+                    if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(
                                         engine.getCurrentFileItem().getName()));
@@ -243,6 +243,10 @@ public class ArchiveReader implements DeploymentConstants {
             }
         } else {
             File file = new File(filename, SERVICES_XML);
+            if (!file.exists()) {
+                // try for meta-inf
+                file = new File(filename, SERVICES_XML.toLowerCase());
+            }
             if (file.exists()) {
                 InputStream in = null;
                 try {
