@@ -79,6 +79,8 @@ public abstract class AxisOperation extends AxisDescription
      */
     public abstract void addMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault;
+    public abstract void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
+            throws AxisFault;
 
     public void addModule(QName moduleName) {
         modulerefs.add(moduleName);

@@ -32,11 +32,11 @@ public class InOutAxisOperation extends AxisOperation {
 
     public void addMessage(AxisMessage message, String label) {
         if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
-//            outMessage = message;
-        	addChild("outMessage", message);
+            addChild("outMessage", message);
         } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-//            inMessage = message;
-        	addChild("inMessage", message);
+            addChild("inMessage", message);
+        } else if (WSDLConstants.MESSAGE_LABEL_FAULT_VALUE.equals(label)) {
+            addChild("faultMessage", message);
         } else {
             throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -61,32 +61,46 @@ public class InOutAxisOperation extends AxisOperation {
         }
     }
 
+    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
+        HashMap mep = opContext.getMessageContexts();
+        MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
+
+        if (faultMessageCtxt != null) {
+            throw new AxisFault("Invalid message addition , operation context completed");
+        } else {
+            mep.put(MESSAGE_LABEL_FAULT_VALUE, msgContext);
+            opContext.setComplete(true);
+            opContext.cleanup();
+        }
+
+    }
+
     private void createMessages() {
 //        inMessage = new AxisMessage();
 //        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 //        inMessage.setParent(this);
-        
+
         AxisMessage inMessage = new AxisMessage();
         inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         inMessage.setParent(this);
         addChild("inMessage", inMessage);
-        
+
         inFaultMessage = new AxisMessage();
         inFaultMessage.setParent(this);
-        
+
         outFaultMessage = new AxisMessage();
         outFaultMessage.setParent(this);
-        
+
 //        outMessage = new AxisMessage();
 //        outMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
 //        outMessage.setParent(this);
-        
+
         AxisMessage outMessage = new AxisMessage();
         outMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
         outMessage.setParent(this);
         addChild("outMessage", outMessage);
-      
-        
+
+
     }
 
     public AxisMessage getMessage(String label) {
@@ -124,10 +138,10 @@ public class InOutAxisOperation extends AxisOperation {
     }
 
     public void setPhasesOutFlow(ArrayList list) {
-    	((AxisMessage) getChild("outMessage")).setMessageFlow(list);
+        ((AxisMessage) getChild("outMessage")).setMessageFlow(list);
     }
 
     public void setRemainingPhasesInFlow(ArrayList list) {
-    	((AxisMessage) getChild("inMessage")).setMessageFlow(list);
+        ((AxisMessage) getChild("inMessage")).setMessageFlow(list);
     }
 }

@@ -7,6 +7,7 @@ import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Author: Deepal Jayasinghe
@@ -36,7 +37,7 @@ public class InOnlyAxisOperation extends AxisOperation {
     public void addMessage(AxisMessage message, String label) {
         if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
 //            inMessage = message;
-        	addChild("inMessage", message);
+            addChild("inMessage", message);
         } else {
             throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -52,13 +53,26 @@ public class InOnlyAxisOperation extends AxisOperation {
         }
     }
 
+    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
+        HashMap mep = opContext.getMessageContexts();
+        MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
+
+        if (faultMessageCtxt != null) {
+            throw new AxisFault("Invalid message addition , operation context completed");
+        } else {
+            mep.put(MESSAGE_LABEL_FAULT_VALUE, msgContext);
+            opContext.setComplete(true);
+            opContext.cleanup();
+        }
+    }
+
     private void createMessage() {
 //        inMessage = new AxisMessage();
 //        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 //        inMessage.setParent(this);
-    	AxisMessage inMessage = new AxisMessage();
-    	inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-    	inMessage.setParent(this);
+        AxisMessage inMessage = new AxisMessage();
+        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+        inMessage.setParent(this);
 
         inFaultMessage = new AxisMessage();
         inFaultMessage.setParent(this);
@@ -67,14 +81,14 @@ public class InOnlyAxisOperation extends AxisOperation {
         outFaultMessage.setParent(this);
 
         outPhase = new ArrayList();
-        
+
         addChild("inMessage", inMessage);
     }
 
     public AxisMessage getMessage(String label) {
         if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
 //            return inMessage;
-        	return (AxisMessage) getChild("inMessage");
+            return (AxisMessage) getChild("inMessage");
         } else {
             throw new UnsupportedOperationException("In valid acess");
         }

@@ -173,12 +173,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String LOGGED = "Logged";
     public static final String CONTAINER_MANAGED = "ContainerManaged";
 
-    public static final String ADDRESSING_TO = "WS-Addressing:To";
-    public static final String ADDRESSING_REPLY_TO = "WS-Addressing:ReplyTo";
-    public static final String ADDRESSING_RELATES_TO = "WS-Addressing:RelatesTo";
-    public static final String ADDRESSING_MESSAGE_ID = "WS-Addressing:MessageId";
-    public static final String ADDRESSING_FROM = "WS-Addressing:From";
-    public static final String ADDRESSING_FAULT_TO = "WS-Addressing:FaultTo";
+    public static final String FAULT_INFORMATION_FOR_HEADERS = "FaultHeaders";
 
     //to set and get the property from service context
     public static final String COOKIE_STRING = "Cookie";

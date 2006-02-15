@@ -141,7 +141,19 @@ public class AxisEngine {
         faultContext.setTransportIn(processingContext.getTransportIn());
         faultContext.setTransportOut(processingContext.getTransportOut());
 
+        // register the fault message context
+        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null){
+            processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
+        }
+
         faultContext.setProcessingFault(true);
+
+        // there are some information  that the fault thrower wants to pass to the fault path.
+        Object faultInfoForHeaders = processingContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        if (faultInfoForHeaders != null) {
+            faultContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInfoForHeaders);
+        }
+
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null) {
             faultContext.setFaultTo(processingContext.getFaultTo());
@@ -300,6 +312,7 @@ public class AxisEngine {
                 fault.setException(new Exception(e));
             }
         }
+
 
     }
 

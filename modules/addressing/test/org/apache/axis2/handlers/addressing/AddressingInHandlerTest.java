@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,7 +63,7 @@ public class AddressingInHandlerTest extends TestCase {
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             Options options =
                     inHandler.extractAddressingInformation(header,
-                            new Options(),
+                            new MessageContext(),
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Submission.WSA_NAMESPACE),
                             AddressingConstants.Submission.WSA_NAMESPACE);
@@ -101,7 +102,7 @@ public class AddressingInHandlerTest extends TestCase {
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
             Options options =
                     inHandler.extractAddressingInformation(header,
-                            new Options(),
+                            new MessageContext(),
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Final.WSA_NAMESPACE),
                             AddressingConstants.Final.WSA_NAMESPACE);

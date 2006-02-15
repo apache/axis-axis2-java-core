@@ -17,6 +17,7 @@ import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -59,6 +60,19 @@ public class OutOnlyAxisOperation extends AxisOperation {
         } else {
             throw new AxisFault(
                     "Invalid message addition , operation context completed");
+        }
+    }
+
+    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
+        HashMap mep = opContext.getMessageContexts();
+        MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
+
+        if (faultMessageCtxt != null) {
+            throw new AxisFault("Invalid message addition , operation context completed");
+        } else {
+            mep.put(MESSAGE_LABEL_FAULT_VALUE, msgContext);
+            opContext.setComplete(true);
+            opContext.cleanup();
         }
     }
 

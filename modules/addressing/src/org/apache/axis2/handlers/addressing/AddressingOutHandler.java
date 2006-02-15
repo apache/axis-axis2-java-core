@@ -129,10 +129,25 @@ public class AddressingOutHandler extends AddressingHandler {
         // processing WSA RelatesTo
         processRelatesTo(envelope, messageContextOptions);
 
+        // process fault headers, if present
+        processFaultsInfoIfPresent(envelope, msgContext);
+
         // We are done, cleanup the references
         addressingNamespaceObject = null;
         addressingNamespace = null;
 
+    }
+
+    private void processFaultsInfoIfPresent(SOAPEnvelope envelope, MessageContext msgContext) {
+        Map faultInfo = (Map) msgContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        if (faultInfo != null) {
+            String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
+            if (faultyHeaderQName != null && "".equals(faultyHeaderQName)) {
+                SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
+                OMElement probHeaderQName = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
+                probHeaderQName.setText(faultyHeaderQName);
+            }
+        }
     }
 
     private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions) {

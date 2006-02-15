@@ -116,6 +116,7 @@ public interface WSDLConstants {
     public static final byte MESSAGE_LABEL_IN = 0;
 
     public static final String MESSAGE_LABEL_IN_VALUE = "In";
+    public static final String MESSAGE_LABEL_FAULT_VALUE = "Fault";
 
     /**
      * Constant to represent the message label "Out" which is used by the

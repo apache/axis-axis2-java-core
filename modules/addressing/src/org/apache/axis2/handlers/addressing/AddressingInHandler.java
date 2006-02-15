@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public abstract class AddressingInHandler extends AddressingHandler {
+public abstract class AddressingInHandler extends AddressingHandler implements AddressingConstants {
 
     private static final long serialVersionUID = 3907988439637261572L;
 
@@ -63,7 +63,7 @@ public abstract class AddressingInHandler extends AddressingHandler {
                 msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace);
 
                 logger.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
-                extractAddressingInformation(header, msgContext.getOptions(),
+                extractAddressingInformation(header, msgContext,
                         addressingHeaders, addressingNamespace);
             } else {
                 logger.debug("No Headers present corresponding to " + addressingVersion);
@@ -79,35 +79,55 @@ public abstract class AddressingInHandler extends AddressingHandler {
 
     }
 
-    protected Options extractAddressingInformation(SOAPHeader header, Options messageContextOptions,
+    protected Options extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
                                                    ArrayList addressingHeaders, String addressingNamespace)
             throws AddressingException {
 
-        Map alreadyFoundAddrHeader = new HashMap(7); // its seven, coz frequently used 
+        Options messageContextOptions = messageContext.getOptions();
+        Map alreadyFoundAddrHeader = new HashMap(7); // there are seven frequently used WS-A headers
 
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
             EndpointReference epr;
-            if (AddressingConstants.WSA_TO.equals(soapHeaderBlock.getLocalName())) {
+            if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
+                checkForDuplicateHeaders(WSA_TO, messageContext, alreadyFoundAddrHeader);
                 extractToEPRInformation(soapHeaderBlock, messageContextOptions, header);
-            } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
+            } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
+                checkForDuplicateHeaders(WSA_FROM, messageContext, alreadyFoundAddrHeader);
                 extractFromEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
-            } else if (AddressingConstants.WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
+            } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
+                checkForDuplicateHeaders(WSA_REPLY_TO, messageContext, alreadyFoundAddrHeader);
                 extractReplyToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
-            } else if (AddressingConstants.WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
+            } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
+                checkForDuplicateHeaders(WSA_FAULT_TO, messageContext, alreadyFoundAddrHeader);
+
                 extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
-            } else if (AddressingConstants.WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
+            } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
                 messageContextOptions.setMessageId(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
-            } else if (AddressingConstants.WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
+            } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
                 messageContextOptions.setAction(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
-            } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
+            } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
+                checkForDuplicateHeaders(WSA_RELATES_TO, messageContext, alreadyFoundAddrHeader);
                 extractRelatesToInformation(soapHeaderBlock, addressingNamespace, messageContextOptions);
             }
         }
         return messageContextOptions;
+    }
+
+    private void checkForDuplicateHeaders(String addressingHeaderName, MessageContext messageContext, Map alreadyFoundAddressingHeaders) {
+        if (alreadyFoundAddressingHeaders.get(addressingHeaderName) != null) {
+            Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+            if (faultInformation == null) {
+                faultInformation = new HashMap();
+                messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
+            }
+            faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, "wsa:" + addressingHeaderName);
+        } else {
+            alreadyFoundAddressingHeaders.put(addressingHeaderName, addressingHeaderName);
+        }
     }
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);
@@ -192,6 +212,7 @@ public abstract class AddressingInHandler extends AddressingHandler {
     }
 
     private void extractToEPRInformation(SOAPHeaderBlock soapHeaderBlock, Options messageContextOptions, SOAPHeader header) {
+
         EndpointReference epr;
         //here the addressing epr overidde what ever already there in the message context
         epr = new EndpointReference(soapHeaderBlock.getText());
@@ -200,6 +221,7 @@ public abstract class AddressingInHandler extends AddressingHandler {
         // check for reference parameters
         extractToEprReferenceParameters(epr, header);
         soapHeaderBlock.setProcessed();
+
     }
 
     /**

@@ -62,6 +62,10 @@ public interface AddressingConstants {
         public static final String WSA_METADATA = "Metadata";
 
         public static final String WSA_INTERFACE_NAME = "InterfaceName";
+
+        // fault information
+        public static final String FAULT_HEADER_PROB_HEADER_QNAME = "ProblemHeaderQName";
+        public static final String FAULT_HEADER_DETAIL = "FaultDetail";
     }
 
 
