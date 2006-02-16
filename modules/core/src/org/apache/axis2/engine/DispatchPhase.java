@@ -3,6 +3,7 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
@@ -26,9 +27,9 @@ import java.util.ArrayList;
 
 public class DispatchPhase extends Phase {
 
-	private static final long serialVersionUID = -6596799621473224363L;
+    private static final long serialVersionUID = -6596799621473224363L;
 
-	public DispatchPhase() {
+    public DispatchPhase() {
     }
 
     public DispatchPhase(String phaseName) {
@@ -48,6 +49,7 @@ public class DispatchPhase extends Phase {
                     : "") + " and WSA Action = " + msgContext.getWSAAction());
         }
 
+        validateTransport(msgContext);
         if (msgContext.getOperationContext() == null) {
             throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
         }
@@ -68,5 +70,31 @@ public class DispatchPhase extends Phase {
         ArrayList operationChain = msgContext.getAxisOperation().getRemainingPhasesInFlow();
 
         msgContext.setExecutionChain(operationChain);
+    }
+
+    /**
+     * To check wether the incoming request has come in valid transport , simpley the transports
+     * that service author wants to expose
+     *
+     * @param msgctx
+     */
+    private void validateTransport(MessageContext msgctx) throws AxisFault {
+        AxisService service = msgctx.getAxisService();
+        if (service.isEnableAllTransport()) {
+            return;
+        } else {
+            String trs [] = service.getExposeTransports();
+            String incommingTrs = msgctx.getIncomingTransportName();
+            for (int i = 0; i < trs.length; i++) {
+                String tr = trs[i];
+                if (incommingTrs.equals(tr)) {
+                    return;
+                }
+            }
+        }
+        EndpointReference toEPR = msgctx.getTo();
+        throw new AxisFault("Service Not found EPR is " + ((toEPR != null)
+                ? toEPR.getAddress()
+                : ""));
     }
 }

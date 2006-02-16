@@ -44,7 +44,7 @@ import java.net.SocketException;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer extends TransportListener {
+public class SimpleHTTPServer implements TransportListener {
 
     /**
      * Field log
@@ -76,7 +76,7 @@ public class SimpleHTTPServer extends TransportListener {
      *
      * @param systemContext
      */
-    public SimpleHTTPServer(ConfigurationContext systemContext, int port) {
+    public SimpleHTTPServer(ConfigurationContext systemContext, int port) throws AxisFault {
         this(systemContext, port, null);
     }
 
@@ -96,7 +96,7 @@ public class SimpleHTTPServer extends TransportListener {
      * @param systemContext
      * @param pool
      */
-    public SimpleHTTPServer(ConfigurationContext systemContext, int port, ThreadFactory pool) {
+    public SimpleHTTPServer(ConfigurationContext systemContext, int port, ThreadFactory pool) throws AxisFault {
         // If a threadPool is not passed-in the threadpool
         // from the ConfigurationContext
         // is used. This is a bit tricky, and might cause a
@@ -123,7 +123,6 @@ public class SimpleHTTPServer extends TransportListener {
             this.port = port;
             this.configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoPath,
                     axis2xml);
-
             // If a thread pool is not passed the thread pool from the config context
             // is used. If one is passed it is set on the config context.
             if (pool == null) {
@@ -249,7 +248,7 @@ public class SimpleHTTPServer extends TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getEPRForService(String)
      */
     public EndpointReference getEPRForService(String serviceName) throws AxisFault {
-        String hostAddress ;
+        String hostAddress;
         try {
             hostAddress = SimpleHttpServerConnection.getIpAddress();
         } catch (SocketException e) {

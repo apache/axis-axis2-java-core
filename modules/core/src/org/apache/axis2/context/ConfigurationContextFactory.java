@@ -4,14 +4,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,7 +60,7 @@ public class ConfigurationContextFactory {
 
             phaseResolver.buildTranspotsChains();
             initModules(configContext);
-            initTransports(configContext);
+            initTransportSenders(configContext);
         } catch (PhaseException e) {
             throw new AxisFault(e);
         } catch (DeploymentException e) {
@@ -100,32 +98,13 @@ public class ConfigurationContextFactory {
      *
      * @param configContext
      */
-    public static void initTransports(ConfigurationContext configContext) {
+    public static void initTransportSenders(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
-
-        // Initialize Transport Ins
-        HashMap transportIns = axisConf.getTransportsIn();
-        Iterator values = transportIns.values().iterator();
-
-        while (values.hasNext()) {
-            TransportInDescription transportIn = (TransportInDescription) values.next();
-            TransportListener listener = transportIn.getReceiver();
-
-            if (listener != null) {
-                try {
-                    listener.init(configContext, transportIn);
-                } catch (AxisFault axisFault) {
-                    LogFactory.getLog(ConfigurationContextFactory.class)
-                            .info("Transport-IN initialization error : "
-                                    + transportIn.getName().getLocalPart());
-                }
-            }
-        }
 
         // Initialize Transport Outs
         HashMap transportOuts = axisConf.getTransportsOut();
 
-        values = transportOuts.values().iterator();
+        Iterator values = transportOuts.values().iterator();
 
         while (values.hasNext()) {
             TransportOutDescription transportOut = (TransportOutDescription) values.next();

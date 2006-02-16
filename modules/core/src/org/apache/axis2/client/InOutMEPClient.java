@@ -30,6 +30,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
@@ -47,8 +48,8 @@ import javax.xml.namespace.QName;
  * and non-blocking calls. The basic API is based on MessageContext and
  * provides more convenient APIs.
  *
- * @deprecated 
  * @see ServiceClient
+ * @deprecated
  */
 public class InOutMEPClient extends MEPClient {
 
@@ -120,8 +121,7 @@ public class InOutMEPClient extends MEPClient {
      */
     public void close() throws AxisFault {
         if (clientOptions.isUseSeparateListener()) {
-            ListenerManager.stop(serviceContext.getConfigurationContext(),
-                    clientOptions.getTransportIn().getName().getLocalPart());
+            TransportManager.transportManager.stop();
         }
     }
 
@@ -155,9 +155,6 @@ public class InOutMEPClient extends MEPClient {
                     new QName(Constants.MODULE_ADDRESSING))) {
                 throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
-
-            ListenerManager.makeSureStarted(clientOptions.getTransportInProtocol(),
-                    serviceContext.getConfigurationContext());
         }
     }
 
@@ -219,7 +216,7 @@ public class InOutMEPClient extends MEPClient {
 
             // process the resule of the invocation
             if (callback.envelope != null) {
-                MessageContext resMsgctx =new MessageContext();
+                MessageContext resMsgctx = new MessageContext();
                 resMsgctx.setConfigurationContext(serviceContext.getConfigurationContext());
 
                 resMsgctx.setEnvelope(callback.envelope);
@@ -321,12 +318,10 @@ public class InOutMEPClient extends MEPClient {
 
                 // set the replyto such that the response will arrive at the transport listener started
                 // Note that this will only change the replyTo Address property in the replyTo EPR
-                EndpointReference replyToFromTransport =
-                        ListenerManager
-                                .replyToEPR(serviceContext.getConfigurationContext(),
-                                        serviceContext.getAxisService().getName() + "/"
-                                                + axisop.getName().getLocalPart(), clientOptions
-                                        .getTransportIn().getName().getLocalPart());
+                EndpointReference replyToFromTransport = TransportManager.transportManager.
+                        getERPforService(serviceContext.getAxisService().getName(),axisop.getName().getLocalPart(), clientOptions
+                                .getTransportIn().getName()
+                                .getLocalPart());
 
                 if (msgctx.getReplyTo() == null) {
                     msgctx.setReplyTo(replyToFromTransport);

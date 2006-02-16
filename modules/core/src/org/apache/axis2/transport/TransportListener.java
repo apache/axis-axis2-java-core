@@ -25,15 +25,15 @@ import org.apache.axis2.description.TransportInDescription;
 /**
  * Class TransportListener
  */
-public abstract class TransportListener {
+public interface TransportListener {
     public static final String PARAM_PORT = "port";
 
-    public abstract void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+    void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
             throws AxisFault;
 
-    public abstract void start() throws AxisFault;
+    void start() throws AxisFault;
 
-    public abstract void stop() throws AxisFault;
+    void stop() throws AxisFault;
 
-    public abstract EndpointReference getEPRForService(String serviceName) throws AxisFault;
+    EndpointReference getEPRForService(String serviceName) throws AxisFault;
 }

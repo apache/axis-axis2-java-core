@@ -25,6 +25,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -85,12 +86,12 @@ public class UtilServer {
         File file = new File(repository);
         if (!file.exists()) {
             throw new Exception("repository directory "
-                                + file.getAbsolutePath() + " does not exists");
+                    + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);
     }
 
-    public static synchronized void stop() {
+    public static synchronized void stop() throws AxisFault {
         if (count == 1) {
             receiver.stop();
             while (receiver.isRunning()) {
@@ -104,6 +105,10 @@ public class UtilServer {
             System.out.print("Server stopped .....");
         } else {
             count--;
+        }
+        if (TransportManager.transportManager != null) {
+            TransportManager.transportManager.stop();
+            TransportManager.transportManager = null;
         }
     }
 
@@ -120,7 +125,7 @@ public class UtilServer {
     private static File getAddressingMARFile() {
         File dir = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
         File[] files = dir.listFiles(new AddressingFilter());
-        TestCase.assertTrue(files.length==1);
+        TestCase.assertTrue(files.length == 1);
         File file = files[0];
         TestCase.assertTrue(file.exists());
         return file;
@@ -133,9 +138,9 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         AxisModule axisModule = deploymentEngine.buildModule(file,
-                                                                    configContext.getAxisConfiguration());
+                configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
         configContext.getAxisConfiguration().addService(service);
@@ -149,9 +154,9 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
-        ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         AxisModule axisModule = deploymentEngine.buildModule(file,
-                                                                    configContext.getAxisConfiguration());
+                configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         configContext.getAxisConfiguration().engageModule(new QName("addressing"));
         return configContext;
@@ -164,9 +169,9 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(clientHome,null);
+                .createConfigurationContextFromFileSystem(clientHome, null);
         AxisModule axisModule = deploymentEngine.buildModule(file,
-                                                                    configContext.getAxisConfiguration());
+                configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
         // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());

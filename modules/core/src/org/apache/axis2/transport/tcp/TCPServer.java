@@ -19,12 +19,12 @@ package org.apache.axis2.transport.tcp;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
@@ -38,7 +38,7 @@ import java.net.Socket;
 /**
  * Class TCPServer
  */
-public class TCPServer extends TransportListener implements Runnable {
+public class TCPServer implements Runnable, TransportListener {
     private int port = 8000;
     private boolean started = false;
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
@@ -123,17 +123,33 @@ public class TCPServer extends TransportListener implements Runnable {
 
     public synchronized void start() throws AxisFault {
         if (serversocket == null) {
-            serversocket = ListenerManager.openSocket(port);
+            serversocket = openSocket(port);
         }
-
         started = true;
         this.configContext.getThreadPool().execute(this);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.TransportListener#stop()
+
+    /**
+     * Controls the number of server sockets kept open.
      */
+    public ServerSocket openSocket(int port) throws AxisFault {
+        for (int i = 0; i < 5; i++) {
+            try {
+                return new ServerSocket(port + i);
+            } catch (IOException e) {
+                // What I'm gonna do here. Try again.
+            }
+        }
+
+        throw new AxisFault(Messages.getMessage("failedToOpenSocket"));
+    }
+
+
+    /*
+    *  (non-Javadoc)
+    * @see org.apache.axis2.transport.TransportListener#stop()
+    */
     public void stop() throws AxisFault {
         try {
             this.serversocket.close();

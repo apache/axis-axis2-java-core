@@ -42,6 +42,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
 
     private AxisService service;
 
+
     private boolean finish = false;
 
     public CommonsHTTPEchoRawXMLTest() {
@@ -88,7 +89,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         };
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -105,7 +106,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         }
 //        call.close();
 //
-
+        sender.finalizeInvoke();
         log.info("send the reqest");
     }
 
@@ -115,13 +116,14 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        sender.finalizeInvoke();
 //        call.close();
     }
 

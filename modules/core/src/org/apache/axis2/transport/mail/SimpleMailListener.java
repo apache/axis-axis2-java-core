@@ -48,7 +48,7 @@ import java.io.File;
  * internationalization work is done this can be fixed. CT 15-Feb-2005
  *
  */
-public class SimpleMailListener extends TransportListener implements Runnable {
+public class SimpleMailListener implements Runnable, TransportListener {
     protected static Log log = LogFactory.getLog(SimpleMailListener.class.getName());
 
     // Are we doing threads?
@@ -111,12 +111,9 @@ public class SimpleMailListener extends TransportListener implements Runnable {
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
             throws AxisFault {
         this.configurationContext = configurationContext;
-        user =
-                Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_USER));
-        host =
-                Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_HOST));
-        password =
-                Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
+        user = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_USER));
+        host = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_HOST));
+        password = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
         port = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PORT));
         replyTo = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.RAPLY_TO));
 

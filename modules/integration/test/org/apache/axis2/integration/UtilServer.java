@@ -26,6 +26,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -99,7 +100,7 @@ public class UtilServer {
         return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);
     }
 
-    public static synchronized void stop() {
+    public static synchronized void stop() throws AxisFault {
         if (count == 1) {
             receiver.stop();
             while (receiver.isRunning()) {
@@ -113,6 +114,10 @@ public class UtilServer {
             System.out.print("Server stopped .....");
         } else {
             count--;
+        }
+        if (TransportManager.transportManager != null) {
+            TransportManager.transportManager.stop();
+            TransportManager.transportManager = null;
         }
     }
 

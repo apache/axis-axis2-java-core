@@ -20,15 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
@@ -188,6 +180,10 @@ public class MessageContext extends AbstractContext {
 
     private transient TransportOutDescription transportOut;
     private transient TransportInDescription transportIn;
+
+    //The value will be set by the tarnsport reciver and there will be validaation for the transport
+    //at the dispatch phase (its post condition)
+    private String incomingTransportName;
 
     public MessageContext() {
         super(null);
@@ -900,5 +896,13 @@ public class MessageContext extends AbstractContext {
      */
     public void setOptions(Options options) {
         this.options.setParent(options);
+    }
+
+    public String getIncomingTransportName() {
+        return incomingTransportName;
+    }
+
+    public void setIncomingTransportName(String incomingTransportName) {
+        this.incomingTransportName = incomingTransportName;
     }
 }

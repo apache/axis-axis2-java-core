@@ -86,7 +86,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 //            OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
 
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 
@@ -99,9 +99,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             assertNotNull("Result value is null", result);
 
             assertEquals("Expected result not received.", expected, result);
-
-//            call.close();
-
+            sender.finalizeInvoke();
         } catch (AxisFault e) {
             log.error(e, e);
             assertFalse("Failure in processing", true);

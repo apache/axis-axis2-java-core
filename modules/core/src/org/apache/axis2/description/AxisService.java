@@ -17,11 +17,7 @@
 
 package org.apache.axis2.description;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
-import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import com.ibm.wsdl.extensions.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -38,36 +34,21 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
 
 /**
  * Class AxisService
  */
 public class AxisService extends AxisDescription implements Serializable {
 
-	private static final long serialVersionUID = 4528303251915455363L;
+    private static final long serialVersionUID = 4528303251915455363L;
 
-	private Definition definition = null;
+    private Definition definition = null;
     private Log log = LogFactory.getLog(getClass());
     private String fileName = "";
 
@@ -113,6 +94,9 @@ public class AxisService extends AxisDescription implements Serializable {
     // to store the target namespace for the schema
     private String schematargetNamespace = SchemaGenerator.SCHEMA_TARGET_NAMESPACE;
     private String schematargetNamespacePrefix = SchemaGenerator.SCHEMA_NAMESPACE_PRFIX;
+
+    private boolean enableAllTransport = true;
+    private String [] exposeTransports;
 
     /**
      * Constructor AxisService.
@@ -728,12 +712,27 @@ public class AxisService extends AxisDescription implements Serializable {
         }
         return null;
     }
-    
-    private void readObject(ObjectInputStream stream)  throws IOException, ClassNotFoundException {
-    	// Do nothing. Service has nothing serializable.
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        // Do nothing. Service has nothing serializable.
     }
 
     private void writeObject(ObjectOutputStream stream) throws IOException {
-    	// Do nothing. Service has nothing serializable.
+        // Do nothing. Service has nothing serializable.
+    }
+
+    public boolean isEnableAllTransport() {
+        return enableAllTransport;
+    }
+
+    public String[] getExposeTransports() {
+        return exposeTransports;
+    }
+
+    public void setExposeTransports(String[] exposeTransports) {
+        if (exposeTransports.length > 0) {
+            enableAllTransport = false;
+            this.exposeTransports = exposeTransports;
+        }
     }
 }

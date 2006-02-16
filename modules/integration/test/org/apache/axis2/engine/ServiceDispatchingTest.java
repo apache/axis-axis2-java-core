@@ -35,6 +35,9 @@ import org.apache.ws.commons.soap.SOAPFactory;
 
 public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
+
+    private int testCount = 3;
+
     public ServiceDispatchingTest() {
         super(ServiceDispatchingTest.class.getName());
     }
@@ -54,7 +57,9 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
+        if (testCount == 0) {
+            UtilServer.stop();
+        }
         UtilServer.unDeployClientService();
     }
 
@@ -64,7 +69,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -72,6 +77,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        testCount --;
     }
 
     public void testDispatchWithURLAndSOAPAction() throws Exception {
@@ -88,12 +94,13 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapAction("echoOMElement");
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
         OMElement result = sender.sendReceive(payload);
         TestingUtils.campareWithCreatedOMElement(result);
+        testCount --;
     }
 
     public void testDispatchWithSOAPBody() throws Exception {
@@ -109,7 +116,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -117,5 +124,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
+        testCount --;
     }
 }

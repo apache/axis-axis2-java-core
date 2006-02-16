@@ -2,7 +2,6 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.Callback;
@@ -11,6 +10,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.wsdl.WSDLConstants;
@@ -268,7 +268,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         mc.setMessageID(messageId);
     }
 
-     private void addReferenceParameters(MessageContext msgctx) {
+    private void addReferenceParameters(MessageContext msgctx) {
         EndpointReference to = msgctx.getTo();
         if (options.isManageSession()) {
             EndpointReference tepr = sc.getTargetEPR();
@@ -356,7 +356,6 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     public void complete(MessageContext msgCtxt) throws AxisFault {
-        ListenerManager.stop(msgCtxt.getConfigurationContext(),
-                msgCtxt.getTransportIn().getName().getLocalPart());
+        TransportManager.transportManager.stop();
     }
 }

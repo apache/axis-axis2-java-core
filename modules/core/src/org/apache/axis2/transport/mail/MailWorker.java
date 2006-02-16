@@ -42,12 +42,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
-import java.util.Properties;
 
 public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
     private ConfigurationContext configContext = null;
-    private Properties prop = new Properties();
     private MimeMessage mimeMessage;
 
     /**
@@ -91,6 +89,7 @@ public class MailWorker implements Runnable {
 
                 msgContext.setWSAAction(soapAction);
                 msgContext.setSoapAction(soapAction);
+                msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
 
                 // TODO add the transport Headers to the Message Context
                 // Create Mail EPR, EPR is constructed using the format, foo@bar/axis2/services/echo and is constructed
@@ -98,13 +97,6 @@ public class MailWorker implements Runnable {
                 InternetAddress[] recepainets = (InternetAddress[]) mimeMessage.getAllRecipients();
 
                 if ((recepainets != null) && (recepainets.length > 0)) {
-                    String emailAddress = recepainets[0].getAddress();
-                    String emailSubject = mimeMessage.getSubject();
-                    EndpointReference to = new EndpointReference(emailAddress + "/"
-                            + ((emailSubject != null)
-                            ? emailSubject
-                            : ""));
-                    //TODO: FixME: There's nothing happening here ??? 
                 } else {
                     throw new AxisFault(Messages.getMessage("noRecep4Email"));
                 }

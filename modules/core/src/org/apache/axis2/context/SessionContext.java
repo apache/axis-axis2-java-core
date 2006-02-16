@@ -30,8 +30,8 @@ import java.util.HashMap;
  */
 public class SessionContext extends AbstractContext {
 
-    private HashMap serviceContextMap = new HashMap();
-    private HashMap serviceGroupContextMap = new HashMap();
+    private transient HashMap serviceContextMap = new HashMap();
+    private transient HashMap serviceGroupContextMap = new HashMap();
     private String cookieID;
 
     // current time out interval is 30 secs. Need to make this configurable

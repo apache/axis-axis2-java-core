@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
+
 /**
  * SimpleJMSListener implements the javax.jms.MessageListener interface. Its
  * basic purpose is listen asynchronously for messages and to pass them off
@@ -48,7 +49,7 @@ import java.util.Properties;
  * is not otherwise tuned for performance. As such, its intended use is not
  * for production code, but for demos, debugging, and performance profiling.
  */
-public class SimpleJMSListener extends TransportListener implements MessageListener {
+public class SimpleJMSListener implements MessageListener, TransportListener {
     protected static Log log = LogFactory.getLog(SimpleJMSListener.class.getName());
 
     // Do we use (multiple) threads to process incoming messages?
@@ -219,12 +220,11 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
         try {
             startListener();
             endpoint.registerListener(this, properties);
+            connector.start();
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
             e.printStackTrace();
         }
-
-        connector.start();
     }
 
     public void stop() throws AxisFault {

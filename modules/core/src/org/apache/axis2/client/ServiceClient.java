@@ -7,6 +7,7 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.ws.commons.om.OMAbstractFactory;
@@ -77,10 +78,7 @@ public class ServiceClient {
     public ServiceClient(ConfigurationContext configContext,
                          AxisService axisService) throws AxisFault {
         // create a config context if needed
-        this.configContext = (configContext != null) ? configContext
-                : ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-
+        initializeTransports(configContext);
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
         this.axisService = (axisService != null) ? axisService
@@ -116,9 +114,7 @@ public class ServiceClient {
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
                          QName wsdlServiceName, String portName) throws AxisFault {
         // create a config context if needed
-        this.configContext = (configContext != null) ? configContext
-                : ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
+        initializeTransports(configContext);
         try {
             this.axisConfig = this.configContext.getAxisConfiguration();
             axisService = ClientUtils.creatAxisService(wsdlURL,
@@ -134,6 +130,30 @@ public class ServiceClient {
             this.serviceContext = sgc.getServiceContext(this.axisService);
         } catch (IOException e) {
             throw new AxisFault(e);
+        }
+    }
+
+    private void initializeTransports(ConfigurationContext configContext) throws AxisFault {
+        if (configContext != null) {
+            this.configContext = configContext;
+            if (TransportManager.transportManager == null) {
+                TransportManager transportManager = new TransportManager();
+                transportManager.init(this.configContext);
+            }
+        } else {
+            if (TransportManager.transportManager != null) {
+                this.configContext = TransportManager.transportManager.getConfigctx();
+            } else {
+                this.configContext = ConfigurationContextFactory.
+                        createConfigurationContextFromFileSystem(null, null);
+                if (TransportManager.transportManager == null) {
+                    TransportManager transportManager = new TransportManager();
+                    transportManager.init(this.configContext);
+                }
+            }
+        }
+        if (!TransportManager.transportManager.isStoped()) {
+            TransportManager.transportManager.start();
         }
     }
 
@@ -356,9 +376,7 @@ public class ServiceClient {
             // this method call two channel non blocking method to do the work
             // and wait on the callbck
             sendReceiveNonBlocking(operation, elem, callback);
-
             long timeout = options.getTimeOutInMilliSeconds();
-
             if (timeout < 0) {
                 while (!callback.isComplete()) {
                     try {
@@ -369,9 +387,7 @@ public class ServiceClient {
                 }
             } else {
                 long index = timeout / 100;
-
                 while (!callback.isComplete()) {
-
                     // wait till the reponse arrives
                     if (index-- >= 0) {
                         try {
@@ -387,11 +403,9 @@ public class ServiceClient {
             }
             // process the resule of the invocation
             if (callback.envelope != null) {
-                MessageContext resMsgctx = callback.getMsgctx();
                 // building soap enevlop
                 callback.envelope.build();
                 // closing tranport
-                finalizeInvoke(resMsgctx);
                 return callback.envelope.getBody().getFirstElement();
             } else {
                 if (callback.error instanceof AxisFault) {
@@ -473,11 +487,8 @@ public class ServiceClient {
      *
      * @throws AxisFault
      */
-    private void finalizeInvoke(MessageContext msgCtx) throws AxisFault {
-        if (options.getTransportInProtocol() != null) {
-            ListenerManager.stop(msgCtx.getConfigurationContext(), msgCtx
-                    .getTransportIn().getName().getLocalPart());
-        }
+    public void finalizeInvoke() throws AxisFault {
+        TransportManager.transportManager.stop();
     }
 
     /**

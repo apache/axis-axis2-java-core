@@ -75,6 +75,7 @@ public class IntegrationTest extends TestCase {
 
             String responseStr = printResponse(response);
             assertTrue(responseStr.indexOf("echo") != -1);
+            sCon.close();
         } catch (SOAPException e) {
             e.printStackTrace();
             fail("Unexpected Exception while running test: " + e);
@@ -149,6 +150,8 @@ public class IntegrationTest extends TestCase {
                            || attachment.getContentType().equals("text/plain"));
             }
         }
+
+        sCon.close();
 
         /*final SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
         System.out.println("------------------------------------");

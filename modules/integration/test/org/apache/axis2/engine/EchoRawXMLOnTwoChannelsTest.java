@@ -87,7 +87,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
-        ServiceClient sender = null;
+        ServiceClient sender =null;
 
         try {
             Options options = new Options();
@@ -127,6 +127,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             }
             log.info("send the reqest");
         } finally {
+            sender.finalizeInvoke();
         }
 
     }

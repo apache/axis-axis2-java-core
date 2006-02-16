@@ -69,6 +69,7 @@ public class TCPWorker implements Runnable {
 
                 // create the Message Context and fill in the values
                 msgContext = new MessageContext();
+                msgContext.setIncomingTransportName(Constants.TRANSPORT_TCP);
                 msgContext.setConfigurationContext(configurationContext);
                 msgContext.setTransportIn(transportIn);
                 msgContext.setTransportOut(transportOut);

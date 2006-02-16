@@ -190,24 +190,17 @@ public class AxisConfiguration extends AxisDescription {
 
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
         Iterator services = axisServiceGroup.getServices();
-
         axisServiceGroup.setParent(this);
-
         AxisService description;
-
         while (services.hasNext()) {
             description = (AxisService) services.next();
-
             if (allservices.get(description.getName()) != null) {
                 throw new AxisFault("Two services can not have same name, a service with "
                         + description.getName() + " already exists in the system");
             }
         }
-
         services = axisServiceGroup.getServices();
-
         Iterator enModule = engagedModules.iterator();
-
         while (enModule.hasNext()) {
             QName moduleName = (QName) enModule.next();
             axisServiceGroup.engageModule(getModule(moduleName));
@@ -224,7 +217,6 @@ public class AxisConfiguration extends AxisDescription {
             allservices.put(description.getName(), description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
         }
-
 //        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
         addChild(axisServiceGroup);
     }

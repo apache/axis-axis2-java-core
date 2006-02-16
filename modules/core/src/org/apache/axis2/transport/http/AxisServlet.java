@@ -19,12 +19,16 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.TransportManager;
+import org.apache.axis2.transport.TransportListener;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -43,7 +47,7 @@ import java.util.Map;
 /**
  * Class AxisServlet
  */
-public class AxisServlet extends HttpServlet {
+public class AxisServlet extends HttpServlet implements TransportListener {
 
     private static final long serialVersionUID = -2085869393709833372L;
     private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
@@ -65,11 +69,12 @@ public class AxisServlet extends HttpServlet {
 
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(httpServletResponse));
-        msgContext.setProperty(MessageContext.REMOTE_ADDR, httpServletRequest.getRemoteAddr()); 
+        msgContext.setProperty(MessageContext.REMOTE_ADDR, httpServletRequest.getRemoteAddr());
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
                 getTransportHeaders(httpServletRequest));
         msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, httpServletRequest.getRequestURL().toString());
+        msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
 
         return msgContext;
     }
@@ -194,6 +199,12 @@ public class AxisServlet extends HttpServlet {
             lister = new ListingAgent(configContext);
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
+            TransportManager transportManager = new TransportManager();
+            transportManager.init(configContext);
+            TransportInDescription trsindes = new TransportInDescription(
+                    new QName(Constants.TRANSPORT_HTTP));
+            trsindes.setReceiver(this);
+            transportManager.addListener(trsindes, true);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -258,5 +269,29 @@ public class AxisServlet extends HttpServlet {
         }
 
         return headerMap;
+    }
+
+    /**
+     * To initilze as TransportListener , not as Servlet
+     *
+     * @param axisConf
+     * @param transprtIn
+     * @throws AxisFault
+     */
+    public void init(ConfigurationContext axisConf,
+                     TransportInDescription transprtIn) throws AxisFault {
+        // no need to do anything :)
+    }
+
+    public void start() throws AxisFault {
+        // no need to do anything :) , it is already started
+    }
+
+    public void stop() throws AxisFault {
+        // no one call thie method
+    }
+
+    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
+        throw new UnsupportedOperationException("Not yet complete");
     }
 }

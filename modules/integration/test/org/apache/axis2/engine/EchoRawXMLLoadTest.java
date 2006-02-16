@@ -48,8 +48,6 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-
-
     }
 
     protected void tearDown() throws Exception {

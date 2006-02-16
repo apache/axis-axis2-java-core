@@ -239,6 +239,7 @@ public class SimpleJMSWorker implements Runnable {
                             new QName(Constants.TRANSPORT_JMS));
 
             msgContext = new MessageContext();
+            msgContext.setIncomingTransportName(Constants.TRANSPORT_JMS);
             msgContext.setConfigurationContext(configurationContext);
             msgContext.setTransportIn(transportIn);
             msgContext.setTransportOut(transportOut);

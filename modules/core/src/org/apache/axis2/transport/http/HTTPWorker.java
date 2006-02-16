@@ -81,7 +81,7 @@ public class HTTPWorker implements HttpRequestHandler {
             SessionContext sessionContext = getSessionContext(cookieID);
 
             msgContext = new MessageContext();
-
+            msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
             msgContext.setConfigurationContext(configurationContext);
             msgContext.setSessionContext(sessionContext);
             msgContext.setTransportIn(configurationContext.getAxisConfiguration().getTransportIn(

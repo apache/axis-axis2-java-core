@@ -3,10 +3,10 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Document;
@@ -72,8 +72,6 @@ public class ClientUtils {
             if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                 throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
-            ListenerManager.makeSureStarted(options.getTransportInProtocol(),
-                    msgCtxt.getServiceContext().getConfigurationContext());
         }
         return transportIn;
 
