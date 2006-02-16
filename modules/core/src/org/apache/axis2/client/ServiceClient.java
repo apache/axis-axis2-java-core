@@ -124,9 +124,8 @@ public class ServiceClient {
             if (this.axisConfig.getService(this.axisService.getName()) == null) {
                 this.axisConfig.addService(this.axisService);
             }
-            ServiceGroupContext sgc = new ServiceGroupContext(
-                    this.configContext, (AxisServiceGroup) this.axisService
-                    .getParent());
+            ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
+                    (AxisServiceGroup) this.axisService.getParent());
             this.serviceContext = sgc.getServiceContext(this.axisService);
         } catch (IOException e) {
             throw new AxisFault(e);

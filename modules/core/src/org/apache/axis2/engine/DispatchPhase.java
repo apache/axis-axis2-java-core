@@ -87,7 +87,7 @@ public class DispatchPhase extends Phase {
             String incommingTrs = msgctx.getIncomingTransportName();
             for (int i = 0; i < trs.length; i++) {
                 String tr = trs[i];
-                if (incommingTrs.equals(tr)) {
+                if (incommingTrs != null && incommingTrs.equals(tr)) {
                     return;
                 }
             }
