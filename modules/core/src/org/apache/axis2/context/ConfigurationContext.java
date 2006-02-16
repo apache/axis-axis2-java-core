@@ -22,6 +22,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
@@ -45,6 +46,8 @@ public class ConfigurationContext extends AbstractContext {
     private transient AxisConfiguration axisConfiguration;
     private File rootDir;
     private transient ThreadFactory threadPool;
+    //To keep TransportManager instance
+    private ListenerManager listenerManager;
 
     // current time out interval is 30 secs. Need to make this configurable
     private long serviceGroupContextTimoutInterval = 30 * 1000;
@@ -304,11 +307,21 @@ public class ConfigurationContext extends AbstractContext {
             Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
             while (sgCtxtMapKeyIter.hasNext()) {
                 String sgCtxtId = (String) sgCtxtMapKeyIter.next();
-                ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
-                if ((currentTime - serviceGroupContext.getLastTouchedTime()) > serviceGroupContextTimoutInterval) {
+                ServiceGroupContext serviceGroupContext =
+                        (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
+                if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
+                        serviceGroupContextTimoutInterval) {
                     sgCtxtMapKeyIter.remove();
                 }
             }
         }
+    }
+
+    public ListenerManager getListenerManager() {
+        return listenerManager;
+    }
+
+    public void setTransportManager(ListenerManager listenerManager) {
+        this.listenerManager = listenerManager;
     }
 }

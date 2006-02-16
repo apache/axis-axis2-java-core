@@ -18,11 +18,13 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
@@ -31,6 +33,7 @@ import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
@@ -65,29 +68,11 @@ public class SimpleHTTPServer implements TransportListener {
      */
     protected ConfigurationContext configurationContext;
 
-    /**
-     * Constructor SimpleHTTPServer
-     */
-    public SimpleHTTPServer() {
+    public SimpleHTTPServer(){
     }
 
-    /**
-     * Constructor SimpleHTTPServer
-     *
-     * @param systemContext
-     */
     public SimpleHTTPServer(ConfigurationContext systemContext, int port) throws AxisFault {
         this(systemContext, port, null);
-    }
-
-    /**
-     * Constructor SimpleHTTPServer
-     *
-     * @param repoPath
-     * @throws AxisFault
-     */
-    public SimpleHTTPServer(String repoPath, String axis2xml, int port) throws AxisFault {
-        this(repoPath, axis2xml, port, null);
     }
 
     /**
@@ -102,40 +87,23 @@ public class SimpleHTTPServer implements TransportListener {
         // is used. This is a bit tricky, and might cause a
         // thread lock. So use with
         // caution
-        if (pool == null) {
-            pool = systemContext.getThreadPool();
-        }
-
         this.configurationContext = systemContext;
+        if (pool == null) {
+            pool = this.configurationContext.getThreadPool();
+        } else {
+            this.configurationContext.setThreadPool(pool);
+        }
         this.port = port;
         this.threadPool = pool;
-    }
-
-    /**
-     * Constructor SimpleHTTPServer
-     *
-     * @param repoPath
-     * @param pool
-     * @throws AxisFault
-     */
-    public SimpleHTTPServer(String repoPath, String axis2xml, int port, ThreadFactory pool) throws AxisFault {
-        try {
-            this.port = port;
-            this.configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoPath,
-                    axis2xml);
-            // If a thread pool is not passed the thread pool from the config context
-            // is used. If one is passed it is set on the config context.
-            if (pool == null) {
-                pool = this.configurationContext.getThreadPool();
-            } else {
-                this.configurationContext.setThreadPool(pool);
-            }
-
-            this.threadPool = pool;
-            Thread.sleep(2000);
-        } catch (Exception e1) {
-            throw new AxisFault(e1);
+        ListenerManager listenerManager = configurationContext.getListenerManager();
+        TransportInDescription trsIn = new TransportInDescription(
+                new QName(Constants.TRANSPORT_HTTP));
+        trsIn.setReceiver(this);
+        if (listenerManager == null) {
+            listenerManager = new ListenerManager();
+            listenerManager.init(configurationContext);
         }
+        listenerManager.addListener(trsIn, true);
     }
 
     /**
@@ -187,7 +155,9 @@ public class SimpleHTTPServer implements TransportListener {
                 + new File(args[0]).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
-            SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], null, port);
+            SimpleHTTPServer receiver = new SimpleHTTPServer(
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            args[0], null), port, null);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
             System.out.println("[SimpleHTTPServer] Started");

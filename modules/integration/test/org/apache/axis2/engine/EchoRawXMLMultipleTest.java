@@ -121,9 +121,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
-        EndpointReference targetEPR = new EndpointReference(
-                "http://127.0.0.1:" + (5000)
-                        + "/axis2/services/EchoXMLService/echoOMElement");
         for (int i = 0; i < 5; i++) {
             Options options = new Options();
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);

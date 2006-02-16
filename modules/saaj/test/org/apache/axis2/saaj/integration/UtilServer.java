@@ -25,7 +25,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.TransportManager;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -101,14 +101,13 @@ public class UtilServer {
                 }
             }
             count = 0;
-            // tp.doStop();
             System.out.print("Server stopped .....");
         } else {
             count--;
         }
-        if (TransportManager.transportManager != null) {
-            TransportManager.transportManager.stop();
-            TransportManager.transportManager = null;
+        ListenerManager listenerManager = receiver.getConfigurationContext().getListenerManager();
+        if (listenerManager != null) {
+            listenerManager.stop();
         }
     }
 

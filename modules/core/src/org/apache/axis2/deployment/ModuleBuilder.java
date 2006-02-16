@@ -110,7 +110,7 @@ public class ModuleBuilder extends DescriptionBuilder {
                     module.setModuleDescription(descriptionElement.getText());
                 }
             } else {
-                module.setModuleDescription("module decription not found");
+                module.setModuleDescription("module description not found");
             }
 
             // setting the PolicyInclude

@@ -18,18 +18,20 @@
 package org.apache.axis2.transport.tcp;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -52,23 +54,25 @@ public class TCPServer implements Runnable, TransportListener {
         try {
             this.configContext = configContext;
             serversocket = new ServerSocket(port);
+
+            ListenerManager listenerManager = configContext.getListenerManager();
+            TransportInDescription trsIn = new TransportInDescription(
+                    new QName(Constants.TRANSPORT_TCP));
+            trsIn.setReceiver(this);
+            if (listenerManager == null) {
+                listenerManager = new ListenerManager();
+                listenerManager.init(configContext);
+            }
+            listenerManager.addListener(trsIn, true);
+
+
         } catch (IOException e1) {
             throw new AxisFault(e1);
         }
     }
 
     public TCPServer(int port, String dir) throws AxisFault {
-        try {
-            this.configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(dir, null);
-            Thread.sleep(3000);
-            serversocket = new ServerSocket(port);
-        } catch (DeploymentException e1) {
-            throw new AxisFault(e1);
-        } catch (InterruptedException e1) {
-            throw new AxisFault(e1);
-        } catch (IOException e1) {
-            throw new AxisFault(e1);
-        }
+        this(port, ConfigurationContextFactory.createConfigurationContextFromFileSystem(dir, null));
     }
 
     public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)

@@ -7,7 +7,7 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.TransportManager;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.ws.commons.om.OMAbstractFactory;
@@ -134,26 +134,22 @@ public class ServiceClient {
     }
 
     private void initializeTransports(ConfigurationContext configContext) throws AxisFault {
+        ListenerManager trsManager;
         if (configContext != null) {
             this.configContext = configContext;
-            if (TransportManager.transportManager == null) {
-                TransportManager transportManager = new TransportManager();
-                transportManager.init(this.configContext);
+            trsManager = configContext.getListenerManager();
+            if (trsManager == null) {
+                trsManager = new ListenerManager();
+                trsManager.init(this.configContext);
             }
         } else {
-            if (TransportManager.transportManager != null) {
-                this.configContext = TransportManager.transportManager.getConfigctx();
-            } else {
-                this.configContext = ConfigurationContextFactory.
-                        createConfigurationContextFromFileSystem(null, null);
-                if (TransportManager.transportManager == null) {
-                    TransportManager transportManager = new TransportManager();
-                    transportManager.init(this.configContext);
-                }
-            }
+            this.configContext = ConfigurationContextFactory.
+                    createConfigurationContextFromFileSystem(null, null);
+            trsManager = new ListenerManager();
+            trsManager.init(this.configContext);
         }
-        if (!TransportManager.transportManager.isStoped()) {
-            TransportManager.transportManager.start();
+        if (!trsManager.isStoped()) {
+            trsManager.start();
         }
     }
 
@@ -488,7 +484,7 @@ public class ServiceClient {
      * @throws AxisFault
      */
     public void finalizeInvoke() throws AxisFault {
-        TransportManager.transportManager.stop();
+        configContext.getListenerManager().stop();
     }
 
     /**

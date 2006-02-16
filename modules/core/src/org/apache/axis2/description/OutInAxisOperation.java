@@ -11,7 +11,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.TransportManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
@@ -251,7 +250,7 @@ class OutInAxisOperationClient implements OperationClient {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
             callbackReceiver.addCallback(mc.getMessageID(), callback);
-            EndpointReference replyToFromTransport = TransportManager.transportManager.
+            EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().
                     getERPforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
                             .getTransportIn().getName()
                             .getLocalPart());
@@ -390,7 +389,7 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     public void complete(MessageContext msgCtxt) throws AxisFault {
-        TransportManager.transportManager.stop();
+        msgCtxt.getConfigurationContext().getListenerManager().stop();
     }
 
     /**

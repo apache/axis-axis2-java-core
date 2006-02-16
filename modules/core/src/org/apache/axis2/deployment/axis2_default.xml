@@ -60,7 +60,7 @@
       </transportReceiver> -->
 
     <transportReceiver name="tcp" class="org.apache.axis2.transport.tcp.TCPServer">
-        <parameter name="port" locked="false">6060</parameter>
+        <parameter name="port" locked="false">6061</parameter>
     </transportReceiver>
 
     <transportReceiver name="jms" class="org.apache.axis2.transport.jms.SimpleJMSListener">

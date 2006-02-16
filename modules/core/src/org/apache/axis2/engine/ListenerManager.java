@@ -30,17 +30,17 @@ import java.util.Iterator;
 *
 */
 
-public class TransportManager {
+public class ListenerManager {
+
     private Log log = LogFactory.getLog(getClass());
 
-    public static TransportManager transportManager;
     private ConfigurationContext configctx;
     private HashMap startedTranports = new HashMap();
     private boolean stoped;
 
     public void init(ConfigurationContext configCtx) {
+        configCtx.setTransportManager(this);
         this.configctx = configCtx;
-        transportManager = this;
     }
 
     public ConfigurationContext getConfigctx() {
@@ -92,7 +92,7 @@ public class TransportManager {
     /**
      * To start all the tranports
      */
-    public void start() throws AxisFault {
+    public void start() {
         Iterator tranportNames = configctx.getAxisConfiguration().
                 getTransportsIn().values().iterator();
         while (tranportNames.hasNext()) {
@@ -111,6 +111,11 @@ public class TransportManager {
             }
         }
         stoped = false;
+    }
+
+    public void startSystem(ConfigurationContext configurationContext) {
+        init(configurationContext);
+        start();
     }
 
     /**

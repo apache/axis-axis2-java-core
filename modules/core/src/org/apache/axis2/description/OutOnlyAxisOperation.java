@@ -10,7 +10,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.TransportManager;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.wsdl.WSDLConstants;
@@ -356,6 +356,10 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     public void complete(MessageContext msgCtxt) throws AxisFault {
-        TransportManager.transportManager.stop();
+        ListenerManager listenerManager =
+                msgCtxt.getConfigurationContext().getListenerManager();
+        if (listenerManager != null) {
+            listenerManager.stop();
+        }
     }
 }

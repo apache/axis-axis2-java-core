@@ -27,7 +27,7 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.TransportManager;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
 
 import javax.servlet.ServletConfig;
@@ -199,12 +199,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             lister = new ListingAgent(configContext);
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
-            TransportManager transportManager = new TransportManager();
-            transportManager.init(configContext);
+            ListenerManager listenerManager = new ListenerManager();
+            listenerManager.init(configContext);
             TransportInDescription trsindes = new TransportInDescription(
                     new QName(Constants.TRANSPORT_HTTP));
             trsindes.setReceiver(this);
-            transportManager.addListener(trsindes, true);
+            listenerManager.addListener(trsindes, true);
         } catch (Exception e) {
             throw new ServletException(e);
         }

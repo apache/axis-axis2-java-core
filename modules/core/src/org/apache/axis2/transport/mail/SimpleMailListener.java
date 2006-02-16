@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
@@ -68,16 +69,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
     }
 
     public SimpleMailListener(String host, String port, String userid, String password,
-                              ConfigurationContext er) {
-        this.host = host;
-        this.port = port;
-        this.user = userid;
-        this.password = password;
-        this.configurationContext = er;
-    }
-
-    public SimpleMailListener(String host, String port, String userid, String password,
-                              String dir) {
+                              String dir) throws AxisFault {
         this.host = host;
         this.port = port;
         this.user = userid;
@@ -95,13 +87,21 @@ public class SimpleMailListener implements Runnable, TransportListener {
         } catch (Exception e) {
             log.info(e.getMessage());
         }
-
         try {
             log.info("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.debug(e1.getMessage(), e1);
         }
+        ListenerManager listenerManager = configurationContext.getListenerManager();
+        TransportInDescription trsIn = new TransportInDescription(
+                new QName(Constants.TRANSPORT_MAIL));
+        trsIn.setReceiver(this);
+        if (listenerManager == null) {
+            listenerManager = new ListenerManager();
+            listenerManager.init(configurationContext);
+        }
+        listenerManager.addListener(trsIn, true);
     }
 
     /*

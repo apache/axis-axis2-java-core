@@ -54,6 +54,8 @@ public interface DeploymentConstants {
     String TAG_OPERATION = "operation";       // operation start tag
     String TAG_MESSAGE_RECEIVER = "messageReceiver";
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
+    String TAG_TRANSPORTS = "transports";
+    String TAG_TRANSPORT = "transport";
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
 

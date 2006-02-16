@@ -22,7 +22,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.TransportManager;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.tcp.TCPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,7 +81,7 @@ public class UtilsTCPServer {
         count++;
     }
 
-    public static synchronized void stop() throws AxisFault{
+    public static synchronized void stop() throws AxisFault {
         try {
             if (count == 1) {
                 receiver.stop();
@@ -93,9 +93,10 @@ public class UtilsTCPServer {
         } catch (AxisFault e) {
             log.error(e.getMessage(), e);
         }
-        if (TransportManager.transportManager != null) {
-            TransportManager.transportManager.stop();
-            TransportManager.transportManager = null;
+        ListenerManager listenerManager =
+                receiver.getConfigurationContext().getListenerManager();
+        if (listenerManager != null) {
+            listenerManager.stop();
         }
     }
 

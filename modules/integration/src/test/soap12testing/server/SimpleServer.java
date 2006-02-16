@@ -17,6 +17,8 @@
 package test.soap12testing.server;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,8 +44,10 @@ public class SimpleServer {
             if (!file.exists()) {
                 throw new AxisFault(file.getAbsolutePath() + " File does not exist");
             }
-            SimpleHTTPServer receiver = new SimpleHTTPServer(file.getAbsolutePath(),
-                    file.getAbsolutePath() + "/axis2.xml", port);
+            ConfigurationContext configctx =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            file.getAbsolutePath(), file.getAbsolutePath() + "/axis2.xml");
+            SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             receiver.start();
         } catch (Exception e) {
             log.info(e.getMessage());

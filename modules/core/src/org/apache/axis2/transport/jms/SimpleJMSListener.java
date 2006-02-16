@@ -18,11 +18,13 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.OptionsParser;
@@ -31,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.jms.BytesMessage;
 import javax.jms.MessageListener;
+import javax.xml.namespace.QName;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,7 +82,15 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
             throw new Exception("repository not found");
         }
 
-
+        ListenerManager listenerManager = configurationContext.getListenerManager();
+        TransportInDescription trsIn = new TransportInDescription(
+                new QName(Constants.TRANSPORT_JMS));
+        trsIn.setReceiver(this);
+        if (listenerManager == null) {
+            listenerManager = new ListenerManager();
+            listenerManager.init(configurationContext);
+        }
+        listenerManager.addListener(trsIn, true);
         this.doThreads = doThreads;
         this.properties = new HashMap(connectorMap);
         this.properties.putAll(cfMap);
@@ -111,29 +122,22 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
             throws AxisFault {
         try {
             this.configurationContext = axisConf;
-
             HashMap params = new HashMap();
             Iterator iterator = transprtIn.getParameters().iterator();
-
             while (iterator.hasNext()) {
                 Parameter param = (Parameter) iterator.next();
-
                 params.put(param.getName(), param.getValue());
             }
-
             if (transprtIn.getParameter(JNDIVendorAdapter.USER) != null) {
                 user = (String) transprtIn.getParameter(JNDIVendorAdapter.USER).getValue();
             }
-
             if (transprtIn.getParameter(JNDIVendorAdapter.PASSWORD) != null) {
                 password = (String) transprtIn.getParameter(JNDIVendorAdapter.PASSWORD).getValue();
             }
-
             if (transprtIn.getParameter(JNDIVendorAdapter.DESTINATION) != null) {
                 destination =
                         (String) transprtIn.getParameter(JNDIVendorAdapter.DESTINATION).getValue();
             }
-
             this.properties = new HashMap(params);
         } catch (Exception e1) {
             throw new AxisFault(e1);
