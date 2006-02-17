@@ -146,7 +146,7 @@ public class ADBPullParserTest extends XMLTestCase {
                     <Name>FooTwo</Name>
                     <Age>25</Age>
                     <Sex>Male</Sex>
-                    <Depemdent>
+                    <Dependent>
                         <Name>FooTwo</Name>
                         <Age>25</Age>
                         <Sex>Male</Sex>
@@ -154,8 +154,8 @@ public class ADBPullParserTest extends XMLTestCase {
                             <Name>FooTwo</Name>
                             <Age>25</Age>
                             <Sex>Male</Sex>
-                    </Depemdent>
-                </Depemdent>
+                    </Dependent>
+                </Dependent>
             </Dependent>
             <Dependent>
                 <Name>FooTwo</Name>
@@ -424,6 +424,57 @@ public class ADBPullParserTest extends XMLTestCase {
         propertyList.add("Some More Text");
 
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario", "ns1"), propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
+
+        try {
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }
+
+
+    }
+
+    public void testComplexStringArrayScenarioWithQNamesAsKeys() {
+
+        String expectedXML = "<ns1:TestComplexStringArrayScenarioWithQNamesAsKeys xmlns:ns1=\"http://testComplexStringArrayScenarioWithQNamesAsKeys.org\">" +
+                "<Foo>Some Text</Foo>" +
+                "<Dependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</Dependent>" +
+                "<StringInfo>Some Text 0</StringInfo>" +
+                "<StringInfo>Some Text 1</StringInfo>" +
+                "<StringInfo>Some Text 2</StringInfo>" +
+                "<StringInfo>Some Text 3</StringInfo>" +
+                "<Bar>Some More Text</Bar>" +
+                "</ns1:TestComplexStringArrayScenarioWithQNamesAsKeys>";
+
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
+
+        String[] stringArray = new String[4];
+        for (int i = 0; i < 4; i++) {
+            stringArray[i] = "Some Text " + i;
+        }
+        propertyList.add(new QName("StringInfo"));
+        propertyList.add(stringArray);
+
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
+
+        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testComplexStringArrayScenarioWithQNamesAsKeys.org", "TestComplexStringArrayScenarioWithQNamesAsKeys", "ns1"), propertyList.toArray(), null);
+
+
         String actualXML = getStringXML(pullParser);
 
         try {
