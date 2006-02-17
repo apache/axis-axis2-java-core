@@ -17,6 +17,7 @@ import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -95,6 +96,37 @@ public class ServiceClient {
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
                 (AxisServiceGroup) this.axisService.getParent());
         this.serviceContext = sgc.getServiceContext(this.axisService);
+    }
+    
+    /**
+     * This is WOM based constructor to configure the Service Client/
+     * We are going to make this policy aware
+     * @param configContext
+     * @param wsdldesc
+     * @param wsdlServiceName
+     * @param portName
+     * @throws AxisFault
+     */
+    
+    public ServiceClient(ConfigurationContext configContext, WSDLDescription wsdldesc,
+    		QName wsdlServiceName, String portName) throws AxisFault {
+		// create a config context if needed
+		initializeTransports(configContext);
+		try {
+			this.axisConfig = this.configContext.getAxisConfiguration();
+			WSDLBasedServiceConfigurationBuilder scb= new WSDLBasedServiceConfigurationBuilder(wsdldesc,configContext);
+			axisService = scb.buildAxisService(wsdlServiceName, portName,options);
+			// add the service to the config context if it isn't in there
+			// already
+			if (this.axisConfig.getService(this.axisService.getName()) == null) {
+			   this.axisConfig.addService(this.axisService);
+			}
+			ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
+			       (AxisServiceGroup) this.axisService.getParent());
+			this.serviceContext = sgc.getServiceContext(this.axisService);
+		} catch (IOException e) {
+			throw new AxisFault(e);
+		}
     }
 
     /**
