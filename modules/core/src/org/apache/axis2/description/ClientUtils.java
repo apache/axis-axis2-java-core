@@ -11,12 +11,7 @@ import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
@@ -67,11 +62,28 @@ public class ClientUtils {
                             listenerTransportProtocol));
                 }
             }
-            // if separate transport is used, start the required listeners
-            if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
-                throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
+            if (msgCtxt.getAxisService() != null) {
+                AxisService service = msgCtxt.getAxisService();
+                Iterator itr = service.getEngagedModules().iterator();
+                boolean found = false;
+                while (itr.hasNext()) {
+                    AxisModule axisModule = (AxisModule) itr.next();
+                    if (axisModule.getName().getLocalPart().indexOf(Constants.MODULE_ADDRESSING) >= 0) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
+                }
+
+            } else {
+                if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
+                    throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
+                }
             }
         }
+
         return transportIn;
 
     }
