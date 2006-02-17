@@ -53,7 +53,9 @@ public class Java2WSDL {
 
     private static void validateCommandLineOptions(
             CommandLineOptionParser parser) {
-        if (parser.getInvalidOptions(new Java2WSDLOptionsValidator()).size() > 0){
+        if(parser.getAllOptions().size()==0){
+             printUsage();
+        }else  if (parser.getInvalidOptions(new Java2WSDLOptionsValidator()).size() > 0){
             printUsage();
         }
 
