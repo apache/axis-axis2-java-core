@@ -40,6 +40,5 @@ public interface MessageContext
     public static final String HTTP_REQUEST_METHOD = "javax.xml.ws.http.request.method";
     public static final String SERVLET_REQUEST = "javax.xml.ws.servlet.request";
     public static final String SERVLET_RESPONSE = "javax.xml.ws.servlet.response";
-    public static final String SERVLET_SESSION = "javax.xml.ws.servlet.session";
     public static final String SERVLET_CONTEXT = "javax.xml.ws.servlet.context";
 }
