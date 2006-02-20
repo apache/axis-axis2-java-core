@@ -28,13 +28,14 @@ import java.util.Locale;
 public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
     protected org.apache.ws.commons.soap.SOAPFault fault;
+    private boolean isDetailAdded;
 
     /**
-     * @param element
+     * @param fault
      */
-    public SOAPFaultImpl(org.apache.ws.commons.soap.SOAPFault element) {
-        super((ElementImpl) element);
-        fault = element;
+    public SOAPFaultImpl(org.apache.ws.commons.soap.SOAPFault fault) {
+        super((ElementImpl) fault);
+        this.fault = fault;
     }
 
     /**
@@ -70,7 +71,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #setFaultCode(java.lang.String) setFaultCode(java.lang.String)
      */
     public String getFaultCode() {
-        return this.fault.getCode().getValue().getText();
+        if (fault != null && fault.getCode() != null && fault.getCode().getValue() != null) {
+            return fault.getCode().getValue().getText();
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -81,11 +85,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             SOAP11FaultRoleImpl faultRoleImpl = new SOAP11FaultRoleImpl(this.fault);
             faultRoleImpl.setRoleValue(faultActor);
             this.fault.setRole(faultRoleImpl);
-
-            /* SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
-            SOAPFaultNode fNode = soapFactory.createSOAPFaultNode(fault);
-            fNode.setNodeValue(faultActor);*/
-
         } else {
             SOAPFaultRole role = this.fault.getRole();
             role.setRoleValue(faultActor);
@@ -100,8 +99,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             return this.fault.getRole().getRoleValue();
         }
         return null;
-
-//        return fault.getNode().getNodeValue();
     }
 
     /**
@@ -148,18 +145,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       * @see javax.xml.soap.SOAPFault#getDetail()
       */
     public Detail getDetail() {
-        if (this.fault.getDetail() != null) {
-            return new DetailImpl(this.fault.getDetail());
-        }
-        return null;
-    }
-
-    /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPFault#addDetail()
-      */
-    public Detail addDetail() throws SOAPException {
-        SOAP11FaultDetailImpl omDetail = new SOAP11FaultDetailImpl(this.fault);
-        return new DetailImpl(omDetail);
+        return (Detail) toSAAJNode((org.w3c.dom.Node) fault.getDetail());
     }
 
     /* (non-Javadoc)
@@ -171,8 +157,25 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     }
 
     /* (non-Javadoc)
+      * @see javax.xml.soap.SOAPFault#addDetail()
+      */
+    public Detail addDetail() throws SOAPException {
+        if (isDetailAdded) {
+            throw new SOAPException("This SOAPFault already contains a Detail element. " +
+                                    "Please remove the existing Detail element before " +
+                                    "calling addDetail()");
+        }
+        SOAP11FaultDetailImpl omDetail = new SOAP11FaultDetailImpl(this.fault);
+        Detail saajDetail = new DetailImpl(omDetail);
+        ((NodeImpl) fault.getDetail()).setUserData(SAAJ_NODE, saajDetail, null);
+        isDetailAdded = true;
+        return saajDetail;
+    }
+
+/* (non-Javadoc)
       * @see javax.xml.soap.SOAPFault#getFaultCodeAsName()
       */
+
     public Name getFaultCodeAsName() {
         // TODO TODO
         throw new UnsupportedOperationException("TODO");

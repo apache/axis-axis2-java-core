@@ -15,6 +15,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPException;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
@@ -130,6 +131,30 @@ public class SOAPFaultsTest extends TestCase {
         assertTrue(xml.indexOf("<faultcode>Client</faultcode>") != -1);
         assertTrue(xml.indexOf("<faultstring>CWMP fault</faultstring>") != -1);
         assertTrue(xml.indexOf("<faultactor>http://gizmos.com/order</faultactor>") != -1);
+    }
+
+    public void testAddDetailsTwice(){
+        try {
+            MessageFactory fac = MessageFactory.newInstance();
+
+            //Create the response to the message
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+
+            body.addFault().addDetail();
+            try {
+                body.getFault().addDetail();
+                fail("Expected Exception did not occur");
+            } catch (SOAPException e) {
+                assertTrue(true);
+            }
+
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
     }
 
     public void testQuick() throws Exception {

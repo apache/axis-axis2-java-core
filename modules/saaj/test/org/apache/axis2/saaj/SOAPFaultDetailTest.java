@@ -17,7 +17,7 @@ public class SOAPFaultDetailTest extends TestCase {
 		super(name);
 	}
 	
-    String xmlString =
+    private String xmlString =
     	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
     	"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
     	" <soapenv:Body>" +
@@ -38,9 +38,9 @@ public class SOAPFaultDetailTest extends TestCase {
     		mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
     	SOAPBody body = smsg.getSOAPBody();
     	//smsg.writeTo(System.out);
-    	SOAPFault flt = body.getFault();
-    	flt.addDetail();
-    	javax.xml.soap.Detail d = flt.getDetail();
+    	SOAPFault fault = body.getFault();
+    	fault.addDetail();
+    	javax.xml.soap.Detail d = fault.getDetail();
     	Iterator i = d.getDetailEntries();
     	while (i.hasNext()){
     		DetailEntry entry = (DetailEntry) i.next();
@@ -52,9 +52,9 @@ public class SOAPFaultDetailTest extends TestCase {
     			assertEquals("the value of the exceptionName element didn't match",
     					"test.wsdl.faults.InvalidTickerFaultMessage", entry.getValue());
     		} else {
-    			assertTrue("Expecting details element name of 'tickerSymbol' or 'expceptionName' - I found :" + name, false);
+    			assertTrue("Expecting details element name of 'tickerSymbol' or " +
+                           "'expceptionName' - I found :" +name, false);
     		}
     	}
-    	assertTrue(d != null);
     }
 }

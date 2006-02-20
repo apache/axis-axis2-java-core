@@ -156,10 +156,10 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
         if (domNode instanceof org.w3c.dom.Text || domNode instanceof org.w3c.dom.Comment) {
             org.w3c.dom.Node prevSiblingDOMNode = domNode.getPreviousSibling();
             org.w3c.dom.Node nextSiblingDOMNode = domNode.getNextSibling();
-//            SOAPElementImpl parent = new SOAPElementImpl((ElementImpl) domNode.getParentNode());
 
             TextImplEx saajTextNode = (TextImplEx) ((NodeImpl) domNode).getUserData(SAAJ_NODE);
-            if (saajTextNode == null) {
+            if (saajTextNode == null){
+                // if SAAJ node has not been set in userData, try to construct it
                 return toSAAJNode2(domNode);
             }
             saajTextNode.setPreviousSibling(prevSiblingDOMNode);
@@ -167,7 +167,7 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
             return saajTextNode;
         }
         Node saajNode = (Node) ((NodeImpl) domNode).getUserData(SAAJ_NODE);
-        if (saajNode == null) {
+        if (saajNode == null) {  // if SAAJ node has not been set in userData, try to construct it
             return toSAAJNode2(domNode);
         }
         return saajNode;

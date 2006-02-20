@@ -17,9 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
-import org.apache.ws.commons.om.OMNamespace;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
@@ -27,9 +25,9 @@ import javax.xml.soap.Name;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -82,7 +80,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      */
     public SOAPFault addFault() throws SOAPException {
         SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
-        return new SOAPFaultImpl(fault);
+        SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
+        ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
+        return saajSOAPFault;
     }
 
     /**
@@ -106,7 +106,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      */
     public SOAPFault getFault() {
         if (omSOAPBody.hasFault()) {
-            return new SOAPFaultImpl(omSOAPBody.getFault());
+            return (SOAPFault) toSAAJNode((org.w3c.dom.Node) omSOAPBody.getFault());
         }
         return null;
     }
@@ -121,9 +121,6 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPBodyElement addBodyElement(Name name) throws SOAPException {
-//        SOAPElementImpl elem = (SOAPElementImpl) addChildElement(name);
-//        return new SOAPBodyElementImpl(elem.element);
-
         return (SOAPBodyElement) addChildElement(name);
     }
 

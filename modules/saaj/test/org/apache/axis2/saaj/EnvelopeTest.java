@@ -15,6 +15,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
@@ -173,59 +175,45 @@ public class EnvelopeTest extends TestCase {
         assertTrue(envelope.getBody() != null);
     }
 
-    //TODO: Fails. Check this. Faults need more thorough testing
     public void testFaults() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
 
         assertFalse(body.hasFault());
         SOAPFault soapFault = body.addFault();
+        soapFault.setFaultString("myFault");
+        soapFault.setFaultCode("CODE");
+
         assertTrue(body.hasFault());
         assertNotNull(body.getFault());
+        assertSame(soapFault, body.getFault());
 
-        soapFault.setFaultString("myFault");
-        String faultString = soapFault.getFaultString();
-        System.err.println("######## faultString=" + faultString);
-
-//        soapFault.setFaultCode("CODE");
-//        soapFault.getFaultCode();
-//        System.err.println("######## faultCode=" + soapFault.getFaultCode());
-
-//        assertEquals()
-
-        //soapFault.setFaultCode("myFault");
-        //String fc = soapFault.getFaultCode();
-        /*soapFault.setFaultString("myFault");
-        String fc = soapFault.getFaultString(); //Chk the same for FaultCode as well
-
-        // currently not done in SAAJ
-        assertTrue(fc.equals("myFault"));*/
+        assertEquals("myFault", soapFault.getFaultString());
+        assertEquals("CODE", soapFault.getFaultCode());
     }
-    /*
-   public void testFaults2() throws Exception {
 
+   public void testFaults2() throws Exception {
        SOAPEnvelope envelope = getSOAPEnvelope();
        SOAPBody body = envelope.getBody();
-       SOAPFault sf = body.addFault();
+       SOAPFault fault = body.addFault();
 
        assertTrue(body.getFault() != null);
 
-       Detail d1 = sf.addDetail();
+       Detail d1 = fault.addDetail();
        Name name = envelope.createName("GetLastTradePrice", "WOMBAT",
                                        "http://www.wombat.org/trader");
        d1.addDetailEntry(name);
 
-       Detail d2 = sf.getDetail();
+       Detail d2 = fault.getDetail();
        assertTrue(d2 != null);
        Iterator i = d2.getDetailEntries();
        assertTrue(getIteratorCount(i) == 1);
        i = d2.getDetailEntries();
-       //message.writeTo(System.out);
        while (i.hasNext()) {
            DetailEntry de = (DetailEntry) i.next();
            assertEquals(de.getElementName(), name);
        }
-   }*/
+   }
 
     public void testHeaderElements() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
