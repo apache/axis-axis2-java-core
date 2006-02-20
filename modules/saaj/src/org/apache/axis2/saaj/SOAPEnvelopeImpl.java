@@ -17,6 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11BodyImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderImpl;
 import org.w3c.dom.Document;
@@ -109,11 +110,12 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
      *                                      obtaining the <CODE>SOAPHeader</CODE> object
      */
     public SOAPHeader getHeader() throws SOAPException {
-        org.apache.ws.commons.soap.SOAPHeader soapHeader = omSOAPEnvelope.getHeader();
+        return (SOAPHeader) toSAAJNode((org.w3c.dom.Node) omSOAPEnvelope.getHeader());
+        /*org.apache.ws.commons.soap.SOAPHeader soapHeader = omSOAPEnvelope.getHeader();
         if (soapHeader != null) {
             return new SOAPHeaderImpl(soapHeader);
         }
-        return null;
+        return null;*/
     }
 
     /**
@@ -134,11 +136,12 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
      *                                      obtaining the <CODE>SOAPBody</CODE> object
      */
     public SOAPBody getBody() throws SOAPException {
-        final org.apache.ws.commons.soap.SOAPBody body = omSOAPEnvelope.getBody();
+        return (SOAPBody) toSAAJNode((org.w3c.dom.Node) omSOAPEnvelope.getBody());
+       /* final org.apache.ws.commons.soap.SOAPBody body = omSOAPEnvelope.getBody();
         if (body != null) {
             return new SOAPBodyImpl(body);
         }
-        return null;
+        return null;*/
     }
 
     /**
@@ -156,11 +159,13 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
      *                                      <CODE>SOAPHeader</CODE> object
      */
     public SOAPHeader addHeader() throws SOAPException {
-
         org.apache.ws.commons.soap.SOAPHeader header = omSOAPEnvelope.getHeader();
         if (header == null) {
             header = new SOAP11HeaderImpl(omSOAPEnvelope);
-            return (new SOAPHeaderImpl(header));
+            SOAPHeaderImpl saajSOAPHeader = new SOAPHeaderImpl(header);
+            saajSOAPHeader.setParentElement(this);
+            ((NodeImpl) omSOAPEnvelope.getHeader()).setUserData(SAAJ_NODE, saajSOAPHeader, null);
+            return saajSOAPHeader;
         } else {
             throw new SOAPException("Header already present, can't set header again without " +
                                     "deleting the existing header. Use getHeader() method instead.");
@@ -185,7 +190,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         org.apache.ws.commons.soap.SOAPBody body = omSOAPEnvelope.getBody();
         if (body == null) {
             body = new SOAP11BodyImpl(omSOAPEnvelope);
-            return (new SOAPBodyImpl(body));
+            SOAPBodyImpl saajSOAPBody = new SOAPBodyImpl(body);
+            saajSOAPBody.setParentElement(this);
+            ((NodeImpl) omSOAPEnvelope.getBody()).setUserData(SAAJ_NODE, saajSOAPBody, null);
+            return saajSOAPBody;
         } else {
             throw new SOAPException("Body already present, can't set body again without " +
                                     "deleting the existing body. Use getBody() method instead.");

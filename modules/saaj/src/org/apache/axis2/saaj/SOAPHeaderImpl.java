@@ -20,6 +20,7 @@ import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
@@ -255,5 +256,13 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             }
         }
         return childElements.iterator();
+    }
+
+    public void detachNode() {
+        this.detach();
+    }
+
+    public OMNode detach() {
+        return omSOAPHeader.detach();
     }
 }

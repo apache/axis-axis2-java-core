@@ -57,6 +57,18 @@ public class EnvelopeTest extends TestCase {
         validateBody(body.getChildElements());
     }
 
+    public void testDetachHeader() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage smsg =
+                mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(XML_STRING.getBytes()));
+        SOAPPart sp = smsg.getSOAPPart();
+        SOAPEnvelope se = sp.getEnvelope();
+        smsg.writeTo(System.out);
+        assertTrue(se != null);
+        SOAPHeader header = se.getHeader();
+        header.detachNode();
+    }
+
     public void testEnvelope2() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         final ByteArrayInputStream baIS = new ByteArrayInputStream(XML_STRING.getBytes());

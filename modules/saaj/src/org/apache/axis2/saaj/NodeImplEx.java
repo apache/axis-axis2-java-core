@@ -22,6 +22,7 @@ import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMNode;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.TypeInfo;
@@ -50,6 +51,11 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
      */
     public void detachNode() {
         this.detach();
+    }
+
+    public OMNode detach() {
+        // TODO: Impl
+        return null;
     }
 
     /**
