@@ -257,7 +257,7 @@ public class EnvelopeTest extends TestCase {
         Iterator iStart = body.getChildElements();
         int countStart = getIteratorCount(iStart);
 
-        final String bodyText = "<txt>This is the body text</txt>";
+        final String bodyText = "This is the body text";
 
         SOAPElement se = body.addTextNode(bodyText);
         assertTrue(se != null);
@@ -272,7 +272,7 @@ public class EnvelopeTest extends TestCase {
     public void testNonCommentText() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
-        SOAPElement se = body.addTextNode("<txt>This is text</txt>");
+        SOAPElement se = body.addTextNode("This is text");
         Iterator iterator = se.getChildElements();
         Object o = null;
         while (iterator.hasNext()) {

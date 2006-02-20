@@ -108,7 +108,7 @@ public class SOAPFaultsTest extends TestCase {
                     soapElement.getValue().equals("This is the fault code")) {
                     foundFirst = true;
                 }
-                if (soapElement.getTagName().equals("FaultString") &&
+                if (soapElement.getTagName().equals("cwmp:FaultString") &&
                     soapElement.getValue().equals("Fault Message")) {
                     foundSecond = true;
                 }

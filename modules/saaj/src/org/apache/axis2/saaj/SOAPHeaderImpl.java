@@ -17,14 +17,18 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,6 +47,58 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         omSOAPHeader = header;
     }
 
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
+    */
+    public SOAPElement addChildElement(String localName) throws SOAPException {
+        return addHeaderElement(new PrefixedQName(null, localName, null));
+    }
+
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String)
+    */
+    public SOAPElement addChildElement(String localName, String prefix) throws SOAPException {
+        String namespaceURI = getNamespaceURI(prefix);
+
+        if (namespaceURI == null) {
+            throw new SOAPException("Namespace not declared for the give prefix: " + prefix);
+        }
+        return addChildElement(localName, prefix, namespaceURI);
+    }
+
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
+    */
+    public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
+        OMNamespace ns = new NamespaceImpl(uri, prefix);
+        SOAPHeaderBlock headerBlock =
+                new SOAP11HeaderBlockImpl(localName, ns, omSOAPHeader);
+        SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
+        element.setUserData(SAAJ_NODE, this, null);
+        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        return soapHeaderElement;
+    }
+
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
+    */
+    public SOAPElement addChildElement(Name name) throws SOAPException {
+        return addHeaderElement(name);
+    }
+
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.SOAPElement)
+    */
+    public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
+        OMNamespace ns = new NamespaceImpl(soapElement.getNamespaceURI(), soapElement.getPrefix());
+        SOAPHeaderBlock headerBlock =
+                new SOAP11HeaderBlockImpl(soapElement.getLocalName(), ns, omSOAPHeader);
+        SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
+        element.setUserData(SAAJ_NODE, this, null);
+        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        return soapHeaderElement;
+    }
+
     /**
      * Creates a new <CODE>SOAPHeaderElement</CODE> object
      * initialized with the specified name and adds it to this
@@ -58,8 +114,12 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
         OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
-        SOAPHeaderBlock headerBlock = new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader);
-        return new SOAPHeaderElementImpl(headerBlock);
+        SOAPHeaderBlock headerBlock =
+                new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader);
+        SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
+        element.setUserData(SAAJ_NODE, this, null);
+        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        return soapHeaderElement;
     }
 
     /**
@@ -128,8 +188,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      */
     public Iterator examineMustUnderstandHeaderElements(String actor) {
         Collection elements = new ArrayList();
-        for (Iterator iterator = omSOAPHeader.examineMustUnderstandHeaderBlocks(actor); iterator.hasNext();)
-        {
+        for (Iterator iterator = omSOAPHeader.examineMustUnderstandHeaderBlocks(actor);
+             iterator.hasNext();) {
             elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
         return elements.iterator();
@@ -167,5 +227,33 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
         }
         return elements.iterator();
+    }
+
+    public Iterator getChildElements(Name name) {
+        QName qName = new QName(name.getURI(), name.getLocalName());
+        return getChildren(element.getChildrenWithName(qName));
+    }
+
+    public Iterator getChildElements() {
+        return getChildren(element.getChildren());
+    }
+
+    private Iterator getChildren(Iterator childIter) {
+        Collection childElements = new ArrayList();
+        while (childIter.hasNext()) {
+            org.w3c.dom.Node domNode = (org.w3c.dom.Node) childIter.next();
+            Node saajNode = toSAAJNode(domNode);
+            if (saajNode instanceof javax.xml.soap.Text) {
+                childElements.add(saajNode);
+            } else if (!(saajNode instanceof SOAPHeaderElement)) {
+                // silently replace node, as per saaj 1.2 spec
+                SOAPHeaderElement headerEle = new SOAPHeaderElementImpl((SOAPHeaderBlock) domNode);
+                ((NodeImpl) domNode).setUserData(SAAJ_NODE, headerEle, null);
+                childElements.add(headerEle);
+            } else {
+                childElements.add(saajNode);
+            }
+        }
+        return childElements.iterator();
     }
 }

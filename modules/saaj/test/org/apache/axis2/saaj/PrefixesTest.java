@@ -67,7 +67,7 @@ public class PrefixesTest extends TestCase {
                 "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
                 "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
                 "   <soapenv:Body>\n" +
-                "       <t:helloworld t:name=\"test\" xmlns:t='http://test.org/Test' />\n" +
+                "       <t:helloworld t:name=\"test\" xmlns:t='http://test.org/Test'>Hello</t:helloworld>\n" +
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
 

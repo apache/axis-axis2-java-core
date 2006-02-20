@@ -34,8 +34,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.Map;
+import java.util.Hashtable;
 
 public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
+
+    /**
+     * Holds the user data objects
+     */
+    private Map userData = new Hashtable();
 
     /**
      * Field builder
@@ -123,7 +130,7 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     public void setPrefix(String prefix) throws DOMException {
         throw new DOMException(DOMException.NAMESPACE_ERR, DOMMessageFormatter
                 .formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NAMESPACE_ERR",
-                        null));
+                               null));
     }
 
     /**
@@ -246,7 +253,7 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     public Node removeChild(Node oldChild) throws DOMException {
         throw new DOMException(DOMException.NOT_FOUND_ERR, DOMMessageFormatter
                 .formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NOT_FOUND_ERR",
-                        null));
+                               null));
     }
 
     /*
@@ -257,9 +264,9 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     public Node insertBefore(Node newChild, Node refChild) throws DOMException {
         // Overridden in ParentNode
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        "HIERARCHY_REQUEST_ERR", null));
+                               DOMMessageFormatter.formatMessage(
+                                       DOMMessageFormatter.DOM_DOMAIN,
+                                       "HIERARCHY_REQUEST_ERR", null));
 
     }
 
@@ -270,9 +277,9 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
      */
     public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        "HIERARCHY_REQUEST_ERR", null));
+                               DOMMessageFormatter.formatMessage(
+                                       DOMMessageFormatter.DOM_DOMAIN,
+                                       "HIERARCHY_REQUEST_ERR", null));
     }
 
     //
@@ -400,9 +407,9 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     public void insertSiblingAfter(OMNode sibling) throws OMException {
         // Overridden in ChildNode
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        "HIERARCHY_REQUEST_ERR", null));
+                               DOMMessageFormatter.formatMessage(
+                                       DOMMessageFormatter.DOM_DOMAIN,
+                                       "HIERARCHY_REQUEST_ERR", null));
 
     }
 
@@ -415,9 +422,9 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     public void insertSiblingBefore(OMNode sibling) throws OMException {
         // Overridden in ChildNode
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        "HIERARCHY_REQUEST_ERR", null));
+                               DOMMessageFormatter.formatMessage(
+                                       DOMMessageFormatter.DOM_DOMAIN,
+                                       "HIERARCHY_REQUEST_ERR", null));
 
     }
 
@@ -437,16 +444,16 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
 
     public void setPreviousOMSibling(OMNode previousSibling) {
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        "HIERARCHY_REQUEST_ERR", null));
+                               DOMMessageFormatter.formatMessage(
+                                       DOMMessageFormatter.DOM_DOMAIN,
+                                       "HIERARCHY_REQUEST_ERR", null));
     }
 
     public void setNextOMSibling(OMNode previousSibling) {
         throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
-                DOMMessageFormatter.formatMessage(
-                        DOMMessageFormatter.DOM_DOMAIN,
-                        "HIERARCHY_REQUEST_ERR", null));
+                               DOMMessageFormatter.formatMessage(
+                                       DOMMessageFormatter.DOM_DOMAIN,
+                                       "HIERARCHY_REQUEST_ERR", null));
     }
 
     /**
@@ -539,14 +546,12 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
         throw new UnsupportedOperationException("TODO");
     }
 
-    public Object setUserData(String arg0, Object arg1, UserDataHandler arg2) {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+    public Object setUserData(String key, Object value, UserDataHandler userDataHandler) {
+       return userData.put(key, value);
     }
 
-    public Object getUserData(String arg0) {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+    public Object getUserData(String key) {
+        return userData.get(key);
     }
 
     public void serialize(OutputStream output) throws XMLStreamException {

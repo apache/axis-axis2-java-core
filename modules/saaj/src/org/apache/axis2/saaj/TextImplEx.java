@@ -23,7 +23,10 @@ import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
 
 import javax.xml.soap.Text;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.Node;
 import javax.xml.stream.XMLStreamException;
+import java.util.Iterator;
 
 public class TextImplEx extends NodeImplEx implements Text {
 
@@ -31,8 +34,28 @@ public class TextImplEx extends NodeImplEx implements Text {
 
     private TextImpl textNode;
 
-    public TextImplEx(String data) {
+    private org.w3c.dom.Node previousSibling;
+    private org.w3c.dom.Node nextSibling;
+
+    public TextImplEx(String data, SOAPElement parent) {
         textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
+        this.parentElement = parent;
+    }
+
+    public TextImplEx(String data, SOAPElement parent,
+                      org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
+        textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
+        this.parentElement = parent;
+        this.previousSibling = prevSibling;
+        this.nextSibling = nextSibling;
+    }
+
+    public void setNextSibling(org.w3c.dom.Node nextSibling) {
+        this.nextSibling = nextSibling;
+    }
+
+    public void setPreviousSibling(org.w3c.dom.Node previousSibling) {
+        this.previousSibling = previousSibling;
     }
 
     /**
@@ -285,4 +308,12 @@ public class TextImplEx extends NodeImplEx implements Text {
     }
 
 
+    public org.w3c.dom.Node getNextSibling() {
+        return toSAAJNode(nextSibling);
+    }
+
+
+    public org.w3c.dom.Node getPreviousSibling() {
+        return toSAAJNode(previousSibling);
+    }
 }

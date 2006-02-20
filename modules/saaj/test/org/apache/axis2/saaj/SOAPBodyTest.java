@@ -24,6 +24,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPBodyElement;
 import java.util.Iterator;
 
 public class SOAPBodyTest extends TestCase {
@@ -79,17 +80,25 @@ public class SOAPBodyTest extends TestCase {
         SOAPElement city = bodyElmnt.addChildElement(ns1);
         city.addTextNode("GENT");
 
-        SOAPElement city2 = body.addBodyElement(ns1);
+        SOAPElement city2 = body.addChildElement(ns1);
+        assertTrue(city2 instanceof SOAPBodyElement);
         city2.addTextNode("CIT2");
 
         Iterator it = body.getChildElements();
         int count = 0;
 
         while (it.hasNext()) {
-        	it.next();
+            Object o = it.next();
+            assertTrue(o instanceof SOAPBodyElement);
+            SOAPBodyElement bodyElement = (SOAPBodyElement) o;
+            assertEquals("http://www.jcommerce.net/soap/ns/SOAPHelloWorld",
+                         bodyElement.getNamespaceURI());
+            assertEquals("shw", bodyElement.getPrefix());
+            assertTrue(bodyElement.getLocalName().equals("City") ||
+                       bodyElement.getLocalName().equals("Address"));
             count++;
         }
-        assertEquals(2,count);
+        assertEquals(2, count);
     }
 
 }

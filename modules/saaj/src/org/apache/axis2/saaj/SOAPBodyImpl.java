@@ -16,14 +16,23 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
+import org.apache.ws.commons.om.OMNamespace;
 import org.w3c.dom.Document;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPElement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Locale;
 
 public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
@@ -36,6 +45,32 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     public SOAPBodyImpl(org.apache.ws.commons.soap.SOAPBody omSOAPBody) {
         super((ElementImpl) omSOAPBody);
         this.omSOAPBody = omSOAPBody;
+    }
+
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
+    */
+    public SOAPElement addChildElement(String localName) throws SOAPException {
+        SOAPBodyElementImpl childEle =
+                new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElement(localName));
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        element.appendChild(childEle.element);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        return childEle;
+    }
+
+    /* (non-Javadoc)
+    * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
+    */
+    public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
+        SOAPBodyElementImpl childEle =
+                new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElementNS(uri,
+                                                                                         localName));
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.element.setNamespace(childEle.element.declareNamespace(uri, prefix));
+        element.appendChild(childEle.element);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        return childEle;
     }
 
     /**
@@ -86,8 +121,10 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPBodyElement addBodyElement(Name name) throws SOAPException {
-        SOAPElementImpl elem = (SOAPElementImpl) addChildElement(name);
-        return new SOAPBodyElementImpl(elem.element);
+//        SOAPElementImpl elem = (SOAPElementImpl) addChildElement(name);
+//        return new SOAPBodyElementImpl(elem.element);
+
+        return (SOAPBodyElement) addChildElement(name);
     }
 
     /**
@@ -158,6 +195,36 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
         SOAPElementImpl elem = new SOAPElementImpl((ElementImpl) document.getDocumentElement());
         return new SOAPBodyElementImpl(elem.element);
+    }
 
+    public Iterator getChildElements(Name name) {
+        QName qName = new QName(name.getURI(), name.getLocalName());
+        return getChildren(element.getChildrenWithName(qName));
+    }
+
+    public Iterator getChildElements() {
+        return getChildren(element.getChildren());
+    }
+
+    private Iterator getChildren(Iterator childIter) {
+        Collection childElements = new ArrayList();
+        while (childIter.hasNext()) {
+            org.w3c.dom.Node domNode = (org.w3c.dom.Node) childIter.next();
+            Node saajNode = toSAAJNode(domNode);
+            if (saajNode instanceof javax.xml.soap.Text) {
+                childElements.add(saajNode);
+            } else if (!(saajNode instanceof SOAPBodyElement)) {
+                //TODO: What about SOAPFault?
+                // silently replace node, as per saaj 1.2 spec
+                if (domNode instanceof ElementImpl) {
+                    SOAPBodyElement bodyEle = new SOAPBodyElementImpl((ElementImpl) domNode);
+                    ((NodeImpl) domNode).setUserData(SAAJ_NODE, bodyEle, null);
+                    childElements.add(bodyEle);
+                }
+            } else {
+                childElements.add(saajNode);
+            }
+        }
+        return childElements.iterator();
     }
 }

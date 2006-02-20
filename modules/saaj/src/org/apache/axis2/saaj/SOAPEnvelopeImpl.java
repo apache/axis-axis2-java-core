@@ -35,6 +35,9 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
 
     public SOAPEnvelopeImpl(final org.apache.ws.commons.soap.SOAPEnvelope element) {
         super((ElementImpl) element);
+
+        //TODO: we need to set the SAAJ user data
+
         omSOAPEnvelope = element;
     }
 

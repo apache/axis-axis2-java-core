@@ -2,6 +2,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
@@ -12,10 +13,16 @@ import org.apache.ws.commons.soap.SOAPFaultRole;
 import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPFaultValue;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPFaultElement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Locale;
 
 public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
@@ -206,4 +213,29 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         throw new UnsupportedOperationException("TODO");
     }
 
+    public Iterator getChildElements(Name name) {
+        QName qName = new QName(name.getURI(), name.getLocalName());
+        return getChildren(element.getChildrenWithName(qName));
+    }
+
+    public Iterator getChildElements() {
+        return getChildren(element.getChildren());
+    }
+
+    private Iterator getChildren(Iterator childIter) {
+        Collection childElements = new ArrayList();
+        while (childIter.hasNext()) {
+            org.w3c.dom.Node domNode = (org.w3c.dom.Node) childIter.next();
+            Node saajNode = toSAAJNode(domNode);
+            if (!(saajNode instanceof SOAPFaultElement)) {
+                // silently replace node, as per saaj 1.2 spec
+                SOAPFaultElement bodyEle = new SOAPFaultElementImpl((ElementImpl) domNode);
+                ((NodeImpl) domNode).setUserData(SAAJ_NODE, bodyEle, null);
+                childElements.add(bodyEle);
+            } else {
+                childElements.add(saajNode);
+            }
+        }
+        return childElements.iterator();
+    }
 }

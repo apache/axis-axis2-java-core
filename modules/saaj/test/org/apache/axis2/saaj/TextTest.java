@@ -156,14 +156,13 @@ public class TextTest extends TestCase {
         assertEquals(5, textNodes.getLength());
 
         for (int i = 0; i < textNodes.getLength(); i++) {
-            Node nde = textNodes.item(i);
+            Node node = textNodes.item(i);
             boolean isComment;
-            if (nde instanceof Text) {
-                isComment = ((Text) nde).isComment();
-                if (i == 1)
-                    assertEquals(true, isComment);
-                else
-                    assertEquals(false, isComment);
+            isComment = ((Text) node).isComment();
+            if (i == 1 || i == 3) {
+                assertEquals(true, isComment);
+            } else {
+                assertEquals(false, isComment);
             }
         }
     }
