@@ -17,8 +17,13 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.NamedNodeMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -36,6 +41,7 @@ import java.util.Locale;
 public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
     private org.apache.ws.commons.soap.SOAPBody omSOAPBody;
+    private boolean isBodyElementAdded;
 
     /**
      * @param omSOAPBody
@@ -49,11 +55,15 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
     */
     public SOAPElement addChildElement(String localName) throws SOAPException {
+        if (omSOAPBody.hasFault()) {
+            throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
+        }
         SOAPBodyElementImpl childEle =
                 new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElement(localName));
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         element.appendChild(childEle.element);
         ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        isBodyElementAdded = true;
         return childEle;
     }
 
@@ -61,6 +71,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
+        if (omSOAPBody.hasFault()) {
+            throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
+        }
         SOAPBodyElementImpl childEle =
                 new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElementNS(uri,
                                                                                          localName));
@@ -68,6 +81,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         childEle.element.setNamespace(childEle.element.declareNamespace(uri, prefix));
         element.appendChild(childEle.element);
         ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        isBodyElementAdded = true;
         return childEle;
     }
 
@@ -79,6 +93,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException if there is a SOAP error
      */
     public SOAPFault addFault() throws SOAPException {
+        if (isBodyElementAdded) {
+            throw new SOAPException("A SOAPBodyElement has been already added to this SOAPBody");
+        }
         SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
         SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
         ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
@@ -189,9 +206,66 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException if the <code>Document</code> cannot be added
      */
     public SOAPBodyElement addDocument(Document document) throws SOAPException {
+        Element docEle = document.getDocumentElement();
 
-        SOAPElementImpl elem = new SOAPElementImpl((ElementImpl) document.getDocumentElement());
-        return new SOAPBodyElementImpl(elem.element);
+        SOAPElement saajSOAPEle = (SOAPElement) toSAAJNode(docEle, this);
+        SOAPBodyElementImpl bodyEle =
+                new SOAPBodyElementImpl(((SOAPElementImpl) saajSOAPEle).element);
+        addChildElement(bodyEle);
+        return bodyEle;
+    }
+
+    private javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node node,
+                                           SOAPElement parent) throws SOAPException {
+        if (node == null) {
+            return null;
+        }
+        if (node instanceof org.w3c.dom.Text) {
+            org.w3c.dom.Text domText = (org.w3c.dom.Text) node;
+            return new TextImplEx(domText.getData(), parent);
+        }
+        if (node instanceof org.w3c.dom.Comment) {
+            org.w3c.dom.Comment domText = (org.w3c.dom.Comment) node;
+            return new TextImplEx("<!--" + domText.getData() + "-->", parent);
+        }
+        Element domEle = ((Element) node);
+        int indexOfColon = domEle.getTagName().indexOf(":");
+        NamespaceImpl ns;
+        String localname;
+        if (indexOfColon != -1) {
+            localname = domEle.getTagName().substring(indexOfColon + 1);
+
+            ns = new NamespaceImpl(domEle.getNamespaceURI(),
+                                   domEle.getTagName().substring(0, indexOfColon));
+        } else {
+            localname = domEle.getLocalName();
+            ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix());
+        }
+        ElementImpl eleImpl =
+                new ElementImpl((DocumentImpl) this.getOwnerDocument(), localname, ns);
+
+        SOAPElementImpl saajEle = new SOAPElementImpl(eleImpl);
+
+        saajEle.setParentElement(parent);
+        NamedNodeMap domAttrs = domEle.getAttributes();
+        for(int i = 0; i < domAttrs.getLength(); i++){
+            org.w3c.dom.Node attrNode = domAttrs.item(i);
+            saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
+                                                   attrNode.getLocalName(),
+                                                   attrNode.getPrefix()),
+                                 attrNode.getNodeValue());
+        }
+
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node childSAAJNode = toSAAJNode(childNodes.item(i), saajEle);
+            if (childSAAJNode instanceof javax.xml.soap.Text) {
+                saajEle.addTextNode(childSAAJNode.getValue());
+            } else {
+                saajEle.addChildElement((javax.xml.soap.SOAPElement) childSAAJNode);
+            }
+        }
+        return saajEle;
     }
 
     public Iterator getChildElements(Name name) {
@@ -203,6 +277,10 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         return getChildren(element.getChildren());
     }
 
+    public SOAPElement addTextNode(String text) throws SOAPException {
+        throw new UnsupportedOperationException("Cannot add text node to SOAPBody");
+    }
+
     private Iterator getChildren(Iterator childIter) {
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
@@ -211,12 +289,18 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             if (saajNode instanceof javax.xml.soap.Text) {
                 childElements.add(saajNode);
             } else if (!(saajNode instanceof SOAPBodyElement)) {
-                //TODO: What about SOAPFault?
                 // silently replace node, as per saaj 1.2 spec
                 if (domNode instanceof ElementImpl) {
-                    SOAPBodyElement bodyEle = new SOAPBodyElementImpl((ElementImpl) domNode);
-                    ((NodeImpl) domNode).setUserData(SAAJ_NODE, bodyEle, null);
-                    childElements.add(bodyEle);
+                    if (omSOAPBody.hasFault()) {
+                        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
+                        SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
+                        ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
+                        childElements.add(saajSOAPFault);
+                    } else {
+                        SOAPBodyElement saajBodyEle = new SOAPBodyElementImpl((ElementImpl) domNode);
+                        ((NodeImpl) domNode).setUserData(SAAJ_NODE, saajBodyEle, null);
+                        childElements.add(saajBodyEle);
+                    }
                 }
             } else {
                 childElements.add(saajNode);

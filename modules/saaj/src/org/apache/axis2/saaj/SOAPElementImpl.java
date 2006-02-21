@@ -108,10 +108,33 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.SOAPElement)
       */
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
-        addChildElement(soapElement.getLocalName(),
-                        soapElement.getPrefix(),
-                        soapElement.getNamespaceURI());
-        return soapElement;
+        String namespaceURI = soapElement.getNamespaceURI();
+        String prefix = soapElement.getPrefix();
+        String localName = soapElement.getLocalName();
+        element.declareNamespace(namespaceURI, prefix);
+
+        SOAPElementImpl childEle =
+                new SOAPElementImpl((ElementImpl) getOwnerDocument().createElementNS(namespaceURI,
+                                                                                     localName));
+        for (Iterator iter = soapElement.getAllAttributes(); iter.hasNext();) {
+            Name name = (Name) iter.next();
+            childEle.addAttribute(name, soapElement.getAttributeValue(name));
+        }
+
+        for (Iterator iter = soapElement.getChildElements(); iter.hasNext();) {
+            Object o = iter.next();
+            if (o instanceof Text) {
+                childEle.addTextNode(((Text) o).getData());
+            } else {
+                childEle.addChildElement((SOAPElement) o);
+            }
+        }
+
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        element.appendChild(childEle.element);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        return childEle;
     }
 
     public String getLocalName() {
@@ -152,7 +175,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         return childEle;
     }
 
@@ -164,7 +187,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
                 new SOAPElementImpl((ElementImpl) getOwnerDocument().createElement(localName));
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         element.appendChild(childEle.element);
-        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         return childEle;
     }
 

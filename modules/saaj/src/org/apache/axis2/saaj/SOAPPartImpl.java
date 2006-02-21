@@ -44,6 +44,7 @@ import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
@@ -55,6 +56,7 @@ public class SOAPPartImpl extends SOAPPart {
     private SOAPEnvelopeImpl envelope;
     private MimeHeadersEx mimeHeaders = new MimeHeadersEx();
 
+    private Source source;
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         SOAPEnvelopeImpl soapEnvelope) {
@@ -252,8 +254,11 @@ public class SOAPPartImpl extends SOAPPart {
      * @see #getContent() getContent()
      */
     public void setContent(Source source) throws SOAPException {
-        //TODO: implementation
-        throw new UnsupportedOperationException("TODO");
+        this.source = source;
+        DOMSource domSource = (DOMSource) source;
+        Node envelope = domSource.getNode().getFirstChild();
+        System.err.println("*****" +envelope.getChildNodes().item(0));
+        System.err.println("*****" + envelope.getClass());
     }
 
     /**
@@ -267,8 +272,7 @@ public class SOAPPartImpl extends SOAPPart {
      * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
      */
     public Source getContent() throws SOAPException {
-        //TODO: implementation
-        throw new UnsupportedOperationException("TODO");
+        return source;
     }
 
     /**

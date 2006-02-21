@@ -66,7 +66,9 @@ public class EnvelopeTest extends TestCase {
         smsg.writeTo(System.out);
         assertTrue(se != null);
         SOAPHeader header = se.getHeader();
+        assertNotNull(header);
         header.detachNode();
+        assertNull(se.getHeader());
     }
 
     public void testEnvelope2() throws Exception {
@@ -259,10 +261,10 @@ public class EnvelopeTest extends TestCase {
 
         final String bodyText = "This is the body text";
 
-        SOAPElement se = body.addTextNode(bodyText);
+        SOAPElement se = body.addChildElement("Child");
         assertTrue(se != null);
-
-        assertTrue(body.getValue().equals(bodyText));
+        SOAPElement soapElement = se.addTextNode(bodyText);
+        assertEquals(bodyText, soapElement.getValue());
 
         Iterator i = body.getChildElements();
         int count = getIteratorCount(i);
@@ -272,7 +274,8 @@ public class EnvelopeTest extends TestCase {
     public void testNonCommentText() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
-        SOAPElement se = body.addTextNode("This is text");
+        SOAPElement se = body.addChildElement("Child");
+        se.addTextNode("This is text");
         Iterator iterator = se.getChildElements();
         Object o = null;
         while (iterator.hasNext()) {
@@ -289,7 +292,8 @@ public class EnvelopeTest extends TestCase {
     public void testCommentText() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
-        SOAPElement se = body.addTextNode("<!-- This is a comment -->");
+        SOAPElement se = body.addChildElement("Child");
+        se.addTextNode("<!-- This is a comment -->");
         Iterator iterator = se.getChildElements();
         Node n = null;
         while (iterator.hasNext()) {

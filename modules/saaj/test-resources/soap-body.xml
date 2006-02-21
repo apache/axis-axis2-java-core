@@ -1,0 +1,4 @@
+<shw:Address shw:t='test' xmlns:shw="http://www.jcommerce.net/soap/ns/SOAPHelloWorld">
+    <shw:City>GENT</shw:City>
+</shw:Address>
+   

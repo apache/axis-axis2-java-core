@@ -230,6 +230,10 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         return elements.iterator();
     }
 
+    public SOAPElement addTextNode(String text) throws SOAPException {
+        throw new UnsupportedOperationException("Cannot add text node to SOAPHeader");
+    }
+
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
         return getChildren(element.getChildrenWithName(qName));

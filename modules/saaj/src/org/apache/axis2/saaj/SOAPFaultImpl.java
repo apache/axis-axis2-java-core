@@ -29,6 +29,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
     protected org.apache.ws.commons.soap.SOAPFault fault;
     private boolean isDetailAdded;
+    private Name faultCodeName;
+    private Locale faultReasonLocale;
 
     /**
      * @param fault
@@ -152,8 +154,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       * @see javax.xml.soap.SOAPFault#setFaultCode(javax.xml.soap.Name)
       */
     public void setFaultCode(Name name) throws SOAPException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        this.faultCodeName = name;
     }
 
     /* (non-Javadoc)
@@ -172,13 +173,11 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         return saajDetail;
     }
 
-/* (non-Javadoc)
+    /* (non-Javadoc)
       * @see javax.xml.soap.SOAPFault#getFaultCodeAsName()
       */
-
     public Name getFaultCodeAsName() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return this.faultCodeName;
     }
 
     /* (non-Javadoc)
@@ -204,16 +203,14 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             reason.setSOAPText(text);
             this.fault.setReason(reason);
         }
+        this.faultReasonLocale = locale;
     }
 
     /* (non-Javadoc)
       * @see javax.xml.soap.SOAPFault#getFaultStringLocale()
       */
     public Locale getFaultStringLocale() {
-        //We only save the language in OM,
-        //Can we construct a Locale with it :-?
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return this.faultReasonLocale;
     }
 
     public Iterator getChildElements(Name name) {

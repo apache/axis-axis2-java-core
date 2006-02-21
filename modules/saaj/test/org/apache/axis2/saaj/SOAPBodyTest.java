@@ -25,7 +25,15 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.Node;
+import javax.xml.soap.Text;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.Iterator;
+import java.io.File;
+
+import org.w3c.dom.Document;
 
 public class SOAPBodyTest extends TestCase {
 
@@ -101,4 +109,62 @@ public class SOAPBodyTest extends TestCase {
         assertEquals(2, count);
     }
 
+    public void testAddDocument() {
+        try {
+            Document document = null;
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.parse(new File("test-resources" + File.separator + "soap-body.xml"));
+
+            MessageFactory fact = MessageFactory.newInstance();
+            SOAPMessage message = fact.createMessage();
+
+//            message.getSOAPHeader().detachNode();
+            SOAPBody soapBody = message.getSOAPBody();
+            soapBody.addDocument(document);
+            message.saveChanges();
+
+            // Get contents using SAAJ APIs
+            Iterator iter1 = soapBody.getChildElements();
+            getContents(iter1, "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception : " + e);
+        }
+    }
+
+    private void getContents(Iterator iterator, String indent) {
+        while (iterator.hasNext()) {
+            Node node = (Node) iterator.next();
+            SOAPElement element = null;
+            Text text = null;
+
+            if (node instanceof SOAPElement) {
+                element = (SOAPElement) node;
+
+                Name name = element.getElementName();
+                System.out.println(indent + "Name is " + name.getQualifiedName());
+
+                Iterator attrs = element.getAllAttributes();
+
+                while (attrs.hasNext()) {
+                    Name attrName = (Name) attrs.next();
+                    System.out.println(indent + " Attribute name is " +
+                                       attrName.getQualifiedName());
+                    System.out.println(indent + " Attribute value is " +
+                                       element.getAttributeValue(attrName));
+                }
+
+                Iterator iter2 = element.getChildElements();
+                getContents(iter2, indent + " ");
+            } else {
+                text = (Text) node;
+
+                String content = text.getValue();
+                System.out.println(indent + "Content is: " + content);
+            }
+        }
+    }
 }
