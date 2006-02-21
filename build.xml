@@ -46,7 +46,8 @@
         keeproot="true" />
 
     <property name="target.dir" location="target"/>
-    <property name="artifact.title" value="${project.id}-${project.currentVersion}" />
+    <property name="project.version" value="${axis2_version}" />
+    <property name="artifact.title" value="${project.id}-${project.version}" />
     <property name="target.jar" location="${target.dir}/${artifact.title}.jar"/>
     <property name="target.pom" location="${target.dir}/${artifact.title}.pom"/>
     <available file="${basedir}/target/lib/axis-wsdl4j-1.2.jar" property="jars.present"/>
@@ -80,22 +81,48 @@
     </maven>
   </target>
 
-  <!-- inline creation of a very minimal (zero dependency) pom -->
+  <!-- inline creation of a very minimal  pom 
+    Only libraries that absolutely must be present should be listed.
+    This POM omits a choice of StAX parser, because there are so many.
+  -->
   <target name="m2-pom" depends="init" xmlns:m2="antlib:org.apache.maven.artifact.ant">
     <echo message="Creating Pom ${target.pom}" level="verbose"/>
     <!--ant1.7's echoxml makes this easier -->
+    
+    
 <echo file="${target.pom}"><![CDATA[<project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>${project.id}</groupId>
   <artifactId>${project.id}</artifactId>
   <packaging>jar</packaging>
-  <version>${project.currentVersion}</version>
+  <version>${project.version}</version>
   <dependencies>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j.version}</version>
     </dependency>
+    <dependency>
+      <groupId>ws-commons</groupId>
+      <artifactId>policy</artifactId>
+      <version>${policy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>axis</groupId>
+      <artifactId>axis.wsdl4j</artifactId>
+      <version>${axis.wsdl4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ws-commons</groupId>
+      <artifactId>XmlSchema</artifactId>
+      <version>${XmlSchema.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>annogen</groupId>
+      <artifactId>annogen</artifactId>
+      <version>${annogen.version}</version>
+    </dependency>
+    
   </dependencies>
 </project>
 ]]></echo>
