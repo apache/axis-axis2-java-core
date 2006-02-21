@@ -50,13 +50,14 @@ public class PopulateAnonComplexTypeTest extends TestCase {
             PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
             if ("varInt".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals(new Integer(5),readMethod.invoke(obj,null));
+                assertEquals(new Integer(5),readMethod.invoke(obj,(Object[]) null));
             } else if ("varFloat".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals(new Float(3.3),readMethod.invoke(obj,null));
+                assertEquals(new Float(3.3),readMethod.invoke(obj,
+                        (Object[]) null));
             }  else if ("varString".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals("Hello",readMethod.invoke(obj,null));
+                assertEquals("Hello",readMethod.invoke(obj, (Object[]) null));
             }
 
         }

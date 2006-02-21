@@ -51,7 +51,7 @@ public class PopulateArrayTest extends TestCase {
             PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
             if ("myobject".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                soapStruct = readMethod.invoke(obj,null);
+                soapStruct = readMethod.invoke(obj, (Object[]) null);
                 break;
             }
         }
@@ -64,14 +64,16 @@ public class PopulateArrayTest extends TestCase {
             PropertyDescriptor propertyDescriptor = structPropertyDescriptors[i];
             if ("varInt".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals("varInt is not properly set",new Integer(5),readMethod.invoke(soapStruct,null));
+                assertEquals("varInt is not properly set",new Integer(5),
+                        readMethod.invoke(soapStruct, (Object[]) null));
             } else if ("varFloat".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
-                assertEquals("varFloat is not properly set",new Float(3.3),readMethod.invoke(soapStruct,null));
+                assertEquals("varFloat is not properly set",new Float(3.3),
+                        readMethod.invoke(soapStruct, (Object[]) null));
             }  else if ("varString".equals(propertyDescriptor.getDisplayName())){
                 readMethod = propertyDescriptor.getReadMethod();
                 assertTrue("String array is not set",readMethod.getReturnType().isArray());
-                Object array = readMethod.invoke(soapStruct, null);
+                Object array = readMethod.invoke(soapStruct, (Object[]) null);
                 int length = Array.getLength(array);
                 assertEquals("Array length is not correct",length,3);
 

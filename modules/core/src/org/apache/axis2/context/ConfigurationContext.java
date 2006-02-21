@@ -42,7 +42,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     private final Map operationContextMap = new HashMap();
     private Hashtable serviceGroupContextMap = new Hashtable();
-    private Hashtable applicationSessionServiceGroupContextTabale = new Hashtable();
+    private Hashtable applicationSessionServiceGroupContextTable = new Hashtable();
     private transient AxisConfiguration axisConfiguration;
     private File rootDir;
     private transient ThreadFactory threadPool;
@@ -89,7 +89,7 @@ public class ConfigurationContext extends AbstractContext {
 
         if (serviceContext == null) {
             if (Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
-                serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTabale.get(
+                serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
                         ((AxisServiceGroup) axisService.getParent()).getServiceGroupName());
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
@@ -185,7 +185,7 @@ public class ConfigurationContext extends AbstractContext {
 
     private synchronized void addServiceGroupContextintoApplicatoionScopeTable(
             ServiceGroupContext serviceGroupContext) {
-        applicationSessionServiceGroupContextTabale.put(
+        applicationSessionServiceGroupContextTable.put(
                 serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
     }
 
@@ -229,7 +229,9 @@ public class ConfigurationContext extends AbstractContext {
                 serviceGroupContext.touch();
             }
         }
-        if (serviceGroupContext == null && msgContext.getSessionContext() != null) {
+        if (serviceGroupContext == null
+                && msgContext!=null  
+                && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
@@ -239,7 +241,7 @@ public class ConfigurationContext extends AbstractContext {
                 AxisServiceGroup asg = (AxisServiceGroup) axisService.getParent();
                 if (asg != null) {
                     serviceGroupContext = (ServiceGroupContext)
-                            applicationSessionServiceGroupContextTabale.get(asg.getServiceGroupName());
+                            applicationSessionServiceGroupContextTable.get(asg.getServiceGroupName());
                 }
             }
 

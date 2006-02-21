@@ -36,7 +36,7 @@ public class ListenerManager {
 
     private ConfigurationContext configctx;
     private HashMap startedTranports = new HashMap();
-    private boolean stoped;
+    private boolean stopped;
 
     public void init(ConfigurationContext configCtx) {
         configCtx.setTransportManager(this);
@@ -110,7 +110,7 @@ public class ListenerManager {
                 log.info(axisFault.getMessage());
             }
         }
-        stoped = false;
+        stopped = false;
     }
 
     public void startSystem(ConfigurationContext configurationContext) {
@@ -127,7 +127,7 @@ public class ListenerManager {
             TransportListener transportListener = (TransportListener) itr_st.next();
             transportListener.stop();
         }
-        stoped = true;
+        stopped = true;
     }
 
     public void addListener(TransportInDescription trsIn, boolean start) throws AxisFault {
@@ -141,7 +141,7 @@ public class ListenerManager {
         }
     }
 
-    public boolean isStoped() {
-        return stoped;
+    public boolean isStopped() {
+        return stopped;
     }
 }

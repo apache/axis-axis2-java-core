@@ -55,7 +55,8 @@ public abstract class AbstractSimplePopulater extends TestCase {
         for (int i = 0; i < propDescs.length; i++) {
             PropertyDescriptor propDesc = propDescs[i];
             if  (propDesc.getPropertyType().equals(propertyClass)){
-                String s = convertToString(propDesc.getReadMethod().invoke(o, null));
+                String s = convertToString(propDesc.getReadMethod().invoke(o,
+                        (Object[]) null));
                 compare(value,s);
             }
 

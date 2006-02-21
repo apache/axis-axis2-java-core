@@ -94,11 +94,13 @@ public class BeanUtil {
                     continue;
                 }
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
-                    Object value = propDesc.getReadMethod().invoke(beanObject, null);
+                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                            (Object[]) null);
                     object.add(propDesc.getName());
                     object.add(value.toString());
                 } else if (ptype.isArray()) {
-                    Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject, null);
+                    Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
+                            (Object[]) null);
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
@@ -114,7 +116,8 @@ public class BeanUtil {
                     }
 
                 } else if (SimpleTypeMapper.isArrayList(ptype)) {
-                    Object value = propDesc.getReadMethod().invoke(beanObject, null);
+                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                            (Object[]) null);
                     ArrayList objList = (ArrayList) value;
                     if (objList != null && objList.size() > 0) {
                         //this was given error , when the array.size = 0
@@ -134,7 +137,8 @@ public class BeanUtil {
                     }
                 } else {
                     object.add(new QName(propDesc.getName()));
-                    Object value = propDesc.getReadMethod().invoke(beanObject, null);
+                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                            (Object[]) null);
                     object.add(value);
                 }
             }

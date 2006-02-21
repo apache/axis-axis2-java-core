@@ -113,15 +113,15 @@ public class MessageContext extends AbstractContext {
     // Are we doing MTOM now?
     private boolean doingMTOM;
 
-    QName transportInName;
+    private QName transportInName;
 
-    QName transportOutname;
+    private QName transportOutname;
 
-    String serviceGroupId;
+    private String serviceGroupId;
 
-    String axisServiceName;
+    private String axisServiceName;
 
-    QName axisOperationName;
+    private QName axisOperationName;
 
     private transient AxisOperation axisOperation;
 

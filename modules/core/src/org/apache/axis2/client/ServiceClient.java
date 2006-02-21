@@ -42,25 +42,25 @@ public class ServiceClient {
     public static final QName ANON_OUT_IN_OP = new QName("__OPERATION_OUT_IN__");
 
     // the metadata for the service that I'm clienting for
-    AxisService axisService;
+    private AxisService axisService;
 
     // the configuration in which my metadata lives
-    AxisConfiguration axisConfig;
+    private AxisConfiguration axisConfig;
 
     // the configuration context in which I live
-    ConfigurationContext configContext;
+    private ConfigurationContext configContext;
 
     // service context for this specific service instance
-    ServiceContext serviceContext;
+    private ServiceContext serviceContext;
 
     // client options for this service interaction
-    Options options = new Options();
+    private Options options = new Options();
 
     // options that must override those of the child operation client also
-    private Options overideOptions;
+    private Options overrideOptions;
 
     // list of headers to be sent with the simple APIs
-    ArrayList headers;
+    private ArrayList headers;
 
     private CallbackReceiver callbackReceiver;
 
@@ -179,7 +179,7 @@ public class ServiceClient {
             trsManager = new ListenerManager();
             trsManager.init(this.configContext);
         }
-        if (!trsManager.isStoped()) {
+        if (!trsManager.isStopped()) {
             trsManager.start();
         }
     }
@@ -250,8 +250,8 @@ public class ServiceClient {
      * Set the client configuration related to this service interaction to
      * override any options that the underlying operation client may have.
      */
-    public void setOverideOptions(Options overideOptions) {
-        this.overideOptions = overideOptions;
+    public void setOverrideOptions(Options overrideOptions) {
+        this.overrideOptions = overrideOptions;
     }
 
     /**
@@ -260,8 +260,8 @@ public class ServiceClient {
      *
      * @return set of options set earlier.
      */
-    public Options getOverideOptions() {
-        return overideOptions;
+    public Options getOverrideOptions() {
+        return overrideOptions;
     }
 
     /**
@@ -463,7 +463,7 @@ public class ServiceClient {
         MessageContext mc = new MessageContext();
         fillSoapEnvelope(mc, elem);
         OperationClient mepClient = createClient(operation);
-        // here a bloking invocation happens in a new thread, so the
+        // here a blocking invocation happens in a new thread, so the
         // progamming model is non blocking
         mepClient.setCallback(callback);
         mepClient.addMessageContext(mc);
@@ -501,9 +501,9 @@ public class ServiceClient {
         // if overide options have been set, that means we need to make sure
         // those options override the options of even the operation client. So,
         // what we do is switch the parents around to make that work.
-        if (overideOptions != null) {
-            overideOptions.setParent(oc.getOptions());
-            oc.setOptions(overideOptions);
+        if (overrideOptions != null) {
+            overrideOptions.setParent(oc.getOptions());
+            oc.setOptions(overrideOptions);
         }
         return oc;
     }
