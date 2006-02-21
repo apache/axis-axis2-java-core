@@ -344,7 +344,7 @@ ready for deployment:</p>
     &lt;echo message="  wsdl2java               - Generate source from WSDL" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" AAR:" /&gt;
-    &lt;echo message="  aar               - Generate an .aar for deployment into WEB-INF/services" /&gt;
+    &lt;echo message="  aar     - Generate an .aar for deployment into WEB-INF/services" /&gt;
 
     &lt;echo message=" " /&gt;
     &lt;echo message=" Executing:" /&gt;
@@ -469,10 +469,16 @@ The name of this file matches the name used in the WSDL2Java ant task above,
 LoginEndpoint.wsdl</p>
 <pre class="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
-&lt;definitions name="LoginService" targetNamespace="http://login" xmlns:tns="http://login" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://login/types"&gt;
+&lt;definitions name="LoginService" targetNamespace="http://login" xmlns:tns="http://login" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://login/types"&gt;
 
   &lt;types&gt;
-    &lt;schema targetNamespace="http://login/types" xmlns:tns="http://login/types" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;schema targetNamespace="http://login/types" xmlns:tns="http://login/types" 
+    xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns="http://www.w3.org/2001/XMLSchema"&gt;
       &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
       &lt;element name="returnWebLoginElement"&gt;
         &lt;complexType&gt;
@@ -529,7 +535,8 @@ LoginEndpoint.wsdl</p>
 
   &lt;service name="LoginService"&gt;
     &lt;port name="LoginEndpointPort" binding="tns:LoginEndpointBinding"&gt;
-      &lt;soap:address location="http://localhost:8080/axis2/services/LoginEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;</pre>
+      &lt;soap:address location="http://localhost:8080/axis2/services/LoginEndpoint"/&gt;&lt;/port&gt;
+      &lt;/service&gt;&lt;/definitions&gt;</pre>
 
 <p>Place the above file, named LoginEndpoint.wsdl, in the directory 'wsdl'
 below the build.xml file. Run the WSDL2Java command via the ant task defined
@@ -587,7 +594,7 @@ public class LoginEndpointSkeleton {
      
      */
     public  org.example.types.databinding.login.ReturnWebLoginElementDocument webLogin
-              (org.example.types.databinding.login.WebLoginElementDocument webLoginElementDocument ){
+       (org.example.types.databinding.login.WebLoginElementDocument webLoginElementDocument){
 
             //Todo fill this with the necessary business logic
             System.out.println("LoginEndpointSkeleton.webLogin reached successfully!");
@@ -607,7 +614,8 @@ public class LoginEndpointSkeleton {
             
             org.example.types.databinding.login.ReturnWebLoginElementDocument.ReturnWebLoginElement
             retElement =
-             org.example.types.databinding.login.ReturnWebLoginElementDocument.ReturnWebLoginElement.Factory.newInstance();
+             org.example.types.databinding.login.ReturnWebLoginElementDocument.ReturnWebLoginElement.
+               Factory.newInstance();
             
             retElement.setWebUserNameElement("joe sixpack");
             retElement.setSoapSessionIdElement("some_random_string");
