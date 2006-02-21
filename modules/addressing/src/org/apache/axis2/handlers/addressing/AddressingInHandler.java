@@ -91,18 +91,21 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
             EndpointReference epr;
             if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
-                checkForDuplicateHeaders(WSA_TO, messageContext, alreadyFoundAddrHeader);
-                extractToEPRInformation(soapHeaderBlock, messageContextOptions, header);
+                if(!hasDuplicateHeaders(WSA_TO, messageContext, alreadyFoundAddrHeader)){
+                    extractToEPRInformation(soapHeaderBlock, messageContextOptions, header);
+                }
             } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
-                checkForDuplicateHeaders(WSA_FROM, messageContext, alreadyFoundAddrHeader);
-                extractFromEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                if(!hasDuplicateHeaders(WSA_FROM, messageContext, alreadyFoundAddrHeader)){
+                    extractFromEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                }
             } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
-                checkForDuplicateHeaders(WSA_REPLY_TO, messageContext, alreadyFoundAddrHeader);
-                extractReplyToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                if(!hasDuplicateHeaders(WSA_REPLY_TO, messageContext, alreadyFoundAddrHeader)){
+                    extractReplyToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                }
             } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
-                checkForDuplicateHeaders(WSA_FAULT_TO, messageContext, alreadyFoundAddrHeader);
-
-                extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                if(!hasDuplicateHeaders(WSA_FAULT_TO, messageContext, alreadyFoundAddrHeader)) {
+                    extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                }
             } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
                 messageContextOptions.setMessageId(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
@@ -110,14 +113,15 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 messageContextOptions.setAction(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
             } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
-                checkForDuplicateHeaders(WSA_RELATES_TO, messageContext, alreadyFoundAddrHeader);
-                extractRelatesToInformation(soapHeaderBlock, addressingNamespace, messageContextOptions);
+                if(!hasDuplicateHeaders(WSA_RELATES_TO, messageContext, alreadyFoundAddrHeader)){
+                    extractRelatesToInformation(soapHeaderBlock, addressingNamespace, messageContextOptions);
+                }
             }
         }
         return messageContextOptions;
     }
 
-    private void checkForDuplicateHeaders(String addressingHeaderName, MessageContext messageContext, Map alreadyFoundAddressingHeaders) {
+    private boolean hasDuplicateHeaders(String addressingHeaderName, MessageContext messageContext, Map alreadyFoundAddressingHeaders) {
         if (alreadyFoundAddressingHeaders.get(addressingHeaderName) != null) {
             Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
             if (faultInformation == null) {
@@ -125,9 +129,11 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
             }
             faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, "wsa:" + addressingHeaderName);
+            return true;
         } else {
             alreadyFoundAddressingHeaders.put(addressingHeaderName, addressingHeaderName);
         }
+        return false;
     }
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);
