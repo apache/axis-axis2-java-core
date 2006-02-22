@@ -201,7 +201,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             if (epr != null) {
-                writeMessageWithCommons(msgContext, epr, dataOut, format);
+                if(!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
+                    writeMessageWithCommons(msgContext, epr, dataOut, format);
+                }
             } else {
                 OutputStream out =
                         (OutputStream) msgContext
