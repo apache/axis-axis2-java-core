@@ -66,8 +66,7 @@ public class AddressingOutHandler extends AddressingHandler {
             // we always defaults to Submission.WSA_NAMESPACE. Hope this is fine.
             addressingNamespace = Final.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt)
                     ? Final.WSA_NAMESPACE : Submission.WSA_NAMESPACE;
-        } else if (msgContext.getOperationContext() != null)
-        { // check for a IN message context, else default to WSA Final
+        } else if (msgContext.getOperationContext() != null) { // check for a IN message context, else default to WSA Final
             MessageContext inMessageContext = msgContext.getOperationContext()
                     .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             if (inMessageContext != null) {
@@ -151,8 +150,7 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions) {
-        if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject))
-        {
+        if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject)) {
             RelatesTo relatesTo = messageContextOptions.getRelatesTo();
             OMElement relatesToHeader = null;
 
@@ -194,14 +192,13 @@ public class AddressingOutHandler extends AddressingHandler {
 
     private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext) {
         EndpointReference epr;
-        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject))
-        {
+        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject)) {
             epr = messageContextOptions.getReplyTo();
             if (epr == null) {//optional
-
-                if (msgContext.getServiceContext() != null && msgContext.getServiceContext().getMyEPRAddress() != null)
-                {
-                    epr = new EndpointReference(msgContext.getServiceContext().getMyEPRAddress());
+                if (msgContext.getServiceContext() != null &&
+                        msgContext.getServiceContext().getMyEPR() != null) {
+//                     epr = new EndpointReference(msgContext.getServiceContext().getMyEPRAddress());
+                    epr = msgContext.getServiceContext().getMyEPR();
                 } else {
                     // setting anonymous URI. Defaulting to Final.
                     epr = new EndpointReference(anonymousURI);
@@ -219,8 +216,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
     private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope) {
         EndpointReference epr = messageContextOptions.getTo();
-        if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject))
-        {
+        if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject)) {
             String address = epr.getAddress();
             if (!"".equals(address) && address != null) {
                 SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
@@ -247,8 +243,7 @@ public class AddressingOutHandler extends AddressingHandler {
     protected void addToSOAPHeader(EndpointReference epr,
                                    String type,
                                    SOAPEnvelope envelope) {
-        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject))
-        {
+        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject)) {
             return;
         }
 

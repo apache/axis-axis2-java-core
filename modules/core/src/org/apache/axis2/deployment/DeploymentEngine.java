@@ -502,8 +502,8 @@ public class DeploymentEngine implements DeploymentConstants {
             org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
             try {
                 axisConfig.setRepository(axis2repository);
+                validateSystemPredefinedPhases();
                 if (!useDefault) {
-                    validateSystemPredefinedPhases();
                     engageModules();
                 }
             } catch (AxisFault axisFault) {

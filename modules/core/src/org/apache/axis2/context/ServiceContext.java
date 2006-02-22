@@ -17,12 +17,13 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.ListenerManager;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 /**
  * Well this is never clearly defined, what it does or the lifecycle.
@@ -30,8 +31,8 @@ import java.util.ArrayList;
  */
 public class ServiceContext extends AbstractContext {
 
-    private String myEPRAddress;
     private EndpointReference targetEPR;
+    private EndpointReference myEPR;
 
     private transient AxisService axisService;
     private String serviceInstanceID;
@@ -39,13 +40,11 @@ public class ServiceContext extends AbstractContext {
 
     //to store service implementation class , to handler session
     private Object serviceImpl;
-    private ArrayList replyTorefpars;
 
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
-        this.replyTorefpars = new ArrayList();
         if (serviceConfig != null) {
             serviceInstanceID = serviceConfig.getName();
         }
@@ -95,12 +94,16 @@ public class ServiceContext extends AbstractContext {
         return serviceGroupContext;
     }
 
-    public String getMyEPRAddress() {
-        return myEPRAddress;
-    }
-
-    public void setMyEPRAddress(String myEPRAddress) {
-        this.myEPRAddress = myEPRAddress;
+    public EndpointReference getMyEPR(String transport) throws AxisFault {
+        axisService.isEnableAllTransport();
+        ConfigurationContext configctx = getConfigurationContext();
+        if (configctx != null) {
+            ListenerManager lm = configctx.getListenerManager();
+            if (!lm.isStopped()) {
+                return lm.getERPforService(axisService.getName(), null, transport);
+            }
+        }
+        return null;
     }
 
     public EndpointReference getTargetEPR() {
@@ -109,5 +112,13 @@ public class ServiceContext extends AbstractContext {
 
     public void setTargetEPR(EndpointReference targetEPR) {
         this.targetEPR = targetEPR;
+    }
+
+    public EndpointReference getMyEPR() {
+        return myEPR;
+    }
+
+    public void setMyEPR(EndpointReference myEPR) {
+        this.myEPR = myEPR;
     }
 }

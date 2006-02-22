@@ -19,11 +19,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -36,7 +32,7 @@ import org.apache.axis2.handlers.AbstractHandler;
  */
 public class InstanceDispatcher extends AbstractHandler {
 
-	private static final long serialVersionUID = -1928612412157492489L;
+    private static final long serialVersionUID = -1928612412157492489L;
 
 
     /**
@@ -94,11 +90,13 @@ public class InstanceDispatcher extends AbstractHandler {
                         msgContext);
             }
         }
-
-
+        // setting myEPR
         String transportURL = (String) msgContext.getProperty(Constants.Configuration.TRANSPORT_IN_URL);
-        if (serviceContext != null && transportURL != null) {
-           serviceContext.setMyEPRAddress(transportURL);
+        if (serviceContext != null) {
+            if (transportURL != null) {
+                serviceContext.setMyEPR(msgContext.getTo());
+            }
+            serviceContext.setMyEPR(msgContext.getTo());
         }
     }
 

@@ -106,8 +106,8 @@ public class ListenerManager {
                         startedTranports.put(tranportIn.getName().getLocalPart(), listener);
                     }
                 }
-            } catch (AxisFault axisFault) {
-                log.info(axisFault.getMessage());
+            } catch (Exception e) {
+                log.info(e.getMessage());
             }
         }
         stopped = false;

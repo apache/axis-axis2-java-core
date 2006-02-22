@@ -558,13 +558,14 @@ public class ServiceClient {
         mc.setEnvelope(se);
     }
 
+
     /**
-     * To get the EPR of the service client if there is
-     *
-     * @return <code>String</code>
+     * To get the EPR that the service is running
+     * transport : can be null , if it is null then epr will be craetd using any available
+     * transports
      */
-    public String getMyEPRAddress() {
-        return serviceContext.getMyEPRAddress();
+    public EndpointReference getMyEPR(String transport) throws AxisFault {
+        return serviceContext.getMyEPR(transport);
     }
 
     /**
@@ -581,6 +582,7 @@ public class ServiceClient {
     public void setTargetEPR(EndpointReference targetEpr) {
         serviceContext.setTargetEPR(targetEpr);
     }
+
 
     /**
      * This class acts as a callback that allows users to wait on the result.
