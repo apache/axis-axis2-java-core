@@ -30,8 +30,21 @@
 
   <target name="init" >
     <!--macro for maven -->
+    <property name="maven.commoncmd" value="--emacs" />
+    <condition property="maven.line" 
+        value="--offline ${maven.commoncmd}">
+      <istrue value="${offline}"/>
+    </condition>
+
+    <condition property="maven.executable" value="maven.bat">
+      <os family="windows" />
+    </condition>
+    <property name="maven.executable" value="maven.sh" />
+
+    <property name="maven.line" value="${maven.commoncmd}" />
     <presetdef name="maven">
-      <exec failonerror="true" os="Windows 2000,Windows 2003,Windows XP" executable="maven.bat">
+      <exec failonerror="true" executable="maven.bat">
+       <arg line="${maven.line}" />
       </exec>
     </presetdef>
 
@@ -109,8 +122,8 @@
     </dependency>
     <dependency>
       <groupId>axis</groupId>
-      <artifactId>axis.wsdl4j</artifactId>
-      <version>${axis.wsdl4j.version}</version>
+      <artifactId>axis-wsdl4j</artifactId>
+      <version>${axis-wsdl4j.version}</version>
     </dependency>
     <dependency>
       <groupId>ws-commons</groupId>
@@ -164,6 +177,10 @@
       <pom refid="m2.pom"/>
     </m2:deploy>
   </target>
+
+  <target name="installed"
+    description="locally installed"
+    depends="m2-install" />
 
   <target name="quick" depends="create-lib"
       description="make a distribution">
