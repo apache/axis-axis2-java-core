@@ -36,7 +36,7 @@
      |    build the war with the default samples
      |
      | release
-     | 	 Creates the complete release
+     |      Creates the complete release
    -->
 
 <project default="jar"
@@ -353,16 +353,27 @@
         <macros:copy-deps copyToDir="target/lib" mods="*"/>
     </goal>
 
+    <goal name="create-kernel">
+        <ant:mkdir dir="target/temp/war/lib"/>
+        <!-- Create axis2-core.jar -->
+        <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/core/target/classes/"/>
+            <fileset dir="modules/common/target/classes/"/>
+            <fileset dir="modules/wsdl/target/classes/"/>
+        </jar>
+    </goal>
+
     <!-- ================================================================ -->
     <!--- Create the War -->
     <!-- ================================================================ -->
     <goal name="war" prereqs="jar,init-dist,cache-war-deps">
 
-        <ant:mkdir dir="target/temp/war/lib"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/conf"/>
 
+        <attainGoal name="create-kernel"/>
+        
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
