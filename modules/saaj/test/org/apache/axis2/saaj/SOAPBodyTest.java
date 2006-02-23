@@ -16,24 +16,22 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.Node;
 import javax.xml.soap.Text;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.Iterator;
 import java.io.File;
-
-import org.w3c.dom.Document;
+import java.util.Iterator;
 
 public class SOAPBodyTest extends TestCase {
 
@@ -117,11 +115,12 @@ public class SOAPBodyTest extends TestCase {
 
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(new File("test-resources" + File.separator + "soap-body.xml"));
-
             MessageFactory fact = MessageFactory.newInstance();
             SOAPMessage message = fact.createMessage();
 
-//            message.getSOAPHeader().detachNode();
+            message.getSOAPHeader().detachNode();
+//            assertNull(message.getSOAPHeader());    // TODO:this fails. Header is always being created if it doesnt exist it DOOM
+
             SOAPBody soapBody = message.getSOAPBody();
             soapBody.addDocument(document);
             message.saveChanges();

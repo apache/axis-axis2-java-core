@@ -63,21 +63,31 @@ public abstract class ChildNode extends NodeImpl {
     // /OMNode methods
     // /
     public void setNextOMSibling(OMNode node) {
-        if (node instanceof ChildNode)
+        if (node == null) {
+            this.nextSibling = null;
+            return;
+        }
+        if (node instanceof ChildNode) {
             this.nextSibling = (ChildNode) node;
-        else
+        } else {
             throw new OMException("The node is not a " + ChildNode.class);
+        }
     }
 
     public void setPreviousOMSibling(OMNode node) {
-        if (node instanceof ChildNode)
+        if (node == null) {
+            this.previousSibling = null;
+            return;
+        }
+        if (node instanceof ChildNode) {
             this.previousSibling = (ChildNode) node;
-        else
+        } else {
             throw new OMException("The node is not a " + ChildNode.class);
+        }
     }
 
     public OMContainer getParent() throws OMException {
-        return (OMContainer) this.parentNode;
+        return this.parentNode;
     }
 
     public Node getParentNode() {
@@ -85,11 +95,12 @@ public abstract class ChildNode extends NodeImpl {
     }
 
     public void setParent(OMContainer element) {
-        if (element instanceof ParentNode)
+        if (element instanceof ParentNode) {
             this.parentNode = (ParentNode) element;
-        else
+        } else {
             throw new OMException("The given parent is not of the type "
-                    + ParentNode.class);
+                                  + ParentNode.class);
+        }
 
     }
 
@@ -111,12 +122,10 @@ public abstract class ChildNode extends NodeImpl {
             if (this.nextSibling != null) {
                 this.nextSibling.setPreviousOMSibling(this.previousSibling);
             }
-            this.parentNode = null;
-
             if (this.parentNode != null && this.parentNode.lastChild == this) {
                 this.parentNode.lastChild = previousSibling;
             }
-
+            this.parentNode = null;
         }
         return this;
     }
@@ -145,7 +154,7 @@ public abstract class ChildNode extends NodeImpl {
 
         } else {
             throw new OMException("The given child is not of type "
-                    + ChildNode.class);
+                                  + ChildNode.class);
         }
     }
 
@@ -176,7 +185,7 @@ public abstract class ChildNode extends NodeImpl {
 
         } else {
             throw new OMException("The given child is not of type "
-                    + ChildNode.class);
+                                  + ChildNode.class);
         }
 
     }

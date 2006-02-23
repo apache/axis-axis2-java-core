@@ -16,6 +16,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPConstants;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
@@ -133,7 +134,7 @@ public class SOAPFaultsTest extends TestCase {
         assertTrue(xml.indexOf("<faultactor>http://gizmos.com/order</faultactor>") != -1);
     }
 
-    public void testAddDetailsTwice(){
+    public void testAddDetailsTwice() {
         try {
             MessageFactory fac = MessageFactory.newInstance();
 
@@ -175,6 +176,84 @@ public class SOAPFaultsTest extends TestCase {
         outputmsg.writeTo(baos);
         String xml = new String(baos.toByteArray());
         assertTrue(xml.indexOf("Hello") != -1);
+    }
+
+    public void testFaults() {
+        try {
+            MessageFactory messageFactory = MessageFactory.newInstance();
+            SOAPFactory soapFactory = SOAPFactory.newInstance();
+            SOAPMessage message = messageFactory.createMessage();
+            SOAPBody body = message.getSOAPBody();
+            SOAPFault fault = body.addFault();
+
+            Name faultName =
+                    soapFactory.createName("Client", "",
+                                           SOAPConstants.URI_NS_SOAP_ENVELOPE);
+            fault.setFaultCode(faultName);
+
+            fault.setFaultString("Message does not have necessary info");
+            fault.setFaultActor("http://gizmos.com/order");
+
+            Detail detail = fault.addDetail();
+
+            Name entryName =
+                    soapFactory.createName("order", "PO",
+                                           "http://gizmos.com/orders/");
+            DetailEntry entry = detail.addDetailEntry(entryName);
+            entry.addTextNode("Quantity element does not have a value");
+
+            Name entryName2 =
+                    soapFactory.createName("confirmation", "PO",
+                                           "http://gizmos.com/confirm");
+            DetailEntry entry2 = detail.addDetailEntry(entryName2);
+            entry2.addTextNode("Incomplete address: " + "no zip code");
+
+            message.saveChanges();
+
+            System.out.println("Here is what the XML message looks like:");
+            message.writeTo(System.out);
+            System.out.println();
+            System.out.println();
+
+            // Now retrieve the SOAPFault object and
+            // its contents, after checking to see that
+            // there is one
+            if (body.hasFault()) {
+                SOAPFault newFault = body.getFault();
+
+                // Get the qualified name of the fault code
+                Name code = newFault.getFaultCodeAsName();
+
+                String string = newFault.getFaultString();
+                String actor = newFault.getFaultActor();
+
+                System.out.println("SOAP fault contains: ");
+                System.out.println("  Fault code = " + code.getQualifiedName());
+                System.out.println("  Local name = " + code.getLocalName());
+                System.out.println("  Namespace prefix = " + code.getPrefix() +
+                                   ", bound to " + code.getURI());
+                System.out.println("  Fault string = " + string);
+
+                if (actor != null) {
+                    System.out.println("  Fault actor = " + actor);
+                }
+
+                Detail newDetail = newFault.getDetail();
+
+                if (newDetail != null) {
+                    Iterator entries = newDetail.getDetailEntries();
+
+                    while (entries.hasNext()) {
+                        DetailEntry newEntry = (DetailEntry) entries.next();
+                        String value = newEntry.getValue();
+                        System.out.println("  Detail entry = " + value);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception : " + e);
+        }
     }
 
 }

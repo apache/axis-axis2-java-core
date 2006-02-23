@@ -66,7 +66,7 @@ public class SOAPPartImpl extends SOAPPart {
 
         soapMessage = parentSoapMsg;
         envelope = soapEnvelope;
-        this.document = soapEnvelope.getOwnerDocument();
+        document = soapEnvelope.getOwnerDocument();
     }
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,

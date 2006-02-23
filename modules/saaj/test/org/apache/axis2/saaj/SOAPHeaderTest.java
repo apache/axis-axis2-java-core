@@ -19,6 +19,12 @@ import junit.framework.TestCase;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
@@ -77,4 +83,79 @@ public class SOAPHeaderTest extends TestCase {
         assertEquals(5, numOfHeaderElements);
     }
 
+    public void testHeaders() {
+        try {
+            // Create message factory and SOAP factory
+            MessageFactory messageFactory = MessageFactory.newInstance();
+            SOAPFactory soapFactory = SOAPFactory.newInstance();
+
+            // Create a message
+            SOAPMessage message = messageFactory.createMessage();
+
+            // Get the SOAP header from the message and
+            //  add headers to it
+            SOAPHeader header = message.getSOAPHeader();
+
+            String nameSpace = "ns";
+            String nameSpaceURI = "http://gizmos.com/NSURI";
+
+            Name order =
+                soapFactory.createName("orderDesk", nameSpace, nameSpaceURI);
+            SOAPHeaderElement orderHeader = header.addHeaderElement(order);
+            orderHeader.setActor("http://gizmos.com/orders");
+
+            Name shipping =
+                soapFactory.createName("shippingDesk", nameSpace, nameSpaceURI);
+            SOAPHeaderElement shippingHeader =
+                header.addHeaderElement(shipping);
+            shippingHeader.setActor("http://gizmos.com/shipping");
+
+            Name confirmation =
+                soapFactory.createName("confirmationDesk", nameSpace,
+                    nameSpaceURI);
+            SOAPHeaderElement confirmationHeader =
+                header.addHeaderElement(confirmation);
+            confirmationHeader.setActor("http://gizmos.com/confirmations");
+
+            Name billing =
+                soapFactory.createName("billingDesk", nameSpace, nameSpaceURI);
+            SOAPHeaderElement billingHeader = header.addHeaderElement(billing);
+            billingHeader.setActor("http://gizmos.com/billing");
+
+            // Add header with mustUnderstand attribute
+            Name tName =
+                soapFactory.createName("Transaction", "t",
+                    "http://gizmos.com/orders");
+
+            SOAPHeaderElement transaction = header.addHeaderElement(tName);
+            transaction.setMustUnderstand(true);
+            transaction.addTextNode("5");
+
+            // Get the SOAP body from the message but leave
+            // it empty
+            SOAPBody body = message.getSOAPBody();
+
+            message.saveChanges();
+
+            // Display the message that would be sent
+            System.out.println("\n----- Request Message ----\n");
+            message.writeTo(System.out);
+
+            // Look at the headers
+            Iterator allHeaders = header.examineAllHeaderElements();
+
+            while (allHeaders.hasNext()) {
+                SOAPHeaderElement headerElement =
+                    (SOAPHeaderElement) allHeaders.next();
+                Name headerName = headerElement.getElementName();
+                System.out.println("\nHeader name is " +
+                    headerName.getQualifiedName());
+                System.out.println("Actor is " + headerElement.getActor());
+                System.out.println("mustUnderstand is " +
+                    headerElement.getMustUnderstand());
+            }
+        } catch (Exception e) {
+            fail("Enexpected Exception " + e);
+        }
+    }
 }

@@ -69,6 +69,7 @@ public class EnvelopeTest extends TestCase {
         assertNotNull(header);
         header.detachNode();
         assertNull(se.getHeader());
+        assertNull(smsg.getSOAPHeader());
     }
 
     public void testEnvelope2() throws Exception {
