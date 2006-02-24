@@ -50,11 +50,11 @@ import java.util.Map;
 public class AxisServlet extends HttpServlet implements TransportListener {
 
     private static final long serialVersionUID = -2085869393709833372L;
-    private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
+    public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
-    private ConfigurationContext configContext;
-    private AxisConfiguration axisConfiguration;
-    private ListingAgent lister;
+    protected ConfigurationContext configContext;
+    protected AxisConfiguration axisConfiguration;
+    protected ListingAgent lister;
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                               MessageContext msgContext, HttpServletResponse httpServletResponse,
