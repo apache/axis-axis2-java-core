@@ -47,6 +47,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class SOAPPartImpl extends SOAPPart {
@@ -79,13 +81,13 @@ public class SOAPPartImpl extends SOAPPart {
 
         try {
             InputStreamReader isReader = new InputStreamReader(inputStream);
-
             StAXSOAPModelBuilder builder =
                     new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(isReader),
                                              new SOAP11Factory(),
                                              null);
             org.apache.ws.commons.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
             envelope = new SOAPEnvelopeImpl(soapEnvelope);
+            envelope.element.build();
             this.document = envelope.getOwnerDocument();
         } catch (XMLStreamException e) {
             e.printStackTrace();

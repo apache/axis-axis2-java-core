@@ -140,10 +140,11 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 						&& SOAPConstants.BODY_LOCAL_NAME.equals(element
 								.getLocalName())) {
 					return (SOAPBody) element;
-				} else {
+				}
+              /*  else {
 					throw new OMException(
 							"SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
-				}
+				}*/
 			}
 		}
 		return null;

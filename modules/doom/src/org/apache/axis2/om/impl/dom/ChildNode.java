@@ -106,7 +106,7 @@ public abstract class ChildNode extends NodeImpl {
 
     public OMNode detach() throws OMException {
         if (this.parentNode == null) {
-            throw new OMException("Parent level elements cannot be ditached");
+            throw new OMException("Parent level elements cannot be detached");
         } else {
             if (previousSibling == null) { // This is the first child
                 if (nextSibling != null) {
@@ -115,9 +115,11 @@ public abstract class ChildNode extends NodeImpl {
                     this.parentNode.firstChild = null;
                     this.parentNode.lastChild = null;
                 }
-            } else if (nextSibling != null) {
-                ((OMNodeEx) this.getPreviousOMSibling())
-                        .setNextOMSibling(nextSibling);
+            } else {
+                this.previousSibling.setNextOMSibling(nextSibling);
+                if(nextSibling == null){
+                    this.previousSibling.parentNode.done = true;
+                }
             }
             if (this.nextSibling != null) {
                 this.nextSibling.setPreviousOMSibling(this.previousSibling);

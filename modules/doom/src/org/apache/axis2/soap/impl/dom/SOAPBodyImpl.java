@@ -141,8 +141,8 @@ public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 		}
 	}
 
-	public OMNode detach() throws OMException {
+	/*public OMNode detach() throws OMException {
 		throw new SOAPProcessingException(
 				"Can not detach SOAP Body, SOAP Envelope must have a Body !!");
-	}
+	}*/
 }

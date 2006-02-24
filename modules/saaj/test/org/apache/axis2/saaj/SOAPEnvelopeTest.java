@@ -17,10 +17,12 @@ import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
+import javax.xml.soap.SOAPException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
-public class EnvelopeTest extends TestCase {
+public class SOAPEnvelopeTest extends TestCase {
 
     private static final String XML_STRING =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -39,7 +41,7 @@ public class EnvelopeTest extends TestCase {
             "</soapenv:Body>\n" +
             "</soapenv:Envelope>";
 
-    public EnvelopeTest(String name) {
+    public SOAPEnvelopeTest(String name) {
         super(name);
     }
 
@@ -70,6 +72,35 @@ public class EnvelopeTest extends TestCase {
         header.detachNode();
         assertNull(se.getHeader());
         assertNull(smsg.getSOAPHeader());
+    }
+
+    public void testDetachBody(){
+        try {
+            MessageFactory mf = MessageFactory.newInstance();
+            SOAPMessage smsg =
+                    mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(XML_STRING.getBytes()));
+            SOAPPart sp = smsg.getSOAPPart();
+            SOAPEnvelope se = sp.getEnvelope();
+
+            try {
+                se.addBody();
+                fail("Expected Exception did not occur");
+            } catch (SOAPException e) {
+                assertTrue(true);
+            }
+
+            se.getBody().detachNode();
+            assertNull(se.getBody());
+            try {
+                se.addBody();
+            } catch (SOAPException e) {
+                e.printStackTrace();
+                fail("Unexpected Exception occurred.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception : " + e);
+        }
     }
 
     public void testEnvelope2() throws Exception {

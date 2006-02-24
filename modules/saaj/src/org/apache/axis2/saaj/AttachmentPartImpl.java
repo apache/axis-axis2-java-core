@@ -35,7 +35,6 @@ import java.util.Iterator;
  * 
  */
 public class AttachmentPartImpl extends AttachmentPart {
-
     private DataHandler dataHandler;
 
     /**
@@ -87,12 +86,13 @@ public class AttachmentPartImpl extends AttachmentPart {
      */
     public int getSize() throws SOAPException {
         if (dataHandler == null) {
-            return -1;
+            return 0;
         }
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
             dataHandler.writeTo(bout);
-        } catch (java.io.IOException ex) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
             throw new SOAPException(ex);
         }
         return bout.size();
@@ -193,7 +193,6 @@ public class AttachmentPartImpl extends AttachmentPart {
      * @see #getContent()
      */
     public void setContent(Object object, String contentType) {
-
         //TODO: need to check whether the type of the content object matches contentType
         //TODO: need to check whether there is a DataContentHandler for this object
         setDataHandler(new DataHandler(object, contentType));
@@ -235,6 +234,8 @@ public class AttachmentPartImpl extends AttachmentPart {
             this.dataHandler = datahandler;
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
             omText = DOOMAbstractFactory.getOMFactory().createText(dataHandler, true);
+        } else {
+            throw new IllegalArgumentException("Cannot set null DataHandler");
         }
     }
 
