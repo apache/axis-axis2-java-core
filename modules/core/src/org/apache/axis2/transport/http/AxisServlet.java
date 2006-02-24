@@ -56,7 +56,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private AxisConfiguration axisConfiguration;
     private ListingAgent lister;
 
-    private MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
+    protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                               MessageContext msgContext, HttpServletResponse httpServletResponse,
                                                               HttpServletRequest httpServletRequest)
             throws AxisFault {
@@ -177,7 +177,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
     }
 
-    private void handleFault(MessageContext msgContext, OutputStream out, AxisFault e)
+    protected void handleFault(MessageContext msgContext, OutputStream out, AxisFault e)
             throws AxisFault {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
@@ -230,7 +230,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
     }
 
-    private HashMap getHTTPParameters(HttpServletRequest httpServletRequest) {
+    protected HashMap getHTTPParameters(HttpServletRequest httpServletRequest) {
         HashMap map = new HashMap();
         Enumeration enu = httpServletRequest.getParameterNames();
 
@@ -244,7 +244,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         return map;
     }
 
-    private Object getSessionContext(HttpServletRequest httpServletRequest) {
+    protected Object getSessionContext(HttpServletRequest httpServletRequest) {
         Object sessionContext =
                 httpServletRequest.getSession(true).getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
 
@@ -257,7 +257,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         return sessionContext;
     }
 
-    private Map getTransportHeaders(HttpServletRequest req) {
+    protected Map getTransportHeaders(HttpServletRequest req) {
         HashMap headerMap = new HashMap();
         Enumeration headerNames = req.getHeaderNames();
 
