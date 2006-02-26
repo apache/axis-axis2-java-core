@@ -207,7 +207,6 @@
                     <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
-                    <xsl:if test="position()>1">,</xsl:if>
                     <xsl:choose>
                         <xsl:when test="@anyAtt">
                             attribList.add(null);
@@ -289,7 +288,7 @@
             <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
 
             String <xsl:value-of select="$attribName"/> =
-              reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")
+              reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
            if (<xsl:value-of select="$attribName"/>!=null){
                  object.set<xsl:value-of select="$javaName"/>(
                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
