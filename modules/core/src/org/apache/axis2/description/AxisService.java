@@ -17,7 +17,11 @@
 
 package org.apache.axis2.description;
 
-import com.ibm.wsdl.extensions.soap.*;
+import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -34,12 +38,22 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Class AxisService
@@ -643,6 +657,13 @@ public class AxisService extends AxisDescription {
         return scope;
     }
 
+    /**
+     * @param scope - Available scopes :
+     *              Constants.SCOPE_APPLICATION
+     *              Constants.SCOPE_TRANSPORT_SESSION
+     *              Constants.SCOPE_SOAP_SESSION
+     *              Constants.SCOPE_REQUEST.equals
+     */
     public void setScope(String scope) {
         if (Constants.SCOPE_APPLICATION.equals(scope) ||
                 Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||

@@ -20,6 +20,7 @@ package org.apache.axis2.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -75,6 +76,16 @@ public class Utils {
 
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setTo(oldOptions.getReplyTo());
+
+        // add the service group id as a reference parameter
+        String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
+        if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
+            EndpointReference replyToEPR = new EndpointReference("");
+            replyToEPR.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
+                    Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
+            newmsgCtx.setReplyTo(replyToEPR);
+        }
+
         newmsgCtx.setFaultTo(oldOptions.getFaultTo());
         newmsgCtx.setFrom(oldOptions.getTo());
         newmsgCtx.setRelatesTo(
