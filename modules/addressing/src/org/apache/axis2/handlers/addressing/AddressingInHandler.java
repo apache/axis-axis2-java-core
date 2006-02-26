@@ -23,11 +23,9 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultReason;
@@ -68,9 +66,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             } else {
                 logger.debug("No Headers present corresponding to " + addressingVersion);
             }
-
-            // extract service group context, if available
-            extractServiceGroupContextId(header, msgContext);
 
         } catch (AddressingException e) {
             logger.info("Exception occurred in Addressing Module");
@@ -137,21 +132,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     }
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);
-
-    private void extractServiceGroupContextId(SOAPHeader header, MessageContext msgContext) throws AxisFault {
-        OMElement serviceGroupId = header.getFirstChildWithName(new QName(Constants.AXIS2_NAMESPACE_URI,
-                Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX));
-        if (serviceGroupId != null) {
-            String groupId = serviceGroupId.getText();
-            ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
-                    getServiceGroupContext(groupId, msgContext);
-            if (serviceGroupContext == null) {
-//                handleNoServiceGroupContextIDCase(msgContext);
-                throw new AxisFault("Invalid Service Group Id." + groupId);
-            }
-            msgContext.setServiceGroupContextId(serviceGroupId.getText());
-        }
-    }
 
     private void handleNoServiceGroupContextIDCase(MessageContext msgContext) {
         SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();

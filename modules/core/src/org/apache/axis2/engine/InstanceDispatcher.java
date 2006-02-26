@@ -19,10 +19,18 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPHeader;
+
+import javax.xml.namespace.QName;
 
 /**
  * By the time the control comes to this handler, the dispatching must have happened
@@ -51,6 +59,10 @@ public class InstanceDispatcher extends AbstractHandler {
 
             return;
         }
+
+        // try to extract sgcId from the message
+        extractServiceGroupContextId(msgContext);
+        
         //trying to get service context from Session context
         fillContextsFromSessionContext(msgContext);
 
@@ -128,6 +140,25 @@ public class InstanceDispatcher extends AbstractHandler {
                 msgContext.setServiceContext(serviceContext);
             }
         }
+    }
+
+    private void extractServiceGroupContextId(MessageContext msgContext) throws AxisFault {
+        SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
+        if (soapHeader != null) {
+            OMElement serviceGroupId = soapHeader.getFirstChildWithName(new QName(Constants.AXIS2_NAMESPACE_URI,
+                    Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX));
+            if (serviceGroupId != null) {
+                String groupId = serviceGroupId.getText();
+                ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
+                        getServiceGroupContext(groupId, msgContext);
+                if (serviceGroupContext == null) {
+//                handleNoServiceGroupContextIDCase(msgContext);
+                    throw new AxisFault("Invalid Service Group Id." + groupId);
+                }
+                msgContext.setServiceGroupContextId(serviceGroupId.getText());
+            }
+        }
+
     }
 
 }
