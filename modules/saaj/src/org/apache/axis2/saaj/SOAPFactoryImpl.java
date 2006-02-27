@@ -18,8 +18,12 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAPFaultDetail;
+import org.apache.ws.commons.soap.SOAPFault;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
@@ -101,8 +105,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      * @throws javax.xml.soap.SOAPException if there is a SOAP error
      */
     public Detail createDetail() throws SOAPException {
-        //TODO: Method implementation
-        return null;
+        return new DetailImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFaultDetail());
     }
 
     /**

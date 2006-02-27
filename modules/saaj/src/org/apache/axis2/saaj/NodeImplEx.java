@@ -54,7 +54,7 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
     }
 
     public OMNode detach() {
-        // TODO: Impl
+        parentElement = null;
         return null;
     }
 

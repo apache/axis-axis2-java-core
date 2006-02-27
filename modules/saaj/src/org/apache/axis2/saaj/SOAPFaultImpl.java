@@ -118,6 +118,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         if (this.fault.getReason() != null) {
             SOAPFaultReason reason = this.fault.getReason();
             if (reason.getSOAPText() != null) {
+                reason.getSOAPText().getFirstOMChild().detach();
                 reason.getSOAPText().setText(faultString);
             } else {
                 SOAPFaultText text = new SOAP11FaultTextImpl(reason);
@@ -125,7 +126,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 reason.setSOAPText(text);
             }
         } else {
-            org.apache.ws.commons.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+            org.apache.ws.commons.soap.SOAPFactory soapFactory =
+                    DOOMAbstractFactory.getSOAP11Factory();
             SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
             SOAPFaultText fText = soapFactory.createSOAPFaultText(fReason);
             fText.setText(faultString);

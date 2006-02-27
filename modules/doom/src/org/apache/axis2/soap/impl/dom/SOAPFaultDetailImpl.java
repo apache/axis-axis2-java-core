@@ -42,6 +42,9 @@ public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFau
         super(parent, SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, builder);
     }
 
+    protected SOAPFaultDetailImpl() {
+    }
+
     public void addDetailEntry(OMElement detailElement) {
         this.addChild(detailElement);
     }

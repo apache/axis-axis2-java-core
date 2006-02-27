@@ -98,7 +98,6 @@ import java.io.InputStream;
  */
 public abstract class MessageFactory {
 
-    // fixme: this should be protected as the class is abstract.
     /**
      * Create a new MessageFactory.
      */

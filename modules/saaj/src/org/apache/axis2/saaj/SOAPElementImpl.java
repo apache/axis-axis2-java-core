@@ -36,13 +36,13 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
-
 
     /**
      * Using a delegate because we can't extend from
@@ -134,6 +134,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
         ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
         return childEle;
     }
 
@@ -176,6 +177,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
         ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
         return childEle;
     }
 
@@ -188,6 +190,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         element.appendChild(childEle.element);
         ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
         return childEle;
     }
 
@@ -195,7 +198,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(java.lang.String, java.lang.String)
       */
     public SOAPElement addNamespaceDeclaration(String prefix, String uri) throws SOAPException {
-        element.declareNamespace(prefix, uri);
+        element.declareNamespace(uri, prefix);
         return this;
     }
 
@@ -259,6 +262,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         final OMAttribute attribute = element.getAttribute(new QName(name.getURI(),
                                                                      name.getLocalName(),
                                                                      name.getPrefix()));
+        if (attribute == null) {
+            return null;
+        }
         return attribute.getAttributeValue();
     }
 
@@ -408,6 +414,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#setEncodingStyle(java.lang.String)
       */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
+        if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
+            throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
+        }
         ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
     }
 
@@ -561,9 +570,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      * @see #setParentElement(javax.xml.soap.SOAPElement) setParentElement(javax.xml.soap.SOAPElement)
      */
     public SOAPElement getParentElement() {
-        return (SOAPElement) toSAAJNode(element.getParentNode());
+        if (this.parentElement == null) {
+            return (SOAPElement) toSAAJNode(element.getParentNode());
+        }
+        return this.parentElement;
     }
 
+    public void setParentElement(SOAPElement parent) throws SOAPException {
+        this.parentElement = parent;
+        this.element.setParent(((SOAPElementImpl)parent).element);
+    }
 
     /**
      * Find the Document that this Node belongs to (the document in
@@ -653,18 +669,29 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      */
     public void setValue(String value) {
         OMNode firstChild = element.getFirstOMChild();
-        if (firstChild == null ||
-            (((javax.xml.soap.Node) firstChild).getNodeType() == javax.xml.soap.Node.TEXT_NODE &&
-             firstChild.getNextOMSibling() == null)) {
-
-            //If there are no children OR
-            //the first child is a text node and the only child
-
-            element.setText(value);
+        if (firstChild == null) {
+            try {
+                this.addTextNode(value);
+            } catch (SOAPException e) {
+                throw new RuntimeException("Cannot add text node", e);
+            }
+        } else if (((org.w3c.dom.Node) firstChild).getNodeType() == javax.xml.soap.Node.TEXT_NODE
+                && firstChild.getNextOMSibling() == null) {
+            ((org.w3c.dom.Text) firstChild).setData(value);
         } else {
             throw new IllegalStateException("This node is not a Text  node and " +
                                             "either has more than one child node or has a child " +
                                             "node that is not a Text node");
         }
+    }
+
+    public void detachNode() {
+        this.detach();
+    }
+
+    public OMNode detach() {
+        OMNode omNode = this.element.detach();
+        this.parentElement = null;
+        return omNode;
     }
 }

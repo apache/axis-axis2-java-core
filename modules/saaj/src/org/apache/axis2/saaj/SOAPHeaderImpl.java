@@ -77,6 +77,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
 
@@ -97,6 +98,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
 
@@ -120,6 +122,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        soapHeaderElement.setParentElement(this);
         return soapHeaderElement;
     }
 
@@ -144,7 +147,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator examineHeaderElements(String actor) {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.examineHeaderBlocks(actor); iterator.hasNext();) {
-            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
+            elements.add(((NodeImpl) iterator.next()).getUserData(SAAJ_NODE));
         }
         return elements.iterator();
     }
@@ -170,7 +173,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator extractHeaderElements(String actor) {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.extractHeaderBlocks(actor); iterator.hasNext();) {
-            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
+            elements.add(((NodeImpl) iterator.next()).getUserData(SAAJ_NODE));
         }
         return elements.iterator();
     }
@@ -191,7 +194,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.examineMustUnderstandHeaderBlocks(actor);
              iterator.hasNext();) {
-            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
+            elements.add(((NodeImpl) iterator.next()).getUserData(SAAJ_NODE));
         }
         return elements.iterator();
     }
@@ -208,7 +211,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator examineAllHeaderElements() {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.examineAllHeaderBlocks(); iterator.hasNext();) {
-            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
+            elements.add(((NodeImpl) iterator.next()).getUserData(SAAJ_NODE));
         }
         return elements.iterator();
     }
@@ -225,7 +228,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator extractAllHeaderElements() {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.extractAllHeaderBlocks(); iterator.hasNext();) {
-            elements.add(new SOAPHeaderElementImpl((SOAPHeaderBlock) iterator.next()));
+            elements.add(((NodeImpl) iterator.next()).getUserData(SAAJ_NODE));
         }
         return elements.iterator();
     }
@@ -267,6 +270,9 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     }
 
     public OMNode detach() {
-        return omSOAPHeader.detach();
+        System.err.println("######omSOapHeader=" + omSOAPHeader.hashCode()) ;
+        OMNode omNode = omSOAPHeader.detach();
+        this.parentElement = null;
+        return omNode;
     }
 }

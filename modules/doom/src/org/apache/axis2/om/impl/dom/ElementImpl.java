@@ -70,8 +70,9 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
      */
     public ElementImpl(DocumentImpl ownerDocument, String tagName) {
         super(ownerDocument);
-        if (ownerDocument.firstChild == null)
+        if (ownerDocument.firstChild == null) {
             ownerDocument.firstChild = this;
+        }
         this.localName = tagName;
         this.attributes = new AttributeMap(this);
         this.done = true;
@@ -132,6 +133,9 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
             this.declareNamespace(ns);
         }
         this.attributes = new AttributeMap(this);
+    }
+
+    public ElementImpl() {
     }
 
     // /
@@ -1124,8 +1128,9 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     protected void setOwnerDocument(DocumentImpl document) {
         this.ownerNode = document;
         this.isOwned(true);
-        if (document.firstChild == null)
+        if (document.firstChild == null) {
             document.firstChild = this;
+        }
     }
 
     /**
@@ -1241,7 +1246,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     public boolean removeNamespace(String prefix) {
         Object ns = this.namespaces.get(prefix);
         if (ns != null) {
-            this.namespaces.remove(ns);
+            this.namespaces.remove(prefix);
             return true;
         } else {
             return false;

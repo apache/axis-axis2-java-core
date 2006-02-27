@@ -37,6 +37,9 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         super(parent, builder);
     }
 
+    public SOAP11FaultDetailImpl() {
+    }
+
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
             throw new SOAPProcessingException(

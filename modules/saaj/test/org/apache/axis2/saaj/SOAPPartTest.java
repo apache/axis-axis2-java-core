@@ -18,6 +18,8 @@ package org.apache.axis2.saaj;
 import junit.framework.TestCase;
 
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.SOAPPart;
@@ -29,8 +31,12 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Text;
 import javax.xml.soap.Name;
+import javax.activation.DataHandler;
 import java.io.File;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
+import java.net.URL;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -39,6 +45,26 @@ import org.w3c.dom.Node;
  * 
  */
 public class SOAPPartTest extends TestCase {
+    public void testGetContents() {
+        try {
+            ByteArrayInputStream ins = new ByteArrayInputStream(new byte[5]);
+            DataHandler dh = new DataHandler(new AttachmentTest("t").new Src(ins, "text/plain"));
+            InputStream in = dh.getInputStream();
+            StreamSource ssrc = new StreamSource(in);
+
+            SOAPPart sp = MessageFactory.newInstance().createMessage().getSOAPPart();
+            sp.setContent(ssrc);
+
+            Source ssrc2 = sp.getContent();
+            if (ssrc2 == null) {
+                fail("Contents were null");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception " + e);
+        }
+    }
+
     public void testAddSource() {
         DOMSource domSource;
         try {

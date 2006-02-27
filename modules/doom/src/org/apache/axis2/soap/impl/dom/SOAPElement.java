@@ -55,6 +55,9 @@ public abstract class SOAPElement extends ElementImpl {
         super((ParentNode)parent, localName, null, builder);
     }
 
+    protected SOAPElement() {
+    }
+
     protected SOAPElement(DocumentImpl doc, String localName,OMNamespace ns) {
 		super(doc, localName, (NamespaceImpl)ns);
 	}

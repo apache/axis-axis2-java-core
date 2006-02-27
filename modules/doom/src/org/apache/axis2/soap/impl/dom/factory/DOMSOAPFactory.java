@@ -19,6 +19,7 @@ import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.dom.SOAPMessageImpl;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPBody;
@@ -269,7 +270,7 @@ public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 
     public SOAPFaultDetail createSOAPFaultDetail() throws SOAPProcessingException {
         //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        return new SOAP11FaultDetailImpl();
     }
 
 }

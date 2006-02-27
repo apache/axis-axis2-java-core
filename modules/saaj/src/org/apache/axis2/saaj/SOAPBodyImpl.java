@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -68,6 +69,54 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         return childEle;
     }
 
+    public SOAPElement addChildElement(String localName, String prefix) throws SOAPException {
+        String namespaceURI = getNamespaceURI(prefix);
+
+        if (namespaceURI == null) {
+            throw new SOAPException("Namespace not declared for the give prefix: " + prefix);
+        }
+        SOAPBodyElementImpl childEle =
+                new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElementNS(namespaceURI,
+                                                                                         localName));
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        element.appendChild(childEle.element);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
+        return childEle;
+    }
+
+    public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
+        String namespaceURI = soapElement.getNamespaceURI();
+        String prefix = soapElement.getPrefix();
+        String localName = soapElement.getLocalName();
+        element.declareNamespace(namespaceURI, prefix);
+
+        SOAPBodyElementImpl childEle =
+                new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElementNS(namespaceURI,
+                                                                                     localName));
+        for (Iterator iter = soapElement.getAllAttributes(); iter.hasNext();) {
+            Name name = (Name) iter.next();
+            childEle.addAttribute(name, soapElement.getAttributeValue(name));
+        }
+
+        for (Iterator iter = soapElement.getChildElements(); iter.hasNext();) {
+            Object o = iter.next();
+            if (o instanceof Text) {
+                childEle.addTextNode(((Text) o).getData());
+            } else {
+                childEle.addChildElement((SOAPElement) o);
+            }
+        }
+
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        element.appendChild(childEle.element);
+        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
+        return childEle;
+    }
+
     /* (non-Javadoc)
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
@@ -83,6 +132,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         element.appendChild(childEle.element);
         ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         isBodyElementAdded = true;
+        childEle.setParentElement(this);
         return childEle;
     }
 
@@ -249,7 +299,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
         saajEle.setParentElement(parent);
         NamedNodeMap domAttrs = domEle.getAttributes();
-        for(int i = 0; i < domAttrs.getLength(); i++){
+        for (int i = 0; i < domAttrs.getLength(); i++) {
             org.w3c.dom.Node attrNode = domAttrs.item(i);
             saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
                                                    attrNode.getLocalName(),
@@ -274,6 +324,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     }
 
     public OMNode detach() {
+        this.parentElement = null;
         return this.element.detach();
     }
 

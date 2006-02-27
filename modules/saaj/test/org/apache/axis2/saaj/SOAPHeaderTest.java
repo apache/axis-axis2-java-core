@@ -25,10 +25,19 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 public class SOAPHeaderTest extends TestCase {
+    private MessageFactory mf = null;
+    private SOAPMessage msg = null;
+    private SOAPPart sp = null;
+    private SOAPEnvelope envelope = null;
+    private SOAPHeader hdr = null;
+    private SOAPHeaderElement she1 = null;
+    private SOAPHeaderElement she2 = null;
 
     public SOAPHeaderTest(String name) {
         super(name);
@@ -100,32 +109,32 @@ public class SOAPHeaderTest extends TestCase {
             String nameSpaceURI = "http://gizmos.com/NSURI";
 
             Name order =
-                soapFactory.createName("orderDesk", nameSpace, nameSpaceURI);
+                    soapFactory.createName("orderDesk", nameSpace, nameSpaceURI);
             SOAPHeaderElement orderHeader = header.addHeaderElement(order);
             orderHeader.setActor("http://gizmos.com/orders");
 
             Name shipping =
-                soapFactory.createName("shippingDesk", nameSpace, nameSpaceURI);
+                    soapFactory.createName("shippingDesk", nameSpace, nameSpaceURI);
             SOAPHeaderElement shippingHeader =
-                header.addHeaderElement(shipping);
+                    header.addHeaderElement(shipping);
             shippingHeader.setActor("http://gizmos.com/shipping");
 
             Name confirmation =
-                soapFactory.createName("confirmationDesk", nameSpace,
-                    nameSpaceURI);
+                    soapFactory.createName("confirmationDesk", nameSpace,
+                                           nameSpaceURI);
             SOAPHeaderElement confirmationHeader =
-                header.addHeaderElement(confirmation);
+                    header.addHeaderElement(confirmation);
             confirmationHeader.setActor("http://gizmos.com/confirmations");
 
             Name billing =
-                soapFactory.createName("billingDesk", nameSpace, nameSpaceURI);
+                    soapFactory.createName("billingDesk", nameSpace, nameSpaceURI);
             SOAPHeaderElement billingHeader = header.addHeaderElement(billing);
             billingHeader.setActor("http://gizmos.com/billing");
 
             // Add header with mustUnderstand attribute
             Name tName =
-                soapFactory.createName("Transaction", "t",
-                    "http://gizmos.com/orders");
+                    soapFactory.createName("Transaction", "t",
+                                           "http://gizmos.com/orders");
 
             SOAPHeaderElement transaction = header.addHeaderElement(tName);
             transaction.setMustUnderstand(true);
@@ -146,16 +155,53 @@ public class SOAPHeaderTest extends TestCase {
 
             while (allHeaders.hasNext()) {
                 SOAPHeaderElement headerElement =
-                    (SOAPHeaderElement) allHeaders.next();
+                        (SOAPHeaderElement) allHeaders.next();
                 Name headerName = headerElement.getElementName();
                 System.out.println("\nHeader name is " +
-                    headerName.getQualifiedName());
+                                   headerName.getQualifiedName());
                 System.out.println("Actor is " + headerElement.getActor());
                 System.out.println("mustUnderstand is " +
-                    headerElement.getMustUnderstand());
+                                   headerElement.getMustUnderstand());
             }
         } catch (Exception e) {
             fail("Enexpected Exception " + e);
+        }
+    }
+
+    protected void setUp() throws Exception {
+        msg = MessageFactory.newInstance().createMessage();
+        sp = msg.getSOAPPart();
+        envelope = sp.getEnvelope();
+        hdr = envelope.getHeader();
+    }
+
+    public void testExamineHeader() {
+        SOAPHeaderElement she = null;
+
+        try {
+            she1 = hdr.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
+            she1.setActor("actor-URI");
+            Iterator iterator = hdr.examineAllHeaderElements();
+            int cnt = 0;
+            while (iterator.hasNext()) {
+                cnt++;
+                she = (SOAPHeaderElement) iterator.next();
+                if (!she.equals(she1)) {
+                    fail("SOAP Header Elements do not match");
+                }
+            }
+
+            if (cnt != 1) {
+                fail("SOAPHeaderElement count mismatch: expected 1, received " + cnt);
+            }
+
+            iterator = hdr.examineAllHeaderElements();
+            if (!iterator.hasNext()) {
+                fail("no elements in iterator - unexpected");
+            }
+
+        } catch (Exception e) {
+            fail("Unexpected Exception: " + e);
         }
     }
 }

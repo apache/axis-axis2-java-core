@@ -42,6 +42,9 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
     }
 
     public void setRoleValue(String uri) {
+        if (firstChild != null) {
+            firstChild.detach();
+        }
         this.setText(uri);
     }
 
@@ -59,7 +62,6 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
             && (builder.getRegisteredContentHandler() == null)) {
             builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
         }
-
 
         if (!cache) {
             //No caching
@@ -88,8 +90,5 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
 
             // do not serialise the siblings
         }
-
-
     }
-
 }

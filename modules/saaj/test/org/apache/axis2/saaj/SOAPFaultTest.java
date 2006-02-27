@@ -20,9 +20,9 @@ import javax.xml.soap.SOAPConstants;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
-public class SOAPFaultsTest extends TestCase {
+public class SOAPFaultTest extends TestCase {
 
-    public SOAPFaultsTest(String name) {
+    public SOAPFaultTest(String name) {
         super(name);
     }
 
@@ -256,4 +256,37 @@ public class SOAPFaultsTest extends TestCase {
         }
     }
 
+    public void testGetFaultActor() {
+        try {
+            SOAPMessage msg = MessageFactory.newInstance().createMessage();
+            SOAPFault sf = msg.getSOAPBody().addFault();
+
+            sf.setFaultActor("/faultActorURI");
+            sf.setFaultActor("/faultActorURI2");
+            String result = sf.getFaultActor();
+
+            if (!result.equals("/faultActorURI2")) {
+                fail("Fault Actor not properly set");
+            }
+        } catch (Exception e) {
+            fail("Unexpected Exception : " + e);
+        }
+    }
+
+    public void testGetFaultString() {
+        try {
+            SOAPMessage msg = MessageFactory.newInstance().createMessage();
+            SOAPFault sf = msg.getSOAPBody().addFault();
+
+            sf.setFaultString("1st Fault String");
+            sf.setFaultString("2nd Fault String");
+            String result = sf.getFaultString();
+
+            if (!result.equals("2nd Fault String")) {
+                fail("Fault String not properly set");
+            }
+        } catch (Exception e) {
+            fail("Unexpected Exception : " + e);
+        }
+    }
 }

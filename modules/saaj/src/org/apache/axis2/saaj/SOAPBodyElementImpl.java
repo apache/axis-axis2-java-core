@@ -18,6 +18,9 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 
 import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPBody;
 
 public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElement {
 
@@ -28,4 +31,10 @@ public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElem
         super(element);
     }
 
+    public void setParentElement(SOAPElement parent) throws SOAPException {
+        if (!(parent instanceof SOAPBody)){
+            throw new IllegalArgumentException("Parent is not a SOAPBody");
+        }
+        this.parentElement = parent;
+    }
 }

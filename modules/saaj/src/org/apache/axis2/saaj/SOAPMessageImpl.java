@@ -40,6 +40,7 @@ public class SOAPMessageImpl extends SOAPMessage {
     private MimeHeadersEx mimeHeaders;
 
     private Map props = new Hashtable();
+    private boolean saveRequired;
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
         String contentType = null;
@@ -243,8 +244,12 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @throws SOAPException if there was a problem saving changes to this message.
      */
     public void saveChanges() throws SOAPException {
+        saveRequired = false;
         // TODO not sure of the implementation
-//        throw new UnsupportedOperationException("TODO");
+    }
+
+    public void setSaveRequired(){
+        this.saveRequired = true;
     }
 
     /**
@@ -257,7 +262,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      *         false</CODE> otherwise.
      */
     public boolean saveRequired() {
-        return false;
+        return saveRequired;
     }
 
     /**
@@ -288,8 +293,8 @@ public class SOAPMessageImpl extends SOAPMessage {
 
             //the writeTo method forces the elements to be built!!!
             ((SOAPEnvelopeImpl) soapPart.getEnvelope()).getOMEnvelope().serialize(out, format);
+            saveChanges();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new SOAPException(e);
         }
     }

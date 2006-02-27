@@ -26,12 +26,16 @@ import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collection;
 
-public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader{
-	   /**
+public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
+    /**
      * @param envelope
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope) throws SOAPProcessingException {
@@ -84,11 +88,11 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader{
     public Iterator examineHeaderBlocks(String paramRole) {
         Iterator headerBlocksIter = this.getChildren();
         ArrayList headersWithGivenActor = new ArrayList();
-        
-        if(paramRole == null || "".equals(paramRole)){
-    		return returnAllSOAPHeaders(this.getChildren());
-    	}
-        
+
+        if (paramRole == null || "".equals(paramRole)) {
+            return returnAllSOAPHeaders(this.getChildren());
+        }
+
         while (headerBlocksIter.hasNext()) {
             Object o = headerBlocksIter.next();
             if (o instanceof SOAPHeaderBlock) {
@@ -103,19 +107,19 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader{
     }
 
     private Iterator returnAllSOAPHeaders(Iterator children) {
-    	ArrayList headers = new ArrayList();
-    	while (children.hasNext()) {
+        ArrayList headers = new ArrayList();
+        while (children.hasNext()) {
             Object o = children.next();
             if (o instanceof SOAPHeaderBlock) {
                 headers.add(o);
             }
         }
-    	
-    	return headers.iterator();
-		
-	}
 
-	/**
+        return headers.iterator();
+
+    }
+
+    /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE> objects in this
      * <CODE>SOAPHeader</CODE> object that have the the specified role and
      * detaches them from this <CODE> SOAPHeader</CODE> object. <P>This method
@@ -153,7 +157,7 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader{
                 String role = soapHeaderBlock.getRole();
                 boolean mustUnderstand = soapHeaderBlock.getMustUnderstand();
                 if ((role != null) && role.equalsIgnoreCase(actor) &&
-                        mustUnderstand) {
+                    mustUnderstand) {
                     mustUnderstandHeadersWithGivenActor.add(soapHeaderBlock);
                 }
             }
@@ -185,7 +189,11 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader{
      *         <code>SOAPHeader</code>
      */
     public Iterator extractAllHeaderBlocks() {
-        throw new UnsupportedOperationException(); // TODO implement this
+        Collection result = new ArrayList();
+        for (Iterator iter = getChildrenWithName(null); iter.hasNext();) {
+            result.add(((ElementImpl) iter.next()).detach());
+        }
+        return result.iterator();
     }
 
     public ArrayList getHeaderBlocksWithNSURI(String nsURI) {

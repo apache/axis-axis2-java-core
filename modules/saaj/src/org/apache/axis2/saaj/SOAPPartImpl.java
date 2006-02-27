@@ -86,7 +86,7 @@ public class SOAPPartImpl extends SOAPPart {
                                              new SOAP11Factory(),
                                              null);
             org.apache.ws.commons.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
-            envelope = new SOAPEnvelopeImpl(soapEnvelope);
+            envelope = new SOAPEnvelopeImpl((org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
         } catch (XMLStreamException e) {
@@ -257,10 +257,8 @@ public class SOAPPartImpl extends SOAPPart {
      */
     public void setContent(Source source) throws SOAPException {
         this.source = source;
-        DOMSource domSource = (DOMSource) source;
-        Node envelope = domSource.getNode().getFirstChild();
-        System.err.println("*****" +envelope.getChildNodes().item(0));
-        System.err.println("*****" + envelope.getClass());
+
+        //TODO: Need to fix the source handling stuff
     }
 
     /**

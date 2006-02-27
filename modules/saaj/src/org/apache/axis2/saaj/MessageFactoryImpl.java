@@ -125,8 +125,11 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage() throws SOAPException {
         final SOAPEnvelopeImpl soapEnvelope =
-                new SOAPEnvelopeImpl(new SOAP11Factory().getDefaultEnvelope());
-        return new SOAPMessageImpl(soapEnvelope);
+                new SOAPEnvelopeImpl((org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl)
+                        new SOAP11Factory().getDefaultEnvelope());
+        SOAPMessageImpl soapMessage = new SOAPMessageImpl(soapEnvelope);
+        soapMessage.setSaveRequired();
+        return soapMessage;
     }
 
     /**
@@ -147,7 +150,9 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage(MimeHeaders mimeheaders,
                                      InputStream inputstream) throws IOException, SOAPException {
-        return new SOAPMessageImpl(inputstream, mimeheaders);
+        SOAPMessageImpl soapMessage = new SOAPMessageImpl(inputstream, mimeheaders);
+        soapMessage.setSaveRequired();
+        return soapMessage;
     }
 
 }

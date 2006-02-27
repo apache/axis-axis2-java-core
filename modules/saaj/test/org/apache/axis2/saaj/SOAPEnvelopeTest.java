@@ -20,7 +20,9 @@ import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Properties;
 
 public class SOAPEnvelopeTest extends TestCase {
 
@@ -74,7 +76,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertNull(smsg.getSOAPHeader());
     }
 
-    public void testDetachBody(){
+    public void testDetachBody() {
         try {
             MessageFactory mf = MessageFactory.newInstance();
             SOAPMessage smsg =
@@ -238,28 +240,28 @@ public class SOAPEnvelopeTest extends TestCase {
         assertEquals("CODE", soapFault.getFaultCode());
     }
 
-   public void testFaults2() throws Exception {
-       SOAPEnvelope envelope = getSOAPEnvelope();
-       SOAPBody body = envelope.getBody();
-       SOAPFault fault = body.addFault();
+    public void testFaults2() throws Exception {
+        SOAPEnvelope envelope = getSOAPEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault fault = body.addFault();
 
-       assertTrue(body.getFault() != null);
+        assertTrue(body.getFault() != null);
 
-       Detail d1 = fault.addDetail();
-       Name name = envelope.createName("GetLastTradePrice", "WOMBAT",
-                                       "http://www.wombat.org/trader");
-       d1.addDetailEntry(name);
+        Detail d1 = fault.addDetail();
+        Name name = envelope.createName("GetLastTradePrice", "WOMBAT",
+                                        "http://www.wombat.org/trader");
+        d1.addDetailEntry(name);
 
-       Detail d2 = fault.getDetail();
-       assertTrue(d2 != null);
-       Iterator i = d2.getDetailEntries();
-       assertTrue(getIteratorCount(i) == 1);
-       i = d2.getDetailEntries();
-       while (i.hasNext()) {
-           DetailEntry de = (DetailEntry) i.next();
-           assertEquals(de.getElementName(), name);
-       }
-   }
+        Detail d2 = fault.getDetail();
+        assertTrue(d2 != null);
+        Iterator i = d2.getDetailEntries();
+        assertTrue(getIteratorCount(i) == 1);
+        i = d2.getDetailEntries();
+        while (i.hasNext()) {
+            DetailEntry de = (DetailEntry) i.next();
+            assertEquals(de.getElementName(), name);
+        }
+    }
 
     public void testHeaderElements() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
@@ -330,8 +332,9 @@ public class SOAPEnvelopeTest extends TestCase {
         Node n = null;
         while (iterator.hasNext()) {
             n = (Node) iterator.next();
-            if (n instanceof Text)
+            if (n instanceof Text) {
                 break;
+            }
         }
         assertTrue(n instanceof Text);
         Text t = (Text) n;
@@ -458,6 +461,30 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(foundName1 && foundName2 && foundName3);
     }
 
+    public void _testAddHeader() {
+        try {
+            SOAPEnvelope envelope = getSOAPEnvelope();
+            try {
+                envelope.addHeader();
+                fail("Did not get expected SOAPException");
+            } catch (SOAPException e) {
+                assertTrue("Got expected SOAPException", true);
+            }
+            envelope.getHeader().detachNode();
+            SOAPHeader myhdr;
+
+            try {
+                myhdr = envelope.addHeader();
+                assertNotNull("SOAPHeader return value is null", myhdr);
+            } catch (SOAPException e) {
+                fail("Unexpected SOAPException : " + e);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception : " + e);
+        }
+    }
+
     private SOAPEnvelope getSOAPEnvelope() throws Exception {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage();
@@ -488,7 +515,9 @@ public class SOAPEnvelopeTest extends TestCase {
                 }
 
                 final Iterator childElementIter = soapElement.getChildElements();
-                if (childElementIter == null) return;
+                if (childElementIter == null) {
+                    return;
+                }
                 validateBody(childElementIter);
             }
         }

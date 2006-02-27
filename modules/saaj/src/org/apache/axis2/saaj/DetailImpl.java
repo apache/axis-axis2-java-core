@@ -16,6 +16,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
 
 import javax.xml.soap.Detail;
@@ -76,9 +77,9 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
      */
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
         SOAPElementImpl childElement = (SOAPElementImpl) addChildElement(name);
-        DetailEntryImpl detailEntryImpl = new DetailEntryImpl(childElement.element);
-//        faultDetail.addDetailEntry(detailEntryImpl.element);  //This causes infinite recursion
-        return detailEntryImpl;
+        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.element);
+        childElement.element.setUserData(SAAJ_NODE, detailEntry, null);
+        return detailEntry;
     }
 
     /**
