@@ -90,10 +90,10 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 	public SOAPHeader getHeader() throws OMException {
 		SOAPHeader header =
                 (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
-		if (builder == null && header == null) {
+		/*if (builder == null && header == null) {
 			header = factory.createSOAPHeader(this);
 			addChild(header);
-		}
+		}*/
 		return header;
 	}
 /*

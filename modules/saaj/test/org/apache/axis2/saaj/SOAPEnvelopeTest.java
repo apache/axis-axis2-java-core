@@ -461,7 +461,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(foundName1 && foundName2 && foundName3);
     }
 
-    public void _testAddHeader() {
+    public void testAddHeader() {
         try {
             SOAPEnvelope envelope = getSOAPEnvelope();
             try {
@@ -471,6 +471,7 @@ public class SOAPEnvelopeTest extends TestCase {
                 assertTrue("Got expected SOAPException", true);
             }
             envelope.getHeader().detachNode();
+            assertNull(envelope.getHeader());
             SOAPHeader myhdr;
 
             try {

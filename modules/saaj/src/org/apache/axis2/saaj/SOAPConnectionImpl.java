@@ -31,6 +31,8 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.impl.llom.OMTextImpl;
+import org.apache.ws.commons.om.impl.MTOMConstants;
+import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;
@@ -138,8 +140,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
             requestMsgCtx.setEnvelope(toOMSOAPEnvelope(request));
             opClient.addMessageContext(requestMsgCtx);
             opClient.execute(true);
-            return getSOAPMessage(opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).
-                    getEnvelope());
+
+            MessageContext msgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            //TODO: get attachments
+//            MIMEHelper mimeHelper = (MIMEHelper) msgCtx.getProperty(MTOMConstants.ATTACHMENTS);
+//            mimeHelper.getAllContentIDs();
+
+            return getSOAPMessage(msgCtx.getEnvelope());
         } catch (AxisFault e) {
             throw new SOAPException(e);
         }

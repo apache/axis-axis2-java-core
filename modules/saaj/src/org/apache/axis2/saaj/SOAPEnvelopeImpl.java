@@ -35,18 +35,11 @@ import javax.xml.soap.SOAPElement;
  */
 public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.SOAPEnvelope {
 
-//    private org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnvelope;
     private org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl omSOAPEnvelope;
 
-//    public SOAPEnvelopeImpl(final org.apache.ws.commons.soap.SOAPEnvelope element) {
-
     public SOAPEnvelopeImpl(final org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl envelope) {
-        super((ElementImpl) envelope);
+        super(envelope);
         omSOAPEnvelope = envelope;
-        /* org.apache.ws.commons.soap.SOAPHeader doomHeader = envelope.addHeader();
-        SOAPHeaderImpl saajHeader = new SOAPHeaderImpl(doomHeader);
-        ((NodeImpl) doomHeader).setUserData(SAAJ_NODE, saajHeader, null);
-        System.err.println("$$$$");*/
     }
 
     public void setOwnerDocument(Document document) {

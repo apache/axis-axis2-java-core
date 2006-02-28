@@ -92,8 +92,10 @@ public class AttachmentPartImpl extends AttachmentPart {
         try {
             dataHandler.writeTo(bout);
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            System.err.println("####################################################");
+//            ex.printStackTrace();
             throw new SOAPException(ex);
+//            System.err.println("####################################################");
         }
         return bout.size();
     }
