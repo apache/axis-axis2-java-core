@@ -36,8 +36,6 @@ import org.apache.wsdl.WSDLConstants;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -104,7 +102,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
         opClient.setOptions(options);
 
         if (request.countAttachments() != 0) { // SOAPMessage with attachments
-            opClient.getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+            opClient.getOptions().setProperty(Constants.Configuration.ENABLE_MTOM,
+                                              Constants.VALUE_TRUE);
             return handleSOAPMessage(request, opClient);
         } else { // simple SOAPMessage
             return handleSOAPMessage(request, opClient);
@@ -118,7 +117,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      *                                      or this SOAPConnection is already closed
      */
     public void close() throws SOAPException {
-        if(serviceClient!=null){
+        if (serviceClient != null) {
             try {
                 serviceClient.finalizeInvoke();
             } catch (AxisFault axisFault) {
@@ -156,6 +155,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private SOAPMessage getSOAPMessage(org.apache.ws.commons.soap.SOAPEnvelope respOMSoapEnv)
             throws SOAPException {
 
+        System.err.println("####### respOMSoapEnv=" + respOMSoapEnv);
+
         // Create the basic SOAP Message
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage response = mf.createMessage();
@@ -174,15 +175,15 @@ public class SOAPConnectionImpl extends SOAPConnection {
             final QName hbQName = hb.getQName();
             final SOAPHeaderElement headerEle =
                     header.addHeaderElement(env.createName(hbQName.getLocalPart(),
-                            hbQName.getPrefix(),
-                            hbQName.getNamespaceURI()));
+                                                           hbQName.getPrefix(),
+                                                           hbQName.getNamespaceURI()));
             for (Iterator attribIter = hb.getAllAttributes(); attribIter.hasNext();) {
                 OMAttribute attr = (OMAttribute) attribIter.next();
                 final QName attrQName = attr.getQName();
                 headerEle.addAttribute(env.createName(attrQName.getLocalPart(),
-                        attrQName.getPrefix(),
-                        attrQName.getNamespaceURI()),
-                        attr.getAttributeValue());
+                                                      attrQName.getPrefix(),
+                                                      attrQName.getNamespaceURI()),
+                                       attr.getAttributeValue());
             }
             final String role = hb.getRole();
             if (role != null) {
@@ -228,13 +229,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
                     if (omText.isOptimized()) { // is this an attachment?
                         final DataHandler datahandler = (DataHandler) omText.getDataHandler();
                         AttachmentPart attachment = saajSOAPMsg.createAttachmentPart(datahandler);
-                        final String sessionID = IDGenerator.generateID();
-                        attachment.setContentId(sessionID);
+                        final String id = IDGenerator.generateID();
+                        attachment.setContentId(id);
                         attachment.setContentType(datahandler.getContentType());
                         saajSOAPMsg.addAttachmentPart(attachment);
 
                         saajEle.addAttribute(saajSOAPMsg.getSOAPPart().getEnvelope().createName("href"),
-                                "cid:" + sessionID);
+                                             "cid:" + id);
                     } else {
                         saajChildEle = saajEle.addTextNode(omText.getText());
                     }
@@ -243,17 +244,17 @@ public class SOAPConnectionImpl extends SOAPConnection {
                     final QName omChildQName = omChildEle.getQName();
                     saajChildEle =
                             saajEle.addChildElement(omChildQName.getLocalPart(),
-                                    omChildQName.getPrefix(),
-                                    omChildQName.getNamespaceURI());
+                                                    omChildQName.getPrefix(),
+                                                    omChildQName.getNamespaceURI());
                     for (Iterator attribIter = omChildEle.getAllAttributes();
                          attribIter.hasNext();) {
                         OMAttribute attr = (OMAttribute) attribIter.next();
                         final QName attrQName = attr.getQName();
                         saajChildEle.addAttribute(saajSOAPMsg.getSOAPPart().getEnvelope().
                                 createName(attrQName.getLocalPart(),
-                                attrQName.getPrefix(),
-                                attrQName.getNamespaceURI()),
-                                attr.getAttributeValue());
+                                           attrQName.getPrefix(),
+                                           attrQName.getNamespaceURI()),
+                                                  attr.getAttributeValue());
                     }
                 }
 
@@ -275,13 +276,15 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
         final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv =
                 SAAJUtil.toOMSOAPEnvelope(saajSOAPMsg.getSOAPPart().getDocumentElement());
+        System.err.println("#### req OM Soap Env=" + omSOAPEnv);
 
         Map attachmentMap = new HashMap();
         final Iterator attachments = saajSOAPMsg.getAttachments();
         while (attachments.hasNext()) {
             final AttachmentPart attachment = (AttachmentPart) attachments.next();
-            if (attachment.getContentId() == null || attachment.getContentId().trim().length() == 0) {
-                throw new SOAPException("Attachment with NULL or Empty contend ID");
+            if (attachment.getContentId() == null ||
+                attachment.getContentId().trim().length() == 0) {
+                attachment.setContentId(IDGenerator.generateID());
             }
             if (attachment.getDataHandler() == null) {
                 throw new SOAPException("Attachment with NULL DataHandler");
@@ -291,7 +294,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
         insertAttachmentNodes(attachmentMap, omSOAPEnv);
 
-        printOMSOAPEnvelope(omSOAPEnv);
+//        printOMSOAPEnvelope(omSOAPEnv);
 
         return omSOAPEnv;
     }
@@ -314,9 +317,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
             if (contentID != null) {//This is an omEnvelope referencing an attachment
                 child.build();
-                OMText text =
-                        new OMTextImpl(((AttachmentPart) attachments.get(contentID.trim())).getDataHandler(),
-                                true);
+                AttachmentPart ap = ((AttachmentPart) attachments.get(contentID.trim()));
+                OMText text = new OMTextImpl(ap.getDataHandler(), true);
                 child.removeAttribute(hrefAttr);
                 child.addChild(text);
             } else {
@@ -326,6 +328,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 insertAttachmentNodes(attachments, child);
             }
         }
+
+        //TODO: Need to handle no referenced attachments
     }
 
     /**
@@ -351,15 +355,29 @@ public class SOAPConnectionImpl extends SOAPConnection {
         return null;
     }
 
-    private void printOMSOAPEnvelope(final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv) {
+    /* private void printOMSOAPEnvelope(final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             omSOAPEnv.serialize(baos);
             log.info("---------------------------------------------------------------------------");
             log.info(baos);
             log.info("---------------------------------------------------------------------------");
+            System.err.println("---------------------------------------------------------------------------");
+            System.err.println(baos);
+            System.err.println("---------------------------------------------------------------------------");
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
     }
+
+    private String printSAAJSOAPMessage(final SOAPMessage msg) throws SOAPException, IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        msg.writeTo(baos);
+        String responseStr = baos.toString();
+
+        System.out.println("\n\n----------------------SAAJ Message-------------------------\n" +
+                           responseStr);
+        System.out.println("-------------------------------------------------------\n\n");
+        return responseStr;
+    }*/
 }

@@ -262,7 +262,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
-    public void _testAddTextNode2() {
+    public void testAddTextNode2() {
         try {
             SOAPMessage msg = MessageFactory.newInstance().createMessage();
             SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
@@ -270,8 +270,6 @@ public class SOAPElementTest extends TestCase {
             Iterator iStart = envelope.getChildElements();
             int countStart = getIteratorCount(iStart);
             SOAPElement se = envelope.addTextNode("<txt>This is text</txt>");
-            System.err.println("####### " + envelope.getValue());
-            System.err.println("####### " + body.getValue());
             if (se == null) {
                 fail("addTextNode() did not return SOAPElement");
             } else if (!envelope.getValue().equals("<txt>This is text</txt>")) {

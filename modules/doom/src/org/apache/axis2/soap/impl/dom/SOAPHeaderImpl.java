@@ -27,8 +27,6 @@ import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -86,24 +84,38 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @see #extractHeaderBlocks(String) extractHeaderBlocks(java.lang.String)
      */
     public Iterator examineHeaderBlocks(String paramRole) {
-        Iterator headerBlocksIter = this.getChildren();
-        ArrayList headersWithGivenActor = new ArrayList();
+        /* Iterator headerBlocksIter = this.getChildren();
+       ArrayList headersWithGivenActor = new ArrayList();
 
-        if (paramRole == null || "".equals(paramRole)) {
-            return returnAllSOAPHeaders(this.getChildren());
+       if (paramRole == null || "".equals(paramRole)) {
+           return returnAllSOAPHeaders(this.getChildren());
+       }
+
+       while (headerBlocksIter.hasNext()) {
+           Object o = headerBlocksIter.next();
+           if (o instanceof SOAPHeaderBlock) {
+               SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) o;
+               String role = soapHeaderBlock.getRole();
+               if ((role != null) && role.equalsIgnoreCase(paramRole)) {
+                   headersWithGivenActor.add(soapHeaderBlock);
+               }
+           }
+       }
+       return headersWithGivenActor.iterator();*/
+
+        if (paramRole == null || paramRole.trim().length() == 0) {
+            return examineAllHeaderBlocks();
         }
-
-        while (headerBlocksIter.hasNext()) {
-            Object o = headerBlocksIter.next();
-            if (o instanceof SOAPHeaderBlock) {
-                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) o;
-                String role = soapHeaderBlock.getRole();
-                if ((role != null) && role.equalsIgnoreCase(paramRole)) {
-                    headersWithGivenActor.add(soapHeaderBlock);
-                }
+        Collection elements = new ArrayList();
+        for (Iterator iter = examineAllHeaderBlocks(); iter.hasNext();) {
+            SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) iter.next();
+            if (headerBlock.getRole() == null ||
+                headerBlock.getRole().trim().length() == 0 ||
+                headerBlock.getRole().equals(paramRole)) {
+                elements.add(headerBlock);
             }
         }
-        return headersWithGivenActor.iterator();
+        return elements.iterator();
     }
 
     private Iterator returnAllSOAPHeaders(Iterator children) {

@@ -73,8 +73,10 @@ public class IntegrationTest extends TestCase {
             assertFalse(response.getAttachments().hasNext());
             assertEquals(0, response.countAttachments());
 
-            String responseStr = printResponse(response);
-            assertTrue(responseStr.indexOf("echo") != -1);
+            String requestStr = printSOAPMessage(request);
+            String responseStr = printSOAPMessage(response);
+//            assertEquals(requestStr, responseStr);
+            assertTrue(responseStr.indexOf("echo")  != -1);
             sCon.close();
         } catch (SOAPException e) {
             e.printStackTrace();
@@ -84,12 +86,12 @@ public class IntegrationTest extends TestCase {
         }
     }
 
-    private String printResponse(final SOAPMessage response) throws SOAPException, IOException {
+    private String printSOAPMessage(final SOAPMessage msg) throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        response.writeTo(baos);
+        msg.writeTo(baos);
         String responseStr = baos.toString();
 
-        System.out.println("\n\n----------------------Response-------------------------\n" +
+        System.out.println("\n\n----------------------Message-------------------------\n" +
                            responseStr);
         System.out.println("-------------------------------------------------------\n\n");
         assertTrue(responseStr.indexOf("This is some text") != -1);
@@ -174,7 +176,7 @@ public class IntegrationTest extends TestCase {
 //        response.getSOAPPart().getEnvelope().getHeader().extractAllHeaderElements();
 //        sCon.call(response, ADDRESS);
 
-//        printResponse(response);
+//        printSOAPMessage(response);
     }
 
     private void createSOAPPart(SOAPMessage message) throws SOAPException {
@@ -223,6 +225,10 @@ public class IntegrationTest extends TestCase {
         SOAPPart sPart = message.getSOAPPart();
         SOAPEnvelope env = sPart.getEnvelope();
         SOAPBody body = env.getBody();
+        SOAPHeader header = env.getHeader();
+        header.addHeaderElement(env.createName("Header1",
+                                               "pref",
+                                               "http://test.apach.org/test")).addTextNode("This is header1");
 
         Name ns = env.createName("echo", "swa2", "http://fakeNamespace2.org");
         final SOAPBodyElement bodyElement = body.addBodyElement(ns);

@@ -145,7 +145,20 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      * @see #extractHeaderElements(java.lang.String) extractHeaderElements(java.lang.String)
      */
     public Iterator examineHeaderElements(String actor) {
+       /* if(actor == null || actor.trim().length() == 0){
+            return examineAllHeaderElements();
+        }*/
         Collection elements = new ArrayList();
+        /*for(Iterator iter = examineAllHeaderElements();iter.hasNext();){
+            SOAPHeaderElement headerEle = (SOAPHeaderElement) iter.next();
+            if(headerEle.getActor() == null ||
+               headerEle.getActor().trim().length() == 0 ||
+                    headerEle.getActor().equals(actor)){
+                elements.add(headerEle);
+            }
+        }*/
+
+
         for (Iterator iterator = omSOAPHeader.examineHeaderBlocks(actor); iterator.hasNext();) {
             elements.add(((NodeImpl) iterator.next()).getUserData(SAAJ_NODE));
         }

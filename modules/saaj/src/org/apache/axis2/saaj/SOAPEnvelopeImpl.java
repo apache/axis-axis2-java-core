@@ -18,14 +18,17 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11BodyImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderImpl;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPElement;
 
 /**
  *
@@ -40,7 +43,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     public SOAPEnvelopeImpl(final org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl envelope) {
         super((ElementImpl) envelope);
         omSOAPEnvelope = envelope;
-       /* org.apache.ws.commons.soap.SOAPHeader doomHeader = envelope.addHeader();
+        /* org.apache.ws.commons.soap.SOAPHeader doomHeader = envelope.addHeader();
         SOAPHeaderImpl saajHeader = new SOAPHeaderImpl(doomHeader);
         ((NodeImpl) doomHeader).setUserData(SAAJ_NODE, saajHeader, null);
         System.err.println("$$$$");*/
@@ -196,5 +199,23 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
             throw new SOAPException("Body already present, can't set body again without " +
                                     "deleting the existing body. Use getBody() method instead.");
         }
+    }
+
+    public SOAPElement addTextNode(String text) throws SOAPException {
+
+        //TODO: Method implementation
+        Node firstChild = element.getFirstChild();
+        if (firstChild instanceof org.w3c.dom.Text) {
+            ((org.w3c.dom.Text) firstChild).setData(text);
+        } else {
+
+            // Else this is a header
+            TextImpl doomText = new TextImpl(text);
+            doomText.setNextOMSibling((NodeImpl) firstChild);
+            doomText.setPreviousOMSibling(null);
+            element.setFirstChild(doomText);
+            ((NodeImpl) firstChild).setPreviousOMSibling(doomText);
+        }
+        return this;
     }
 }
