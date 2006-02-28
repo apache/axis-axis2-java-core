@@ -17,16 +17,14 @@
 
 package org.apache.axis2.description;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
-import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import com.ibm.wsdl.PortImpl;
+import com.ibm.wsdl.extensions.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.writer.WOMWriter;
@@ -38,22 +36,12 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -335,15 +323,53 @@ public class AxisService extends AxisDescription {
         PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
     }
 
+    private AxisConfiguration getAxisConfiguration() {
+        if (getParent() != null) return (AxisConfiguration) getParent().getParent();
+        return null;
+    }
+
     public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
-        if (getWSDLDefinition() != null) {
-            printUsingWSDLDefinition(out, serviceURL);
+        ArrayList eprList = new ArrayList();
+        AxisConfiguration axisConfig = getAxisConfiguration();
+        if (enableAllTransport) {
+            Iterator transports = axisConfig.getTransportsIn().values().iterator();
+            while (transports.hasNext()) {
+                TransportInDescription transportIn = (TransportInDescription) transports.next();
+                TransportListener listener = transportIn.getReceiver();
+                if (listener != null) {
+                    try {
+                        eprList.add(listener.getEPRForService(getName()).getAddress());
+                    } catch (AxisFault axisFault) {
+                        log.info(axisFault.getMessage());
+                    }
+                }
+            }
         } else {
-            printUsingWOM(out, serviceURL);
+            String trs [] = getExposeTransports();
+            for (int i = 0; i < trs.length; i++) {
+                String trsName = trs[i];
+                TransportInDescription transportIn = axisConfig.getTransportIn(new QName(trsName));
+                if (transportIn != null) {
+                    TransportListener listener = transportIn.getReceiver();
+                    if (listener != null) {
+                        try {
+                            eprList.add(listener.getEPRForService(getName()).getAddress());
+                        } catch (AxisFault axisFault) {
+                            log.info(axisFault.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+        String eprArray [] = (String[]) eprList.toArray(new String[eprList.size()]);
+        if (getWSDLDefinition() != null) {
+            printUsingWSDLDefinition(out, eprArray);
+        } else {
+            printUsingWOM(out, eprArray);
         }
     }
 
-    private void printUsingWSDLDefinition(OutputStream out, String serviceURL) throws AxisFault {
+    private void printUsingWSDLDefinition(OutputStream out, String [] serviceURL) throws AxisFault {
         try {
             Definition wsdlDefinition = getWSDLDefinition();
             Iterator itr_bindings = wsdlDefinition.getBindings().values().iterator();
@@ -387,17 +413,17 @@ public class AxisService extends AxisDescription {
 
             for (Iterator iterator = services.iterator(); iterator.hasNext();) {
                 Service service = (Service) iterator.next();
-                Collection ports = service.getPorts().values();
+                service.getPorts().values().clear();
 
-                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
-                    Port port = (Port) iterator1.next();
-
+                for (int i = 0; i < serviceURL.length; i++) {
+                    String url = serviceURL[i];
+                    Port port = new PortImpl();
                     SOAPAddress soapAddress = new SOAPAddressImpl();
 
                     soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
-                    soapAddress.setLocationURI(serviceURL);
-                    port.getExtensibilityElements().clear();
+                    soapAddress.setLocationURI(url);
                     port.addExtensibilityElement(soapAddress);
+                    service.addPort(port);
                 }
             }
 
@@ -408,7 +434,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    private void printUsingWOM(OutputStream out, String serviceURL) throws AxisFault {
+    private void printUsingWOM(OutputStream out, String [] serviceURL) throws AxisFault {
         AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(),
                 this,
                 targetNamespace,

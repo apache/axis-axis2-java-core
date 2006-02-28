@@ -68,7 +68,7 @@ public class SimpleHTTPServer implements TransportListener {
      */
     protected ConfigurationContext configurationContext;
 
-    public SimpleHTTPServer(){
+    public SimpleHTTPServer() {
     }
 
     public SimpleHTTPServer(ConfigurationContext systemContext, int port) throws AxisFault {
@@ -225,8 +225,14 @@ public class SimpleHTTPServer implements TransportListener {
             throw AxisFault.makeFault(e);
         }
 
-        return new EndpointReference("http://" + hostAddress + ":" + (embedded.getLocalPort())
-                + "/axis2/services/" + serviceName);
+
+        if (embedded != null) {
+            // todo this has to fix
+            return new EndpointReference("http://" + hostAddress + ":" + (embedded.getLocalPort())
+                    + "/axis2/services/" + serviceName);
+        } else {
+            throw new AxisFault("Unable to generate EPR for the transport : http");
+        }
     }
 
     /**

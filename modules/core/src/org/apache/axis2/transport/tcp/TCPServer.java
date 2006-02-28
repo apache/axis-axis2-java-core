@@ -172,9 +172,12 @@ public class TCPServer implements Runnable, TransportListener {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference getEPRForService(String serviceName) throws AxisFault {
-
-        // todo this has to fix
-        return new EndpointReference("tcp://127.0.0.1:" + (serversocket.getLocalPort())
-                + "/axis2/services/" + serviceName);
+        if (serversocket != null) {
+            // todo this has to fix
+            return new EndpointReference("tcp://127.0.0.1:" + (serversocket.getLocalPort())
+                    + "/axis2/services/" + serviceName);
+        } else {
+            throw new AxisFault("Unable to generate EPR for the transport tcp");
+        }
     }
 }
