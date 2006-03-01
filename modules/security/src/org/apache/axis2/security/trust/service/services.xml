@@ -1,9 +1,0 @@
-<service name="SecurityTokenService">
-    <description>
-        Axis2 SecurityTokenService
-    </description>
-    <parameter name="ServiceClass" locked="false">org.apache.axis2.security.trust.service.SecurityTokenService</parameter>
-    <operation name="requestSecurityToken">
-        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-    </operation>
-</service>
