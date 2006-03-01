@@ -17,12 +17,7 @@
 
 package org.apache.axis2.phaseresolver;
 
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 
@@ -247,8 +242,21 @@ public class PhaseResolver {
                 }
 
                 case PhaseMetadata.FAULT_OUT_FLOW : {
-                    phaseHolder = new PhaseHolder(axisOperation.getPhasesOutFaultFlow());
+                    ArrayList phases = new ArrayList();
+                    Iterator itr_ops = axisOperation.getPhasesOutFaultFlow().iterator();
+                    while (itr_ops.hasNext()) {
+                        Object o = itr_ops.next();
 
+                        phases.add(o);
+                    }
+                    if (axisConfig != null) {
+                        Iterator itr_axis_config = axisConfig.getOutFaultFlow().iterator();
+                        while (itr_axis_config.hasNext()) {
+                            Object o = itr_axis_config.next();
+                            phases.add(o);
+                        }
+                    }
+                    phaseHolder = new PhaseHolder(phases);
                     break;
                 }
             }

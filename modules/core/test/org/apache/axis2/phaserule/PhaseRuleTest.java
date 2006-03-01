@@ -4,7 +4,9 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
 import javax.xml.namespace.QName;
@@ -19,12 +21,21 @@ public class PhaseRuleTest extends AbstractTestCase {
         super(testName);
     }
 
+
     public void testPhaseRules() throws Exception {
         super.setUp();
         //TODO fix me
         phaserul = new PhaseRuleTest("");
         axisSytem = new AxisConfiguration();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
+        Phase transportIN = new Phase("TransportIn");
+        Phase preDispatch = new Phase("PreDispatch");
+        DispatchPhase dispatchPhase = new DispatchPhase();
+//
+        dispatchPhase.setName("Dispatch");
+        inPhase.add(transportIN);
+        inPhase.add(preDispatch);
+        inPhase.add(dispatchPhase);
 
         PhaseHolder ph = new PhaseHolder(inPhase);
 
@@ -75,7 +86,6 @@ public class PhaseRuleTest extends AbstractTestCase {
         rule3.setPhaseName("Dispatch");
         hm3.setRules(rule3);
         ph.addHandler(hm3);
-
 
         /*ArrayList oh = ph.getOrderHandler();
         for (int i = 0; i < oh.size(); i++) {

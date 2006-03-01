@@ -613,6 +613,7 @@ public class DeploymentEngine implements DeploymentConstants {
         axisConfig.setInPhasesUptoAndIncludingPostDispatch(phasesinfo.getGlobalInflow());
         axisConfig.setInFaultPhases(phasesinfo.getIN_FaultPhases());
         axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());
+        axisConfig.setOutFaultPhases(phasesinfo.getOUT_FaultPhases());
     }
 
     /**

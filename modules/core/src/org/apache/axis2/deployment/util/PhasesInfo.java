@@ -111,7 +111,6 @@ public class PhasesInfo {
     }
 
     public ArrayList getGlobalOutPhaseList() throws DeploymentException {
-
         /**
          * I have assumed that     PolicyDetermination and  MessageProcessing are global out phase
          */
@@ -142,8 +141,18 @@ public class PhasesInfo {
         return OUTPhases;
     }
 
-    public ArrayList getOUT_FaultPhases() {
-        return OUT_FaultPhases;
+    public ArrayList getOUT_FaultPhases() throws DeploymentException {
+        ArrayList globalPhaseList = new ArrayList();
+        for (int i = 0; i < OUT_FaultPhases.size(); i++) {
+            Phase phase = (Phase) OUT_FaultPhases.get(i);
+            String phaseName = phase.getPhaseName();
+
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
+                    || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                globalPhaseList.add(copyPhase(phase));
+            }
+        }
+        return globalPhaseList;
     }
 
     public ArrayList getOperationInFaultPhases() throws DeploymentException {
@@ -179,13 +188,15 @@ public class PhasesInfo {
 
     public ArrayList getOperationOutFaultPhases() throws DeploymentException {
         ArrayList oprationOUT_FaultPhases = new ArrayList();
-
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             Phase phase = (Phase) OUT_FaultPhases.get(i);
-
-            oprationOUT_FaultPhases.add(copyPhase(phase));
+            String phaseName = phase.getPhaseName();
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
+                    || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+            } else {
+                oprationOUT_FaultPhases.add(copyPhase(phase));
+            }
         }
-
         return oprationOUT_FaultPhases;
     }
 

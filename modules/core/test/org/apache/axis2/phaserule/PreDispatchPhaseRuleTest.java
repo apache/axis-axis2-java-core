@@ -20,7 +20,9 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
 import javax.xml.namespace.QName;
@@ -40,7 +42,14 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         phaserul = new PreDispatchPhaseRuleTest("");
         axisSytem = new AxisConfiguration();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
-
+        Phase transportIN = new Phase("TransportIn");
+        Phase preDispatch = new Phase("PreDispatch");
+        DispatchPhase dispatchPhase = new DispatchPhase();
+//
+        dispatchPhase.setName("Dispatch");
+        inPhase.add(transportIN);
+        inPhase.add(preDispatch);
+        inPhase.add(dispatchPhase);
         PhaseHolder ph = new PhaseHolder(inPhase);
 
 
@@ -103,7 +112,6 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         rule2.setBefore("pre-H3");
         hm2.setRules(rule2);
         ph.addHandler(hm2);
-
 
         /*ArrayList oh = ph.getOrderHandler();
         for (int i = 0; i < oh.size(); i++) {

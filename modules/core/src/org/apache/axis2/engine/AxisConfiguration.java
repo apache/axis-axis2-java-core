@@ -23,17 +23,7 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
-import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.description.*;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -41,12 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class AxisConfigurationImpl
@@ -112,33 +97,14 @@ public class AxisConfiguration extends AxisDescription {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-
         systemClassLoader = Thread.currentThread().getContextClassLoader();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
-
         this.phasesinfo = new PhasesInfo();
-
-        // setting the default flow , if some one creating AxisConfig programatically
-        // most required handles will be there in the flow.
-
-        // todo we need to fix this , we know that we are doing wrong thing here
-        createDefaultChain();
-        //setting default message receivers
-        addDefaultMessageReceivers();
     }
 
     public void addMessageReceiver(String mepURL, MessageReceiver messageReceiver) {
         messageReceivers.put(mepURL, messageReceiver);
-    }
-
-    /**
-     * This is required if we are going to create AxisConfiguration programatically
-     * in that case , no dafault message recivers will there be in the system
-     */
-    private void addDefaultMessageReceivers() {
-        addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
-        addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
     }
 
     /**
@@ -253,42 +219,6 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void addTransportOut(TransportOutDescription transport) throws AxisFault {
         transportsOut.put(transport.getName(), transport);
-    }
-
-    private void createDefaultChain() {
-        Phase transportIN = new Phase("TransportIn");
-        Phase preDispatch = new Phase("PreDispatch");
-        DispatchPhase dispatchPhase = new DispatchPhase();
-
-        dispatchPhase.setName("Dispatch");
-
-        AddressingBasedDispatcher abd = new AddressingBasedDispatcher();
-
-        abd.initDispatcher();
-
-        RequestURIBasedDispatcher rud = new RequestURIBasedDispatcher();
-
-        rud.initDispatcher();
-
-        SOAPActionBasedDispatcher sabd = new SOAPActionBasedDispatcher();
-
-        sabd.initDispatcher();
-
-        SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
-
-        smbd.initDispatcher();
-
-        InstanceDispatcher id = new InstanceDispatcher();
-
-        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
-        dispatchPhase.addHandler(abd);
-        dispatchPhase.addHandler(rud);
-        dispatchPhase.addHandler(sabd);
-        dispatchPhase.addHandler(smbd);
-        dispatchPhase.addHandler(id);
-        inPhasesUptoAndIncludingPostDispatch.add(transportIN);
-        inPhasesUptoAndIncludingPostDispatch.add(preDispatch);
-        inPhasesUptoAndIncludingPostDispatch.add(dispatchPhase);
     }
 
     /**

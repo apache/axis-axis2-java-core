@@ -19,12 +19,11 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.*;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +40,7 @@ public class MessageWithServerTest extends TestCase {
     private QName operationName =
             new QName("http://ws.apache.org/axis2", "echoVoid");
 
-    private AxisConfiguration engineRegistry;
+    private AxisConfiguration config;
     private ClassLoader cl;
 
     public MessageWithServerTest(String testName) {
@@ -61,8 +60,42 @@ public class MessageWithServerTest extends TestCase {
                 new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
-        engineRegistry = new AxisConfiguration();
-        service.engageModule(m1, engineRegistry);
+        config = new AxisConfiguration();
+        config.addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+        config.addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
+
+        DispatchPhase dispatchPhase = new DispatchPhase();
+
+        dispatchPhase.setName("Dispatch");
+
+        AddressingBasedDispatcher abd = new AddressingBasedDispatcher();
+
+        abd.initDispatcher();
+
+        RequestURIBasedDispatcher rud = new RequestURIBasedDispatcher();
+
+        rud.initDispatcher();
+
+        SOAPActionBasedDispatcher sabd = new SOAPActionBasedDispatcher();
+
+        sabd.initDispatcher();
+
+        SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
+
+        smbd.initDispatcher();
+
+        InstanceDispatcher id = new InstanceDispatcher();
+
+        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
+        dispatchPhase.addHandler(abd);
+        dispatchPhase.addHandler(rud);
+        dispatchPhase.addHandler(sabd);
+        dispatchPhase.addHandler(smbd);
+        dispatchPhase.addHandler(id);
+        config.getInPhasesUptoAndIncludingPostDispatch().add(dispatchPhase);
+        service.engageModule(m1, config);
 
         AxisOperation axisOperation = new OutInAxisOperation(
         );

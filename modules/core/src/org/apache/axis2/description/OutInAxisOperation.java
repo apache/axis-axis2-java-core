@@ -271,18 +271,14 @@ class OutInAxisOperationClient implements OperationClient {
                 if (resenvelope.getBody().hasFault()) {
                     SOAPFault soapFault = resenvelope.getBody().getFault();
                     Exception ex = soapFault.getException();
-
                     if (options.isExceptionToBeThrownOnSOAPFault()) {
-
                         // does the SOAPFault has a detail element for Excpetion
                         if (ex != null) {
                             throw new AxisFault(ex);
                         } else {
-
                             // if detail element not present create a new
                             // Exception from the detail
                             String message = "";
-
                             message = (message + "Code =" + soapFault.getCode() == null) ? ""
                                     : (soapFault.getCode().getValue() == null) ? ""
                                     : soapFault.getCode().getValue()
@@ -361,7 +357,7 @@ class OutInAxisOperationClient implements OperationClient {
             responseMessageContext.setEnvelope(resenvelope);
             engine = new AxisEngine(msgctx.getConfigurationContext());
             engine.receive(responseMessageContext);
-            if (!resenvelope.getBody().hasFault()) {
+            if (responseMessageContext.getReplyTo() != null) {
                 sc.setTargetEPR(responseMessageContext.getReplyTo());
             }
         } else {

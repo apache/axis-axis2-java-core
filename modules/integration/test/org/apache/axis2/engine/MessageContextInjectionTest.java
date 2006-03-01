@@ -22,15 +22,11 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
 import org.apache.ws.commons.om.OMAbstractFactory;
@@ -55,6 +51,40 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     protected void setUp() throws Exception {
         AxisConfiguration config = new AxisConfiguration();
 
+        config.addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+        config.addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
+
+        DispatchPhase dispatchPhase = new DispatchPhase();
+
+        dispatchPhase.setName("Dispatch");
+
+        AddressingBasedDispatcher abd = new AddressingBasedDispatcher();
+
+        abd.initDispatcher();
+
+        RequestURIBasedDispatcher rud = new RequestURIBasedDispatcher();
+
+        rud.initDispatcher();
+
+        SOAPActionBasedDispatcher sabd = new SOAPActionBasedDispatcher();
+
+        sabd.initDispatcher();
+
+        SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
+
+        smbd.initDispatcher();
+
+        InstanceDispatcher id = new InstanceDispatcher();
+
+        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
+        dispatchPhase.addHandler(abd);
+        dispatchPhase.addHandler(rud);
+        dispatchPhase.addHandler(sabd);
+        dispatchPhase.addHandler(smbd);
+        dispatchPhase.addHandler(id);
+        config.getInPhasesUptoAndIncludingPostDispatch().add(dispatchPhase);
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportIn(tIn);
 

@@ -18,15 +18,12 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.ws.commons.om.OMAbstractFactory;
@@ -61,7 +58,40 @@ public class EnginePausingTest extends TestCase {
 
         AxisService service = new AxisService(serviceName.getLocalPart());
         configConetxt.getAxisConfiguration().addService(service);
+        configConetxt.getAxisConfiguration().addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+        configConetxt.getAxisConfiguration().addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
 
+        DispatchPhase dispatchPhase = new DispatchPhase();
+
+        dispatchPhase.setName("Dispatch");
+
+        AddressingBasedDispatcher abd = new AddressingBasedDispatcher();
+
+        abd.initDispatcher();
+
+        RequestURIBasedDispatcher rud = new RequestURIBasedDispatcher();
+
+        rud.initDispatcher();
+
+        SOAPActionBasedDispatcher sabd = new SOAPActionBasedDispatcher();
+
+        sabd.initDispatcher();
+
+        SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
+
+        smbd.initDispatcher();
+
+        InstanceDispatcher id = new InstanceDispatcher();
+
+        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
+        dispatchPhase.addHandler(abd);
+        dispatchPhase.addHandler(rud);
+        dispatchPhase.addHandler(sabd);
+        dispatchPhase.addHandler(smbd);
+        dispatchPhase.addHandler(id);
+        configConetxt.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch().add(dispatchPhase);
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) {
@@ -149,7 +179,7 @@ public class EnginePausingTest extends TestCase {
 
     public class TempHandler extends AbstractHandler {
         private static final long serialVersionUID = 6201231320871883424L;
-		private Integer index;
+        private Integer index;
         private boolean pause = false;
 
         public TempHandler(int index, boolean pause) {
