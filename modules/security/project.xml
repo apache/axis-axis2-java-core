@@ -210,6 +210,21 @@
 		</properties>
 	</dependency>
     </dependencies>
+    <!-- build information for the project -->
+    <build>
+        <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+        <sourceDirectory>src</sourceDirectory>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/*Abstract*.java</exclude>
+                <exclude>**/WSSPolicyProcessorTest.java</exclude>
+            </excludes>
+        </unitTest>
+	</build>
     <reports/>
 </project>
