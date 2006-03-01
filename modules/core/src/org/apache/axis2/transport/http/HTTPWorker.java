@@ -150,7 +150,7 @@ public class HTTPWorker implements HttpRequestHandler {
                     if (service != null) {
                         response.addHeader(new Header("Content-Type", "text/xml"));
                         String url = conn.getURL(uri.substring(1, uri.length() - 5));
-                        service.printWSDL(baos, url);
+                        service.printWSDL(baos);
                         byte[] buf = baos.toByteArray();
                         response.setBody(new ByteArrayInputStream(buf));
                         conn.writeResponse(response);

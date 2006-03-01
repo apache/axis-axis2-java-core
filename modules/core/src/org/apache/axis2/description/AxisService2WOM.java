@@ -243,7 +243,7 @@ public class AxisService2WOM {
             String epr = URL[i];
             WSDLEndpoint endpoints = wsdlComponentFactory.createEndpoint();
             endpoints.setBinding(binding);
-            endpoints.setName(new QName(ServiceName + "PortType"));
+            endpoints.setName(new QName(ServiceName + "PortType" + i));
             SOAPAddressImpl address = new SOAPAddressImpl();
             address.setLocationURI(epr);
             endpoints.addExtensibilityElement(address);

@@ -108,7 +108,7 @@ public class ListenerManager {
                 }
             } catch (Exception e) {
                 log.info(e.getMessage());
-            }
+            } 
         }
         stopped = false;
     }

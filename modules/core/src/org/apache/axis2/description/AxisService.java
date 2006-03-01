@@ -328,7 +328,7 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
-    public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
+    public void printWSDL(OutputStream out) throws AxisFault {
         ArrayList eprList = new ArrayList();
         AxisConfiguration axisConfig = getAxisConfiguration();
         if (enableAllTransport) {
@@ -373,8 +373,9 @@ public class AxisService extends AxisDescription {
         try {
             Definition wsdlDefinition = getWSDLDefinition();
             Iterator itr_bindings = wsdlDefinition.getBindings().values().iterator();
+            Binding binding = null;
             while (itr_bindings.hasNext()) {
-                Binding binding = (Binding) itr_bindings.next();
+                binding = (Binding) itr_bindings.next();
                 binding.getExtensibilityElements().clear();
                 javax.wsdl.extensions.soap.SOAPBinding soapBinding = new SOAPBindingImpl();
                 soapBinding.setStyle("document");
@@ -423,6 +424,8 @@ public class AxisService extends AxisDescription {
                     soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
                     soapAddress.setLocationURI(url);
                     port.addExtensibilityElement(soapAddress);
+                    port.setName(getName() + "Port" + i);
+                    port.setBinding(binding);
                     service.addPort(port);
                 }
             }

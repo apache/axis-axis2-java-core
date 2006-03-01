@@ -463,7 +463,7 @@ public class ListingAgent {
             if (serviceObj != null) {
                 if (wsdl != null) {
                     res.setContentType("text/xml");
-                    ((AxisService) serviceObj).printWSDL(out, filePart);
+                    ((AxisService) serviceObj).printWSDL(out);
                     out.flush();
                     out.close();
                     return;

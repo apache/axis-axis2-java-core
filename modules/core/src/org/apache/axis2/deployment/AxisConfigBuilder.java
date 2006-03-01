@@ -20,12 +20,7 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
@@ -112,7 +107,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 processHostCongiguration(hostElement, axisConfig);
             }
 
-           // processing <wsp:Policy> .. </..> elements
+            // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
                     TAG_POLICY));
 
@@ -202,41 +197,32 @@ public class AxisConfigBuilder extends DescriptionBuilder {
      *
      * @param oservers
      */
-    private void processObservers(Iterator oservers) throws DeploymentException {
+    private void processObservers(Iterator oservers) {
         while (oservers.hasNext()) {
-            OMElement observerelement = (OMElement) oservers.next();
-            AxisObserver observer;
-            OMAttribute trsClas = observerelement.getAttribute(new QName(TAG_CLASS_NAME));
-            String clasName;
-
-            if (trsClas != null) {
-                clasName = trsClas.getAttributeValue();
-            } else {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.OBSERVER_ERROR));
-            }
-
             try {
+                OMElement observerelement = (OMElement) oservers.next();
+                AxisObserver observer;
+                OMAttribute trsClas = observerelement.getAttribute(new QName(TAG_CLASS_NAME));
+                String clasName ;
+                if (trsClas != null) {
+                    clasName = trsClas.getAttributeValue();
+                } else {
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.OBSERVER_ERROR));
+                    return;
+                }
+
                 Class observerclass = Class.forName(clasName, true,
                         Thread.currentThread().getContextClassLoader());
-
                 observer = (AxisObserver) observerclass.newInstance();
-
                 // processing Parameters
                 // Processing service level parameters
                 Iterator itr = observerelement.getChildrenWithName(new QName(TAG_PARAMETER));
-
                 processParameters(itr, observer, axisConfig);
-
                 // initialization
                 observer.init(axisConfig);
                 axisConfig.addObservers(observer);
-            } catch (ClassNotFoundException e) {
-                throw new DeploymentException(e);
-            } catch (IllegalAccessException e) {
-                throw new DeploymentException(e);
-            } catch (InstantiationException e) {
-                throw new DeploymentException(e);
+            } catch (Exception e) {
+                log.info(e.getMessage());
             }
         }
     }
