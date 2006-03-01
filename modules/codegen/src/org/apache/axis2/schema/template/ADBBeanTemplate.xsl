@@ -556,7 +556,7 @@
                 <xsl:value-of select="$stateMachineName"/>.read(reader);
                 object.set<xsl:value-of select="$javaName"/>(
                   <xsl:choose>
-                      <xsl:when test="@nillable">
+                      <xsl:when test="@nillable and not(@primitive)">
                            <xsl:value-of select="$stateMachineName"/>.getText()==null?null:
                              org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                            <xsl:value-of select="$stateMachineName"/>.getText()));

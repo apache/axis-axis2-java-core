@@ -35,7 +35,7 @@
         public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.Stub
         <xsl:if test="not(@wrapped)">implements <xsl:value-of select="$interfaceName"/></xsl:if>{
         //default axis home being null forces the system to pick up the mars from the axis2 library
-        public static final String AXIS2_HOME = null;
+        public static final java.lang.String AXIS2_HOME = null;
         protected static org.apache.axis2.description.AxisOperation[] _operations;
 	
 	static{
@@ -46,7 +46,7 @@
 	/*
 	 * setting the endpont policy
 	 */
-	 String _service_policy_string = "<xsl:value-of select="@policy"/>";
+	 java.lang.String _service_policy_string = "<xsl:value-of select="@policy"/>";
 	 org.apache.axis2.description.PolicyInclude servicePolicyInclude 
 	 	= _service.getPolicyInclude();
 	 servicePolicyInclude.addPolicyElement(
@@ -57,7 +57,7 @@
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
 	<xsl:if test="//method[@policy]">
-	String __operation_policy_string;
+	java.lang.String __operation_policy_string;
 	</xsl:if>
 	
 	
@@ -92,7 +92,8 @@
 
 
 
-     public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext, String targetEndpoint)
+     public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
+        java.lang.String targetEndpoint)
         throws java.lang.Exception {
 	
 	<xsl:if test="//@policy">
@@ -104,7 +105,7 @@
 		
 	for (java.util.Iterator iterator = modules.iterator(); iterator.hasNext(); iterator.next()) {
 		org.apache.axis2.description.AxisModule axisModule = (org.apache.axis2.description.AxisModule) iterator.next();
-		String[] namespaces = axisModule.getSupportedPolicyNamespaces();
+		java.lang.String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 			
 		if (namespaces != null) {
 			for (int i = 0; i &lt; namespaces.length; i++) {
@@ -159,7 +160,7 @@
     /**
      * Constructor taking the traget endpoint
      */
-    public <xsl:value-of select="@name"/>(String targetEndpoint) throws java.lang.Exception {
+    public <xsl:value-of select="@name"/>(java.lang.String targetEndpoint) throws java.lang.Exception {
         this(org.apache.axis2.context.ConfigurationContextFactory.createConfigurationContextFromFileSystem(AXIS2_HOME,null),
                 targetEndpoint);
     }
@@ -206,8 +207,8 @@
                                 <xsl:when test="$style='rpc'">
                                     // Style is RPC
                                     org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-                                    new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-                                    new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
+                                    new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
+                                    new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                                 </xsl:when>
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc.
@@ -312,8 +313,8 @@
                                 <xsl:when test="$style='rpc'">
                                     // Style is RPC
                                     org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-                                    new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-                                    new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
+                                    new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
+                                    new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                                 </xsl:when>
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc.
@@ -419,8 +420,8 @@
                                 // Style is RPC
                                 env = createEnvelope();
                                 org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-                                new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-                                new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
+                                new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
+                                new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                             </xsl:when>
                             <xsl:when test="$style='doc'">
                                 <!-- for the doc lit case there can be only one element. So take the first element -->
@@ -472,7 +473,7 @@
 	
 	////////////////////////////////////////////////////////////////////////
 	
-	private static org.apache.ws.policy.Policy getPolicyFromString (String policyString) {
+	private static org.apache.ws.policy.Policy getPolicyFromString (java.lang.String policyString) {
 		org.apache.ws.policy.util.PolicyReader prdr 
 			= org.apache.ws.policy.util.PolicyFactory.getPolicyReader(
 					org.apache.ws.policy.util.PolicyFactory.OM_POLICY_READER);
@@ -491,8 +492,8 @@
 		return null;
 	}
 	
-	private static org.apache.ws.policy.Policy merge(String policyString1,
-		String policyString2) {
+	private static org.apache.ws.policy.Policy merge(java.lang.String policyString1,
+		java.lang.String policyString2) {
 		return (org.apache.ws.policy.Policy) getPolicyFromString(policyString1)
 			.merge(getPolicyFromString(policyString2));
 	}
@@ -504,7 +505,7 @@
 		java.util.Iterator iterator = termsList.iterator();
 		
 		org.apache.ws.policy.PrimitiveAssertion pa;
-		String namespace;
+		java.lang.String namespace;
 		org.apache.axis2.description.AxisModule axisModule;
 		
 		while (iterator.hasNext()) {
