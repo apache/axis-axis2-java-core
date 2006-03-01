@@ -37,7 +37,6 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XSLTUtils;
-import org.apache.axis2.wsdl.builder.SchemaUnwrapper;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
@@ -92,7 +91,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     private static Map MEPtoClassMap;
     private static Map MEPtoSuffixMap;
-    
+
 
     /**
      * Field constructorMap
@@ -157,7 +156,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected CodeGenConfiguration configuration;
     protected TypeMapper mapper;
     protected URIResolver resolver;
-    
+
     protected PolicyAttachmentUtil attachmentUtil;
 
 
@@ -200,14 +199,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void addEndpoint(Document doc, Element rootElement) throws Exception {
         WSDLEndpoint endpoint = infoHolder.getPort();
-        
+
         Policy endpointPolicy = attachmentUtil.getPolicyForEndPoint(endpoint.getName());
-        
+
         if (endpointPolicy != null) {
         	String policyString = PolicyUtil.getPolicyAsString(endpointPolicy);
         	addAttribute(doc, "policy", policyString, rootElement);
         }
-        
+
         Element endpointElement = doc.createElement("endpoint");
         org.apache.wsdl.extensions.SOAPAddress address = null;
         Iterator iterator = endpoint.getExtensibilityElements().iterator();
@@ -397,6 +396,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * Creates the DOM tree for implementations.
      */
     protected Document createDOMDocumentForInterfaceImplementation() throws Exception {
+
         WSDLInterface boundInterface = infoHolder.getWSDLinterface();
         WSDLBinding binding = infoHolder.getBinding();
         String packageName = configuration.getPackageName();
@@ -411,7 +411,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc, "namespace", boundInterface.getName().getNamespaceURI(), rootElement);
         addAttribute(doc, "interfaceName", localPart, rootElement);
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
-        
+
         // add the wrap classes flag
         if (configuration.isPackClasses()) {
             addAttribute(doc, "wrapped", "yes", rootElement);
@@ -419,8 +419,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // add SOAP version
         addSoapVersion(binding, doc, rootElement);
-        
-        
 
         // add the end point
         addEndpoint(doc, rootElement);
@@ -450,13 +448,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         // add the databind supporters. Now the databind supporters are completly contained inside
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
-        
+
         Object stubMethods;
-        
+
+        //if some extension has added the stub methods property, add them to the
+        //main document
         if ((stubMethods = configuration.getProperty("stubMethods")) != null) {
         	rootElement.appendChild(doc.importNode((Element) stubMethods, true));
         }
-        
+
         doc.appendChild(rootElement);
         return doc;
     }
@@ -528,8 +528,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
         doc.appendChild(rootElement);
-
-        System.out.println("rootElement = " + rootElement);
 
         return doc;
     }
@@ -644,9 +642,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // ///////////////////////
         doc.appendChild(rootElement);
-        
+
         return doc;
-    }    
+    }
 
     /**
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitSkeleton()
@@ -667,7 +665,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 throw new Exception(CodegenMessages.getMessage("emitter.unknownStyle", codegenStyle + ""));
             }
 
-            
+
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
@@ -925,21 +923,21 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                         addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
                     }
                 }
-                
+
                 /*
                  * Setting the policy of the operation
                  */
                 WSDLEndpoint endpoint = infoHolder.getPort();
-                
+
                 if (endpoint != null) {
                 	Policy policy = attachmentUtil.getOperationPolicy(endpoint.getName(), operation.getName());
-                	
+
                 	if (policy != null) {
                 		addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
                 	}
-                }	
-                
-                               
+                }
+
+
                 methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));
                 methodElement.appendChild(getOutputElement(doc, operation, soapHeaderOutputParameterList));
                 rootElement.appendChild(methodElement);
@@ -973,13 +971,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                             addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
                         }
                     }
-                    
+
                     /*
                      * Setting the policy of the operation
                      */
                     WSDLEndpoint endpoint = infoHolder.getPort();
                     Policy policy = attachmentUtil.getOperationPolicy(endpoint.getName(), operation.getName());
-                    
+
                     if (policy != null) {
                     	addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
                     }
@@ -1130,7 +1128,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 root.appendChild(doc.importNode(((Document) o).getDocumentElement(), true));
             } else {
 
-                // oops we have no idea how to do this
+                // oops we have no idea how to do this, if the model provided is not a DOM document
+                // we are done. we might as well skip  it here
             }
         }
     }
@@ -1140,7 +1139,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * expect the fully qulified class names to be present in the class names list due to the simple
      * reason that they've not been written yet! Hence the mappers class name list needs to be updated
      * to suit the expected package to be written
-     * in this case we modify the package name to have make the class a inner class of the stub
+     * in this case we modify the package name to have make the class a inner class of the stub,
+     * interface or the message receiver depending on the style
+     *
      */
     private void updateMapperClassnames(String fullyQulifiedIncludingClassNamePrefix) {
         Map classNameMap = mapper.getAllMappedNames();
@@ -1153,6 +1154,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
     }
 
+    /**
+     * Update the mappers for the interface
+     * @param boundInterface
+     */
     private void updateMapperForInterface(WSDLInterface boundInterface) {
         String packageName = configuration.getPackageName();
         String interfaceName = getCoreClassName(boundInterface);
@@ -1160,14 +1165,21 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         updateMapperClassnames(packageName + "." + interfaceName + ".");
     }
 
+    /**
+     * Update mapper for message receiver
+     * @param boundInterface
+     */
     private void updateMapperForMessageReceiver(WSDLInterface boundInterface) {
         String packageName = configuration.getPackageName();
         String localPart = getCoreClassName(boundInterface);
         String messageReceiver = localPart + MESSAGE_RECEIVER_SUFFIX;
-
         updateMapperClassnames(packageName + "." + messageReceiver + ".");
     }
 
+    /**
+     * Update mapper for the stub
+     * @param boundInterface
+     */
     private void updateMapperForStub(WSDLInterface boundInterface) {
         String packageName = configuration.getPackageName();
         String localPart = getCoreClassName(boundInterface);
@@ -1178,7 +1190,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Writes the Ant build.
-     *
      * @throws Exception
      */
     protected void writeAntBuild() throws Exception {

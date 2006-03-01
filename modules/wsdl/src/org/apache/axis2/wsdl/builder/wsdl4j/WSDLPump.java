@@ -203,24 +203,27 @@ public class WSDLPump {
         // get all the schema elements (as DOM elements) and read them
         // into  commons XMLSchema objects. This comes in handy when we
         // need to populate the message references
-        List typeExtensibilityElements = wsdlTypes.getExtensibilityElements();
-        XmlSchemaCollection commonsSchemaReader = new XmlSchemaCollection();
-        Map namespacesMap = wsdlDefinition.getNamespaces();
-        String[] prefixes = (String[])namespacesMap.keySet().toArray(new String[namespacesMap.size()]);
-        for (int i = 0; i < prefixes.length; i++) {
-            commonsSchemaReader.mapNamespace(prefixes[i],(String)namespacesMap.get(prefixes[i]));
-        }
 
-        XmlSchema schema;
-        for (int i = 0; i < typeExtensibilityElements.size(); i++) {
-            Object extElement =  typeExtensibilityElements.get(i);
-            if (extElement instanceof org.apache.wsdl.extensions.Schema){
-                org.apache.wsdl.extensions.Schema schemaExtesnsibilityElement = ((org.apache.wsdl.extensions.Schema) extElement);
-                schema = commonsSchemaReader.read(schemaExtesnsibilityElement.getElement());
-                //attach this schema in the extensibility element
-                schemaExtesnsibilityElement.setSchema(schema);
-            }
-        }
+        // this is temporarily commented until the xmlschema baseuri handling is fixed
+
+//        List typeExtensibilityElements = wsdlTypes.getExtensibilityElements();
+//        XmlSchemaCollection commonsSchemaReader = new XmlSchemaCollection();
+//        Map namespacesMap = wsdlDefinition.getNamespaces();
+//        String[] prefixes = (String[])namespacesMap.keySet().toArray(new String[namespacesMap.size()]);
+//        for (int i = 0; i < prefixes.length; i++) {
+//            commonsSchemaReader.mapNamespace(prefixes[i],(String)namespacesMap.get(prefixes[i]));
+//        }
+//
+//        XmlSchema schema;
+//        for (int i = 0; i < typeExtensibilityElements.size(); i++) {
+//            Object extElement =  typeExtensibilityElements.get(i);
+//            if (extElement instanceof org.apache.wsdl.extensions.Schema){
+//                org.apache.wsdl.extensions.Schema schemaExtesnsibilityElement = ((org.apache.wsdl.extensions.Schema) extElement);
+//                schema = commonsSchemaReader.read(schemaExtesnsibilityElement.getElement());
+//                //attach this schema in the extensibility element
+//                schemaExtesnsibilityElement.setSchema(schema);
+//            }
+//        }
 
 
 
@@ -527,7 +530,8 @@ public class WSDLPump {
             wsdlOperation.setInputMessage(wsdlInputMessage);
 
             // attach the right schema element
-            findSchemaElement(wsdlInputMessage,wsdlTypes);
+            // Note  - commented till the XmlSchema baseuri code is fixed
+            //findSchemaElement(wsdlInputMessage,wsdlTypes);
         }
 
         //Create an output message and add
@@ -555,7 +559,8 @@ public class WSDLPump {
             wsdlOperation.setOutputMessage(wsdlOutputMessage);
 
             // attach the right schema element
-            findSchemaElement(wsdlOutputMessage,wsdlTypes);
+            //Note - Commented till fixing the commons schema
+            //findSchemaElement(wsdlOutputMessage,wsdlTypes);
 
         }
 
@@ -1180,7 +1185,7 @@ public class WSDLPump {
                 }else if (ExtensionConstants.SOAP_12_HEADER.equals(unknown.getElementType())){
                     org.apache.wsdl.extensions.SOAPHeader soapHeaderExtensibilityElement = (org.apache.wsdl.extensions.SOAPHeader) extensionFactory.getExtensionElement(
                             unknown.getElementType());
-//right now there's no known header binding!. Ignore the copying of values for now
+                       //right now there's no known header binding!. Ignore the copying of values for now
                     component.addExtensibilityElement(soapHeaderExtensibilityElement);
                 }else if (ExtensionConstants.SOAP_12_BINDING.equals(unknown.getElementType())){
                     org.apache.wsdl.extensions.SOAPBinding soapBindingExtensibiltyElement = (org.apache.wsdl.extensions.SOAPBinding) extensionFactory

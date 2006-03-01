@@ -90,6 +90,11 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
         //check the comptibilty
         checkCompatibility();
 
+        // Note  - typically we  need to check the presence of unwrapped or wrapped
+        // parameter style  here. However XMLBeans nicely generates classes for all
+        // elements,even internal ones and hence in this extension we do not have to
+        // special case anything
+
         Element[] additionalSchemas = loadAdditionalSchemas();
 
         try {
@@ -327,13 +332,13 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             HashMap bindingOps = b.getBindingOperations();
             Collection bindingOpsCollection = bindingOps.values();
             for (Iterator iterator1 = bindingOpsCollection.iterator(); iterator1.hasNext();) {
-                foo((WSDLBindingOperation) iterator1.next());
+                checkInvalidUse((WSDLBindingOperation) iterator1.next());
             }
 
         }
     }
 
-    protected void foo(WSDLBindingOperation bindingOp) {
+    protected void checkInvalidUse(WSDLBindingOperation bindingOp) {
         WSDLBindingMessageReference input = bindingOp.getInput();
         if (input != null) {
             Iterator extIterator = input.getExtensibilityElements()

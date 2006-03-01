@@ -54,7 +54,7 @@ public class SchemaUnwrapper {
             WSDLBinding[] bindingsArray = (WSDLBinding[])
                     bindings.values().toArray(new WSDLBinding[bindings.size()]);
             for (int i = 0; i < bindingsArray.length; i++) {
-                unwrapSchemaForInterface(bindingsArray[i].getBoundInterface(),description);
+                unwrapSchemaForInterface(bindingsArray[i].getBoundInterface());
 
             }
 
@@ -63,7 +63,7 @@ public class SchemaUnwrapper {
             WSDLInterface[] interfacesArray = (WSDLInterface[])
                     interfaces.values().toArray(new WSDLInterface[interfaces.size()]);
             for (int i = 0; i < interfacesArray.length; i++) {
-                unwrapSchemaForInterface(interfacesArray[i],description);
+                unwrapSchemaForInterface(interfacesArray[i]);
             }
 
 
@@ -76,15 +76,17 @@ public class SchemaUnwrapper {
      * @param wsdlInterface
      * @param decription
      */
-    private static void unwrapSchemaForInterface(WSDLInterface wsdlInterface,WSDLDescription decription){
-        Map operationsMap = wsdlInterface.getOperations();
+    private static void unwrapSchemaForInterface(WSDLInterface wsdlInterface){
+        // we should be getting all the operation since we also need to consider the inherited ones
+        Map operationsMap = wsdlInterface.getAllOperations();
         if (!operationsMap.isEmpty()){
             WSDLOperation[] operations = (WSDLOperation[])
                     operationsMap.values().toArray(new WSDLOperation[operationsMap.size()]);
             WSDLOperation operation;
             for (int i = 0; i < operations.length; i++) {
                 operation = operations[i];
-                //process Schema
+                // There's is no such concept as having multiple output parameters
+                // (atleast in java) so our focus is only in the input message reference
                 MessageReference inputMessage = operation.getInputMessage();
                 processMessageReference(inputMessage);
             }
@@ -96,7 +98,9 @@ public class SchemaUnwrapper {
     /**
      * Processes a message reference,
      * What we do is to store the relevant message elements inside
-     * the metadata bag for further use
+     * the metadata bag for further use. The unwrapping algorithm
+     * only looks at the sequnece and not anything else
+     *
      * @param messageReference
      */
 
@@ -123,12 +127,8 @@ public class SchemaUnwrapper {
                                           internalElement.getQName(),
                                           internalElement);
                              }
-
-
                         }
-
                     }
-
                 }
             }
         }
