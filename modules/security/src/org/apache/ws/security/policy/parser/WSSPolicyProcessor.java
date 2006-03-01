@@ -162,6 +162,7 @@ public class WSSPolicyProcessor {
                 merged = newPolicy;
             } else {
                 merged = (Policy) merged.merge(newPolicy);
+                merged = (Policy) merged.normalize();
             }
             try {
                 fis.close();

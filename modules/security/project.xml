@@ -220,10 +220,6 @@
             <includes>
                 <include>**/*Test.java</include>
             </includes>
-            <excludes>
-                <exclude>**/*Abstract*.java</exclude>
-                <exclude>**/WSSPolicyProcessorTest.java</exclude>
-            </excludes>
         </unitTest>
 	</build>
     <reports/>
