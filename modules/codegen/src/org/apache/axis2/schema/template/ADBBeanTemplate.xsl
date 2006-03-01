@@ -168,7 +168,7 @@
 
                     <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
-                        <xsl:when test="@ours or @any or @default or @array">
+                        <xsl:when test="@ours or @default or @array">
                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
                                                                       "<xsl:value-of select="$propertyName"/>"));
                             <!-- Arraylist can handle null's -->
@@ -184,6 +184,12 @@
                                     elementList.add(<xsl:value-of select="$varName"/>);
                                 </xsl:otherwise>
                             </xsl:choose>
+                        </xsl:when>
+                        <!-- handle any-->
+                         <xsl:when test="@any">
+                             <!--todo Not sure whether this is right-->
+                            elementList.add(null);
+                            elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:otherwise>
                              elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
@@ -464,11 +470,41 @@
                     </xsl:choose>
              </xsl:when>
              <!--  end of array handling -->
+
+             <!-- start of adb handling-->
               <xsl:when test="@ours">
+
+                  object.set<xsl:value-of select="$javaName"/>(
+                  <xsl:value-of select="$propertyType"/>.Factory.parse(reader));
+
+
+              </xsl:when>
+
+              <!-- start of any handling. Any can also be @default so we need to
+        handle the any case before default! -->
+              <xsl:when test="@any">
                   <!--No concerns of being nillable here. if it's ours and if the nillable attribute was present
                       we would have outputted a null already-->
-                  object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(
-                  reader));
+                   boolean <xsl:value-of select="$loopBoolName"/> = false;
+                   //move to the start element
+                   while(!<xsl:value-of select="$loopBoolName"/>){
+                    if (reader.isStartElement()){
+                        <xsl:value-of select="$loopBoolName"/> = true;
+                    }else{
+                        reader.next();
+                    }
+                }
+
+                   <!--This can be any element and we may not know the name. so we pick the name of the
+                   element from the parser-->  
+                //use the QName from the parser as the name for the builder
+                javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = reader.getName();
+
+                // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
+                // this is needed by the builder classes
+                org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                        new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
+                object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement());
 
 
               </xsl:when>

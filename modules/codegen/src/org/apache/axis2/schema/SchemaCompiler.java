@@ -68,7 +68,8 @@ public class SchemaCompiler {
     //the list of processedElements for the outer elements
     private HashMap processedElementMap;
 
-     private HashMap processedAnonymousComplexTypesMap;
+    private HashMap processedAnonymousComplexTypesMap;
+
     //we need this map to keep the referenced elements. these elements need to be kept seperate
     //to avoid conflicts
     private HashMap processedElementRefMap;
@@ -83,18 +84,23 @@ public class SchemaCompiler {
     //
     private ArrayList processedElementList;
 
-    //
+    //a list of nillable elements - used to generate code
+    //for nillable elements
     private List nillableElementList;
-
     private BeanWriter writer = null;
-
     private Map baseSchemaTypeMap = null;
 
-    private static final String ANY_ELEMENT_FIELD_NAME = "extraElements";
-    private static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
+    // a list of externally identified QNames to be processed. This becomes
+    // useful when  only a list of external elements need to be processed
+
+    public static final String ANY_ELEMENT_FIELD_NAME = "extraElement";
+    public static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
     public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.ws.commons.om.OMElement[]";
+
+
+
 
 
     /**
@@ -105,6 +111,7 @@ public class SchemaCompiler {
     public HashMap getProcessedElementMap() {
         return processedElementMap;
     }
+
 
     /**
      * @return a map of Qname vs models. A model can be anything,
@@ -129,6 +136,7 @@ public class SchemaCompiler {
             this.options = options;
         }
 
+        //instantiate the maps
         processedTypemap = new HashMap();
         processedElementMap = new HashMap();
         simpleTypesMap = new HashMap();
@@ -139,7 +147,7 @@ public class SchemaCompiler {
         processedElementRefMap = new HashMap();
         nillableElementList = new ArrayList();
 
-        //load the writer a nd initiliaze the base type
+        //load the writer and initiliaze the base types
         writer = SchemaPropertyLoader.getBeanWriterInstance();
         writer.init(this.options);
 
@@ -192,8 +200,11 @@ public class SchemaCompiler {
                 }
             }
         }
+
+
         //select all the elements. We generate the code for types
-        //only if the elements refer them!!!
+        //only if the elements refer them!!! regardless of the fact that
+        //we have a list of elementnames, we'll need to process all the elements
         XmlSchemaObjectTable elements = schema.getElements();
         Iterator xmlSchemaElement1Iterator = elements.getValues();
         while (xmlSchemaElement1Iterator.hasNext()) {
@@ -214,6 +225,7 @@ public class SchemaCompiler {
             //this is the set of outer elements so we need to generate classes
             writeElement((XmlSchemaElement) xmlSchemaElement2Iterator.next());
         }
+
 
         if (options.isWrapClasses()) {
             writer.writeBatch();
@@ -276,7 +288,7 @@ public class SchemaCompiler {
                     className);
 
 
-        }else{
+        }else if (schemaType != null){  //the named type should have been handled already
 
             //we are going to special case the anonymous complex type. Our algorithm for dealing
             //with it is to generate a single object that has the complex content inside. Really the
@@ -284,6 +296,10 @@ public class SchemaCompiler {
             //First copy the schema types content into the metainf holder
             metainf = (BeanWriterMetaInfoHolder) this.processedAnonymousComplexTypesMap.get(xsElt);
             metainf.setAnonymous(true);
+        }else{
+            //this means we did not find any schema type associated with the particular element. we
+            //should be throwing an exception here
+            throw new SchemaCompilationException("no type!!");//todo i18n this
         }
 
         if (nillableElementList.contains(xsElt.getQName())){
@@ -669,12 +685,13 @@ public class SchemaCompiler {
             //todo - Handle simple type restriction here
         }
     }
+
     /**
      * Handle any attribute
-     *
      * @param metainf
      */
     private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
+
         //The best thing we can do here is to add a set of OMAttributes
         metainf.registerMapping(new QName(EXTRA_ATTRIBUTE_FIELD_NAME),
                 null,
@@ -682,6 +699,8 @@ public class SchemaCompiler {
                 SchemaConstants.ANY_ATTRIBUTE_TYPE);
 
     }
+
+
 
     /**
      * Process the attribute
@@ -761,7 +780,13 @@ public class SchemaCompiler {
 
                 //handle xsd:any ! We place an OMElement in the generated class
             } else if (item instanceof XmlSchemaAny) {
-                processAny((XmlSchemaAny) item, metainfHolder);
+                XmlSchemaAny any = (XmlSchemaAny) item;
+                processAny(any, processedElementTypeMap);
+                //any can also be inside a sequence
+                if (order) {
+                    elementOrderMap.put(any, new Integer(i));
+                }
+                 processedElementArrayStatusMap.put(any, Boolean.FALSE);
             } else {
                 //there may be other types to be handled here. Add them
                 //when we are ready
@@ -774,47 +799,76 @@ public class SchemaCompiler {
         Iterator processedElementsIterator = processedElementArrayStatusMap.keySet().iterator();
         int startingItemNumberOrder = metainfHolder.getOrderStartPoint();
         while (processedElementsIterator.hasNext()) {
-            XmlSchemaElement elt = (XmlSchemaElement) processedElementsIterator.next();
-            String clazzName;
-            QName qName;
+            Object child = processedElementsIterator.next();
 
-            if (elt.getQName()!=null){
-                clazzName = (String) processedElementTypeMap.get(elt.getQName());
-                qName = elt.getQName();
-                metainfHolder.registerMapping(qName,
-                        elt.getSchemaTypeName()
-                        , clazzName,
-                        ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
-                                SchemaConstants.ANY_ARRAY_TYPE :
-                                SchemaConstants.ELEMENT_TYPE);
-            }else{ //probably this is referenced
-                clazzName = (String)processedElementRefMap.get(elt.getRefName());
-                qName = elt.getRefName();
-                metainfHolder.registerMapping(qName,
-                        parentSchema.getElementByName(elt.getRefName()).getSchemaTypeName()
-                        , clazzName,
-                        ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
-                                SchemaConstants.ANY_ARRAY_TYPE :
-                                SchemaConstants.ELEMENT_TYPE);
+            // process the XmlSchemaElement
+            if (child instanceof XmlSchemaElement){
+                XmlSchemaElement elt = (XmlSchemaElement) child;
+                String clazzName;
+                QName qName;
+
+                if (elt.getQName()!=null){
+                    clazzName = (String) processedElementTypeMap.get(elt.getQName());
+                    qName = elt.getQName();
+                    metainfHolder.registerMapping(qName,
+                            elt.getSchemaTypeName()
+                            , clazzName,
+                            ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
+                                    SchemaConstants.ANY_ARRAY_TYPE :
+                                    SchemaConstants.ELEMENT_TYPE);
+                }else{ //probably this is referenced
+                    clazzName = (String)processedElementRefMap.get(elt.getRefName());
+                    qName = elt.getRefName();
+                    metainfHolder.registerMapping(qName,
+                            parentSchema.getElementByName(elt.getRefName()).getSchemaTypeName()
+                            , clazzName,
+                            ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
+                                    SchemaConstants.ANY_ARRAY_TYPE :
+                                    SchemaConstants.ELEMENT_TYPE);
+                }
+
+
+
+                //register the occurence counts
+                metainfHolder.addMaxOccurs(qName, elt.getMaxOccurs());
+                metainfHolder.addMinOccurs(qName, elt.getMinOccurs());
+                //we need the order to be preserved. So record the order also
+                if (order) {
+                    //record the order in the metainf holder
+                    Integer integer = (Integer) elementOrderMap.get(elt);
+                    metainfHolder.registerQNameIndex(qName,
+                            startingItemNumberOrder + integer.intValue());
+                }
+
+                //get the nillable state and register that on the metainf holder
+                if (localNillableList.contains(elt.getQName())){
+                    metainfHolder.registerNillableQName(elt.getQName());
+                }
+
+                // process the XMLSchemaAny
+            }else if (child instanceof XmlSchemaAny){
+                XmlSchemaAny any = (XmlSchemaAny)child;
+
+                //since there is only one element here it does not matter
+                //for the constant. However the problem occurs if the users
+                //uses the same name for an element decalration
+                QName anyElementFieldName = new QName(ANY_ELEMENT_FIELD_NAME);
+                metainfHolder.registerMapping(anyElementFieldName,
+                        null,
+                        DEFAULT_CLASS_NAME,
+                        SchemaConstants.ANY);
+                metainfHolder.addMaxOccurs(anyElementFieldName,any.getMaxOccurs());
+                metainfHolder.addMinOccurs(anyElementFieldName,any.getMinOccurs());
+                if (order) {
+                    //record the order in the metainf holder for the any
+                    Integer integer = (Integer) elementOrderMap.get(any);
+                    metainfHolder.registerQNameIndex(anyElementFieldName,
+                            startingItemNumberOrder + integer.intValue());
+                }
+
+
             }
 
-
-
-            //register the occurence counts
-            metainfHolder.addMaxOccurs(qName, elt.getMaxOccurs());
-            metainfHolder.addMinOccurs(qName, elt.getMinOccurs());
-            //we need the order to be preserved. So record the order also
-            if (order) {
-                //record the order in the metainf holder
-                Integer integer = (Integer) elementOrderMap.get(elt);
-                metainfHolder.registerQNameIndex(qName,
-                        startingItemNumberOrder + integer.intValue());
-            }
-
-            //get the nillable state and register that on the metainf holder
-            if (localNillableList.contains(elt.getQName())){
-                metainfHolder.registerNillableQName(elt.getQName());
-            }
 
         }
 
@@ -828,15 +882,8 @@ public class SchemaCompiler {
      * @param any
      * @param metainf
      */
-    private void processAny(XmlSchemaAny any, BeanWriterMetaInfoHolder metainf) {
-        //handle the minoccurs/maxoccurs here.
-        //However since the any element does not have a name
-        //we need to put a name here
-        metainf.registerMapping(new QName(ANY_ELEMENT_FIELD_NAME),
-                null,
-                DEFAULT_CLASS_NAME,
-                SchemaConstants.ANY_TYPE);
-
+    private void processAny(XmlSchemaAny any, Map processedElementTypeMap) {
+        processedElementTypeMap.put(new QName(ANY_ELEMENT_FIELD_NAME),any);
     }
 
     /**
