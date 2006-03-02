@@ -34,6 +34,7 @@ import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPConstants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultCode;
@@ -94,19 +95,24 @@ public class AxisEngine {
 
             String role = hb.getRole();
 
+            String prefix = se.getNamespace().getPrefix();
+            
             if (!msgContext.isSOAP11()) {
 
                 // if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
                 // it to be NEXT
+                if (prefix == null || "".equals(prefix)) {
+                    prefix = SOAPConstants.SOAPFAULT_NAMESPACE_PREFIX;
+                }
                 if (role != null) {
                     if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
                         throw new AxisFault("Must Understand check failed",
-                                SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
+                                prefix + ":" + SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                     }
                 } else {
                     // This is the ultimate receiver, throw an error.
                     throw new AxisFault("Must Understand check failed",
-                            SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
+                            prefix + ":" + SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             } else {
 
@@ -114,7 +120,7 @@ public class AxisEngine {
                 // it to be NEXT
                 if ((role != null) && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
                     throw new AxisFault("Must Understand check failed",
-                            SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
+                            prefix + ":" + SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             }
         }
