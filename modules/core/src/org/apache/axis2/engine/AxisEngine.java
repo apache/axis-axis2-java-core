@@ -265,12 +265,19 @@ public class AxisEngine {
         Object faultCode = context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         String soapFaultCode = "";
 
+        Throwable exception = null;
         if (faultCode != null) {
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
-        } else if (e instanceof AxisFault) {
-            soapFaultCode = ((AxisFault) e).getFaultCode();
+        } else if ((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault) {
+            QName faultCodeQName = ((AxisFault) exception).getFaultCode();
+            String prefix = faultCodeQName.getPrefix();
+            String uri = faultCodeQName.getNamespaceURI();
+            prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
+            uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
+            soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
+            fault.declareNamespace(uri, prefix);
         }
 
         // defaulting to fault code Sender, if no message is available
@@ -288,7 +295,9 @@ public class AxisEngine {
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (e instanceof AxisFault) {
-            message = e.getMessage();
+            message = ((AxisFault) e).getReason();
+            message = message != null && "".equals(message) ? message : e.getMessage();
+
         }
 
         // defaulting to reason, unknown, if no reason is available
@@ -499,9 +508,9 @@ public class AxisEngine {
         // TODO: Make this clearer - should we have transport senders and messagereceivers as Handlers?
         if (!msgContext.isPaused()) {
 
-//            msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext().getAxisConfiguration().getOutFaultFlow().clone());
-//            msgContext.setFLOW(MessageContext.OUT_FLOW);
-//            invoke(msgContext);
+            msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext().getAxisConfiguration().getOutFaultFlow().clone());
+            msgContext.setFLOW(MessageContext.OUT_FLOW);
+            invoke(msgContext);
 
             // Actually send the SOAP Fault
             TransportSender sender = msgContext.getTransportOut().getSender();

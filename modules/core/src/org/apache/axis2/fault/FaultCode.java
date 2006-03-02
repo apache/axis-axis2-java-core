@@ -24,7 +24,7 @@ import org.apache.ws.commons.soap.SOAPFaultValue;
 import javax.xml.namespace.QName;
 
 public class FaultCode extends AbstractFaultCode {
-    String value;
+    QName value;
 
     /**
      * simple constructor
@@ -62,11 +62,15 @@ public class FaultCode extends AbstractFaultCode {
     }
 
     public String getValueString() {
-        return value;
+        return value.getLocalPart();
     }
 
     public void setValue(QName value) {
-        setValueString(value.toString());
+        this.value = value;
+    }
+
+    public QName getValue() {
+        return value;
     }
 
     /**
@@ -75,8 +79,6 @@ public class FaultCode extends AbstractFaultCode {
      * @param value
      */
     public void setValueString(String value) {
-        QName newName = new QName(value);
-
-        this.value = newName.toString();
+       this.value = new QName(value);
     }
 }

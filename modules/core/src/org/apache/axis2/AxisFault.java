@@ -205,6 +205,10 @@ public class AxisFault extends RemoteException {
         reasons.add(text, language);
     }
 
+    public String getReason() {
+        return reasons.getFirstReasonText();
+    }
+
     /**
      * Iterate over all of the headers
      *
@@ -272,8 +276,8 @@ public class AxisFault extends RemoteException {
         return detail;
     }
 
-    public String getFaultCode() {
-        return faultCode.getValueString();
+    public QName getFaultCode() {
+        return faultCode.getValue();
     }
 
     /**
