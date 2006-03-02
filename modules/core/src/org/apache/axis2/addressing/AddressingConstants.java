@@ -56,6 +56,7 @@ public interface AddressingConstants {
                 "http://www.w3.org/2005/08/addressing/anonymous";
         public static final String WSA_NONE_URI =
                 "http://www.w3.org/2005/08/addressing/none";
+        public static final String WSA_FAULT_ACTION = "http://www.w3.org/2005/08/addressing/fault";
         public static final String WSA_TYPE_ATTRIBUTE_VALUE = "true";
         public static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "EndpointName";
         public static final String WSA_POLICIES = "Policies";

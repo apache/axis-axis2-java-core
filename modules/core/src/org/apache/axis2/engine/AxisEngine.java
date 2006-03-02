@@ -96,7 +96,7 @@ public class AxisEngine {
             String role = hb.getRole();
 
             String prefix = se.getNamespace().getPrefix();
-            
+
             if (!msgContext.isSOAP11()) {
 
                 // if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
@@ -276,14 +276,18 @@ public class AxisEngine {
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
-        } else if ((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault) {
+        } else
+        if (e != null && ((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
+        {
             QName faultCodeQName = ((AxisFault) exception).getFaultCode();
-            String prefix = faultCodeQName.getPrefix();
-            String uri = faultCodeQName.getNamespaceURI();
-            prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
-            uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
-            soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
-            fault.declareNamespace(uri, prefix);
+            if (faultCodeQName != null) {
+                String prefix = faultCodeQName.getPrefix();
+                String uri = faultCodeQName.getNamespaceURI();
+                prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
+                uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
+                soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
+                fault.declareNamespace(uri, prefix);
+            }
         }
 
         // defaulting to fault code Sender, if no message is available
