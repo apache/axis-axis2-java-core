@@ -171,6 +171,7 @@ public class WSSPolicyProcessor {
                 e.printStackTrace();
             }
         }
+      
         if (processPolicy(merged)) {
             log.debug("Security Policy sucessfully parsed");
         } else {
@@ -197,7 +198,7 @@ public class WSSPolicyProcessor {
     public boolean processPolicy(Policy policy) {
 
         if (!policy.isNormalized()) {
-            throw new RuntimeException("Policy is not in normalized format");
+        	policy = (Policy) policy.normalize();
         }
 
         XorCompositeAssertion xor = (XorCompositeAssertion) policy.getTerms()
