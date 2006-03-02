@@ -181,8 +181,8 @@ public abstract class AbstractHTTPSender {
      * @param method
      * @param msgContext
      */
-    protected void obatainHTTPHeaderInformation(HttpMethodBase method,
-                                                MessageContext msgContext) {
+    protected void obtainHTTPHeaderInformation(HttpMethodBase method,
+                                               MessageContext msgContext) {
         Header header =
                 method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
@@ -225,7 +225,7 @@ public abstract class AbstractHTTPSender {
     protected void processResponse(HttpMethodBase httpMethod,
                                    MessageContext msgContext)
             throws IOException {
-        obatainHTTPHeaderInformation(httpMethod, msgContext);
+        obtainHTTPHeaderInformation(httpMethod, msgContext);
 
         InputStream in = httpMethod.getResponseBodyAsStream();
 
@@ -234,8 +234,10 @@ public abstract class AbstractHTTPSender {
                     Messages.getMessage("canNotBeNull", "InputStream"));
         }
 
-        msgContext.getOperationContext()
-                .setProperty(MessageContext.TRANSPORT_IN, in);
+        if(msgContext.getOperationContext() != null) {
+            msgContext.getOperationContext()
+                    .setProperty(MessageContext.TRANSPORT_IN, in);
+        }
     }
 
     public abstract void send(MessageContext msgContext, OMElement dataout,
