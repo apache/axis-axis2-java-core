@@ -122,11 +122,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         // processing WSA Action
-        String action = messageContextOptions.getAction();
-        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
-                addressingNamespaceObject)) {
-            processStringInfo(action, WSA_ACTION, envelope);
-        }
+        processWSAAction(messageContextOptions, envelope);
 
         // processing WSA RelatesTo
         processRelatesTo(envelope, messageContextOptions);
@@ -138,6 +134,17 @@ public class AddressingOutHandler extends AddressingHandler {
         addressingNamespaceObject = null;
         addressingNamespace = null;
 
+    }
+
+    private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope) {
+        if (msgCtxt.isProcessingFault()) {
+            processStringInfo(Final.WSA_FAULT_ACTION, WSA_ACTION, envelope);
+        }
+        String action = messageContextOptions.getAction();
+        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
+                addressingNamespaceObject)) {
+            processStringInfo(action, WSA_ACTION, envelope);
+        }
     }
 
     private void processFaultsInfoIfPresent(SOAPEnvelope envelope, MessageContext msgContext) {
