@@ -26,8 +26,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultReason;
@@ -44,7 +42,6 @@ import java.util.Map;
 public abstract class AddressingInHandler extends AddressingHandler implements AddressingConstants {
 
     private static final long serialVersionUID = 3907988439637261572L;
-    private OMNamespace addressingNamespaceObject;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         SOAPHeader header = msgContext.getEnvelope().getHeader();
@@ -61,7 +58,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             addressingHeaders = header.getHeaderBlocksWithNSURI(addressingNamespace);
             if (addressingHeaders != null && addressingHeaders.size() > 0) {
                 msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace);
-                addressingNamespaceObject = ((OMElement) addressingHeaders.get(0)).findNamespace(addressingNamespace, null);
                 logger.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
                 extractAddressingInformation(header, msgContext,
                         addressingHeaders, addressingNamespace);
@@ -125,7 +121,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 faultInformation = new HashMap();
                 messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
             }
-            faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject.getPrefix() + ":" + addressingHeaderName);
+            faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME,  "wsa:" + addressingHeaderName);
             faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
             return true;
         } else {

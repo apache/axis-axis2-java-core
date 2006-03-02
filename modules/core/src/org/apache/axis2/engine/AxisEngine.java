@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPConstants;
@@ -277,10 +278,10 @@ public class AxisEngine {
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
         } else
-        if (e != null && ((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
+        if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
         {
             QName faultCodeQName = ((AxisFault) exception).getFaultCode();
-            if (faultCodeQName != null) {
+            if (faultCodeQName != null && faultCodeQName.getLocalPart().indexOf(":") == -1) {
                 String prefix = faultCodeQName.getPrefix();
                 String uri = faultCodeQName.getNamespaceURI();
                 prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
@@ -292,7 +293,7 @@ public class AxisEngine {
 
         // defaulting to fault code Sender, if no message is available
         soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
-                ? getSenderFaultCode(soapNamespaceURI)
+                ? getSenderFaultCode(context.getEnvelope().getNamespace())
                 : soapFaultCode;
         fault.getCode().getValue().setText(soapFaultCode);
 
@@ -529,9 +530,9 @@ public class AxisEngine {
         }
     }
 
-    private String getSenderFaultCode(String soapNamespace) {
-        return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace)
-                ? SOAP12Constants.FAULT_CODE_SENDER
-                : SOAP11Constants.FAULT_CODE_SENDER;
+    private String getSenderFaultCode(OMNamespace soapNamespace) {
+        return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getName())
+                ? soapNamespace.getPrefix() + ":" + SOAP12Constants.FAULT_CODE_SENDER
+                : soapNamespace.getPrefix() + ":" + SOAP11Constants.FAULT_CODE_SENDER;
     }
 }
