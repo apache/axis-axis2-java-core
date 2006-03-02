@@ -101,11 +101,15 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                     extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
                 }
             } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
-                messageContextOptions.setMessageId(soapHeaderBlock.getText());
-                soapHeaderBlock.setProcessed();
+                if (!hasDuplicateHeaders(WSA_MESSAGE_ID, messageContext, alreadyFoundAddrHeader)) {
+                    messageContextOptions.setMessageId(soapHeaderBlock.getText());
+                    soapHeaderBlock.setProcessed();
+                }
             } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
-                messageContextOptions.setAction(soapHeaderBlock.getText());
-                soapHeaderBlock.setProcessed();
+                if (!hasDuplicateHeaders(WSA_ACTION, messageContext, alreadyFoundAddrHeader)) {
+                    messageContextOptions.setAction(soapHeaderBlock.getText());
+                    soapHeaderBlock.setProcessed();
+                }
             } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 if (!hasDuplicateHeaders(WSA_RELATES_TO, messageContext, alreadyFoundAddrHeader)) {
                     extractRelatesToInformation(soapHeaderBlock, addressingNamespace, messageContextOptions);
