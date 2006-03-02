@@ -177,13 +177,14 @@ public class AxisEngine {
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null) {
             faultContext.setTo(processingContext.getFaultTo());
-        } else
-        if (processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null)
+        } else if (processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null)
         {
             OMElement faultToElement = processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo"));
             faultTo = new EndpointReference("");
             faultTo.fromOM(faultToElement);
             faultContext.setTo(faultTo);
+        } else if (processingContext.getReplyTo() != null) {
+            faultContext.setTo(processingContext.getReplyTo());
         }
 
         if (faultTo == null || AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
