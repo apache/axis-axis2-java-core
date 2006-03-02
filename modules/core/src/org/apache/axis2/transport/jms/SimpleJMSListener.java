@@ -254,14 +254,18 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
         return properties;
     }
 
-    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
+    public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         try {
             JMSURLHelper url = new JMSURLHelper("jms:/" + destination);
-            url.getProperties().putAll(properties);
-            return new EndpointReference(url.getURLString());
+            if (url != null && url.getProperties() != null && properties != null) {
+                url.getProperties().putAll(properties);
+                return new EndpointReference(url.getURLString());
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
-            throw AxisFault.makeFault(e);
+            return null;
         }
     }
 }

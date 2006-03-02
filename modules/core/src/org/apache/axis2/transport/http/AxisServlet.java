@@ -57,8 +57,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected ListingAgent lister;
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
-                                                              MessageContext msgContext, HttpServletResponse httpServletResponse,
-                                                              HttpServletRequest httpServletRequest)
+                                                                MessageContext msgContext, HttpServletResponse httpServletResponse,
+                                                                HttpServletRequest httpServletRequest)
             throws AxisFault {
         msgContext = new MessageContext();
         msgContext.setConfigurationContext(configContext);
@@ -291,7 +291,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // no one call thie method
     }
 
-    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
-        throw new UnsupportedOperationException("Not yet complete");
+    public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+        //RUNNING_PORT
+        String port = System.getProperty(ListingAgent.RUNNING_PORT);
+        if (port == null) {
+            // TODO : Need to fix this
+            port = "8080";
+        }
+        return new EndpointReference("http://" + ip + ":" + port + "/axis2/services/" + serviceName);
     }
 }

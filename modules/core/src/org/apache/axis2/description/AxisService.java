@@ -328,7 +328,7 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
-    public void printWSDL(OutputStream out) throws AxisFault {
+    public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
         ArrayList eprList = new ArrayList();
         AxisConfiguration axisConfig = getAxisConfiguration();
         if (enableAllTransport) {
@@ -338,7 +338,12 @@ public class AxisService extends AxisDescription {
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null) {
                     try {
-                        eprList.add(listener.getEPRForService(getName()).getAddress());
+                        if (listener.getEPRForService(getName(), requestIP) != null) {
+                            String address = listener.getEPRForService(getName(), requestIP).getAddress();
+                            if (address != null) {
+                                eprList.add(address);
+                            }
+                        }
                     } catch (AxisFault axisFault) {
                         log.info(axisFault.getMessage());
                     }
@@ -353,7 +358,12 @@ public class AxisService extends AxisDescription {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
                         try {
-                            eprList.add(listener.getEPRForService(getName()).getAddress());
+                            if (listener.getEPRForService(getName(), requestIP) != null) {
+                                String address = listener.getEPRForService(getName(), requestIP).getAddress();
+                                if (address != null) {
+                                    eprList.add(address);
+                                }
+                            }
                         } catch (AxisFault axisFault) {
                             log.info(axisFault.getMessage());
                         }

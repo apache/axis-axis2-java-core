@@ -28,6 +28,7 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Class TCPServer
@@ -171,13 +173,21 @@ public class TCPServer implements Runnable, TransportListener {
      *  (non-Javadoc)
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
-    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
+    public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+        if (ip == null) {
+            try {
+                ip = SimpleHttpServerConnection.getIpAddress();
+            } catch (SocketException e) {
+                throw AxisFault.makeFault(e);
+            }
+        }
         if (serversocket != null) {
             // todo this has to fix
-            return new EndpointReference("tcp://127.0.0.1:" + (serversocket.getLocalPort())
+            return new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
                     + "/axis2/services/" + serviceName);
         } else {
-            throw new AxisFault("Unable to generate EPR for the transport tcp");
+            log.info("Unable to generate EPR for the transport tcp");
+            return null;
         }
     }
 }

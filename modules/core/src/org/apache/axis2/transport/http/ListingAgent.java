@@ -77,6 +77,7 @@ public class ListingAgent {
      */
     private OutputStream out = null;
     private ConfigurationContext configContext;
+    public static final String RUNNING_PORT = "RUNNING_PORT";
 
     public ListingAgent(ConfigurationContext configContext) {
         this.configContext = configContext;
@@ -463,7 +464,19 @@ public class ListingAgent {
             if (serviceObj != null) {
                 if (wsdl != null) {
                     res.setContentType("text/xml");
-                    ((AxisService) serviceObj).printWSDL(out);
+                    int ipindex = filePart.indexOf("//");
+                    String ip = null;
+                    if (ipindex >= 0) {
+                        ip = filePart.substring(ipindex + 2, filePart.length());
+                        int seperatorIndex = ip.indexOf(":");
+                        int slashIndex = ip.indexOf("/");
+                        String port = ip.substring(seperatorIndex + 1, slashIndex);
+                        System.setProperty(RUNNING_PORT, port);
+                        if (seperatorIndex > 0) {
+                            ip = ip.substring(0, seperatorIndex);
+                        }
+                    }
+                    ((AxisService) serviceObj).printWSDL(out, ip);
                     out.flush();
                     out.close();
                     return;

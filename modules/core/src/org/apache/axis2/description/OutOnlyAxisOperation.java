@@ -12,6 +12,8 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.wsdl.WSDLConstants;
 
@@ -22,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class OutOnlyAxisOperation extends AxisOperation {
+
     private AxisMessage inFaultMessage;
 
     // just to keep the inflow , there wont be any usage
@@ -333,8 +336,12 @@ class OutOnlyAxisOperationClient implements OperationClient {
         addReferenceParameters(mc);
         // ship it out
         AxisEngine engine = new AxisEngine(cc);
-        engine.send(mc);
-
+        if (block) {
+            engine.send(mc);
+        } else {
+            sc.getConfigurationContext().getThreadPool().execute(
+                    new FireAndForgetInvocationWorker(mc, engine));
+        }
         // all done
         completed = true;
     }
@@ -360,6 +367,29 @@ class OutOnlyAxisOperationClient implements OperationClient {
                 msgCtxt.getConfigurationContext().getListenerManager();
         if (listenerManager != null) {
             listenerManager.stop();
+        }
+    }
+
+    /**
+     * This class is the workhorse for a non-blocking invocation that uses a two
+     * way transport.
+     */
+    private class FireAndForgetInvocationWorker implements Runnable {
+        private Log log = LogFactory.getLog(getClass());
+        private MessageContext msgctx;
+        private AxisEngine axisEngine;
+
+        public FireAndForgetInvocationWorker(MessageContext msgctx, AxisEngine axisEngine) {
+            this.msgctx = msgctx;
+            this.axisEngine = axisEngine;
+        }
+
+        public void run() {
+            try {
+                axisEngine.send(msgctx);
+            } catch (Exception e) {
+                log.info(e.getMessage());
+            }
         }
     }
 }

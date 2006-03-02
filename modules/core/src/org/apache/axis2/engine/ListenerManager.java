@@ -66,7 +66,7 @@ public class ListenerManager {
                 Iterator itr_st = startedTranports.values().iterator();
                 if (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener) itr_st.next();
-                    return transportListener.getEPRForService(serviceName);
+                    return transportListener.getEPRForService(serviceName, null);
                 } else {
                     return null;
                 }
@@ -75,8 +75,8 @@ public class ListenerManager {
                 TransportListener listener = (TransportListener)
                         startedTranports.get(exposeTransport[0]);
                 if (opName == null) {
-                    return listener.getEPRForService(serviceName);
-                } else return listener.getEPRForService(serviceName + "/" + opName);
+                    return listener.getEPRForService(serviceName, null);
+                } else return listener.getEPRForService(serviceName + "/" + opName, null);
             }
 
         } else {
@@ -84,8 +84,8 @@ public class ListenerManager {
                     .getTransportIn(new QName(tranportName));
             TransportListener listener = trsIN.getReceiver();
             if (opName == null) {
-                return listener.getEPRForService(serviceName);
-            } else return listener.getEPRForService(serviceName + "/" + opName);
+                return listener.getEPRForService(serviceName, null);
+            } else return listener.getEPRForService(serviceName + "/" + opName, null);
         }
     }
 
@@ -108,7 +108,7 @@ public class ListenerManager {
                 }
             } catch (Exception e) {
                 log.info(e.getMessage());
-            } 
+            }
         }
         stopped = false;
     }

@@ -214,18 +214,21 @@ public class SimpleHTTPServer implements TransportListener {
      * replyToEPR
      *
      * @param serviceName
+     * @param ip
      * @return an EndpointReference
-     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String)
+     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
      */
-    public EndpointReference getEPRForService(String serviceName) throws AxisFault {
+    public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         String hostAddress;
-        try {
-            hostAddress = SimpleHttpServerConnection.getIpAddress();
-        } catch (SocketException e) {
-            throw AxisFault.makeFault(e);
+        if (ip != null) {
+            hostAddress = ip;
+        } else {
+            try {
+                hostAddress = SimpleHttpServerConnection.getIpAddress();
+            } catch (SocketException e) {
+                throw AxisFault.makeFault(e);
+            }
         }
-
-
         if (embedded != null) {
             // todo this has to fix
             return new EndpointReference("http://" + hostAddress + ":" + (embedded.getLocalPort())

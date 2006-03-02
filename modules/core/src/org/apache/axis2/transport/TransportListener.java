@@ -35,5 +35,5 @@ public interface TransportListener {
 
     void stop() throws AxisFault;
 
-    EndpointReference getEPRForService(String serviceName) throws AxisFault;
+    EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault;
 }
