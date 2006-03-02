@@ -203,8 +203,10 @@ public abstract class AbstractHTTPSender {
                                 header.getValue());
                     }
                 } else if (charsetEnc != null) {
-                    opContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                            charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+                    if (opContext != null) {
+                        opContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                                charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+                    }
                 }
             }
         }
