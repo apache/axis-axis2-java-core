@@ -149,6 +149,11 @@ public class AddressingOutHandler extends AddressingHandler {
                 OMElement probHeaderQName = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
                 probHeaderQName.setText(faultyHeaderQName);
             }
+
+            String wsaFaultAction = (String) faultInfo.get(Final.WSA_FAULT_ACTION);
+            if (wsaFaultAction != null && !"".equals(wsaFaultAction)) {
+                processStringInfo(wsaFaultAction, WSA_ACTION, envelope);
+            }
         }
     }
 
@@ -238,8 +243,8 @@ public class AddressingOutHandler extends AddressingHandler {
 //                    referenceParameters = faultTo.getAllReferenceParameters();
 //                }
 //            } else {
-                address = epr.getAddress();
-                referenceParameters = epr.getAllReferenceParameters();
+            address = epr.getAddress();
+            referenceParameters = epr.getAllReferenceParameters();
 //            }
 
             if (!"".equals(address) && address != null) {
