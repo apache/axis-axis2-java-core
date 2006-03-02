@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -28,6 +29,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
@@ -149,6 +151,14 @@ public class AxisEngine {
         faultContext.setSessionContext(processingContext.getSessionContext());
         faultContext.setTransportIn(processingContext.getTransportIn());
         faultContext.setTransportOut(processingContext.getTransportOut());
+
+        faultContext.setMessageID(UUIDGenerator.getUUID());
+        faultContext.setRelatesTo(
+                new RelatesTo(
+                        processingContext.getOptions().getMessageId(),
+                        AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        faultContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                processingContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
 
         // register the fault message context
         if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
@@ -289,7 +299,7 @@ public class AxisEngine {
                     uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
                     soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
                     fault.declareNamespace(uri, prefix);
-                }else{
+                } else {
                     soapFaultCode = faultCodeQName.getLocalPart();
                 }
             }
@@ -309,7 +319,7 @@ public class AxisEngine {
             message = fault.getReason().getSOAPText().getText();
         } else if (soapException != null) {
             message = soapException.getMessage();
-        } else if (exception instanceof AxisFault) {
+        } else if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault)){
             message = ((AxisFault) exception).getReason();
             message = message != null && "".equals(message) ? message : e.getMessage();
 

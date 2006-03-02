@@ -86,7 +86,7 @@ public class Utils {
             newmsgCtx.setReplyTo(replyToEPR);
         }
 
-        newmsgCtx.setFaultTo(oldOptions.getFaultTo());
+        newmsgCtx.setFaultTo(oldOptions.getTo());
         newmsgCtx.setFrom(oldOptions.getTo());
         newmsgCtx.setRelatesTo(
                 new RelatesTo(

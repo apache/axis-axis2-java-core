@@ -122,6 +122,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 faultInformation = new HashMap();
                 messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
             }
+
             faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, "wsa:" + addressingHeaderName);
             faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
             if (messageContext.isSOAP11()) {

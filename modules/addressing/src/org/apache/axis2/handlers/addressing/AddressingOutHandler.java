@@ -151,7 +151,7 @@ public class AddressingOutHandler extends AddressingHandler {
         Map faultInfo = (Map) msgContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInfo != null) {
             String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
-            if (faultyHeaderQName != null && "".equals(faultyHeaderQName)) {
+            if (faultyHeaderQName != null && !"".equals(faultyHeaderQName)) {
                 SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
                 OMElement probHeaderQName = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
                 probHeaderQName.setText(faultyHeaderQName);
