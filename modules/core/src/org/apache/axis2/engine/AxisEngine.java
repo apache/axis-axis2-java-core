@@ -31,6 +31,7 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
@@ -41,6 +42,7 @@ import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -142,7 +144,8 @@ public class AxisEngine {
         faultContext.setTransportOut(processingContext.getTransportOut());
 
         // register the fault message context
-        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null){
+        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
+        {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
         }
 
@@ -156,7 +159,14 @@ public class AxisEngine {
 
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null) {
-            faultContext.setFaultTo(processingContext.getFaultTo());
+            faultContext.setTo(processingContext.getFaultTo());
+        } else
+        if (processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null)
+        {
+            OMElement faultToElement = processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo"));
+            faultTo = new EndpointReference("");
+            faultTo.fromOM(faultToElement);
+            faultContext.setTo(faultTo);
         }
 
         if (faultTo == null || AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
@@ -488,6 +498,10 @@ public class AxisEngine {
 
         // TODO: Make this clearer - should we have transport senders and messagereceivers as Handlers?
         if (!msgContext.isPaused()) {
+
+//            msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext().getAxisConfiguration().getOutFaultFlow().clone());
+//            msgContext.setFLOW(MessageContext.OUT_FLOW);
+//            invoke(msgContext);
 
             // Actually send the SOAP Fault
             TransportSender sender = msgContext.getTransportOut().getSender();

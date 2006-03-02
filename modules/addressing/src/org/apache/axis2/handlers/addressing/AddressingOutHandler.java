@@ -48,6 +48,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
     protected OMNamespace addressingNamespaceObject;
 
+    private MessageContext msgCtxt;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
 
@@ -58,7 +59,7 @@ public class AddressingOutHandler extends AddressingHandler {
             log.info("Addressing is disbaled .....");
             return;
         }
-
+        this.msgCtxt = msgContext;
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (addressingVersionFromCurrentMsgCtxt != null) {
@@ -221,16 +222,31 @@ public class AddressingOutHandler extends AddressingHandler {
         }
     }
 
-    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope) {
+    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope) throws AxisFault {
         EndpointReference epr = messageContextOptions.getTo();
         if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject))
         {
-            String address = epr.getAddress();
+            Map referenceParameters = null;
+            String address = "";
+//            System.out.println("envelope = " + envelope);
+//            if (envelope.getBody().hasFault()) {
+//                MessageContext inMsgCtxt = msgCtxt.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+//                if (inMsgCtxt != null && inMsgCtxt.getFaultTo() != null && inMsgCtxt.getFaultTo().getAddress() != null)
+//                {
+//                    EndpointReference faultTo = inMsgCtxt.getFaultTo();
+//                    address = faultTo.getAddress();
+//                    referenceParameters = faultTo.getAllReferenceParameters();
+//                }
+//            } else {
+                address = epr.getAddress();
+                referenceParameters = epr.getAllReferenceParameters();
+//            }
+
             if (!"".equals(address) && address != null) {
                 SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
                 toHeaderBlock.setText(address);
             }
-            processReferenceInformation(epr.getAllReferenceParameters(), envelope.getHeader());
+            processReferenceInformation(referenceParameters, envelope.getHeader());
         }
     }
 

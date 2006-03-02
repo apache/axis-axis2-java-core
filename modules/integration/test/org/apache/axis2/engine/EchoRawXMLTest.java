@@ -39,6 +39,7 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAP12Constants;
 
 import javax.xml.namespace.QName;
 
@@ -122,6 +123,7 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =

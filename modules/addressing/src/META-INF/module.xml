@@ -15,4 +15,10 @@
             <order phase="MessageOut"/>
         </handler>
     </outflow>
+
+    <Outfaultflow>
+        <handler name="AddressingOutHandler" class="org.apache.axis2.handlers.addressing.AddressingOutHandler">
+            <order phase="MessageOut"/>
+        </handler>
+    </Outfaultflow>
 </module>

@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -45,7 +46,7 @@ public class EndpointReference implements Serializable {
      * </EndpointReference>
      */
 
-
+    private String name;
     private String address;
     private OMElement metaData;
     private Map referenceParameters;
@@ -130,6 +131,14 @@ public class EndpointReference implements Serializable {
         this.metaData = metaData;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * Set a Map with QName as the key and an OMElement
      * as the value
@@ -138,6 +147,21 @@ public class EndpointReference implements Serializable {
      */
     public void setReferenceParameters(Map referenceParameters) {
         this.referenceParameters = referenceParameters;
+    }
+
+    public void fromOM(OMElement eprOMElement) {
+        setAddress(eprOMElement.getFirstChildWithName(new QName("Address")).getText());
+        Iterator refParams = eprOMElement.getChildrenWithName(new QName("ReferenceParameters"));
+        while (refParams.hasNext()) {
+            OMElement omElement = (OMElement) refParams.next();
+            addReferenceParameter(omElement);
+        }
+        setMetaData(eprOMElement.getFirstChildWithName(new QName("MetaData")));
+        setName(eprOMElement.getLocalName());
+    }
+
+    public void toOM() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
 }

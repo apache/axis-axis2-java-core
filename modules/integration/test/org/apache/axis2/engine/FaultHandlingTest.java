@@ -36,9 +36,12 @@ import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.wsdl.WSDLConstants;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -108,16 +111,39 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         assertEquals(fault.getCode().getValue().getText().trim(), SOAP11Constants.FAULT_CODE_SENDER);
 
     }
+     public void testRefParamsWithFaultTo() throws AxisFault, XMLStreamException {
+        SOAPEnvelope soapEnvelope = getSOAPEnvelopeWithRefParamsInFaultTo();
+        SOAPEnvelope resposeEnvelope = getResponse(soapEnvelope);
 
-//    public void testSOAPFaultSerializing(){
-//        try {
-//            SOAPEnvelope envelope = createEnvelope("soap/fault/test.xml");
-//            SOAPEnvelope response = getResponse(envelope);
-//             printElement(response);
-//            assertTrue(true);
-//        } catch (Exception e) {
-//        }
-//    }
+         System.out.println("resposeEnvelope = " + resposeEnvelope);
+    }
+
+    private SOAPEnvelope getSOAPEnvelopeWithRefParamsInFaultTo() throws XMLStreamException {
+        String soap = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">  \n" +
+                "      <env:Header>    \n" +
+                "         <wsa:Action>http://example.org/action/echoIn</wsa:Action>    \n" +
+                "         <wsa:To>http://www-lk.wso2.com:9762/axis2/services/wsaTestService/</wsa:To>    \n" +
+                "         <wsa:MessageID>urn:uuid:BAB79B77-E9AE-4B9F-A8B4-624BB9E7E919</wsa:MessageID>    \n" +
+                "         <wsa:ReplyTo>      \n" +
+                "            <wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>      \n" +
+                "            <wsa:ReferenceParameters xmlns:customer=\"http://example.org/customer\">        \n" +
+                "               <customer:CustomerKey>Key#123456789</customer:CustomerKey>      \n" +
+                "            </wsa:ReferenceParameters>    \n" +
+                "         </wsa:ReplyTo>    \n" +
+                "         <wsa:FaultTo>      \n" +
+                "            <wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>      \n" +
+                "            <wsa:ReferenceParameters xmlns:customer=\"http://example.org/customer\">        \n" +
+                "               <customer:CustomerKey>Fault#123456789</customer:CustomerKey>      \n" +
+                "            </wsa:ReferenceParameters>    \n" +
+                "         </wsa:FaultTo>  \n" +
+                "      </env:Header>  \n" +
+                "      <env:Body>    \n" +
+                "         <m:echoIn xmlns:m=\"http://example.org/echo\" />  \n" +
+                "      </env:Body>\n" +
+                "   </env:Envelope>";
+        return (SOAPEnvelope) new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(soap.getBytes())), SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI).getDocumentElement();
+    }
+
 
     private void checkSOAPFaultContent(SOAPEnvelope soapEnvelope) {
         assertTrue(soapEnvelope.getBody().hasFault());
