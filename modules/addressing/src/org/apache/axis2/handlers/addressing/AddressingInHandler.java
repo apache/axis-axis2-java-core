@@ -67,6 +67,8 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             logger.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
             extractAddressingInformation(header, msgContext,
                     addressingHeaders, addressingNamespace);
+
+
         } else {
             logger.debug("No Headers present corresponding to " + addressingVersion);
         }
@@ -116,35 +118,54 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 }
             }
         }
+
+        // check for the presense of madatory addressing headers
+        checkForMandatoryHeaders(alreadyFoundAddrHeader, messageContext);
+
         return messageContextOptions;
+    }
+
+    private void checkForMandatoryHeaders(Map alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
+        if (alreadyFoundAddrHeader.get(WSA_ACTION) == null) {
+            makeFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED);
+        } else if (alreadyFoundAddrHeader.get(WSA_TO) == null) {
+            makeFault(messageContext, WSA_TO, Final.FAULT_ADDRESSING_HEADER_REQUIRED);
+        }
     }
 
     private boolean hasDuplicateHeaders(String addressingHeaderName, MessageContext messageContext, Map alreadyFoundAddressingHeaders) throws AxisFault {
         if (alreadyFoundAddressingHeaders.get(addressingHeaderName) != null) {
-            Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
-            if (faultInformation == null) {
-                faultInformation = new HashMap();
-                messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
-            }
-
-            faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, "wsa:" + addressingHeaderName);
-            faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
-            if (!messageContext.isSOAP11()) {
-                SOAPFactory soapFac = OMAbstractFactory.getSOAP12Factory();
-                SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
-                SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
-                soapFaultValue.setText(messageContext.getEnvelope().getNamespace().getPrefix() + ":" + SOAP12Constants.FAULT_CODE_SENDER);
-                SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
-                SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
-                soapFaultSubcodeValue.setText(addressingNSObject.getPrefix() + ":" + Final.FAULT_INVALID_HEADER);
-                messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
-            }
-            throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", addressingNSObject.getPrefix() + ":" + Final.FAULT_INVALID_HEADER);
-
+            return makeFault(messageContext, addressingHeaderName, Final.FAULT_INVALID_HEADER);
         } else {
             alreadyFoundAddressingHeaders.put(addressingHeaderName, addressingHeaderName);
         }
         return false;
+    }
+
+    private boolean makeFault(MessageContext messageContext, String addressingHeaderName, String faultCode) throws AxisFault {
+        Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        if (faultInformation == null) {
+            faultInformation = new HashMap();
+            messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
+        }
+
+        faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, "wsa:" + addressingHeaderName);
+        faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
+        if (!messageContext.isSOAP11()) {
+            setFaultCode(messageContext, faultCode);
+        }
+        throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", addressingNSObject.getPrefix() + ":" + faultCode);
+    }
+
+    private void setFaultCode(MessageContext messageContext, String faultCode) {
+        SOAPFactory soapFac = OMAbstractFactory.getSOAP12Factory();
+        SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
+        SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
+        soapFaultValue.setText(messageContext.getEnvelope().getNamespace().getPrefix() + ":" + SOAP12Constants.FAULT_CODE_SENDER);
+        SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
+        SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
+        soapFaultSubcodeValue.setText(addressingNSObject.getPrefix() + ":" + faultCode);
+        messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
     }
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);

@@ -69,6 +69,7 @@ public interface AddressingConstants {
         public static final String FAULT_HEADER_PROB_HEADER = "ProblemHeader";
         public static final String FAULT_HEADER_DETAIL = "FaultDetail";
         public static final String FAULT_INVALID_HEADER = "InvalidAddressingHeader";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED = "MessageAddressingHeaderRequired";
 
     }
 
