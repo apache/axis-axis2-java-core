@@ -31,6 +31,7 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.wsdl.WSDLConstants;
@@ -152,9 +153,18 @@ public class AddressingOutHandler extends AddressingHandler {
         if (faultInfo != null) {
             String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
             if (faultyHeaderQName != null && !"".equals(faultyHeaderQName)) {
+                // add to header
                 SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
                 OMElement probHeaderQName = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
                 probHeaderQName.setText(faultyHeaderQName);
+
+                // add to header
+                SOAPFault fault = envelope.getBody().getFault();
+                if (fault != null && fault.getDetail() != null) {
+                    OMElement probHeaderQName2 = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, fault.getDetail());
+                    probHeaderQName2.setText(faultyHeaderQName);
+                }
+
             }
 
         }
