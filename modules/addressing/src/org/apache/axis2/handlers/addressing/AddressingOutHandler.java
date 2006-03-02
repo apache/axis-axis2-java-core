@@ -157,10 +157,6 @@ public class AddressingOutHandler extends AddressingHandler {
                 probHeaderQName.setText(faultyHeaderQName);
             }
 
-            String wsaFaultAction = (String) faultInfo.get(Final.WSA_FAULT_ACTION);
-            if (wsaFaultAction != null && !"".equals(wsaFaultAction)) {
-                processStringInfo(wsaFaultAction, WSA_ACTION, envelope);
-            }
         }
     }
 

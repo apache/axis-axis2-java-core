@@ -281,13 +281,17 @@ public class AxisEngine {
         if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
         {
             QName faultCodeQName = ((AxisFault) exception).getFaultCode();
-            if (faultCodeQName != null && faultCodeQName.getLocalPart().indexOf(":") == -1) {
-                String prefix = faultCodeQName.getPrefix();
-                String uri = faultCodeQName.getNamespaceURI();
-                prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
-                uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
-                soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
-                fault.declareNamespace(uri, prefix);
+            if (faultCodeQName != null) {
+                if (faultCodeQName.getLocalPart().indexOf(":") == -1) {
+                    String prefix = faultCodeQName.getPrefix();
+                    String uri = faultCodeQName.getNamespaceURI();
+                    prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
+                    uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
+                    soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
+                    fault.declareNamespace(uri, prefix);
+                }else{
+                    soapFaultCode = faultCodeQName.getLocalPart();
+                }
             }
         }
 
@@ -305,8 +309,8 @@ public class AxisEngine {
             message = fault.getReason().getSOAPText().getText();
         } else if (soapException != null) {
             message = soapException.getMessage();
-        } else if (e instanceof AxisFault) {
-            message = ((AxisFault) e).getReason();
+        } else if (exception instanceof AxisFault) {
+            message = ((AxisFault) exception).getReason();
             message = message != null && "".equals(message) ? message : e.getMessage();
 
         }
@@ -315,6 +319,7 @@ public class AxisEngine {
         message = ("".equals(message) || (message == null))
                 ? "unknown"
                 : message;
+        fault.getReason().getSOAPText().setLang("en-US");
         fault.getReason().getSOAPText().setText(message);
 
         Object faultRole = context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);

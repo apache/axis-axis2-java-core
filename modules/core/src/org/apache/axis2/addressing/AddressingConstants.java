@@ -67,6 +67,8 @@ public interface AddressingConstants {
         // fault information
         public static final String FAULT_HEADER_PROB_HEADER_QNAME = "ProblemHeaderQName";
         public static final String FAULT_HEADER_DETAIL = "FaultDetail";
+        public static final String FAULT_INVALID_HEADER = "InvalidAddressingHeader";
+
     }
 
 
