@@ -385,13 +385,27 @@ public class SchemaCompiler {
         }else if (xsElt.getSchemaTypeName()!=null){
             //There can be instances where the SchemaType is null but the schemaTypeName is not
             //this specifically happens with xsd:anyType.
-            if (!isOuter) {
-                String className = findClassName(xsElt.getSchemaTypeName(), isArray(xsElt));
-                innerElementMap.put(xsElt.getQName(), className);
+            QName schemaTypeName = xsElt.getSchemaTypeName();
+            XmlSchemaType typeByName = parentSchema.getTypeByName(schemaTypeName);
+            if (typeByName!=null){
+                //this type is found in the schema so we can process it
+                processSchema(xsElt, typeByName,parentSchema);
+                if (!isOuter) {
+                    String className = findClassName(schemaTypeName, isArray(xsElt));
+                    //since this is a inner element we should add it to the inner element map
+                    innerElementMap.put(xsElt.getQName(), className);
+                }else{
+                    this.processedElementList.add(xsElt.getQName());
+                }
             }else{
-                this.processedElementList.add(xsElt.getQName());
+                //this type is not found at all. we'll just register it with whatever the class name we can comeup with
+                if (!isOuter) {
+                    String className = findClassName(schemaTypeName, isArray(xsElt));
+                    innerElementMap.put(xsElt.getQName(), className);
+                }else{
+                    this.processedElementList.add(xsElt.getQName());
+                }
             }
-
         }
 
         //add this elements QName to the nillable group if it has the  nillable attribute
@@ -786,7 +800,7 @@ public class SchemaCompiler {
                 if (order) {
                     elementOrderMap.put(any, new Integer(i));
                 }
-                 processedElementArrayStatusMap.put(any, Boolean.FALSE);
+                processedElementArrayStatusMap.put(any, Boolean.FALSE);
             } else {
                 //there may be other types to be handled here. Add them
                 //when we are ready
