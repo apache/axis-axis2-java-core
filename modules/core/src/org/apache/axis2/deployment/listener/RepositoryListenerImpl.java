@@ -141,9 +141,9 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * Finds a list of services in the folder and adds to wsInfoList.
      */
     public void checkServices() {
-        String modulepath = folderName + SERVICE_PATH;
+        String servicedir = folderName + SERVICE_PATH;
 
-        findServicesInDirectory(modulepath);
+        findServicesInDirectory(servicedir);
         update();
     }
 

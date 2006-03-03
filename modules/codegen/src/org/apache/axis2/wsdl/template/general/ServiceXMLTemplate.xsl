@@ -46,9 +46,9 @@
 				<operation>
 					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
 					<xsl:attribute name="mep"><xsl:value-of select="@mep"/></xsl:attribute>
-					<wsamapping>
+					<actionMapping>
 						<xsl:value-of select="@soapaction"/>
-					</wsamapping>
+					</actionMapping>
 				</operation>
 			</xsl:for-each>
         </service>

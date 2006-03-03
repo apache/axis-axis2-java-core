@@ -226,7 +226,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             processParameters(parameters, op_descrip, module);
 
             //To process wsamapping;
-            Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.WSA_ACTION));
+            Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.ACTION_MAPPING));
             if (mappingIterator != null) {
                 ArrayList wsamappings = processWsaMapping(mappingIterator);
                 op_descrip.setWsamappingList(wsamappings);

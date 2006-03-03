@@ -31,7 +31,7 @@ public class WSInfoList implements DeploymentConstants {
      * This is to store all the jar files in a specified folder (WEB_INF)
      */
     private static List jarList = new ArrayList();
-    private boolean check = false;   
+    private boolean check = false;
 
     /**
      * All the curently updated jars
@@ -50,12 +50,12 @@ public class WSInfoList implements DeploymentConstants {
     /**
      * First checks whether the file is already available by the
      * system call isFileExist. If it is not deployed yet then adds to the jarList
-     * and to the deployment engine as a new service or module. 
-     * While adding new item to jarList, first creates the WSInfo object and 
+     * and to the deployment engine as a new service or module.
+     * While adding new item to jarList, first creates the WSInfo object and
      * then adds to the jarlist and actual jar file is added to DeploymentEngine.
      * <p/>
      * If the files already exists, then checks whether it has been updated
-     * then changes the last update date of the wsInfo and adds two entries to 
+     * then changes the last update date of the wsInfo and adds two entries to
      * DeploymentEngine - one for New Deployment and other for undeployment.
      *
      * @param file actual jar files for either Module or service
@@ -75,7 +75,6 @@ public class WSInfoList implements DeploymentConstants {
                 } else {
                     if (deployer.isHotUpdate()) {
                         WSInfo tempWSInfo = getFileItem(file.getName());
-
                         if (isModified(file, tempWSInfo)) {    // check whether file is updated
                             tempWSInfo.setLastModifiedDate(file.lastModified());
 
@@ -103,7 +102,7 @@ public class WSInfoList implements DeploymentConstants {
                     ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_MODULE);
 
                     deployer.addWSToDeploy(archiveFileData);    // inform that new web service is deployed
-                } 
+                }
 
                 break;
             }
@@ -121,7 +120,7 @@ public class WSInfoList implements DeploymentConstants {
      * list then it is assumed that the jar file has been removed
      * and that is hot undeployment.
      */
-    public void checkForUndeployedServices() {
+    private void checkForUndeployedServices() {
         if (!check) {
             return;
         } else {
@@ -198,11 +197,11 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     /**
-     * Gets the WSInfo object related to a file if it exists, null otherwise. 
+     * Gets the WSInfo object related to a file if it exists, null otherwise.
      *
      * @param filename
      */
-    public WSInfo getFileItem(String filename) {
+    private WSInfo getFileItem(String filename) {
         int sise = jarList.size();
 
         for (int i = 0; i < sise; i++) {
@@ -221,19 +220,59 @@ public class WSInfoList implements DeploymentConstants {
      *
      * @param filename
      */
-    public boolean isFileExist(String filename) {
+    private boolean isFileExist(String filename) {
         return !(getFileItem(filename) == null);
     }
 
     /**
-     * Checks if a file has been modified by comparing the last update date of 
-     * both files and WSInfo. If they are different, the file is assumed to have 
+     * Checks if a file has been modified by comparing the last update date of
+     * both files and WSInfo. If they are different, the file is assumed to have
      * been modified.
      *
      * @param file
      * @param wsInfo
      */
-    public boolean isModified(File file, WSInfo wsInfo) {
-        return (wsInfo.getLastModifiedDate() != file.lastModified());
+    private boolean isModified(File file, WSInfo wsInfo) {
+        if (file.isDirectory()) {
+            if (isChanged(file, wsInfo.getLastModifiedDate(), wsInfo)) {
+                setLastModifiedDate(file, wsInfo);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return (wsInfo.getLastModifiedDate() != file.lastModified());
+        }
+    }
+
+    private void setLastModifiedDate(File file, WSInfo wsInfo) {
+        File files [] = file.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File fileItem = files[i];
+            if (fileItem.isDirectory()) {
+                setLastModifiedDate(fileItem, wsInfo);
+            } else {
+                fileItem.setLastModified(wsInfo.getLastModifiedDate());
+            }
+        }
+    }
+
+    private boolean isChanged(File file, long lastModifedData, WSInfo wsInfo) {
+        File files [] = file.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File fileItem = files[i];
+            if (fileItem.isDirectory()) {
+                if (isChanged(fileItem, lastModifedData, wsInfo)) {
+                    wsInfo.setLastModifiedDate(fileItem.lastModified());
+                    return true;
+                }
+            } else {
+                if (lastModifedData != fileItem.lastModified()) {
+                    wsInfo.setLastModifiedDate(fileItem.lastModified());
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

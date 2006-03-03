@@ -274,9 +274,8 @@ public class AxisService extends AxisDescription {
     public void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
             throws AxisFault {
         if (moduleref == null) {
-            return;
+            throw new AxisFault("Module not found ");
         }
-
         boolean needToadd = true;
         Iterator itr_engageModules = engagedModules.iterator();
 

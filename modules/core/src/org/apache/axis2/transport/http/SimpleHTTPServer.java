@@ -230,7 +230,6 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
         if (embedded != null) {
-            // todo this has to fix
             return new EndpointReference("http://" + hostAddress + ":" + (embedded.getLocalPort())
                     + "/axis2/services/" + serviceName);
         } else {
