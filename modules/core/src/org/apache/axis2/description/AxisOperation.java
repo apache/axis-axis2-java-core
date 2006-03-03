@@ -79,6 +79,7 @@ public abstract class AxisOperation extends AxisDescription
      */
     public abstract void addMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault;
+
     public abstract void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault;
 
@@ -146,11 +147,12 @@ public abstract class AxisOperation extends AxisDescription
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             ArrayList wsamappings = axisOperation.getWsamappingList();
+            if (wsamappings != null) {
+                for (int j = 0; j < wsamappings.size(); j++) {
+                    String mapping = (String) wsamappings.get(j);
 
-            for (int j = 0; j < wsamappings.size(); j++) {
-                Parameter parameter = (Parameter) wsamappings.get(j);
-
-                service.mapActionToOperation((String) parameter.getValue(), axisOperation);
+                    service.mapActionToOperation(mapping, axisOperation);
+                }
             }
             if (service.getOperation(axisOperation.getName()) == null) {
                 // this opration is a control operation.

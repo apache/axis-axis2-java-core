@@ -8,7 +8,7 @@
         <operation name="echo">
             <messageReceiver
                     class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-            <parameter name="wsamapping">urn:sample/echo</parameter>
+            <wsamapping>urn:sample/echo</wsamapping>
         </operation>
     </service>
 </serviceGroup>

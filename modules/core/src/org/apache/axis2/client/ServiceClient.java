@@ -290,6 +290,14 @@ public class ServiceClient {
     }
 
     /**
+     * To remove all the headers in ServiceClient
+     */
+    public void removeHeaders() {
+        headers.clear();
+    }
+
+
+    /**
      * Add a simple header consisting of some text (and a header name; duh) to
      * be sent with interactions.
      *

@@ -18,16 +18,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.FlowImpl;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -202,16 +193,16 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         return flow;
     }
-    
+
     protected String[] processSupportedPolicyNamespaces(OMElement supportedPolicyElements) {
-    	OMAttribute namespaces = supportedPolicyElements.getAttribute(new QName(TAG_NAMESPACES));
-    	if (namespaces != null) {
-    		String value = namespaces.getAttributeValue();
-    		if (! value.trim().equals("")) {
-    			return value.split(" ");    			
-    		}
-    	}
-    	return null;
+        OMAttribute namespaces = supportedPolicyElements.getAttribute(new QName(TAG_NAMESPACES));
+        if (namespaces != null) {
+            String value = namespaces.getAttributeValue();
+            if (! value.trim().equals("")) {
+                return value.split(" ");
+            }
+        }
+        return null;
     }
 
     /**
@@ -324,35 +315,25 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @param parameters       <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
      * @param parent           <code>ParameterInclude</code>
-     * @return  list of WSA action parameters
      */
-    protected ArrayList processParameters(Iterator parameters, ParameterInclude parameterInclude,
-                                          ParameterInclude parent)
+    protected void processParameters(Iterator parameters, ParameterInclude parameterInclude,
+                                     ParameterInclude parent)
             throws DeploymentException {
-        ArrayList wsamapping = new ArrayList();
-
         while (parameters.hasNext()) {
-
             // this is to check whether some one has locked the parmter at the top level
             OMElement parameterElement = (OMElement) parameters.next();
             Parameter parameter = new ParameterImpl();
-
             // setting parameterElement
             parameter.setParameterElement(parameterElement);
-
             // setting parameter Name
             OMAttribute paramName = parameterElement.getAttribute(new QName(ATTRIBUTE_NAME));
-
             if (paramName == null) {
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.BAD_PARAMETER_ARGUMENT));
             }
-
             parameter.setName(paramName.getAttributeValue());
-
             // setting parameter Value (the chiled elemnt of the parameter)
             OMElement paramValue = parameterElement.getFirstElement();
-
             if (paramValue != null) {
                 parameter.setValue(parameterElement);
                 parameter.setParameterType(Parameter.OM_PARAMETER);
@@ -362,20 +343,15 @@ public class DescriptionBuilder implements DeploymentConstants {
                 parameter.setValue(paratextValue);
                 parameter.setParameterType(Parameter.TEXT_PARAMETER);
             }
-
             // setting locking attribute
             OMAttribute paramLocked = parameterElement.getAttribute(new QName(ATTRIBUTE_LOCKED));
             Parameter parentParam = null;
-
             if (parent != null) {
                 parentParam = parent.getParameter(parameter.getName());
             }
-
             if (paramLocked != null) {
                 String lockedValue = paramLocked.getAttributeValue();
-
                 if (BOOLEAN_TRUE.equals(lockedValue)) {
-
                     // if the parameter is locked at some level parameter value replace by that
                     if ((parent != null) && parent.isParameterLocked(parameter.getName())) {
                         throw new DeploymentException(
@@ -388,14 +364,6 @@ public class DescriptionBuilder implements DeploymentConstants {
                     parameter.setLocked(false);
                 }
             }
-
-            if (Constants.WSA_ACTION.equals(paramName.getAttributeValue())) {
-                wsamapping.add(parameter);
-
-                // no need to add this parameter , since this is just for mapping
-                continue;
-            }
-
             try {
                 if (parent != null) {
                     if ((parentParam == null) || !parent.isParameterLocked(parameter.getName())) {
@@ -408,12 +376,26 @@ public class DescriptionBuilder implements DeploymentConstants {
                 throw new DeploymentException(axisFault);
             }
         }
-
-        return wsamapping;
     }
-    
+
+    /**
+     * To process <wsamapping>Value</wsamapping> elements which can be there inside operation tag
+     * either in services.xml or module.xml
+     *
+     * @param mappingIterator
+     * @return ArrayList
+     */
+    protected ArrayList processWsaMapping(Iterator mappingIterator) {
+        ArrayList mappingList = new ArrayList();
+        while (mappingIterator.hasNext()) {
+            OMElement mappingElement = (OMElement) mappingIterator.next();
+            mappingList.add(mappingElement.getText());
+        }
+        return mappingList;
+    }
+
     protected void processPolicyElements(int type, Iterator policyElements,
-            PolicyInclude policyInclude) {
+                                         PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
 
@@ -424,7 +406,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     protected void processPolicyRefElements(int type, Iterator policyRefElements,
-            PolicyInclude policyInclude) {
+                                            PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory
                 .getPolicyReader(PolicyFactory.OM_POLICY_READER);
 
@@ -434,7 +416,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             policyInclude.addPolicyRefElement(type, policyReference);
         }
     }
-    
+
 
     /**
      * Gets the short file name. Short file name is the name before the dot.

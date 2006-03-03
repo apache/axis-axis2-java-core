@@ -148,10 +148,11 @@ public class AxisService extends AxisDescription {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             ArrayList wsamappings = axisOperation.getWsamappingList();
 
-            for (int j = 0; j < wsamappings.size(); j++) {
-                Parameter parameter = (Parameter) wsamappings.get(j);
-
-                this.mapActionToOperation((String) parameter.getValue(), axisOperation);
+            if (wsamappings != null) {
+                for (int j = 0; j < wsamappings.size(); j++) {
+                    String mapping = (String) wsamappings.get(j);
+                    this.mapActionToOperation(mapping, axisOperation);
+                }
             }
             if (this.getOperation(axisOperation.getName()) == null) {
                 // this opration is a control operation.

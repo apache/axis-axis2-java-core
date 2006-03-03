@@ -18,6 +18,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -58,22 +59,16 @@ public class ServiceBuilder extends DescriptionBuilder {
      */
     public AxisService populateService(OMElement service_element) throws DeploymentException {
         try {
-
             // Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
-
             processParameters(itr, service, service.getParent());
-
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
-
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement.getFirstElement();
-
                 if (descriptionValue != null) {
                     StringWriter writer = new StringWriter();
-
                     descriptionValue.build();
                     descriptionValue.serialize(writer);
                     writer.flush();
@@ -110,11 +105,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
-
             //<schema targetNamespace="http://x.y.z"/>
-
             // setting the PolicyInclude
-
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = service_element.getChildrenWithName(
                     new QName(POLICY_NS_URI, TAG_POLICY));
@@ -176,10 +168,12 @@ public class ServiceBuilder extends DescriptionBuilder {
             for (int i = 0; i < ops.size(); i++) {
                 AxisOperation operationDesc = (AxisOperation) ops.get(i);
                 ArrayList wsamappings = operationDesc.getWsamappingList();
-
+                if (wsamappings == null) {
+                    continue;
+                }
                 for (int j = 0; j < wsamappings.size(); j++) {
-                    Parameter parameter = (Parameter) wsamappings.get(j);
-                    service.mapActionToOperation((String) parameter.getValue(), operationDesc);
+                    String mapping = (String) wsamappings.get(j);
+                    service.mapActionToOperation(mapping, operationDesc);
                 }
 
                 service.addOperation(operationDesc);
@@ -347,9 +341,13 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
-            ArrayList wsamappings = processParameters(parameters, op_descrip, service);
-
-            op_descrip.setWsamappingList(wsamappings);
+            processParameters(parameters, op_descrip, service);
+            //To process wsamapping;
+            Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.WSA_ACTION));
+            if (mappingIterator != null) {
+                ArrayList wsamappings = processWsaMapping(mappingIterator);
+                op_descrip.setWsamappingList(wsamappings);
+            }
 
             // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
@@ -381,17 +379,14 @@ public class ServiceBuilder extends DescriptionBuilder {
 
                 info.setOperationPhases(op_descrip);
             }
-
             Iterator moduleConfigs = operation.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
-
             processOperationModuleConfig(moduleConfigs, op_descrip, op_descrip);
-
             // adding the operation
             operations.add(op_descrip);
         }
-
         return operations;
     }
+
 
     protected void processServiceModuleConfig(Iterator moduleConfigs, ParameterInclude parent,
                                               AxisService service)

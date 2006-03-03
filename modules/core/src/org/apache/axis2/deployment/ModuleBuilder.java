@@ -18,12 +18,9 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -159,11 +156,11 @@ public class ModuleBuilder extends DescriptionBuilder {
             if (outFaultFlow != null) {
                 module.setFaultOutFlow(processFlow(outFaultFlow, module));
             }
-            
+
             OMElement supportedPolicyNamespaces = moduleElement.getFirstChildWithName(new QName(TAG_SUPPORTED_POLICY_NAMESPACES));
-            
+
             if (supportedPolicyNamespaces != null) {
-            	module.setSupportedPolicyNamespaces(processSupportedPolicyNamespaces(supportedPolicyNamespaces));
+                module.setSupportedPolicyNamespaces(processSupportedPolicyNamespaces(supportedPolicyNamespaces));
             }
 
             // processing Operations
@@ -226,9 +223,14 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
-            ArrayList wsamapping = processParameters(parameters, op_descrip, module);
+            processParameters(parameters, op_descrip, module);
 
-            op_descrip.setWsamappingList(wsamapping);
+            //To process wsamapping;
+            Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.WSA_ACTION));
+            if (mappingIterator != null) {
+                ArrayList wsamappings = processWsaMapping(mappingIterator);
+                op_descrip.setWsamappingList(wsamappings);
+            }
 
             // setting the mep of the operation
             // loading the message recivers
@@ -237,24 +239,18 @@ public class ModuleBuilder extends DescriptionBuilder {
             if (receiverElement != null) {
                 MessageReceiver messageReceiver =
                         loadMessageReceiver(module.getModuleClassLoader(), receiverElement);
-
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
-
                 // setting default message receiver
                 MessageReceiver msgReceiver = loadDefaultMessageReceiver(mepURL, null);
-
                 op_descrip.setMessageReceiver(msgReceiver);
             }
-
             // Process Module Refs
             Iterator modules = operation.getChildrenWithName(new QName(TAG_MODULE));
-
             processOperationModuleRefs(modules, op_descrip);
 
             // setting Operation phase
             PhasesInfo info = axisConfig.getPhasesInfo();
-
             try {
                 info.setOperationPhases(op_descrip);
             } catch (AxisFault axisFault) {
