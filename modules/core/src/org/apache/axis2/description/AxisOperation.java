@@ -11,6 +11,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -123,6 +124,10 @@ public abstract class AxisOperation extends AxisDescription
         }
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
         phaseResolver.engageModuleToOperation(this, moduleref);
+        Module module = moduleref.getModule();
+        if (module != null) {
+            module.engageNotify(this);
+        }
 
         if (needToadd) {
             engagedModules.add(moduleref);
@@ -157,6 +162,10 @@ public abstract class AxisOperation extends AxisDescription
             if (service.getOperation(axisOperation.getName()) == null) {
                 // this opration is a control operation.
                 axisOperation.setControlOperation(true);
+                Module moduleclazz = module.getModule();
+                if (moduleclazz != null) {
+                    moduleclazz.engageNotify(axisOperation);
+                }
                 phaseResolver.engageModuleToOperation(axisOperation, module);
                 ops.add(axisOperation);
             }

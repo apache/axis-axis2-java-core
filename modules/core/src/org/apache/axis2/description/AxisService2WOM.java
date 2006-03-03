@@ -321,7 +321,12 @@ public class AxisService2WOM {
                     .getExtensionElement(ExtensionConstants.SOAP_11_OPERATION);
             soapOpimpl.setStyle(style);
             // to do heve to set a proper SOAPAction
-            soapOpimpl.setSoapAction(opName);
+            ArrayList wsamappingList = axisOperation.getWsamappingList();
+            if (wsamappingList != null && wsamappingList.size() > 0) {
+                soapOpimpl.setSoapAction((String) wsamappingList.get(0));
+            } else {
+                soapOpimpl.setSoapAction(opName);
+            }
             bindingoperation.addExtensibilityElement(soapOpimpl);
 
             if (inMessage != null) {

@@ -203,11 +203,31 @@ public class AxisService extends AxisDescription {
                         + module.getName().getLocalPart());
             }
         }
-
-//        operations.put(axisOperation.getName(), axisOperation);
+        if (axisOperation.getMessageReceiver() == null) {
+            axisOperation.setMessageReceiver(
+                    loadDefaultMessageReceiver(axisOperation.getMessageExchangePattern(), this));
+        }
         addChild(axisOperation);
         operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
     }
+
+
+    private MessageReceiver loadDefaultMessageReceiver(String mepURL, AxisService service) {
+        MessageReceiver messageReceiver;
+        if (mepURL == null) {
+            mepURL = WSDLConstants.MEP_URI_IN_OUT;
+        }
+        if (service != null) {
+            messageReceiver = service.getMessageReceiver(mepURL);
+            if (messageReceiver != null)
+                return messageReceiver;
+        }
+        if (getParent() != null && getParent().getParent() != null) {
+            return ((AxisConfiguration) getParent().getParent()).getMessageReceiver(mepURL);
+        }
+        return null;
+    }
+
 
     /**
      * Gets a copy from module operation.
