@@ -95,7 +95,8 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             serviceClient.setOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
+            options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+                 
             OperationClient opClient = serviceClient.createClient(operationName);
             opClient.addMessageContext(msgctx);
             opClient.setOptions(options);
