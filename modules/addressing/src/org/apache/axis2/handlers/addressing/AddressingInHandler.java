@@ -52,8 +52,13 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     public void invoke(MessageContext msgContext) throws AxisFault {
         SOAPHeader header = msgContext.getEnvelope().getHeader();
 
-        // if there are no headers or addressing version is already determined, pass through
-        if (header == null || msgContext.getProperty(WS_ADDRESSING_VERSION) != null) {
+        // if there is some one who has already found addressing, do not do anything here.
+        if (msgContext.getProperty(WS_ADDRESSING_VERSION) != null) {
+            return;
+        }
+
+        // if there are not headers put a flag to disable addressing temporary
+        if (header == null) {
             msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             return;
         }

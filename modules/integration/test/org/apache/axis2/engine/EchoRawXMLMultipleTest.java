@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
@@ -125,6 +124,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
+            options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+                                                                  
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -179,12 +180,14 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
         options.setTo(targetEPR);
+
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setUseSeparateListener(true);
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
 
         sender.setOptions(options);
         for (int i = 0; i < 5; i++) {

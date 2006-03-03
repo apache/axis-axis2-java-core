@@ -45,7 +45,7 @@ import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 
 import javax.activation.DataHandler;
-import java.awt.Image;
+import java.awt.*;
 import java.io.InputStream;
 
 public class EchoRawMTOMTest extends TestCase implements TestConstants {
@@ -128,6 +128,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext, null);
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         sender.setOptions(options);
 
         sender.sendReceiveNonblocking(payload, callback);
@@ -146,7 +147,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
     public void testEchoXMLSync() throws Exception {
         OMElement payload = createEnvelope();
         Options options = new Options();
-        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
+//        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
         //options.setTimeOutInMilliSeconds(-1);
         //options.setProperty(HTTPConstants.SO_TIMEOUT,new Integer(Integer.MAX_VALUE));
         options.setTo(targetEPR);
@@ -156,6 +157,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
         ServiceClient sender = new ServiceClient(configContext,null);
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         sender.setOptions(options);
         options.setTo(targetEPR);
         OMElement result = sender.sendReceive(payload);

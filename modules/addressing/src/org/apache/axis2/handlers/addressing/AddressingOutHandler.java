@@ -59,7 +59,9 @@ public class AddressingOutHandler extends AddressingHandler {
         if (property == null && msgContext.getOperationContext() != null) {
             // check in the IN message context, if available
             MessageContext inMsgCtxt = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            property = (Boolean) inMsgCtxt.getProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+            if (inMsgCtxt != null) {
+                property = (Boolean) inMsgCtxt.getProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+            }
         }
         if (property != null && property.booleanValue()) {
             log.info("Addressing is disbaled .....");

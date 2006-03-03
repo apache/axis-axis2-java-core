@@ -109,6 +109,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -151,7 +152,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+                 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(operationName, payload);
@@ -172,7 +174,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setAction(operationName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
         options.setUseSeparateListener(true);
 

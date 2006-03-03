@@ -137,6 +137,7 @@ public class Utils {
         axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);
+        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI+"/"+opName.getLocalPart(), axisOp);
 
         return service;
     }
