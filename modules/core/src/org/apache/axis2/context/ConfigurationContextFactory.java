@@ -7,6 +7,7 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -115,8 +116,7 @@ public class ConfigurationContextFactory {
                     sender.init(configContext, transportOut);
                 } catch (AxisFault axisFault) {
                     LogFactory.getLog(ConfigurationContextFactory.class)
-                            .info("Transport-OUT initialization error : "
-                                    + transportOut.getName().getLocalPart());
+                            .info(Messages.getMessage("transportiniterror", transportOut.getName().getLocalPart()));
                 }
             }
         }

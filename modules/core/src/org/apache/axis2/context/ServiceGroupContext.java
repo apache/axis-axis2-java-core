@@ -20,6 +20,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.i18n.Messages;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,8 +58,8 @@ public class ServiceGroupContext extends AbstractContext {
     public ServiceContext getServiceContext(AxisService service) throws AxisFault {
         AxisService axisService = axisServiceGroup.getService(service.getName());
         if (axisService == null) {
-            throw new AxisFault("Invalid service " + service.getName() + " not belong to " +
-                    "service group " + axisServiceGroup.getServiceGroupName());
+            throw new AxisFault(Messages.getMessage("invalidserviceinagroup",
+                    service.getName(), axisServiceGroup.getServiceGroupName()));
         }
         ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
         if (serviceContext == null) {

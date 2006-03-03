@@ -57,7 +57,7 @@ public abstract class AbstractContext {
      * @return Returns the property.
      */
     public Object getProperty(String key) {
-        Object obj = null;
+        Object obj;
 
         obj = properties.get(key);
 

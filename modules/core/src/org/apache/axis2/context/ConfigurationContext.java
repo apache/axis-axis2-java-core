@@ -23,6 +23,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
@@ -126,7 +127,7 @@ public class ConfigurationContext extends AbstractContext {
                     // set the serviceGroupContextID
                     serviceGroupContext.setId(serviceGroupContextId);
                 } else {
-                    throw new AxisFault("AxisService Not found yet");
+                    throw new AxisFault(Messages.getMessage("servicenotfound"));
                 }
             }
 
@@ -230,12 +231,12 @@ public class ConfigurationContext extends AbstractContext {
             }
         }
         if (serviceGroupContext == null
-                && msgContext!=null  
+                && msgContext != null
                 && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
-        if (serviceGroupContext == null) {
+        if (serviceGroupContext == null && msgContext != null) {
             AxisService axisService = msgContext.getAxisService();
             if (axisService != null) {
                 AxisServiceGroup asg = (AxisServiceGroup) axisService.getParent();
@@ -299,7 +300,7 @@ public class ConfigurationContext extends AbstractContext {
         if (threadPool == null) {
             threadPool = pool;
         } else {
-            throw new AxisFault("Thread pool already set.");
+            throw new AxisFault(Messages.getMessage("threadpoolset"));
         }
     }
 

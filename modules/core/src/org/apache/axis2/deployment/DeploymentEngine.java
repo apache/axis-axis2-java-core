@@ -19,8 +19,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.listener.RepositoryListener;
-import org.apache.axis2.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.WSInfo;
@@ -475,7 +473,7 @@ public class DeploymentEngine implements DeploymentConstants {
             builder.populateConfig();
             axisConfig.setPhasesinfo(phasesinfo);
             //To load modules from the class path
-            new RepositoryListenerImpl(this);
+            new RepositoryListener(this);
             org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
             return axisConfig;
         } else if (axis2repository != null) {
@@ -498,7 +496,7 @@ public class DeploymentEngine implements DeploymentConstants {
             // setting the CLs
             setClassLoaders(axis2repository);
             setDeploymentFeatures();
-            RepositoryListener repoListener = new RepositoryListenerImpl(axis2repository, this);
+            RepositoryListener repoListener = new RepositoryListener(axis2repository, this);
             org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
             try {
                 axisConfig.setRepository(axis2repository);
@@ -531,7 +529,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 axis2repository = (String) axis2repoPara.getValue();
                 setClassLoaders(axis2repository);
                 setDeploymentFeatures();
-                RepositoryListener repoListener = new RepositoryListenerImpl(axis2repository, this);
+                RepositoryListener repoListener = new RepositoryListener(axis2repository, this);
                 org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
                 try {
                     axisConfig.setRepository(axis2repository);
@@ -549,7 +547,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 return axisConfig;
             } else {
                 log.info("no repository location found in axis2.xml");
-                new RepositoryListenerImpl(this);
+                new RepositoryListener(this);
                 org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
                 validateSystemPredefinedPhases();
                 return axisConfig;

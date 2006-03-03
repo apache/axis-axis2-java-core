@@ -5,18 +5,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ClientUtils;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
@@ -112,7 +102,8 @@ public class ServiceClient {
         // Action and To address to be present. In anon case, we might not have the action.
         // so switching addressing off now. But will be setting back on, if some one sets the action.
         // @see Options.setAction()
-        if (axisService == null) serviceContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+        if (axisService == null) serviceContext.setProperty(
+                Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
     }
 
     /**
@@ -132,7 +123,8 @@ public class ServiceClient {
         initializeTransports(configContext);
         try {
             this.axisConfig = this.configContext.getAxisConfiguration();
-            WSDLBasedServiceConfigurationBuilder scb = new WSDLBasedServiceConfigurationBuilder(wsdldesc, configContext);
+            WSDLBasedServiceConfigurationBuilder scb =
+                    new WSDLBasedServiceConfigurationBuilder(wsdldesc, configContext);
             axisService = scb.buildAxisService(wsdlServiceName, portName, options);
             // add the service to the config context if it isn't in there
             // already
@@ -519,7 +511,8 @@ public class ServiceClient {
     public OperationClient createClient(QName operation) throws AxisFault {
         AxisOperation axisOp = axisService.getOperation(operation);
         if (axisOp == null) {
-            throw new AxisFault("Operation '" + operation + "' not found");
+            throw new AxisFault(Messages
+                    .getMessage("operationnotfound", operation.getLocalPart()));
         }
 
         OperationClient oc = axisOp.createClient(serviceContext, options);

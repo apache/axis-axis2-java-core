@@ -18,16 +18,12 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.i18n.Messages;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPBody;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.ws.commons.soap.*;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.stream.XMLStreamReader;
@@ -68,7 +64,8 @@ public abstract class Stub {
         } else if (WSDLService.STYLE_DOC.equals(type)) {
             return element;
         } else {
-            throw new UnsupportedOperationException("Unsupported type");
+            throw new UnsupportedOperationException(Messages
+                    .getMessage("unsupportedType"));
         }
     }
 
@@ -80,16 +77,16 @@ public abstract class Stub {
     }
 
     protected SOAPFactory getFactory(String soapVersionURI) {
-        
+
         if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP11Factory();
         } else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory();
         } else {
-            throw new RuntimeException("Unknown SOAP version");
+            throw new RuntimeException(Messages
+                    .getMessage("unknownsoapversion"));
         }
     }
-
 
 
 }

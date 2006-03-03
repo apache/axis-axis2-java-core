@@ -18,11 +18,8 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -39,20 +36,7 @@ import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
+import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -64,11 +48,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * AxisServiceBuilder builds an AxisService using a WSDL document which is input
@@ -126,10 +106,7 @@ public class AxisServiceBuilder {
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger
-                    .error(
-                            "Exception occured when creating the Document from WSDL",
-                            e);
+            logger.error(Messages.getMessage("documentcreatingerror", e.getMessage()));
             throw new DeploymentException(e);
         }
     }
@@ -143,9 +120,8 @@ public class AxisServiceBuilder {
         Map services = wsdlDefinition.getServices();
 
         if (services.isEmpty()) {
-            logger.error("No javax.wsdl.Service element found");
-            throw new DeploymentException(
-                    "No javax.wsdl.Service element is found");
+            logger.error(Messages.getMessage("noserviceelemtfound"));
+            throw new DeploymentException(Messages.getMessage("noserviceelemtfound"));
         }
 
         Iterator serviceIterator = services.values().iterator();
@@ -201,17 +177,15 @@ public class AxisServiceBuilder {
         Map ports = wsdl4jService.getPorts();
 
         if (ports.isEmpty()) {
-            logger.error("atleast one port should be specified");
-            throw new WSDLProcessingException(
-                    "atleast one Port should be specified");
+            logger.error(Messages.getMessage("serviceporterror"));
+            throw new WSDLProcessingException(Messages.getMessage("serviceporterror"));
         }
 
         Port wsdl4jPort = getPortWithSoapBinding(ports);
 
         if (wsdl4jPort == null) {
-            logger
-                    .error("atleast one port with a soap binding should be specified");
-            throw new WSDLProcessingException("no port with soap binding found");
+            logger.error(Messages.getMessage("soapbindingerror"));
+            throw new WSDLProcessingException(Messages.getMessage("soapbindingerror"));
         }
 
         Binding wsdl4jBinding = wsdl4jPort.getBinding();
@@ -377,7 +351,7 @@ public class AxisServiceBuilder {
                         outputPolicies = getPoliciesAsExtElements(wsdl4jBindingOutput
                                 .getExtensibilityElements());
                         if (outputPolicies != null) {
-                            addPolicyElements(PolicyInclude.BINDING_OUTPUT_POLICY, 
+                            addPolicyElements(PolicyInclude.BINDING_OUTPUT_POLICY,
                                     outputPolicies, outputPolicyInclude);
                         }
                     }
@@ -410,12 +384,9 @@ public class AxisServiceBuilder {
                 }
 
             } catch (AxisFault axisFault) {
-                logger
-                        .error(
-                                "Exception when creating AxisOperation for the AxisService",
-                                axisFault);
-
-                throw new DeploymentException(axisFault.getMessage());
+                logger.error(Messages.getMessage("axisoperationcreateerror", axisFault.getMessage()));
+                throw new DeploymentException(
+                        Messages.getMessage("axisoperationcreateerror", axisFault.getMessage()));
             }
             axisService.addOperation(axisOperation);
         }
@@ -446,8 +417,7 @@ public class AxisServiceBuilder {
             return fac.newDocumentBuilder().newDocument();
 
         } catch (ParserConfigurationException ex) {
-            logger.error("Exception occured when creating a Decument element",
-                    ex);
+            logger.error(Messages.getMessage("documentcreatingerror", ex.getMessage()));
             throw new DeploymentException(ex.getMessage());
         }
     }
@@ -579,9 +549,8 @@ public class AxisServiceBuilder {
                         schemaTypeName = part.getElementName();
                         isTyped = false;
                     } else {
-                        logger
-                                .error("Exception occured while creating wrapper element");
-                        throw new RuntimeException(" Unqualified Message part!");
+                        logger.error(Messages.getMessage("wrapperelementcreaterror"));
+                        throw new RuntimeException(Messages.getMessage("wrapperelementcreaterror"));
                     }
 
                     child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI,
@@ -857,9 +826,8 @@ public class AxisServiceBuilder {
                         policies.add(reader.readPolicyReference(element));
 
                     } catch (Exception ex) {
-                        logger
-                                .debug("Exception occured when processing policy elements");
-                        throw new DeploymentException(ex.getMessage());
+                        logger.debug(Messages.getMessage("policyprocessingerror"));
+                        throw new DeploymentException(Messages.getMessage("policyprocessingerror"));
                     }
                 }
             }
@@ -910,7 +878,7 @@ public class AxisServiceBuilder {
         if (wsaAction != null) {
             return ((QName) wsaAction).getLocalPart();
         }
-        
+
         wsaAction = extAttributes.get(new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION));
         if (wsaAction != null) {
             return ((QName) wsaAction).getLocalPart();
@@ -963,7 +931,7 @@ public class AxisServiceBuilder {
                     if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
                             && name.getLocalPart().equals("binding")) {
                         return port;
-                    }                    
+                    }
                 }
             }
         }

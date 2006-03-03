@@ -16,152 +16,146 @@
 
 package org.apache.axis2.client;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.axis2.i18n.Messages;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.SOAPAddress;
 import org.apache.wsdl.extensions.SOAPOperation;
 
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+
 public class WSDLBasedServiceConfigurationBuilder {
-	private ConfigurationContext configurationContext;
 
-	private WSDLDescription description;
+    private WSDLDescription description;
 
-	public WSDLBasedServiceConfigurationBuilder(WSDLDescription wsdlDesc,
-			ConfigurationContext configctx) {
-		description = wsdlDesc;
-		configurationContext = configctx;
-	}
+    public WSDLBasedServiceConfigurationBuilder(WSDLDescription wsdlDesc,
+                                                ConfigurationContext configctx) {
+        description = wsdlDesc;
+//		ConfigurationContext configurationContext = configctx;
+    }
 
-	public AxisService buildAxisService(QName servicename, String endpointname,Options clientOptions)throws AxisFault {
-		WSDLService service = findService(servicename);
-		AxisService serviceDesc = new AxisService();
-		
-		//TODO we just pick first end point
-		WSDLEndpoint endpoint = findEndpoint(null, service);
-		
-		Iterator elements = endpoint.getExtensibilityElements().iterator();
+    public AxisService buildAxisService(QName servicename, String endpointname, Options clientOptions) throws AxisFault {
+        WSDLService service = findService(servicename);
+        AxisService serviceDesc = new AxisService();
 
-		while (elements.hasNext()) {
-			Object obj = elements.next();
-			if (obj instanceof SOAPAddress) {
-				SOAPAddress soapAddress = (SOAPAddress) obj;
-				clientOptions.setTo(new EndpointReference(soapAddress.getLocationURI()));
-			}
-		}
+        //TODO we just pick first end point
+        WSDLEndpoint endpoint = findEndpoint(null, service);
 
-		WSDLBinding binding = endpoint.getBinding();
+        Iterator elements = endpoint.getExtensibilityElements().iterator();
 
-		// let us configure the complete AxisService out of this, not the
-		// current the Operation only
-		Iterator bindings = binding.getBindingOperations().values().iterator();
+        while (elements.hasNext()) {
+            Object obj = elements.next();
+            if (obj instanceof SOAPAddress) {
+                SOAPAddress soapAddress = (SOAPAddress) obj;
+                clientOptions.setTo(new EndpointReference(soapAddress.getLocationURI()));
+            }
+        }
 
-		while (bindings.hasNext()) {
-			WSDLBindingOperation wsdlbop = (WSDLBindingOperation) bindings
-					.next();
-			serviceDesc.addOperation(configureOperation(wsdlbop));
-		}
+        WSDLBinding binding = endpoint.getBinding();
 
-		return serviceDesc;
-	}
-	
-	
-	private AxisOperation configureOperation(WSDLBindingOperation bindingOperation) throws AxisFault{
-		WSDLOperation wsdlop = bindingOperation.getOperation();
-		AxisOperation axisOp = AxisOperationFactory.getAxisOperation(findMEP(wsdlop));
+        // let us configure the complete AxisService out of this, not the
+        // current the Operation only
+        Iterator bindings = binding.getBindingOperations().values().iterator();
 
-		axisOp.setName(wsdlop.getName());
-		
-		
-		
-		
-		Iterator elments = bindingOperation.getExtensibilityElements().iterator();
+        while (bindings.hasNext()) {
+            WSDLBindingOperation wsdlbop = (WSDLBindingOperation) bindings
+                    .next();
+            serviceDesc.addOperation(configureOperation(wsdlbop));
+        }
 
-		while (elments.hasNext()) {
-			Object obj = elments.next();
+        return serviceDesc;
+    }
 
-			if (obj instanceof SOAPOperation) {
-				SOAPOperation soapOp = (SOAPOperation) obj;
-				//TODO put soap action to right place
-				//axisOp.setSoapAction(soapOp.getSoapAction());
-				break;
-			}
-			
-			//TODO set style 
-		}
-		return axisOp;	
-	}
-	
 
-	private WSDLEndpoint findEndpoint(QName endpointname, WSDLService service)
-			throws AxisFault {
-		WSDLEndpoint endpoint;
+    private AxisOperation configureOperation(WSDLBindingOperation bindingOperation) throws AxisFault {
+        WSDLOperation wsdlop = bindingOperation.getOperation();
+        AxisOperation axisOp = AxisOperationFactory.getAxisOperation(findMEP(wsdlop));
 
-		if (endpointname == null) {
-			Iterator endpoints = service.getEndpoints().values().iterator();
+        axisOp.setName(wsdlop.getName());
 
-			if (endpoints.hasNext()) {
-				endpoint = (WSDLEndpoint) endpoints.next();
-			} else {
-				throw new AxisFault("No Endpoint Found in Service, "
-						+ service.getName());
-			}
-		} else {
-			endpoint = service.getEndpoint(endpointname);
-		}
 
-		if (endpoint == null) {
-			throw new AxisFault("Endpoint Not found");
-		}
+        Iterator elments = bindingOperation.getExtensibilityElements().iterator();
 
-		return endpoint;
-	}
+        while (elments.hasNext()) {
+            Object obj = elments.next();
 
-	private int findMEP(WSDLOperation wsdlOp) throws AxisFault {
-		if (wsdlOp.getInputMessage() == null) {
-			throw new AxisFault("Unsupported MEP");
-		}
+            if (obj instanceof SOAPOperation) {
+                SOAPOperation soapOp = (SOAPOperation) obj;
+                //TODO put soap action to right place
+                //axisOp.setSoapAction(soapOp.getSoapAction());
+                break;
+            }
 
-		if (wsdlOp.getOutputMessage() == null) {
-			return WSDLConstants.MEP_CONSTANT_IN_ONLY;
-		} else {
-			return WSDLConstants.MEP_CONSTANT_IN_OUT;
-		}
-	}
+            //TODO set style
+        }
+        return axisOp;
+    }
 
-	private WSDLService findService(QName serviceName) throws AxisFault {
-		WSDLService service;
 
-		if (serviceName == null) {
-			Iterator services = description.getServices().values().iterator();
+    private WSDLEndpoint findEndpoint(QName endpointname, WSDLService service)
+            throws AxisFault {
+        WSDLEndpoint endpoint;
 
-			if (services.hasNext()) {
-				service = (WSDLService) services.next();
-			} else {
-				throw new AxisFault("No service found");
-			}
-		} else {
-			service = description.getService(serviceName);
-		}
+        if (endpointname == null) {
+            Iterator endpoints = service.getEndpoints().values().iterator();
 
-		if (service == null) {
-			throw new AxisFault("No service found");
-		}
+            if (endpoints.hasNext()) {
+                endpoint = (WSDLEndpoint) endpoints.next();
+            } else {
+                throw new AxisFault(Messages
+                        .getMessage("noendpointfound", service.getName().getLocalPart()));
+            }
+        } else {
+            endpoint = service.getEndpoint(endpointname);
+        }
 
-		return service;
-	}
+        if (endpoint == null) {
+            throw new AxisFault(Messages
+                    .getMessage("endpointnotfound"));
+        }
+
+        return endpoint;
+    }
+
+    private int findMEP(WSDLOperation wsdlOp) throws AxisFault {
+        if (wsdlOp.getInputMessage() == null) {
+            throw new AxisFault(Messages
+                    .getMessage("unsupportdmep"));
+        }
+
+        if (wsdlOp.getOutputMessage() == null) {
+            return WSDLConstants.MEP_CONSTANT_IN_ONLY;
+        } else {
+            return WSDLConstants.MEP_CONSTANT_IN_OUT;
+        }
+    }
+
+    private WSDLService findService(QName serviceName) throws AxisFault {
+        WSDLService service;
+
+        if (serviceName == null) {
+            Iterator services = description.getServices().values().iterator();
+
+            if (services.hasNext()) {
+                service = (WSDLService) services.next();
+            } else {
+                throw new AxisFault(Messages
+                        .getMessage("noservicefound"));
+            }
+        } else {
+            service = description.getService(serviceName);
+        }
+        if (service == null) {
+            throw new AxisFault(Messages
+                    .getMessage("noservicefound"));
+        }
+
+        return service;
+    }
 }

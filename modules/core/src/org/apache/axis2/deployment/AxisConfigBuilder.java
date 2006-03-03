@@ -203,7 +203,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 OMElement observerelement = (OMElement) oservers.next();
                 AxisObserver observer;
                 OMAttribute trsClas = observerelement.getAttribute(new QName(TAG_CLASS_NAME));
-                String clasName ;
+                String clasName;
                 if (trsClas != null) {
                     clasName = trsClas.getAttributeValue();
                 } else {
@@ -241,7 +241,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             try {
                 phase = getPhase(phaseClass);
             } catch (Exception e) {
-                throw new DeploymentException("Couldn't find phase class : " + phaseClass, e);
+                throw new DeploymentException(
+                        Messages.getMessage("phaseclassnotfound", phaseClass, e.getMessage()));
             }
 
             phase.setName(phaseName);
@@ -298,13 +299,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement omElement = (OMElement) moduleVersions.next();
             String name = omElement.getAttributeValue(new QName(ATTRIBUTE_NAME));
             if (name == null) {
-                throw new DeploymentException("Module name can not be null in side" +
-                        " default module vresion element ");
+                throw new DeploymentException(Messages.getMessage("modulenamecannotnull"));
             }
             String defaultVeriosn = omElement.getAttributeValue(new QName(ATTRIBUTE_DEFAULT_VERSION));
             if (defaultVeriosn == null) {
-                throw new DeploymentException("Module vresion can not be null in side" +
-                        " default module vresion element ");
+                throw new DeploymentException(Messages.getMessage("modulenamecannotnull"));
             }
             axisConfig.addDefaultModuleVersion(name, defaultVeriosn);
         }
@@ -314,18 +313,13 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         while (trs_senders.hasNext()) {
             TransportInDescription transportIN;
             OMElement transport = (OMElement) trs_senders.next();
-
             // getting transport Name
             OMAttribute trsName = transport.getAttribute(new QName(ATTRIBUTE_NAME));
-
             if (trsName != null) {
                 String name = trsName.getAttributeValue();
-
                 transportIN = new TransportInDescription(new QName(name));
-
                 // transport impl class
                 OMAttribute trsClas = transport.getAttribute(new QName(TAG_CLASS_NAME));
-
                 if (trsClas != null) {
                     try {
                         String clasName = trsClas.getAttributeValue();
@@ -333,7 +327,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                 Thread.currentThread().getContextClassLoader());
                         TransportListener receiver =
                                 (TransportListener) receiverClass.newInstance();
-
                         transportIN.setReceiver(receiver);
                     } catch (NoClassDefFoundError e) {
                         log.info(Messages.getMessage("classnotfound", trsClas.getAttributeValue()));
@@ -345,38 +338,24 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         throw new DeploymentException(e);
                     }
                 }
-
                 try {
-
-                    // process Parameters
-                    // processing Parameters
-                    // Processing service level parameters
                     Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
-
                     processParameters(itr, transportIN, axisConfig);
-
-                    // process INFLOW
                     OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
-
                     if (inFlow != null) {
                         throw new DeploymentException(
                                 Messages.getMessage(
                                         DeploymentErrorMsgs.INFLOW_NOT_ALLOWED_IN_TRS_OUT, name));
                     }
-
                     OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
-
                     if (outFlow != null) {
                         transportIN.setInFlow(processFlow(outFlow, axisConfig));
                     }
-
                     OMElement inFaultFlow =
                             transport.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
-
                     if (inFaultFlow != null) {
                         transportIN.setFaultFlow(processFlow(inFaultFlow, axisConfig));
                     }
-
                     OMElement outFaultFlow =
                             transport.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
 
@@ -385,7 +364,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                 Messages.getMessage(
                                         DeploymentErrorMsgs.OUTFLOW_NOT_ALLOWED_IN_TRS_IN, name));
                     }
-
                     // adding to axis2 config
                     axisConfig.addTransportIn(transportIN);
                 } catch (AxisFault axisFault) {

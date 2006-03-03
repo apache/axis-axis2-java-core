@@ -80,7 +80,7 @@ public class ArchiveReader implements DeploymentConstants {
                 try {
                     Utils.fillAxisService(service, axisConfig);
                 } catch (Exception e) {
-                    log.info("Error in schema generating :" + e.getMessage());
+                    log.info(Messages.getMessage("errorinscheamgen", e.getMessage()));
                 }
             }
             serviceList.add(service);
@@ -219,7 +219,7 @@ public class ArchiveReader implements DeploymentConstants {
                     try {
                         zin.close();
                     } catch (IOException e) {
-                        log.info("error in closing input stream");
+                        log.info(Messages.getMessage("errorininputstreamclose"));
                     }
                 }
             }
@@ -246,7 +246,7 @@ public class ArchiveReader implements DeploymentConstants {
                         try {
                             in.close();
                         } catch (IOException e) {
-                            log.info("error in cloasing input stream");
+                            log.info(Messages.getMessage("errorininputstreamclose"));
                         }
                     }
                 }

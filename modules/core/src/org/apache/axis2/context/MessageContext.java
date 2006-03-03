@@ -113,16 +113,6 @@ public class MessageContext extends AbstractContext {
     // Are we doing MTOM now?
     private boolean doingMTOM;
 
-    private QName transportInName;
-
-    private QName transportOutname;
-
-    private String serviceGroupId;
-
-    private String axisServiceName;
-
-    private QName axisOperationName;
-
     private transient AxisOperation axisOperation;
 
     private transient AxisService axisService;
@@ -399,8 +389,6 @@ public class MessageContext extends AbstractContext {
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getParameter(String key) {
-        Parameter param = null;
-
         if (getAxisOperation() != null) {
             AxisOperation opDesc = getAxisOperation();
             return opDesc.getParameter(key);
@@ -616,23 +604,15 @@ public class MessageContext extends AbstractContext {
     }
 
     public void setAxisOperation(AxisOperation axisOperation) {
-        if (axisOperation != null) {
-            this.axisOperationName = axisOperation.getName();
-        }
         this.axisOperation = axisOperation;
     }
 
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
-
-        if (axisService != null) {
-            this.axisServiceName = axisService.getName();
-        }
     }
 
     public void setAxisServiceGroup(AxisServiceGroup axisServiceGroup) {
         if (axisServiceGroup != null) {
-            this.serviceGroupId = axisServiceGroup.getServiceGroupName();
             this.axisServiceGroup = axisServiceGroup;
         }
     }
@@ -845,10 +825,6 @@ public class MessageContext extends AbstractContext {
      */
     public void setTransportIn(TransportInDescription in) {
         this.transportIn = in;
-
-        if (in != null) {
-            this.transportInName = in.getName();
-        }
     }
 
     /**
@@ -856,10 +832,6 @@ public class MessageContext extends AbstractContext {
      */
     public void setTransportOut(TransportOutDescription out) {
         transportOut = out;
-
-        if (out != null) {
-            this.transportOutname = out.getName();
-        }
     }
 
     /**

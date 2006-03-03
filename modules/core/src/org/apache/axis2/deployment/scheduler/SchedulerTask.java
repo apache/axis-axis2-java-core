@@ -17,8 +17,7 @@
 
 package org.apache.axis2.deployment.scheduler;
 
-import org.apache.axis2.deployment.listener.RepositoryListener;
-import org.apache.axis2.deployment.listener.RepositoryListenerImpl;
+import org.apache.axis2.deployment.RepositoryListener;
 
 import java.util.TimerTask;
 
@@ -59,7 +58,7 @@ public class SchedulerTask implements Runnable {
     }
 
     private void checkRepositary() {
-        ((RepositoryListenerImpl) wsListener).startListener();
+        wsListener.startListener();
     }
 
     /**
