@@ -54,6 +54,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
         // if there are no headers or addressing version is already determined, pass through
         if (header == null || msgContext.getProperty(WS_ADDRESSING_VERSION) != null) {
+            msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             return;
         }
 
@@ -63,13 +64,12 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         addressingHeaders = header.getHeaderBlocksWithNSURI(addressingNamespace);
         if (addressingHeaders != null && addressingHeaders.size() > 0) {
             msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace);
+            msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
             addressingNSObject = ((OMElement) addressingHeaders.get(0)).findNamespace(addressingNamespace, "");
             logger.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
-            extractAddressingInformation(header, msgContext,
-                    addressingHeaders, addressingNamespace);
-
-
+            extractAddressingInformation(header, msgContext, addressingHeaders, addressingNamespace);
         } else {
+            msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             logger.debug("No Headers present corresponding to " + addressingVersion);
         }
 

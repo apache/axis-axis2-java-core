@@ -1,11 +1,22 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.*;
-import org.apache.axis2.description.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.ClientUtils;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
@@ -96,6 +107,12 @@ public class ServiceClient {
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
                 (AxisServiceGroup) this.axisService.getParent());
         this.serviceContext = sgc.getServiceContext(this.axisService);
+
+        // if we are using anon case then we can not use addressing, as WS-A requires both
+        // Action and To address to be present. In anon case, we might not have the action.
+        // so switching addressing off now. But will be setting back on, if some one sets the action.
+        // @see Options.setAction()
+        if (axisService == null) serviceContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
     }
 
     /**

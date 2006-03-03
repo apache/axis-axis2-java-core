@@ -76,6 +76,7 @@ public class Utils {
 
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setTo(oldOptions.getReplyTo());
+        newmsgCtx.getOptions().setAction(oldOptions.getAction());
 
         // add the service group id as a reference parameter
         String serviceGroupContextId = inMessageContext.getServiceGroupContextId();

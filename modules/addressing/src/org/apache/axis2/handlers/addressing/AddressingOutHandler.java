@@ -56,10 +56,16 @@ public class AddressingOutHandler extends AddressingHandler {
         // it should be able to disable addressing by some one.
         Boolean
                 property = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        if (property == null && msgContext.getOperationContext() != null) {
+            // check in the IN message context, if available
+            MessageContext inMsgCtxt = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            property = (Boolean) inMsgCtxt.getProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        }
         if (property != null && property.booleanValue()) {
             log.info("Addressing is disbaled .....");
             return;
         }
+
         this.msgCtxt = msgContext;
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);

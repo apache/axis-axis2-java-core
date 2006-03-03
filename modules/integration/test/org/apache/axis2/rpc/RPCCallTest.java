@@ -61,10 +61,7 @@ public class RPCCallTest extends TestCase {
     //  0123456789 0 123456789
 
 
-    protected EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis2/services/EchoXMLService/concat");
+    protected EndpointReference targetEPR;
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
