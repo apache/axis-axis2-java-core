@@ -523,7 +523,7 @@ public class MessageContext extends AbstractContext {
      * @return Returns soap action.
      */
     public String getSoapAction() {
-        return options.getSoapAction();
+        return options.getAction();
     }
 
     /**
@@ -830,7 +830,7 @@ public class MessageContext extends AbstractContext {
      * @param soapAction
      */
     public void setSoapAction(String soapAction) {
-        options.setSoapAction(soapAction);
+        options.setAction(soapAction);
     }
 
     /**

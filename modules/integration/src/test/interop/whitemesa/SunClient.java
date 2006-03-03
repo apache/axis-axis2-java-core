@@ -45,7 +45,7 @@ public class SunClient {
             options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
             options.setTo(new EndpointReference(url.toString()));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            options.setSoapAction(soapAction);
+            options.setAction(soapAction);
 
             MessageContext messageContext = new MessageContext();
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();

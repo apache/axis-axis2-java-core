@@ -92,7 +92,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis2/services/EchoXMLService/"));
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setSoapAction("echoOMElement");
+        options.setAction("echoOMElement");
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);

@@ -77,7 +77,7 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
         try {
             Options options = new Options();
             options.setTo(new EndpointReference(url));
-            options.setSoapAction("http://soap.amazon.com");
+            options.setAction("http://soap.amazon.com");
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(
                     org.apache.axis2.context.MessageContextConstants.CHUNKED,

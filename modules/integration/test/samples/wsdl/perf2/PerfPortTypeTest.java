@@ -64,7 +64,7 @@ public class PerfPortTypeTest extends TestCase {
    public void testhandleStringArray() throws java.lang.Exception {
         PerfPortTypeStub stub = new PerfPortTypeStub(null, targetEpr);
         //create a new databinder
-        stub._getServiceClient().getOptions().setSoapAction("handleStringArray");
+        stub._getServiceClient().getOptions().setAction("handleStringArray");
         log.info(">>>> Warming up...");
         pump(stub, 1);
         log.info(">>>> Running volume tests...");
@@ -79,7 +79,7 @@ public class PerfPortTypeTest extends TestCase {
                 new InputElement();
         String[] s = new String[count];
         for (int i = 0; i < s.length; i++) {
-            s[i] = "qwertyuiopåasdfghjklöäzxcvbnm";
+            s[i] = "qwertyuiop?asdfghjkl??zxcvbnm";
         }
         input.setItem(s);
         Date start = new Date();

@@ -104,7 +104,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
-        options.setSoapAction("echoOMElement");
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -147,7 +146,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
-        options.setSoapAction("EchoXMLService/echoOMElement");
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
 
@@ -173,7 +171,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        options.setSoapAction("EchoXMLService/echoOMElement");
         options.setUseSeparateListener(true);
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
@@ -194,7 +191,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        options.setSoapAction("EchoXMLService/echoOMElement");
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

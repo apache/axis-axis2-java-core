@@ -191,7 +191,7 @@
                     </xsl:for-each>) throws java.rmi.RemoteException{
 
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
-              _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+              _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
@@ -297,7 +297,7 @@
                 <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
-          _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+          _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
           _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
           <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
@@ -405,7 +405,7 @@
                 </xsl:for-each>) throws java.rmi.RemoteException{
 
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
-                _operationClient.getOptions().setSoapAction("<xsl:value-of select="$soapAction"/>");
+                _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>

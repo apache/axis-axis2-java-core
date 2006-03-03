@@ -73,6 +73,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 //~--- classes ----------------------------------------------------------------
 
 public abstract class MultiLanguageClientEmitter implements Emitter {
@@ -1597,7 +1599,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         }
 
-
+        loadOperations(boundInterface, doc, rootElement, axisBinding);
 
         return rootElement;
     }

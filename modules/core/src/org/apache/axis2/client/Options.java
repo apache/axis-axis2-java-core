@@ -55,8 +55,6 @@ public class Options {
     private String soapVersionURI; // defaults to
     // SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
-    private String soapAction;
-
     private Boolean isExceptionToBeThrownOnSOAPFault; // defaults to true;
 
     private long timeOutInMilliSeconds = -1; // =
@@ -218,14 +216,6 @@ public class Options {
         }
 
         return senderTransportProtocol;
-    }
-
-    public String getSoapAction() {
-        if (soapAction == null && parent != null) {
-            return parent.getSoapAction();
-        }
-
-        return (soapAction != null) ? soapAction : "";
     }
 
     public String getSoapVersionURI() {
@@ -402,10 +392,6 @@ public class Options {
             throw new AxisFault(Messages.getMessage("unknownTransport",
                     senderTransport));
         }
-    }
-
-    public void setSoapAction(String soapAction) {
-        this.soapAction = soapAction;
     }
 
     public void setSoapVersionURI(String soapVersionURI) {

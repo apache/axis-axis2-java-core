@@ -42,7 +42,15 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </parameter>
-            <xsl:comment>All public methods of the service class are exposed by default</xsl:comment>
+			<xsl:for-each select="method">
+				<operation>
+					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
+					<xsl:attribute name="mep"><xsl:value-of select="@mep"/></xsl:attribute>
+					<wsamapping>
+						<xsl:value-of select="@soapaction"/>
+					</wsamapping>
+				</operation>
+			</xsl:for-each>
         </service>
     </xsl:template>
 </xsl:stylesheet>
