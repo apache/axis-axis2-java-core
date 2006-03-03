@@ -448,7 +448,25 @@ public class OutflowConfiguration {
 		return (String) this.actionList[this.currentAction]
 				.get(WSHandlerConstants.ENC_PROP_FILE);
 	}
-	
+
+    /**
+     * Enable/Disable PrecisionInMilliseconds
+     * @param encPropFile
+     */
+    public void setPrecisionInMilliseconds(boolean value) {
+        this.actionList[this.currentAction].put(
+                WSHandlerConstants.TIMESTAMP_PRECISION, value?"true":"false");
+    }
+    
+    /**
+     * Returns whether PrecisionInMilliseconds is enabled or not
+     * @return Returns String.
+     */
+    public String getPrecisionInMilliseconds() {
+        return (String) this.actionList[this.currentAction]
+                .get(WSHandlerConstants.TIMESTAMP_PRECISION);
+    }
+    
 	/**
 	 * Option to add additional elements in the username token element.
 	 * Example: Nonce and Create elements
