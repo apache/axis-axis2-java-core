@@ -149,12 +149,12 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
         }
 
-        faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, "wsa:" + addressingHeaderName);
+        faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, WSA_DEFAULT_PREFIX + ":" + addressingHeaderName);
         faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
         if (!messageContext.isSOAP11()) {
             setFaultCode(messageContext, faultCode);
         }
-        throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", addressingNSObject.getPrefix() + ":" + faultCode);
+        throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", WSA_DEFAULT_PREFIX + ":" + faultCode);
     }
 
     private void setFaultCode(MessageContext messageContext, String faultCode) {
@@ -164,7 +164,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         soapFaultValue.setText(messageContext.getEnvelope().getNamespace().getPrefix() + ":" + SOAP12Constants.FAULT_CODE_SENDER);
         SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
         SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
-        soapFaultSubcodeValue.setText(addressingNSObject.getPrefix() + ":" + faultCode);
+        soapFaultSubcodeValue.setText(WSA_DEFAULT_PREFIX + ":" + faultCode);
         messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
     }
 
