@@ -594,6 +594,9 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
             flag = (this.attributes.getLength() > 0);
         }
 
+        //The namespaces
+        flag = this.namespace != null;
+        
         if (!flag) {
             if (this.namespaces != null) {
                 flag = !this.namespaces.isEmpty();
@@ -601,6 +604,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
                 flag = true;
             }
         }
+        
 
         return flag;
     }
