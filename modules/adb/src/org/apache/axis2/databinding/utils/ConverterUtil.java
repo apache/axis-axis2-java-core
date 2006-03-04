@@ -296,6 +296,9 @@ public class ConverterUtil {
         return new Duration(s);
     }
 
+    public static Duration convertToDuration(String s) {
+        return new Duration(s);
+    }
     public static HexBinary convertTohexBinary(String s) {
         return new HexBinary(s);
     }
