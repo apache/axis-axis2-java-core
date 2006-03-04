@@ -548,7 +548,7 @@ public class AxisEngine {
 
     private String getSenderFaultCode(OMNamespace soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getName())
-                ? soapNamespace.getPrefix() + ":" + SOAP12Constants.FAULT_CODE_SENDER
-                : soapNamespace.getPrefix() + ":" + SOAP11Constants.FAULT_CODE_SENDER;
+                ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP12Constants.FAULT_CODE_SENDER
+                : SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP11Constants.FAULT_CODE_SENDER;
     }
 }

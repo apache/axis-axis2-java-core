@@ -169,7 +169,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         } catch (AxisFault e) {
             if (msgContext != null) {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 handleFault(msgContext, out, e);
             } else {
                 throw new ServletException(e);

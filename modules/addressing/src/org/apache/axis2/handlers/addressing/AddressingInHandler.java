@@ -166,7 +166,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         SOAPFactory soapFac = OMAbstractFactory.getSOAP12Factory();
         SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
         SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
-        soapFaultValue.setText(messageContext.getEnvelope().getNamespace().getPrefix() + ":" + SOAP12Constants.FAULT_CODE_SENDER);
+        soapFaultValue.setText(SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP12Constants.FAULT_CODE_SENDER);
         SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
         SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
         soapFaultSubcodeValue.setText(WSA_DEFAULT_PREFIX + ":" + faultCode);
