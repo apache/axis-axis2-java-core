@@ -1216,6 +1216,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
                 if (this.parentNode.getNamespaceURI() != this.getNamespaceURI()) {
                     AttrImpl attr = new AttrImpl(this.ownerNode, "xmlns",
                             this.namespace.getName());
+                    attr.setOMNamespace(new NamespaceImpl(
+                            OMConstants.XMLNS_NS_URI, OMConstants.XMLNS_NS_PREFIX));
                     attributeMap.addItem(attr);
                 }
             }

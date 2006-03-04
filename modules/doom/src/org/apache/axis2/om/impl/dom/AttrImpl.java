@@ -99,7 +99,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * Returns the name of this attribute.
      */
     public String getNodeName() {
-        return (this.namespace != null && !"".equals(this.namespace)) 
+        return (this.namespace != null
+                && !"".equals(this.namespace.getPrefix()) && !(OMConstants.XMLNS_NS_PREFIX.equals(this.attrName))) 
                 ? this.namespace.getPrefix()+ ":" + this.attrName
                 : this.attrName;
     }
