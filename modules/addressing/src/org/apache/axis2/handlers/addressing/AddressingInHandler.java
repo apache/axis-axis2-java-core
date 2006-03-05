@@ -132,22 +132,22 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
     private void checkForMandatoryHeaders(Map alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
         if (alreadyFoundAddrHeader.get(WSA_ACTION) == null) {
-            makeFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED);
+            makeFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
         } else if (alreadyFoundAddrHeader.get(WSA_TO) == null) {
-            makeFault(messageContext, WSA_TO, Final.FAULT_ADDRESSING_HEADER_REQUIRED);
+            makeFault(messageContext, WSA_TO, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
         }
     }
 
     private boolean hasDuplicateHeaders(String addressingHeaderName, MessageContext messageContext, Map alreadyFoundAddressingHeaders) throws AxisFault {
         if (alreadyFoundAddressingHeaders.get(addressingHeaderName) != null) {
-            return makeFault(messageContext, addressingHeaderName, Final.FAULT_INVALID_HEADER);
+            return makeFault(messageContext, addressingHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_INVALID_CARDINALITY);
         } else {
             alreadyFoundAddressingHeaders.put(addressingHeaderName, addressingHeaderName);
         }
         return false;
     }
 
-    private boolean makeFault(MessageContext messageContext, String addressingHeaderName, String faultCode) throws AxisFault {
+    private boolean makeFault(MessageContext messageContext, String addressingHeaderName, String faultCode, String faultSubCode) throws AxisFault {
         Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInformation == null) {
             faultInformation = new HashMap();
@@ -157,12 +157,12 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, WSA_DEFAULT_PREFIX + ":" + addressingHeaderName);
         faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
         if (!messageContext.isSOAP11()) {
-            setFaultCode(messageContext, faultCode);
+            setFaultCode(messageContext, faultCode, faultSubCode);
         }
         throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", WSA_DEFAULT_PREFIX + ":" + faultCode);
     }
 
-    private void setFaultCode(MessageContext messageContext, String faultCode) {
+    private void setFaultCode(MessageContext messageContext, String faultCode, String faultSubCode) {
         SOAPFactory soapFac = OMAbstractFactory.getSOAP12Factory();
         SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
         SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
@@ -170,6 +170,11 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
         SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
         soapFaultSubcodeValue.setText(WSA_DEFAULT_PREFIX + ":" + faultCode);
+        if(faultSubCode != null) {
+            SOAPFaultSubCode soapFaultSubCode2 = soapFac.createSOAPFaultSubCode(soapFaultSubCode);
+            SOAPFaultValue soapFaultSubcodeValue2 = soapFac.createSOAPFaultValue(soapFaultSubCode2);
+            soapFaultSubcodeValue2.setText(WSA_DEFAULT_PREFIX + ":" + faultSubCode);
+        }
         messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
     }
 
