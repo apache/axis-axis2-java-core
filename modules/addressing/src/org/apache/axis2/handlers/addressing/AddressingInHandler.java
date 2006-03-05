@@ -90,7 +90,10 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
-            EndpointReference epr;
+
+            if (SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole()))
+                continue;
+
             if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                 if (!hasDuplicateHeaders(WSA_TO, messageContext, alreadyFoundAddrHeader)) {
                     extractToEPRInformation(soapHeaderBlock, messageContextOptions, header);
