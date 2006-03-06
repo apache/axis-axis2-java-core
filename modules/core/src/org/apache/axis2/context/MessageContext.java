@@ -40,7 +40,7 @@ public class MessageContext extends AbstractContext {
     public final static int IN_FAULT_FLOW = 3;
 
     public final static int OUT_FLOW = 2;
-    public final static int OUT_FAUTT_FLOW = 4;
+    public final static int OUT_FAULT_FLOW = 4;
 
     public static final String REMOTE_ADDR = "REMOTE_ADDR";
 
@@ -87,6 +87,13 @@ public class MessageContext extends AbstractContext {
     // to keep a ref to figure out which path your are in the execution (send or
     // receive)
     public int FLOW = IN_FLOW;
+
+    /**
+     * To invoke fireAndforget method we have to hand over transport sening logic to a thread
+     * other wise user has to wait till it get transport response (in the case of HTTP its HTTP
+     * 202)
+     */
+    public static final String TRANSPORT_NON_BLOCKING = "transportNonBlocking";
 
     /**
      * Field processingFault

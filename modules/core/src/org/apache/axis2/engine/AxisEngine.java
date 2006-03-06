@@ -248,16 +248,16 @@ public class AxisEngine {
     private void extractFaultInformationFromMessageContext(MessageContext context, SOAPFault fault,
                                                            Throwable e) {
         SOAPProcessingException soapException = null;
-        String soapNamespaceURI;
-
-        // get the current SOAP version
-        if (!context.isSOAP11()) {
-
-            // defaulting to SOAP 1.2
-            soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-        } else {
-            soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-        }
+//        String soapNamespaceURI;
+//
+//        // get the current SOAP version
+//        if (!context.isSOAP11()) {
+//
+//            // defaulting to SOAP 1.2
+//            soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+//        } else {
+//            soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+//        }
 
         if (e instanceof SOAPProcessingException) {
             soapException = (SOAPProcessingException) e;
@@ -272,7 +272,7 @@ public class AxisEngine {
         Object faultCode = context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         String soapFaultCode = "";
 
-        Throwable exception = null;
+        Throwable exception;
         if (faultCode != null) {
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
@@ -505,7 +505,17 @@ public class AxisEngine {
             TransportOutDescription transportOut = msgContext.getTransportOut();
             TransportSender sender = transportOut.getSender();
 
-            sender.invoke(msgContext);
+            // This boolean property only used in client side fireAndForget invocation
+            //It will set a property into message context and if some one has set the
+            //property then transport sender will invoke in a diffrent thread
+            Object isTranportBlocking = msgContext.getProperty(
+                    MessageContext.TRANSPORT_NON_BLOCKING);
+            if (isTranportBlocking != null && ((Boolean) isTranportBlocking).booleanValue()) {
+                msgContext.getConfigurationContext().getThreadPool().execute(
+                        new TranportNonBlockingInvocationWorker(msgContext, sender));
+            } else {
+                sender.invoke(msgContext);
+            }
         }
     }
 
@@ -524,7 +534,7 @@ public class AxisEngine {
             ArrayList faultExecutionChain = axisOperation.getPhasesOutFaultFlow();
 
             msgContext.setExecutionChain((ArrayList) faultExecutionChain.clone());
-            msgContext.setFLOW(MessageContext.OUT_FLOW);
+            msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
             invoke(msgContext);
         }
 
@@ -546,5 +556,28 @@ public class AxisEngine {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getName())
                 ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP12Constants.FAULT_CODE_SENDER
                 : SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP11Constants.FAULT_CODE_SENDER;
+    }
+
+    /**
+     * This class is the workhorse for a non-blocking invocation that uses a two
+     * way transport.
+     */
+    private class TranportNonBlockingInvocationWorker implements Runnable {
+        private Log log = LogFactory.getLog(getClass());
+        private MessageContext msgctx;
+        private TransportSender sender;
+
+        public TranportNonBlockingInvocationWorker(MessageContext msgctx, TransportSender sender) {
+            this.msgctx = msgctx;
+            this.sender = sender;
+        }
+
+        public void run() {
+            try {
+                sender.invoke(msgctx);
+            } catch (Exception e) {
+                log.info(e.getMessage());
+            }
+        }
     }
 }
