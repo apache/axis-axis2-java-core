@@ -17,18 +17,34 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Represents logical collection of handlers. The order of Handlers do not have
- * any symantics.
+ * Class FlowImpl
  */
-public interface Flow {
+public class Flow  {
+
+    /**
+     * Field list
+     */
+    protected final List list;
+
+    /**
+     * Constructor FlowImpl
+     */
+    public Flow() {
+        list = new ArrayList();
+    }
 
     /**
      * Method addHandler.
      *
      * @param handler
      */
-    public void addHandler(HandlerDescription handler);
+    public void addHandler(HandlerDescription handler) {
+        list.add(handler);
+    }
 
     /**
      * Method getHandler.
@@ -36,12 +52,16 @@ public interface Flow {
      * @param index
      * @return Returns HandlerDescription.
      */
-    public HandlerDescription getHandler(int index);
+    public HandlerDescription getHandler(int index) {
+        return (HandlerDescription) list.get(index);
+    }
 
     /**
-     * Method getHandlerCount
+     * Method getHandlerCount.
      *
      * @return Returns int.
      */
-    public int getHandlerCount();
+    public int getHandlerCount() {
+        return list.size();
+    }
 }
