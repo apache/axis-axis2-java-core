@@ -429,9 +429,23 @@ public class WSDLPump {
                     this.wsdlComponentFactory.createWSDLBindingOperation();
             wsdl4jBindingOperation =
                     (BindingOperation) bindingoperationsIterator.next();
+
+            //for the namespace we should pick the namespace from the porttype
+            //not the binding since the portyype can be imported and then the
+            //namespaces of the binding and porttype can differ
+
+            PortType portType = wsdl4JBinding.getPortType();
+            String namespaceURI = "";
+            if (portType!=null){
+                namespaceURI = portType.getQName().getNamespaceURI();
+            }else{
+                namespaceURI = wsdl4JBinding.getQName().getNamespaceURI();
+            }
+
             this.populateBindingOperation(wsdlBindingOperation,
                     wsdl4jBindingOperation,
-                    wsdl4JBinding.getQName().getNamespaceURI(), wsdl4jDefinition);
+                    namespaceURI,
+                    wsdl4jDefinition);
             wsdlBindingOperation.setOperation(
                     wsdlInterface.getOperation(
                             wsdl4jBindingOperation.getOperation().getName()));
