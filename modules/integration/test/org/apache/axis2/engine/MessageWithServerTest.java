@@ -94,7 +94,7 @@ public class MessageWithServerTest extends TestCase {
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
         dispatchPhase.addHandler(id);
-        config.getInPhasesUptoAndIncludingPostDispatch().add(dispatchPhase);
+        config.getGlobalInFlow().add(dispatchPhase);
         service.engageModule(m1, config);
 
         AxisOperation axisOperation = new OutInAxisOperation(

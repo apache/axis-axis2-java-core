@@ -29,7 +29,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.util.HostConfiguration;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 
@@ -100,13 +99,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processModuleConfig(moduleConfigs, axisConfig, axisConfig);
 
-            // setting host configuration
-            OMElement hostElement = config_element.getFirstChildWithName(new QName(TAG_HOST_CONFIG));
-
-            if (hostElement != null) {
-                processHostCongiguration(hostElement, axisConfig);
-            }
-
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
                     TAG_POLICY));
@@ -133,26 +125,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }
-    }
-
-    private void processHostCongiguration(OMElement element, AxisConfiguration config) {
-        OMElement ipele = element.getFirstChildWithName(new QName("ip"));
-        String ip = null;
-        int port = -1;
-
-        if (ipele != null) {
-            ip = ipele.getText().trim();
-        }
-
-        OMElement portele = element.getFirstChildWithName(new QName("port"));
-
-        if (portele != null) {
-            port = Integer.parseInt(portele.getText().trim());
-        }
-
-        HostConfiguration hostconfig = new HostConfiguration(ip, port);
-
-        config.setHostConfiguration(hostconfig);
     }
 
     protected void processModuleConfig(Iterator moduleConfigs, ParameterInclude parent,

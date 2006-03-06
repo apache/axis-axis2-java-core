@@ -55,7 +55,7 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
     public void testFaultHandling() throws AxisFault {
         ConfigurationContext configurationContext = UtilServer.getConfigurationContext();
-        ArrayList inPhasesUptoAndIncludingPostDispatch = configurationContext.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
+        ArrayList inPhasesUptoAndIncludingPostDispatch = configurationContext.getAxisConfiguration().getGlobalInFlow();
         Phase phaseOne = (Phase) inPhasesUptoAndIncludingPostDispatch.get(0);
         phaseOne.addHandler(new FaultHandler());
 

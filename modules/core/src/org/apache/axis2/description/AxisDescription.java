@@ -106,4 +106,10 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public abstract Object getKey();
+
+    /**
+     * To check whether a given module has engaged to parenet
+     * @param moduleName
+     * @return
+     */
 }

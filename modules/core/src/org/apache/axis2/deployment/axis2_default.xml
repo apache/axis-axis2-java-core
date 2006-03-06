@@ -13,11 +13,6 @@
     <parameter name="password" locked="false">axis2</parameter>
 
     <parameter name="seralizeLocation" locked="false">.</parameter>
-    <hostConfiguration>
-        <ip>127.0.0.1</ip>
-        <port>5555</port>
-    </hostConfiguration>
-
 
     <!--if you want to extract the service archive file and work with that please uncomment this-->
     <!--else , it wont extract archive file or does not take into consideration if someone drop-->
@@ -119,22 +114,22 @@
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-            
+
             <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-            
+
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-            
+
             <handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-            
+
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
                 <order phase="PostDispatch"/>

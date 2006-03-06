@@ -84,7 +84,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
         dispatchPhase.addHandler(id);
-        config.getInPhasesUptoAndIncludingPostDispatch().add(dispatchPhase);
+        config.getGlobalInFlow().add(dispatchPhase);
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportIn(tIn);
 

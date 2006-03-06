@@ -37,8 +37,10 @@ public class MessageContext extends AbstractContext {
     protected Options options;
 
     public final static int IN_FLOW = 1;
+    public final static int IN_FAULT_FLOW = 3;
 
     public final static int OUT_FLOW = 2;
+    public final static int OUT_FAUTT_FLOW = 4;
 
     public static final String REMOTE_ADDR = "REMOTE_ADDR";
 

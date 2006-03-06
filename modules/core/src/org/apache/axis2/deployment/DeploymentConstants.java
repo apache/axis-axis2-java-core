@@ -40,7 +40,6 @@ public interface DeploymentConstants {
     String TAG_MESSAGE = "message";
     String TAG_LISTENER = "listener";
     String TAG_LABEL = "label";
-    String TAG_HOST_CONFIG = "hostConfiguration";
     String TAG_HANDLER = "handler";
     String TAG_TYPE = "type";
     String TAG_TRANSPORT_SENDER = "transportSender";

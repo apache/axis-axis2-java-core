@@ -35,16 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPConstants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPFaultDetail;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.ws.commons.soap.*;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -161,8 +152,7 @@ public class AxisEngine {
                 processingContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
 
         // register the fault message context
-        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
-        {
+        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
         }
 
@@ -177,8 +167,7 @@ public class AxisEngine {
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null) {
             faultContext.setTo(processingContext.getFaultTo());
-        } else if (processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null)
-        {
+        } else if (processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
             OMElement faultToElement = processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo"));
             faultTo = new EndpointReference("");
             faultTo.fromOM(faultToElement);
@@ -288,9 +277,7 @@ public class AxisEngine {
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
-        } else
-        if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
-        {
+        } else if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault)) {
             QName faultCodeQName = ((AxisFault) exception).getFaultCode();
             if (faultCodeQName != null) {
                 if (faultCodeQName.getLocalPart().indexOf(":") == -1) {
@@ -320,7 +307,7 @@ public class AxisEngine {
             message = fault.getReason().getSOAPText().getText();
         } else if (soapException != null) {
             message = soapException.getMessage();
-        } else if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault)){
+        } else if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault)) {
             message = ((AxisFault) exception).getReason();
             message = message != null && "".equals(message) ? message : e.getMessage();
 
@@ -375,7 +362,7 @@ public class AxisEngine {
     public void receive(MessageContext msgContext) throws AxisFault {
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
-                confContext.getAxisConfiguration().getInPhasesUptoAndIncludingPostDispatch();
+                confContext.getAxisConfiguration().getGlobalInFlow();
 
         // Set the initial execution chain in the MessageContext to a *copy* of what
         // we got above.  This allows individual message processing to change the chain without
@@ -466,7 +453,16 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-        // TODO : rationalize fault handling!
+        log.info("Received Error Message with id " + msgContext.getMessageID());
+        ConfigurationContext confContext = msgContext.getConfigurationContext();
+        ArrayList preCalculatedPhases =
+                confContext.getAxisConfiguration().getInFaultFlow();
+        // Set the initial execution chain in the MessageContext to a *copy* of what
+        // we got above.  This allows individual message processing to change the chain without
+        // affecting later messages.
+        msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
+        msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
+        invoke(msgContext);
     }
 
     public void resume(MessageContext msgctx) throws AxisFault {

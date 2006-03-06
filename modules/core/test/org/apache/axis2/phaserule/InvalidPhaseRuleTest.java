@@ -43,7 +43,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             super.setUp();
             phaserul = new InvalidPhaseRuleTest("");
             axisSytem = new AxisConfiguration();
-            ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
+            ArrayList inPhase = axisSytem.getGlobalInFlow();
 
             Handler han = null;
             PhaseHolder ph = new PhaseHolder(inPhase);
@@ -90,7 +90,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
 
             phaserul = new InvalidPhaseRuleTest("");
             axisSytem = new AxisConfiguration();
-            ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
+            ArrayList inPhase = axisSytem.getGlobalInFlow();
 
             inPhase.add("global");
             ((AxisConfiguration) axisSytem).setInFaultPhases(inPhase);

@@ -9,8 +9,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.phaseresolver.PhaseException;
-import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,13 +55,8 @@ public class ConfigurationContextFactory {
 
     private static void init(ConfigurationContext configContext) throws AxisFault {
         try {
-            PhaseResolver phaseResolver = new PhaseResolver(configContext.getAxisConfiguration());
-
-            phaseResolver.buildTranspotsChains();
             initModules(configContext);
             initTransportSenders(configContext);
-        } catch (PhaseException e) {
-            throw new AxisFault(e);
         } catch (DeploymentException e) {
             throw new AxisFault(e);
         }

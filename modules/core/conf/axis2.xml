@@ -13,11 +13,6 @@
     <parameter name="password" locked="false">axis2</parameter>
 
     <parameter name="seralizeLocation" locked="false">.</parameter>
-    <hostConfiguration>
-        <ip>127.0.0.1</ip>
-        <port>5555</port>
-    </hostConfiguration>
-
 
     <!--if you want to extract the service archive file and work with that please uncomment this-->
     <!--else , it wont extract archive file or does not take into consideration if someone drop-->
@@ -81,7 +76,8 @@
         <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding" locked="false">chunked</parameter>
     </transportSender>
-    <transportSender name="https" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+    <transportSender name="https"
+                     class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding" locked="false">chunked</parameter>
     </transportSender>

@@ -27,7 +27,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         //TODO fix me
         phaserul = new PhaseRuleTest("");
         axisSytem = new AxisConfiguration();
-        ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
+        ArrayList inPhase = axisSytem.getGlobalInFlow();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();

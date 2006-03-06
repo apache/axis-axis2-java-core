@@ -24,7 +24,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
-import org.apache.axis2.util.HostConfiguration;
+import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,8 +69,6 @@ public class AxisConfiguration extends AxisDescription {
      */
     private Hashtable faultyServices;
 
-    // to store host configuration if any
-    private HostConfiguration hostConfiguration;
     private ArrayList inFaultPhases;
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     private HashMap messageReceivers;
@@ -244,7 +242,7 @@ public class AxisConfiguration extends AxisDescription {
                 module = loadModulefromResources(moduleName);
             }
         }
-        engageModule(module, moduleref);
+        engageModule(module);
     }
 
     /**
@@ -259,25 +257,26 @@ public class AxisConfiguration extends AxisDescription {
         AxisModule module = getModule(moduleQName);
         if (module == null) {
             module = loadModulefromResources(moduleQName.getLocalPart());
-            engageModule(module, moduleQName);
+            engageModule(module);
         } else {
-            engageModule(module, moduleQName);
+            engageModule(module);
         }
 
     }
 
-    private void engageModule(AxisModule module, QName moduleQName) throws AxisFault {
+    private void engageModule(AxisModule module) throws AxisFault {
+        QName moduleQName;
         if (module != null) {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
+                moduleQName = module.getName();
                 if (moduleQName.equals(qName)) {
                     log.info("Attempt to engage an already engaged module " + qName);
                     return;
                 }
             }
         } else {
-            throw new AxisFault(this + " Refer to invalid module " + moduleQName.getLocalPart()
-                    + " has not bean deployed yet !");
+            throw new AxisFault(this + " Refer to invalid module , has not bean deployed yet !");
         }
         Iterator servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
@@ -285,6 +284,26 @@ public class AxisConfiguration extends AxisDescription {
             serviceGroup.engageModule(module);
         }
         engagedModules.add(module.getName());
+    }
+
+    /**
+     * To dis-engage module from the system,
+     * this will remove all the handlers belongs to this module
+     * from all the handler chains
+     *
+     * @param module
+     */
+    public void disEngageModule(AxisModule module) {
+        if (module != null && isEngaged(module.getName())) {
+            PhaseResolver phaseResolver = new PhaseResolver(this);
+            phaseResolver.disEngageModulefromGlobalChains(module);
+            Iterator serviceItr = getServices().values().iterator();
+            while (serviceItr.hasNext()) {
+                AxisService axisService = (AxisService) serviceItr.next();
+                axisService.disEngageModule(module);
+            }
+            engagedModules.remove(module.getName());
+        }
     }
 
     /**
@@ -364,10 +383,6 @@ public class AxisConfiguration extends AxisDescription {
         return this.outPhases;
     }
 
-    public HostConfiguration getHostConfiguration() {
-        return this.hostConfiguration;
-    }
-
     /**
      * @return Returns ArrayList.
      */
@@ -375,7 +390,7 @@ public class AxisConfiguration extends AxisDescription {
         return inFaultPhases;
     }
 
-    public ArrayList getInPhasesUptoAndIncludingPostDispatch() {
+    public ArrayList getGlobalInFlow() {
         return inPhasesUptoAndIncludingPostDispatch;
     }
 
@@ -538,11 +553,6 @@ public class AxisConfiguration extends AxisDescription {
 
     public void setGlobalOutPhase(ArrayList outPhases) {
         this.outPhases = outPhases;
-    }
-
-    // to set and get host configuration
-    public void setHostConfiguration(HostConfiguration hostConfiguration) {
-        this.hostConfiguration = hostConfiguration;
     }
 
     /**

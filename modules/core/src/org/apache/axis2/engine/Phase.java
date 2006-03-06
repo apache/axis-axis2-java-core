@@ -35,9 +35,9 @@ import java.util.Iterator;
  */
 public class Phase implements Handler {
 
-	private static final long serialVersionUID = -3352439587370050957L;
+    private static final long serialVersionUID = -3352439587370050957L;
 
-	/**
+    /**
      * Field BOTH_BEFORE_AFTER
      */
     private static final int BOTH_BEFORE_AFTER = 0;
@@ -431,7 +431,7 @@ public class Phase implements Handler {
     }
 
     public HandlerDescription getHandlerDesc() {
-        return null;    
+        return null;
     }
 
     /**
@@ -448,7 +448,7 @@ public class Phase implements Handler {
     }
 
     public Parameter getParameter(String name) {
-        return null;    
+        return null;
     }
 
     /**
@@ -513,4 +513,20 @@ public class Phase implements Handler {
                     + phaseLast.getName());
         }
     }
+
+    /**
+     * To remove a given hnadler from a phase
+     *
+     * @param handler
+     */
+    public void removeHandler(HandlerDescription handler) {
+        if (handlers.remove(handler.getHandler())) {
+            log.info("removed handler " + handler.getName().getLocalPart()
+                    + " from the phase " + phaseName);
+        } else {
+            log.info("unable to remove handler " + handler.getName().getLocalPart()
+                    + " from the phase " + phaseName);
+        }
+    }
+
 }

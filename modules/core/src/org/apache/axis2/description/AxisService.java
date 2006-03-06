@@ -24,6 +24,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
@@ -343,7 +344,7 @@ public class AxisService extends AxisDescription {
         PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
     }
 
-    private AxisConfiguration getAxisConfiguration() {
+    public AxisConfiguration getAxisConfiguration() {
         if (getParent() != null) return (AxisConfiguration) getParent().getParent();
         return null;
     }
@@ -804,5 +805,40 @@ public class AxisService extends AxisDescription {
             enableAllTransport = false;
             this.exposeTransports = exposeTransports;
         }
+    }
+
+    public void disEngageModule(AxisModule module) {
+        AxisConfiguration axisConfig = getAxisConfiguration();
+        if (axisConfig != null) {
+            PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
+            if (axisConfig.isEngaged(module.getName())) {
+                Iterator operations = getChildren();
+                while (operations.hasNext()) {
+                    AxisOperation axisOperation = (AxisOperation) operations.next();
+                    phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
+                }
+            } else {
+                if (isEngaged(module.getName())) {
+                    phaseResolver.disEngageModulefromGlobalChains(module);
+                    Iterator operations = getChildren();
+                    while (operations.hasNext()) {
+                        AxisOperation axisOperation = (AxisOperation) operations.next();
+                        phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
+                    }
+                }
+            }
+        }
+        engagedModules.remove(module);
+    }
+
+    public boolean isEngaged(QName moduleName) {
+        Iterator engagedModuleItr = engagedModules.iterator();
+        while (engagedModuleItr.hasNext()) {
+            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
+            if (axisModule.getName().getLocalPart().equals(moduleName.getLocalPart())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

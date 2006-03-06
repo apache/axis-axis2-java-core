@@ -135,6 +135,28 @@ public abstract class AxisOperation extends AxisDescription
         return addModuleOperations(moduleref, axisConfig, (AxisService) getParent());
     }
 
+    public void disEngageModule(AxisModule module) {
+        if (module != null) {
+            if (getParent() != null) {
+                AxisService service = (AxisService) getParent();
+                AxisConfiguration axiConfiguration = service.getAxisConfiguration();
+                PhaseResolver phaseResolver = new PhaseResolver(axiConfiguration);
+                if (service.isEngaged(module.getName())) {
+                    phaseResolver.disEngageModulefromOperationChian(module, this);
+                } else if (axiConfiguration != null &&
+                        axiConfiguration.isEngaged(module.getName())) {
+                    phaseResolver.disEngageModulefromOperationChian(module, this);
+                } else {
+                    if (axiConfiguration != null) {
+                        phaseResolver.disEngageModulefromGlobalChains(module);
+                    }
+                    phaseResolver.disEngageModulefromOperationChian(module, this);
+                }
+            }
+            engagedModules.remove(module);
+        }
+    }
+
 
     /**
      * Adds an operation to a service if a module is required to do so.
