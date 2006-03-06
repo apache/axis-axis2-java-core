@@ -22,27 +22,27 @@
 
 <p>Axis1.x and Axis2 have been evolved from different architectures.</p>
 
-<p>Speed - Axis2 is based on StAX API, which gives greater speed than SAX
-event base parsing that has been used in Axis1.x.</p>
+<p><strong>Speed</strong> - Axis2 is based on StAX API, which gives greater
+speed than SAX event base parsing that has been used in Axis1.x.</p>
 
-<p>Stability - Axis2 has fixed phases and for extensions an area of user
-defined phases. This allows far more stability and flexibility than
-Axis1.x.</p>
+<p><strong>Stability</strong> - Axis2 has fixed phases and for extensions an
+area of user defined phases. This allows far more stability and flexibility
+than Axis1.x.</p>
 
-<p>Transport framework - Simple abstraction designing of transports (i.e.,
-senders and listeners for SOAP over various protocols such as SMTP, etc),
-allow far more flexibility and the core of the engine is completely
-transport-independent.</p>
+<p><strong>Transport framework</strong> - Simple abstraction designing of
+transports (i.e., senders and listeners for SOAP over various protocols such
+as SMTP, etc), allow far more flexibility and the core of the engine is
+completely transport-independent.</p>
 
-<p>WSDL Support - Axis2 supports version 1.1 and 2.0, which allow creating
-stubs and skeletons, to manipulate web service arena.</p>
+<p><strong>WSDL Support</strong> - Axis2 supports version 1.1 and 2.0, which
+allow creating stubs and skeletons, to manipulate web service arena.</p>
 
-<p>Component - Oriented Architecture - This is merely through archives (.mar
-and .aar) . Easily reusable components such as Handlers, Modules allow
-patterns processing for your applications, or to distribute to partners.
-Axis2 more concern on the "Module" concept rather Handler concept. Modules
-contain handlers that have been ordered through phase rules. which being
-ordered to specific service(s).</p>
+<p><strong>Component - Oriented Architecture</strong> - This is merely
+through archives (.mar and .aar) . Easily reusable components such as
+Handlers, Modules allow patterns processing for your applications, or to
+distribute to partners. Axis2 more concern on the "Module" concept rather
+Handler concept. Modules contain handlers that have been ordered through
+phase rules. which being ordered to specific service(s).</p>
 
 <h2>Getting Started</h2>
 
@@ -128,6 +128,172 @@ the handlers are registered with the proper phases.</p>
 <p>Services are hot deployable in Axis2 and dynamic, but Modules. This is one
 feature, which is unique to Axis2.</p>
 
+<p>Lets take a detailed look at what it takes to migrate Axis 1.x handlers to
+Axis 2 modules via the SOAP Monitor. The SOAP Monitor is really three
+components: An applet which displays responses / requests, a servlet which
+binds to a default port of 5001 and connects to the applet, and a handler
+chain used to intercept the soap messages. Here we'll focus on the
+handler.</p>
+
+<p><b>Axis 1.x required two WSDD's to use the SOAP Monitor. First, the SOAP
+Monitor Handler itself:</b></p>
+<pre>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"&gt;
+    
+  &lt;handler name="soapmonitor" 
+      type="java:org.apache.axis.handlers.SOAPMonitorHandler"&gt;
+    &lt;parameter name="wsdlURL" 
+      value="/wzs/SOAPMonitorService-impl.wsdl"/&gt;
+    &lt;parameter name="namespace" 
+      value="http://tempuri.org/wsdl/2001/12/SOAPMonitorService-impl.wsdl"/&gt;
+    &lt;parameter name="serviceName" value="SOAPMonitorService"/&gt;
+    &lt;parameter name="portName" value="Demo"/&gt;
+  &lt;/handler&gt;
+
+  &lt;service name="SOAPMonitorService" provider="java:RPC"&gt;
+    &lt;parameter name="allowedMethods" value="publishMessage"/&gt;
+    &lt;parameter name="className" 
+      value="org.apache.axis.monitor.SOAPMonitorService"/&gt;
+    &lt;parameter name="scope" value="Application"/&gt;
+  &lt;/service&gt;
+&lt;/deployment&gt;</pre>
+
+<p><b>Axis 1.x requires a reference to the Handler in the user's WSDD that
+defines their Web Service:</b></p>
+<pre>&lt;deployment name="example" xmlns="http://xml.apache.org/axis/wsdd/" 
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"&gt;
+  
+  &lt;service name="urn:myService" provider="java:RPC"&gt;
+    &lt;parameter name="className" value="org.MyService"/&gt;
+    &lt;parameter name="allowedMethods" value="*"/&gt;
+
+    &lt;requestFlow&gt;
+      &lt;handler type="soapmonitor"/&gt;
+    &lt;/requestFlow&gt;
+    &lt;responseFlow&gt;
+      &lt;handler type="soapmonitor"/&gt;
+    &lt;/responseFlow&gt;
+
+  &lt;/service&gt;
+&lt;/deployment&gt;</pre>
+
+<p><b>Axis 2 requires a module.xml, placed inside a jar with a .mar extension
+under WEB-INF/modules, to define a Handler:</b></p>
+<pre>&lt;module name="soapmonitor" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorModule"&gt;
+    &lt;inflow&gt;
+        &lt;handler name="InFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
+            &lt;order phase="soapmonitorPhase"/&gt;
+        &lt;/handler&gt;
+    &lt;/inflow&gt;
+
+    &lt;outflow&gt;
+        &lt;handler name="OutFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
+            &lt;order phase="soapmonitorPhase"/&gt;
+        &lt;/handler&gt;
+    &lt;/outflow&gt;
+
+    &lt;Outfaultflow&gt;
+        &lt;handler name="FaultOutFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
+            &lt;order phase="soapmonitorPhase"/&gt;
+        &lt;/handler&gt;
+    &lt;/Outfaultflow&gt;
+
+    &lt;INfaultflow&gt;
+        &lt;handler name="FaultInFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
+            &lt;order phase="soapmonitorPhase"/&gt;
+        &lt;/handler&gt;
+    &lt;/INfaultflow&gt;
+&lt;/module&gt;</pre>
+
+<p>The SOAPMonitorModule referenced above simply implements
+org.apache.axis2.modules.Module and is used for any additional tasks needed
+to initialize the module and shutdown the module. In this case nothing is
+needed and the implemented interface methods have blank bodies. Furthermore,
+the 'soapmonitorPhase' will be used later below in the axis2.xml .</p>
+
+<p><b>Axis 1.x the SOAPMonitorHandler has the class signature as:</b></p>
+<pre>public class SOAPMonitorHandler extends BasicHandler</pre>
+
+<p><b>Axis 2 the SOAPMonitorHandler has the class signature as:</b></p>
+<pre>public class SOAPMonitorHandler extends AbstractHandler implements Handler</pre>
+
+<p><b>In axis2, you need to reference the module that contains the handler
+chain that you want to use inside your services.xml:</b></p>
+<pre>&lt;service name="ExampleService"&gt;
+    &lt;module ref="soapmonitor"/&gt;
+    &lt;description&gt;
+       This service has the SOAP Monitor wired in 
+    &lt;/description&gt;
+    &lt;parameter name="ServiceClass" locked="false"&gt;org.ExampleService&lt;/parameter&gt;
+    &lt;operation name="myExecute"&gt;
+        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+    &lt;/operation&gt;
+&lt;/service&gt;</pre>
+
+<p><b>Finally, axis2 requires you to make some changes to axis2.xml. Start by
+adding a global module:</b></p>
+<pre>    &lt;module ref="soapmonitor"/&gt;</pre>
+
+<p><b>Then define your phase orders for 'soapmonitorPhase' referenced in the
+module.xml :</b></p>
+<pre>    &lt;phaseOrder type="inflow"&gt;
+        &lt;!--  System pre defined phases       --&gt;
+        &lt;phase name="TransportIn"/&gt;
+        &lt;phase name="PreDispatch"/&gt;
+        &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
+            &lt;handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="SOAPMessageBodyBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+            &lt;handler name="InstanceDispatcher"
+                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
+                &lt;order phase="PostDispatch"/&gt;
+            &lt;/handler&gt;
+        &lt;/phase&gt;
+        &lt;!--  System pre defined phases       --&gt;
+        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --&gt;
+        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="soapmonitorPhase"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="outflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="soapmonitorPhase"/&gt;
+        &lt;!--system predefined phase--&gt;
+        &lt;!--these phase will run irrespective of the service--&gt;
+        &lt;phase name="PolicyDetermination"/&gt;
+        &lt;phase name="MessageOut"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="INfaultflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="soapmonitorPhase"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="Outfaultflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="soapmonitorPhase"/&gt;
+        &lt;phase name="PolicyDetermination"/&gt;
+        &lt;phase name="MessageOut"/&gt;
+    &lt;/phaseOrder&gt;</pre>
+
+<p>See the user guide for more info on axis2 modules.</p>
+
 <h2>Transports for HTTP Connection</h2>
 
 <p>Axis2 comes with two  CommonsHTTPTransportSender which is based on
@@ -141,8 +307,7 @@ transports, with the statement,</p>
    &lt;parameter name="PROTOCOL" locked="false"&gt;HTTP/1.1&lt;/parameter&gt; 
    &lt;parameter name="Transfer-Encoding" locked="false"&gt;chunked&lt;/parameter&gt;
 &lt;/transportSender&gt;
-...
-</pre>
+...</pre>
 
 <h2>Data Binding Support</h2>
 

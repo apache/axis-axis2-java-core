@@ -291,7 +291,7 @@ flexibility would serve better in this instant.</p>
       </td>
     </tr>
     <tr>
-      <td width="112"><p>Message Context</p>
+      <td width="112"><a name="messageContext"></a><p>Message Context</p>
       </td>
       <td width="371"><p>Holds all the information about the Message
         currently being executed.</p>
@@ -338,8 +338,7 @@ Pipe</i> would begin, the <i>Out Pipe</i> invokes the handlers and end with a
 Transport Sender that sends the SOAP message to the target endpoint. The SOAP
 message is received by a Transport Receiver at the target endpoint, which
 reads the SOAP message and starts the <i>In Pipe</i>. The <em>In Pipe</em>
-consists of handlers and ends with the</p>
-<a href="#mr">Message Receiver</a>, which consumes the SOAP message.
+consists of handlers and ends with the <a href="#mr">Message Receiver</a>, which consumes the SOAP message.</p>
 
 <p>Above explained processing happens for each and every SOAP message
 exchanged. After processing one message Axis2 may decide to create other SOAP
@@ -587,8 +586,8 @@ The Client API has four ways to configure a given Message Exchange</p>
 
 <p>Depending on the values of the above four parameter, Axis2 behave
 differently.</p>
-
-<h2><a name="bmTransports">Transports</a></h2>
+<a name="bmTransports"></a>
+<h2>Transports</h2>
 
 <p>Axis2 has two basic constructs for transports, transport In Configuration
 and transport Out Configuration. These are accessed via the messages

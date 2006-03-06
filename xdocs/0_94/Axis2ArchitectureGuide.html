@@ -60,7 +60,7 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
           </li>
         </ul>
       </li>
-      <li><a href="#bmTransports">Transports</a></li>
+      <li><a href="#Transports">Transports</a></li>
       <li><p><a href="#bmWSDL">Code generation</a></p>
       </li>
       <li><a href="#bmDB">Data Binding</a>
@@ -172,7 +172,7 @@ modules/architecture.</p>
     for users to communicate with web services using Axis2. There are set of
     classes to interact with IN-OUT and IN-Only style Message Exchange
     Patterns (MEPs) where those can be used to construct any other MEP.</li>
-  <li><p><a href="#bmTransports">Transports</a>- Axis2 define a transport
+  <li><p><a href="#Transports">Transports</a>- Axis2 define a transport
     framework that enables the user to use different transports. The
     transports fit into specific places in the SOAP processing model. The
     implementation provides a few common transports and the user may write
@@ -291,7 +291,7 @@ flexibility would serve better in this instant.</p>
       </td>
     </tr>
     <tr>
-      <td width="112"><p>Message Context</p>
+      <td width="112"><a name="messageContext"><p>Message Context</p>
       </td>
       <td width="371"><p>Holds all the information about the Message
         currently being executed.</p>
@@ -587,8 +587,8 @@ The Client API has four ways to configure a given Message Exchange</p>
 
 <p>Depending on the values of the above four parameter, Axis2 behave
 differently.</p>
-
-<h2><a name="bmTransports">Transports</a></h2>
+<a name="Transports"></a>
+<h2>Transports</h2>
 
 <p>Axis2 has two basic constructs for transports, transport In Configuration
 and transport Out Configuration. These are accessed via the messages
