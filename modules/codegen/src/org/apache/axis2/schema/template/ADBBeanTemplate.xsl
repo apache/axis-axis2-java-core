@@ -179,7 +179,7 @@
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
-                                    throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
                                     elementList.add(<xsl:value-of select="$varName"/>);
                                 </xsl:otherwise>
@@ -293,7 +293,7 @@
             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
             <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
 
-            String <xsl:value-of select="$attribName"/> =
+            java.lang.String <xsl:value-of select="$attribName"/> =
               reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
            if (<xsl:value-of select="$attribName"/>!=null){
                  object.set<xsl:value-of select="$javaName"/>(
@@ -407,7 +407,7 @@
                                     <!-- if-block that handles nillable -->
                                     <xsl:if test="@nillable">
                                        if ("true".equals(reader.getAttributeValue("","nil"))){
-                                            object.set<xsl:value-of select="$javaName"/>(null);
+                                             <xsl:value-of select="$listName"/>.add(null);
                                        }else{
                                     </xsl:if>
 
@@ -416,8 +416,8 @@
                                        = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
                                             new org.apache.axis2.util.StreamWrapper(reader), <xsl:value-of select="$startQname"/>);
 
-                                   <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
-
+                                     <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
+                                     <xsl:if test="@nillable">}</xsl:if>
                                     } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
                                         !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
                                         <xsl:value-of select="$loopBoolName"/> = true;
@@ -437,8 +437,7 @@
                                org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
 
-                             <!-- closing bracket for the if statement above -->
-                             <xsl:if test="@nillable">}</xsl:if>
+
                         </xsl:when>
                         <!-- End of Array handling of ADB classes -->
                         <xsl:otherwise>
@@ -459,7 +458,7 @@
                                <xsl:value-of select="$stateMachineName"/>.setNillable();
                             </xsl:if>
                             <xsl:value-of select="$stateMachineName"/>.read(reader);
-                            String[] textArray = <xsl:value-of select="$stateMachineName"/>.getTextArray();
+                            java.lang.String[] textArray = <xsl:value-of select="$stateMachineName"/>.getTextArray();
                             object.set<xsl:value-of select="$javaName"/>(
                              (<xsl:value-of select="$propertyType"/>)
                                org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
