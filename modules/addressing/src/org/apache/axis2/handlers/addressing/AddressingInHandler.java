@@ -136,9 +136,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     private void checkForMandatoryHeaders(Map alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
         if (alreadyFoundAddrHeader.get(WSA_ACTION) == null) {
             makeFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
-        } else if (alreadyFoundAddrHeader.get(WSA_TO) == null) {
-            makeFault(messageContext, WSA_TO, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
-        }
+        } 
     }
 
     private boolean hasDuplicateHeaders(String addressingHeaderName, MessageContext messageContext, Map alreadyFoundAddressingHeaders) throws AxisFault {
