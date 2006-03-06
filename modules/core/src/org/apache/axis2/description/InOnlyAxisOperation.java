@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.wsdl.WSDLConstants;
@@ -49,16 +50,15 @@ public class InOnlyAxisOperation extends AxisOperation {
             opContext.getMessageContexts().put(MESSAGE_LABEL_IN_VALUE, msgContext);
             opContext.setComplete(true);
         } else {
-            throw new AxisFault("Invalid message addition , operation context completed");
+            throw new AxisFault(Messages.getMessage("mepcompleted"));
         }
     }
 
     public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
         HashMap mep = opContext.getMessageContexts();
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
-
         if (faultMessageCtxt != null) {
-            throw new AxisFault("Invalid message addition , operation context completed");
+            throw new AxisFault(Messages.getMessage("mepcompleted"));
         } else {
             mep.put(MESSAGE_LABEL_FAULT_VALUE, msgContext);
             opContext.setComplete(true);
@@ -67,9 +67,6 @@ public class InOnlyAxisOperation extends AxisOperation {
     }
 
     private void createMessage() {
-//        inMessage = new AxisMessage();
-//        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-//        inMessage.setParent(this);
         AxisMessage inMessage = new AxisMessage();
         inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         inMessage.setParent(this);
@@ -87,10 +84,9 @@ public class InOnlyAxisOperation extends AxisOperation {
 
     public AxisMessage getMessage(String label) {
         if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-//            return inMessage;
             return (AxisMessage) getChild("inMessage");
         } else {
-            throw new UnsupportedOperationException("In valid acess");
+            throw new UnsupportedOperationException(Messages.getMessage("invalidacess"));
         }
     }
 

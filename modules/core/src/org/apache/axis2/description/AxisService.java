@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
@@ -200,8 +201,8 @@ public class AxisService extends AxisDescription {
                 }
                 axisOperation.engageModule(module, axisConfig);
             } catch (AxisFault axisFault) {
-                log.info("Trying to engage a module which is already engege:"
-                        + module.getName().getLocalPart());
+                log.info(Messages.getMessage(
+                        "modulealredyengagetoservice", module.getName().getLocalPart()));
             }
         }
         if (axisOperation.getMessageReceiver() == null) {
@@ -270,12 +271,12 @@ public class AxisService extends AxisDescription {
     /**
      * Engages a module. It is required to use this method.
      *
-     * @param moduleref
+     * @param axisModule
      */
-    public void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
+    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig)
             throws AxisFault {
-        if (moduleref == null) {
-            throw new AxisFault("Module not found ");
+        if (axisModule == null) {
+            throw new AxisFault(Messages.getMessage("modulenf"));
         }
         boolean needToadd = true;
         Iterator itr_engageModules = engagedModules.iterator();
@@ -283,21 +284,20 @@ public class AxisService extends AxisDescription {
         while (itr_engageModules.hasNext()) {
             AxisModule module = (AxisModule) itr_engageModules.next();
 
-            if (module.getName().equals(moduleref.getName())) {
-                log.debug(moduleref.getName().getLocalPart()
-                        + " module has already been engaged on the service. "
-                        + " Operation terminated !!!");
+            if (module.getName().equals(axisModule.getName())) {
+                log.debug(Messages.getMessage("modulealredyengagetoservice",
+                        axisModule.getName().getLocalPart()));
                 needToadd = false;
             }
         }
 
-        Module moduleImpl = moduleref.getModule();
+        Module moduleImpl = axisModule.getModule();
         if (moduleImpl != null) {
             // notyfying module for service engagement
             moduleImpl.engageNotify(this);
         }
         // adding module operations
-        addModuleOperations(moduleref, axisConfig);
+        addModuleOperations(axisModule, axisConfig);
 
         Iterator operations = getOperations();
 
@@ -307,11 +307,11 @@ public class AxisService extends AxisDescription {
                 // notyfying module for service engagement
                 moduleImpl.engageNotify(axisOperation);
             }
-            axisOperation.engageModule(moduleref, axisConfig);
+            axisOperation.engageModule(axisModule, axisConfig);
         }
 
         if (needToadd) {
-            engagedModules.add(moduleref);
+            engagedModules.add(axisModule);
         }
     }
 
@@ -339,7 +339,8 @@ public class AxisService extends AxisDescription {
     public void printPolicy(OutputStream out, String operationName) throws AxisFault {
         AxisOperation axisOperation = getOperation(new QName(operationName));
         if (axisOperation == null) {
-            throw new AxisFault("invalid operation : " + operationName);
+            throw new AxisFault(Messages.getMessage("invalidoperation",
+              operationName));
         }
         PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
     }

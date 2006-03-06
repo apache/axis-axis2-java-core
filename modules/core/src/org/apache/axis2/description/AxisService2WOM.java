@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -82,7 +83,7 @@ public class AxisService2WOM {
         DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
         StringWriter writer = new StringWriter();
         if (schema == null) {
-            throw new Exception("no scheam found for the service");
+            throw new Exception(Messages.getMessage("noschemafound"));
         }
         schema.write(writer);
         writer.flush();

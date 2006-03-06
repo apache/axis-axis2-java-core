@@ -48,7 +48,6 @@ public abstract class AxisOperation extends AxisDescription
     // To store deploytime module refs
     private ArrayList modulerefs;
 
-    // todo need to change name to String
     private QName name;
 
     private ArrayList wsamappingList;
@@ -116,9 +115,8 @@ public abstract class AxisOperation extends AxisDescription
             AxisModule module = (AxisModule) module_itr.next();
 
             if (module.getName().equals(moduleref.getName())) {
-                log.debug(moduleref.getName().getLocalPart()
-                        + " module has already engaged to the operation"
-                        + "  operation terminated !!!");
+                log.debug(Messages.getMessage("modulealredyengaged",
+                        moduleref.getName().getLocalPart()));
                 needToadd = false;
             }
         }
@@ -355,7 +353,7 @@ public abstract class AxisOperation extends AxisDescription
         }
 
         if (temp == MEP_CONSTANT_INVALID) {
-            throw new AxisError("Could not Map the MEP URI to a axis2 MEP constant value");
+            throw new AxisError(Messages.getMessage("mepmappingerror"));
         }
 
         this.mep = temp;
@@ -473,7 +471,7 @@ public abstract class AxisOperation extends AxisDescription
      * 
      */
     public OperationClient createClient(ServiceContext sc, Options options) {
-        throw new UnsupportedOperationException("The MEP you are using (" + mepURI + ") has not implemented createClient().");
+        throw new UnsupportedOperationException(Messages.getMessage("mepnotyetimplemented", mepURI));
     }
 
     public Object getKey() {

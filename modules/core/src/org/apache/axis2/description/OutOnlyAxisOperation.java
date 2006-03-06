@@ -11,6 +11,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.wsdl.WSDLConstants;
@@ -59,8 +60,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
                     msgContext);
             opContext.setComplete(true);
         } else {
-            throw new AxisFault(
-                    "Invalid message addition , operation context completed");
+            throw new AxisFault(Messages.getMessage("mepcompleted"));
         }
     }
 
@@ -69,7 +69,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
 
         if (faultMessageCtxt != null) {
-            throw new AxisFault("Invalid message addition , operation context completed");
+            throw new AxisFault(Messages.getMessage("mepcompleted"));
         } else {
             mep.put(MESSAGE_LABEL_FAULT_VALUE, msgContext);
             opContext.setComplete(true);
@@ -205,8 +205,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      */
     public void addMessageContext(MessageContext mc) throws AxisFault {
         if (this.mc != null) {
-            throw new AxisFault(
-                    "Can't add message context again until client has been executed");
+            throw new AxisFault(Messages.getMessage("cannotaddmsgctx"));
         }
         this.mc = mc;
         if (mc.getMessageID() == null) {
@@ -230,7 +229,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         if (messageLabel.equals(WSDLConstants.MESSAGE_LABEL_OUT_VALUE)) {
             return mc;
         }
-        throw new AxisFault("Unknown message label: '" + messageLabel + "'");
+        throw new AxisFault(Messages.getMessage("unknownMsgLabel", messageLabel));
     }
 
     /**
@@ -302,8 +301,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      */
     public void execute(boolean block) throws AxisFault {
         if (completed) {
-            throw new AxisFault(
-                    "MEP is already completed- need to reset() before re-executing.");
+            throw new AxisFault(Messages.getMessage("mepiscomplted"));
         }
         ConfigurationContext cc = sc.getConfigurationContext();
 
@@ -352,7 +350,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      */
     public void reset() throws AxisFault {
         if (!completed) {
-            throw new AxisFault("MEP is not yet complete: cannot reset");
+            throw new AxisFault(Messages.getMessage("cannotreset"));
         }
         mc = null;
         completed = false;

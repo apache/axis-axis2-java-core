@@ -19,6 +19,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.ws.commons.om.OMElement;
 
@@ -97,7 +98,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
      */
     public void addParameter(Parameter param) throws AxisFault {
         if (isParameterLocked(param.getName())) {
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
         } else {
             parameters.addParameter(param);
         }

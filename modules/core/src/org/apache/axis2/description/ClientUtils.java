@@ -118,7 +118,9 @@ public class ClientUtils {
             if (wsdlServiceName != null) {
                 wsdlService = wsdlDefinition.getService(wsdlServiceName);
                 if (wsdlService == null) {
-                    throw new AxisFault("Service" + wsdlServiceName + " not found in the wsdl ");
+                    throw new AxisFault(
+                            Messages.getMessage("servicenotfoundinwsdl",
+                                    wsdlServiceName.getLocalPart()));
                 }
 
             } else {
@@ -126,10 +128,10 @@ public class ClientUtils {
                 if (col != null && col.size() > 0) {
                     wsdlService = (Service) col.iterator().next();
                     if (wsdlService == null) {
-                        throw new AxisFault("No servoce found in the given wsdl");
+                        throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
                     }
                 } else {
-                    throw new AxisFault("No servoce found in the given wsdl");
+                    throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
                 }
             }
             axisService.setName(wsdlService.getQName().getLocalPart());
@@ -138,17 +140,17 @@ public class ClientUtils {
             if (portName != null) {
                 port = wsdlService.getPort(portName);
                 if (port == null) {
-                    throw new AxisFault("No port found for the given port name : " + portName);
+                    throw new AxisFault(Messages.getMessage("noporttypefoundfor", portName));
                 }
             } else {
                 Collection ports = wsdlService.getPorts().values();
                 if (ports != null && ports.size() > 0) {
                     port = (Port) ports.iterator().next();
                     if (port == null) {
-                        throw new AxisFault("no port found in the service element");
+                        throw new AxisFault(Messages.getMessage("noporttypefound"));
                     }
                 } else {
-                    throw new AxisFault("no port found in the service element");
+                    throw new AxisFault(Messages.getMessage("noporttypefound"));
                 }
             }
             List exteElemts = port.getExtensibilityElements();

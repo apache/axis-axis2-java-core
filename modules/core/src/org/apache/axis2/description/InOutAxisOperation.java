@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.wsdl.WSDLConstants;
@@ -49,7 +50,7 @@ public class InOutAxisOperation extends AxisOperation {
         MessageContext outmsgContext = (MessageContext) mep.get(MESSAGE_LABEL_OUT_VALUE);
 
         if ((inMsgContext != null) && (outmsgContext != null)) {
-            throw new AxisFault("Invalid message addition , operation context completed");
+            throw new AxisFault(Messages.getMessage("mepcompleted"));
         }
 
         if (inMsgContext == null) {
@@ -66,7 +67,7 @@ public class InOutAxisOperation extends AxisOperation {
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
 
         if (faultMessageCtxt != null) {
-            throw new AxisFault("Invalid message addition , operation context completed");
+             throw new AxisFault(Messages.getMessage("mepcompleted"));
         } else {
             mep.put(MESSAGE_LABEL_FAULT_VALUE, msgContext);
             opContext.setComplete(true);

@@ -37,7 +37,7 @@ public class AxisMessage extends AxisDescription {
     // such as SchemaElementName , direction etc.
     private MessageReference messageReference;
 
-    private PolicyInclude policyInclude;
+    // private PolicyInclude policyInclude;
 
 
     public AxisMessage() {

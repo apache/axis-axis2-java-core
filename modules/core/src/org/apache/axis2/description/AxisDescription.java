@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.ws.commons.om.OMElement;
 
 import java.util.ArrayList;
@@ -31,8 +32,7 @@ public abstract class AxisDescription implements ParameterInclude,
         }
 
         if (isParameterLocked(param.getName())) {
-            throw new AxisFault("Parameter:" + param.getName()
-                    + " is already locked, hence value cannot be overridden");
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
         }
 
         parameterInclude.addParameter(param);

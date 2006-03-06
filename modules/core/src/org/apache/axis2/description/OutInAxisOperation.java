@@ -49,8 +49,7 @@ public class OutInAxisOperation extends InOutAxisOperation {
                 .get(MESSAGE_LABEL_OUT_VALUE);
 
         if ((immsgContext != null) && (outmsgContext != null)) {
-            throw new AxisFault(
-                    "Invalid message addition , operation context completed");
+            throw new AxisFault(Messages.getMessage("mepcompleted"));
         }
 
         if (outmsgContext == null) {
@@ -205,8 +204,7 @@ class OutInAxisOperationClient implements OperationClient {
      */
     public void execute(boolean block) throws AxisFault {
         if (completed) {
-            throw new AxisFault(
-                    "MEP is already completed- need to reset() before re-executing.");
+            throw new AxisFault(Messages.getMessage("mepiscomplted"));
         }
         ConfigurationContext cc = sc.getConfigurationContext();
 
@@ -214,9 +212,7 @@ class OutInAxisOperationClient implements OperationClient {
         MessageContext mc = oc
                 .getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
         if (mc == null) {
-            throw new AxisFault(
-                    "Out message context is null ,"
-                            + " please set the out message context before calling this method");
+            throw new AxisFault(Messages.getMessage("outmsgctxnull"));
         }
 
         mc.setOptions(options);
@@ -378,7 +374,7 @@ class OutInAxisOperationClient implements OperationClient {
      */
     public void reset() throws AxisFault {
         if (!completed) {
-            throw new AxisFault("MEP is not yet complete: cannot reset");
+            throw new AxisFault(Messages.getMessage("cannotreset"));
         }
         oc = null;
         completed = false;

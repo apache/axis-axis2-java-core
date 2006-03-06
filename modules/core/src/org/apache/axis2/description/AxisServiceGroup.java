@@ -20,6 +20,7 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -100,14 +101,13 @@ public class AxisServiceGroup extends AxisDescription {
                     }
                     service.engageModule(axisModule, axisConfig);
                 } else {
-                    throw new AxisFault("Trying to engage a module which is not " + "available : "
-                            + moduleName.getLocalPart());
+                    throw new AxisFault(Messages.getMessage(
+                            "modulenotavailble", moduleName.getLocalPart()));
                 }
             }
         }
 
         service.setLastupdate();
-//        services.put(service.getName(), service);
         addChild(service);
     }
 
@@ -122,9 +122,8 @@ public class AxisServiceGroup extends AxisDescription {
             QName modu = (QName) iterator.next();
 
             if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
-                log.debug(moduleName.getLocalPart()
-                        + " module has already been engaged on the service Group. "
-                        + " Operation terminated !!!");
+                log.debug(Messages.getMessage(
+                        "modulealredyengagedtoservicegroup", moduleName.getLocalPart()));
                 needToadd = false;
             }
         }

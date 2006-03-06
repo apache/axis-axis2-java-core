@@ -20,6 +20,7 @@ import org.apache.ws.commons.om.util.UUIDGenerator;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyRegistry;
+import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -116,8 +117,8 @@ public class PolicyInclude {
 	public void updatePolicy(Policy policy) {
 		String policyURI = policy.getPolicyURI();
 		
-		if (policyURI == null && policyURI.equals("")) {
-			throw new RuntimeException("Policy Id is either null or empty");
+		if (policyURI == null && "".equals(policyURI)) {
+			throw new RuntimeException(Messages.getMessage("emptypolicy"));
 		}
 		
 		Wrapper wrapper = (Wrapper) wrapperElements.get(policyURI);
@@ -175,7 +176,7 @@ public class PolicyInclude {
 	}
 
 	private void calculateEffectivePolicy() {
-		Policy result = null;
+		Policy result ;
 		
 		if (getParent() != null) {
 			Policy parentPolicy = getParent().getEffectivePolicy();
@@ -253,7 +254,6 @@ public class PolicyInclude {
 	}
 
 	public void addPolicyElement(int type, Policy policy) {
-		String u = policy.getPolicyURI();
 		if (policy.getPolicyURI() == null || policy.getPolicyURI().equals("")) {
 			policy.setId(UUIDGenerator.getUUID());
 		}
