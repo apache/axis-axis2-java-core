@@ -124,6 +124,10 @@ public class Phase implements Handler {
      * @throws PhaseException
      */
     public void addHandler(HandlerDescription handler) throws PhaseException {
+    		
+    		if(handler.getName().getLocalPart().equals("CapabilityHandler")){
+    			System.out.println(handler.getName());
+    		}
         Iterator handlers_itr = getHandlers().iterator();
 
         while (handlers_itr.hasNext()) {
@@ -233,6 +237,13 @@ public class Phase implements Handler {
     private void insertBefore(Handler handler) throws PhaseException {
         String beforename = handler.getHandlerDesc().getRules().getBefore();
 
+        
+        
+        //we keep going foward, till the before handler is found, if we do not find him just add the handler
+        //once we found the before handler 
+        
+        int beforeHandlerIndex = -1;
+        
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
 
@@ -243,18 +254,18 @@ public class Phase implements Handler {
                                 + temphandler.getName()
                                 + "', which is marked phaseFirst");
                     }
-
-                    handlers.add(0, handler);
-
-                    return;
                 }
-
-                handlers.add(i - 1, handler);
+                beforeHandlerIndex = i;
+                break;
             }
         }
-
-        // added as last handler
-        addHandler(handler);
+        
+        if(beforeHandlerIndex >= 0){
+        		//java arraylist does the shift for us
+        		handlers.add(beforeHandlerIndex,handler);
+        }else{
+        		handlers.add(handler);
+        }
     }
 
     /**
