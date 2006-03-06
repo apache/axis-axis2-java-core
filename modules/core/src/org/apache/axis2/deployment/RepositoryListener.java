@@ -17,8 +17,6 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.commons.logging.Log;

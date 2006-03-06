@@ -82,15 +82,15 @@ public class RegistryTest extends AbstractTestCase {
 
     public void testParameteInClude(ParameterInclude parmInclude) throws AxisFault {
         String key = "value1";
-        Parameter p = new ParameterImpl(key, "value2");
+        Parameter p = new Parameter(key, "value2");
         parmInclude.addParameter(p);
         assertEquals(p, parmInclude.getParameter(key));
     }
 
     public void testFlowIncludeTest(FlowInclude flowInclude) {
-        Flow flow1 = new FlowImpl();
-        Flow flow2 = new FlowImpl();
-        Flow flow3 = new FlowImpl();
+        Flow flow1 = new Flow();
+        Flow flow2 = new Flow();
+        Flow flow3 = new Flow();
 
         flowInclude.setInFlow(flow1);
         flowInclude.setFaultInFlow(flow2);

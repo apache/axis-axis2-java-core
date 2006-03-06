@@ -24,7 +24,6 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.server.AdminAppException;
 
@@ -119,7 +118,7 @@ public class ListingAgent {
                     Parameter parameter = (Parameter) service_para.get(i);
                     String para = req.getParameter(serviceName + "_" + parameter.getName());
 
-                    service.addParameter(new ParameterImpl(parameter.getName(), para));
+                    service.addParameter(new Parameter(parameter.getName(), para));
                 }
 
                 for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
@@ -131,7 +130,7 @@ public class ListingAgent {
                         Parameter parameter = (Parameter) operation_para.get(i);
                         String para = req.getParameter(op_name + "_" + parameter.getName());
 
-                        axisOperation.addParameter(new ParameterImpl(parameter.getName(), para));
+                        axisOperation.addParameter(new Parameter(parameter.getName(), para));
                     }
                 }
             }

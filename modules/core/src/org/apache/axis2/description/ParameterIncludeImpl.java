@@ -71,7 +71,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
 
             // this is to check whether some one has locked the parmter at the top level
             OMElement parameterElement = (OMElement) iterator.next();
-            Parameter parameter = new ParameterImpl();
+            Parameter parameter = new Parameter();
 
             // setting parameterElement
             parameter.setParameterElement(parameterElement);

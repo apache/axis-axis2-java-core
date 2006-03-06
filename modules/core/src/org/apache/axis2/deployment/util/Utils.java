@@ -216,7 +216,7 @@ public class Utils {
      */
     public static AxisService createService(String implClass,
                                             AxisConfiguration axisConfig, Class messageReceiverClass) throws AxisFault {
-        Parameter parameter = new ParameterImpl(Constants.SERVICE_CLASS, implClass);
+        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
         OMElement paraElement = getParameter(Constants.SERVICE_CLASS, implClass, false);
         parameter.setParameterElement(paraElement);
         AxisService axisService = new AxisService();

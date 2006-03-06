@@ -23,7 +23,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
 
 import javax.xml.namespace.QName;
 /**
@@ -35,7 +34,7 @@ public class ParameterAddTest extends TestCase {
     private AxisConfiguration reg = new AxisConfiguration();
     public void testAddParameterServiceLockedAtAxisConfig(){
         try {
-            Parameter para = new ParameterImpl();
+            Parameter para = new Parameter();
             para.setValue(null);
             para.setName("PARA_NAME");
             para.setLocked(true);
@@ -52,7 +51,7 @@ public class ParameterAddTest extends TestCase {
 
      public void testAddParameterModuleLockedAtAxisConfig(){
         try {
-            Parameter para = new ParameterImpl();
+            Parameter para = new Parameter();
             para.setValue(null);
             para.setName("PARA_NAME");
             para.setLocked(true);
@@ -68,7 +67,7 @@ public class ParameterAddTest extends TestCase {
 
      public void testAddParameterOperationlockedByAxisConfig(){
         try {
-            Parameter para = new ParameterImpl();
+            Parameter para = new Parameter();
             para.setValue(null);
             para.setName("PARA_NAME");
             para.setLocked(true);
@@ -90,7 +89,7 @@ public class ParameterAddTest extends TestCase {
 
      public void testAddParameterOperationLockebyService(){
         try {
-            Parameter para = new ParameterImpl();
+            Parameter para = new Parameter();
             para.setValue(null);
             para.setName("PARA_NAME");
             para.setLocked(true);

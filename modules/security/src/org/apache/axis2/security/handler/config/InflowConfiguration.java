@@ -17,7 +17,6 @@
 package org.apache.axis2.security.handler.config;
 
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
@@ -68,7 +67,7 @@ public class InflowConfiguration {
 		
 		paramElement.addChild(actionElem);
 		
-		ParameterImpl param = new ParameterImpl();
+		Parameter param = new Parameter();
 		param.setParameterElement(paramElement);
         param.setValue(paramElement);
         param.setName(WSSHandlerConstants.INFLOW_SECURITY);

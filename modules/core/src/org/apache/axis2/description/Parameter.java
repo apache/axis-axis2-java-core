@@ -20,9 +20,9 @@ package org.apache.axis2.description;
 import org.apache.ws.commons.om.OMElement;
 
 /**
- * Interface Parameter
+ * Class ParameterImpl
  */
-public interface Parameter {
+public class Parameter {
 
     /**
      * Field TEXT_PARAMETER
@@ -35,71 +35,121 @@ public interface Parameter {
     public static int OM_PARAMETER = 1;
 
     /**
-     * Method getName.
-     *
-     * @return Returns int.
+     * Field type
      */
-    public String getName();
+    private int type = TEXT_PARAMETER;
 
     /**
-     * Gets the whole parameter element.
-     *
-     * @return Returns <code>OMElement<code>.
+     * Field locked
      */
-    public OMElement getParameterElement();
+    private boolean locked;
+
+    /**
+     * Field name
+     */
+    private String name;
+
+    /**
+     * to store the parameter lement
+     * <parameter name="ServiceClass1" locked="false">
+     * org.apache.axis2.sample.echo.EchoImpl</parameter>
+     */
+    private OMElement parameterElement;
+
+    /**
+     * Field value
+     */
+    private Object value;
+
+    /**
+     * Constructor ParameterImpl.
+     */
+    public Parameter() {
+    }
+
+    /**
+     * Constructor ParameterImpl.
+     *
+     * @param name
+     * @param value
+     */
+    public Parameter(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    /**
+     * Method getName.
+     *
+     * @return Returns String.
+     */
+    public String getName() {
+        return name;
+    }
+
+    public OMElement getParameterElement() {
+        return this.parameterElement;
+    }
 
     /**
      * Method getParameterType.
      *
      * @return Returns int.
      */
-    public int getParameterType();
+    public int getParameterType() {
+        return type;
+    }
 
     /**
      * Method getValue.
      *
      * @return Returns Object.
      */
-    public Object getValue();
+    public Object getValue() {
+        return value;
+    }
 
     /**
      * Method isLocked.
      *
      * @return Returns boolean.
      */
-    public boolean isLocked();
+    public boolean isLocked() {
+        return locked;
+    }
 
     /**
      * Method setLocked.
      *
      * @param value
      */
-    public void setLocked(boolean value);
+    public void setLocked(boolean value) {
+        locked = value;
+    }
 
     /**
      * Method setName.
      *
      * @param name
      */
-    public void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    /**
-     * Parameter can be any thing - it can be XML element with number of child elements. So if some
-     * one wants to access the XML element we need to store that. At the deployment time , to store
-     * the XMLelement of the parameter, use this method to store whole
-     * <parameter name="ServiceClass1" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
-     * element.
-     *
-     * @param element <code>OMElement<code>
-     */
-    public void setParameterElement(OMElement element);
+    public void setParameterElement(OMElement element) {
+        this.parameterElement = element;
+    }
 
-    public void setParameterType(int type);
+    public void setParameterType(int type) {
+        this.type = type;
+    }
 
     /**
      * Method setValue.
      *
      * @param value
      */
-    public void setValue(Object value);
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

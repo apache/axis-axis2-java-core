@@ -182,7 +182,7 @@ public class ClientUtils {
                         Object extensibilityElement = exteElements.next();
                         if (extensibilityElement instanceof SOAPOperation) {
                             SOAPOperation soapOp = (SOAPOperation) extensibilityElement;
-                            axisOperation.addParameter(new ParameterImpl(AxisOperation.SOAP_ACTION,
+                            axisOperation.addParameter(new Parameter(AxisOperation.SOAP_ACTION,
                                     soapOp.getSoapActionURI()));
                         }
                     }

@@ -25,7 +25,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
@@ -52,7 +51,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        Parameter parameter = new ParameterImpl(
+        Parameter parameter = new Parameter(
                 Constants.Configuration.ENABLE_REST, "true");
         UtilServer.getConfigurationContext()
                 .getAxisConfiguration().addParameter(parameter);

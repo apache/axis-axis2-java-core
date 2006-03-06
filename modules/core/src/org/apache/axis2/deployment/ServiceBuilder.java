@@ -208,7 +208,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             OMAttribute lable = messageElement.getAttribute(new QName(TAG_LABEL));
 
             if (lable == null) {
-                throw new DeploymentException("message lebel can not be null");
+                throw new DeploymentException(Messages.getMessage("messagelabelcannotfound"));
             }
 
             AxisMessage message = operation.getMessage(lable.getAttributeValue());

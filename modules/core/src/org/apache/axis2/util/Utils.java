@@ -37,7 +37,6 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
@@ -130,7 +129,7 @@ public class Utils {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
+        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
 
         AxisOperation axisOp = new InOutAxisOperation(opName);
 
@@ -150,7 +149,7 @@ public class Utils {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
+        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
 
         AxisOperation axisOp = new OutInAxisOperation(opName);
 

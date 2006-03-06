@@ -95,16 +95,15 @@ public class DeploymentEngine implements DeploymentConstants {
             } else {
                 useDefault = true;
                 axis2repository = null;
-                log.debug("neither repository location nor axis2.xml are given ," +
-                        " so system will continue using default configuration (using default_axis2.xml)");
+                log.debug(Messages.getMessage("bothrepoandconfignull"));
             }
 
         } else if (!(repositoryName == null || "".equals(repositoryName.trim()))) {
             axis2repository = repositoryName.trim();
             File axisRepo = new File(axis2repository);
             if (!axisRepo.exists()) {
-                throw new DeploymentException("System can not find the given repository location: "
-                        + axis2repository);
+                throw new DeploymentException(
+                        Messages.getMessage("cannotfindrepo", axis2repository));
             }
             if (xmlFile == null || "".equals(xmlFile.trim())) {
                 axis2_xml_file_name = null;
@@ -546,9 +545,10 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
                 return axisConfig;
             } else {
-                log.info("no repository location found in axis2.xml");
+                log.info(Messages.getMessage("norepofoundinaxis2"));
                 new RepositoryListener(this);
-                org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
+                org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
+                        axisConfig.getModules(), axisConfig);
                 validateSystemPredefinedPhases();
                 return axisConfig;
             }
@@ -746,26 +746,24 @@ public class DeploymentEngine implements DeploymentConstants {
         File services = new File(repository, DIRECTORY_SERVICES);
         if (!services.exists()) {
             services.mkdirs();
-            log.info("no services directory found , new one created");
+            log.info(Messages.getMessage("noservicedirfound"));
         }
         File modules = new File(repository, DIRECTORY_MODULES);
         if (!modules.exists()) {
             modules.mkdirs();
-            log.info("no modules directory found , new one created");
+            log.info(Messages.getMessage("nomoduledirfound"));
         }
 
         if (axis2_xml_file_name == null) {
             File confdir = new File(repository, DIRECTORY_CONF);
             if (!confdir.exists()) {
-                log.info("conf directory not found , and no axis2.xml file is given ! " +
-                        "System will continue using default_axis2.xml");
+                log.info(Messages.getMessage("confdirnotfound"));
                 useDefault = true;
             } else {
                 File axis2xml = new File(confdir, "axis2.xml");
                 if (!axis2xml.exists()) {
                     useDefault = true;
-                    log.info("axis2.xml file not found in conf directory , " +
-                            "system will continue using default_axis2.xml");
+                    log.info(Messages.getMessage("noaxis2xmlfound"));
                 } else {
                     useDefault = false;
                     axis2_xml_file_name = axis2xml.getAbsolutePath();

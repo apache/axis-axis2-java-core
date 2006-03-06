@@ -22,7 +22,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -73,7 +73,7 @@ public class ContextHierarchyTest extends TestCase {
         configurationContext.setProperty(key1, value1);
         assertEquals(value1, msgctx.getProperty(key1));
 
-        axisConfiguration.addParameter(new ParameterImpl(key2, value2));
+        axisConfiguration.addParameter(new Parameter(key2, value2));
         assertEquals(value2, msgctx.getParameter(key2).getValue());
 
         opContext.setProperty(key1, value3);
@@ -100,7 +100,7 @@ public class ContextHierarchyTest extends TestCase {
         configurationContext.setProperty(key1, value1);
         assertEquals(value1, msgctx.getProperty(key1));
 
-        axisConfiguration.addParameter(new ParameterImpl(key2, value2));
+        axisConfiguration.addParameter(new Parameter(key2, value2));
         assertEquals(value2, msgctx.getParameter(key2).getValue());
     }
 

@@ -22,7 +22,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -68,7 +68,7 @@ public class EchoRawSwATest extends TestCase {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new ParameterImpl(
+        service.addParameter(new Parameter(
                         AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
                                 .getName()));
         AxisOperation axisOp = new OutInAxisOperation(operationName);

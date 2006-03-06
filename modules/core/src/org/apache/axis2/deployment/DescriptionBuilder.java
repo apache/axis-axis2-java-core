@@ -177,7 +177,7 @@ public class DescriptionBuilder implements DeploymentConstants {
      */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
             throws DeploymentException {
-        Flow flow = new FlowImpl();
+        Flow flow = new Flow();
 
         if (flowelement == null) {
             return flow;
@@ -322,7 +322,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         while (parameters.hasNext()) {
             // this is to check whether some one has locked the parmter at the top level
             OMElement parameterElement = (OMElement) parameters.next();
-            Parameter parameter = new ParameterImpl();
+            Parameter parameter = new Parameter();
             // setting parameterElement
             parameter.setParameterElement(parameterElement);
             // setting parameter Name

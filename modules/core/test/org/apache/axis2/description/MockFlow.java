@@ -20,7 +20,7 @@ import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Utils;
 
 
-public class MockFlow extends FlowImpl implements Flow {
+public class MockFlow extends Flow {
     public MockFlow(String message, int length) {
         super();
         for (int i = 0; i < length; i++) {
