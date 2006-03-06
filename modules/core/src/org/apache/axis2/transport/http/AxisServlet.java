@@ -29,6 +29,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -49,6 +51,7 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
 
+    private Log log = LogFactory.getLog(getClass());
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
@@ -169,7 +172,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         } catch (AxisFault e) {
             if (msgContext != null) {
-                handleFault(msgContext, out, e);
+                try {
+                    handleFault(msgContext, out, e);
+                } catch (AxisFault e2) {
+                    log.info(e.getMessage());
+                }
             } else {
                 throw new ServletException(e);
             }
