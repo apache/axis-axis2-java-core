@@ -124,10 +124,6 @@ public class Phase implements Handler {
      * @throws PhaseException
      */
     public void addHandler(HandlerDescription handler) throws PhaseException {
-    		
-    		if(handler.getName().getLocalPart().equals("CapabilityHandler")){
-    			System.out.println(handler.getName());
-    		}
         Iterator handlers_itr = getHandlers().iterator();
 
         while (handlers_itr.hasNext()) {
