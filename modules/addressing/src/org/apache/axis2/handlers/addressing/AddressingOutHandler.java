@@ -166,6 +166,12 @@ public class AddressingOutHandler extends AddressingHandler {
                 OMElement probHeaderQName = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
                 probHeaderQName.setText(faultyHeaderQName);
 
+                String messageID = (String) faultInfo.get(AddressingConstants.WSA_RELATES_TO);
+                if(messageID != null) {
+                    SOAPHeaderBlock relatesTo = envelope.getHeader().addHeaderBlock(AddressingConstants.WSA_RELATES_TO, addressingNamespaceObject);
+                    relatesTo.setText(messageID);
+                }
+
                 // add to header
                 SOAPFault fault = envelope.getBody().getFault();
                 if (fault != null && fault.getDetail() != null) {
