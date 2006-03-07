@@ -131,11 +131,11 @@ public class RPCServiceClass {
         return bean2 != null && bean != null;
     }
 
-    public String handleArrayList(ArrayList list, int b){
-        String str="";
+    public String handleArrayList(ArrayList list, int b) {
+        String str = "";
         for (int i = 0; i < list.size(); i++) {
             Object obj = list.get(i);
-            if(obj instanceof OMElement){
+            if (obj instanceof OMElement) {
                 OMElement omElement = (OMElement) obj;
                 str = str + omElement.getText();
             }
@@ -143,25 +143,29 @@ public class RPCServiceClass {
         return str + b;
     }
 
-    public Employee echoEmployee(Employee em){
+    public Employee echoEmployee(Employee em) {
         return em;
     }
 
 
     public Company echoCompany(Company com) throws AxisFault {
         ArrayList pss = com.getPersons();
-        ArrayList tems= new ArrayList();
+        ArrayList tems = new ArrayList();
         for (int i = 0; i < pss.size(); i++) {
             OMElement omElement = (OMElement) pss.get(i);
-            Person  p =(Person) BeanUtil.deserialize(Person.class,omElement);
+            Person p = (Person) BeanUtil.deserialize(Person.class, omElement);
             tems.add(p);
         }
         com.setPersons(tems);
         return com;
     }
 
-    public void handlAnyThing(String value1, int abc, Date date){
+    public void handlAnyThing(String value1, int abc, Date date) {
 
+    }
+
+    public boolean handleStringArray(String [] value) {
+        return value.length > 0;
     }
 
 }

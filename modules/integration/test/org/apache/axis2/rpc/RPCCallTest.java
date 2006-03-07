@@ -101,7 +101,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(clientHome,null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(clientHome, null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -153,7 +153,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -186,7 +186,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -204,7 +204,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -218,7 +218,7 @@ public class RPCCallTest extends TestCase {
     public void testAdd() throws AxisFault {
         configureSystem("add");
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
 
         Options options = new Options();
@@ -241,7 +241,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -261,7 +261,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -281,7 +281,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -299,7 +299,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -337,7 +337,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -356,7 +356,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -377,7 +377,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -410,7 +410,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -432,7 +432,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -449,6 +449,43 @@ public class RPCCallTest extends TestCase {
 //        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
     }
 
+    public void testStringArray() throws AxisFault {
+        configureSystem("handleStringArray");
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        String str = "<req:handleStringArray xmlns:req=\"http://org.apache.axis2/xsd\">\n" +
+                "    <item0>abc</item0>\n" +
+                "    <item0>def</item0>\n" +
+                "    <item0>ghi</item0>\n" +
+                "    <item0>klm</item0>\n" +
+                "</req:handleStringArray>";
+        StAXOMBuilder staxOMBuilder;
+        try {
+            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+                    ByteArrayInputStream(str.getBytes()));
+            OMFactory fac = OMAbstractFactory.getOMFactory();
+
+            staxOMBuilder = new
+                    StAXOMBuilder(fac, xmlReader);
+        } catch (XMLStreamException e) {
+            throw new AxisFault(e);
+        } catch (FactoryConfigurationError factoryConfigurationError) {
+            throw new AxisFault(factoryConfigurationError);
+        }
+        ;
+
+        OMElement result = sender.sendReceive(staxOMBuilder.getDocumentElement());
+        assertEquals(result.getFirstElement().getText(), "true");
+    }
+
     public void testmulReturn() throws AxisFault {
         configureSystem("mulReturn");
 
@@ -457,7 +494,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -478,7 +515,7 @@ public class RPCCallTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 

@@ -454,7 +454,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-        log.info( Messages.getMessage("receivederrormessage",
+        log.info(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
@@ -569,7 +569,8 @@ public class AxisEngine {
         private MessageContext msgctx;
         private TransportSender sender;
 
-        public TranportNonBlockingInvocationWorker(MessageContext msgctx, TransportSender sender) {
+        public TranportNonBlockingInvocationWorker(MessageContext msgctx,
+                                                   TransportSender sender) {
             this.msgctx = msgctx;
             this.sender = sender;
         }
