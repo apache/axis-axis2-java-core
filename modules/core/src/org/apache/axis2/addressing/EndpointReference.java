@@ -51,7 +51,7 @@ public class EndpointReference implements Serializable {
     private String address;
     private ArrayList metaData;
     private Map referenceParameters;
-    private ArrayList omElements;
+    private ArrayList extensibleElements;
 
 
     /**
@@ -110,17 +110,26 @@ public class EndpointReference implements Serializable {
         this.address = address;
     }
 
-    public ArrayList getOmElements() {
-        return omElements;
+    public ArrayList getExtensibleElements() {
+        return extensibleElements;
     }
 
     /**
      * {any}
      *
-     * @param omElements
+     * @param extensibleElements
      */
-    public void setOmElements(ArrayList omElements) {
-        this.omElements = omElements;
+    public void setExtensibleElements(ArrayList extensibleElements) {
+        this.extensibleElements = extensibleElements;
+    }
+
+    public void addExtensibleElement(OMElement extensibleElement) {
+         if (extensibleElement != null) {
+            if (this.extensibleElements == null) {
+                this.extensibleElements = new ArrayList();
+            }
+            this.extensibleElements.add(extensibleElement);
+        }
     }
 
     public ArrayList getMetaData() {

@@ -72,6 +72,8 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                     OMElement element = (OMElement) referenceParameters.next();
                     epr.addMetaData(element);
                 }
+            } else {
+                epr.addExtensibleElement(eprChildElement);
             }
         }
     }

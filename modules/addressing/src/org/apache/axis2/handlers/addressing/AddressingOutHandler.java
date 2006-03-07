@@ -327,7 +327,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         // add xs:any
-        ArrayList omElements = epr.getOmElements();
+        ArrayList omElements = epr.getExtensibleElements();
         if (omElements != null) {
             for (int i = 0; i < omElements.size(); i++) {
                 soapHeaderBlock.addChild((OMElement) omElements.get(i));
