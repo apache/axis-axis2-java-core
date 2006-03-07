@@ -19,15 +19,17 @@ package org.apache.axis2.soap.impl.dom.soap12;
 import org.apache.axis2.soap.impl.dom.SOAPFaultValueImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP12FaultValueImpl extends SOAPFaultValueImpl {
-    public SOAP12FaultValueImpl(OMElement parent) throws SOAPProcessingException {
-        super(parent);
+    
+    public SOAP12FaultValueImpl(OMElement parent, SOAPFactory factory) throws SOAPProcessingException {
+        super(parent, factory);
     }
 
-    public SOAP12FaultValueImpl(OMElement parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP12FaultValueImpl(OMElement parent, OMXMLParserWrapper builder, SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {

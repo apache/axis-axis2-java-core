@@ -25,6 +25,7 @@ import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
@@ -39,9 +40,6 @@ import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP11Factory extends DOMSOAPFactory {
-    /**
-     * Eran Chinthaka (chinthaka@apache.org)
-     */
 
 	public SOAP11Factory() {}
 	
@@ -57,156 +55,176 @@ public class SOAP11Factory extends DOMSOAPFactory {
         return new SOAPEnvelopeImpl(
                 new NamespaceImpl(
                         SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX),
+                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX, this),
                 this);
     }
 
-    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) throws SOAPProcessingException {
-        return new SOAP11HeaderImpl(envelope);
+    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope)
+            throws SOAPProcessingException {
+        return new SOAP11HeaderImpl(envelope, this);
     }
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
                                        OMXMLParserWrapper builder) {
-        return new SOAP11HeaderImpl(envelope, builder);
+        return new SOAP11HeaderImpl(envelope, builder, this);
     }
 
     public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                 OMNamespace ns,
-                                                 SOAPHeader parent) throws SOAPProcessingException {
-        return new SOAP11HeaderBlockImpl(localName, ns, parent);
+            OMNamespace ns, SOAPHeader parent) throws SOAPProcessingException {
+        return new SOAP11HeaderBlockImpl(localName, ns, parent, this);
     }
 
     public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                 OMNamespace ns,
-                                                 SOAPHeader parent,
-                                                 OMXMLParserWrapper builder) throws SOAPProcessingException {
-        return new SOAP11HeaderBlockImpl(localName, ns, parent, builder);
+            OMNamespace ns, SOAPHeader parent, OMXMLParserWrapper builder)
+            throws SOAPProcessingException {
+        return new SOAP11HeaderBlockImpl(localName, ns, parent, builder, this);
     }
 
-    public SOAPFault createSOAPFault(SOAPBody parent, Exception e) throws SOAPProcessingException {
-        return new SOAP11FaultImpl(parent, e);
+    public SOAPFault createSOAPFault(SOAPBody parent, Exception e)
+            throws SOAPProcessingException {
+        return new SOAP11FaultImpl(parent, e, this);
     }
 
-    public SOAPFault createSOAPFault(SOAPBody parent) throws SOAPProcessingException {
-        return new SOAP11FaultImpl(parent);
+    public SOAPFault createSOAPFault(SOAPBody parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultImpl(parent, this);
     }
 
     public SOAPFault createSOAPFault(SOAPBody parent,
                                      OMXMLParserWrapper builder) {
-        return new SOAP11FaultImpl(parent, builder);
+        return new SOAP11FaultImpl(parent, builder, this);
     }
 
-    public SOAPBody createSOAPBody(SOAPEnvelope envelope) throws SOAPProcessingException {
-        return new SOAP11BodyImpl(envelope);
+    public SOAPBody createSOAPBody(SOAPEnvelope envelope)
+            throws SOAPProcessingException {
+        return new SOAP11BodyImpl(envelope, (SOAPFactory) envelope
+                .getOMFactory());
     }
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope,
                                    OMXMLParserWrapper builder) {
-        return new SOAP11BodyImpl(envelope, builder);
+        return new SOAP11BodyImpl(envelope, builder, (SOAPFactory) envelope
+                .getOMFactory());
     }
 
-    public SOAPFaultCode createSOAPFaultCode(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP11FaultCodeImpl(parent);
+    public SOAPFaultCode createSOAPFaultCode(SOAPFault parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultCodeImpl(parent, this);
     }
 
     public SOAPFaultCode createSOAPFaultCode(SOAPFault parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP11FaultCodeImpl(parent, builder);
+        return new SOAP11FaultCodeImpl(parent, builder, this);
     }
 
-    public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent) throws SOAPProcessingException {
-        return new SOAP11FaultValueImpl(parent);
+    public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultValueImpl(parent, this);
     }
 
     public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent,
                                                OMXMLParserWrapper builder) {
-        return new SOAP11FaultValueImpl(parent, builder);
+        return new SOAP11FaultValueImpl(parent, builder, this);
     }
 
     //added
-    public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent) throws SOAPProcessingException {
-        return new SOAP11FaultValueImpl(parent);
+    public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultValueImpl(parent, this);
     }
 
     //added
     public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent,
                                                OMXMLParserWrapper builder) {
-        return new SOAP11FaultValueImpl(parent, builder);
+        return new SOAP11FaultValueImpl(parent, builder, this);
     }
 
     //changed
-    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent) throws SOAPProcessingException {
-        return new SOAP11FaultSubCodeImpl(parent);
+    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultSubCodeImpl(parent, this);
     }
 
     //changed
     public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent,
                                                    OMXMLParserWrapper builder) {
-        return new SOAP11FaultSubCodeImpl(parent, builder);
+        return new SOAP11FaultSubCodeImpl(parent, builder, this);
     }
 
-    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent) throws SOAPProcessingException {
-        return new SOAP11FaultSubCodeImpl(parent);
+    public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultSubCodeImpl(parent, this);
     }
 
     public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent,
                                                    OMXMLParserWrapper builder) {
-        return new SOAP11FaultSubCodeImpl(parent, builder);
+        return new SOAP11FaultSubCodeImpl(parent, builder, this);
     }
 
-    public SOAPFaultReason createSOAPFaultReason(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP11FaultReasonImpl(parent);
+    public SOAPFaultReason createSOAPFaultReason(SOAPFault parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultReasonImpl(parent, this);
     }
 
     public SOAPFaultReason createSOAPFaultReason(SOAPFault parent,
                                                  OMXMLParserWrapper builder) {
-        return new SOAP11FaultReasonImpl(parent, builder);
+        return new SOAP11FaultReasonImpl(parent, builder, this);
     }
 
-    public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent) throws SOAPProcessingException {
-        return new SOAP11FaultTextImpl(parent);
+    public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultTextImpl(parent, this);
     }
 
     public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP11FaultTextImpl(parent, builder);
+        return new SOAP11FaultTextImpl(parent, builder, this);
     }
 
-    public SOAPFaultNode createSOAPFaultNode(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP11FaultNodeImpl(parent);
+    public SOAPFaultNode createSOAPFaultNode(SOAPFault parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultNodeImpl(parent, this);
     }
 
     public SOAPFaultNode createSOAPFaultNode(SOAPFault parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP11FaultNodeImpl(parent, builder);
+        return new SOAP11FaultNodeImpl(parent, builder, this);
     }
 
-    public SOAPFaultRole createSOAPFaultRole(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP11FaultRoleImpl(parent);
+    public SOAPFaultRole createSOAPFaultRole(SOAPFault parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultRoleImpl(parent, this);
     }
 
     public SOAPFaultRole createSOAPFaultRole(SOAPFault parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP11FaultRoleImpl(parent, builder);
+        return new SOAP11FaultRoleImpl(parent, builder, this);
     }
 
-    public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP11FaultDetailImpl(parent);
+    public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent)
+            throws SOAPProcessingException {
+        return new SOAP11FaultDetailImpl(parent, this);
     }
 
     public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent,
                                                  OMXMLParserWrapper builder) {
-        return new SOAP11FaultDetailImpl(parent, builder);
+        return new SOAP11FaultDetailImpl(parent, builder, this);
     }
 
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
                 new NamespaceImpl(
                         SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX, this);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns, this);
         createSOAPHeader(env);
         createSOAPBody(env);
         return env;
     }
+    
+    public OMNamespace getNamespace() {
+        return new NamespaceImpl(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX, this);
+    }
+    
 }

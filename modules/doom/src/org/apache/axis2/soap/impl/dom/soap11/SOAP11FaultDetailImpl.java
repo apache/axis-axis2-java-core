@@ -19,9 +19,11 @@ package org.apache.axis2.soap.impl.dom.soap11;
 import org.apache.axis2.soap.impl.dom.SOAPFaultDetailImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
@@ -29,25 +31,31 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
-    public SOAP11FaultDetailImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, false);
+    
+    public SOAP11FaultDetailImpl(SOAPFault parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, false, factory);
     }
 
-    public SOAP11FaultDetailImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP11FaultDetailImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
-    public SOAP11FaultDetailImpl() {
+    public SOAP11FaultDetailImpl(SOAPFactory factory) {
+        super(factory);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault as " +
+                    "the parent. But received some other implementation");
         }
     }
 
-    public void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput, boolean cache)
+            throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type

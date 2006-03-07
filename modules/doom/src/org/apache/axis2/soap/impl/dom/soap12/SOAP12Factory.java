@@ -54,153 +54,155 @@ public class SOAP12Factory extends DOMSOAPFactory {
         return new SOAPEnvelopeImpl(
                 new NamespaceImpl(
                         SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX),
+                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX,
+                        this),
                 this);
     }
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) throws SOAPProcessingException {
-        return new SOAP12HeaderImpl(envelope);
+        return new SOAP12HeaderImpl(envelope, this);
     }
 
     public SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
                                        OMXMLParserWrapper builder) {
-        return new SOAP12HeaderImpl(envelope, builder);
+        return new SOAP12HeaderImpl(envelope, builder, this);
     }
 
     public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
                                                  OMNamespace ns,
                                                  SOAPHeader parent) throws SOAPProcessingException {
-        return new SOAP12HeaderBlockImpl(localName, ns, parent);
+        return new SOAP12HeaderBlockImpl(localName, ns, parent, this);
     }
 
     public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
                                                  OMNamespace ns,
                                                  SOAPHeader parent,
                                                  OMXMLParserWrapper builder) throws SOAPProcessingException {
-        return new SOAP12HeaderBlockImpl(localName, ns, parent, builder);
+        return new SOAP12HeaderBlockImpl(localName, ns, parent, builder, this);
     }
 
     public SOAPFault createSOAPFault(SOAPBody parent, Exception e) throws SOAPProcessingException {
-        return new SOAP12FaultImpl(parent, e);
+        return new SOAP12FaultImpl(parent, e, this);
     }
 
     public SOAPFault createSOAPFault(SOAPBody parent) throws SOAPProcessingException {
-        return new SOAP12FaultImpl(parent);
+        return new SOAP12FaultImpl(parent, this);
     }
 
     public SOAPFault createSOAPFault(SOAPBody parent,
                                      OMXMLParserWrapper builder) {
-        return new SOAP12FaultImpl(parent, builder);
+        return new SOAP12FaultImpl(parent, builder, this);
     }
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope) throws SOAPProcessingException {
-        return new SOAP12BodyImpl(envelope);
+        return new SOAP12BodyImpl(envelope, this);
     }
 
     public SOAPBody createSOAPBody(SOAPEnvelope envelope,
                                    OMXMLParserWrapper builder) {
-        return new SOAP12BodyImpl(envelope, builder);
+        return new SOAP12BodyImpl(envelope, builder, this);
     }
 
     public SOAPFaultCode createSOAPFaultCode(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP12FaultCodeImpl(parent);
+        return new SOAP12FaultCodeImpl(parent, this);
     }
 
     public SOAPFaultCode createSOAPFaultCode(SOAPFault parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP12FaultCodeImpl(parent, builder);
+        return new SOAP12FaultCodeImpl(parent, builder, this);
     }
 
     public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent) throws SOAPProcessingException {
-        return new SOAP12FaultValueImpl(parent);
+        return new SOAP12FaultValueImpl(parent, this);
     }
 
     public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent,
                                                OMXMLParserWrapper builder) {
-        return new SOAP12FaultValueImpl(parent, builder);
+        return new SOAP12FaultValueImpl(parent, builder, this);
     }
 
     //added
     public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent) throws SOAPProcessingException {
-        return new SOAP12FaultValueImpl(parent);
+        return new SOAP12FaultValueImpl(parent, this);
     }
 
     //added
     public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent,
                                                OMXMLParserWrapper builder) {
-        return new SOAP12FaultValueImpl(parent, builder);
+        return new SOAP12FaultValueImpl(parent, builder, this);
     }
 
     //changed
     public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent) throws SOAPProcessingException {
-        return new SOAP12FaultSubCodeImpl(parent);
+        return new SOAP12FaultSubCodeImpl(parent, this);
     }
 
     //changed
     public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent,
                                                    OMXMLParserWrapper builder) {
-        return new SOAP12FaultSubCodeImpl(parent, builder);
+        return new SOAP12FaultSubCodeImpl(parent, builder, this);
     }
 
     public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent) throws SOAPProcessingException {
-        return new SOAP12FaultSubCodeImpl(parent);
+        return new SOAP12FaultSubCodeImpl(parent, this);
     }
 
     public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent,
                                                    OMXMLParserWrapper builder) {
-        return new SOAP12FaultSubCodeImpl(parent, builder);
+        return new SOAP12FaultSubCodeImpl(parent, builder, this);
     }
 
     public SOAPFaultReason createSOAPFaultReason(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP12FaultReasonImpl(parent);
+        return new SOAP12FaultReasonImpl(parent, this);
     }
 
     public SOAPFaultReason createSOAPFaultReason(SOAPFault parent,
                                                  OMXMLParserWrapper builder) {
-        return new SOAP12FaultReasonImpl(parent, builder);
+        return new SOAP12FaultReasonImpl(parent, builder, this);
     }
 
     public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent) throws SOAPProcessingException {
-        return new SOAP12FaultTextImpl(parent);
+        return new SOAP12FaultTextImpl(parent, this);
     }
 
     public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP12FaultTextImpl(parent, builder);
+        return new SOAP12FaultTextImpl(parent, builder, this);
     }
 
     public SOAPFaultNode createSOAPFaultNode(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP12FaultNodeImpl(parent);
+        return new SOAP12FaultNodeImpl(parent, this);
     }
 
     public SOAPFaultNode createSOAPFaultNode(SOAPFault parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP12FaultNodeImpl(parent, builder);
+        return new SOAP12FaultNodeImpl(parent, builder, this);
     }
 
     public SOAPFaultRole createSOAPFaultRole(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP12FaultRoleImpl(parent);
+        return new SOAP12FaultRoleImpl(parent, this);
     }
 
     public SOAPFaultRole createSOAPFaultRole(SOAPFault parent,
                                              OMXMLParserWrapper builder) {
-        return new SOAP12FaultRoleImpl(parent, builder);
+        return new SOAP12FaultRoleImpl(parent, builder, this);
     }
 
     public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent) throws SOAPProcessingException {
-        return new SOAP12FaultDetailImpl(parent);
+        return new SOAP12FaultDetailImpl(parent, this);
     }
 
     public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent,
                                                  OMXMLParserWrapper builder) {
-        return new SOAP12FaultDetailImpl(parent, builder);
+        return new SOAP12FaultDetailImpl(parent, builder, this);
     }
 
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
                 new NamespaceImpl(
                         SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX,
+                        this);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns, this);
         createSOAPHeader(env);
         createSOAPBody(env);

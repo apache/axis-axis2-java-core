@@ -25,6 +25,7 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPConstants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
@@ -40,10 +41,10 @@ public abstract class SOAPHeaderBlockImpl  extends ElementImpl implements SOAPHe
      * @param ns
      * @param parent     
      */
-    public SOAPHeaderBlockImpl(String localName,
-                               OMNamespace ns,
-                               SOAPHeader parent) throws SOAPProcessingException {
-        super((ParentNode)parent, localName,(NamespaceImpl) ns);
+    public SOAPHeaderBlockImpl(String localName, OMNamespace ns,
+            SOAPHeader parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super((ParentNode)parent, localName,(NamespaceImpl) ns, factory);
         this.setNamespace(ns);
     }
 
@@ -56,8 +57,8 @@ public abstract class SOAPHeaderBlockImpl  extends ElementImpl implements SOAPHe
      * @param builder
      */
     public SOAPHeaderBlockImpl(String localName, OMNamespace ns,
-                               OMElement parent, OMXMLParserWrapper builder) {
-        super((ParentNode)parent, localName, (NamespaceImpl)ns, builder);
+            OMElement parent, OMXMLParserWrapper builder, SOAPFactory factory) {
+        super((ParentNode)parent, localName, (NamespaceImpl)ns, builder, factory);
         this.setNamespace(ns);
     }
 
@@ -75,9 +76,9 @@ public abstract class SOAPHeaderBlockImpl  extends ElementImpl implements SOAPHe
             omAttribute.setAttributeValue(attrValue);
         } else {
             OMAttribute attribute = new AttrImpl(this.ownerNode, attributeName,
-					new NamespaceImpl(soapEnvelopeNamespaceURI,
-							SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
-					attrValue);
+                    new NamespaceImpl(soapEnvelopeNamespaceURI,
+                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX,
+                            this.factory), attrValue, this.factory);
             this.addAttribute(attribute);
         }
     }

@@ -77,4 +77,9 @@ public interface WSSHandlerConstants {
     public final static String SIGN_ALL_HEADERS = "signAllHeaders";
     public final static String SIGN_BODY = "signBody";
     public final static String ENCRYPT_BODY = "encryptBody";
+    
+    /**
+     * Key to be used to set a flag in msg ctx to enable/disable using doom
+     */
+    public final static String DISABLE_DOOM = "useDoom";
 }

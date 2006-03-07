@@ -20,6 +20,7 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.util.ElementHelper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultSubCode;
 import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.ws.commons.soap.SOAPProcessingException;
@@ -30,14 +31,15 @@ public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFa
     protected SOAPFaultSubCode subCode;
 
 
-    protected SOAPFaultSubCodeImpl(OMElement parent, String localName) throws SOAPProcessingException {
-        super(parent, localName, true);
+    protected SOAPFaultSubCodeImpl(OMElement parent, String localName, SOAPFactory factory) throws SOAPProcessingException {
+        super(parent, localName, true, factory);
     }
 
     protected SOAPFaultSubCodeImpl(OMElement parent,
                                    String localName,
-                                   OMXMLParserWrapper builder) {
-        super(parent, localName, builder);
+                                   OMXMLParserWrapper builder, 
+                                   SOAPFactory factory) {
+        super(parent, localName, builder, factory);
     }
 
     public void setValue(SOAPFaultValue soapFaultSubCodeValue) throws SOAPProcessingException {

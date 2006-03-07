@@ -19,16 +19,21 @@ package org.apache.axis2.soap.impl.dom;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public abstract class SOAPFaultValueImpl extends SOAPElement implements SOAPFaultValue {
 
-    protected SOAPFaultValueImpl(OMElement parent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME, true);
+    protected SOAPFaultValueImpl(OMElement parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME, true,
+                factory);
     }
 
-    protected SOAPFaultValueImpl(OMElement parent, OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME, builder);
+    protected SOAPFaultValueImpl(OMElement parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME, builder,
+                factory);
     }
 }

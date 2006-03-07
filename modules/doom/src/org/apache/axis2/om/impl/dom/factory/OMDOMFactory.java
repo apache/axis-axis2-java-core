@@ -54,7 +54,7 @@ public class OMDOMFactory implements OMFactory {
 
     public OMDocument createOMDocument() {
         if (this.document == null)
-            this.document = new DocumentImpl();
+            this.document = new DocumentImpl(this);
 
         return this.document;
     }
@@ -70,7 +70,7 @@ public class OMDOMFactory implements OMFactory {
 
     public OMElement createOMElement(String localName, OMNamespace ns) {
         return new ElementImpl((DocumentImpl) this.createOMDocument(),
-                localName, (NamespaceImpl) ns);
+                localName, (NamespaceImpl) ns, this);
     }
 
     public OMElement createOMElement(String localName, OMNamespace ns,
@@ -79,20 +79,20 @@ public class OMDOMFactory implements OMFactory {
         case Node.ELEMENT_NODE: // We are adding a new child to an elem
             ElementImpl parentElem = (ElementImpl) parent;
             ElementImpl elem = new ElementImpl((DocumentImpl) parentElem
-                    .getOwnerDocument(), localName, (NamespaceImpl) ns);
+                    .getOwnerDocument(), localName, (NamespaceImpl) ns, this);
             parentElem.appendChild(elem);
             return elem;
 
         case Node.DOCUMENT_NODE:
             DocumentImpl docImpl = (DocumentImpl) parent;
             ElementImpl elem2 = new ElementImpl(docImpl, localName,
-                    (NamespaceImpl) ns);
+                    (NamespaceImpl) ns, this);
             return elem2;
 
         case Node.DOCUMENT_FRAGMENT_NODE:
             DocumentFragmentimpl docFragImpl = (DocumentFragmentimpl) parent;
             ElementImpl elem3 = new ElementImpl((DocumentImpl) docFragImpl
-                    .getOwnerDocument(), localName, (NamespaceImpl) ns);
+                    .getOwnerDocument(), localName, (NamespaceImpl) ns, this);
             return elem3;
         default:
             throw new OMDOMException(
@@ -110,20 +110,22 @@ public class OMDOMFactory implements OMFactory {
         case Node.ELEMENT_NODE: // We are adding a new child to an elem
             ElementImpl parentElem = (ElementImpl) parent;
             ElementImpl elem = new ElementImpl((DocumentImpl) parentElem
-                    .getOwnerDocument(), localName, (NamespaceImpl) ns, builder);
+                    .getOwnerDocument(), localName, (NamespaceImpl) ns,
+                    builder, this);
             parentElem.appendChild(elem);
             return elem;
         case Node.DOCUMENT_NODE:
             DocumentImpl docImpl = (DocumentImpl) parent;
             ElementImpl elem2 = new ElementImpl(docImpl, localName,
-                    (NamespaceImpl) ns, builder);
+                    (NamespaceImpl) ns, builder, this);
             docImpl.appendChild(elem2);
             return elem2;
 
         case Node.DOCUMENT_FRAGMENT_NODE:
             DocumentFragmentimpl docFragImpl = (DocumentFragmentimpl) parent;
             ElementImpl elem3 = new ElementImpl((DocumentImpl) docFragImpl
-                    .getOwnerDocument(), localName, (NamespaceImpl) ns, builder);
+                    .getOwnerDocument(), localName, (NamespaceImpl) ns,
+                    builder, this);
             return elem3;
         default:
             throw new OMDOMException(
@@ -140,7 +142,8 @@ public class OMDOMFactory implements OMFactory {
      */
     public OMElement createOMElement(String localName, String namespaceURI,
             String namespacePrefix) {
-        NamespaceImpl ns = new NamespaceImpl(namespaceURI, namespacePrefix);
+        NamespaceImpl ns = new NamespaceImpl(namespaceURI, namespacePrefix,
+                this);
         return this.createOMElement(localName, ns);
     }
 
@@ -155,9 +158,9 @@ public class OMDOMFactory implements OMFactory {
             throws OMException {
         NamespaceImpl ns;
         if (qname.getPrefix() != null) {
-            ns = new NamespaceImpl(qname.getNamespaceURI(), qname.getPrefix());
+            ns = new NamespaceImpl(qname.getNamespaceURI(), qname.getPrefix(), this);
         } else {
-            ns = new NamespaceImpl(qname.getNamespaceURI());
+            ns = new NamespaceImpl(qname.getNamespaceURI(), this);
         }
         return createOMElement(qname.getLocalPart(), ns, parent);
     }
@@ -169,7 +172,7 @@ public class OMDOMFactory implements OMFactory {
      *      java.lang.String)
      */
     public OMNamespace createOMNamespace(String uri, String prefix) {
-        return new NamespaceImpl(uri, prefix);
+        return new NamespaceImpl(uri, prefix, this);
     }
 
     /**
@@ -182,7 +185,7 @@ public class OMDOMFactory implements OMFactory {
     public OMText createText(OMElement parent, String text) {
         ElementImpl parentElem = (ElementImpl) parent;
         TextImpl txt = new TextImpl((DocumentImpl) parentElem
-                .getOwnerDocument(), text);
+                .getOwnerDocument(), text, this);
         parentElem.addChild(txt);
         return txt;
     }
@@ -199,7 +202,7 @@ public class OMDOMFactory implements OMFactory {
      * @see org.apache.ws.commons.om.OMFactory#createText(java.lang.String)
      */
     public OMText createText(String s) {
-        return new TextImpl(s);
+        return new TextImpl(s, this);
     }
 
     /**
@@ -210,7 +213,7 @@ public class OMDOMFactory implements OMFactory {
     public OMText createText(String text, int type) {
         switch (type) {
         case Node.TEXT_NODE:
-            return new TextImpl(text);
+            return new TextImpl(text, this);
         default:
             throw new OMDOMException("Only Text nodes are supported right now");
         }
@@ -224,7 +227,7 @@ public class OMDOMFactory implements OMFactory {
      *      java.lang.String, boolean)
      */
     public OMText createText(String text, String mimeType, boolean optimize) {
-        return new TextImpl(text, mimeType, optimize);
+        return new TextImpl(text, mimeType, optimize, this);
     }
 
     /**
@@ -234,7 +237,7 @@ public class OMDOMFactory implements OMFactory {
      * @see org.apache.ws.commons.om.OMFactory#createText(java.lang.Object, boolean)
      */
     public OMText createText(Object dataHandler, boolean optimize) {
-        return new TextImpl(dataHandler, optimize);
+        return new TextImpl(dataHandler, optimize, this);
     }
 
     /**
@@ -247,21 +250,21 @@ public class OMDOMFactory implements OMFactory {
     public OMText createText(OMElement parent, String s, String mimeType,
             boolean optimize) {
         TextImpl text = new TextImpl((DocumentImpl) ((ElementImpl) parent)
-                .getOwnerDocument(), s, mimeType, optimize);
+                .getOwnerDocument(), s, mimeType, optimize, this);
         parent.addChild(text);
         return text;
     }
 
     public OMText createText(String contentID, OMElement parent,
             OMXMLParserWrapper builder) {
-        TextImpl text = new TextImpl(contentID, parent, builder);
+        TextImpl text = new TextImpl(contentID, parent, builder, this);
         parent.addChild(text);
         return text;
     }
 
     public OMAttribute createOMAttribute(String localName, OMNamespace ns,
             String value) {
-        return new AttrImpl(this.getDocument(), localName, ns, value);
+        return new AttrImpl(this.getDocument(), localName, ns, value, this);
     }
 
     public OMDocType createOMDocType(OMContainer parent, String content) {
@@ -283,7 +286,7 @@ public class OMDOMFactory implements OMFactory {
             doc = (DocumentImpl) ((ParentNode) parent).getOwnerDocument();
         }
 
-        CommentImpl comment = new CommentImpl(doc, content);
+        CommentImpl comment = new CommentImpl(doc, content, this);
         parent.addChild(comment);
         return comment;
     }
@@ -293,7 +296,7 @@ public class OMDOMFactory implements OMFactory {
     }
 
     public OMDocument createOMDocument(OMXMLParserWrapper builder) {
-        this.document = new DocumentImpl(builder);
+        this.document = new DocumentImpl(builder, this);
         return this.document;
     }
 

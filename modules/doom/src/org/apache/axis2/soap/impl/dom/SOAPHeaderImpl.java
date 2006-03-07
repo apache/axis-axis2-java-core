@@ -16,6 +16,11 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMNamespace;
@@ -23,21 +28,20 @@ import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPConstants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collection;
 
 public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
+
+    
     /**
      * @param envelope
      */
-    public SOAPHeaderImpl(SOAPEnvelope envelope) throws SOAPProcessingException {
-        super(envelope, SOAPConstants.HEADER_LOCAL_NAME, true);
+    public SOAPHeaderImpl(SOAPEnvelope envelope, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(envelope, SOAPConstants.HEADER_LOCAL_NAME, true, factory);
 
     }
 
@@ -47,8 +51,9 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @param envelope
      * @param builder
      */
-    public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(envelope, SOAPConstants.HEADER_LOCAL_NAME, builder);
+    public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(envelope, SOAPConstants.HEADER_LOCAL_NAME, builder, factory);
     }
 
     /**
@@ -236,7 +241,8 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAPEnvelopeImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
+                    "Expecting an implementation of SOAP Envelope as the " +
+                    "parent. But received some other implementation");
         }
     }
 

@@ -19,15 +19,19 @@ package org.apache.axis2.soap.impl.dom.soap11;
 import org.apache.axis2.soap.impl.dom.SOAPFaultValueImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP11FaultValueImpl extends SOAPFaultValueImpl {
-    public SOAP11FaultValueImpl(OMElement parent) throws SOAPProcessingException {
-        super(parent);
+    
+    public SOAP11FaultValueImpl(OMElement parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, factory);
     }
 
-    public SOAP11FaultValueImpl(OMElement parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP11FaultValueImpl(OMElement parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
 
@@ -35,7 +39,9 @@ public class SOAP11FaultValueImpl extends SOAPFaultValueImpl {
         if (!((parent instanceof SOAP11FaultSubCodeImpl) ||
                 (parent instanceof SOAP11FaultCodeImpl))) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP FaultSubCode or SOAP FaultCode as the parent. But received some other implementation." +
+                    "Expecting SOAP 1.1 implementation of SOAP FaultSubCode " +
+                    "or SOAP FaultCode as the parent. But received some other" +
+                    " implementation." +
                     parent.getClass());
         }
     }

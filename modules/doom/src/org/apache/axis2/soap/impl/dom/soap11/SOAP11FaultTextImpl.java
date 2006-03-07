@@ -19,23 +19,26 @@ package org.apache.axis2.soap.impl.dom.soap11;
 import org.apache.axis2.soap.impl.dom.SOAPFaultTextImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP11FaultTextImpl extends SOAPFaultTextImpl  {
-    public SOAP11FaultTextImpl(SOAPFaultReason parent) throws SOAPProcessingException {
-        super(parent);
+    public SOAP11FaultTextImpl(SOAPFaultReason parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, factory);
     }
 
     public SOAP11FaultTextImpl(SOAPFaultReason parent,
-                               OMXMLParserWrapper builder) {
-        super(parent, builder);
+            OMXMLParserWrapper builder, SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultReasonImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP FaultReason as the parent. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP FaultReason " +
+                    "as the parent. But received some other implementation");
         }
     }
 }

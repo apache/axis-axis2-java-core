@@ -73,7 +73,8 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * @see javax.xml.parsers.DocumentBuilder#newDocument()
      */
     public Document newDocument() {
-        DocumentImpl documentImpl = new DocumentImpl();
+        OMDOMFactory factory = new OMDOMFactory();
+        DocumentImpl documentImpl = new DocumentImpl(factory);
         documentImpl.setComplete(true);
         return documentImpl;
     }

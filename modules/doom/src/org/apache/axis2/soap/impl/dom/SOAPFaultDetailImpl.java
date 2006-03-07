@@ -21,6 +21,7 @@ import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
 import org.apache.ws.commons.soap.SOAPProcessingException;
@@ -30,19 +31,24 @@ import java.util.Iterator;
 
 public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFaultDetail {
 
+    
     protected SOAPFaultDetailImpl(SOAPFault parent,
-                                  boolean extractNamespaceFromParent) throws SOAPProcessingException {
+            boolean extractNamespaceFromParent, SOAPFactory factory)
+            throws SOAPProcessingException {
         super(parent,
                 SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME,
-                extractNamespaceFromParent);
+                extractNamespaceFromParent, factory);
     }
 
+    protected SOAPFaultDetailImpl(SOAPFactory factory) {
+        super(factory);
+    }
+    
     protected SOAPFaultDetailImpl(SOAPFault parent,
-                                  OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, builder);
-    }
-
-    protected SOAPFaultDetailImpl() {
+                                  OMXMLParserWrapper builder,
+                                  SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, builder,
+                factory);
     }
 
     public void addDetailEntry(OMElement detailElement) {

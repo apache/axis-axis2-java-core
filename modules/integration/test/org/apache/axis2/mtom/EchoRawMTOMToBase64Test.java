@@ -92,7 +92,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
                 98};
         DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
-        expectedTextData = new OMTextImpl(dataHandler, true);
+        expectedTextData = new OMTextImpl(dataHandler, true, fac);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
         return rpcWrapEle;

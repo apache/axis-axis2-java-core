@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 
 public class NamespaceImpl implements OMNamespace {
@@ -22,13 +23,16 @@ public class NamespaceImpl implements OMNamespace {
     private String nsUri;
 
     private String nsPrefix;
+    
+    private OMFactory factory;
 
-    public NamespaceImpl(String uri) {
+    public NamespaceImpl(String uri, OMFactory factory) {
+        this.factory = factory;
         this.nsUri = uri;
     }
 
-    public NamespaceImpl(String uri, String prefix) {
-        this.nsUri = uri;
+    public NamespaceImpl(String uri, String prefix, OMFactory factory) {
+        this(uri, factory);
         this.nsPrefix = prefix;
     }
 
@@ -58,6 +62,13 @@ public class NamespaceImpl implements OMNamespace {
      */
     public String getName() {
         return this.nsUri;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ws.commons.om.OMNamespace#getOMFactory()
+     */
+    public OMFactory getOMFactory() {
+        return this.factory;
     }
 
 }

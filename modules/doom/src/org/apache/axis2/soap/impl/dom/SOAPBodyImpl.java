@@ -19,13 +19,13 @@ package org.apache.axis2.soap.impl.dom;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPConstants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
@@ -40,8 +40,9 @@ public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 	/**
 	 * @param envelope
 	 */
-	public SOAPBodyImpl(SOAPEnvelope envelope) throws SOAPProcessingException {
-		super(envelope, SOAPConstants.BODY_LOCAL_NAME, true);
+	public SOAPBodyImpl(SOAPEnvelope envelope, SOAPFactory factory)
+            throws SOAPProcessingException {
+		super(envelope, SOAPConstants.BODY_LOCAL_NAME, true, factory);
 
 	}
 
@@ -51,8 +52,9 @@ public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 	 * @param envelope
 	 * @param builder
 	 */
-	public SOAPBodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-		super(envelope, SOAPConstants.BODY_LOCAL_NAME, builder);
+	public SOAPBodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+		super(envelope, SOAPConstants.BODY_LOCAL_NAME, builder, factory);
 	}
 
 	/**
@@ -128,7 +130,8 @@ public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 	public void addFault(SOAPFault soapFault) throws OMException {
 		if (hasSOAPFault) {
 			throw new OMException(
-					"SOAP Body already has a SOAP Fault and there can not be more than one SOAP fault");
+					"SOAP Body already has a SOAP Fault and there can not be " +
+                    "more than one SOAP fault");
 		}
 		addChild(soapFault);
 		hasSOAPFault = true;
@@ -137,7 +140,8 @@ public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 	protected void checkParent(OMElement parent) throws SOAPProcessingException {
 		if (!(parent instanceof SOAPEnvelopeImpl)) {
 			throw new SOAPProcessingException(
-					"Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
+					"Expecting an implementation of SOAP Envelope as the " +
+                    "parent. But received some other implementation");
 		}
 	}
 

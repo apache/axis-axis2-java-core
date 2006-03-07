@@ -29,6 +29,7 @@ import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandler
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPConstants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
@@ -53,9 +54,9 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 	 * @param parent
 	 * @param e
 	 */
-	public SOAPFaultImpl(SOAPBody parent, Exception e)
+	public SOAPFaultImpl(SOAPBody parent, Exception e, SOAPFactory factory)
 			throws SOAPProcessingException {
-		super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true);
+		super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true, factory);
 		setException(e);
 	}
 
@@ -64,8 +65,9 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 		putExceptionToSOAPFault(e);
 	}
 
-	public SOAPFaultImpl(SOAPBody parent) throws SOAPProcessingException {
-		super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true);
+	public SOAPFaultImpl(SOAPBody parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+		super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, true, factory);
 	}
 
 	/**
@@ -74,8 +76,9 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 	 * @param parent
 	 * @param builder
 	 */
-	public SOAPFaultImpl(SOAPBody parent, OMXMLParserWrapper builder) {
-		super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, builder);
+	public SOAPFaultImpl(SOAPBody parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+		super(parent, SOAPConstants.SOAPFAULT_LOCAL_NAME, builder, factory);
 	}
 
 	protected abstract SOAPFaultDetail getNewSOAPFaultDetail(SOAPFault fault)
@@ -160,7 +163,7 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 		}
 		OMElement faultDetailEnty = new ElementImpl((ParentNode) this,
 				SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY,
-				null);
+				null, this.factory);
 		faultDetailEnty.setText(sw.getBuffer().toString());
 	}
 

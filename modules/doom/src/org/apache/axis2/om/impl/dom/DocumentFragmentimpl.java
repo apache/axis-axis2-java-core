@@ -16,6 +16,7 @@
 package org.apache.axis2.om.impl.dom;
 
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
@@ -29,8 +30,8 @@ public class DocumentFragmentimpl extends ParentNode implements
     /**
      * @param ownerDocument
      */
-    public DocumentFragmentimpl(DocumentImpl ownerDocument) {
-        super(ownerDocument);
+    public DocumentFragmentimpl(DocumentImpl ownerDocument, OMFactory factory) {
+        super(ownerDocument, factory);
     }
 
     /*

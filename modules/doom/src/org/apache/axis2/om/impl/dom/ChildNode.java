@@ -17,6 +17,7 @@ package org.apache.axis2.om.impl.dom;
 
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.w3c.dom.Node;
@@ -32,12 +33,12 @@ public abstract class ChildNode extends NodeImpl {
     /**
      * @param ownerDocument
      */
-    protected ChildNode(DocumentImpl ownerDocument) {
-        super(ownerDocument);
+    protected ChildNode(DocumentImpl ownerDocument, OMFactory factory) {
+        super(ownerDocument, factory);
     }
 
-    protected ChildNode() {
-
+    protected ChildNode(OMFactory factory) {
+        super(factory);
     }
 
     public OMNode getNextOMSibling() throws OMException {

@@ -22,6 +22,7 @@ import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.om.util.ElementHelper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPFaultText;
@@ -29,7 +30,8 @@ import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamException;
 
-public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFaultReason {
+public abstract class SOAPFaultReasonImpl extends SOAPElement implements
+        SOAPFaultReason {
     protected SOAPFaultText text;
 
     /**
@@ -38,18 +40,20 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
      * @param parent
      * @param builder
      */
-    public SOAPFaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, builder);
+    public SOAPFaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, builder,
+                factory);
     }
 
     /**
      * @param parent
      */
     public SOAPFaultReasonImpl(OMElement parent,
-                               boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent,
-                SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME,
-                extractNamespaceFromParent);
+            boolean extractNamespaceFromParent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent,SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME,
+                extractNamespaceFromParent,factory);
     }
 
     /**

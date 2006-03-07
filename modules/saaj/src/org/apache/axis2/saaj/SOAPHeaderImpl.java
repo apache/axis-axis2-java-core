@@ -21,6 +21,7 @@ import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
@@ -71,9 +72,9 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
-        OMNamespace ns = new NamespaceImpl(uri, prefix);
+        OMNamespace ns = new NamespaceImpl(uri, prefix, this.element.getOMFactory());
         SOAPHeaderBlock headerBlock =
-                new SOAP11HeaderBlockImpl(localName, ns, omSOAPHeader);
+                new SOAP11HeaderBlockImpl(localName, ns, omSOAPHeader, (SOAPFactory)this.element.getOMFactory());
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
@@ -92,9 +93,13 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.SOAPElement)
     */
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
-        OMNamespace ns = new NamespaceImpl(soapElement.getNamespaceURI(), soapElement.getPrefix());
+        OMNamespace ns = new NamespaceImpl(soapElement.getNamespaceURI(), 
+                soapElement.getPrefix(),
+                (SOAPFactory)this.element.getOMFactory());
         SOAPHeaderBlock headerBlock =
-                new SOAP11HeaderBlockImpl(soapElement.getLocalName(), ns, omSOAPHeader);
+                new SOAP11HeaderBlockImpl(soapElement.getLocalName(), ns, 
+                        omSOAPHeader,
+                        (SOAPFactory)this.element.getOMFactory());
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
@@ -116,9 +121,11 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
-        OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
+        OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix(), 
+                (SOAPFactory)this.element.getOMFactory());
         SOAPHeaderBlock headerBlock =
-                new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader);
+                new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
+                        (SOAPFactory)this.element.getOMFactory());
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);

@@ -19,22 +19,26 @@ package org.apache.axis2.soap.impl.dom.soap12;
 import org.apache.axis2.soap.impl.dom.SOAPFaultNodeImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP12FaultNodeImpl extends SOAPFaultNodeImpl {
-    public SOAP12FaultNodeImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent);
+    public SOAP12FaultNodeImpl(SOAPFault parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, factory);
     }
 
-    public SOAP12FaultNodeImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP12FaultNodeImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault as the " +
+                    "parent. But received some other implementation");
         }
     }
 }

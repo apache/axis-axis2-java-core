@@ -15,12 +15,14 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.util.XMLChar;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMDocument;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMOutputFormat;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
@@ -60,16 +62,20 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
     /**
      * @param ownerDocument
      */
-    public DocumentImpl(DocumentImpl ownerDocument) {
-        super(ownerDocument);
+    public DocumentImpl(DocumentImpl ownerDocument, OMFactory factory) {
+        super(ownerDocument, factory);
+        ((OMDOMFactory)factory).setDocument(this);
     }
 
-    public DocumentImpl(OMXMLParserWrapper parserWrapper) {
+    public DocumentImpl(OMXMLParserWrapper parserWrapper, OMFactory factory) {
+        super(factory);
         this.builder = parserWrapper;
+        ((OMDOMFactory)factory).setDocument(this);
     }
 
-    public DocumentImpl() {
-
+    public DocumentImpl(OMFactory factory) {
+        super(factory);
+        ((OMDOMFactory)factory).setDocument(this);
     }
 
     // /
@@ -145,23 +151,22 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
                     null);
             throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
         }
-        return new AttrImpl(this, name);
+        return new AttrImpl(this, name, this.factory);
     }
 
     public Attr createAttributeNS(String namespaceURI, String qualifiedName)
             throws DOMException {
-        if (!namespaceURI.equals(OMConstants.XMLNS_NS_URI)) {
+//        if (!namespaceURI.equals(OMConstants.XMLNS_NS_URI)) {
             String localName = DOMUtil.getLocalName(qualifiedName);
             String prefix = DOMUtil.getPrefix(qualifiedName);
 
             this.checkQName(prefix, localName);
 
             return new AttrImpl(this, localName, new NamespaceImpl(
-                    namespaceURI, prefix));
-        } else {
-            // Do nothing since we handle the 'xmlns:' internally
-            return null;
-        }
+                    namespaceURI, prefix, this.factory), this.factory);
+//        } else {
+//            return null;
+//        }
     }
 
     public CDATASection createCDATASection(String arg0) throws DOMException {
@@ -170,15 +175,15 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
     }
 
     public Comment createComment(String data) {
-        return new CommentImpl(this, data);
+        return new CommentImpl(this, data, this.factory);
     }
 
     public DocumentFragment createDocumentFragment() {
-        return new DocumentFragmentimpl(this);
+        return new DocumentFragmentimpl(this, this.factory);
     }
 
     public Element createElement(String tagName) throws DOMException {
-        return new ElementImpl(this, tagName);
+        return new ElementImpl(this, tagName, this.factory);
     }
 
     public Element createElementNS(String ns, String qualifiedName)
@@ -191,8 +196,8 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
             this.checkQName(prefix, localName);
         }
 
-        NamespaceImpl namespace = new NamespaceImpl(ns, prefix);
-        return new ElementImpl(this, localName, namespace);
+        NamespaceImpl namespace = new NamespaceImpl(ns, prefix, this.factory);
+        return new ElementImpl(this, localName, namespace, this.factory);
     }
 
     public EntityReference createEntityReference(String arg0)
@@ -208,7 +213,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
     }
 
     public Text createTextNode(String value) {
-        return new TextImpl(this, value);
+        return new TextImpl(this, value, this.factory);
     }
 
     public DocumentType getDoctype() {
@@ -261,7 +266,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
                                     OMConstants.XMLNS_NS_URI)) {
                         Attr newAttr = (Attr) importNode(attr, true);
                         newElement.setAttributeNodeNS(newAttr);
-                    } else if (attr.getLocalName() == null) {
+                    } else { // if (attr.getLocalName() == null) {
                         Attr newAttr = (Attr) importNode(attr, true);
                         newElement.setAttributeNode(newAttr);
                     }
@@ -273,11 +278,17 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
         }
 
         case Node.ATTRIBUTE_NODE: {
-            if (importedNode.getLocalName() == null) {
+            if ("".equals(importedNode.getNamespaceURI())
+                    || importedNode.getNamespaceURI() == null) {
                 newNode = createAttribute(importedNode.getNodeName());
             } else {
-                newNode = createAttributeNS(importedNode.getNamespaceURI(),
-                        importedNode.getNodeName());
+                //Check whether it is a default ns decl
+                if(OMConstants.XMLNS_NS_PREFIX.equals(importedNode.getNodeName())) {
+                    newNode = createAttribute(importedNode.getNodeName());
+                } else {
+                    newNode = createAttributeNS(importedNode.getNamespaceURI(),
+                            importedNode.getNodeName());
+                }
             }
             ((Attr) newNode).setValue(importedNode.getNodeValue());
             break;

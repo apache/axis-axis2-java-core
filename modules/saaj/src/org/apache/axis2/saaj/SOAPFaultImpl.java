@@ -7,6 +7,7 @@ import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPFaultRole;
@@ -84,7 +85,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       */
     public void setFaultActor(String faultActor) throws SOAPException {
         if (this.fault.getRole() == null) {
-            SOAP11FaultRoleImpl faultRoleImpl = new SOAP11FaultRoleImpl(this.fault);
+            SOAP11FaultRoleImpl faultRoleImpl = new SOAP11FaultRoleImpl(
+                    this.fault, (SOAPFactory) this.element.getOMFactory());
             faultRoleImpl.setRoleValue(faultActor);
             this.fault.setRole(faultRoleImpl);
         } else {
@@ -121,7 +123,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 reason.getSOAPText().getFirstOMChild().detach();
                 reason.getSOAPText().setText(faultString);
             } else {
-                SOAPFaultText text = new SOAP11FaultTextImpl(reason);
+                SOAPFaultText text = new SOAP11FaultTextImpl(reason,
+                        (SOAPFactory) this.element.getOMFactory());
                 text.setText(faultString);
                 reason.setSOAPText(text);
             }
@@ -168,7 +171,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                                     "Please remove the existing Detail element before " +
                                     "calling addDetail()");
         }
-        SOAP11FaultDetailImpl omDetail = new SOAP11FaultDetailImpl(this.fault);
+        SOAP11FaultDetailImpl omDetail = new SOAP11FaultDetailImpl(this.fault,
+                (SOAPFactory) this.element.getOMFactory());
         Detail saajDetail = new DetailImpl(omDetail);
         ((NodeImpl) fault.getDetail()).setUserData(SAAJ_NODE, saajDetail, null);
         isDetailAdded = true;
@@ -192,14 +196,17 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 reason.getSOAPText().setText(faultString);
                 reason.getSOAPText().setLang(locale.getLanguage());
             } else {
-                SOAPFaultText text = new SOAP11FaultTextImpl(reason);
+                SOAPFaultText text = new SOAP11FaultTextImpl(reason,
+                        (SOAPFactory) this.element.getOMFactory());
                 text.setText(faultString);
                 text.setLang(locale.getLanguage());
                 reason.setSOAPText(text);
             }
         } else {
-            SOAPFaultReason reason = new SOAP11FaultReasonImpl(this.fault);
-            SOAPFaultText text = new SOAP11FaultTextImpl(reason);
+            SOAPFaultReason reason = new SOAP11FaultReasonImpl(this.fault,
+                    (SOAPFactory) this.element.getOMFactory());
+            SOAPFaultText text = new SOAP11FaultTextImpl(reason,
+                    (SOAPFactory) this.element.getOMFactory());
             text.setText(faultString);
             text.setLang(locale.getLanguage());
             reason.setSOAPText(text);

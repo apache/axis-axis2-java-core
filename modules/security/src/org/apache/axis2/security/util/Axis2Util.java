@@ -16,9 +16,18 @@
 
 package org.apache.axis2.security.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
@@ -31,12 +40,6 @@ import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 /**
  * Utility class for the Axis2-WSS4J Module
  */
@@ -48,39 +51,70 @@ public class Axis2Util {
 	 * @return Returns the DOM Document of the given SOAP Envelope.
 	 * @throws Exception
 	 */
-	public static Document getDocumentFromSOAPEnvelope(SOAPEnvelope env)
+	public static Document getDocumentFromSOAPEnvelope(SOAPEnvelope env, boolean disableDoom)
 			throws WSSecurityException {
 		try {
-			env.build();
-			
-			//Check the namespace and find SOAP version and factory
-			String nsURI = null;
-			SOAPFactory factory;
-			if(env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-				nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-				factory = DOOMAbstractFactory.getSOAP11Factory();
-			} else {
-				nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-				factory = DOOMAbstractFactory.getSOAP12Factory();
-			}
-			
-			StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(),factory, nsURI);
-			SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
-			envelope.build();
-			
-			Element envElem = (Element)envelope;
-			return envElem.getOwnerDocument();
-			
+            if(!disableDoom) {
+    			env.build();
+    			
+    			//Check the namespace and find SOAP version and factory
+    			String nsURI = null;
+    			SOAPFactory factory;
+    			if(env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+    				nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+    				factory = DOOMAbstractFactory.getSOAP11Factory();
+    			} else {
+    				nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+    				factory = DOOMAbstractFactory.getSOAP12Factory();
+    			}
+    			
+    			StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(),factory, nsURI);
+    			SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
+    			envelope.build();
+    			
+    			Element envElem = (Element)envelope;
+    			return envElem.getOwnerDocument();
+            } else {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                env.build();
+                env.serialize(baos);
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                return factory.newDocumentBuilder().parse(bais);
+            }
 		} catch (Exception e) {
 			throw new WSSecurityException(
 					"Error in converting SOAP Envelope to Document", e);
 		}
 	}
 
-	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(DocumentImpl doc) {
-        OMElement docElem = (OMElement)doc.getDocumentElement();
-        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
-        return stAXSOAPModelBuilder.getSOAPEnvelope();
+	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(Document doc, boolean disableDoom) {
+        
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        XMLUtils.outputDOM(doc, os, true);
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(os.toByteArray());
+        
+//        OMElement docElem = (OMElement)doc.getDocumentElement();
+        XMLStreamReader reader;
+        try {
+            reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
+            StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(reader, null);
+            SOAPEnvelope envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
+            envelope.build();
+            return envelope;
+        } catch (XMLStreamException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new UnsupportedOperationException("WIP");
+        } catch (FactoryConfigurationError e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new UnsupportedOperationException("WIP");
+        }
+        
+
 	}
 	
 	

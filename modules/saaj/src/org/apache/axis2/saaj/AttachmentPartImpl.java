@@ -369,6 +369,6 @@ public class AttachmentPartImpl extends AttachmentPart {
     }
 
     public TextImpl getText(DocumentImpl doc) {
-        return new TextImpl(doc, omText.getText());
+        return new TextImpl(doc, omText.getText(), doc.getOMFactory());
     }
 }

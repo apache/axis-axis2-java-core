@@ -22,6 +22,7 @@ import org.apache.ws.commons.attachments.DataHandlerUtils;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMText;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
@@ -58,8 +59,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     /**
      * Field nameSpace is used when serializing Binary stuff as MTOM optimized.
      */
-    protected OMNamespace ns = new NamespaceImpl(
-            Constants.URI_XOP_INCLUDE, "xop");
+    protected OMNamespace ns = null;
 
     /**
      * Field localName is used when serializing Binary stuff as MTOM optimized.
@@ -77,9 +77,11 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
      * 
      * @param text
      */
-    public TextImpl(String text) {
+    public TextImpl(String text, OMFactory factory) {
+        super(factory);
         this.textValue = new StringBuffer(text);
         this.done = true;
+        this.ns = new NamespaceImpl(Constants.URI_XOP_INCLUDE, "xop", factory);
     }
 
     /**
@@ -91,22 +93,24 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
      *            deffered parsing of MIME messages
      */
     public TextImpl(String contentID, OMElement parent,
-            OMXMLParserWrapper builder) {
-        super((DocumentImpl) ((ParentNode) parent).getOwnerDocument());
+            OMXMLParserWrapper builder, OMFactory factory) {
+        super((DocumentImpl) ((ParentNode) parent).getOwnerDocument(), factory);
         this.contentID = contentID;
         this.optimize = true;
         this.isBinary = true;
         this.done = true;
         this.builder = builder;
-    }
-
-    public TextImpl(String text, String mimeType, boolean optimize) {
-        this(text, mimeType, optimize, true);
+        this.ns = new NamespaceImpl(Constants.URI_XOP_INCLUDE, "xop", factory);
     }
 
     public TextImpl(String text, String mimeType, boolean optimize,
-            boolean isBinary) {
-        this(text);
+            OMFactory factory) {
+        this(text, mimeType, optimize, true, factory);
+    }
+
+    public TextImpl(String text, String mimeType, boolean optimize,
+            boolean isBinary, OMFactory factory) {
+        this(text, factory);
         this.mimeType = mimeType;
         this.optimize = optimize;
         this.isBinary = isBinary;
@@ -117,28 +121,32 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
      * @param optimize
      *            To send binary content. Created progrmatically.
      */
-    public TextImpl(Object dataHandler, boolean optimize) {
+    public TextImpl(Object dataHandler, boolean optimize, OMFactory factory) {
+        super(factory);
         this.dataHandlerObject = dataHandler;
         this.isBinary = true;
         this.optimize = optimize;
         done = true;
+        this.ns = new NamespaceImpl(Constants.URI_XOP_INCLUDE, "xop", factory);
     }
 
     /**
      * @param ownerNode
      */
-    public TextImpl(DocumentImpl ownerNode) {
-        super(ownerNode);
+    public TextImpl(DocumentImpl ownerNode, OMFactory factory) {
+        super(ownerNode, factory);
         this.done = true;
+        this.ns = new NamespaceImpl(Constants.URI_XOP_INCLUDE, "xop", factory);
     }
 
     /**
      * @param ownerNode
      * @param value
      */
-    public TextImpl(DocumentImpl ownerNode, String value) {
-        super(ownerNode, value);
+    public TextImpl(DocumentImpl ownerNode, String value, OMFactory factory) {
+        super(ownerNode, value, factory);
         this.done = true;
+        this.ns = new NamespaceImpl(Constants.URI_XOP_INCLUDE, "xop", factory);
     }
 
     /**
@@ -146,8 +154,8 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
      * @param value
      */
     public TextImpl(DocumentImpl ownerNode, String value, String mimeType,
-            boolean optimize) {
-        this(ownerNode, value);
+            boolean optimize, OMFactory factory) {
+        this(ownerNode, value, factory);
         this.mimeType = mimeType;
         this.optimize = optimize;
         this.isBinary = true;
@@ -362,7 +370,9 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                 }
                 // send binary as MTOM optimised
                 this.attribute = new AttrImpl(this.ownerNode, "href",
-                        new NamespaceImpl("", ""), "cid:" + getContentID());
+                        new NamespaceImpl("", "", this.factory), 
+                        "cid:" + getContentID(),
+                        this.factory);
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimized(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
@@ -467,7 +477,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     }
 
     public Node cloneNode(boolean deep) {
-        TextImpl textImpl = new TextImpl(this.textValue.toString());
+        TextImpl textImpl = new TextImpl(this.textValue.toString(), this.factory);
         textImpl.setOwnerDocument(this.ownerNode);
         return textImpl;
     }

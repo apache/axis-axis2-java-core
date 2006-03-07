@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -29,12 +30,15 @@ public class DOMImplementationImpl implements DOMImplementation {
 
     public Document createDocument(String namespaceURI, String qualifiedName,
             DocumentType doctype) throws DOMException {
+        
         // TODO Handle docType stuff
-        DocumentImpl doc = new DocumentImpl();
+        OMDOMFactory fac = new OMDOMFactory();
+        DocumentImpl doc = new DocumentImpl(fac);
+        fac.setDocument(doc);
 
         new ElementImpl(doc, DOMUtil.getLocalName(qualifiedName),
                 new NamespaceImpl(namespaceURI, DOMUtil
-                        .getPrefix(qualifiedName)));
+                        .getPrefix(qualifiedName),fac),fac);
 
         return doc;
     }

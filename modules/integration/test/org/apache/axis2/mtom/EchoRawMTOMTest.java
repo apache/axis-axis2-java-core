@@ -94,7 +94,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
-        expectedTextData = new OMTextImpl(expectedDH, true);
+        expectedTextData = new OMTextImpl(expectedDH, true, fac);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
         return rpcWrapEle;

@@ -16,6 +16,8 @@
 package org.apache.axis2.om.impl.dom;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -33,7 +35,8 @@ public class DocumentImplTest extends TestCase {
 	public void testCreateElement() {
 		String tagName = "LocalName";
 		String namespace = "http://ws.apache.org/axis2/ns";
-		DocumentImpl doc = new DocumentImpl();
+        OMDOMFactory fac = new OMDOMFactory();
+		DocumentImpl doc = new DocumentImpl(fac);
 		Element elem = doc.createElement(tagName);
 		
 		assertEquals("Local name misnatch",tagName, elem.getNodeName());
@@ -50,7 +53,8 @@ public class DocumentImplTest extends TestCase {
 		String attrNs = "http://ws.apache.org/axis2/ns";
 		String attrNsPrefix = "axis2";
 		
-		DocumentImpl doc = new DocumentImpl();
+        OMDOMFactory fac = new OMDOMFactory();
+        DocumentImpl doc = new DocumentImpl(fac);
 		Attr attr = doc.createAttribute(attrName);
 
 		assertEquals("Attr name mismatch",attrName,attr.getName());
@@ -70,7 +74,8 @@ public class DocumentImplTest extends TestCase {
 	public void testCreateText() {
 		String textValue = "temp text value";
 		
-		DocumentImpl doc = new DocumentImpl();
+        OMDOMFactory fac = new OMDOMFactory();
+        DocumentImpl doc = new DocumentImpl(fac);
 		Text txt = doc.createTextNode(textValue);
 		
 		assertEquals("Text value mismatch", textValue, txt.getData());

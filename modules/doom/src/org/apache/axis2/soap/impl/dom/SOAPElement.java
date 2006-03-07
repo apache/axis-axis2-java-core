@@ -23,18 +23,23 @@ import org.apache.axis2.om.impl.dom.ParentNode;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public abstract class SOAPElement extends ElementImpl {
 
+    public SOAPElement(SOAPFactory factory) {
+        super(factory);
+    }
 
     /**
      * @param parent
      */
     protected SOAPElement(OMElement parent,
                           String localName,
-                          boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super((ParentNode)parent, localName, null);
+                          boolean extractNamespaceFromParent,
+                          SOAPFactory factory) throws SOAPProcessingException {
+        super((ParentNode)parent, localName, null, factory);
         if (parent == null) {
             throw new SOAPProcessingException(
                     " Can not create " + localName +
@@ -51,38 +56,26 @@ public abstract class SOAPElement extends ElementImpl {
 
     protected SOAPElement(OMElement parent,
                           String localName,
-                          OMXMLParserWrapper builder) {
-        super((ParentNode)parent, localName, null, builder);
+                          OMXMLParserWrapper builder,
+                          SOAPFactory factory) {
+        super((ParentNode)parent, localName, null, builder, factory);
     }
 
-    protected SOAPElement() {
-    }
-
-    protected SOAPElement(DocumentImpl doc, String localName,OMNamespace ns) {
-		super(doc, localName, (NamespaceImpl)ns);
+    protected SOAPElement(DocumentImpl doc, String localName, OMNamespace ns,
+            SOAPFactory factory) {
+		super(doc, localName, (NamespaceImpl)ns, factory);
 	}
     
-    protected SOAPElement(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
-    	super(ownerDocument, tagName, ns, builder);
+    protected SOAPElement(DocumentImpl ownerDocument, String tagName,
+            NamespaceImpl ns, OMXMLParserWrapper builder, SOAPFactory factory) {
+    	super(ownerDocument, tagName, ns, builder, factory);
     }
     
-// /**
-// * Caution : This Constructor is meant to be used only by the SOAPEnvelope.
-//     * <p/>
-//     * Reasons : This can be used to create a SOAP Element programmatically. But we need to make sure that the user
-//     * always passes a parent for the element being created. But SOAP Envelope has no parent.
-//     *
-//     * @param localName
-//     * @param ns
-//     */
-//    protected SOAPElement(String localName, OMNamespace ns) {
-//        super(localName, ns);
-//
-//    }
-
     /**
-     * This has to be implemented by all the derived classes to check for the correct parent.
+     * This has to be implemented by all the derived classes to check 
+     * for the correct parent.
      */
-    protected abstract void checkParent(OMElement parent) throws SOAPProcessingException;
+    protected abstract void checkParent(OMElement parent)
+            throws SOAPProcessingException;
 
 }

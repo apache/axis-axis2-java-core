@@ -325,7 +325,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
             if (contentID != null) {//This is an omEnvelope referencing an attachment
                 child.build();
                 AttachmentPart ap = ((AttachmentPart) attachments.get(contentID.trim()));
-                OMText text = new OMTextImpl(ap.getDataHandler(), true);
+                OMText text = new OMTextImpl(ap.getDataHandler(), true,
+                        omEnvelope.getOMFactory());
                 child.removeAttribute(hrefAttr);
                 child.addChild(text);
             } else {

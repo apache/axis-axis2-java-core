@@ -42,14 +42,12 @@ import javax.xml.stream.XMLStreamException;
 public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 		OMConstants {
 
-	SOAPFactory factory;
 
 	/**
 	 * @param builder
 	 */
 	public SOAPEnvelopeImpl(OMXMLParserWrapper builder, SOAPFactory factory) {
-		super(null, SOAPConstants.SOAPENVELOPE_LOCAL_NAME, builder);
-		this.factory = factory;
+		super(null, SOAPConstants.SOAPENVELOPE_LOCAL_NAME, builder, factory);
 	}
 
 	public SOAPEnvelopeImpl(DocumentImpl doc, OMXMLParserWrapper builder, SOAPFactory factory) {
@@ -59,17 +57,15 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 				(NamespaceImpl)factory
 						.createOMNamespace((factory instanceof SOAP11Factory) ? SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI
 								: SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
-				builder);
-		this.factory = factory;
+				builder, factory);
 	}
 	/**
 	 * @param ns
 	 */
 	public SOAPEnvelopeImpl(OMNamespace ns, SOAPFactory factory) {
 		super(((DOMSOAPFactory) factory).getDocument(),
-				SOAPConstants.SOAPENVELOPE_LOCAL_NAME, ns);
+				SOAPConstants.SOAPENVELOPE_LOCAL_NAME, ns, factory);
 		this.getOwnerDocument().appendChild(this);
-		this.factory = factory;
 	}
 
 	/**
@@ -90,22 +86,8 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 	public SOAPHeader getHeader() throws OMException {
 		SOAPHeader header =
                 (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
-		/*if (builder == null && header == null) {
-			header = factory.createSOAPHeader(this);
-			addChild(header);
-		}*/
 		return header;
 	}
-/*
-    public SOAPHeader getHeader2(){
-       return (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
-    }
-
-    public SOAPHeader addHeader(){
-        SOAPHeader soapHeader = factory.createSOAPHeader(this);
-        addChild(soapHeader);
-        return soapHeader;
-    }*/
 
     public void addChild(OMNode child) {
         if ((child instanceof OMElement)

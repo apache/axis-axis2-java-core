@@ -18,6 +18,7 @@ package org.apache.axis2.om.impl.dom;
 
 import org.apache.ws.commons.om.OMComment;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
@@ -27,13 +28,13 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class CommentImpl extends CharacterImpl implements Comment, OMComment {
 
-    public CommentImpl(DocumentImpl ownerNode) {
-        super(ownerNode);
+    public CommentImpl(DocumentImpl ownerNode, OMFactory factory) {
+        super(ownerNode, factory);
         this.done = true;
     }
 
-    public CommentImpl(DocumentImpl ownerNode, String value) {
-        super(ownerNode, value);
+    public CommentImpl(DocumentImpl ownerNode, String value, OMFactory factory) {
+        super(ownerNode, value, factory);
         this.done = true;
     }
 

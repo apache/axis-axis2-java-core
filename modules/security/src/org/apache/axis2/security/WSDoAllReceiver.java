@@ -17,6 +17,7 @@
 package org.apache.axis2.security;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
@@ -63,12 +64,17 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         
         boolean doDebug = log.isDebugEnabled();
         
-        /**
-         * Temporary solution until DOOM's DocumentBuilder module is done.
-         * Use ThreadLocal to determine whether or not DOOM implementation is required.
-         */
-        // Set the DOM impl to DOOM
-        DocumentBuilderFactoryImpl.setDOOMRequired(true);
+        String disableDoomValue = (String)msgContext.getProperty(WSSHandlerConstants.DISABLE_DOOM);
+        boolean disableDoom = disableDoomValue != null && Constants.VALUE_TRUE.equalsIgnoreCase(disableDoomValue);
+        
+        if(!disableDoom) {
+            /**
+             * Temporary solution until DOOM's DocumentBuilder module is done.
+             * Use ThreadLocal to determine whether or not DOOM implementation is required.
+             */
+            // Set the DOM impl to DOOM
+            DocumentBuilderFactoryImpl.setDOOMRequired(true);
+        }
         
         try {
             //populate the properties
@@ -115,7 +121,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             Document doc = null;
             
             try {
-                doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
+                doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope(), disableDoom);
             } catch (WSSecurityException wssEx) {
                 throw new AxisFault("WSDoAllReceiver: Error in converting to Document", wssEx);
             }
@@ -190,14 +196,9 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             /**
              * Set the new SOAPEnvelope
              */
-//          
-//          log.debug("Creating LLOM Structure");
-//          OMElement docElem = (OMElement)doc.getDocumentElement();
-//          StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-//          log.debug("Creating LLOM Structure - DONE");
-//          msgContext.setEnvelope((stAXSOAPModelBuilder).getSOAPEnvelope());
+
             
-            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument((DocumentImpl)doc));
+            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc, disableDoom));
             
             /*
              * After setting the new current message, probably modified because

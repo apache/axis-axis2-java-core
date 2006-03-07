@@ -20,22 +20,27 @@ import org.apache.axis2.soap.impl.dom.SOAPFaultRoleImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP12FaultRoleImpl extends SOAPFaultRoleImpl {
-    public SOAP12FaultRoleImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, true);
+    
+    public SOAP12FaultRoleImpl(SOAPFault parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, true, factory);
     }
 
-    public SOAP12FaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP12FaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault as the " +
+                    "parent. But received some other implementation");
         }
     }
 }

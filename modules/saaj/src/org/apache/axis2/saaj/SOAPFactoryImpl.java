@@ -104,7 +104,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
      * @return a <code>Detail</code> object
      * @throws javax.xml.soap.SOAPException if there is a SOAP error
      */
-    public Detail createDetail() throws SOAPException {
+    public Detail createDetail() throws SOAPException { 
         return new DetailImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFaultDetail());
     }
 

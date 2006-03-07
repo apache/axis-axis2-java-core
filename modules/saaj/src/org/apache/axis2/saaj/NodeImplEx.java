@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.soap.impl.dom.SOAPBodyImpl;
@@ -22,6 +23,7 @@ import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNode;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -40,6 +42,14 @@ import javax.xml.soap.SOAPException;
  * getting and setting the parent of a node, and for removing a node.
  */
 public abstract class NodeImplEx extends NodeImpl implements Node {
+
+    /**
+     * @param ownerDocument
+     * @param factory
+     */
+    protected NodeImplEx(OMFactory factory) {
+        super(factory);
+    }
 
     protected SOAPElement parentElement;
     static final String SAAJ_NODE = "saaj.node";

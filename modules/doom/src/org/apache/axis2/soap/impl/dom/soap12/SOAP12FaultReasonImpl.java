@@ -19,27 +19,32 @@ package org.apache.axis2.soap.impl.dom.soap12;
 import org.apache.axis2.soap.impl.dom.SOAPFaultReasonImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP12FaultReasonImpl extends SOAPFaultReasonImpl {
 
-    public SOAP12FaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP12FaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     /**
      * @param parent
      */
-    public SOAP12FaultReasonImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, true);
+    public SOAP12FaultReasonImpl(SOAPFault parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, true, factory);
     }
 
-    public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
+    public void setSOAPText(SOAPFaultText soapFaultText)
+            throws SOAPProcessingException {
         if (!(soapFaultText instanceof SOAP12FaultTextImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault Text. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault Text. " +
+                    "But received some other implementation");
         }
         super.setSOAPText(soapFaultText);
     }
@@ -47,7 +52,8 @@ public class SOAP12FaultReasonImpl extends SOAPFaultReasonImpl {
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault as the " +
+                    "parent. But received some other implementation");
         }
     }
 }

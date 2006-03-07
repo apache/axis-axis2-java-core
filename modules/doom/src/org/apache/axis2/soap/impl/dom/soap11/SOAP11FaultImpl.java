@@ -21,6 +21,7 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
@@ -33,12 +34,14 @@ import javax.xml.stream.XMLStreamException;
 
 public class SOAP11FaultImpl extends SOAPFaultImpl {
 
-    public SOAP11FaultImpl(SOAPBody parent, Exception e) throws SOAPProcessingException {
-        super(parent, e);
+    public SOAP11FaultImpl(SOAPBody parent, Exception e, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, e, factory);
     }
 
-    public SOAP11FaultImpl(SOAPBody parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP11FaultImpl(SOAPBody parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     /**
@@ -46,27 +49,33 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
      *
      * @param parent
      */
-    public SOAP11FaultImpl(SOAPBody parent) throws SOAPProcessingException {
-        super(parent);
-
+    public SOAP11FaultImpl(SOAPBody parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, factory);
     }
 
-    protected SOAPFaultDetail getNewSOAPFaultDetail(SOAPFault fault) throws SOAPProcessingException {
-        return new SOAP11FaultDetailImpl(fault);
+    protected SOAPFaultDetail getNewSOAPFaultDetail(SOAPFault fault)
+            throws SOAPProcessingException {
+        return new SOAP11FaultDetailImpl(fault, (SOAPFactory)this.factory);
     }
 
-    public void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+            throws XMLStreamException {
         super.serialize(omOutput);
     }
 
-    public void serializeAndConsume(org.apache.ws.commons.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    public void serializeAndConsume(
+            org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+            throws XMLStreamException {
         super.serializeAndConsume(omOutput);
     }
 
-    public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException {
+    public void setCode(SOAPFaultCode soapFaultCode)
+            throws SOAPProcessingException {
         if (!(soapFaultCode instanceof SOAP11FaultCodeImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Code. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Code. " +
+                    "But received some other implementation");
         }
         super.setCode(soapFaultCode);
     }
@@ -74,7 +83,8 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
     public void setReason(SOAPFaultReason reason) throws SOAPProcessingException {
         if (!(reason instanceof SOAP11FaultReasonImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Reason. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Reason. " +
+                    "But received some other implementation");
         }
         super.setReason(reason);
     }
@@ -82,7 +92,8 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
     public void setNode(SOAPFaultNode node) throws SOAPProcessingException {
         if (!(node instanceof SOAP11FaultNodeImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Node. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Node. " +
+                    "But received some other implementation");
         }
         super.setNode(node);
     }
@@ -90,7 +101,8 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
     public void setRole(SOAPFaultRole role) throws SOAPProcessingException {
         if (!(role instanceof SOAP11FaultRoleImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Role. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Role. " +
+                    "But received some other implementation");
         }
         super.setRole(role);
     }
@@ -98,19 +110,23 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11BodyImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Body as the parent. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Body as the " +
+                    "parent. But received some other implementation");
         }
     }
 
     public void setDetail(SOAPFaultDetail detail) throws SOAPProcessingException {
         if (!(detail instanceof SOAP11FaultDetailImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Detail. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Detail. " +
+                    "But received some other implementation");
         }
         super.setDetail(detail);
     }
 
-    protected void serializeFaultNode(org.apache.ws.commons.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    protected void serializeFaultNode(
+            org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+            throws XMLStreamException {
         
     }
     

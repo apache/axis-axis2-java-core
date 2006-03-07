@@ -16,48 +16,50 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.om.impl.dom.AttrImpl;
-import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
-import javax.xml.namespace.QName;
-
 public abstract class SOAPFaultTextImpl extends SOAPElement implements SOAPFaultText {
+    
     protected OMAttribute langAttr;
-    protected OMNamespace langNamespace = new OMDOMFactory()
-            .createOMNamespace(
-                    SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_URI,
-                    SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX);
+    
+    protected OMNamespace langNamespace = null;
 
-    protected SOAPFaultTextImpl(SOAPFaultReason parent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true);
+    protected SOAPFaultTextImpl(SOAPFaultReason parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true, factory);
+        this.langNamespace = factory.createOMNamespace(
+                SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_URI,
+                SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX);
     }
 
     protected SOAPFaultTextImpl(SOAPFaultReason parent,
-                                OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, builder);
+                                OMXMLParserWrapper builder, SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, builder,
+                factory);
     }
 
 
     public void setLang(String lang) {
-        //langAttr = new OMAttributeImpl(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, parent.getNamespace(), lang);
         langAttr =
                 new AttrImpl(this.ownerNode, 
                         SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME,
                         langNamespace,
-                        lang);
+                        lang, this.factory);
         this.addAttribute(langAttr);
     }
 
     public String getLang() {
         if (langAttr == null) {
-            //langAttr = this.getFirstAttribute(new QName(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, parent.getNamespace().getName()));
             langAttr =
                     this.getAttribute(
                             new QName(langNamespace.getName(),

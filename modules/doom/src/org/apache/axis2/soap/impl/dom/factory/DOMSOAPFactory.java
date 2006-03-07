@@ -52,13 +52,13 @@ public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
     }
 
     public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
-        SOAPMessageImpl messageImpl = new SOAPMessageImpl(builder);
+        SOAPMessageImpl messageImpl = new SOAPMessageImpl(builder, this);
         this.document = messageImpl;
         return messageImpl;
     }
 
 	public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
-		SOAPMessageImpl messageImpl = new SOAPMessageImpl(envelope, parserWrapper);
+		SOAPMessageImpl messageImpl = new SOAPMessageImpl(envelope, parserWrapper, this);
 		this.document = messageImpl;
 		return messageImpl;
 	}
@@ -209,68 +209,59 @@ public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 	}
 
     public SOAPMessage createSOAPMessage() {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        return new SOAPMessageImpl(this);
     }
 
     public SOAPHeader createSOAPHeader() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns) throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFault createSOAPFault() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPBody createSOAPBody() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultCode createSOAPFaultCode() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultValue createSOAPFaultValue() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultSubCode createSOAPFaultSubCode() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultReason createSOAPFaultReason() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultText createSOAPFaultText() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultNode createSOAPFaultNode() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-         throw new UnsupportedOperationException();
+         throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultRole createSOAPFaultRole() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public SOAPFaultDetail createSOAPFaultDetail() throws SOAPProcessingException {
-        //TODO Ruchith FIx me
-        return new SOAP11FaultDetailImpl();
+        return new SOAP11FaultDetailImpl(this);
+    }
+
+    public OMNamespace getNamespace() {
+        throw new UnsupportedOperationException();
     }
 
 }

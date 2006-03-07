@@ -81,7 +81,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
         OMElement subData = fac.createOMElement("subData", omNs);
-        OMText textData = new OMTextImpl(expectedDH);
+        OMText textData = new OMTextImpl(expectedDH, fac);
         subData.addChild(textData);
         data.addChild(subData);
         rpcWrapEle.addChild(data);

@@ -19,16 +19,19 @@ package org.apache.axis2.soap.impl.dom;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAPTextImpl extends SOAPElement{
 
-    protected SOAPTextImpl(OMElement parent) throws SOAPProcessingException {
-        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true);
+    protected SOAPTextImpl(OMElement parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true, factory);
     }
 
-    protected SOAPTextImpl(OMElement parent, OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, builder);
+    protected SOAPTextImpl(OMElement parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, builder, factory);
     }
 
     public void setLang(String lang) {

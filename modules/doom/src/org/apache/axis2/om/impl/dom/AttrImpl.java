@@ -19,6 +19,7 @@ import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMConstants;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
@@ -61,33 +62,40 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * Owner of this attribute
      */
     protected ParentNode parent;
-
-    protected AttrImpl(DocumentImpl ownerDocument) {
-        super(ownerDocument);
+    
+    protected AttrImpl(DocumentImpl ownerDocument, OMFactory factory) {
+        super(ownerDocument, factory);
     }
 
     public AttrImpl(DocumentImpl ownerDocument, String localName,
-            OMNamespace ns, String value) {
-        super(ownerDocument);
+            OMNamespace ns, String value, OMFactory factory) {
+        super(ownerDocument, factory);
         this.attrName = localName;
-        this.attrValue = new TextImpl(ownerDocument, value);
+        this.attrValue = new TextImpl(ownerDocument, value, factory);
         this.namespace = (NamespaceImpl) ns;
     }
 
-    public AttrImpl(DocumentImpl ownerDocument, String name, String value) {
-        super(ownerDocument);
+    public AttrImpl(DocumentImpl ownerDocument, String name, String value,
+            OMFactory factory) {
+        super(ownerDocument, factory);
         this.attrName = name;
-        this.attrValue = new TextImpl(ownerDocument, value);
+        this.attrValue = new TextImpl(ownerDocument, value, factory);
     }
 
-    public AttrImpl(DocumentImpl ownerDocument, String name) {
-        super(ownerDocument);
+    public AttrImpl(DocumentImpl ownerDocument, String name, OMFactory factory) {
+        super(ownerDocument, factory);
         this.attrName = name;
+        //If this is a default namespace attr
+        if(OMConstants.XMLNS_NS_PREFIX.equals(name)) {
+            this.namespace = new NamespaceImpl(
+                    OMConstants.XMLNS_NS_URI, OMConstants.XMLNS_NS_PREFIX,
+                    this.factory);
+        }
     }
 
     public AttrImpl(DocumentImpl ownerDocument, String localName,
-            OMNamespace namespace) {
-        super(ownerDocument);
+            OMNamespace namespace, OMFactory factory) {
+        super(ownerDocument, factory);
         this.attrName = localName;
         this.namespace = (NamespaceImpl) namespace;
     }
@@ -333,7 +341,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * @see org.w3c.dom.Node#getLocalName()
      */
     public String getLocalName() {
-        return (this.namespace == null) ? null : DOMUtil
+        return (this.namespace == null) ? this.attrName : DOMUtil
                 .getLocalName(this.attrName);
     }
 
@@ -365,7 +373,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 
         if (clone.attrValue == null) {
             // Need to break the association w/ original kids
-            clone.attrValue = new TextImpl(this.attrValue.toString());
+            clone.attrValue = new TextImpl(this.attrValue.toString(), factory);
             if (this.attrValue.nextSibling != null) {
                 throw new UnsupportedOperationException(
                         "Attribute value can contain only a text " +

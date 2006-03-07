@@ -21,6 +21,7 @@ import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPMessage;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
@@ -28,16 +29,18 @@ import javax.xml.stream.XMLStreamException;
 
 public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
 
-    public SOAPMessageImpl() {
+    public SOAPMessageImpl(SOAPFactory factory) {
+        super(factory);
     }
 
-    public SOAPMessageImpl(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
-    	this(parserWrapper);
+    public SOAPMessageImpl(SOAPEnvelope envelope,
+            OMXMLParserWrapper parserWrapper, SOAPFactory factory) {
+    	this(parserWrapper, factory);
     	this.setSOAPEnvelope(envelope);
     }
 
-    public SOAPMessageImpl(OMXMLParserWrapper parserWrapper) {
-        super();
+    public SOAPMessageImpl(OMXMLParserWrapper parserWrapper, SOAPFactory factory) {
+        super(factory);
         this.builder = parserWrapper;
     }
 
@@ -46,11 +49,13 @@ public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
         return (SOAPEnvelope) getOMDocumentElement();
     }
 
-    public void setSOAPEnvelope(SOAPEnvelope envelope) throws SOAPProcessingException {
+    public void setSOAPEnvelope(SOAPEnvelope envelope)
+            throws SOAPProcessingException {
     	this.addChild(envelope);
     }
 
-    protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
+    protected void serialize(OMOutputImpl omOutput, boolean cache,
+            boolean includeXMLDeclaration) throws XMLStreamException {
         if (cache) {
             ((OMNodeEx)this.ownerNode.getDocumentElement()).serialize(omOutput);
         } else {

@@ -81,7 +81,7 @@ public class BodyElements {
     public static OMText getOriginalText(boolean optimized) {
         File file = new File("modules/integration/itest-resources/mtom/mtom.bin");
         DataHandler handler = new DataHandler(new FileDataSource(file));//
-        return new OMTextImpl(handler, optimized);
+        return new OMTextImpl(handler, optimized, OMAbstractFactory.getOMFactory());
     }
 
 }

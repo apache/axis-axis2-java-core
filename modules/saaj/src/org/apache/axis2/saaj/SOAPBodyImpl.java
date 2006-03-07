@@ -21,6 +21,7 @@ import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
 import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -147,7 +148,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (isBodyElementAdded) {
             throw new SOAPException("A SOAPBodyElement has been already added to this SOAPBody");
         }
-        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
+        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
         SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
         ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
         return saajSOAPFault;
@@ -210,7 +211,8 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException if there is a SOAP error
      */
     public SOAPFault addFault(Name faultCode, String faultString, Locale locale) throws SOAPException {
-        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, new Exception(faultString));
+        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, new Exception(
+                faultString), (SOAPFactory) this.element.getOMFactory());
         SOAPFaultImpl faultImpl = new SOAPFaultImpl(fault);
         faultImpl.setFaultCode(faultCode);
         if (locale != null) {
@@ -287,13 +289,16 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             localname = domEle.getTagName().substring(indexOfColon + 1);
 
             ns = new NamespaceImpl(domEle.getNamespaceURI(),
-                                   domEle.getTagName().substring(0, indexOfColon));
+                                   domEle.getTagName().substring(0, indexOfColon),
+                                   this.element.getOMFactory());
         } else {
             localname = domEle.getLocalName();
-            ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix());
+            ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix(),
+                    this.element.getOMFactory());
         }
         ElementImpl eleImpl =
-                new ElementImpl((DocumentImpl) this.getOwnerDocument(), localname, ns);
+                new ElementImpl((DocumentImpl) this.getOwnerDocument(), 
+                        localname, ns, this.element.getOMFactory());
 
         SOAPElementImpl saajEle = new SOAPElementImpl(eleImpl);
 
@@ -352,7 +357,8 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                 // silently replace node, as per saaj 1.2 spec
                 if (domNode instanceof ElementImpl) {
                     if (omSOAPBody.hasFault()) {
-                        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody);
+                        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody,
+                                (SOAPFactory) this.element.getOMFactory());
                         SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
                         ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
                         childElements.add(saajSOAPFault);

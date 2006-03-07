@@ -21,6 +21,7 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
@@ -32,12 +33,14 @@ import org.apache.ws.commons.soap.SOAPProcessingException;
 import javax.xml.stream.XMLStreamException;
 
 public class SOAP12FaultImpl extends SOAPFaultImpl {
-    public SOAP12FaultImpl(SOAPBody parent, Exception e) throws SOAPProcessingException {
-        super(parent, e);
+    public SOAP12FaultImpl(SOAPBody parent, Exception e, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, e, factory);
     }
 
-    public SOAP12FaultImpl(SOAPBody parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP12FaultImpl(SOAPBody parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     /**
@@ -45,19 +48,21 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
      *
      * @param parent
      */
-    public SOAP12FaultImpl(SOAPBody parent) throws SOAPProcessingException {
-        super(parent);
+    public SOAP12FaultImpl(SOAPBody parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, factory);
     }
 
     protected SOAPFaultDetail getNewSOAPFaultDetail(SOAPFault fault) {
-        return new SOAP12FaultDetailImpl(fault);
+        return new SOAP12FaultDetailImpl(fault, (SOAPFactory)this.factory);
 
     }
 
     public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException {
         if (!(soapFaultCode instanceof SOAP12FaultCodeImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault Code. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault Code. " +
+                    "But received some other implementation");
         }
         super.setCode(soapFaultCode);
     }

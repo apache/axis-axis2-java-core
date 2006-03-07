@@ -87,7 +87,7 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
             OMElement subData = fac.createOMElement("subData", omNs);
             DataHandler dataHandler = new DataHandler("Thilina", "text/plain");
             //new ByteArrayDataSource(expectedByteArray));
-            textData = new OMTextImpl(dataHandler, true);
+            textData = new OMTextImpl(dataHandler, true, fac);
             subData.addChild(textData);
             data.addChild(subData);
 

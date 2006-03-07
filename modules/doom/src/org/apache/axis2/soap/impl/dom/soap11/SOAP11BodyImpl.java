@@ -17,10 +17,10 @@
 package org.apache.axis2.soap.impl.dom.soap11;
 
 import org.apache.axis2.soap.impl.dom.SOAPBodyImpl;
-import org.apache.axis2.soap.impl.dom.soap12.SOAP12FaultImpl;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
@@ -28,8 +28,9 @@ public class SOAP11BodyImpl extends SOAPBodyImpl {
     /**
      * @param envelope
      */
-    public SOAP11BodyImpl(SOAPEnvelope envelope) throws SOAPProcessingException {
-        super(envelope);
+    public SOAP11BodyImpl(SOAPEnvelope envelope, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(envelope, factory);
     }
 
     /**
@@ -38,12 +39,13 @@ public class SOAP11BodyImpl extends SOAPBodyImpl {
      * @param envelope
      * @param builder
      */
-    public SOAP11BodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(envelope, builder);
+    public SOAP11BodyImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(envelope, builder, factory);
     }
 
     public SOAPFault addFault(Exception e) throws OMException {
-    	SOAPFault soapFault = new SOAP12FaultImpl(this, e);
+    	SOAPFault soapFault = new SOAP11FaultImpl(this, e, (SOAPFactory)this.factory);
     	this.hasSOAPFault = true;
     	return soapFault;
     }

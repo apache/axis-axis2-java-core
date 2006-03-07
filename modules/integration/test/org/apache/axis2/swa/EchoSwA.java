@@ -52,7 +52,7 @@ public class EchoSwA {
             contentID = contentID.substring(4);
         }
         DataHandler dataHandler = attachment.getDataHandler(contentID);
-        OMText textNode = new OMTextImpl(dataHandler);
+        OMText textNode = new OMTextImpl(dataHandler, omEle.getOMFactory());
         omEle.build();
         child.detach();
         omEle.addChild(textNode);

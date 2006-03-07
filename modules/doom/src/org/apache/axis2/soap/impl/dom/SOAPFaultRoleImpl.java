@@ -21,24 +21,28 @@ import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.ws.commons.soap.SOAPFaultRole;
 import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamException;
 
 
-public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apache.ws.commons.soap.SOAPFaultRole {
+public abstract class SOAPFaultRoleImpl extends SOAPElement implements
+        SOAPFaultRole {
 
     public SOAPFaultRoleImpl(SOAPFault parent,
                              String localName,
-                             boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent,
-              localName,
-              extractNamespaceFromParent);
+                             boolean extractNamespaceFromParent,
+                             SOAPFactory factory) throws SOAPProcessingException {
+        super(parent, localName, extractNamespaceFromParent, factory);
     }
 
-    public SOAPFaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, builder);
+    public SOAPFaultRoleImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, builder,
+                factory);
     }
 
     public void setRoleValue(String uri) {
@@ -52,7 +56,8 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
         return this.getText();
     }
 
-    protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputImpl omOutput, boolean cache)
+            throws XMLStreamException {
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
         if (builder != null) {
@@ -60,7 +65,8 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
         }
         if ((builderType == PUSH_TYPE_BUILDER)
             && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+            builder.registerExternalContentHandler(
+                    new StreamWriterToContentHandlerConverter(omOutput));
         }
 
         if (!cache) {

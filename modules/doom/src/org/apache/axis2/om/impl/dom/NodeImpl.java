@@ -15,8 +15,10 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.OMOutputFormat;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
@@ -60,6 +62,11 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     protected int nodeType;
 
     protected DocumentImpl ownerNode;
+    
+    /**
+     * Factory that created this node
+     */
+    protected OMFactory factory;
 
     // data
 
@@ -79,21 +86,19 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
     // Constructors
     //
 
-    protected NodeImpl(DocumentImpl ownerDocument) {
-
+    protected NodeImpl(DocumentImpl ownerDocument, OMFactory factory) {
+        this(factory);
         this.ownerNode = ownerDocument;
         // this.isOwned(true);
 
     }
 
-    protected NodeImpl() {
+    protected NodeImpl(OMFactory factory) {
+        this.factory = factory;
     }
 
     public void normalize() {
-        /*
-         * by default we do not have any children, ParentNode overrides this
-         * behavior
-         */
+        //Parent node should override this 
     }
 
     public boolean hasAttributes() {
@@ -603,5 +608,12 @@ public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
         omOutput.setOutputFormat(format);
         serializeAndConsume(omOutput);
         omOutput.flush();
+    }
+
+    /**
+     * Returns the <code>OMFactory</code> that created this node
+     */
+    public OMFactory getOMFactory() {
+        return this.factory;
     }
 }

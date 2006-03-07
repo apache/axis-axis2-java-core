@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.ws.commons.om.OMFactory;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.DOMException;
 
@@ -26,18 +27,19 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 
 	protected StringBuffer textValue;
 	
-	protected CharacterImpl() {
+	protected CharacterImpl(OMFactory factory) {
+        super(factory);
 	}
 	
 	/**
 	 * @param ownerNode
 	 */
-	public CharacterImpl(DocumentImpl ownerNode) {
-		super(ownerNode);
+	public CharacterImpl(DocumentImpl ownerNode, OMFactory factory) {
+		super(ownerNode, factory);
 	}
 
-	public CharacterImpl(DocumentImpl ownerNode, String value){
-		super(ownerNode);
+	public CharacterImpl(DocumentImpl ownerNode, String value, OMFactory factory){
+		super(ownerNode, factory);
 		this.textValue = new StringBuffer(value);
 	}
 	

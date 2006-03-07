@@ -23,6 +23,7 @@ import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPProcessingException;
@@ -32,21 +33,25 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
 
-	public SOAP11FaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+	public SOAP11FaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     /**
      * @param parent
      */
-    public SOAP11FaultReasonImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, false);
+    public SOAP11FaultReasonImpl(SOAPFault parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, false, factory);
     }
 
-    public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
+    public void setSOAPText(SOAPFaultText soapFaultText)
+            throws SOAPProcessingException {
         if (!(soapFaultText instanceof SOAP11FaultTextImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Text. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault Text. " +
+                    "But received some other implementation");
         }
         super.setSOAPText(soapFaultText);
     }
@@ -54,11 +59,13 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
+                    "Expecting SOAP 1.1 implementation of SOAP Fault as the " +
+                    "parent. But received some other implementation");
         }
     }
 
-    protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputImpl omOutput, boolean cache)
+            throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type

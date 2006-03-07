@@ -21,6 +21,7 @@ import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11BodyImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderImpl;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -154,7 +155,8 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     public SOAPHeader addHeader() throws SOAPException {
         org.apache.ws.commons.soap.SOAPHeader header = omSOAPEnvelope.getHeader();
         if (header == null) {
-            header = new SOAP11HeaderImpl(omSOAPEnvelope);
+            header = new SOAP11HeaderImpl(omSOAPEnvelope,
+                    (SOAPFactory) this.element.getOMFactory());
             SOAPHeaderImpl saajSOAPHeader = new SOAPHeaderImpl(header);
             saajSOAPHeader.setParentElement(this);
             ((NodeImpl) omSOAPEnvelope.getHeader()).setUserData(SAAJ_NODE, saajSOAPHeader, null);
@@ -183,7 +185,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     public SOAPBody addBody() throws SOAPException {
         org.apache.ws.commons.soap.SOAPBody body = omSOAPEnvelope.getBody();
         if (body == null) {
-            body = new SOAP11BodyImpl(omSOAPEnvelope);
+            body = new SOAP11BodyImpl(omSOAPEnvelope, (SOAPFactory)this.element.getOMFactory());
             SOAPBodyImpl saajSOAPBody = new SOAPBodyImpl(body);
             saajSOAPBody.setParentElement(this);
             ((NodeImpl) omSOAPEnvelope.getBody()).setUserData(SAAJ_NODE, saajSOAPBody, null);
@@ -203,7 +205,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         } else {
 
             // Else this is a header
-            TextImpl doomText = new TextImpl(text);
+            TextImpl doomText = new TextImpl(text, this.element.getOMFactory());
             doomText.setNextOMSibling((NodeImpl) firstChild);
             doomText.setPreviousOMSibling(null);
             element.setFirstChild(doomText);

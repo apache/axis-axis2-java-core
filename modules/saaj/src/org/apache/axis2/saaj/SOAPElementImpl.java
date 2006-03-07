@@ -52,6 +52,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     protected ElementImpl element;
 
     public SOAPElementImpl(ElementImpl element) {
+        super(element.getOMFactory());
         this.element = element;
     }
 

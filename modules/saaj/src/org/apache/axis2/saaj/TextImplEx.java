@@ -15,18 +15,16 @@
  */
 package org.apache.axis2.saaj;
 
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.Text;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
-
-import javax.xml.soap.Text;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Node;
-import javax.xml.stream.XMLStreamException;
-import java.util.Iterator;
 
 public class TextImplEx extends NodeImplEx implements Text {
 
@@ -38,12 +36,14 @@ public class TextImplEx extends NodeImplEx implements Text {
     private org.w3c.dom.Node nextSibling;
 
     public TextImplEx(String data, SOAPElement parent) {
+        super(((SOAPElementImpl)parent).getOMFactory());
         textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
         this.parentElement = parent;
     }
 
     public TextImplEx(String data, SOAPElement parent,
                       org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
+        super(((SOAPElementImpl)parent).getOMFactory());
         textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
         this.parentElement = parent;
         this.previousSibling = prevSibling;

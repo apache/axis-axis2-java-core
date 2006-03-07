@@ -19,6 +19,7 @@ package org.apache.axis2.soap.impl.dom.soap12;
 import org.apache.axis2.soap.impl.dom.SOAPFaultCodeImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultSubCode;
 import org.apache.ws.commons.soap.SOAPFaultValue;
@@ -31,22 +32,26 @@ public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl {
      * @param parent
      * @param builder
      */
-    public SOAP12FaultCodeImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, builder);
+    public SOAP12FaultCodeImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, builder, factory);
     }
 
     /**
      * @param parent
      */
-    public SOAP12FaultCodeImpl(SOAPFault parent) throws SOAPProcessingException {
-        super(parent, true);
+    public SOAP12FaultCodeImpl(SOAPFault parent, SOAPFactory factory)
+            throws SOAPProcessingException {
+        super(parent, true, factory);
     }
 
 
-    public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException {
+    public void setSubCode(SOAPFaultSubCode subCode)
+            throws SOAPProcessingException {
         if (!(subCode instanceof SOAP12FaultSubCodeImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault Sub Code. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault " +
+                    "Sub Code. But received some other implementation");
         }
         super.setSubCode(subCode);
     }
@@ -54,7 +59,8 @@ public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl {
     public void setValue(SOAPFaultValue value) throws SOAPProcessingException {
         if (!(value instanceof SOAP12FaultValueImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault Value. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault Value. " +
+                    "But received some other implementation");
         }
         super.setValue(value);
     }
@@ -62,7 +68,8 @@ public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl {
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
             throw new SOAPProcessingException(
-                    "Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
+                    "Expecting SOAP 1.2 implementation of SOAP Fault as " +
+                    "the parent. But received some other implementation");
         }
     }
 }

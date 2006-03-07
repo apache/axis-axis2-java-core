@@ -64,7 +64,8 @@ public class TextImplTest extends TestCase {
 	public void testSplitText() {
 		String textValue = "temp text value";
 
-		DocumentImpl doc = new DocumentImpl();
+        OMDOMFactory fac = new OMDOMFactory();
+        DocumentImpl doc = new DocumentImpl(fac);
 
 		Text txt = doc.createTextNode(textValue);
 		txt.splitText(3);

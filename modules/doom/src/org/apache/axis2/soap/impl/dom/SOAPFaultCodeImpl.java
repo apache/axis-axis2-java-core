@@ -22,6 +22,7 @@ import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.om.util.ElementHelper;
 import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultSubCode;
@@ -38,18 +39,20 @@ public abstract class SOAPFaultCodeImpl  extends SOAPElement implements SOAPFaul
      * @param parent
      * @param builder
      */
-    public SOAPFaultCodeImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, builder);
+    public SOAPFaultCodeImpl(SOAPFault parent, OMXMLParserWrapper builder,
+            SOAPFactory factory) {
+        super(parent, SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, builder,
+                factory);
     }
 
     /**
      * @param parent
      */
     public SOAPFaultCodeImpl(SOAPFault parent,
-                             boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent,
-                SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME,
-                extractNamespaceFromParent);
+                             boolean extractNamespaceFromParent, 
+                             SOAPFactory factory) throws SOAPProcessingException {
+        super(parent, SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME,
+                extractNamespaceFromParent, factory);
     }
 
     /**

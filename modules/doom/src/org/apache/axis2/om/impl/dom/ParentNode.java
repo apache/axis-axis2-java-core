@@ -17,6 +17,7 @@ package org.apache.axis2.om.impl.dom;
 
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.om.impl.OMContainerEx;
 import org.apache.ws.commons.om.impl.OMNodeEx;
@@ -39,11 +40,12 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
     /**
      * @param ownerDocument
      */
-    protected ParentNode(DocumentImpl ownerDocument) {
-        super(ownerDocument);
+    protected ParentNode(DocumentImpl ownerDocument, OMFactory factory) {
+        super(ownerDocument, factory);
     }
 
-    protected ParentNode() {
+    protected ParentNode(OMFactory factory) {
+        super(factory);
     }
 
     // /
