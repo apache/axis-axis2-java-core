@@ -23,6 +23,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -81,11 +82,10 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 
             if (axisService != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Found AxisService : " + axisService.getServiceDescription());
+                    log.debug(Messages.getMessage("servicefound",
+                            axisService.getName()));
                 }
-
                 msgctx.setAxisService(axisService);
-                // TODO Chinthaka : set the Service Group Context to the message Context
             }
         }
 
@@ -94,7 +94,8 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 
             if (axisOperation != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Found AxisOperation : " + axisOperation.getName());
+                    log.debug(Messages.getMessage("operationfound",
+                            axisOperation.getName().getLocalPart()));
                 }
 
                 msgctx.setAxisOperation(axisOperation);

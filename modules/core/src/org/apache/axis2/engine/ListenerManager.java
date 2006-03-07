@@ -5,6 +5,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,8 +60,8 @@ public class ListenerManager {
         if (tranportName == null || "".equals(tranportName)) {
             AxisService service = configctx.getAxisConfiguration().getService(serviceName);
             if (service == null) {
-                throw new AxisFault("Invalid service " +
-                        serviceName + " , not found in the system");
+                throw new AxisFault(Messages.getMessage(
+                        "servicenotfoundinthesystem", serviceName));
             }
             if (service.isEnableAllTransport()) {
                 Iterator itr_st = startedTranports.values().iterator();

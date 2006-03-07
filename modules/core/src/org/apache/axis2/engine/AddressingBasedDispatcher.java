@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -27,6 +28,7 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +52,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        log.debug("Checking for Operation using WSAAction : " + messageContext.getWSAAction());
+        log.debug(Messages.getMessage("checkingoperation",
+                messageContext.getWSAAction()));
 
         String action = messageContext.getWSAAction();
 
@@ -69,8 +72,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
         if (toEPR != null) {
             String address = toEPR.getAddress();
-
-            log.debug("Checking for Service using toEPR's address : " + address);
+            log.debug(Messages.getMessage("checkingserviceforepr",address));
 
             if (Final.WSA_ANONYMOUS_URL.equals(address)
                     || Submission.WSA_ANONYMOUS_URL.equals(address)) {
@@ -83,7 +85,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 return null;
             }
 
-            log.debug("Checking for Service using toEPR : " + values[0]);
+            log.debug(Messages.getMessage("checkingserviceforepr",values[0]));
 
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
@@ -110,7 +112,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
         // first check we can dispatch using the relates to
         if (msgctx.getRelatesTo() != null) {
-            log.debug("Checking RelatesTo : " + msgctx.getRelatesTo());
+            log.debug(Messages.getMessage("checkingrelatesto",
+                    msgctx.getRelatesTo().getValue()));
 
             String relatesTo = msgctx.getRelatesTo().getValue();
 

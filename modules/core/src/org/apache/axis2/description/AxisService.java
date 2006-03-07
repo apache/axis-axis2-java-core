@@ -145,7 +145,6 @@ public class AxisService extends AxisDescription {
             throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
-
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             ArrayList wsamappings = axisOperation.getWsamappingList();

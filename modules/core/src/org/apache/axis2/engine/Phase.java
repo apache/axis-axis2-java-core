@@ -129,14 +129,11 @@ public class Phase implements Handler {
         while (handlers_itr.hasNext()) {
             Handler hand = (Handler) handlers_itr.next();
             HandlerDescription handlerDesc = hand.getHandlerDesc();
-
             if (handler.getName().getLocalPart().equals(handlerDesc.getName().getLocalPart())) {
                 return;
             }
         }
-
         if (isOneHanlder) {
-
             // TODO : should we allow both phaseFirst and phaseLast to be true for one Handler??
             throw new PhaseException(this.getPhaseName()
                     + "can only have one handler, since there is a "
@@ -233,13 +230,13 @@ public class Phase implements Handler {
     private void insertBefore(Handler handler) throws PhaseException {
         String beforename = handler.getHandlerDesc().getRules().getBefore();
 
-        
-        
+
+
         //we keep going foward, till the before handler is found, if we do not find him just add the handler
-        //once we found the before handler 
-        
+        //once we found the before handler
+
         int beforeHandlerIndex = -1;
-        
+
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
 
@@ -255,7 +252,7 @@ public class Phase implements Handler {
                 break;
             }
         }
-        
+
         if(beforeHandlerIndex >= 0){
         		//java arraylist does the shift for us
         		handlers.add(beforeHandlerIndex,handler);

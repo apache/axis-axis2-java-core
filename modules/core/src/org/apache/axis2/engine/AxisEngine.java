@@ -57,12 +57,11 @@ public class AxisEngine {
      * Constructor AxisEngine
      */
     public AxisEngine(ConfigurationContext engineContext) {
-        log.debug("Axis Engine Started");
+        log.debug(Messages.getMessage("enginestarted"));
         this.engineContext = engineContext;
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-
         // todo : need to move this to pre-condition of the MessageReceiver Phase
         SOAPEnvelope se = msgContext.getEnvelope();
 
@@ -100,21 +99,23 @@ public class AxisEngine {
                 }
                 if (role != null) {
                     if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
-                        throw new AxisFault("Must Understand check failed",
-                                prefix + ":" + SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
+                        throw new AxisFault(Messages.getMessage(
+                                "mustunderstandfaild",
+                                prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                     }
                 } else {
-                    // This is the ultimate receiver, throw an error.
-                    throw new AxisFault("Must Understand check failed",
-                            prefix + ":" + SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
+                    throw new AxisFault(Messages.getMessage(
+                            "mustunderstandfaild",
+                            prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                 }
             } else {
 
                 // if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
                 // it to be NEXT
                 if ((role != null) && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
-                    throw new AxisFault("Must Understand check failed",
-                            prefix + ":" + SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
+                    throw new AxisFault(Messages.getMessage(
+                            "mustunderstandfaild",
+                            prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                 }
             }
         }
@@ -453,7 +454,8 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-        log.info("Received Error Message with id " + msgContext.getMessageID());
+        log.info( Messages.getMessage("receivederrormessage",
+                msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
                 confContext.getAxisConfiguration().getInFaultFlow();

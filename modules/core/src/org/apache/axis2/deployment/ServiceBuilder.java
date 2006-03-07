@@ -286,13 +286,10 @@ public class ServiceBuilder extends DescriptionBuilder {
 
     private ArrayList processOperations(Iterator operationsIterator) throws AxisFault {
         ArrayList operations = new ArrayList();
-
         while (operationsIterator.hasNext()) {
             OMElement operation = (OMElement) operationsIterator.next();
-
             // /getting operation name
             OMAttribute op_name_att = operation.getAttribute(new QName(ATTRIBUTE_NAME));
-
             if (op_name_att == null) {
                 throw new DeploymentException(
                         Messages.getMessage(
@@ -359,7 +356,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
                 // setting default message receiver
-                MessageReceiver msgReceiver = loadDefaultMessageReceiver(null, service);
+                MessageReceiver msgReceiver = loadDefaultMessageReceiver(
+                        op_descrip.getMessageExchangePattern()
+                        , service);
                 op_descrip.setMessageReceiver(msgReceiver);
             }
 

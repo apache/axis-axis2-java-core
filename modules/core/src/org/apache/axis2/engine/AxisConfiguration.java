@@ -24,6 +24,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -159,8 +160,9 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             description = (AxisService) services.next();
             if (allservices.get(description.getName()) != null) {
-                throw new AxisFault("Two services can not have same name, a service with "
-                        + description.getName() + " already exists in the system");
+                throw new AxisFault(Messages.getMessage(
+                        "twoservicecannothavesamename",
+                        description.getName()));
             }
         }
         services = axisServiceGroup.getServices();
@@ -188,7 +190,8 @@ public class AxisConfiguration extends AxisDescription {
     public void removeServiceGroup(String serviceGroupName) throws AxisFault {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) getChild(serviceGroupName);
         if (axisServiceGroup == null) {
-            throw new AxisFault("invalid service group name : " + serviceGroupName);
+            throw new AxisFault(Messages.getMessage("invalidservicegroupname",
+                    serviceGroupName));
         }
         Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -236,13 +239,17 @@ public class AxisConfiguration extends AxisDescription {
             String moduleName = moduleref.getLocalPart();
             String defaultModuleVersion = getDefaultModuleVersion(moduleName);
             if (defaultModuleVersion != null) {
-                QName moduleQName = Utils.getModuleName(moduleName, defaultModuleVersion);
+                QName moduleQName = Utils.getModuleName(moduleName,
+                        defaultModuleVersion);
                 module = loadModulefromResources(moduleQName.getLocalPart());
-            } else {
-                module = loadModulefromResources(moduleName);
             }
         }
-        engageModule(module);
+        if (module != null) {
+            engageModule(module);
+        } else {
+            throw new AxisFault(Messages.getMessage("modulenotavailble",
+                    moduleref.getLocalPart()));
+        }
     }
 
     /**
@@ -271,12 +278,13 @@ public class AxisConfiguration extends AxisDescription {
                 QName qName = (QName) iterator.next();
                 moduleQName = module.getName();
                 if (moduleQName.equals(qName)) {
-                    log.info("Attempt to engage an already engaged module " + qName);
+                    log.info(Messages.getMessage("modulealredyengagedglobaly",
+                            qName.getLocalPart()));
                     return;
                 }
             }
         } else {
-            throw new AxisFault(this + " Refer to invalid module , has not bean deployed yet !");
+            throw new AxisFault(Messages.getMessage("refertoinvalidmodule"));
         }
         Iterator servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
@@ -357,7 +365,7 @@ public class AxisConfiguration extends AxisDescription {
         AxisService service = (AxisService) allservices.remove(name);
 
         if (service != null) {
-            log.info("Removed service " + name);
+            log.info(Messages.getMessage("serviceremoved", name));
         }
     }
 
@@ -470,7 +478,7 @@ public class AxisConfiguration extends AxisDescription {
             if (axisService.isActive()) {
                 return axisService;
             } else {
-                throw new AxisFault("Trying to acess inactive service :" + name);
+                throw new AxisFault(Messages.getMessage("serviceinactive", name));
             }
         } else {
             return null;
@@ -640,7 +648,8 @@ public class AxisConfiguration extends AxisDescription {
     public void stopService(String serviceName) throws AxisFault {
         AxisService service = (AxisService) allservices.get(serviceName);
         if (service == null) {
-            throw new AxisFault("Invalid service name : " + serviceName);
+            throw new AxisFault(Messages.getMessage("servicenamenotvalid",
+                    serviceName));
         }
         service.setActive(false);
         notifyObservers(AxisEvent.SERVICE_STOP, service);
@@ -649,7 +658,8 @@ public class AxisConfiguration extends AxisDescription {
     public void stratService(String serviceName) throws AxisFault {
         AxisService service = (AxisService) allservices.get(serviceName);
         if (service == null) {
-            throw new AxisFault("Invalid service name : " + serviceName);
+            throw new AxisFault(Messages.getMessage("servicenamenotvalid",
+                    serviceName));
         }
         service.setActive(true);
         notifyObservers(AxisEvent.SERVICE_START, service);

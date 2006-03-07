@@ -19,14 +19,11 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.i18n.Messages;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPHeader;
 
@@ -62,7 +59,7 @@ public class InstanceDispatcher extends AbstractHandler {
 
         // try to extract sgcId from the message
         extractServiceGroupContextId(msgContext);
-        
+
         //trying to get service context from Session context
         fillContextsFromSessionContext(msgContext);
 
@@ -115,7 +112,7 @@ public class InstanceDispatcher extends AbstractHandler {
     private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
         AxisService service = msgContext.getAxisService();
         if (service == null) {
-            throw new AxisFault("Service not found operation terminated !!");
+            throw new AxisFault(Messages.getMessage("unabletofindservice"));
         }
         SessionContext sessionContext = msgContext.getSessionContext();
         String serviceGroupContextId = msgContext.getServiceGroupContextId();
@@ -153,7 +150,8 @@ public class InstanceDispatcher extends AbstractHandler {
                         getServiceGroupContext(groupId, msgContext);
                 if (serviceGroupContext == null) {
 //                handleNoServiceGroupContextIDCase(msgContext);
-                    throw new AxisFault("Invalid Service Group Id." + groupId);
+                    throw new AxisFault(Messages.getMessage(
+                            "invalidservicegrouoid", groupId));
                 }
                 msgContext.setServiceGroupContextId(serviceGroupId.getText());
             }
