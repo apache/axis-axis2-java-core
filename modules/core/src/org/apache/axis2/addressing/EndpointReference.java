@@ -19,6 +19,7 @@ package org.apache.axis2.addressing;
 
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNode;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
@@ -48,13 +49,12 @@ public class EndpointReference implements Serializable {
 
     private String name;
     private String address;
-    private OMElement metaData;
+    private ArrayList metaData;
     private Map referenceParameters;
     private ArrayList omElements;
 
 
     /**
-     * 
      * @param address
      */
     public EndpointReference(String address) {
@@ -104,7 +104,6 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     *
      * @param address - xs:anyURI
      */
     public void setAddress(String address) {
@@ -117,18 +116,25 @@ public class EndpointReference implements Serializable {
 
     /**
      * {any}
+     *
      * @param omElements
      */
     public void setOmElements(ArrayList omElements) {
         this.omElements = omElements;
     }
 
-    public OMElement getMetaData() {
+    public ArrayList getMetaData() {
         return metaData;
     }
 
-    public void setMetaData(OMElement metaData) {
-        this.metaData = metaData;
+    public void addMetaData(OMNode metaData) {
+        if (metaData != null) {
+            if (this.metaData == null) {
+                this.metaData = new ArrayList();
+            }
+            this.metaData.add(metaData);
+        }
+
     }
 
     public String getName() {
@@ -156,7 +162,16 @@ public class EndpointReference implements Serializable {
             OMElement omElement = (OMElement) refParams.next();
             addReferenceParameter(omElement);
         }
-        setMetaData(eprOMElement.getFirstChildWithName(new QName("MetaData")));
+
+        OMElement metaDataElement = eprOMElement.getFirstChildWithName(new QName("MetaData"));
+        if (metaDataElement != null) {
+            Iterator children = metaDataElement.getChildren();
+            while (children.hasNext()) {
+                OMNode omNode = (OMNode) children.next();
+                addMetaData(omNode);
+            }
+        }
+
         setName(eprOMElement.getLocalName());
     }
 

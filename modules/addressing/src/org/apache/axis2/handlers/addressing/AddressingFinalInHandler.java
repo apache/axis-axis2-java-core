@@ -65,10 +65,13 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                     OMElement element = (OMElement) referenceParameters.next();
                     epr.addReferenceParameter(element);
                 }
-            } else
-            if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName()))
+            } else if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName()))
             {
-                epr.setMetaData(eprChildElement);
+                Iterator referenceParameters = eprChildElement.getChildElements();
+                while (referenceParameters.hasNext()) {
+                    OMElement element = (OMElement) referenceParameters.next();
+                    epr.addMetaData(element);
+                }
             }
         }
     }

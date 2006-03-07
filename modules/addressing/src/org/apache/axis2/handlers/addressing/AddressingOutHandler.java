@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMNode;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
@@ -334,12 +335,15 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         // add metadata
-        OMElement metaData = epr.getMetaData();
-        if (metaData != null) {
+        ArrayList metaDataList = epr.getMetaData();
+        if (metaDataList != null) {
             OMElement metadata =
                     OMAbstractFactory.getOMFactory().createOMElement(
                             Final.WSA_METADATA,
                             addressingNamespaceObject, soapHeaderBlock);
+            for (int i = 0; i < metaDataList.size(); i++) {
+                  metadata.addChild((OMNode) metaDataList.get(i));
+            }
 
         }
 
