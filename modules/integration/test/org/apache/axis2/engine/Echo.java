@@ -50,7 +50,7 @@ public class Echo {
     }
 
     public OMElement echoMTOMtoBase64(OMElement omEle) {
-        OMText omText = (OMText) omEle.getFirstOMChild();
+        OMText omText =  (OMText) (omEle.getFirstElement()).getFirstOMChild();
         omText.setOptimize(false);
         return omEle;
     }

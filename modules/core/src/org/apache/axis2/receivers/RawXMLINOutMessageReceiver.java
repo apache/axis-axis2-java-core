@@ -27,10 +27,8 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.wsdl.WSDLService;
 
 import java.lang.reflect.Method;
 
@@ -84,39 +82,13 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
             Method method = findOperation(opDesc, ImplClass);
 
             if (method != null) {
-                String style =
-                        msgContext.getOperationContext().getAxisOperation().getStyle();
                 Class[]  parameters = method.getParameterTypes();
                 Object[] args;
 
                 if ((parameters == null) || (parameters.length == 0)) {
                     args = new Object[0];
                 } else if (parameters.length == 1) {
-                    OMElement omElement;
-
-                    if (WSDLService.STYLE_DOC.equals(style)) {
-                        omElement = msgContext.getEnvelope().getBody().getFirstElement();
-                    } else if (WSDLService.STYLE_RPC.equals(style)) {
-                        OMElement operationElement =
-                                msgContext.getEnvelope().getBody().getFirstElement();
-
-                        if (operationElement != null) {
-                            if ((operationElement.getLocalName() != null)
-                                    && operationElement.getLocalName().startsWith(
-                                    method.getName())) {
-                                omElement = operationElement.getFirstElement();
-                            } else {
-                                throw new AxisFault(Messages.getMessage("AandBdonotmatch",
-                                        "Operation Name", "immediate child name",
-                                        operationElement.getLocalName(), method.getName()));
-                            }
-                        } else {
-                            throw new AxisFault(Messages.getMessage("rpcNeedmatchingChild"));
-                        }
-                    } else {
-                        throw new AxisFault(Messages.getMessage("unknownStyle", style));
-                    }
-
+                    OMElement omElement = msgContext.getEnvelope().getBody().getFirstElement();
                     args = new Object[]{omElement};
                 } else {
                     throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
@@ -130,14 +102,7 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 OMElement bodyContent;
 
                 SOAPFactory fac = getSOAPFactory(msgContext);
-                if (WSDLService.STYLE_RPC.equals(style)) {
-                    OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
-                    bodyContent = fac.createOMElement(method.getName() + "Response",
-                            ns);
-                    bodyContent.addChild(result);
-                } else {
-                    bodyContent = result;
-                }
+                bodyContent = result;
 
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
 

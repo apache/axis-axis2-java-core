@@ -26,7 +26,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.wsdl.WSDLService;
 
 import java.lang.reflect.Method;
 
@@ -95,25 +94,11 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
                     && OMElement.class.getName().equals(parameters[0].getName())) {
                 OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
                 OMElement parmeter;
-                String style = msgContext.getOperationContext().getAxisOperation().getStyle();
+                parmeter = methodElement;
+                Object[] parms = new Object[]{parmeter};
+                // Need not have a return here
+                method.invoke(obj, parms);
 
-                if (WSDLService.STYLE_DOC.equals(style)) {
-                    parmeter = methodElement;
-
-                    Object[] parms = new Object[]{parmeter};
-
-                    // Need not have a return here
-                    method.invoke(obj, parms);
-                } else if (WSDLService.STYLE_RPC.equals(style)) {
-                    parmeter = methodElement.getFirstElement();
-
-                    Object[] parms = new Object[]{parmeter};
-
-                    // invoke the WebService
-                    method.invoke(obj, parms);
-                } else {
-                    throw new AxisFault(Messages.getMessage("unknownStyle", style));
-                }
             } else {
                 throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
             }
