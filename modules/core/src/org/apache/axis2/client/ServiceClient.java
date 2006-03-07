@@ -391,12 +391,10 @@ public class ServiceClient {
     public void fireAndForget(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
         OperationClient mepClient = createClient(operation);
-
         // create a message context and put the payload in there along with any
         // headers
         MessageContext mc = new MessageContext();
         fillSoapEnvelope(mc, elem);
-
         // add the message context there and have it go
         mepClient.addMessageContext(mc);
         mepClient.execute(false);

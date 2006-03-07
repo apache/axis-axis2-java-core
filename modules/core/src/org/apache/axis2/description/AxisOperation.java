@@ -172,13 +172,6 @@ public abstract class AxisOperation extends AxisDescription
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             ArrayList wsamappings = axisOperation.getWsamappingList();
-            if (wsamappings != null) {
-                for (int j = 0; j < wsamappings.size(); j++) {
-                    String mapping = (String) wsamappings.get(j);
-
-                    service.mapActionToOperation(mapping, axisOperation);
-                }
-            }
             if (service.getOperation(axisOperation.getName()) == null) {
                 // this opration is a control operation.
                 axisOperation.setControlOperation(true);
@@ -188,6 +181,13 @@ public abstract class AxisOperation extends AxisDescription
                 }
                 phaseResolver.engageModuleToOperation(axisOperation, module);
                 ops.add(axisOperation);
+                if (wsamappings != null) {
+                    for (int j = 0; j < wsamappings.size(); j++) {
+                        String mapping = (String) wsamappings.get(j);
+
+                        service.mapActionToOperation(mapping, axisOperation);
+                    }
+                }
             }
         }
         return ops;
