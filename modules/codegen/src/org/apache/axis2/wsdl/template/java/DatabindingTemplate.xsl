@@ -21,6 +21,7 @@
                 (org.apache.ws.commons.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
                 org.apache.ws.commons.om.OMElement documentElement = builder.getDocumentElement();
+
                 <xsl:if test="$base64">
                          optimizeContent(documentElement,qNameArray);
                 </xsl:if>
@@ -31,15 +32,25 @@
 
                 private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
                     org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                    envelope.getBody().addChild(toOM(param));
+                    if (param != null){
+                        envelope.getBody().addChild(toOM(param));
+                    }
                     return envelope;
                 }
             </xsl:if>
 
         </xsl:for-each>
 
-        public org.apache.xmlbeans.XmlObject fromOM(org.apache.ws.commons.om.OMElement param,
-        java.lang.Class type){
+        /**
+         *  get the default envelope
+         */
+        private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory){
+            return factory.getDefaultEnvelope();
+        }
+
+        public org.apache.xmlbeans.XmlObject fromOM(
+            org.apache.ws.commons.om.OMElement param,
+            java.lang.Class type){
         try{
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
@@ -107,7 +118,9 @@
         private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(
             org.apache.ws.commons.soap.SOAPFactory factory, Object param) {
             org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-            envelope.getBody().addChild(toOM(param));
+            if (param != null){
+                envelope.getBody().addChild(toOM(param));
+            }
 
             return envelope;
         }
@@ -193,6 +206,14 @@
                 </xsl:if>
             </xsl:for-each>
 
+           /**
+           *  get the default envelope
+           */
+           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory){
+                return factory.getDefaultEnvelope();
+           }
+
+
             private  java.lang.Object fromOM(org.apache.ws.commons.om.OMElement param,
             java.lang.Class type){
 
@@ -228,6 +249,14 @@
                 envelope.getBody().addChild(param);
                 return envelope;
            }
+
+           /**
+           *  get the default envelope
+           */
+           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory){
+                return factory.getDefaultEnvelope();
+           }
+
        </xsl:template>
 
      </xsl:stylesheet>

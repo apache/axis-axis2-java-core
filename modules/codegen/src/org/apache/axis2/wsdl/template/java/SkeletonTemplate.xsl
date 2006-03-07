@@ -28,7 +28,7 @@
             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/></xsl:if>
                    </xsl:for-each> ) throws Exception {
                 //Todo fill this with the necessary business logic
-                <xsl:if test="$outputtype!=''">return null;</xsl:if>
+                <xsl:if test="$outputtype!=''">throw new  java.lang.UnsupportedOperationException();</xsl:if>
         }
      </xsl:for-each>
     }

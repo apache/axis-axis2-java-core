@@ -212,8 +212,17 @@
                                 </xsl:when>
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc.
+                                    <!-- Let's assume there is only one parameters here -->
                                     <xsl:for-each select="input/param[@location='body']">
-                                        env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                        <xsl:choose>
+                                            <xsl:when test="@type!=''">
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
                                         // add the children only if the parameter is not null
@@ -319,7 +328,14 @@
                                 <xsl:when test="$style='doc'">
                                     //Style is Doc.
                                     <xsl:for-each select="input/param[@location='body']">
-                                        env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                        <xsl:choose>
+                                            <xsl:when test="@type!=''">
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </xsl:for-each>
                                     <xsl:for-each select="input/param[@location='header']">
                                          // add the headers only if they are not null
