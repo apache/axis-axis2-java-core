@@ -112,7 +112,7 @@ public class ADBPullParser implements XMLStreamReader {
      * remove them from the namespace map, after the end element.
      */
     private HashMap namespaceMap;
-    private static final QName NIL_QNAME = new QName("nil");
+    private static final QName NIL_QNAME = new QName("http://www.w3.org/2001/XMLSchema-instance","nil");
 
 
     private ADBPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {

@@ -93,7 +93,7 @@ public class ConverterUtil {
     }
 
     public static String convertToString(byte i) {
-        return new String(new byte[]{i});
+        return ((int)i)+"";
     }
 
     public static String convertToString(char i) {

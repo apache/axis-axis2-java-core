@@ -254,6 +254,10 @@
 
         }
 
+        /**
+        * utility method to http://www.w3.org/2001/XMLSchema-instance
+        */
+
     /**
       *  Factory class that keeps the parse method
       */
@@ -278,7 +282,7 @@
         </xsl:if>
 
         <xsl:if test="@nillable">
-           if ("true".equals(reader.getAttributeValue("","nil"))){
+           if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
                  return null;
            }
         </xsl:if>
@@ -406,7 +410,7 @@
 
                                     <!-- if-block that handles nillable -->
                                     <xsl:if test="@nillable">
-                                       if ("true".equals(reader.getAttributeValue("","nil"))){
+                                       if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
                                              <xsl:value-of select="$listName"/>.add(null);
                                        }else{
                                     </xsl:if>
