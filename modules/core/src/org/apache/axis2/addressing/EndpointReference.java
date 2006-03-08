@@ -18,7 +18,9 @@
 package org.apache.axis2.addressing;
 
 import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
 
 import javax.xml.namespace.QName;
@@ -52,6 +54,7 @@ public class EndpointReference implements Serializable {
     private ArrayList metaData;
     private Map referenceParameters;
     private ArrayList extensibleElements;
+    private ArrayList attributes;
 
 
     /**
@@ -110,6 +113,34 @@ public class EndpointReference implements Serializable {
         this.address = address;
     }
 
+    /**
+     * @param localName
+     * @param ns
+     * @param value
+     */
+    public void addAttribute(String localName, OMNamespace ns, String value) {
+        if (attributes == null) {
+            attributes = new ArrayList();
+        }
+        attributes.add(OMAbstractFactory.getOMFactory().createOMAttribute(localName, ns, value));
+    }
+
+    public ArrayList getAttributes() {
+        return attributes;
+    }
+
+
+    /**
+     *
+     * @param omAttribute
+     */
+    public void addAttribute(OMAttribute omAttribute) {
+        if (attributes == null) {
+            attributes = new ArrayList();
+        }
+        attributes.add(omAttribute);
+    }
+
     public ArrayList getExtensibleElements() {
         return extensibleElements;
     }
@@ -124,7 +155,7 @@ public class EndpointReference implements Serializable {
     }
 
     public void addExtensibleElement(OMElement extensibleElement) {
-         if (extensibleElement != null) {
+        if (extensibleElement != null) {
             if (this.extensibleElements == null) {
                 this.extensibleElements = new ArrayList();
             }
@@ -182,6 +213,16 @@ public class EndpointReference implements Serializable {
         }
 
         setName(eprOMElement.getLocalName());
+
+        Iterator allAttributes = eprOMElement.getAllAttributes();
+        if (attributes == null) {
+            attributes = new ArrayList();
+        }
+
+        while (allAttributes.hasNext()) {
+            OMAttribute attribute = (OMAttribute) allAttributes.next();
+            attributes.add(attribute);
+        }
     }
 
     public void toOM() {

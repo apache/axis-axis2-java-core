@@ -65,7 +65,8 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                     OMElement element = (OMElement) referenceParameters.next();
                     epr.addReferenceParameter(element);
                 }
-            } else if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName()))
+            } else
+            if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName()))
             {
                 Iterator referenceParameters = eprChildElement.getChildElements();
                 while (referenceParameters.hasNext()) {
@@ -75,6 +76,12 @@ public class AddressingFinalInHandler extends AddressingInHandler {
             } else {
                 epr.addExtensibleElement(eprChildElement);
             }
+        }
+
+        Iterator allAttributes = headerBlock.getAllAttributes();
+        while (allAttributes.hasNext()) {
+            OMAttribute attribute = (OMAttribute) allAttributes.next();
+            epr.addAttribute(attribute);
         }
     }
 

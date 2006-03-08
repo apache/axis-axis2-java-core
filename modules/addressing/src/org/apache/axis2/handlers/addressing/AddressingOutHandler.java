@@ -27,6 +27,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMNode;
@@ -168,7 +169,7 @@ public class AddressingOutHandler extends AddressingHandler {
                 probHeaderQName.setText(faultyHeaderQName);
 
                 String messageID = (String) faultInfo.get(AddressingConstants.WSA_RELATES_TO);
-                if(messageID != null) {
+                if (messageID != null) {
                     SOAPHeaderBlock relatesTo = envelope.getHeader().addHeaderBlock(AddressingConstants.WSA_RELATES_TO, addressingNamespaceObject);
                     relatesTo.setText(messageID);
                 }
@@ -342,10 +343,19 @@ public class AddressingOutHandler extends AddressingHandler {
                             Final.WSA_METADATA,
                             addressingNamespaceObject, soapHeaderBlock);
             for (int i = 0; i < metaDataList.size(); i++) {
-                  metadata.addChild((OMNode) metaDataList.get(i));
+                metadata.addChild((OMNode) metaDataList.get(i));
             }
 
         }
+
+        if (epr.getAttributes() != null) {
+            Iterator attrIter = epr.getAttributes().iterator();
+            while (attrIter.hasNext()) {
+                OMAttribute omAttributes = (OMAttribute) attrIter.next();
+                soapHeaderBlock.addAttribute(omAttributes);
+            }
+        }
+
 
     }
 
