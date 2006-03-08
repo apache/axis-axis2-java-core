@@ -90,6 +90,17 @@ public class AxisServiceBuilder {
     private Log logger = LogFactory.getLog(this.getClass().getName());
 
     private int nsCount = 1;
+    
+    
+    private boolean serverSide = true;
+    
+    public AxisServiceBuilder(){
+    	
+    }
+    
+    public AxisServiceBuilder(boolean serverSide){
+    	this.serverSide = true;
+    }
 
     public AxisService getAxisService(InputStream wsdlInputStream)
             throws DeploymentException {
@@ -395,13 +406,20 @@ public class AxisServiceBuilder {
 
     private int getMessageExchangePattern(Operation wsdl4jOperation) {
         logger.debug("AxisServiceBuilder.getMessageExchangePattern");
-
-        if (wsdl4jOperation.getOutput() == null) {
-            return WSDLConstants.MEP_CONSTANT_IN_ONLY;
-
-        } else {
-            return WSDLConstants.MEP_CONSTANT_IN_OUT;
+        if(serverSide){
+            if (wsdl4jOperation.getOutput() == null) {
+                return WSDLConstants.MEP_CONSTANT_IN_ONLY;
+            } else {
+                return WSDLConstants.MEP_CONSTANT_IN_OUT;
+            }
+        }else{
+        	if (wsdl4jOperation.getOutput() == null) {
+                return WSDLConstants.MEP_CONSTANT_OUT_ONLY;
+            } else {
+                return WSDLConstants.MEP_CONSTANT_OUT_IN;
+            }
         }
+
     }
 
     private XmlSchema getXMLSchema(Element element) {
