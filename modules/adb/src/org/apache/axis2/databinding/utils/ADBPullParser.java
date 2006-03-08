@@ -4,6 +4,8 @@ import org.apache.axis2.databinding.ADBBean;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
 
 import javax.xml.namespace.NamespaceContext;
@@ -112,7 +114,7 @@ public class ADBPullParser implements XMLStreamReader {
      * remove them from the namespace map, after the end element.
      */
     private HashMap namespaceMap;
-    private static final QName NIL_QNAME = new QName("http://www.w3.org/2001/XMLSchema-instance","nil");
+    private static final QName NIL_QNAME = new QName("http://www.w3.org/2001/XMLSchema-instance","nil","xsi");
 
 
     private ADBPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
@@ -305,8 +307,14 @@ public class ADBPullParser implements XMLStreamReader {
                     eventType = processADBNameValuePair((QName) o, (String) object);
                     return eventType;
                 } else if (object == null) {
-                    OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement((QName) o, null);
-                    omElement.addAttribute("nil", "true", null);
+                    OMFactory omFactory = OMAbstractFactory.getOMFactory();
+                    OMElement omElement = omFactory.createOMElement((QName) o, null);
+                    OMNamespace omNamespace = omFactory.createOMNamespace(NIL_QNAME.getNamespaceURI(),
+                            NIL_QNAME.getPrefix());
+                    omElement.declareNamespace(omNamespace);
+                    omElement.addAttribute(NIL_QNAME.getLocalPart(),
+                            "true",
+                            omNamespace);
                     childPullParser = omElement.getXMLStreamReader();
 
                     // here we are injecting one additional element. So need to accomodate that.

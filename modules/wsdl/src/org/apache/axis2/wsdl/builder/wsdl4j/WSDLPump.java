@@ -365,6 +365,10 @@ public class WSDLPump {
                             Map porttypeMap = importedDef.getPortTypes();
                             wsdl4JDefinition.getPortTypes().putAll(porttypeMap);
 
+                            //add bindings
+                            Map bindingMap = importedDef.getBindings();
+                            wsdl4JDefinition.getBindings().putAll(bindingMap);
+
                         }
 
                     }
@@ -1179,14 +1183,14 @@ public class WSDLPump {
             if (wsdl4jElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) (wsdl4jElement);
 
-//look for the SOAP 1.2 stuff here. WSDL4j does not understand SOAP 1.2 things
+                //look for the SOAP 1.2 stuff here. WSDL4j does not understand SOAP 1.2 things
                 if (ExtensionConstants.SOAP_12_OPERATION.equals(unknown.getElementType())){
                     org.apache.wsdl.extensions.SOAPOperation soapOperationExtensibiltyElement = (org.apache.wsdl.extensions.SOAPOperation) extensionFactory
                             .getExtensionElement(wsdl4jElement.getElementType());
                     Element element = unknown.getElement();
                     soapOperationExtensibiltyElement.setSoapAction(element.getAttribute("soapAction"));
                     soapOperationExtensibiltyElement.setStyle(element.getAttribute("style"));
-// soapActionRequired
+                // soapActionRequired
                     component.addExtensibilityElement(soapOperationExtensibiltyElement);
                 }else if (ExtensionConstants.SOAP_12_BODY.equals(unknown.getElementType())){
                     org.apache.wsdl.extensions.SOAPBody soapBodyExtensibiltyElement = (org.apache.wsdl.extensions.SOAPBody) extensionFactory
@@ -1194,7 +1198,7 @@ public class WSDLPump {
                     Element element = unknown.getElement();
                     soapBodyExtensibiltyElement.setUse(element.getAttribute("use"));
                     soapBodyExtensibiltyElement.setNamespaceURI(element.getAttribute("namespace"));
-//encoding style
+                    //encoding style
                     component.addExtensibilityElement(soapBodyExtensibiltyElement);
                 }else if (ExtensionConstants.SOAP_12_HEADER.equals(unknown.getElementType())){
                     org.apache.wsdl.extensions.SOAPHeader soapHeaderExtensibilityElement = (org.apache.wsdl.extensions.SOAPHeader) extensionFactory.getExtensionElement(

@@ -108,7 +108,8 @@ public class ADBPullParserTest extends XMLTestCase {
             This is what I expect :
 
             */
-            String exptectedXML = "<Person xmlns=\"\"><Name xmlns=\"\">FooOne</Name><DependentOne xmlns=\"\" nil=\"true\" />" +
+            String exptectedXML = "<Person xmlns=\"\"><Name xmlns=\"\">FooOne</Name><DependentOne xmlns=\"\" " +
+                    "xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
                     "</Person>";
 
             ArrayList propertyList = new ArrayList();
