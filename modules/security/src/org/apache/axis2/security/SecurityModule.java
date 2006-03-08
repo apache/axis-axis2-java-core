@@ -34,12 +34,17 @@ import org.apache.ws.security.policy.WSS4JConfigBuilder;
 import org.apache.ws.security.policy.parser.WSSPolicyProcessor;
 
 public class SecurityModule implements Module {
-
+	private AxisModule module;
+	
+	
+	public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {
+        this.module = module;
+    }
+	
+	
     public void engageNotify(AxisDescription axisDescription) throws AxisFault {
         Policy policy = axisDescription.getPolicyInclude().getEffectivePolicy();
         if(axisDescription instanceof AxisOperation && policy != null) {
-//            PolicyWriter writer = PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
-//            writer.writePolicy(policy, System.out);
             try {
                 WSSPolicyProcessor wssPolicyProcessor = new WSSPolicyProcessor();
                 wssPolicyProcessor.setup();
@@ -50,26 +55,7 @@ public class SecurityModule implements Module {
                 InflowConfiguration policyInflowConfig = config.getInflowConfiguration();
                 OutflowConfiguration policyOutflowConfig = config.getOutflowConfiguration();
                 
-                Parameter inflowSecParam = axisDescription.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
-                Parameter outflowSecParam = axisDescription.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
-                
-                InflowConfiguration staticInflowConfig = HandlerParameterDecoder.getInflowConfiguration(inflowSecParam);
-                OutflowConfiguration staticOutflowConfig = HandlerParameterDecoder.getOutflowConfiguration(outflowSecParam);
-
-//                if(staticInflowConfig == null || staticOutflowConfig == null) {
-//                    throw new Exception("Static configuration not available!!!");
-//                }
-                if(staticOutflowConfig != null) {
-                    OutflowConfiguration mergedOutflowConfig = this
-                            .mergeStaticAndPolicyOutflowConfiguration(
-                                    staticOutflowConfig, policyOutflowConfig);
-                    axisDescription.addParameter(mergedOutflowConfig.getProperty());
-                }
-                
-                if(staticInflowConfig != null) {
-                    InflowConfiguration mergedInflowConfig = this.mergeStaticAndPolicyInflowConfiguration(staticInflowConfig, policyInflowConfig);
-                    axisDescription.addParameter(mergedInflowConfig.getProperty());
-                }
+                calcuateCurrentConfiguration(policyInflowConfig,policyOutflowConfig,axisDescription);
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(),e);
             }
@@ -80,26 +66,69 @@ public class SecurityModule implements Module {
         //Do nothing
     }
 
-    public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {
-        //DO nothing 
-    }
+    
 
-    private OutflowConfiguration mergeStaticAndPolicyOutflowConfiguration(
-            OutflowConfiguration staticConfig, OutflowConfiguration policyConfig) {
-        policyConfig.setPasswordCallbackClass(staticConfig.getPasswordCallbackClass());
-        policyConfig.setSignaturePropFile(staticConfig.getSignaturePropFile());
-        policyConfig.setEncryptionPropFile(staticConfig.getEncryptionPropFile());
-        policyConfig.setEmbeddedKeyCallbackClass(staticConfig.getEmbeddedKeyCallbackClass());
-        policyConfig.setUser(staticConfig.getUser());
-        policyConfig.setEncryptionUser(staticConfig.getEncryptionUser());
-        return policyConfig;
+    private void calcuateCurrentConfiguration(InflowConfiguration policyInflowConfig,
+    		OutflowConfiguration policyOutflowConfig,AxisDescription axisDescription) throws AxisFault{
+    	//merge inflow configuration
+    	Parameter inflowModuleParam = axisDescription.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+    	InflowConfiguration moduleInflowConfig = HandlerParameterDecoder.getInflowConfiguration(inflowModuleParam);
+    	
+    	Parameter inflowSecParam = axisDescription.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+    	InflowConfiguration staticInflowConfig = HandlerParameterDecoder.getInflowConfiguration(inflowSecParam);
+    	
+    	InflowConfiguration mergedInConf = mergeInflowConfiguration(staticInflowConfig,moduleInflowConfig);
+    	InflowConfiguration finalInConf = mergeInflowConfiguration(policyInflowConfig,mergedInConf);
+    	axisDescription.addParameter(finalInConf.getProperty());
+    	
+    	
+    	
+    	//merge outflow configuration
+    	Parameter outfloModuleParam = axisDescription.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+    	OutflowConfiguration moduleOutflowConfig = HandlerParameterDecoder.getOutflowConfiguration(outfloModuleParam);
+        Parameter outflowSecParam = axisDescription.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+        OutflowConfiguration staticOutflowConfig = HandlerParameterDecoder.getOutflowConfiguration(outflowSecParam);
+        
+        OutflowConfiguration mergedOutFlowConf = mergeOutflowConfiguration(staticOutflowConfig,moduleOutflowConfig);
+        OutflowConfiguration finalOutFlowConf = mergeOutflowConfiguration(policyOutflowConfig,mergedOutFlowConf);
+        axisDescription.addParameter(finalOutFlowConf.getProperty());
     }
     
-    private InflowConfiguration mergeStaticAndPolicyInflowConfiguration(
-            InflowConfiguration staticConfig, InflowConfiguration policyConfig) {
-        policyConfig.setPasswordCallbackClass(staticConfig.getPasswordCallbackClass());
-        policyConfig.setDecryptionPropFile(staticConfig.getDecryptionPropFile());
-        policyConfig.setSignaturePropFile(staticConfig.getSignaturePropFile());
-        return policyConfig;
+    
+    //overide secondry configuration with primry configuration
+    private OutflowConfiguration mergeOutflowConfiguration(
+    		OutflowConfiguration primaryConfig,OutflowConfiguration secondryConf) {
+    	if(secondryConf == null && primaryConfig != null){
+    		return primaryConfig;
+    	}else if(primaryConfig == null && secondryConf != null){
+    		return secondryConf;
+    	}else if(primaryConfig == null && secondryConf == null){
+    		return null;
+    	}
+    	
+    	secondryConf.setPasswordCallbackClass(primaryConfig.getPasswordCallbackClass());
+    	secondryConf.setSignaturePropFile(primaryConfig.getSignaturePropFile());
+    	secondryConf.setEncryptionPropFile(primaryConfig.getEncryptionPropFile());
+    	secondryConf.setEmbeddedKeyCallbackClass(primaryConfig.getEmbeddedKeyCallbackClass());
+    	secondryConf.setUser(primaryConfig.getUser());
+    	secondryConf.setEncryptionUser(primaryConfig.getEncryptionUser());
+        return secondryConf;
+    }
+    
+    //overide secondry configuration with primry configuration
+    private InflowConfiguration mergeInflowConfiguration(
+    		InflowConfiguration primaryConfig,InflowConfiguration secondryConf) {
+    	if(secondryConf == null && primaryConfig != null){
+    		return primaryConfig;
+    	}else if(primaryConfig == null && secondryConf != null){
+    		return secondryConf;
+    	}else if(primaryConfig == null && secondryConf == null){
+    		return null;
+    	}
+    	
+    	secondryConf.setPasswordCallbackClass(primaryConfig.getPasswordCallbackClass());
+    	secondryConf.setDecryptionPropFile(primaryConfig.getDecryptionPropFile());
+    	secondryConf.setSignaturePropFile(primaryConfig.getSignaturePropFile());
+        return secondryConf;
     }
 }

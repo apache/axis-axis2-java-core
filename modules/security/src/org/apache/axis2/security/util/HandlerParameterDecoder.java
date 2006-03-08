@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.security.util;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
@@ -138,14 +139,14 @@ public class HandlerParameterDecoder {
 		}
 	}
     
-    public static OutflowConfiguration getOutflowConfiguration(Parameter outflowConfigParam) throws Exception {
+    public static OutflowConfiguration getOutflowConfiguration(Parameter outflowConfigParam) throws AxisFault {
         if (outflowConfigParam != null) {
             OMElement outflowParamElem = outflowConfigParam.getParameterElement();
 
             OMElement actionElem = outflowParamElem
                     .getFirstChildWithName(new QName(WSSHandlerConstants.ACTION));
             if (actionElem == null) {
-                throw new Exception(
+                throw new AxisFault(
                         "Inflow configurtion must contain an 'action' "
                                 + "elementas the child of 'InflowSecurity' element");
             }
@@ -176,7 +177,7 @@ public class HandlerParameterDecoder {
         return null;
     }
     
-    public static InflowConfiguration getInflowConfiguration(Parameter inflowConfigParam) throws Exception {
+    public static InflowConfiguration getInflowConfiguration(Parameter inflowConfigParam) throws AxisFault {
 
         if (inflowConfigParam != null) {
             OMElement inFlowParamElem = inflowConfigParam.getParameterElement();
@@ -184,7 +185,7 @@ public class HandlerParameterDecoder {
             OMElement actionElem = inFlowParamElem
                     .getFirstChildWithName(new QName(WSSHandlerConstants.ACTION));
             if (actionElem == null) {
-                throw new Exception(
+                throw new AxisFault(
                         "Inflow configurtion must contain an 'action' "
                                 + "elementas the child of 'InflowSecurity' element");
             }
