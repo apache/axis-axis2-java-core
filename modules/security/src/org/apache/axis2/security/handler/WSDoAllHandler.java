@@ -137,7 +137,6 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     	int repetition = getCurrentRepetition(msgContext);
     	
     	String key = Axis2Util.getKey(axisKey,inHandler, repetition);
-    	log.debug("wss4j key: " + axisKey + " Key : " + key);
         Object property = ((MessageContext)msgContext).getProperty(key);
         if(property == null) {
             //Try the description hierarchy
