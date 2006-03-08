@@ -189,9 +189,9 @@ public class ServiceClient {
             trsManager = new ListenerManager();
             trsManager.init(this.configContext);
         }
-        if (!trsManager.isStopped()) {
-            trsManager.start();
-        }
+//        if (!trsManager.isStopped()) {
+//            trsManager.start();
+//        }
     }
 
     /**

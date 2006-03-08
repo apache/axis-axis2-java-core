@@ -6,6 +6,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
@@ -40,12 +41,16 @@ public class ClientUtils {
         if (options.isUseSeparateListener()) {
             if ((listenerTransportProtocol != null) && !"".equals(listenerTransportProtocol)) {
                 transportIn = ac.getTransportIn(new QName(listenerTransportProtocol));
-
+                ListenerManager listenerManager =
+                        msgCtxt.getConfigurationContext().getListenerManager();
                 if (transportIn == null) {
                     // TODO : User should not be mandated to give an IN transport. If it is not given, we should
                     // ask from the ListenerManager to give any available transport for this client.
                     throw new AxisFault(Messages.getMessage("unknownTransport",
                             listenerTransportProtocol));
+                }
+                if (!listenerManager.isListenerRunning(transportIn.getName().getLocalPart())) {
+                    listenerManager.addListener(transportIn, false);
                 }
             }
             if (msgCtxt.getAxisService() != null) {

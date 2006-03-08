@@ -136,10 +136,15 @@ public class ListenerManager {
         TransportListener transportListener = trsIn.getReceiver();
         if (transportListener != null) {
             if (!start) {
+                transportListener.init(configctx,trsIn);
                 transportListener.start();
             }
             startedTranports.put(trsIn.getName().getLocalPart(), transportListener);
         }
+    }
+
+    public boolean isListenerRunning(String transportName) {
+        return startedTranports.get(transportName) != null;
     }
 
     public boolean isStopped() {
