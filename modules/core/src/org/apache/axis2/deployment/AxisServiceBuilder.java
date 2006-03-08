@@ -254,7 +254,8 @@ public class AxisServiceBuilder {
 
                 PolicyInclude operationPolicyInclude = axisOperation
                         .getPolicyInclude();
-
+                operationPolicyInclude.setPolicyRegistry(policyInclude.getPolicyRegistry());
+                
                 List operationPolicies;
 
                 // wsdl:PortType -> wsdl:Operation
@@ -292,7 +293,8 @@ public class AxisServiceBuilder {
 
                 PolicyInclude inputPolicyInclue = axisInputMessage
                         .getPolicyInclude();
-
+                inputPolicyInclue.setPolicyRegistry(operationPolicyInclude.getPolicyRegistry());
+                
                 List inputMessagePolicies;
 
                 // wsdl:PortType -> wsdl:Operation -> wsdl:Input
@@ -348,7 +350,7 @@ public class AxisServiceBuilder {
 
                     PolicyInclude outputPolicyInclude = axisOutputMessage
                             .getPolicyInclude();
-
+                    outputPolicyInclude.setPolicyRegistry(operationPolicyInclude.getPolicyRegistry());
                     List outputPolicies;
 
                     // wsdl:Output
