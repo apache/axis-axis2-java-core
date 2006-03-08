@@ -30,17 +30,15 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageReceiver {
     protected Log log = LogFactory.getLog(getClass());
 
-    public abstract void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage,
-                                             ServerCallback callback)
-            throws AxisFault;
+    public abstract void invokeBusinessLogic(MessageContext inMessage,
+                                             MessageContext outMessage) throws AxisFault;
 
-    public final void receive(final MessageContext messageCtx) throws AxisFault {
+    public final void receive(final MessageContext messageCtx) {
         final ServerCallback callback = new ServerCallback() {
             public void handleResult(MessageContext result) throws AxisFault {
                 AxisEngine engine =
                         new AxisEngine(messageCtx.getOperationContext().getServiceContext()
                                 .getConfigurationContext());
-
                 engine.send(result);
             }
 
@@ -58,14 +56,18 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                 try {
                     MessageContext newmsgCtx = Utils.createOutMessageContext(messageCtx);
                     newmsgCtx.getOperationContext().addMessageContext(newmsgCtx);
-
-                    invokeBusinessLogic(messageCtx, newmsgCtx, callback);
+                    invokeBusinessLogic(messageCtx, newmsgCtx);
+                    callback.handleResult(newmsgCtx);
                 } catch (AxisFault e) {
+                    try {
+                        callback.handleFault(e);
+                    } catch (AxisFault axisFault) {
+                        log.error(e);
+                    }
                     log.error(e);
                 }
             }
         };
-
         messageCtx.getConfigurationContext().getThreadPool().execute(theadedTask);
     }
 }
