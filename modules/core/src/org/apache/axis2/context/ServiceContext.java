@@ -31,15 +31,13 @@ import javax.xml.namespace.QName;
  */
 public class ServiceContext extends AbstractContext {
 
+    public static final String SERVICE_CLASS = "serviceClass";
     private EndpointReference targetEPR;
     private EndpointReference myEPR;
 
     private transient AxisService axisService;
     private String serviceInstanceID;
     private ServiceGroupContext serviceGroupContext;
-
-    //to store service implementation class , to handler session
-    private Object serviceImpl;
 
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
@@ -80,14 +78,6 @@ public class ServiceContext extends AbstractContext {
 
         // todo we do not need this , this ID should equal to serviceName
         this.serviceInstanceID = serviceInstanceID;
-    }
-
-    public Object getServiceImpl() {
-        return serviceImpl;
-    }
-
-    public void setServiceImpl(Object serviceImpl) {
-        this.serviceImpl = serviceImpl;
     }
 
     public ServiceGroupContext getServiceGroupContext() {

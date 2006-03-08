@@ -10,7 +10,7 @@
         </handler>
         <handler name="Handler3"
                  class="org.apache.axis2.deployment.SpeakingHandler">
-            <order phase="userphase1"/>
+            <order phase="OperationInPhase"/>
         </handler>
     </inflow>
 

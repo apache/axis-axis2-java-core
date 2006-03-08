@@ -37,7 +37,7 @@ public class WSDLClientTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        service = org.apache.axis2.deployment.util.Utils.createService(Echo.class.getName(),
+        service = AxisService.createService(Echo.class.getName(),
                 UtilServer.getConfigurationContext().getAxisConfiguration());
         service.setName(serviceName.getLocalPart());
         UtilServer.deployService(service);

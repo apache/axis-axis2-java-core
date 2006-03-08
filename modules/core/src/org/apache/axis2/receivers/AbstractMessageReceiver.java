@@ -80,14 +80,14 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
         ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();
-        Object serviceimpl = serviceContext.getServiceImpl();
+        Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_CLASS);
         if (serviceimpl != null) {
             // since service impl is there in service context , take that from there
             return serviceimpl;
         } else {
             // create a new service impl class for that service
             serviceimpl = makeNewServiceObject(msgContext);
-            serviceContext.setServiceImpl(serviceimpl);
+            serviceContext.setProperty(ServiceContext.SERVICE_CLASS, serviceimpl);
             return serviceimpl;
         }
     }

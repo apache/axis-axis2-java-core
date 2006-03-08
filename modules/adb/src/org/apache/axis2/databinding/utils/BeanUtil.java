@@ -314,11 +314,10 @@ public class BeanUtil {
         //to handle multirefs
         //have to check the instanceof
         MultirefHelper helper = new MultirefHelper((OMElement) response.getParent());
-        boolean hasRef = false;
         //to support array . if the parameter type is array , then all the omelemnts with that paramtre name
         // has to  get and add to the list
         Class classType;
-        String currentLocalName = "";
+        String currentLocalName;
         while (parts.hasNext() && count < length) {
             Object objValue = parts.next();
             OMElement omElement;
@@ -332,42 +331,7 @@ public class BeanUtil {
             if (classType.isArray()) {
                 ArrayList valueList = new ArrayList();
                 Class arrayClassType = classType.getComponentType();
-
-                OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
-                String ref = null;
-                if (omatribute != null) {
-                    hasRef = true;
-                    ref = MultirefHelper.getAttvalue(omatribute);
-                }
-
-                if (OMElement.class.isAssignableFrom(arrayClassType)) {
-                    if (hasRef) {
-                        OMElement elemnt = helper.getOMElement(ref);
-                        if (elemnt == null) {
-                            valueList.add(helper.processOMElementRef(ref));
-                        } else {
-                            valueList.add(omElement);
-                        }
-                    } else
-                        valueList.add(omElement);
-                } else {
-                    if (hasRef) {
-                        if (helper.getObject(ref) != null) {
-                            valueList.add(helper.getObject(ref));
-                        } else {
-                            valueList.add(helper.processRef(classType, ref));
-                        }
-                    } else {
-                        if (SimpleTypeMapper.isSimpleType(arrayClassType)) {
-                            valueList.add(SimpleTypeMapper.getSimpleTypeObject(arrayClassType, omElement));
-                        } else if (SimpleTypeMapper.isArrayList(arrayClassType)) {
-                            valueList.add(SimpleTypeMapper.getArrayList(omElement));
-                        } else {
-                            valueList.add(BeanUtil.deserialize(arrayClassType, omElement));
-                        }
-                    }
-                }
-
+                valueList.add(processObject(omElement, arrayClassType, helper));
                 while (parts.hasNext()) {
                     objValue = parts.next();
                     if (objValue instanceof OMElement) {
@@ -375,90 +339,62 @@ public class BeanUtil {
                     } else {
                         continue;
                     }
-
                     if (!currentLocalName.equals(omElement.getLocalName())) {
                         break;
                     }
-                    omatribute = MultirefHelper.processRefAtt(omElement);
-                    ref = null;
-                    if (omatribute != null) {
-                        hasRef = true;
-                        ref = MultirefHelper.getAttvalue(omatribute);
-                    }
-
-                    if (OMElement.class.isAssignableFrom(arrayClassType)) {
-                        if (hasRef) {
-                            OMElement elemnt = helper.getOMElement(ref);
-                            if (elemnt == null) {
-                                valueList.add(helper.processOMElementRef(ref));
-                            } else {
-                                valueList.add(omElement);
-                            }
-                        } else
-                            valueList.add(omElement);
-                    } else {
-                        if (hasRef) {
-                            if (helper.getObject(ref) != null) {
-                                valueList.add(helper.getObject(ref));
-                            } else {
-                                valueList.add(helper.processRef(classType, ref));
-                            }
-                        } else {
-                            if (SimpleTypeMapper.isSimpleType(arrayClassType)) {
-                                valueList.add(SimpleTypeMapper.getSimpleTypeObject(arrayClassType, omElement));
-                            } else if (SimpleTypeMapper.isArrayList(arrayClassType)) {
-                                valueList.add(SimpleTypeMapper.getArrayList(omElement));
-                            } else {
-                                valueList.add(BeanUtil.deserialize(arrayClassType, omElement));
-                            }
-                        }
-                    }
-
+                    valueList.add(processObject(omElement, arrayClassType,
+                            helper));
                 }
-                retObjs[count] = ConverterUtil.convertToArray(arrayClassType, valueList);
+                retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
+                        valueList);
             } else {
                 //handling refs
-                OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
-                String ref = null;
-                if (omatribute != null) {
-                    hasRef = true;
-                    ref = MultirefHelper.getAttvalue(omatribute);
-                }
-
-                if (OMElement.class.isAssignableFrom(classType)) {
-                    if (hasRef) {
-                        OMElement elemnt = helper.getOMElement(ref);
-                        if (elemnt == null) {
-                            retObjs[count] = helper.processOMElementRef(ref);
-                        } else {
-                            retObjs[count] = omElement;
-                        }
-                    } else
-                        retObjs[count] = omElement;
-                } else {
-                    if (hasRef) {
-                        if (helper.getObject(ref) != null) {
-                            retObjs[count] = helper.getObject(ref);
-                        } else {
-                            retObjs[count] = helper.processRef(classType, ref);
-                        }
-                    } else {
-                        if (SimpleTypeMapper.isSimpleType(classType)) {
-                            retObjs[count] = SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
-                        } else if (SimpleTypeMapper.isArrayList(classType)) {
-                            retObjs[count] = SimpleTypeMapper.getArrayList(omElement);
-                        } else {
-                            retObjs[count] = BeanUtil.deserialize(classType, omElement);
-                        }
-                    }
-                }
+                retObjs[count] = processObject(omElement, classType, helper);
             }
-            hasRef = false;
             count ++;
         }
 
         helper.clean();
         return retObjs;
+    }
+
+    public static Object processObject(OMElement omElement,
+                                       Class classType,
+                                       MultirefHelper helper) throws AxisFault {
+        boolean hasRef = false;
+        OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
+        String ref = null;
+        if (omatribute != null) {
+            hasRef = true;
+            ref = MultirefHelper.getAttvalue(omatribute);
+        }
+        if (OMElement.class.isAssignableFrom(classType)) {
+            if (hasRef) {
+                OMElement elemnt = helper.getOMElement(ref);
+                if (elemnt == null) {
+                    return helper.processOMElementRef(ref);
+                } else {
+                    return omElement;
+                }
+            } else
+                return omElement;
+        } else {
+            if (hasRef) {
+                if (helper.getObject(ref) != null) {
+                    return helper.getObject(ref);
+                } else {
+                    return helper.processRef(classType, ref);
+                }
+            } else {
+                if (SimpleTypeMapper.isSimpleType(classType)) {
+                    return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+                } else if (SimpleTypeMapper.isArrayList(classType)) {
+                    return SimpleTypeMapper.getArrayList(omElement);
+                } else {
+                    return BeanUtil.deserialize(classType, omElement);
+                }
+            }
+        }
     }
 
     public static OMElement getOMElement(QName opName, Object [] args, String partName) {
@@ -473,36 +409,64 @@ public class BeanUtil {
             //todo if the request parameter has name other than argi (0<i<n) , there should be a
             //way to do that , to solve that problem we need to have RPCRequestParameter
             //note that The value of request parameter can either be simple type or JavaBean
-            if (SimpleTypeMapper.isSimpleType(arg)) {
-                if (partName == null) {
-                    objects.add("arg" + argCount);
-                } else {
-                    objects.add(partName);
-                }
-                objects.add(arg.toString());
-            } else {
-                if (partName == null) {
-                    objects.add(new QName("arg" + argCount));
-                } else {
-                    objects.add(new QName(partName));
-                }
-                if (arg instanceof OMElement) {
-                    OMFactory fac = OMAbstractFactory.getOMFactory();
-                    OMElement wrappingElement;
-                    if (partName == null) {
-                        wrappingElement = fac.createOMElement("arg" + argCount, null);
-                        wrappingElement.addChild((OMElement) arg);
+            if (arg instanceof Object[]) {
+                Object array [] = (Object[]) arg;
+                for (int j = 0; j < array.length; j++) {
+                    Object o = array[j];
+                    if (SimpleTypeMapper.isSimpleType(o)) {
+                        objects.add("item" + argCount);
+                        objects.add(o.toString());
                     } else {
-                        wrappingElement = fac.createOMElement(partName, null);
-                        wrappingElement.addChild((OMElement) arg);
+                        objects.add(new QName("item" + argCount));
+                        if (o instanceof OMElement) {
+                            OMFactory fac = OMAbstractFactory.getOMFactory();
+                            OMElement wrappingElement;
+                            if (partName == null) {
+                                wrappingElement = fac.createOMElement("item" + argCount, null);
+                                wrappingElement.addChild((OMElement) o);
+                            } else {
+                                wrappingElement = fac.createOMElement(partName, null);
+                                wrappingElement.addChild((OMElement) o);
+                            }
+                            objects.add(wrappingElement);
+                        } else {
+                            objects.add(o);
+                        }
                     }
-                    objects.add(wrappingElement);
+                }
+            } else {
+                if (SimpleTypeMapper.isSimpleType(arg)) {
+                    if (partName == null) {
+                        objects.add("arg" + argCount);
+                    } else {
+                        objects.add(partName);
+                    }
+                    objects.add(arg.toString());
                 } else {
-                    objects.add(arg);
+                    if (partName == null) {
+                        objects.add(new QName("arg" + argCount));
+                    } else {
+                        objects.add(new QName(partName));
+                    }
+                    if (arg instanceof OMElement) {
+                        OMFactory fac = OMAbstractFactory.getOMFactory();
+                        OMElement wrappingElement;
+                        if (partName == null) {
+                            wrappingElement = fac.createOMElement("arg" + argCount, null);
+                            wrappingElement.addChild((OMElement) arg);
+                        } else {
+                            wrappingElement = fac.createOMElement(partName, null);
+                            wrappingElement.addChild((OMElement) arg);
+                        }
+                        objects.add(wrappingElement);
+                    } else {
+                        objects.add(arg);
+                    }
                 }
             }
             argCount ++;
         }
+
         XMLStreamReader xr = ADBPullParser.createPullParser(opName, objects.toArray(), null);
         StAXOMBuilder stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(

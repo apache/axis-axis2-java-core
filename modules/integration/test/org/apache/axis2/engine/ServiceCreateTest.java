@@ -50,7 +50,7 @@ public class ServiceCreateTest extends TestCase {
 
     public void testServiceCreate() throws AxisFault {
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
-        AxisService service = Utils.createService("org.apache.axis2.engine.MyService", axisConfig);
+        AxisService service = AxisService.createService("org.apache.axis2.engine.MyService", axisConfig);
         assertNotNull(service);
         axisConfig.addService(service);
         assertEquals("MyService", service.getName());

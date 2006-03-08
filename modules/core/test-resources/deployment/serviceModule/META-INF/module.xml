@@ -16,13 +16,13 @@
 
     <Outfaultflow>
         <handler name="h4" class="org.apache.axis2.ModuleHandler1">
-            <order phase="userphase1"/>
+            <order phase="OperationOutFaultPhase"/>
         </handler>
     </Outfaultflow>
 
     <INfaultflow>
         <handler name="h5" class="org.apache.axis2.ModuleHandler1">
-            <order phase="userphase1"/>
+            <order phase="OperationInFaultPhase"/>
         </handler>
     </INfaultflow>
 </module>

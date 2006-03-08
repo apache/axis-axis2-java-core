@@ -446,7 +446,6 @@ public class RPCCallTest extends TestCase {
         Object [] response = sender.invokeBlocking(operationName, args.toArray(), ret.toArray());
         assertEquals(((Integer) response[0]).intValue(), 10);
         assertEquals(response[1], "foo");
-//        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
     }
 
     public void testStringArray() throws AxisFault {
@@ -461,29 +460,15 @@ public class RPCCallTest extends TestCase {
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
-        String str = "<req:handleStringArray xmlns:req=\"http://org.apache.axis2/xsd\">\n" +
-                "    <item0>abc</item0>\n" +
-                "    <item0>def</item0>\n" +
-                "    <item0>ghi</item0>\n" +
-                "    <item0>klm</item0>\n" +
-                "</req:handleStringArray>";
-        StAXOMBuilder staxOMBuilder;
-        try {
-            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
-                    ByteArrayInputStream(str.getBytes()));
-            OMFactory fac = OMAbstractFactory.getOMFactory();
-
-            staxOMBuilder = new
-                    StAXOMBuilder(fac, xmlReader);
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw new AxisFault(factoryConfigurationError);
-        }
-        ;
-
-        OMElement result = sender.sendReceive(staxOMBuilder.getDocumentElement());
-        assertEquals(result.getFirstElement().getText(), "true");
+        ArrayList args = new ArrayList();
+        String [] values = new String[]{"abc", "cde", "efg"};
+        args.add(values);
+        ArrayList ret = new ArrayList();
+        ret.add(Boolean.class);
+        Object [] objs = sender.invokeBlocking(operationName, args.toArray(),
+                ret.toArray());
+        assertNotNull(objs);
+        assertEquals(Boolean.TRUE, Boolean.valueOf(objs[0].toString()));
     }
 
     public void testmulReturn() throws AxisFault {
