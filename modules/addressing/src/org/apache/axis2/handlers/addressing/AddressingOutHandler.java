@@ -280,7 +280,7 @@ public class AddressingOutHandler extends AddressingHandler {
                 SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
                 toHeaderBlock.setText(address);
             }
-            processReferenceInformation(referenceParameters, envelope.getHeader());
+            processToEPRReferenceInformation(referenceParameters, envelope.getHeader());
         }
     }
 
@@ -366,6 +366,24 @@ public class AddressingOutHandler extends AddressingHandler {
      * @param referenceInformation
      */
     private void processReferenceInformation(Map referenceInformation, OMElement parent) {
+
+        boolean processingWSAFinal = Final.WSA_NAMESPACE.equals(addressingNamespace);
+        if (referenceInformation != null && parent != null) {
+            Iterator iterator = referenceInformation.keySet().iterator();
+            while (iterator.hasNext()) {
+                QName key = (QName) iterator.next();
+                OMElement omElement = (OMElement) referenceInformation.get(key);
+                parent.addChild(omElement);
+            }
+        }
+    }
+
+    /**
+     * This will add reference parameters and/or reference properties in to the message
+     *
+     * @param referenceInformation
+     */
+    private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent) {
 
         boolean processingWSAFinal = Final.WSA_NAMESPACE.equals(addressingNamespace);
         if (referenceInformation != null && parent != null) {
