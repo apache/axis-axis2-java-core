@@ -63,23 +63,23 @@ demonstrates the usage of the above, using the "echo"operation of the
 <pre>public class RESTClient {
 
     private static String toEpr = "http://localhost:8080/axis2/services/MyService";
-
+    
     public static void main(String[] args) throws AxisFault {
 
         Options options = new Options();
         options.setTo(new EndpointReference(toEpr));
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
-        Call call = new Call();
-        call.setClientOptions(options);
-        
-        OMElement result = call.invokeBlocking("echo", getPayload());
+        ServiceClient sender = new ServiceClient();
+        sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        sender.setOptions(options);
+        OMElement result = sender.sendReceive(getPayload());
 
         try {
             XMLStreamWriter writer = XMLOutputFactory.newInstance()
-                   .createXMLStreamWriter(System.out);
+                    .createXMLStreamWriter(System.out);
             result.serialize(writer);
             writer.flush();
         } catch (XMLStreamException e) {
@@ -88,7 +88,6 @@ demonstrates the usage of the above, using the "echo"operation of the
             e.printStackTrace();
         }
     }
-
     private static OMElement getPayload() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace(

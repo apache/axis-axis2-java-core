@@ -1,6 +1,6 @@
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="">
+  <meta http-equiv="content-type" content="">
   <title></title>
 </head>
 
@@ -37,10 +37,10 @@ read any further.</p>
 
 <p>Broadly speaking a transport inside Axis2 can be classified as a way of
 getting a messages that arrive though some channel into the Axis2 engine. The
-core of Axis2 is transport independent. All data that is transport
-specific is striped out of the incoming message and inserted into the
-MessageContext and on the outgoing message all transport specific information
-like headers are added and sent.</p>
+core of Axis2 is transport independent. All data that is transport specific
+is striped out of the incoming message and inserted into the MessageContext
+and on the outgoing message all transport specific information like headers
+are added and sent.</p>
 
 <p>To write your own transport you will need to primarily write two classes,
 one is the TransportSender and the other is the TransportReceiver. To
@@ -70,22 +70,23 @@ a configuration context. The following code fragment will do this. This
 should ideally be only done once for the lifetime of the Transport
 receiver.</p>
 
-<p><source>
+<p><source></p>
 <pre>try {
         //Create a factory 
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         //Use the factory and an Axis2 repository to create a new Configuration Context
-        configurationContext = factory.buildConfigurationContext(repository_directory);
+        configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repository_directory, 
+axis2xmllocation);
 } catch (Exception e) {
         log.info(e.getMessage());
 }</pre>
 </source>
-</p>
 <p>Now we need some kind of a listener to listen to the requests that come
 in. This you will need to implement according to the transport that you are
 trying to build. After a message is received at the receiver you can use the
 following code to process the request and then forward the message context to
-the engine using thing the engine.receive(msgContext) method.{Following code snippet extracted from MailListener as an example}</p>
+the engine using thing the engine.receive(msgContext) method.{Following code
+snippet extracted from MailListener as an example}</p>
 <source><pre>AxisEngine engine = new AxisEngine(configurationContext);
 MessageContext msgContext = null;
 // create and initialize a message context
