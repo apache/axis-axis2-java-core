@@ -35,11 +35,21 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.soap.*;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPConstants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.ws.commons.soap.SOAPFaultCode;
+import org.apache.ws.commons.soap.SOAPFaultDetail;
+import org.apache.ws.commons.soap.SOAPFaultReason;
+import org.apache.ws.commons.soap.SOAPHeaderBlock;
+import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -153,7 +163,8 @@ public class AxisEngine {
                 processingContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
 
         // register the fault message context
-        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {
+        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
+        {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
         }
 
@@ -165,10 +176,20 @@ public class AxisEngine {
             faultContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInfoForHeaders);
         }
 
+        // if the exception is due to a problem in the faultTo header itself, we can not use those
+        // fault informatio to send the error. Try to send using replyTo, leave it to transport
+        boolean doNotSendFaultUsingFaultTo = false;
+        if (faultInfoForHeaders != null) {
+            String problemHeaderName = (String) ((Map) faultInfoForHeaders).get(AddressingConstants.Final.FAULT_HEADER_PROB_HEADER_QNAME);
+            doNotSendFaultUsingFaultTo = (problemHeaderName != null && (AddressingConstants.WSA_DEFAULT_PREFIX + ":" + AddressingConstants.WSA_FAULT_TO).equals(problemHeaderName));
+        }
+
         EndpointReference faultTo = processingContext.getFaultTo();
-        if (faultTo != null) {
+        if (faultTo != null && !doNotSendFaultUsingFaultTo) {
             faultContext.setTo(processingContext.getFaultTo());
-        } else if (processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
+        } else
+        if (!doNotSendFaultUsingFaultTo && processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null)
+        {
             OMElement faultToElement = processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo"));
             faultTo = new EndpointReference("");
             faultTo.fromOM(faultToElement);
@@ -278,7 +299,9 @@ public class AxisEngine {
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
-        } else if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault)) {
+        } else
+        if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
+        {
             QName faultCodeQName = ((AxisFault) exception).getFaultCode();
             if (faultCodeQName != null) {
                 if (faultCodeQName.getLocalPart().indexOf(":") == -1) {
@@ -308,7 +331,9 @@ public class AxisEngine {
             message = fault.getReason().getSOAPText().getText();
         } else if (soapException != null) {
             message = soapException.getMessage();
-        } else if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault)) {
+        } else
+        if (((exception = e) instanceof AxisFault || (exception = e.getCause()) instanceof AxisFault))
+        {
             message = ((AxisFault) exception).getReason();
             message = message != null && "".equals(message) ? message : e.getMessage();
 
