@@ -21,6 +21,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
 
+import java.io.File;
+import java.util.Hashtable;
+import java.util.Set;
+import java.util.Iterator;
+
 public class InvalidServiceTest extends TestCase {
     /**
      * This is used to test whether service specific module  try to add handlers to system pre defined phases
@@ -30,16 +35,21 @@ public class InvalidServiceTest extends TestCase {
 
     public void testInvalidService() {
         try {
-            String filename = "./target/test-resources/InvalidDeployment";
-            er =ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
+            String repo = "target/test-resources/InvalidDeployment";
+            er =ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,null)
                     .getAxisConfiguration();
-            String msg = (String) er.getFaultyServices().get("invalidService");
+
+            String fileName = System.getProperty("user.dir") +
+                              File.separator + repo + File.separator +
+                              "services" + File.separator + "invalidService.jar";
+            String msg = (String) er.getFaultyServices().get(fileName);
             if (msg == null || "".equals(msg)) {
                 fail("this must failed gracefully with AxisFault ervice specifi module can not" +
-                        "refer system pre defined phases");
+                     "refer system pre defined phases");
             }
         } catch (AxisFault e) {
-            return;
+            e.printStackTrace();
+            fail("Unexpected Exception : " + e);
         }
     }
 }
