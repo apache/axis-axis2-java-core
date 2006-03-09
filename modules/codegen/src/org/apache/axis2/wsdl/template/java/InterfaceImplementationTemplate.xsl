@@ -520,8 +520,7 @@
 			.merge(getPolicyFromString(policyString2));
 	}
 	
-	// /////////////////////////////////////////////////////////////////
-	
+
 	private java.util.ArrayList getModules(java.util.List termsList) {
 		java.util.ArrayList arrayList = new java.util.ArrayList();
 		java.util.Iterator iterator = termsList.iterator();
@@ -576,30 +575,15 @@
 		}
 	}
 
-	
-	////////////////////////////////////////////////////////////////////////
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	</xsl:if>
 	
-	///////////////////////////////////////////////////////////////////////
-	
-	
-	
-		private javax.xml.namespace.QName[] opNameArray;
-		
-		
+    private javax.xml.namespace.QName[] opNameArray = null;
 	private boolean optimizeContent(javax.xml.namespace.QName opName) {
-		if (opNameArray == null) {
+        <xsl:if test="stubMethods">
+            setOpNameArray();
+        </xsl:if>
+
+        if (opNameArray == null) {
 			return false;
 		}
 		for (int i = 0; i &lt; opNameArray.length; i++) {
@@ -609,15 +593,8 @@
 		}
 		return false;
 	}
-	
-	
-	
-	////////////////////////////////////////////////////////////////////////
-
-
-        //<xsl:apply-templates/>
-
-        }
+    //<xsl:apply-templates/>
+   }
 
 
 

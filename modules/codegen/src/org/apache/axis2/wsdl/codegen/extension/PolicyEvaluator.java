@@ -71,23 +71,13 @@ public class PolicyEvaluator implements CodeGenExtension {
 		this.configuration = configuration;
 		util = new PolicyAttachmentUtil(configuration.getWom());
         
-
-        //////////////////////////////////////////////////////////////////
-       
        // adding default PolicyExtensions
        ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization", new MTOMPolicyExtension());
        ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding", new EncodePolicyExtension());
-       
-       //////////////////////////////////////////////////////////////////
 
-
+       //set the policy handling template 
        configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
-       
-       
-       
-       ////////////////////////////////////////////////////////////////////
-       
-       
+
        
 		String repository = configuration.getRepositoryPath();
         

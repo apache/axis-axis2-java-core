@@ -33,15 +33,23 @@
 		<xsl:variable name="optimized">
 			<xsl:value-of select="//optimizeContent"/>
 		</xsl:variable>
-				
-		<xsl:if test="$optimized">
-			opNameArray = {
+
+       <xsl:choose>
+           <xsl:when test="$optimized">
+            private void setOpNameArray(){
+            opNameArray = new javax.xml.namespace.QName[] {
 			<xsl:for-each select="optimizeContent/opName">
 				<xsl:if test="position()>1">,
 				</xsl:if>new javax.xml.namespace.QName("<xsl:value-of select="@ns-url"/>","<xsl:value-of select="@localName"/>")
 			</xsl:for-each>
 			};
-		</xsl:if>		
-		
+           }
+           </xsl:when>
+           <xsl:otherwise>
+            private void setOpNameArray(){
+            opNameArray = null;
+            }
+           </xsl:otherwise>
+       </xsl:choose>
 </xsl:template>
 </xsl:stylesheet>
