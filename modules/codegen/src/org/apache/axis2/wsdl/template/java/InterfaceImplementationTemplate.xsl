@@ -9,6 +9,7 @@
      -->
     <xsl:include href="externalTemplate"/>
     
+    
     <xsl:include href="policyExtensionTemplate"/>
 
     <xsl:template match="/class">
@@ -173,6 +174,11 @@
             <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
 
             <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
+	    
+	    <!-- MTOM -->
+	    <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
+	    <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
+	    <!-- MTOM -->
 
             <!-- Code generation for the in-out mep -->
             <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-out'">
@@ -216,18 +222,18 @@
                                     <xsl:for-each select="input/param[@location='body']">
                                         <xsl:choose>
                                             <xsl:when test="@type!=''">
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
                                             </xsl:when>
                                             <xsl:otherwise>
                                                  env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
                                             </xsl:otherwise>
                                         </xsl:choose>
 
-                                    </xsl:for-each>
+                                    </xsl:for-each>	
                                     <xsl:for-each select="input/param[@location='header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -330,7 +336,7 @@
                                     <xsl:for-each select="input/param[@location='body']">
                                         <xsl:choose>
                                             <xsl:when test="@type!=''">
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>);
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
                                             </xsl:when>
                                             <xsl:otherwise>
                                                  env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
@@ -340,7 +346,7 @@
                                     <xsl:for-each select="input/param[@location='header']">
                                          // add the headers only if they are not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>));
+                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -442,7 +448,7 @@
                             <xsl:when test="$style='doc'">
                                 <!-- for the doc lit case there can be only one element. So take the first element -->
                                 //Style is Doc.
-                                env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>);
+                                env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
@@ -574,7 +580,39 @@
 	////////////////////////////////////////////////////////////////////////
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	</xsl:if>
+	
+	///////////////////////////////////////////////////////////////////////
+	
+	
+	
+		private javax.xml.namespace.QName[] opNameArray;
+		
+		
+	private boolean optimizeContent(javax.xml.namespace.QName opName) {
+		if (opNameArray == null) {
+			return false;
+		}
+		for (int i = 0; i &lt; opNameArray.length; i++) {
+			if (opName.equals(opNameArray[i])) {
+				return true;   
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	////////////////////////////////////////////////////////////////////////
 
 
         //<xsl:apply-templates/>

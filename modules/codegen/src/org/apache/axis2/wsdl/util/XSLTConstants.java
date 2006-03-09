@@ -20,6 +20,7 @@ package org.apache.axis2.wsdl.util;
 public interface XSLTConstants {
 
      String BASE_64_PROPERTY_KEY = "base64map";
+     String PLAIN_BASE_64_PROPERTY_KEY = "plainbase64map";
 
     String EXTERNAL_TEMPLATE_PROPERTY_KEY = "externalTemplate";
     String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY = "databindsupporter";

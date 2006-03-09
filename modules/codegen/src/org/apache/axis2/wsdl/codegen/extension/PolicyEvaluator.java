@@ -29,10 +29,11 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.modules.ModulePolicyExtension;
+import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.ws.policy.AndCompositeAssertion;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
@@ -55,7 +56,9 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 	CodeGenConfiguration configuration;
 
-	HashMap ns2modules = new HashMap();
+//HashMap ns2modules = new HashMap();
+	
+	HashMap ns2Exts = new HashMap();
 
 	PolicyAttachmentUtil util;
 
@@ -67,17 +70,35 @@ public class PolicyEvaluator implements CodeGenExtension {
 	public void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;
 		util = new PolicyAttachmentUtil(configuration.getWom());
+        
 
+        //////////////////////////////////////////////////////////////////
+       
+       // adding default PolicyExtensions
+       ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization", new MTOMPolicyExtension());
+       ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding", new EncodePolicyExtension());
+       
+       //////////////////////////////////////////////////////////////////
+
+
+       configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
+       
+       
+       
+       ////////////////////////////////////////////////////////////////////
+       
+       
+       
 		String repository = configuration.getRepositoryPath();
-
+        
 		if (repository == null) {
-			System.err.println("Warning: repository is not specified");
-			System.err.println("policy will not be supported");
 			return;
 		}
 
 
 		try {
+            
+           
 			ConfigurationContext configurationCtx = ConfigurationContextFactory
 					.createConfigurationContextFromFileSystem(repository, null);
 			AxisConfiguration axisConfiguration = configurationCtx
@@ -85,15 +106,23 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 			for (Iterator iterator = axisConfiguration.getModules().values()
 					.iterator(); iterator.hasNext();) {
-				AxisModule axisModule = (AxisModule) iterator.next();
+		
+                AxisModule axisModule = (AxisModule) iterator.next();
 				String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 
 				if (namespaces == null) {
 					continue;
 				}
+                
+                Module module = axisModule.getModule();
+                if (!(module instanceof ModulePolicyExtension)) {
+                    continue;
+                }
+                
+                PolicyExtension ext = ((ModulePolicyExtension) module).getPolicyExtension();
 
 				for (int i = 0; i < namespaces.length; i++) {
-					ns2modules.put(namespaces[i], axisModule);
+					ns2Exts.put(namespaces[i], ext);
 				}
 			}
 
@@ -102,16 +131,13 @@ public class PolicyEvaluator implements CodeGenExtension {
 			System.err
 					.println("cannot create repository : policy will not be supported");
 		}
-
-		//
-		configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
 	}
 
 	public void engage() {
-		if (ns2modules.isEmpty()) {
-			System.err.println("Any policy supported module not found");
-			return;
-		}
+        
+        // TODO XSLTConstants.BASE_64_PROPERTY_KEY
+        
+        
 		WSDLDescription womDescription = configuration.getWom();
 		String serviceName = configuration.getServiceName();
 
@@ -161,7 +187,7 @@ public class PolicyEvaluator implements CodeGenExtension {
 			for (Iterator iterator = wsdlInterface.getOperations().values()
 					.iterator(); iterator.hasNext();) {
 				WSDLOperation wsdlOperation = (WSDLOperation) iterator.next();
-				Policy policy = util.getOperationPolicy(wsdlEndpoint.getName(),
+				Policy policy = util.getPolicyForOperation(wsdlEndpoint.getName(),
 						wsdlOperation.getName());
 
 				if (policy != null) {
@@ -190,6 +216,7 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 	private void processPolicies(Document document, Element rootElement,
 			Policy policy, WSDLEndpoint wsdlEndpoint, WSDLOperation operation) {
+        
 		if (!policy.isNormalized()) {
 			policy = (Policy) policy.normalize();
 		}
@@ -225,25 +252,15 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
 			String namespace = (String) iterator.next();
-			AxisModule axisModule = (AxisModule) ns2modules.get(namespace);
+            PolicyExtension policyExtension = (PolicyExtension) ns2Exts.get(namespace);
+            
+//			AxisModule axisModule = (AxisModule) ns2modules.get(namespace);
 
-			if (axisModule == null) {
-				System.err.println("cannot find a module to process "
+			if (policyExtension == null) {
+				System.err.println("cannot find a PolicyExtension to process "
 						+ namespace + "type assertions");
 				continue;
 			}
-
-			Module module = axisModule.getModule();
-
-			if (!(module instanceof ModulePolicyExtension)) {
-				System.err
-						.println(axisModule.getName()
-								+ " module doesnt provde a PolicyExtension to process policies");
-				continue;
-			}
-
-			PolicyExtension policyExtension = ((ModulePolicyExtension) module)
-					.getPolicyExtension();
 
 			Policy nPolicy = new Policy();
 			XorCompositeAssertion nXOR = new XorCompositeAssertion();
@@ -253,7 +270,8 @@ public class PolicyEvaluator implements CodeGenExtension {
 					.get(namespace);
 			nXOR.addTerm(nAND);
 
-			policyExtension.addMethodsToStub(document, rootElement, nPolicy);
+            QName operationName = operation.getName();
+			policyExtension.addMethodsToStub(document, rootElement, operationName, nPolicy);
 		}
 
 		configuration.putProperty("stubMethods", rootElement);
@@ -269,4 +287,35 @@ public class PolicyEvaluator implements CodeGenExtension {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	class MTOMPolicyExtension implements PolicyExtension {
+        
+        boolean setOnce = false;
+        
+		public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
+            
+            if (!setOnce) {
+                 Object plainBase64PropertyMap = configuration.getProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY);
+                 configuration.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY, plainBase64PropertyMap);
+                
+                 setOnce = true;
+            }
+                       
+            Element optimizeContent = document.createElement("optimizeContent");
+            Element opNameElement = document.createElement("opName");
+            
+            opNameElement.setAttribute("ns-url", operationName.getNamespaceURI());
+            opNameElement.setAttribute("localName", operationName.getLocalPart());
+            
+            optimizeContent.appendChild(opNameElement);
+            
+            element.appendChild(optimizeContent);
+		}
+	};
+    
+    class EncodePolicyExtension implements PolicyExtension {
+    	public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
+            // TODO implement encoding
+        }
+    }
 }

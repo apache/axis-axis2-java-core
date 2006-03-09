@@ -16,6 +16,8 @@
 
 package org.apache.axis2.modules;
 
+import javax.xml.namespace.QName;
+
 import org.apache.ws.policy.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,6 +27,6 @@ import org.w3c.dom.Element;
  * @author Sanka Samaranayake (sanka@apache.org)
  */
 public interface PolicyExtension {
-	public void addMethodsToStub(Document document, Element element, Policy policy);
+	public void addMethodsToStub(Document document, Element element, QName methodName,Policy policy);
 
 }

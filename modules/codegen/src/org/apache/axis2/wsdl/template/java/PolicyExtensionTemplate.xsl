@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="stubMethods">
-	
+
 		<xsl:if test="//createSequence">
 		/**
 		 * Starts a reliabel message sequence
@@ -29,6 +29,19 @@
 			_getServiceClient().getOptions().setProperty("END_RM_SEQUENCE", "true");
 		}
 		</xsl:if>
+		
+		<xsl:variable name="optimized">
+			<xsl:value-of select="//optimizeContent"/>
+		</xsl:variable>
+				
+		<xsl:if test="$optimized">
+			opNameArray = {
+			<xsl:for-each select="optimizeContent/opName">
+				<xsl:if test="position()>1">,
+				</xsl:if>new javax.xml.namespace.QName("<xsl:value-of select="@ns-url"/>","<xsl:value-of select="@localName"/>")
+			</xsl:for-each>
+			};
+		</xsl:if>		
 		
 </xsl:template>
 </xsl:stylesheet>

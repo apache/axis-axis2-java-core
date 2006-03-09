@@ -190,6 +190,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
             // prune the generated schema type system and add the list of base64 types
             FindBase64Types(sts);
+            findPlainBase64Types(sts);
 
             //get the schematypes and add the document types to the type mapper
             SchemaType[] schemaType = sts.documentTypes();
@@ -276,7 +277,43 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
         configuration.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY, base64ElementQNamesList);
     }
-
+    
+    private void findPlainBase64Types(SchemaTypeSystem sts) {
+        ArrayList allSeenTypes = new ArrayList();
+        
+        allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
+        allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
+        
+        ArrayList base64Types = new ArrayList();
+        
+        for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext(); ) {
+            SchemaType stype = (SchemaType) iterator.next();
+            findPlainBase64Types(stype, base64Types);
+        }
+        
+        configuration.putProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY, base64Types);
+    }
+    
+    private void findPlainBase64Types(SchemaType stype, ArrayList base64Types) {
+        
+        SchemaProperty[] elementProperties = stype.getElementProperties();
+        
+        for (int i = 0; i < elementProperties.length; i++) {
+            SchemaType schemaType = elementProperties[i].getType();
+            
+            if (schemaType.isPrimitiveType()) {
+                SchemaType primitiveType = schemaType.getPrimitiveType();
+            
+                if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
+                    base64Types.add(elementProperties[i].getName());
+                }
+                
+            } else {
+                findPlainBase64Types(schemaType, base64Types);                      
+            }  
+        }
+    }
+    
     /**
      * Loading the external schemas.
      *

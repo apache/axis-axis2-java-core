@@ -96,7 +96,7 @@
 
                     <xsl:choose>
                       <xsl:when test="$returntype!=''">
-                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>);
+                        envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false);
                       </xsl:when>
                       <xsl:otherwise>
                         envelope = getSOAPFactory(msgContext).getDefaultEnvelope();

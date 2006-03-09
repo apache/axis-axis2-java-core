@@ -16,24 +16,26 @@
 
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
-                private  org.apache.ws.commons.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                private  org.apache.ws.commons.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimzieContent){
                 org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder
                 (org.apache.ws.commons.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
                 org.apache.ws.commons.om.OMElement documentElement = builder.getDocumentElement();
 
-                <xsl:if test="$base64">
+		<xsl:if test="$base64">
+		if (optimzieContent) {
                          optimizeContent(documentElement,qNameArray);
+		}
                 </xsl:if>
 
                   ((org.apache.ws.commons.om.impl.OMNodeEx)documentElement).setParent(null);
                   return documentElement;
                 }
 
-                private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent){
                     org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     if (param != null){
-                        envelope.getBody().addChild(toOM(param));
+                        envelope.getBody().addChild(toOM(param, optimizeContent));
                     }
                     return envelope;
                 }
@@ -67,6 +69,7 @@
 
     <!-- Generate the base 64 optimize methods only if the base64 items are present -->    
    <xsl:if test="$base64">
+		
    private void optimizeContent(org.apache.ws.commons.om.OMElement element, javax.xml.namespace.QName[] qNames){
         for (int i = 0; i &lt; qNames.length; i++) {
             markElementsAsOptimized(qNames[i],element);
@@ -116,10 +119,10 @@
         }
 
         private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(
-            org.apache.ws.commons.soap.SOAPFactory factory, Object param) {
+            org.apache.ws.commons.soap.SOAPFactory factory, Object param, boolean optimizeContent) {
             org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
             if (param != null){
-                envelope.getBody().addChild(toOM(param));
+                envelope.getBody().addChild(toOM(param, optimizeContent));
             }
 
             return envelope;
@@ -191,7 +194,7 @@
                         }
                     }
 
-                    private  org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param){
+                    private  org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
                                     org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME),
@@ -244,7 +247,7 @@
                return param;
            }
 
-           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, org.apache.ws.commons.om.OMElement param){
+           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, org.apache.ws.commons.om.OMElement param, boolean optimizeContent){
                 org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                 envelope.getBody().addChild(param);
                 return envelope;
