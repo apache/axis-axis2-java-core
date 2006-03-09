@@ -99,7 +99,7 @@ public class AxisServiceBuilder {
     }
     
     public AxisServiceBuilder(boolean serverSide){
-    	this.serverSide = true;
+    	this.serverSide = serverSide;
     }
 
     public AxisService getAxisService(InputStream wsdlInputStream)
