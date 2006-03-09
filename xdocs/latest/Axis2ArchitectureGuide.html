@@ -291,7 +291,9 @@ flexibility would serve better in this instant.</p>
       </td>
     </tr>
     <tr>
-      <td width="112"><a name="messageContext"></a><p>Message Context</p>
+      <td width="112"><a name="messageContext"></a>
+
+        <p>Message Context</p>
       </td>
       <td width="371"><p>Holds all the information about the Message
         currently being executed.</p>
@@ -338,7 +340,8 @@ Pipe</i> would begin, the <i>Out Pipe</i> invokes the handlers and end with a
 Transport Sender that sends the SOAP message to the target endpoint. The SOAP
 message is received by a Transport Receiver at the target endpoint, which
 reads the SOAP message and starts the <i>In Pipe</i>. The <em>In Pipe</em>
-consists of handlers and ends with the <a href="#mr">Message Receiver</a>, which consumes the SOAP message.</p>
+consists of handlers and ends with the <a href="#mr">Message Receiver</a>,
+which consumes the SOAP message.</p>
 
 <p>Above explained processing happens for each and every SOAP message
 exchanged. After processing one message Axis2 may decide to create other SOAP
@@ -374,10 +377,11 @@ There are four special handlers defined in Axis2.
     URI information, SOAP action information, etc.,</li>
 </ol>
 <ul>
-  <li><a name="mr">Message Receiver - Consume the SOAP Message and run on the
-    Message Processing phase in the inflow</a></li>
+  <li><a name="mr">Message Receiver - Consume the SOAP Message And hands that
+    over to application , Message receiver is the last handler of the
+    in-pipe</a></li>
   <li><p>Transport Sender - Send the SOAP message to the SOAP endpoint the
-    message is destined to. Always runs on the</p>
+    message is destined to. Always runs as last handler in the out-pipe</p>
   </li>
 </ul>
 
@@ -390,21 +394,23 @@ are parsed and a</p>
 SOAP Message. Then the <i>In Pipe</i> is executed with the Message Context.
 
 <p>Let us see what happens at each phase of the execution. This process may
-happen either in the server or in the Client. There is a special case of
-using the Two-Way transport where the first four phases of the In-Phase most
-likely does nothing.</p>
+happen either in the server or in the Client. </p>
 <ol>
-  <li>Transport Phase - The handlers in the transport phase are taken from
-    the transport configuration associated and executed according to the
-    phase rules.</li>
-  <li>Pre-Dispatch Phase- handlers in this phase will be engaged globally
-    since the service is not found yet.</li>
+  <li>Transport Phase - The handlers are in the phase ment to be process
+    transport specific information such as validate incoming message by
+    looking at various transport headers, add data into message context etc..
+  </li>
+  <li>Pre-Dispatch Phase- The main functionality of the handlers are in this
+    phase is to populate message context in order to do the dispatching. As
+    an example processing of addressing headers happen in this phase , so by
+    looking at addressing headers it will find the name of the service and
+    operation.</li>
   <li>Dispatch Phase - The Dispatchers run in this phase and find the Service
     if the service is not found already. <br>
     The post condition of the dispatch phase work as follows; That checks
-    weather the service is found or not. If the service has not been found by
-    this point the execution will halt and send a "service not found
-  error".</li>
+    weather the service and operation are found or not. If the service or
+    operation has not been found by this point the execution will halt and
+    send a "service not found error".</li>
   <li>User Defined Phases - Users are allowed to engage their custom handlers
     here.</li>
   <li>Message Validation Phase - Once the user level execution has taken
@@ -450,9 +456,9 @@ SOAP Processing Model can be extended with handler or Modules.</p>
 <a name="extendingwithhandlers"></a>
 
 <h4>Extending the SOAP Processing Model with Handlers</h4>
-The handlers can specify the phase they need to be placed in. Furthermore
-they can specify their location inside a phase by providing phase rules.
-Phase rules will place a handler
+The handlers in a module can specify the phase they need to be placed in.
+Furthermore they can specify their location inside a phase by providing phase
+rules. Phase rules will place a handler
 <ol>
   <li>as the first handler in a phase.</li>
   <li>or as the last handler in a phase.</li>
@@ -562,8 +568,8 @@ Client API supports.</p>
 
 <p>The One-Way support is provided by the <code>fireAndForget</code> which
 provide by <code>ServiceClient</code> that provides a much simpler interface
-for the user. The Axis2 supports HTTP/SMTP and TCP transports. In the case of
-the HTTP transport the return channel is not used and the HTTP 202 OK is
+for the user. The Axis2 supports HTTP , SMTP and TCP transports. In the case
+of the HTTP transport the return channel is not used and the HTTP 202 OK is
 returned in the return Channel.</p>
 <a name="requestresponse"></a>
 
@@ -578,42 +584,40 @@ The Client API has four ways to configure a given Message Exchange</p>
     methods</li>
   <li>Sender transport - transport used to send the SOAP Message</li>
   <li>Listener transport - transport the Response is received</li>
-  <li>Use Separate Channel - determines whether the response is send over
-    a separate transport connection or not. This can be false only when
-    sender and listener transport is same and is a Two-Way transport.
-  </li>
+  <li>Use Separate Channel - determines whether the response is send over a
+    separate transport connection or not. This can be false only when sender
+    and listener transport is same and is a Two-Way transport.</li>
 </ol>
 
 <p>Depending on the values of the above four parameter, Axis2 behave
 differently.</p>
 <a name="bmTransports"></a>
+
 <h2>Transports</h2>
 
-<p>Axis2 has two basic constructs for transports, transport In Configuration
-and transport Out Configuration. These are accessed via the messages
-context.</p>
+<p>Axis2 has two basic constructs for transports, Transport Senders and
+Transport Receivers . These are accessed via the AxisConfiguration.</p>
 
 <p>The incoming transport is the transport via which the server side receives
 the message and the outgoing transport is decided based on the addressing
 information (wsa:ReplyTo and wsa:FaultTo). If addressing information is not
-available then the out going transport will be the same as the incoming
-one.</p>
+available then the out going transport will be the outputstream of the
+incoming transport (if it is two-way transport).</p>
 
 <p>At the client side the user is free to specify the transport to be
 used.</p>
 
-<p>Transport In Configuration and the transport Out Configuration contains
-following information.</p>
+<p>Transport Senders and Transport Receivers contains following
+information.</p>
 <ol>
   <li>Transport Sender for Out Configuration</li>
   <li>Transport Listener for In Configuration</li>
   <li>Parameters of the transport</li>
-  <li>Transport handlers
-  </li>
 </ol>
 
-<p>Each and every transport Out Configuration defines a transport tender.
-Transport sender sends the SOAP Message over its transport.</p>
+<p>Each and every transport Out Configuration defines a transport sender.
+Transport sender sends the SOAP Message over depending on its
+configuration.</p>
 
 <p>Transport receiver waits for the SOAP Messages and for each SOAP Message
 that arrives, it uses the <i>In Pipe</i> to process the SOAP Message.</p>
