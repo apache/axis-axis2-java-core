@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2 User's Guide</title>
-  <meta name="generator" content="amaya 9.2.1, see http://www.w3.org/Amaya/">
+  <meta name="generator" content="amaya 9.3, see http://www.w3.org/Amaya/">
 </head>
 
 <body lang="en-US" dir="ltr">
@@ -156,8 +156,7 @@ ranging from pure blocking single channel invocations to a non-blocking dual
 channel invocations. Let's first see how we can write a client to invoke
 "echo" operation of "MyService" using the simplest blocking invocation. The
 client code you need to write is as follows.</p>
-<source>
-<pre>  try {
+<source><pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
             <span style="color: #24C113">            
             Options options = new Options();
@@ -183,7 +182,6 @@ client code you need to write is as follows.</p>
         }
 }</pre>
 </source>
-
 <p>The green lines shows the set of operations that you need to perform
 inorder to invoke a web service. The rest is used to create the OMElement
 that needs to be sent and display the response OMElement. To test this
@@ -288,7 +286,7 @@ Non-Blocking API with two transport connections<strong>. The ultimate
 asynchrony!!</strong></p>
 <pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-            Options options = new Options();<br>            options.setTo(targetEPR);<br>            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            Options options = new Options();<br>            options.setTo(targetEPR);  
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
@@ -343,7 +341,7 @@ response.</font></font></p>
 <p>Before we run the sample client we have one more step to perform. As
 mentioned earlier Axis2 uses addressing based correlation mechanism, hence we
 need to "engage" addressing module in the server side as well. According to
-the Axis2 architecture, addressing module is deployed in the
+the Axis2 architecture, addressing module put its handlers in the
 "<strong>pre-dispatch</strong>" phase (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about phases)  and hence "engaging" means simply adding module

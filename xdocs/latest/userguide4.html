@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2 User's Guide</title>
-  <meta name="generator" content="amaya 9.2.1, see http://www.w3.org/Amaya/">
+  <meta name="generator" content="amaya 9.3, see http://www.w3.org/Amaya/">
 </head>
 
 <body lang="en-US" dir="ltr">
@@ -18,9 +18,9 @@ href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></i>
 href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <a
 href="userguide3.html">3</a>, <b>4</b>, <a href="userguide5.html">5</a></p>
 
-<p><b><font size="4">Note (on samples):</font></b> All the user's guide samples
-are located in the <b>"samples/userguide/src"</b> directory of the binary
-distribution.</p>
+<p><b><font size="4">Note (on samples):</font></b> All the user's guide
+samples are located in the <b>"samples/userguide/src"</b> directory of the
+binary distribution.</p>
 
 <h2><a name="Modules"></a>Modules</h2>
 
@@ -66,8 +66,9 @@ width="185" height="120" border="0"></p>
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2
 modules should implement the "org.apache.axis2.modules.Module" interface with
 the following methods.</p>
-<pre>public void init(AxisConfiguration axisSystem) throws AxisFault;//Initialize the module
-public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing</pre>
+<pre>public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault;//Initialize the module
+public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing
+public void engageNotify(AxisDescription axisDescription) throws AxisFault;</pre>
 
 <p>These methods can be used to control the module initialization and the
 termination. With the input parameter AxisConfiguration user is provided with
@@ -216,12 +217,12 @@ an extract of the phase section of the "axis2.xml".</p>
         &lt;/phase&gt;
         &lt;!--  System pre defined phases       --&gt;
         &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --&gt;
-        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="OperationInPhase"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
     &lt;/phaseOrder&gt;
     &lt;phaseOrder type="outflow"&gt;
         &lt;!--      user can add his own phases to this area  --&gt;
-        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="OperationOutPhase"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
         &lt;!--system predefined phase--&gt;
         &lt;!--these phase will run irrespective of the service--&gt;
@@ -230,12 +231,12 @@ an extract of the phase section of the "axis2.xml".</p>
     &lt;/phaseOrder/&gt;
     &lt;phaseOrder type="INfaultflow"&gt;
         &lt;!--      user can add his own phases to this area  --&gt;
-        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="OperationInFaultPhase"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
     &lt;/phaseOrder&gt;
     &lt;phaseOrder type="Outfaultflow"&gt;
         &lt;!--      user can add his own phases to this area  --&gt;
-        &lt;phase name="userphase1"/&gt;
+        &lt;phase name="OperationOutFaultPhase"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
         &lt;phase name="PolicyDetermination"/&gt;
         &lt;phase name="MessageOut"/&gt;
