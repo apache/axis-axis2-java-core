@@ -37,7 +37,7 @@ public class ListenerManager {
 
     private ConfigurationContext configctx;
     private HashMap startedTranports = new HashMap();
-    private boolean stopped;
+    private boolean stopped = true;
 
     public void init(ConfigurationContext configCtx) {
         configCtx.setTransportManager(this);
@@ -131,14 +131,20 @@ public class ListenerManager {
         stopped = true;
     }
 
-    public void addListener(TransportInDescription trsIn, boolean start) throws AxisFault {
+    /**
+     * @param trsIn   : Transport in description (which contains Transport Listener)
+     * @param started : whether transport Listener running or not
+     * @throws AxisFault : will throw AxisFault if something goes wrong
+     */
+    public void addListener(TransportInDescription trsIn, boolean started) throws AxisFault {
         configctx.getAxisConfiguration().addTransportIn(trsIn);
         TransportListener transportListener = trsIn.getReceiver();
         if (transportListener != null) {
-            if (!start) {
-                transportListener.init(configctx,trsIn);
+            if (!started) {
+                transportListener.init(configctx, trsIn);
                 transportListener.start();
             }
+            stopped = false;
             startedTranports.put(trsIn.getName().getLocalPart(), transportListener);
         }
     }

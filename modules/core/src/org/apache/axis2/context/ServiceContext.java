@@ -21,7 +21,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
 
@@ -84,11 +86,30 @@ public class ServiceContext extends AbstractContext {
         return serviceGroupContext;
     }
 
+    /**
+     *  To get the ERP for a given service , if the transport is present and not
+     * running then it will add as a listener to ListenerManager , there it will
+     * init that and start the listener , and finally ask the EPR from tarnsport
+     * for a given service
+     * @param transport : Name of the transport
+     * @return
+     * @throws AxisFault
+     */
     public EndpointReference getMyEPR(String transport) throws AxisFault {
         axisService.isEnableAllTransport();
         ConfigurationContext configctx = getConfigurationContext();
         if (configctx != null) {
             ListenerManager lm = configctx.getListenerManager();
+            if (!lm.isListenerRunning(transport)) {
+                TransportInDescription trsin = configctx.getAxisConfiguration().
+                        getTransportIn(new QName(transport));
+                if (trsin != null) {
+                    lm.addListener(trsin, false);
+                } else {
+                    throw new AxisFault(Messages.getMessage("transportnotfound",
+                            transport));
+                }
+            }
             if (!lm.isStopped()) {
                 return lm.getERPforService(axisService.getName(), null, transport);
             }
