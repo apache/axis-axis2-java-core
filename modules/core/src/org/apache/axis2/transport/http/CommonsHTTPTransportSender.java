@@ -201,17 +201,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
             if (epr != null) {
                 if (!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
-                    try {
+//                    try {
                         writeMessageWithCommons(msgContext, epr, dataOut, format);
-                    } catch (AxisFault axisFault) {
-                        // if the given to epr is an unreachable one, we should try to send it
-                        // over the output stream. See AddressingInterop.test1260(http://www.w3.org/2002/ws/addr/testsuite/testcases/#test1260)
-                        if (axisFault != null && axisFault.getCause() instanceof IOException) {
-                            sendUsingOutputStream(msgContext, format, dataOut);
-                        } else {
-                            throw axisFault;
-                        }
-                    }
+//                    } catch (AxisFault axisFault) {
+//                        // if the given to epr is an unreachable one, we should try to send it
+//                        // over the output stream. See AddressingInterop.test1260(http://www.w3.org/2002/ws/addr/testsuite/testcases/#test1260)
+//                        if (axisFault != null && axisFault.getCause() instanceof IOException) {
+//                            sendUsingOutputStream(msgContext, format, dataOut);
+//                        } else {
+//                            throw axisFault;
+//                        }
+//                    }
                 }
             } else {
                 sendUsingOutputStream(msgContext, format, dataOut);

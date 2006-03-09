@@ -24,17 +24,15 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Utils;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFaultCode;
 import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPFaultSubCode;
 import org.apache.ws.commons.soap.SOAPFaultText;
-import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
@@ -171,7 +169,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, WSA_DEFAULT_PREFIX + ":" + addressingHeaderName);
         faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
         if (!messageContext.isSOAP11()) {
-            setFaultCode(messageContext, faultCode, faultSubCode);
+            Utils.setFaultCode(messageContext, faultCode, faultSubCode);
         }
         throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", WSA_DEFAULT_PREFIX + ":" + faultCode);
     }
@@ -191,21 +189,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         return null;
     }
 
-    private void setFaultCode(MessageContext messageContext, String faultCode, String faultSubCode) {
-        SOAPFactory soapFac = OMAbstractFactory.getSOAP12Factory();
-        SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
-        SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
-        soapFaultValue.setText(SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP12Constants.FAULT_CODE_SENDER);
-        SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
-        SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
-        soapFaultSubcodeValue.setText(WSA_DEFAULT_PREFIX + ":" + faultCode);
-        if(faultSubCode != null) {
-            SOAPFaultSubCode soapFaultSubCode2 = soapFac.createSOAPFaultSubCode(soapFaultSubCode);
-            SOAPFaultValue soapFaultSubcodeValue2 = soapFac.createSOAPFaultValue(soapFaultSubCode2);
-            soapFaultSubcodeValue2.setText(WSA_DEFAULT_PREFIX + ":" + faultSubCode);
-        }
-        messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
-    }
+
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);
 

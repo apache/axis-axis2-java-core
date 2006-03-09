@@ -43,6 +43,12 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPFaultCode;
+import org.apache.ws.commons.soap.SOAPFaultSubCode;
+import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
@@ -136,7 +142,7 @@ public class Utils {
         axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);
-        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI+"/"+opName.getLocalPart(), axisOp);
+        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(), axisOp);
 
         return service;
     }
@@ -314,5 +320,21 @@ public class Utils {
             float m_c_vresion = Float.parseFloat(currentDefaultVersion);
             return m_version > m_c_vresion;
         }
+    }
+
+    public static void setFaultCode(MessageContext messageContext, String faultCode, String faultSubCode) {
+        SOAPFactory soapFac = OMAbstractFactory.getSOAP12Factory();
+        SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
+        SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
+        soapFaultValue.setText(SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP12Constants.FAULT_CODE_SENDER);
+        SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
+        SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
+        soapFaultSubcodeValue.setText(AddressingConstants.WSA_DEFAULT_PREFIX + ":" + faultCode);
+        if (faultSubCode != null) {
+            SOAPFaultSubCode soapFaultSubCode2 = soapFac.createSOAPFaultSubCode(soapFaultSubCode);
+            SOAPFaultValue soapFaultSubcodeValue2 = soapFac.createSOAPFaultValue(soapFaultSubCode2);
+            soapFaultSubcodeValue2.setText(AddressingConstants.WSA_DEFAULT_PREFIX + ":" + faultSubCode);
+        }
+        messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
     }
 }
