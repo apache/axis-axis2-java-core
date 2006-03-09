@@ -74,6 +74,8 @@ import java.util.TimeZone;
  * 4. Object list -> array
  */
 public class ConverterUtil {
+    private static final String POSITIVE_INFINITY = "INF";
+    private static final String NEGATIVE_INFINITY = "-INF";
 
     /* String conversion methods */
     public static String convertToString(int i) {
@@ -230,6 +232,11 @@ public class ConverterUtil {
     }
 
     public static double convertTodouble(String s) {
+        if (POSITIVE_INFINITY.equals(s)){
+            return Double.POSITIVE_INFINITY;
+        }else if (NEGATIVE_INFINITY.equals(s)){
+            return Double.NEGATIVE_INFINITY;
+        }
         return Double.parseDouble(s);
     }
 
@@ -238,6 +245,11 @@ public class ConverterUtil {
     }
 
     public static float convertTofloat(String s) {
+         if (POSITIVE_INFINITY.equals(s)){
+            return Float.POSITIVE_INFINITY;
+        }else if (NEGATIVE_INFINITY.equals(s)){
+            return Float.NEGATIVE_INFINITY;
+        }
         return Float.parseFloat(s);
     }
 
