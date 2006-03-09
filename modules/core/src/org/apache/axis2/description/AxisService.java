@@ -163,15 +163,14 @@ public class AxisService extends AxisDescription {
         Collection col = map.values();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
-            ArrayList wsamappings = axisOperation.getWsamappingList();
-
-            if (wsamappings != null) {
-                for (int j = 0; j < wsamappings.size(); j++) {
-                    String mapping = (String) wsamappings.get(j);
-                    this.mapActionToOperation(mapping, axisOperation);
-                }
-            }
             if (this.getOperation(axisOperation.getName()) == null) {
+                ArrayList wsamappings = axisOperation.getWsamappingList();
+                if (wsamappings != null) {
+                    for (int j = 0; j < wsamappings.size(); j++) {
+                        String mapping = (String) wsamappings.get(j);
+                        this.mapActionToOperation(mapping, axisOperation);
+                    }
+                }
                 // this opration is a control operation.
                 axisOperation.setControlOperation(true);
                 this.addOperation(axisOperation);
@@ -293,7 +292,6 @@ public class AxisService extends AxisDescription {
         if (axisModule == null) {
             throw new AxisFault(Messages.getMessage("modulenf"));
         }
-        boolean needToadd = true;
         Iterator itr_engageModules = engagedModules.iterator();
 
         while (itr_engageModules.hasNext()) {
@@ -302,7 +300,8 @@ public class AxisService extends AxisDescription {
             if (module.getName().equals(axisModule.getName())) {
                 log.debug(Messages.getMessage("modulealredyengagetoservice",
                         axisModule.getName().getLocalPart()));
-                needToadd = false;
+                throw new AxisFault(Messages.getMessage("modulealredyengagetoservice",
+                        axisModule.getName().getLocalPart()));
             }
         }
 
@@ -324,10 +323,7 @@ public class AxisService extends AxisDescription {
             }
             axisOperation.engageModule(axisModule, axisConfig);
         }
-
-        if (needToadd) {
-            engagedModules.add(axisModule);
-        }
+        engagedModules.add(axisModule);
     }
 
     /**

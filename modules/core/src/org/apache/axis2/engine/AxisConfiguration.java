@@ -20,8 +20,6 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
@@ -31,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -234,16 +231,6 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void engageModule(QName moduleref) throws AxisFault {
         AxisModule module = getModule(moduleref);
-        if (module == null) {
-            // there is no module found with the given name , so better check for dafult module version
-            String moduleName = moduleref.getLocalPart();
-            String defaultModuleVersion = getDefaultModuleVersion(moduleName);
-            if (defaultModuleVersion != null) {
-                QName moduleQName = Utils.getModuleName(moduleName,
-                        defaultModuleVersion);
-                module = loadModulefromResources(moduleQName.getLocalPart());
-            }
-        }
         if (module != null) {
             engageModule(module);
         } else {
@@ -262,13 +249,11 @@ public class AxisConfiguration extends AxisDescription {
     public void engageModule(String moduleName, String versionID) throws AxisFault {
         QName moduleQName = Utils.getModuleName(moduleName, versionID);
         AxisModule module = getModule(moduleQName);
-        if (module == null) {
-            module = loadModulefromResources(moduleQName.getLocalPart());
+        if (module != null) {
             engageModule(module);
         } else {
-            engageModule(module);
+            throw new AxisFault(Messages.getMessage("refertoinvalidmodule"));
         }
-
     }
 
     private void engageModule(AxisModule module) throws AxisFault {
@@ -280,7 +265,8 @@ public class AxisConfiguration extends AxisDescription {
                 if (moduleQName.equals(qName)) {
                     log.info(Messages.getMessage("modulealredyengagedglobaly",
                             qName.getLocalPart()));
-                    return;
+                    throw new AxisFault(Messages.getMessage("modulealredyengagedglobaly",
+                            qName.getLocalPart()));
                 }
             }
         } else {
@@ -312,27 +298,6 @@ public class AxisConfiguration extends AxisDescription {
             }
             engagedModules.remove(module.getName());
         }
-    }
-
-    /**
-     * Loads module from class path - the mar files in a jar file inside
-     * modules/    directory
-     *
-     * @param moduleName
-     * @return Returns ModuleDescription.
-     * @throws AxisFault
-     */
-    public AxisModule loadModulefromResources(String moduleName) throws AxisFault {
-        AxisModule module;
-        // trying to read from resources
-        File file = new ArchiveReader().creatModuleArchivefromResource(moduleName,
-                getRepository());
-        module = new DeploymentEngine().buildModule(file, this);
-        if (module != null) {
-            // since it is a new module
-            addModule(module);
-        }
-        return module;
     }
 
     public void notifyObservers(int event_type, AxisService service) {

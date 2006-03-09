@@ -169,7 +169,6 @@ public class UtilServer {
         AxisModule axisModule = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
-        configContext.getAxisConfiguration().engageModule(new QName("addressing"));
         return configContext;
     }
 

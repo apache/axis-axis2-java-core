@@ -60,8 +60,6 @@ public class GroovyServiceTest extends TestCase {
     protected void setUp() throws Exception {
         String repository = "target/groovyRepo";
         UtilServer.start(repository);
-        UtilServer.getConfigurationContext().getAxisConfiguration()
-                .engageModule(new QName("addressing"));
     }
 
     protected void tearDown() throws Exception {
@@ -92,7 +90,7 @@ public class GroovyServiceTest extends TestCase {
 
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(payload);

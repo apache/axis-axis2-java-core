@@ -55,9 +55,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        UtilServer.getConfigurationContext().getAxisConfiguration()
-                .engageModule(new QName("addressing"));
-
         AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -111,7 +108,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             };
 
             sender = new ServiceClient(configcontext, service);
-            sender.engageModule(new QName("addressing"));
             sender.setOptions(options);
 
             sender.sendReceiveNonBlocking(operationName, method, callback);

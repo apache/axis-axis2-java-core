@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 public class ArchiveReader implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
@@ -91,91 +90,6 @@ public class ArchiveReader implements DeploymentConstants {
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
         return null;
-    }
-
-    /**
-     * Creates the module file archive file. Checks whether the module exists in home
-     * directory. If yes, returns that else reads the given module from classpath (from resources).
-     * If found, gets the module.mar file from the resource stream and writes into
-     * the userhome/axis2home/module directory.
-     *
-     * @param moduleName
-     * @return Returns File.
-     * @throws DeploymentException
-     */
-    public File creatModuleArchivefromResource(String moduleName, String axis2repository)
-            throws DeploymentException {
-        File modulearchiveFile;
-        File modules;
-
-        try {
-            int BUFFER = 2048;
-
-            if (axis2repository == null) {
-                String userHome = System.getProperty(DeploymentConstants.PROPERTY_TEMP_DIR);
-                File userHomedir = new File(userHome);
-                File repository = new File(userHomedir, DIRECTORY_AXIS2_HOME);
-
-                modules = new File(repository, DIRECTORY_MODULES);
-            } else {
-                modules = new File(axis2repository, DIRECTORY_MODULES);
-            }
-
-            String modulearchiveName = moduleName + SUFFIX_MAR;
-
-            modulearchiveFile = new File(modules, modulearchiveName);
-
-            if (modulearchiveFile.exists()) {
-                return modulearchiveFile;
-            }
-
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream(RESOURCE_MODULES + moduleName + SUFFIX_MAR);
-
-            if (in == null) {
-                in = cl.getResourceAsStream(RESOURCE_MODULES + moduleName + SUFFIX_JAR);
-            }
-
-            if (in == null) {
-                throw new DeploymentException(
-                        Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_NOT_FOUND, moduleName));
-            } else {
-                if (!modules.exists()) {
-                    modules.mkdirs();
-                }
-
-                modulearchiveFile.createNewFile();
-
-                FileOutputStream dest = new FileOutputStream(modulearchiveFile);
-                ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-                byte data[] = new byte[BUFFER];
-                ZipInputStream zin;
-
-                zin = new ZipInputStream(in);
-
-                ZipEntry entry;
-
-                while ((entry = zin.getNextEntry()) != null) {
-                    ZipEntry zip = new ZipEntry(entry);
-
-                    out.putNextEntry(zip);
-
-                    int count;
-
-                    while ((count = zin.read(data, 0, BUFFER)) != -1) {
-                        out.write(data, 0, count);
-                    }
-                }
-
-                out.close();
-                zin.close();
-            }
-        } catch (Exception e) {
-            throw new DeploymentException(e);
-        }
-
-        return modulearchiveFile;
     }
 
     /**

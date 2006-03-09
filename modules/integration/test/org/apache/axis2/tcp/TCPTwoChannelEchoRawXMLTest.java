@@ -90,7 +90,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
 
-        ServiceClient sender = null;
+        ServiceClient sender ;
 
         try {
             Options options = new Options();

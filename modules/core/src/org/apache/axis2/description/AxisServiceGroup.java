@@ -117,14 +117,14 @@ public class AxisServiceGroup extends AxisDescription {
 
     public void engageModule(AxisModule module) throws AxisFault {
         QName moduleName = module.getName();
-        boolean needToadd = true;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
             QName modu = (QName) iterator.next();
 
             if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
                 log.debug(Messages.getMessage(
                         "modulealredyengagedtoservicegroup", moduleName.getLocalPart()));
-                needToadd = false;
+                throw new AxisFault(Messages.getMessage(
+                        "modulealredyengagedtoservicegroup", moduleName.getLocalPart()));
             }
         }
 
@@ -138,10 +138,7 @@ public class AxisServiceGroup extends AxisDescription {
                 log.info(axisFault.getMessage());
             }
         }
-
-        if (needToadd) {
-            addToengagedModules(moduleName);
-        }
+        addToengagedModules(moduleName);
     }
 
     public void removeService(String name) throws AxisFault {

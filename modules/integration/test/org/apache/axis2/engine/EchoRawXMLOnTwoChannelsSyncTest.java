@@ -31,8 +31,6 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 
-import javax.xml.namespace.QName;
-
 public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestConstants {
 
     public EchoRawXMLOnTwoChannelsSyncTest() {
@@ -45,9 +43,6 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        UtilServer.getConfigurationContext().getAxisConfiguration()
-                .engageModule(new QName("addressing"));
-
         AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),

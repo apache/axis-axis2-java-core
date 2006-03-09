@@ -107,17 +107,15 @@ public abstract class AxisOperation extends AxisDescription
         if (moduleref == null) {
             return null;
         }
-
-        boolean needToadd = true;
         Iterator module_itr = engagedModules.iterator();
-
         while (module_itr.hasNext()) {
             AxisModule module = (AxisModule) module_itr.next();
 
             if (module.getName().equals(moduleref.getName())) {
                 log.debug(Messages.getMessage("modulealredyengaged",
                         moduleref.getName().getLocalPart()));
-                needToadd = false;
+                throw new AxisFault(Messages.getMessage("modulealredyengaged",
+                        moduleref.getName().getLocalPart()));
             }
         }
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
@@ -126,10 +124,7 @@ public abstract class AxisOperation extends AxisDescription
         if (module != null) {
             module.engageNotify(this);
         }
-
-        if (needToadd) {
-            engagedModules.add(moduleref);
-        }
+        engagedModules.add(moduleref);
         return addModuleOperations(moduleref, axisConfig, (AxisService) getParent());
     }
 
