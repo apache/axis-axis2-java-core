@@ -46,8 +46,8 @@ import java.net.URL;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
 
-	private static final long serialVersionUID = 7929963795196215199L;
-	protected static final String PROXY_HOST_NAME = "proxy_host";
+    private static final long serialVersionUID = 7929963795196215199L;
+    protected static final String PROXY_HOST_NAME = "proxy_host";
     protected static final String PROXY_PORT = "proxy_port";
     public static final String HTTP_METHOD = "HTTP_METHOD";
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
@@ -99,8 +99,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                                 transferEncoding.getValue())) {
                     chunked = true;
                 }
-            } else
-            if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
+            } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else {
                 throw new AxisFault(
@@ -201,37 +200,21 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             if (epr != null) {
-                if(!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
-                    writeMessageWithCommons(msgContext, epr, dataOut, format);
-                }
-            } else {
-                OutputStream out =
-                        (OutputStream) msgContext
-                                .getProperty(MessageContext.TRANSPORT_OUT);
-
-                if (msgContext.isServerSide()) {
-                    OutTransportInfo transportInfo =
-                            (OutTransportInfo) msgContext
-                                    .getProperty(Constants.OUT_TRANSPORT_INFO);
-
-                    if (transportInfo != null) {
-                        boolean soap11 = msgContext.isSOAP11();
-
-                        format.setSOAP11(soap11);
-
-                        String contentType = format.getContentType();
-                        String encoding = contentType + "; charset="
-                                + format.getCharSetEncoding();
-
-                        transportInfo.setContentType(encoding);
-                    } else {
-                        throw new AxisFault(Constants.OUT_TRANSPORT_INFO +
-                                " has not been set");
+                if (!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
+                    try {
+                        writeMessageWithCommons(msgContext, epr, dataOut, format);
+                    } catch (AxisFault axisFault) {
+                        // if the given to epr is an unreachable one, we should try to send it
+                        // over the output stream. See AddressingInterop.test1260(http://www.w3.org/2002/ws/addr/testsuite/testcases/#test1260)
+                        if (axisFault != null && axisFault.getCause() instanceof IOException) {
+                            sendUsingOutputStream(msgContext, format, dataOut);
+                        } else {
+                            throw axisFault;
+                        }
                     }
                 }
-
-                format.setDoOptimize(msgContext.isDoingMTOM());
-                dataOut.serializeAndConsume(out, format);
+            } else {
+                sendUsingOutputStream(msgContext, format, dataOut);
             }
 
             if (msgContext.getOperationContext() != null) {
@@ -248,6 +231,36 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
+    private void sendUsingOutputStream(MessageContext msgContext, OMOutputFormat format, OMElement dataOut) throws AxisFault, XMLStreamException {
+        OutputStream out =
+                (OutputStream) msgContext
+                        .getProperty(MessageContext.TRANSPORT_OUT);
+
+        if (msgContext.isServerSide()) {
+            OutTransportInfo transportInfo =
+                    (OutTransportInfo) msgContext
+                            .getProperty(Constants.OUT_TRANSPORT_INFO);
+
+            if (transportInfo != null) {
+                boolean soap11 = msgContext.isSOAP11();
+
+                format.setSOAP11(soap11);
+
+                String contentType = format.getContentType();
+                String encoding = contentType + "; charset="
+                        + format.getCharSetEncoding();
+
+                transportInfo.setContentType(encoding);
+            } else {
+                throw new AxisFault(Constants.OUT_TRANSPORT_INFO +
+                        " has not been set");
+            }
+        }
+
+        format.setDoOptimize(msgContext.isDoingMTOM());
+        dataOut.serializeAndConsume(out, format);
+    }
+
     public void writeMessageWithCommons(MessageContext msgContext,
                                         EndpointReference toURL,
                                         OMElement dataout,
@@ -257,8 +270,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             URL url = new URL(toURL.getAddress());
             String soapActionString = msgContext.getSoapAction();
 
-            if ((soapActionString == null) || (soapActionString.length() == 0))
-            {
+            if ((soapActionString == null) || (soapActionString.length() == 0)) {
                 soapActionString = msgContext.getWSAAction();
             }
 
@@ -274,14 +286,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             } else {
                 sender = new RESTSender();
             }
-            if (msgContext.getProperty(MessageContextConstants.CHUNKED) != null)
-            {
+            if (msgContext.getProperty(MessageContextConstants.CHUNKED) != null) {
                 chunked = Constants.VALUE_TRUE.equals(msgContext.getProperty(
                         MessageContextConstants.CHUNKED));
             }
 
             if (msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION) != null) {
-                httpVersion = (String)msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION);
+                httpVersion = (String) msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION);
             }
 
             // Following order needed to be preserved because,
