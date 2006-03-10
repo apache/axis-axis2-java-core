@@ -28,7 +28,7 @@ import org.apache.axis2.description.TransportInDescription;
 public interface TransportListener {
 
     public static final String PARAM_PORT = "port";
-    public static final String HOST_ADDRESS="hostAddress";
+    public static final String HOST_ADDRESS="hostname";
 
     void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
             throws AxisFault;

@@ -33,7 +33,7 @@
         <parameter name="port" locked="false">6060</parameter>
         <!--If you want to give your own host address for EPR generation-->
         <!--uncommet following paramter , and set as you required.-->
-        <!--<parameter name="hostAddress" locked="false">http://myApp.com/ws</parameter>-->
+        <!--<parameter name="hostname" locked="false">http://myApp.com/ws</parameter>-->
     </transportReceiver>
 
     <transportReceiver name="tcp"
@@ -41,7 +41,7 @@
         <parameter name="port" locked="false">6061</parameter>
         <!--If you want to give your own host address for EPR generation-->
         <!--uncommet following paramter , and set as you required.-->
-        <!--<parameter name="hostAddress" locked="false">tcp://myApp.com/ws</parameter>-->
+        <!--<parameter name="hostname" locked="false">tcp://myApp.com/ws</parameter>-->
     </transportReceiver>
 
     <!-- ================================================= -->
