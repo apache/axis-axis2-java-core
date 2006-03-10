@@ -74,10 +74,10 @@ public class AxisService extends AxisDescription {
 //    private HashMap operations = new HashMap();
 
     // to store module ref at deploy time parsing
-    private ArrayList moduleRefs = new ArrayList();
+    private ArrayList moduleRefs = null;
 
     // to store engaged mdodules
-    private ArrayList engagedModules = new ArrayList();
+    private ArrayList engagedModules = null;
     private String serviceDescription;
 
     // to store the wsdl definition , which is build at the deployment time
@@ -125,6 +125,8 @@ public class AxisService extends AxisDescription {
         //by dafault service scope is for the request
         scope = Constants.SCOPE_REQUEST;
         messageReceivers = new HashMap();
+        moduleRefs = new ArrayList();
+        engagedModules = new ArrayList();
     }
 
     /**

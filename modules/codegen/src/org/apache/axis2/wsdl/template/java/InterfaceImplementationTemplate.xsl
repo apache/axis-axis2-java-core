@@ -39,29 +39,29 @@
         public static final java.lang.String AXIS2_HOME = null;
         protected static org.apache.axis2.description.AxisOperation[] _operations;
 	
-	static{
+	private void populateAxisService(){
 
         //creating the Service
-        _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");	
-	<xsl:if test="@policy"> 
+        _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");
+	<xsl:if test="@policy">
 	/*
 	 * setting the endpont policy
 	 */
 	 java.lang.String _service_policy_string = "<xsl:value-of select="@policy"/>";
-	 org.apache.axis2.description.PolicyInclude servicePolicyInclude 
+	 org.apache.axis2.description.PolicyInclude servicePolicyInclude
 	 	= _service.getPolicyInclude();
 	 servicePolicyInclude.addPolicyElement(
-	 		org.apache.axis2.description.PolicyInclude.SERVICE_POLICY, 
+	 		org.apache.axis2.description.PolicyInclude.SERVICE_POLICY,
 	 		getPolicyFromString(_service_policy_string));
 	</xsl:if>
-	
+
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
 	<xsl:if test="//method[@policy]">
 	java.lang.String __operation_policy_string;
 	</xsl:if>
-	
-	
+
+
         _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
@@ -74,7 +74,7 @@
             </xsl:choose>
 
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
-	    
+
 	    <xsl:if test="@policy">
 	    __operation_policy_string = "<xsl:value-of select="@policy"/>";
 	    org.apache.ws.policy.Policy __operation_policy
@@ -83,9 +83,9 @@
 	    		= __operation.getPolicyInclude();
 	    include.addPolicyElement(org.apache.axis2.description.PolicyInclude.ANON_POLICY,
 	    		__operation_policy);
-	    
+
 	    </xsl:if>
-	    
+
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
             _service.addOperation(__operation);
         </xsl:for-each>
@@ -96,7 +96,8 @@
      public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
         java.lang.String targetEndpoint)
         throws java.lang.Exception {
-	
+       //To populate AxisService
+       populateAxisService();
 	<xsl:if test="//@policy">
 	
 	////////////////////////////////////////////////////////////////////////

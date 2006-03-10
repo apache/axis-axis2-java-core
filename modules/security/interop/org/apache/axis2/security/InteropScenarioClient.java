@@ -59,6 +59,8 @@ public class InteropScenarioClient {
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         stub._getServiceClient().getOptions().setSoapVersionURI(soapNsURI);
+        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("security"));
+
 
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 
@@ -86,9 +88,9 @@ public class InteropScenarioClient {
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-
         //Engage the security module
         stub._getServiceClient().engageModule(new javax.xml.namespace.QName("security"));
+
 
         if (outflowConfig != null) {
             stub._getServiceClient().getOptions().setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
