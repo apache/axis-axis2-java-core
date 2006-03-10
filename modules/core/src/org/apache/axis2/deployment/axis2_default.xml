@@ -31,24 +31,36 @@
     <transportReceiver name="http"
                        class="org.apache.axis2.transport.http.SimpleHTTPServer">
         <parameter name="port" locked="false">6060</parameter>
+        <!--If you want to give your own host address for EPR generation-->
+        <!--uncommet following paramter , and set as you required.-->
+        <!--<parameter name="hostAddress" locked="false">http://myApp.com/ws</parameter>-->
     </transportReceiver>
 
-    <transportReceiver name="tcp"  class="org.apache.axis2.transport.tcp.TCPServer">
+    <transportReceiver name="tcp"
+                       class="org.apache.axis2.transport.tcp.TCPServer">
         <parameter name="port" locked="false">6061</parameter>
+        <!--If you want to give your own host address for EPR generation-->
+        <!--uncommet following paramter , and set as you required.-->
+        <!--<parameter name="hostAddress" locked="false">tcp://myApp.com/ws</parameter>-->
     </transportReceiver>
 
     <!-- ================================================= -->
     <!-- Transport Outs -->
     <!-- ================================================= -->
 
-    <transportSender name="tcp" class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
-    <transportSender name="local" class="org.apache.axis2.transport.local.LocalTransportSender"/>
-    <transportSender name="jms" class="org.apache.axis2.transport.jms.JMSSender"/>
-    <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+    <transportSender name="tcp"
+                     class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
+    <transportSender name="local"
+                     class="org.apache.axis2.transport.local.LocalTransportSender"/>
+    <transportSender name="jms"
+                     class="org.apache.axis2.transport.jms.JMSSender"/>
+    <transportSender name="http"
+                     class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding" locked="false">chunked</parameter>
     </transportSender>
-    <transportSender name="https" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+    <transportSender name="https"
+                     class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding" locked="false">chunked</parameter>
     </transportSender>

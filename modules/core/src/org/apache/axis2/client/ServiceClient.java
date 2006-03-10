@@ -420,28 +420,16 @@ public class ServiceClient {
             // and wait on the callbck
             sendReceiveNonBlocking(operation, elem, callback);
             long timeout = options.getTimeOutInMilliSeconds();
-            if (timeout < 0) {
-                while (!callback.isComplete()) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new AxisFault(e);
-                    }
+            long startTime = System.currentTimeMillis();
+            long currentTime;
+            while (true) {
+                if (callback.isComplete()) {
+                    break;
                 }
-            } else {
-                long index = timeout / 100;
-                while (!callback.isComplete()) {
-                    // wait till the reponse arrives
-                    if (index-- >= 0) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            throw new AxisFault(e);
-                        }
-                    } else {
-                        throw new AxisFault(Messages
-                                .getMessage("responseTimeOut"));
-                    }
+                currentTime = System.currentTimeMillis();
+                if (currentTime - startTime > timeout) {
+                    throw new AxisFault(Messages
+                            .getMessage("responseTimeOut"));
                 }
             }
             // process the resule of the invocation

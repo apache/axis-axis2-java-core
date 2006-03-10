@@ -62,6 +62,7 @@ public class SimpleHTTPServer implements TransportListener {
     private ThreadFactory threadPool = null;
 
     public static int DEFAULT_PORT = 8080;
+    private String hostAddress = null;
 
     /**
      * Field systemContext
@@ -122,6 +123,10 @@ public class SimpleHTTPServer implements TransportListener {
 
             if (param != null) {
                 this.port = Integer.parseInt((String) param.getValue());
+            }
+            param = transprtIn.getParameter(HOST_ADDRESS);
+            if (param != null) {
+                hostAddress = ((String) param.getValue()).trim();
             }
         } catch (Exception e1) {
             throw new AxisFault(e1);
@@ -212,6 +217,9 @@ public class SimpleHTTPServer implements TransportListener {
 
     /**
      * replyToEPR
+     * If the user has given host address paramter then it gets the high priority and
+     * ERP will be creatd using that
+     * N:B - hostAddress should be a complte url (http://www.myApp.com/ws)
      *
      * @param serviceName
      * @param ip
@@ -219,18 +227,28 @@ public class SimpleHTTPServer implements TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        String hostAddress;
+        //if host address is present
+        if (hostAddress != null) {
+            if (embedded != null) {
+                return new EndpointReference(hostAddress + "/axis2/services/" + serviceName);
+            } else {
+                throw new AxisFault("Unable to generate EPR for the transport : http");
+            }
+        }
+        //if the host address is not present
+        String localAddress;
         if (ip != null) {
-            hostAddress = ip;
+            localAddress = ip;
         } else {
             try {
-                hostAddress = SimpleHttpServerConnection.getIpAddress();
+                localAddress = SimpleHttpServerConnection.getIpAddress();
             } catch (SocketException e) {
                 throw AxisFault.makeFault(e);
             }
         }
         if (embedded != null) {
-            return new EndpointReference("http://" + hostAddress + ":" + (embedded.getLocalPort())
+            return new EndpointReference("http://" + localAddress + ":" +
+                    (embedded.getLocalPort())
                     + "/axis2/services/" + serviceName);
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");

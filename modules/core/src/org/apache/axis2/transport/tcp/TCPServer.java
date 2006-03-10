@@ -48,6 +48,7 @@ public class TCPServer implements Runnable, TransportListener {
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
     private ConfigurationContext configContext;
     private ServerSocket serversocket;
+    private String hostAddress = null;
 
     public TCPServer() {
     }
@@ -85,6 +86,10 @@ public class TCPServer implements Runnable, TransportListener {
 
         if (param != null) {
             this.port = Integer.parseInt((String) param.getValue());
+        }
+        param = transprtIn.getParameter(HOST_ADDRESS);
+        if (param != null) {
+            hostAddress = ((String) param.getValue()).trim();
         }
     }
 
@@ -169,11 +174,24 @@ public class TCPServer implements Runnable, TransportListener {
         return this.configContext;
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
+    /**
+     * I fthe hostAddress parameter is present in axis2.xml then the EPR will be
+     * created by taking the hostAddres into account
+     * (non-Javadoc)
+     *
+     * @see org.apache.axis2.transport.TransportListener#replyToEPR(String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+        //if host address is present
+        if (hostAddress != null) {
+            if (serversocket != null) {
+                // todo this has to fix
+                return new EndpointReference(hostAddress + "/axis2/services/" + serviceName);
+            } else {
+                log.info("Unable to generate EPR for the transport tcp");
+                return null;
+            }
+        }
         if (ip == null) {
             try {
                 ip = SimpleHttpServerConnection.getIpAddress();
