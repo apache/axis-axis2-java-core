@@ -281,7 +281,6 @@ public class ServiceClient {
      * @throws AxisFault if something goes wrong
      */
     public void engageModule(QName moduleName) throws AxisFault {
-        System.out.println("axisService = " + axisService);
         axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);
     }
 
