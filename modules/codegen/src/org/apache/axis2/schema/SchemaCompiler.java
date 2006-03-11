@@ -4,6 +4,7 @@ import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -99,6 +100,8 @@ public class SchemaCompiler {
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
     public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.ws.commons.om.OMElement[]";
 
+    public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.ws.commons.om.OMAttribute[]";
 
 
 
@@ -545,7 +548,7 @@ public class SchemaCompiler {
         //somehow the xml schema parser does not seem to pickup the any attribute!!
         XmlSchemaAnyAttribute anyAtt = complexType.getAnyAttribute();
         if (anyAtt != null) {
-            processAnyAttribute(metaInfHolder);
+            processAnyAttribute(metaInfHolder,anyAtt);
         }
 
         //process content ,either  complex or simple
@@ -704,12 +707,14 @@ public class SchemaCompiler {
      * Handle any attribute
      * @param metainf
      */
-    private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
+    private void processAnyAttribute(BeanWriterMetaInfoHolder metainf,XmlSchemaAnyAttribute anyAtt) {
 
         //The best thing we can do here is to add a set of OMAttributes
+        //since attributes do not have the notion of minoccurs/maxoccurs the
+        //safest option here is to have an OMAttribute array
         metainf.registerMapping(new QName(EXTRA_ATTRIBUTE_FIELD_NAME),
                 null,
-                OMElement[].class.getName(),
+                DEFAULT_ATTRIB_ARRAY_CLASS_NAME,
                 SchemaConstants.ANY_ATTRIBUTE_TYPE);
 
     }
@@ -792,15 +797,16 @@ public class SchemaCompiler {
                     elementOrderMap.put(xsElt, new Integer(i));
                 }
 
-                //handle xsd:any ! We place an OMElement in the generated class
+                //handle xsd:any ! We place an OMElement (or an array of OMElements) in the generated class
             } else if (item instanceof XmlSchemaAny) {
                 XmlSchemaAny any = (XmlSchemaAny) item;
-                processAny(any, processedElementTypeMap);
+                processedElementTypeMap.put(new QName(ANY_ELEMENT_FIELD_NAME),any);
                 //any can also be inside a sequence
                 if (order) {
                     elementOrderMap.put(any, new Integer(i));
                 }
-                processedElementArrayStatusMap.put(any, Boolean.FALSE);
+                //we do not register the array status for the any type
+                processedElementArrayStatusMap.put(any,isArray(any) ? Boolean.TRUE : Boolean.FALSE);
             } else {
                 //there may be other types to be handled here. Add them
                 //when we are ready
@@ -828,7 +834,7 @@ public class SchemaCompiler {
                             elt.getSchemaTypeName()
                             , clazzName,
                             ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
-                                    SchemaConstants.ANY_ARRAY_TYPE :
+                                    SchemaConstants.ARRAY_TYPE :
                                     SchemaConstants.ELEMENT_TYPE);
                 }else{ //probably this is referenced
                     clazzName = (String)processedElementRefMap.get(elt.getRefName());
@@ -837,7 +843,7 @@ public class SchemaCompiler {
                             parentSchema.getElementByName(elt.getRefName()).getSchemaTypeName()
                             , clazzName,
                             ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
-                                    SchemaConstants.ANY_ARRAY_TYPE :
+                                    SchemaConstants.ARRAY_TYPE :
                                     SchemaConstants.ELEMENT_TYPE);
                 }
 
@@ -867,12 +873,17 @@ public class SchemaCompiler {
                 //for the constant. However the problem occurs if the users
                 //uses the same name for an element decalration
                 QName anyElementFieldName = new QName(ANY_ELEMENT_FIELD_NAME);
+
+                //this can be an array or a single element
+                boolean isArray =  ((Boolean) processedElementArrayStatusMap.get(any)).booleanValue();
                 metainfHolder.registerMapping(anyElementFieldName,
                         null,
-                        DEFAULT_CLASS_NAME,
-                        SchemaConstants.ANY);
+                        isArray?DEFAULT_CLASS_ARRAY_NAME:DEFAULT_CLASS_NAME,
+                        isArray?SchemaConstants.ANY_ARRAY_TYPE:SchemaConstants.ANY);
+
                 metainfHolder.addMaxOccurs(anyElementFieldName,any.getMaxOccurs());
                 metainfHolder.addMinOccurs(anyElementFieldName,any.getMinOccurs());
+
                 if (order) {
                     //record the order in the metainf holder for the any
                     Integer integer = (Integer) elementOrderMap.get(any);
@@ -888,16 +899,6 @@ public class SchemaCompiler {
 
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
-    }
-
-    /**
-     * process the 'any'
-     *
-     * @param any
-     * @param metainf
-     */
-    private void processAny(XmlSchemaAny any, Map processedElementTypeMap) {
-        processedElementTypeMap.put(new QName(ANY_ELEMENT_FIELD_NAME),any);
     }
 
     /**

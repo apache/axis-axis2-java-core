@@ -685,4 +685,21 @@ public class ConverterUtil {
         return returnArray;
     }
 
+    /**
+     * 
+     * @param array
+     * @return
+     */
+    public static List toList(Object[] array){
+        if (array==null){
+            return new ArrayList();
+        }else{
+            ArrayList list =  new ArrayList();
+            for (int i = 0; i < array.length; i++) {
+                list.add(array[i]);
+            }
+            return list;
+        }
+    }
+
 }

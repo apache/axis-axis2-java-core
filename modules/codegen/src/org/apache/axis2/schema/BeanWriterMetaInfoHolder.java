@@ -221,7 +221,8 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean getAttributeStatusForQName(QName qName) {
         Integer attribState = (Integer) specialTypeFlagMap.get(qName);
-        return attribState != null && attribState.equals(SchemaConstants.ATTRIBUTE_TYPE);
+        return attribState != null && (attribState.equals(SchemaConstants.ATTRIBUTE_TYPE)
+                || attribState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE));
     }
 
     /**
@@ -242,8 +243,10 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getArrayStatusForQName(QName qName) {
-        Integer anyState = (Integer) specialTypeFlagMap.get(qName);
-        return anyState != null && anyState.equals(SchemaConstants.ANY_ARRAY_TYPE);
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && (
+                state.equals(SchemaConstants.ARRAY_TYPE) ||
+                state.equals(SchemaConstants.ANY_ARRAY_TYPE));
     }
 
     /**
@@ -254,7 +257,8 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean getAnyAttributeStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
-        return anyState != null && anyState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE);
+        return anyState != null &&
+                anyState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE);
     }
 
     /**
