@@ -38,7 +38,7 @@
         <copy file="${maven.repo.local}/xml-security/jars/xmlsec-1.2.1.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-jdk13-128.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/temp-mar/lib"/>
+        <copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
