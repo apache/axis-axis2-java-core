@@ -111,7 +111,12 @@ public class Phase implements Handler {
         log.debug("Handler " + handler.getName() + " added to Phase " + phaseName);
 
         if (phaselastset) {
-            handlers.add(handlers.size() - 2, handler);    // add before phaseLast
+            //handlers.size() can not be 0 , since when setting phase last it is always > 0
+            if (handlers.size() == 1) {
+                handlers.add(0, handler);
+            } else {
+                handlers.add(handlers.size() - 2, handler);
+            }
         } else {
             handlers.add(handler);
         }
@@ -230,8 +235,6 @@ public class Phase implements Handler {
     private void insertBefore(Handler handler) throws PhaseException {
         String beforename = handler.getHandlerDesc().getRules().getBefore();
 
-
-
         //we keep going foward, till the before handler is found, if we do not find him just add the handler
         //once we found the before handler
 
@@ -253,11 +256,11 @@ public class Phase implements Handler {
             }
         }
 
-        if(beforeHandlerIndex >= 0){
-        		//java arraylist does the shift for us
-        		handlers.add(beforeHandlerIndex,handler);
-        }else{
-        		handlers.add(handler);
+        if (beforeHandlerIndex >= 0) {
+            //java arraylist does the shift for us
+            handlers.add(beforeHandlerIndex, handler);
+        } else {
+            handlers.add(handler);
         }
     }
 
