@@ -830,6 +830,7 @@ public class AxisService extends AxisDescription {
                 while (operations.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operations.next();
                     phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
+                    axisOperation.removeFromEngageModueList(module);
                 }
             } else {
                 if (isEngaged(module.getName())) {
@@ -838,6 +839,7 @@ public class AxisService extends AxisDescription {
                     while (operations.hasNext()) {
                         AxisOperation axisOperation = (AxisOperation) operations.next();
                         phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
+                        axisOperation.removeFromEngageModueList(module);
                     }
                 }
             }

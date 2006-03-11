@@ -36,7 +36,7 @@
                     getAttribute(Constants.GLOBAL_HANDLERS);
              if(axisConfig != null ){
                  ArrayList handlers ;
-                 ArrayList phases = axisConfig.getInPhasesUptoAndIncludingPostDispatch();
+                 ArrayList phases = axisConfig.getGlobalInFlow();
                  %>
                  <h3> In Flow up to and including dispatcher </h3>
                  <ul>
