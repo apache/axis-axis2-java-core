@@ -80,14 +80,6 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
     /**
-     * Method revoke.
-     *
-     * @param msgContext
-     */
-    public void revoke(MessageContext msgContext) {
-    }
-
-    /**
      * Method cleanup.
      *
      * @throws org.apache.axis2.AxisFault
