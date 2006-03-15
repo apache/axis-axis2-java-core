@@ -46,13 +46,16 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
             if (ExtensionConstants.SCHEMA.equals(element.getType())) {
                 Schema schema = (Schema) element;
                 Element schemaElement = schema.getElement();
-                //first check whether the schema include only a single import statement.
-                //As per the nature of WSDL if the schema has a single import ONLY, then the
+                //first check whether the schema include import statements.
+                //As per the nature of WSDL if the schema has imports ONLY, then the
                 //schema element need not contain a target namespace.
                 NodeList importNodeList = schemaElement.getElementsByTagNameNS(schemaElement.getNamespaceURI(), "import");
                 NodeList allNodes = schemaElement.getElementsByTagName("*");
+
                 //checking the number of child elements and the number of import elements should get us what we need
-                if (importNodeList.getLength() == 1 && allNodes.getLength() == 1) {
+                //if these match, that means we have only import statements
+
+                if (importNodeList.getLength()== allNodes.getLength()) {
                     return;
                 }
 
