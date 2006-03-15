@@ -122,7 +122,7 @@
                    <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
 
-                   <!-- generate the validator Method-->
+                   <!-- generate the validator Method, this is specifiacally for validating the arrays-->
                   /**
                    * validate the array for <xsl:value-of select="$javaName"/>
                    */
@@ -132,8 +132,8 @@
                             throw new java.lang.RuntimeException();
                           }
                       </xsl:if>
-                      <xsl:if test="@minOccurs">
-                          if (param.length &lt; <xsl:value-of select="@minOccurs"/>){
+                      <xsl:if test="$min!=0">
+                          if (param.length &lt; <xsl:value-of select="$min"/>){
                             throw new java.lang.RuntimeException();
                           }
                       </xsl:if>
@@ -158,11 +158,11 @@
                   this.<xsl:value-of select="$varName"/>=param;
                   }
 
-                   <!-- we special case the 'any' scenario and generate a convenience
+                   <!-- we special case the 'array' scenario and generate a convenience
                        method for adding elements one by one to the array. The
-                       current implementation is somewhat in-efficient but
+                       current implementation is somewhat inefficient but
                        gets the job done-->
-                 <xsl:if test="@any">
+
                  /**
                  * Auto generated add method for the array for convenience
                  * @param param <xsl:value-of select="$basePropertyType"/>
@@ -179,8 +179,8 @@
                         new <xsl:value-of select="$basePropertyType"/>[list.size()]);
 
                  }
-                     <!-- end of special casing for any-->
-                 </xsl:if>
+                     <!-- end of special casing for the array-->
+
                </xsl:when>
                 <!-- Non array setter method-->
                 <xsl:otherwise>
@@ -198,10 +198,6 @@
                     </xsl:if>
                    this.<xsl:value-of select="$varName"/>=param;
                    }
-
-
-
-
                 </xsl:otherwise>
             </xsl:choose>
 
