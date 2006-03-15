@@ -104,6 +104,9 @@ public class SchemaCompiler {
     public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.ws.commons.om.OMAttribute[]";
 
 
+    private static int typeCounter = 0;
+
+
 
 
     /**
@@ -361,9 +364,31 @@ public class SchemaCompiler {
             //later
 
             if (!isOuter) {
-                String className = findClassName(schemaType.getQName(), isArray(xsElt));
-                //since this is a inner element we should add it to the inner element map
-                innerElementMap.put(xsElt.getQName(), className);
+
+                if (schemaType.getName()!=null){
+                    // this element already has a name. Which means we can directly
+                    // register it
+                    innerElementMap.put(xsElt.getQName(), findClassName(schemaType.getQName(), isArray(xsElt)));
+                    //since this is a inner element we should add it to the inner element map
+                }else{
+                    //this is an anon type. This should have been already processed and registered at
+                    //the anon map. we've to write it just like we treat a referenced type(giving due
+                    //care that this is meant to be an attribute in some class)
+
+                    QName generatedTypeName = generateTypeQName(xsElt.getQName(), parentSchema);
+
+                    if (schemaType instanceof XmlSchemaComplexType){
+                        //set a name
+                        schemaType.setName(generatedTypeName.getLocalPart());
+                        writeComplexType((XmlSchemaComplexType)schemaType,
+                                (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(xsElt));
+                        //remove the reference from the anon list since we named the type
+                        processedAnonymousComplexTypesMap.remove(xsElt);
+                        innerElementMap.put(
+                                xsElt.getQName(),
+                                findClassName(schemaType.getQName(), isArray(xsElt)));
+                    }
+                }
             }else{
                 this.processedElementList.add(xsElt.getQName());
             }
@@ -378,15 +403,39 @@ public class SchemaCompiler {
             processElement(referencedElement, parentSchema);
 
             //no outer check required here. If the element is having a ref, then it is definitely
-            //not an outer element.
+            //not an outer element since the top level elements are not supposed to have refs
             //Also we are sure that it should have a type reference
-            String className = findClassName(referencedElement.getSchemaTypeName(), isArray(xsElt));
-            //if this element is referenced, there's no QName for this element
-            this.processedElementRefMap.put(referencedElement.getQName(), className);
+            QName referenceEltQName = referencedElement.getQName();
+            if (referencedElement.getSchemaTypeName()!=null){
+                String className = findClassName(referencedElement.getSchemaTypeName(), isArray(xsElt));
+                //if this element is referenced, there's no QName for this element
+                this.processedElementRefMap.put(referenceEltQName, className);
+            }else{
+                //this referenced element has an anon type and that anon type has been already
+                //processed. But in this case we need it to be a seperate class since this
+                // complextype has to be added as an attribute in a class.
+                //generate a name for this type
+                QName generatedTypeName = generateTypeQName(referenceEltQName, parentSchema);
+                XmlSchemaType referenceSchemaType = referencedElement.getSchemaType();
 
+                if (referenceSchemaType instanceof XmlSchemaComplexType){
+                    //set a name
+                    referenceSchemaType.setName(generatedTypeName.getLocalPart());
+
+                    writeComplexType((XmlSchemaComplexType)referenceSchemaType,
+                            (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement));
+                    //remove the reference from the anon list since we named the type
+                    processedAnonymousComplexTypesMap.remove(referencedElement);
+
+                    //add this to the processed ref type map
+                    this.processedElementRefMap.put(referenceEltQName,findClassName(
+                            referenceSchemaType.getQName(), isArray(referencedElement)
+                    ));
+                }
+            }
 
         }else if (xsElt.getSchemaTypeName()!=null){
-            //There can be instances where the SchemaType is null but the schemaTypeName is not
+            //There can be instances where the SchemaType is null but the schemaTypeName is not!
             //this specifically happens with xsd:anyType.
             QName schemaTypeName = xsElt.getSchemaTypeName();
             XmlSchemaType typeByName = parentSchema.getTypeByName(schemaTypeName);
@@ -423,6 +472,22 @@ public class SchemaCompiler {
     }
 
     /**
+     * Generate a unique type Qname using an element name
+     * @param referenceEltQName
+     * @param parentSchema
+     * @return
+     */
+    private QName generateTypeQName(QName referenceEltQName, XmlSchema parentSchema) {
+        QName generatedTypeName = new QName(referenceEltQName.getNamespaceURI(),
+                referenceEltQName.getLocalPart() + getNextTypeSuffix());
+        while (parentSchema.getTypeByName(generatedTypeName)!= null){
+            generatedTypeName = new QName(referenceEltQName.getNamespaceURI(),
+                    referenceEltQName.getLocalPart() + getNextTypeSuffix());
+        }
+        return generatedTypeName;
+    }
+
+    /**
      * Finds whether a given class is already made
      * @param qName
      * @return
@@ -431,6 +496,30 @@ public class SchemaCompiler {
         return processedTypemap.containsKey(qName)||
                 simpleTypesMap.containsKey(qName) ||
                 baseSchemaTypeMap.containsKey(qName);
+    }
+
+
+    /**
+     * A method to pick the ref class name
+     * @param name
+     * @param isArray
+     * @return
+     */
+    private String findRefClassName(QName name,boolean isArray){
+        String className = null;
+        if (processedElementRefMap.get(name)!=null){
+            className =(String)processedElementRefMap.get(name);
+
+            if (isArray) {
+                //append the square braces that say this is an array
+                //hope this works for all cases!!!!!!!
+                //todo this however is a thing that needs to be
+                //todo fixed to get complete language support
+                className = className + "[]";
+            }
+        }
+        return className;
+
     }
     /**
      * Finds a class name from the given Qname
@@ -503,7 +592,6 @@ public class SchemaCompiler {
 
     /**
      * handle the complex types which are named
-     *
      * @param complexType
      */
     private void processNamedComplexSchemaType(XmlSchemaComplexType complexType,XmlSchema parentSchema) throws SchemaCompilationException {
@@ -516,13 +604,23 @@ public class SchemaCompiler {
         BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType,parentSchema);
 
         //write the class. This type mapping would have been populated right now
-        //Note - We always write classes for complex types
+        //Note - We always write classes for named complex types
+        writeComplexType(complexType, metaInfHolder);
+
+
+    }
+
+    /**
+     * Writes a complex type
+     * @param complexType
+     * @param metaInfHolder
+     * @throws SchemaCompilationException
+     */
+    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
         String fullyQualifiedClassName = writer.write(complexType, processedTypemap, metaInfHolder);
         //populate the type map with the type QName
         processedTypemap.put(complexType.getQName(), fullyQualifiedClassName);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
-
-
     }
 
     private BeanWriterMetaInfoHolder processComplexType(XmlSchemaComplexType complexType,XmlSchema parentSchema) throws SchemaCompilationException {
@@ -825,24 +923,25 @@ public class SchemaCompiler {
             if (child instanceof XmlSchemaElement){
                 XmlSchemaElement elt = (XmlSchemaElement) child;
                 String clazzName;
-                QName qName;
+                QName referencedQName;
 
                 if (elt.getQName()!=null){
                     clazzName = (String) processedElementTypeMap.get(elt.getQName());
-                    qName = elt.getQName();
-                    metainfHolder.registerMapping(qName,
-                            elt.getSchemaTypeName()
-                            , clazzName,
+                    referencedQName = elt.getQName();
+                    metainfHolder.registerMapping(referencedQName,
+                            elt.getSchemaType().getQName(), //always get the schema type name from the schema it-self
+                            clazzName,
                             ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
                                     SchemaConstants.ARRAY_TYPE :
                                     SchemaConstants.ELEMENT_TYPE);
                 }else{ //probably this is referenced
-                    clazzName = (String)processedElementRefMap.get(elt.getRefName());
-                    qName = elt.getRefName();
-                    metainfHolder.registerMapping(qName,
-                            parentSchema.getElementByName(elt.getRefName()).getSchemaTypeName()
+                    referencedQName = elt.getRefName();
+                    boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
+                    clazzName = findRefClassName(referencedQName,arrayStatus);
+                    metainfHolder.registerMapping(referencedQName,
+                            parentSchema.getElementByName(referencedQName).getSchemaTypeName()
                             , clazzName,
-                            ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
+                            arrayStatus ?
                                     SchemaConstants.ARRAY_TYPE :
                                     SchemaConstants.ELEMENT_TYPE);
                 }
@@ -850,13 +949,13 @@ public class SchemaCompiler {
 
 
                 //register the occurence counts
-                metainfHolder.addMaxOccurs(qName, elt.getMaxOccurs());
-                metainfHolder.addMinOccurs(qName, elt.getMinOccurs());
+                metainfHolder.addMaxOccurs(referencedQName, elt.getMaxOccurs());
+                metainfHolder.addMinOccurs(referencedQName, elt.getMinOccurs());
                 //we need the order to be preserved. So record the order also
                 if (order) {
                     //record the order in the metainf holder
                     Integer integer = (Integer) elementOrderMap.get(elt);
-                    metainfHolder.registerQNameIndex(qName,
+                    metainfHolder.registerQNameIndex(referencedQName,
                             startingItemNumberOrder + integer.intValue());
                 }
 
@@ -963,6 +1062,11 @@ public class SchemaCompiler {
 
     }
 
-
+    private String getNextTypeSuffix(){
+        if (typeCounter==Integer.MAX_VALUE){
+            typeCounter = 0;
+        }
+        return ("_type" +typeCounter++);
+    }
 
 }
