@@ -929,7 +929,7 @@ public class SchemaCompiler {
                     clazzName = (String) processedElementTypeMap.get(elt.getQName());
                     referencedQName = elt.getQName();
                     metainfHolder.registerMapping(referencedQName,
-                            elt.getSchemaType().getQName(), //always get the schema type name from the schema it-self
+                            elt.getSchemaType()!=null?elt.getSchemaType().getQName():elt.getSchemaTypeName(), //always get the schema type name from the schema it-self
                             clazzName,
                             ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
                                     SchemaConstants.ARRAY_TYPE :
