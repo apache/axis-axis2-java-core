@@ -147,6 +147,19 @@ public class RPCServiceClass {
         return em;
     }
 
+    public int testCompanyArray(Company [] com) {
+        return com.length;
+    }
+
+    public Company [] CompanyArray(Company [] com) {
+        ArrayList res = new ArrayList();
+        for (int i = 0; i < com.length; i++) {
+            Company company = com[i];
+            res.add(company);
+        }
+        return (Company []) res.toArray(new Company[res.size()]);
+    }
+
 
     public Company echoCompany(Company com) throws AxisFault {
         ArrayList pss = com.getPersons();
@@ -168,4 +181,11 @@ public class RPCServiceClass {
         return value.length > 0;
     }
 
+    public int omElementArray(OMElement [] omElement) {
+        return omElement.length;
+    }
+
+    public Mail echoMail(Mail mail) {
+        return mail;
+    }
 }

@@ -177,7 +177,7 @@ public class BeanUtil {
                 // if parts/@href != null then need to find element with id and deserialize.
                 // before that first check whether we already have it in the hashtable
                 String partsLocalName = parts.getLocalName();
-                PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName.toLowerCase());
+                PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName);
                 if (prty != null) {
                     Class parameters = prty.getPropertyType();
                     if (prty.equals("class"))
@@ -209,7 +209,9 @@ public class BeanUtil {
         return beanObj;
     }
 
-    public static Object deserialize(Class beanClass, OMElement beanElement, MultirefHelper helper) throws AxisFault {
+    public static Object deserialize(Class beanClass,
+                                     OMElement beanElement,
+                                     MultirefHelper helper) throws AxisFault {
         Object beanObj;
         try {
             HashMap properties = new HashMap();

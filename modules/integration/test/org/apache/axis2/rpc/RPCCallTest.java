@@ -177,6 +177,37 @@ public class RPCCallTest extends TestCase {
         assertEquals(resBean.getAge(), 100);
     }
 
+    public void testechoMail() throws AxisFault {
+        configureSystem("echoMail");
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        Mail mail = new Mail();
+        mail.setBody("My Body");
+        mail.setContentType("ContentType");
+        mail.setFrom("From");
+        mail.setId("ID");
+        mail.setSubject("Subject");
+        mail.setTo("To");
+
+        ArrayList args = new ArrayList();
+        args.add(mail);
+
+
+        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        Mail resBean = (Mail) BeanUtil.deserialize(Mail.class, response.getFirstElement());
+//        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
+        assertNotNull(resBean);
+        assertEquals(resBean.getBody(), "My Body");
+    }
+
 
     public void testEchoString() throws AxisFault {
         configureSystem("echoString");
@@ -328,6 +359,98 @@ public class RPCCallTest extends TestCase {
         args.add(com);
         sender.invokeBlocking(operationName, args.toArray());
     }
+
+
+    public void testtestCompany() throws AxisFault {
+        configureSystem("testCompanyArray");
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        Company com = new Company();
+        com.setName("MyCompany");
+
+        ArrayList ps = new ArrayList();
+
+        Person p1 = new Person();
+        p1.setAge(10);
+        p1.setName("P1");
+        ps.add(p1);
+
+        Person p2 = new Person();
+        p2.setAge(15);
+        p2.setName("P2");
+        ps.add(p2);
+
+        Person p3 = new Person();
+        p3.setAge(20);
+        p3.setName("P3");
+        ps.add(p3);
+
+        com.setPersons(ps);
+        ArrayList args = new ArrayList();
+        args.add(com);
+        args.add(com);
+        args.add(com);
+        args.add(com);
+
+        ArrayList req = new ArrayList();
+        req.add(args.toArray());
+        OMElement value = sender.invokeBlocking(operationName, req.toArray());
+        assertEquals("4", value.getFirstElement().getText());
+    }
+
+    public void testCompanyArray() throws AxisFault {
+        configureSystem("CompanyArray");
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        Company com = new Company();
+        com.setName("MyCompany");
+
+        ArrayList ps = new ArrayList();
+
+        Person p1 = new Person();
+        p1.setAge(10);
+        p1.setName("P1");
+        ps.add(p1);
+
+        Person p2 = new Person();
+        p2.setAge(15);
+        p2.setName("P2");
+        ps.add(p2);
+
+        Person p3 = new Person();
+        p3.setAge(20);
+        p3.setName("P3");
+        ps.add(p3);
+
+        com.setPersons(ps);
+        ArrayList args = new ArrayList();
+        args.add(com);
+        args.add(com);
+        args.add(com);
+        args.add(com);
+
+        ArrayList req = new ArrayList();
+        req.add(args.toArray());
+        OMElement value = sender.invokeBlocking(operationName, req.toArray());
+        assertEquals("MyCompany", value.getFirstElement().getFirstElement().getText());
+    }
+
 
     public void testEchoOM() throws AxisFault {
         configureSystem("echoOM");
@@ -487,7 +610,8 @@ public class RPCCallTest extends TestCase {
         args.add("foo");
 
 
-        sender.invokeBlocking(operationName, args.toArray());
+        OMElement element = sender.invokeBlocking(operationName, args.toArray());
+        System.out.println("element = " + element);
 //        assertEquals(response.getFirstElement().getText(), "foo");
     }
 
@@ -506,6 +630,40 @@ public class RPCCallTest extends TestCase {
 
         OMElement elem = sender.sendReceive(getpayLoad());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
+    }
+
+    public void testomElementArray() throws AxisFault {
+        configureSystem("omElementArray");
+        String str = "<req:omElementArray xmlns:req=\"http://org.apache.axis2/xsd\">\n" +
+                "    <arg0><abc>vaue1</abc></arg0>\n" +
+                "    <arg0><abc>vaue2</abc></arg0>\n" +
+                "    <arg0><abc>vaue3</abc></arg0>\n" +
+                "    <arg0><abc>vaue4</abc></arg0>\n" +
+                "</req:omElementArray>";
+        StAXOMBuilder staxOMBuilder;
+        try {
+            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+                    ByteArrayInputStream(str.getBytes()));
+            OMFactory fac = OMAbstractFactory.getOMFactory();
+
+            staxOMBuilder = new
+                    StAXOMBuilder(fac, xmlReader);
+        } catch (XMLStreamException e) {
+            throw new AxisFault(e);
+        } catch (FactoryConfigurationError factoryConfigurationError) {
+            throw new AxisFault(factoryConfigurationError);
+        }
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        OMElement elem = sender.sendReceive(staxOMBuilder.getDocumentElement());
+        assertEquals("4", elem.getFirstElement().getText());
     }
 
     private OMElement getpayLoad() throws AxisFault {
