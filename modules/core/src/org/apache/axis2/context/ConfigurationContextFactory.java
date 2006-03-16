@@ -37,15 +37,48 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Builds the configuration.
+     * To get a ConfigurationContext for  given data , and underline implementation
+     * is Axis2 default impl which is file system based deployment model to create
+     * an AxisConfiguration.
+     * <p/>
+     * Here either or both parameter can be null. So that boil down to following
+     * scanarios and it should note that parameter value should be pull path ,
+     * you are not allowed to give one relative to other. And these two can be located
+     * in completely different locations.
+     * <ul>
+     * <li>If none of them are null , then AxisConfiguration will be based on the
+     * value of axis2xml , and the repositoy will be the value specified by the
+     * path paramter and there will not be any assumptions.</li>
+     * <li>If axis2xml is null , then the repository will be the value specfied by
+     * path parameter and , system will try to find axis2.xml from sub directory
+     * called "conf" inside the repository, so if system find
+     * repository/conf/axis2/xml then AxisConfiguration will be created using that
+     * else AxisConfiguration will be created using default_axis2.xml</li>
+     * <li>If path parameter is null , then AxisConfiguration will be created using
+     * that axis2.xml. And after creatig AxisConfiguration system will try to
+     * find user has specified repository parameter in axis2.xml
+     * (&lt;parameter name="repository"&gt;locationo of the repo&lt;/parameter&gt;) , if it
+     * find that then repository will be the value specified by that parameter.</li>
+     * <li>If both are null , then it is simple , AixsConfiguration will be created
+     * using default_axis2.xml and thats it.</li>
+     * </ul>
+     * <p/>
+     * Note : rather than passing any paremeters you can give them as System
+     * properties. Simple you can add following system properties before
+     * you call this.
+     * <ul>
+     * <li>axis2.repo : same as path paramter</li>
+     * <li>axis2.xml  : same as axis2xml</li>
+     * </ul>
      *
      * @param path     : location of the repository
      * @param axis2xml : location of the axis2.xml (configuration) file
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */
-    public static ConfigurationContext createConfigurationContextFromFileSystem(String path,
-                                                                                String axis2xml) throws AxisFault {
+    public static ConfigurationContext createConfigurationContextFromFileSystem(
+            String path,
+            String axis2xml) throws AxisFault {
         return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
     }
 

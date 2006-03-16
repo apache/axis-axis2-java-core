@@ -226,6 +226,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
+            //adding weblocation property
+//            setWebLocationProperty(context);
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoDir, null);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
@@ -234,6 +236,21 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         } catch (Exception e) {
             throw new ServletException(e);
         }
+    }
+
+    /**
+     * To find out the location where web reposurce need to be coiped, when
+     * deployment fine any service aar with web resources.
+     *
+     * @param context
+     */
+    private void setWebLocationProperty(ServletContext context) {
+        String webpath = context.getRealPath("");
+        if (webpath == null || "".equals(webpath)) {
+            return;
+        }
+        File weblocation = new File(webpath);
+        System.setProperty("web.location", weblocation.getAbsolutePath());
     }
 
     protected HashMap getHTTPParameters(HttpServletRequest httpServletRequest) {

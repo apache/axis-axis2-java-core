@@ -37,6 +37,8 @@ public class Phase implements Handler {
 
     private static final long serialVersionUID = -3352439587370050957L;
 
+    public static final String ALL_PHASES = "*";
+
     /**
      * Field BOTH_BEFORE_AFTER
      */
@@ -331,25 +333,18 @@ public class Phase implements Handler {
         switch (type) {
             case BOTH_BEFORE_AFTER : {
                 insertBeforeandAfter(handler);
-
                 break;
             }
-
             case BEFORE : {
                 insertBefore(handler);
-
                 break;
             }
-
             case AFTER : {
                 insertAfter(handler);
-
                 break;
             }
-
             case ANYWHERE : {
                 addHandler(handler);
-
                 break;
             }
         }

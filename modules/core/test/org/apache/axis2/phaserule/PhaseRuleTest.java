@@ -86,11 +86,5 @@ public class PhaseRuleTest extends AbstractTestCase {
         rule3.setPhaseName("Dispatch");
         hm3.setRules(rule3);
         ph.addHandler(hm3);
-
-        /*ArrayList oh = ph.getOrderHandler();
-        for (int i = 0; i < oh.size(); i++) {
-            HandlerDescription metadata = (HandlerDescription) oh.get(i);
-            System.out.println("Name:" + metadata.getName().getLocalPart());
-        }*/
     }
 }
