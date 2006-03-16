@@ -927,7 +927,7 @@ public class SchemaCompiler {
 
                 if (elt.getQName()!=null){
                     clazzName = (String) processedElementTypeMap.get(elt.getQName());
-                    referencedQName = elt.getQName();
+                    referencedQName = elt.getQName();                                
                     metainfHolder.registerMapping(referencedQName,
                             elt.getSchemaType()!=null?elt.getSchemaType().getQName():elt.getSchemaTypeName(), //always get the schema type name from the schema it-self
                             clazzName,
