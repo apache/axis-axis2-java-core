@@ -159,43 +159,66 @@ public class BeanUtil {
     public static Object deserialize(Class beanClass, OMElement beanElement) throws AxisFault {
         Object beanObj;
         try {
-            if (SimpleTypeMapper.isSimpleType(beanClass)) {
-                return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
-            }
-            HashMap properties = new HashMap();
-            BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-            PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
-            for (int i = 0; i < propDescs.length; i++) {
-                PropertyDescriptor proprty = propDescs[i];
-                properties.put(proprty.getName(), proprty);
-            }
-
-            beanObj = beanClass.newInstance();
-            Iterator elements = beanElement.getChildren();
-            while (elements.hasNext()) {
-                OMElement parts = (OMElement) elements.next();
-                // if parts/@href != null then need to find element with id and deserialize.
-                // before that first check whether we already have it in the hashtable
-                String partsLocalName = parts.getLocalName();
-                PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName);
-                if (prty != null) {
-                    Class parameters = prty.getPropertyType();
-                    if (prty.equals("class"))
-                        continue;
-
-                    Object partObj;
-                    if (SimpleTypeMapper.isSimpleType(parameters)) {
-                        partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-                    } else if (SimpleTypeMapper.isArrayList(parameters)) {
-                        //todo : Deepal , the array handling is completely wrong , this has to be
-                        // improved
-                        partObj = SimpleTypeMapper.getArrayList((OMElement) parts.getParent(), prty.getName());
-                    } else {
-                        partObj = deserialize(parameters, parts);
+            if (beanClass.isArray()) {
+                ArrayList valueList = new ArrayList();
+                Class arrayClassType = beanClass.getComponentType();
+                Iterator parts = beanElement.getChildElements();
+                OMElement omElement;
+                while (parts.hasNext()) {
+                    Object objValue = parts.next();
+                    if (objValue instanceof OMElement) {
+                        omElement = (OMElement) objValue;
+                        valueList.add(deserialize(arrayClassType, omElement));
                     }
-                    Object [] parms = new Object[]{partObj};
-                    prty.getWriteMethod().invoke(beanObj, parms);
                 }
+                return ConverterUtil.convertToArray(arrayClassType,
+                        valueList);
+            } else {
+                if (SimpleTypeMapper.isSimpleType(beanClass)) {
+                    return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
+                }
+                HashMap properties = new HashMap();
+                BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
+                PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
+                for (int i = 0; i < propDescs.length; i++) {
+                    PropertyDescriptor proprty = propDescs[i];
+                    properties.put(proprty.getName(), proprty);
+                }
+
+                beanObj = beanClass.newInstance();
+                Iterator elements = beanElement.getChildren();
+                while (elements.hasNext()) {
+                    OMElement parts;
+                    Object objValue = elements.next();
+                    if (objValue instanceof OMElement) {
+                        parts = (OMElement) objValue;
+                    } else {
+                        continue;
+                    }
+                    // if parts/@href != null then need to find element with id and deserialize.
+                    // before that first check whether we already have it in the hashtable
+                    String partsLocalName = parts.getLocalName();
+                    PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName);
+                    if (prty != null) {
+                        Class parameters = prty.getPropertyType();
+                        if (prty.equals("class"))
+                            continue;
+
+                        Object partObj;
+                        if (SimpleTypeMapper.isSimpleType(parameters)) {
+                            partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+                        } else if (SimpleTypeMapper.isArrayList(parameters)) {
+                            //todo : Deepal , the array handling is completely wrong , this has to be
+                            // improved
+                            partObj = SimpleTypeMapper.getArrayList((OMElement) parts.getParent(), prty.getName());
+                        } else {
+                            partObj = deserialize(parameters, parts);
+                        }
+                        Object [] parms = new Object[]{partObj};
+                        prty.getWriteMethod().invoke(beanObj, parms);
+                    }
+                }
+                return beanObj;
             }
         } catch (InstantiationException e) {
             throw new AxisFault("InstantiationException : " + e);
@@ -206,7 +229,8 @@ public class BeanUtil {
         } catch (IntrospectionException e) {
             throw new AxisFault("IntrospectionException : " + e);
         }
-        return beanObj;
+
+
     }
 
     public static Object deserialize(Class beanClass,
