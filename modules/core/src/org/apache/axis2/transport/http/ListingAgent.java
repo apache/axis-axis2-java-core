@@ -487,6 +487,8 @@ public class ListingAgent {
                 } else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
                 }
+            } else {
+                req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
             }
         }
         String URI = req.getRequestURI();
