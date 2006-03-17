@@ -427,14 +427,10 @@ public class ServiceClient {
             // and wait on the callbck
             sendReceiveNonBlocking(operation, elem, callback);
             long timeout = options.getTimeOutInMilliSeconds();
-            long startTime = System.currentTimeMillis();
-            long currentTime;
-            while (true) {
-                if (callback.isComplete()) {
-                    break;
-                }
-                currentTime = System.currentTimeMillis();
-                if (currentTime - startTime > timeout) {
+            synchronized (callback) {
+                try {
+                    callback.wait(timeout);
+                } catch (InterruptedException e) {
                     throw new AxisFault(Messages
                             .getMessage("responseTimeOut"));
                 }
@@ -609,6 +605,9 @@ public class ServiceClient {
         public void onComplete(AsyncResult result) {
             this.envelope = result.getResponseEnvelope();
             this.msgctx = result.getResponseMessageContext();
+            synchronized (this){
+                notify();
+            }
         }
 
         public void onError(Exception e) {
