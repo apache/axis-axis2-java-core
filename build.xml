@@ -24,6 +24,8 @@
   <!--read in project properties, including library versions-->
   <property file="etc/project.properties"/>
 
+  
+  
   <target name="default">
 
   </target>
@@ -39,11 +41,11 @@
     <condition property="maven.executable" value="maven.bat">
       <os family="windows" />
     </condition>
-    <property name="maven.executable" value="maven.sh" />
+    <property name="maven.executable" value="maven" />
 
     <property name="maven.line" value="${maven.commoncmd}" />
     <presetdef name="maven">
-      <exec failonerror="true" executable="maven.bat">
+      <exec failonerror="true" executable="${maven.executable}">
        <arg line="${maven.line}" />
       </exec>
     </presetdef>
@@ -56,14 +58,17 @@
     <property name="project.xml" location="etc/project.xml" />
     <!-- pull out the value of the project version from the maven1 file-->
     <xmlproperty file="${project.xml}"
-        keeproot="true" />
+        keeproot="true" semanticAttributes="true" />
 
     <property name="target.dir" location="target"/>
     <property name="project.version" value="${axis2_version}" />
     <property name="artifact.title" value="${project.id}-${project.version}" />
     <property name="target.jar" location="${target.dir}/${artifact.title}.jar"/>
     <property name="target.pom" location="${target.dir}/${artifact.title}.pom"/>
-    <available file="${basedir}/target/lib/axis-wsdl4j-1.2.jar" property="jars.present"/>
+    <!-- use a proper m2 hierarchy -->
+    <property name="maven2.groupId" value="org.apache.ws.${project.groupId}"/>
+    
+    <available file="${basedir}/target/lib/axis-wsdl4j-${axis.wsdl4j.version}.jar" property="jars.present"/>
 
   </target>
 
@@ -105,11 +110,31 @@
     
 <echo file="${target.pom}"><![CDATA[<project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>${project.id}</groupId>
+  <groupId>${maven2.groupId}</groupId>
   <artifactId>${project.id}</artifactId>
   <packaging>jar</packaging>
   <version>${project.version}</version>
   <dependencies>
+    <dependency>
+      <groupId>annogen</groupId>
+      <artifactId>annogen</artifactId>
+      <version>${annogen.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>axis</groupId>
+      <artifactId>axis-wsdl4j</artifactId>
+      <version>${axis.wsdl4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>backport-util-concurrent</groupId>
+      <artifactId>backport-util-concurrent</artifactId>
+      <version>${backport_util_concurrent.version}</version>
+    </dependency>    
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>${commons.logging.version}</version>
+    </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -121,21 +146,15 @@
       <version>${policy.version}</version>
     </dependency>
     <dependency>
-      <groupId>axis</groupId>
-      <artifactId>axis-wsdl4j</artifactId>
-      <version>${axis-wsdl4j.version}</version>
+      <groupId>org.apache.ws.commons</groupId>
+      <artifactId>XmlSchema</artifactId>
+      <version>${XmlSchema.m2.version}</version>
     </dependency>
     <dependency>
       <groupId>ws-commons</groupId>
-      <artifactId>XmlSchema</artifactId>
-      <version>${XmlSchema.version}</version>
+      <artifactId>axiom</artifactId>
+      <version>${axiom.version}</version>
     </dependency>
-    <dependency>
-      <groupId>annogen</groupId>
-      <artifactId>annogen</artifactId>
-      <version>${annogen.version}</version>
-    </dependency>
-    
   </dependencies>
 </project>
 ]]></echo>
@@ -156,7 +175,7 @@
         version="${wagon.version}"/>
   </target>
 
-  <target name="ready-to-deploy" depends="m2-pom,dist-lite" />
+  <target name="ready-to-deploy" depends="m2-pom" />
 
   <target name="m2-install" depends="ready-to-deploy"
       description="install the libray into the local m2 repository"
@@ -180,7 +199,7 @@
 
   <target name="installed"
     description="locally installed"
-    depends="m2-install" />
+    depends="dist-lite,m2-install" />
 
   <target name="quick" depends="create-lib"
       description="make a distribution">
@@ -242,5 +261,10 @@
     </copy>
   </target>
 
+  <target name="diag" depends="init">
+  <!-- probably ant 1.7+ only -->
+    <diagnostics/>
+    <echoproperties/>
+  </target>
 
 </project>
