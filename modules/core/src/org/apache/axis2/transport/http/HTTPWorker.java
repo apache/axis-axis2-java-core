@@ -139,6 +139,20 @@ public class HTTPWorker implements HttpRequestHandler {
                     return true;
                 }
 
+                if (uri.indexOf("?") < 0) {
+                    if (!(uri.endsWith("/axis2/services/") || uri.endsWith("/axis2/services"))) {
+                        String serviceName = uri.replaceAll("/axis2/services/", "");
+                        if (serviceName.indexOf("/") < 0) {
+                            response.addHeader(new Header("Content-Type", "text/html"));
+                            String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
+                            byte[] buf = res.getBytes();
+                            response.setBody(new ByteArrayInputStream(buf));
+                            conn.writeResponse(response);
+                            return true;
+                        }
+                    }
+                }
+
                 if (uri.endsWith("?wsdl")) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 5);
                     HashMap services = configurationContext.getAxisConfiguration().getServices();

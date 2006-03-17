@@ -380,7 +380,6 @@ public class ListingAgent {
             return;
         } else if ((filePart != null) && filePart.endsWith(Constants.LOGOUT)) {
             logout(httpServletRequest, httpServletResponse);
-
             return;
         }
 
@@ -490,9 +489,7 @@ public class ListingAgent {
                 }
             }
         }
-
         String URI = req.getRequestURI();
-
         URI = URI.substring(0, URI.indexOf("services"));
         res.sendRedirect(URI + LIST_SINGLE_SERVICE_JSP_NAME);
     }

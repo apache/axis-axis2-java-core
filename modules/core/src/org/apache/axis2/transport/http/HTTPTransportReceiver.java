@@ -18,6 +18,7 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -382,6 +383,36 @@ public class HTTPTransportReceiver {
         temp = "<html><head><title>Axis2: Services</title></head>" + "<body>" + temp
                 + "</body></html>";
 
+        return temp;
+    }
+
+    public static String printServiceHTML(String serviceName,
+                                          ConfigurationContext configurationContext) {
+        String temp = "";
+        try {
+            AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+            AxisService axisService = axisConfig.getService(serviceName);
+            Iterator iterator = axisService.getOperations();
+            temp += "<h3>" + axisService.getName() + "</h3>";
+            temp += "<a href=\"" + axisService.getName() + "?wsdl\">wsdl</a> <br/> ";
+            temp += "<i>Service Description :  " + axisService.getServiceDescription() + "</i><br/><br/>";
+            if (iterator.hasNext()) {
+                temp += "Available operations <ul>";
+                for (; iterator.hasNext();) {
+                    AxisOperation axisOperation = (AxisOperation) iterator.next();
+                    temp += "<li>" + axisOperation.getName().getLocalPart() + "</li>";
+                }
+                temp += "</ul>";
+            } else {
+                temp += "No operations specified for this service";
+            }
+            temp = "<html><head><title>Axis2: Services</title></head>" + "<body>" + temp
+                    + "</body></html>";
+        }
+        catch (AxisFault axisFault) {
+            temp = "<html><head><title>Service has a fualt</title></head>" + "<body>"
+                    + "<hr><h2><font color=\"blue\">" + axisFault.getMessage() + "</font></h2></body></html>";
+        }
         return temp;
     }
 }
