@@ -76,7 +76,7 @@ public class TrustException extends Exception {
      *
      * @return the message translated from the property (message) file.
      */
-    private static String getMessage(String faultCode, Object[] args) {
+    protected static String getMessage(String faultCode, Object[] args) {
         String msg = null;
         try {
             msg = MessageFormat.format(resources.getString(faultCode), args);

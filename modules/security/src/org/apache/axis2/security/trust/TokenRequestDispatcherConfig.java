@@ -68,7 +68,7 @@ public class TokenRequestDispatcherConfig {
             while (tokenTypes.hasNext()) {
                 OMElement type = (OMElement) tokenTypes.next();
                 String value = type.getText();
-                if(value == null) {
+                if(value == null || "".equals(value)) {
                     throw new TrustException("invalidTokenTypeDefinition",
                             new String[] { "Issuer", classAttr });
                 }
