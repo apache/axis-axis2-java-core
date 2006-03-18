@@ -20,6 +20,23 @@ import java.util.HashMap;
 
 import org.apache.ws.commons.om.OMElement;
 
+/**
+ * This represents a security token which can have either one of 4 states.
+ * <ul>
+ * <li>ISSUED</li>
+ * <li>EXPIRED</li>
+ * <li>CACELLED</li>
+ * <li>RENEWED</li>
+ * </ul>
+ * Also this holds the <code>OMElement</code>s representing the token in its 
+ * present state and the previous state.
+ * 
+ * These tokens are stired using the storage mechanism provided via the 
+ * <code>TokenStorage</code> interface.
+ * @see org.apache.axis2.security.trust.TokenStorage
+ * 
+ * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ */
 public class Token {
     
     public final static int ISSUED = 1;
@@ -43,11 +60,9 @@ public class Token {
     private OMElement token;
     
     /**
-     * The original token
-     * This will be differnet from the <code>token</code> if and only
-     * if there was a change in the properties of the token it self
+     * The token in its previous state
      */
-    private OMElement originalToken;
+    private OMElement presivousToken;
     
     /**
      * A bag to hold anyother properties
@@ -83,21 +98,7 @@ public class Token {
     
     public Token(String id, OMElement tokenElem) {
         this.id = id;
-        this.originalToken = tokenElem; 
-    }
-    
-    /**
-     * @return Returns the originalToken.
-     */
-    protected OMElement getOriginalToken() {
-        return originalToken;
-    }
-
-    /**
-     * @param originalToken The originalToken to set.
-     */
-    protected void setOriginalToken(OMElement originalToken) {
-        this.originalToken = originalToken;
+        this.token = tokenElem; 
     }
 
     /**
@@ -148,4 +149,20 @@ public class Token {
     protected String getId() {
         return id;
     }
+
+    /**
+     * @return Returns the presivousToken.
+     */
+    protected OMElement getPresivousToken() {
+        return presivousToken;
+    }
+
+    /**
+     * @param presivousToken The presivousToken to set.
+     */
+    protected void setPresivousToken(OMElement presivousToken) {
+        this.presivousToken = presivousToken;
+    }
+    
+    
 }

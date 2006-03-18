@@ -16,14 +16,56 @@
 
 package org.apache.axis2.security.trust;
 
+import java.util.ArrayList;
+
+/**
+ * The storage interface to store security tokens and
+ * manipulate them  
+ */
 public interface TokenStorage {
     
+    /**
+     * Add the given token to the list.
+     * @param token The token to be added
+     * @throws TrustException
+     */
     public void add(Token token) throws TrustException;
     
+    /**
+     * Update an existing token.
+     * @param token
+     * @throws TrustException
+     */
     public void update(Token token) throws TrustException;
     
-    //Utility methods
+    /**
+     * Return the list of all token identifiers.
+     * @return
+     * @throws TrustException
+     */
     public String[] gettokenIdentifiers() throws TrustException;
 
+    /**
+     * Return the list of <code>EXPIRED</code> tokens.
+     * If there are no <code>EXPIRED</code> tokens <code>null</code> will be 
+     * returned
+     * @return
+     * @throws TrustException
+     */
+    public ArrayList getExpiredTokens() throws TrustException;
+    
+    /**
+     * Return the list of ISSUED and RENEWED tokens.
+     * @return
+     * @throws TrustException
+     */
+    public ArrayList getValidTokens() throws TrustException;
+    
+    /**
+     * Return the list of RENEWED tokens.
+     * @return
+     * @throws TrustException
+     */
+    public ArrayList getRenewedTokens() throws TrustException;
     
 }
