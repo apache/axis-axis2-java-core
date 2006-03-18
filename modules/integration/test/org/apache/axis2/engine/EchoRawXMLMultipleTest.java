@@ -98,7 +98,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                     finish = true;
                 }
             };
-            sender.sendReceiveNonblocking(payload, callback);
+            sender.sendReceiveNonBlocking(payload, callback);
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);
@@ -144,7 +144,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             sender.setOptions(options);
             options.setTo(targetEPR);
 
-            sender.sendReceiveNonblocking(payload, callback);
+            sender.sendReceiveNonBlocking(payload, callback);
 
             int index = 0;
             while (!finish) {

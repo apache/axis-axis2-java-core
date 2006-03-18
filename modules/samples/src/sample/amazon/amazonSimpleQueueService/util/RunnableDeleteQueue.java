@@ -71,7 +71,7 @@ public class RunnableDeleteQueue extends QueueManager implements Runnable {
                     org.apache.axis2.Constants.VALUE_FALSE);
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
-            sender.sendReceiveNonblocking(element, specificCallbackObject);
+            sender.sendReceiveNonBlocking(element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
         } catch (Exception e) {

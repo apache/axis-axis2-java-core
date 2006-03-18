@@ -447,8 +447,14 @@ public class RPCCallTest extends TestCase {
 
         ArrayList req = new ArrayList();
         req.add(args.toArray());
-        OMElement value = sender.invokeBlocking(operationName, req.toArray());
-        assertEquals("MyCompany", value.getFirstElement().getFirstElement().getText());
+        ArrayList resobj = new ArrayList();
+        resobj.add(Company.class);
+        resobj.add(Company.class);
+        resobj.add(Company.class);
+        resobj.add(Company.class);
+        Object [] value = sender.invokeBlocking(operationName, req.toArray(), resobj.toArray());
+        assertEquals(4, value.length);
+        assertEquals(((Company) value[0]).getName(), "MyCompany");
     }
 
 

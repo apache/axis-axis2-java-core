@@ -125,7 +125,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
 
-        sender.sendReceiveNonblocking(payload, callback);
+        sender.sendReceiveNonBlocking(payload, callback);
 
         int index = 0;
         while (!finish) {

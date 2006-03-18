@@ -131,7 +131,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         sender.setOptions(options);
 
-        sender.sendReceiveNonblocking(payload, callback);
+        sender.sendReceiveNonBlocking(payload, callback);
 
         int index = 0;
         while (!finish) {

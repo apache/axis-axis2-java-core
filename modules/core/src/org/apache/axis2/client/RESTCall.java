@@ -34,7 +34,7 @@ public class RESTCall extends ServiceClient {
     }
 
     public void sendReceiveNonblocking(Callback callback) throws AxisFault {
-        super.sendReceiveNonblocking(OMAbstractFactory.getOMFactory().createOMElement("nothing",
+        super.sendReceiveNonBlocking(OMAbstractFactory.getOMFactory().createOMElement("nothing",
                 "nothing", "nothing"), callback);
     }
 }

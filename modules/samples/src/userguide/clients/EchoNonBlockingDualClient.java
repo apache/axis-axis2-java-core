@@ -71,7 +71,7 @@ public class EchoNonBlockingDualClient {
             //Non-Blocking Invocation
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
-            sender.sendReceiveNonblocking(payload, callback);
+            sender.sendReceiveNonBlocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {

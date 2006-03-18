@@ -81,7 +81,7 @@ public class FormModel {
         try {
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
-            sender.sendReceiveNonblocking(requestElement, new GoogleCallBack(word));
+            sender.sendReceiveNonBlocking(requestElement, new GoogleCallBack(word));
 
         } catch (AxisFault axisFault) {
             observer.updateError(axisFault.getMessage());

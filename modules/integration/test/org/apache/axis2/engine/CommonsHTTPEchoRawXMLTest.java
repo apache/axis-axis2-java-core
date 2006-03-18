@@ -93,7 +93,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
-        sender.sendReceiveNonblocking(payload, callback);
+        sender.sendReceiveNonBlocking(payload, callback);
 
         int index = 0;
         while (!finish) {

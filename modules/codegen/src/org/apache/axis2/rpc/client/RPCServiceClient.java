@@ -98,7 +98,7 @@ public class RPCServiceClient extends ServiceClient {
             throws AxisFault {
         OMElement omElement = BeanUtil.getOMElement(opName, args, null);
         //call the underline implementation
-        super.sendReceiveNonblocking(omElement, callback);
+        super.sendReceiveNonBlocking(omElement, callback);
     }
 
 

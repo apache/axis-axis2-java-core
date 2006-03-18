@@ -236,8 +236,8 @@ public class DeploymentEngine implements DeploymentConstants {
             contolops.clear();
         }
         axisConfig.addServiceGroup(serviceGroup);
-//        addAsWebResources(currentArchiveFile.getFile(),
-//                serviceGroup.getServiceGroupName());
+        addAsWebResources(currentArchiveFile.getFile(),
+                serviceGroup.getServiceGroupName());
     }
 
     private void addAsWebResources(File in, String serviceFileName) {

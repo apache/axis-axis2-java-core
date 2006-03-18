@@ -189,9 +189,6 @@ public class ServiceClient {
             trsManager = new ListenerManager();
             trsManager.init(this.configContext);
         }
-//        if (!trsManager.isStopped()) {
-//            trsManager.start();
-//        }
     }
 
     /**
@@ -460,7 +457,7 @@ public class ServiceClient {
         }
     }
 
-    public void sendReceiveNonblocking(OMElement elem, Callback callback)
+    public void sendReceiveNonBlocking(OMElement elem, Callback callback)
             throws AxisFault {
         sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
     }
@@ -605,7 +602,7 @@ public class ServiceClient {
         public void onComplete(AsyncResult result) {
             this.envelope = result.getResponseEnvelope();
             this.msgctx = result.getResponseMessageContext();
-            synchronized (this){
+            synchronized (this) {
                 notify();
             }
         }
