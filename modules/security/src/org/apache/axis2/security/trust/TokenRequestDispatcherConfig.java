@@ -59,7 +59,7 @@ public class TokenRequestDispatcherConfig {
             String isDefault = element.getAttributeValue(DEFAULT_ATTR);
             if(isDefault != null && "true".equalsIgnoreCase(isDefault)) {
                 //Use the first default issuer as the default isser
-                if(conf.defaultIssuerClassName != null) {
+                if(conf.defaultIssuerClassName == null) {
                     conf.defaultIssuerClassName = classAttr;
                 }
             }
@@ -72,12 +72,12 @@ public class TokenRequestDispatcherConfig {
                     throw new TrustException("invalidTokenTypeDefinition",
                             new String[] { "Issuer", classAttr });
                 }
-                if(conf.issuers != null) {
+                if(conf.issuers == null) {
                     conf.issuers = new Hashtable();
                 }
                 //If the token type is not aleady declared then add it to the 
                 //table with the issuer classname
-                if(!conf.issuers.keySet().contains(value)) {
+                if(conf.issuers.keySet().size() > 0 && !conf.issuers.keySet().contains(value)) {
                     conf.issuers.put(value, classAttr);
                 }
             }
