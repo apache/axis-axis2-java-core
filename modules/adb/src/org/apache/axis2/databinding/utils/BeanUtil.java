@@ -148,7 +148,7 @@ public class BeanUtil {
      *
      * @param beanObject
      */
-    public static Object getPullParser(Object beanObject) {
+    public static XMLStreamReader getPullParser(Object beanObject) {
         String className = beanObject.getClass().getName();
         if (className.indexOf(".") > 0) {
             className = className.substring(className.lastIndexOf('.') + 1, className.length());
