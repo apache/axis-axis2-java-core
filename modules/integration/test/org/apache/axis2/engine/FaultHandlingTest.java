@@ -31,11 +31,7 @@ import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.ws.commons.soap.*;
 import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.wsdl.WSDLConstants;
 
@@ -75,6 +71,7 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
         String result = sender.sendReceive(payload).toString();
 
+        assertTrue(result.indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
         assertTrue(result.indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
         assertTrue(result.indexOf(FaultHandler.FAULT_REASON) > -1);
 
@@ -88,6 +85,7 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
         result = sender.sendReceive(payload).toString();
 
+        assertTrue(result.indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
         assertTrue(result.indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
         assertTrue(result.indexOf(FaultHandler.FAULT_REASON) > -1);
 

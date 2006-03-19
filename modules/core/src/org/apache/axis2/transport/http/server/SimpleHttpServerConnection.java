@@ -291,12 +291,10 @@ public class SimpleHttpServerConnection {
     /**
      * Returns the ip address to be used for the replyto epr
      * CAUTION:
-     * This will simply go though the list of available network
-     * interfaces and will return the final address of the final interface
-     * available in the list. This workes fine for the simple cases where
-     * 1.) there's only the loopback interface, where the ip is 127.0.0.1
-     * 2.) there's an additional interface availbale which is used to
-     * access an external network and has only one ip assigned to it.
+     * This will go through all the available network interfaces and will try to return an ip address.
+     * First this will try to get the first IP which is not loopback address (127.0.0.1). If none is found
+     * then this will return this will return 127.0.0.1.
+     * This will <b>not<b> consider IPv6 addresses.
      * <p/>
      * TODO:
      * - Improve this logic to genaralize it a bit more
@@ -307,7 +305,7 @@ public class SimpleHttpServerConnection {
      */
     public static String getIpAddress() throws SocketException {
         Enumeration e = NetworkInterface.getNetworkInterfaces();
-        String address = null;
+        String address = "127.0.0.1";
 
         while (e.hasMoreElements()) {
             NetworkInterface netface = (NetworkInterface) e.nextElement();
@@ -315,12 +313,16 @@ public class SimpleHttpServerConnection {
 
             while (addresses.hasMoreElements()) {
                 InetAddress ip = (InetAddress) addresses.nextElement();
-
-                // the last available ip address will be returned
-                address = ip.getHostAddress();
+                if (!ip.isLoopbackAddress() && isIP(ip.getHostAddress())) {
+                    return ip.getHostAddress();
+                }
             }
         }
 
         return address;
+    }
+
+    private static boolean isIP(String hostAddress) {
+        return hostAddress.split("[.]").length == 4;
     }
 }

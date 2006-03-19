@@ -25,6 +25,7 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
@@ -35,16 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPConstants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPFaultDetail;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.ws.commons.soap.*;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -166,6 +158,11 @@ public class AxisEngine {
         if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
         {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
+        }
+
+        ServiceContext serviceContext = processingContext.getServiceContext();
+        if (serviceContext != null) {
+            faultContext.setServiceContext(serviceContext);
         }
 
         faultContext.setProcessingFault(true);
@@ -318,10 +315,12 @@ public class AxisEngine {
         }
 
         // defaulting to fault code Sender, if no message is available
-        soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
-                ? getSenderFaultCode(context.getEnvelope().getNamespace())
-                : soapFaultCode;
-        fault.getCode().getValue().setText(soapFaultCode);
+        if (faultCode == null) {
+            soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
+                    ? getSenderFaultCode(context.getEnvelope().getNamespace())
+                    : soapFaultCode;
+            fault.getCode().getValue().setText(soapFaultCode);
+        }
 
         Object faultReason = context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
         String message = "";
@@ -340,26 +339,25 @@ public class AxisEngine {
         }
 
         // defaulting to reason, unknown, if no reason is available
-        message = ("".equals(message) || (message == null))
-                ? "unknown"
-                : message;
-        fault.getReason().getSOAPText().setLang("en-US");
-        fault.getReason().getSOAPText().setText(message);
+        if (faultReason == null) {
+            message = ("".equals(message) || (message == null))
+                    ? "unknown"
+                    : message;
+            fault.getReason().getSOAPText().setLang("en-US");
+            fault.getReason().getSOAPText().setText(message);
+        }
 
         Object faultRole = context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
-
         if (faultRole != null) {
             fault.getRole().setText((String) faultRole);
         }
 
         Object faultNode = context.getProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
-
         if (faultNode != null) {
             fault.getNode().setText((String) faultNode);
         }
 
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
-
         if (faultDetail != null) {
             fault.setDetail((SOAPFaultDetail) faultDetail);
         }

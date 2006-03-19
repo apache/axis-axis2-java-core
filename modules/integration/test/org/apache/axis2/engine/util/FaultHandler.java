@@ -5,11 +5,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFaultDetail;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPFaultText;
+import org.apache.ws.commons.soap.*;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -31,6 +27,7 @@ import org.apache.ws.commons.soap.SOAPFaultText;
 public class FaultHandler extends AbstractHandler {
     public static final String FAULT_REASON = "This is a test fault message which happened suddenly";
     public static final String DETAIL_MORE_INFO = "This error is a result due to a fake problem in Axis2 engine. Do not worry ;)";
+    public static final String M_FAULT_EXCEPTION = "m:FaultException";
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         // this handler will be used to check the fault handling of Axis2.
@@ -39,6 +36,12 @@ public class FaultHandler extends AbstractHandler {
         SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
 
         // I have a sudden fake error ;)
+
+        SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
+        soapFaultCode.declareNamespace("http://someuri.org", "m");
+        SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
+        soapFaultValue.setText(M_FAULT_EXCEPTION);
+
         SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
         soapFaultText.setLang("en");
         soapFaultText.setText(FAULT_REASON);
@@ -50,6 +53,7 @@ public class FaultHandler extends AbstractHandler {
         SOAPFaultDetail faultDetail = soapFac.createSOAPFaultDetail();
         faultDetail.addDetailEntry(detailEntry);
 
+        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
         msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
         msgContext.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, faultDetail);
 

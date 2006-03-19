@@ -48,13 +48,13 @@ rem set the classes
 setlocal EnableDelayedExpansion
 rem loop through the libs and add them to the class path
 set AXIS2_CLASS_PATH=%AXIS2_HOME%
-FOR %%c in (%AXIS2_HOME%\lib\*.jar) DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
+FOR %%c in ("%AXIS2_HOME%\lib\*.jar") DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
 
 rem ----- Execute The Requested Command ---------------------------------------
 echo Using AXIS2_HOME:   %AXIS2_HOME%
 echo Using JAVA_HOME:    %JAVA_HOME%
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 
-%_RUNJAVA% %JAVA_OPTS% -cp %AXIS2_CLASS_PATH% org.apache.axis2.wsdl.WSDL2Java %*
+%_RUNJAVA% %JAVA_OPTS% -cp "%AXIS2_CLASS_PATH%" org.apache.axis2.wsdl.WSDL2Java %*
 endlocal
 :end
