@@ -33,7 +33,7 @@ public class XSD2Java {
      *
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             // printout the options
             System.out.println(SchemaCompilerMessages.getMessage("schema.xsdarg1"));
@@ -48,8 +48,7 @@ public class XSD2Java {
      * @param xsdName
      * @param outputLocation
      */
-    private static void compile(String xsdName, String outputLocation) {
-        try {
+    private static void compile(String xsdName, String outputLocation) throws Exception {
             //load the current Schema through a file
             //first read the file into a DOM
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -82,9 +81,5 @@ public class XSD2Java {
 
             SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
             compiler.compile(currentSchema);
-
-        } catch (Exception e) {
-            throw new RuntimeException(SchemaCompilerMessages.getMessage("schema.compilerexception"), e);
-        }
     }
 }

@@ -45,6 +45,7 @@
         <!-- Run schema compiler with designated schemas -->
         <!-- simple max occurs 2 xsd -->
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${schema.source.dir}/simple_maxOccurs2.xsd"/>
@@ -52,6 +53,7 @@
         </java>
         <!-- anon complex type xsd -->
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${schema.source.dir}/anonymous_complexType.xsd"/>
@@ -59,6 +61,7 @@
         </java>
         <!-- simple max occurs xsd -->
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${schema.source.dir}/simple_maxOccurs.xsd"/>
@@ -67,6 +70,7 @@
 
         <!-- simple any type xsd -->
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${schema.source.dir}/simple_anytype.xsd"/>
@@ -76,6 +80,7 @@
         <!-- ################################################################### -->
         <!-- All simple primitive types xsd -->
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${schema.source.dir}/simple/simpleType-All.xsd"/>
@@ -84,6 +89,7 @@
 
         <!-- All simple derived types xsd -->
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${schema.source.dir}/derived/derivedType-All.xsd"/>
