@@ -129,8 +129,8 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-activation</artifactId>
+            <groupId>${geronimo.spec.groupid}</groupId>
+            <artifactId>${geronimo.spec.activation.artifactid}</artifactId>
             <version>${geronimo.spec.activation.version}</version>
             <properties>
                 <module>true</module>
