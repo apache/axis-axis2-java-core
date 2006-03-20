@@ -77,7 +77,6 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
             Iterator operationIterator;
             WSDLInterface superInterface;
             WSDLOperation superInterfaceOperation;
-            Iterator thisIterator = all.values().iterator();
             WSDLOperation thisOperation;
             boolean tobeAdded = false;
             while (superIterator.hasNext()) {
@@ -88,6 +87,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
                     superInterfaceOperation =
                             (WSDLOperation) operationIterator.next();
                     tobeAdded = true;
+                    Iterator thisIterator = all.values().iterator();
                     while (thisIterator.hasNext()) {
                         thisOperation = (WSDLOperation) thisIterator.next();
                         if ((thisOperation.getName() ==
