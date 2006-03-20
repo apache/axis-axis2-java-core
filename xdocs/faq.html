@@ -23,11 +23,15 @@
   </li>
   <li><strong>Integration security tests fail with JDK 1.5</strong></a><br>
 
-    <p>You have to add Bouncy Castle as a JCE provider. Add the following entry to 
-    JDK_HOME/jre/lib/security/java.security file</p>
+    <p>You have to add Bouncy Castle as a JCE provider. Add the following
+entry to java.security file of the appropriate JRE on your machine. This file is 
+available in the lib\security\ directory within the JRE directory.</p>
     <p>security.provider.7=org.bouncycastle.jce.provider.BouncyCastleProvider</p>
     <p>security.provider.# will have to be decided depending on the existing entries 
     in the java.security file</p>
+    <p>NOTE: For Windows XP the correct version can be found using 'java -version'. The
+correct file is JRE (typically c:\Program
+Files\Java\jre&lt;version&gt;\lib\security\java.security.</p>
   </li>
 </ol>
 
