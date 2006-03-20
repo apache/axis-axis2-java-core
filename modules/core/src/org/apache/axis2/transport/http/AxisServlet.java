@@ -225,7 +225,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
         try {
             ServletContext context = config.getServletContext();
-            String repoDir = context.getRealPath("/WEB-INF");
+            String repoDir = config.getInitParameter("repository");
+            if(repoDir == null || repoDir.trim().length() == 0){
+                repoDir = context.getRealPath("/WEB-INF");
+            } else {
+                repoDir = context.getRealPath(repoDir);
+            }
+
             //adding weblocation property
             setWebLocationProperty(context);
             ConfigurationContext configContext =
