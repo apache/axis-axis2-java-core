@@ -340,7 +340,6 @@ public class AxisService2WOM {
                 SOAPBody requestSoapbody = (SOAPBody) extensionFactory
                         .getExtensionElement(ExtensionConstants.SOAP_11_BODY);
                 requestSoapbody.setUse(use);
-                // TODO need to fix this
                 requestSoapbody.setNamespaceURI(namespeceURI);
                 bindingInMessage.addExtensibilityElement(requestSoapbody);
 

@@ -826,6 +826,7 @@ public class AxisService extends AxisDescription {
         if (axisConfig != null) {
             PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
             if (axisConfig.isEngaged(module.getName())) {
+                removeModuleOperations(module);
                 Iterator operations = getChildren();
                 while (operations.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operations.next();
@@ -835,6 +836,7 @@ public class AxisService extends AxisDescription {
             } else {
                 if (isEngaged(module.getName())) {
                     phaseResolver.disEngageModulefromGlobalChains(module);
+                    removeModuleOperations(module);
                     Iterator operations = getChildren();
                     while (operations.hasNext()) {
                         AxisOperation axisOperation = (AxisOperation) operations.next();
@@ -845,6 +847,20 @@ public class AxisService extends AxisDescription {
             }
         }
         engagedModules.remove(module);
+    }
+
+    /**
+     * To remove module operations added at the time of engagement
+     */
+    private void removeModuleOperations(AxisModule module) {
+        HashMap moduleOerations = module.getOperations();
+        if (moduleOerations != null) {
+            Iterator moduleOperations_itr = moduleOerations.values().iterator();
+            while (moduleOperations_itr.hasNext()) {
+                AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
+                removeOeration(operation.getName());
+            }
+        }
     }
 
     public boolean isEngaged(QName moduleName) {
@@ -1067,5 +1083,20 @@ public class AxisService extends AxisDescription {
 
         return createService(implClass, axisConfig, clazz);
 
+    }
+
+    public void removeOeration(QName opName) {
+        AxisOperation operation = getOperation(opName);
+        if (operation != null) {
+            removeChild(opName);
+            ArrayList mappingList = operation.getWsamappingList();
+            if (mappingList != null) {
+                for (int i = 0; i < mappingList.size(); i++) {
+                    String actionMapping = (String) mappingList.get(i);
+                    operationsAliasesMap.remove(actionMapping);
+                }
+            }
+            operationsAliasesMap.remove(operation.getName().getLocalPart());
+        }
     }
 }

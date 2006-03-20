@@ -51,6 +51,7 @@ public interface DeploymentConstants {
     String TAG_PHASE_FIRST = "phaseFirst";
     String TAG_ORDER = "order";           // to resolve the order tag
     String TAG_OPERATION = "operation";       // operation start tag
+    String TAG_EXCLUDE_OPERATIONS="excludeOperations";
     String TAG_MESSAGE_RECEIVER = "messageReceiver";
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_TRANSPORTS = "transports";

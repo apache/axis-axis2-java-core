@@ -47,7 +47,8 @@ public class ListingAgent {
     private static final String LIST_SERVICE_GROUP_JSP = "ListServiceGroup.jsp";
     private static final String LIST_SERVICES_JSP_NAME = "listService.jsp";
     private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
-    private static final String REMOVE_SERVICE_JSP_NAME = "RemoveService.jsp";
+    private static final String IN_ACTIVATE_SERVICE_JSP_NAME = "InActivateService.jsp";
+    private static final String ACTIVATE_SERVICE_JSP_NAME = "ActivateService.jsp";
 
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
@@ -357,8 +358,12 @@ public class ListingAgent {
             engageModulesToOperation(httpServletRequest, httpServletResponse);
 
             return;
-        } else if ((filePart != null) && filePart.endsWith(Constants.REMOVE_SERVICE)) {
-            removeService(httpServletRequest, httpServletResponse);
+        } else if ((filePart != null) && filePart.endsWith(Constants.IN_ACTIVATE_SERVICE)) {
+            inActivateService(httpServletRequest, httpServletResponse);
+
+            return;
+        } else if ((filePart != null) && filePart.endsWith(Constants.ACTIVATE_SERVICE)) {
+            activateService(httpServletRequest, httpServletResponse);
 
             return;
         } else if ((filePart != null)
@@ -545,32 +550,40 @@ public class ListingAgent {
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
-    private void removeService(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void activateService(HttpServletRequest req, HttpServletResponse res) throws IOException {
         if (req.getParameter("submit") != null) {
-            String serviceName = req.getParameter("service");
-            String turnoff = req.getParameter("turnoff");
-
+            String serviceName = req.getParameter("axisService");
+            String turnon = req.getParameter("turnon");
             if (serviceName != null) {
-                if (turnoff != null) {
-                    configContext.getAxisConfiguration().removeService(serviceName);
-                    res.setContentType("text/css");
-
-                    PrintWriter out_writer = new PrintWriter(out);
-
-                    out_writer.println("Service removed from the system Successfully");
-                    out_writer.flush();
-                    out_writer.close();
-
-                    return;
+                if (turnon != null) {
+                    AxisService service = configContext.getAxisConfiguration().getServiceForActivation(serviceName);
+                    service.setActive(true);
                 }
             }
         } else {
             HashMap services = configContext.getAxisConfiguration().getServices();
-
             req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         }
 
-        res.sendRedirect(REMOVE_SERVICE_JSP_NAME);
+        res.sendRedirect(ACTIVATE_SERVICE_JSP_NAME);
+    }
+
+    private void inActivateService(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (req.getParameter("submit") != null) {
+            String serviceName = req.getParameter("axisService");
+            String turnoff = req.getParameter("turnoff");
+            if (serviceName != null) {
+                if (turnoff != null) {
+                    AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+                    service.setActive(false);
+                }
+            }
+        } else {
+            HashMap services = configContext.getAxisConfiguration().getServices();
+            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        }
+
+        res.sendRedirect(IN_ACTIVATE_SERVICE_JSP_NAME);
     }
 
     private void selectService(HttpServletRequest req, HttpServletResponse res) throws IOException {

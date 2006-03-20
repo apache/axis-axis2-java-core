@@ -401,23 +401,17 @@ class OutInAxisOperationClient implements OperationClient {
 
         public void run() {
             try {
-
                 // send the request and wait for reponse
                 MessageContext response = send(msgctx);
-
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();
-                resenvelope.build();
                 SOAPBody body = resenvelope.getBody();
-
                 if (body.hasFault()) {
                     Exception ex = body.getFault().getException();
 
                     if (ex != null) {
                         callback.onError(ex);
                     } else {
-
-                        // todo this needs to be fixed
                         callback.onError(new Exception(body.getFault()
                                 .getReason().getText()));
                     }

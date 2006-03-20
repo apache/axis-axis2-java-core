@@ -317,7 +317,7 @@ asynchrony!!</strong></p>
             };
 
             //Non-Blocking Invocation
-            serviceClinet.sendReceiveNonblocking(payload, callback);
+            serviceClinet.sendReceiveNonBlocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {

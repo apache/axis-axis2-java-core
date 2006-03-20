@@ -144,10 +144,20 @@ public abstract class AxisOperation extends AxisDescription
                         phaseResolver.disEngageModulefromGlobalChains(module);
                     }
                     phaseResolver.disEngageModulefromOperationChian(module, this);
+                    //removing operations added at the time of module engagemnt
+                    HashMap moduleOperations = module.getOperations();
+                    if (moduleOperations != null) {
+                        Iterator moduleOperations_itr = moduleOperations.values().iterator();
+                        while (moduleOperations_itr.hasNext()) {
+                            AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
+                            service.removeOeration(operation.getName());
+                        }
+                    }
                 }
             }
             engagedModules.remove(module);
-            log.info("remove mdoule from engage module list " + module.getName().getLocalPart());
+            log.info("remove mdoule from engage module list "
+                    + module.getName().getLocalPart());
         }
     }
 

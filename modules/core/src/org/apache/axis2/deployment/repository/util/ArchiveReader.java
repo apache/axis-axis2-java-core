@@ -73,15 +73,6 @@ public class ArchiveReader implements DeploymentConstants {
             AxisService service = serviceBuilder.populateService(rootElement);
 
             ArrayList serviceList = new ArrayList();
-
-            if (!axisService.isWsdlfound()) {
-                //trying to generate WSDL for the service using JAM  and Java refelection
-                try {
-                    Utils.fillAxisService(service, axisConfig);
-                } catch (Exception e) {
-                    log.info(Messages.getMessage("errorinscheamgen", e.getMessage()));
-                }
-            }
             serviceList.add(service);
             return serviceList;
         } else if (TAG_SERVICE_GROUP.equals(elementName)) {

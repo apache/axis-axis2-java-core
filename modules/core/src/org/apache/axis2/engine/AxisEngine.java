@@ -64,24 +64,18 @@ public class AxisEngine {
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-        // todo : need to move this to pre-condition of the MessageReceiver Phase
         SOAPEnvelope se = msgContext.getEnvelope();
-
         if (se.getHeader() == null) {
             return;
         }
-
         Iterator hbs = se.getHeader().examineAllHeaderBlocks();
-
         while (hbs.hasNext()) {
             SOAPHeaderBlock hb = (SOAPHeaderBlock) hbs.next();
-
             // if this header block has been processed or mustUnderstand isn't
             // turned on then its cool
             if (hb.isProcessed() || !hb.getMustUnderstand()) {
                 continue;
             }
-
             // if this header block is not targetted to me then its not my
             // problem. Currently this code only supports the "next" role; we
             // need to fix this to allow the engine/service to be in one or more
@@ -419,7 +413,6 @@ public class AxisEngine {
             msgContext.setCurrentHandlerIndex(0);
         }
         while (msgContext.getCurrentHandlerIndex() < msgContext.getExecutionChain().size()) {
-            //todo : This might cause for performance drawback
             Handler currentHandler = (Handler) msgContext.getExecutionChain().
                     get(msgContext.getCurrentHandlerIndex());
             currentHandler.invoke(msgContext);

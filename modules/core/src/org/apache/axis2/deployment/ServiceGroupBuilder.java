@@ -92,14 +92,6 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
 
                     ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
                     AxisService as = serviceBuilder.populateService(service);
-                    if (!as.isWsdlfound()) {
-                        //trying to generate WSDL for the service using JAM  and Java refelection
-                        try {
-                            Utils.fillAxisService(as,axisConfig);
-                        } catch (Exception e) {
-                            log.info("Error in schema generating :" + e.getMessage());
-                        }
-                    }
                     serviceList.add(as);
                 }
             }

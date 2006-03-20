@@ -133,7 +133,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String SERVICE_GROUP_MAP = "serviceGroupmap";
     public static final String SERVICE = "service";
     public static final String SELECT_SERVICE_TYPE = "SELECT_SERVICE_TYPE";
-    public static final String REMOVE_SERVICE = "removeService";
+    public static final String IN_ACTIVATE_SERVICE = "inActivateService";
+    public static final String ACTIVATE_SERVICE = "activateService";
     public static final String PHASE_LIST = "phaseList";
     public static final String PASSWORD = "password";
     public static final String OPERATION_MAP = "operationmap";

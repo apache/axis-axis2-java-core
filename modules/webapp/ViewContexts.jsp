@@ -36,7 +36,7 @@
             %><ul><%
         while (serviceContextItr.hasNext()) {
             ServiceContext serviceContext = (ServiceContext)serviceContextItr.next();
-             String serviceConID = serviceContext.getServiceInstanceID();
+             String serviceConID = serviceContext.getAxisService().getName();
         %>
             <li><%=serviceConID%><font color="blue"><a href="viewServiceContext.jsp?TYPE=VIEW&ID=<%=serviceConID%>&PID=<%=groupContextID%>">
                     View</a></font></li>

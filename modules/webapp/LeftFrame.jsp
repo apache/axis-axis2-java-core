@@ -154,7 +154,15 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="removeService">Undeploy Service</a>
+         <a href="inActivateService">In Activate Service</a>
+       </td>
+    </tr>
+    <tr>
+       <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+       <td>
+         <a href="activateService">Activate Service</a>
        </td>
     </tr>
     <tr>

@@ -31,7 +31,6 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -296,16 +295,18 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Builds ModuleDescription for a given module archive file.
-     *
-     * @param modulearchive
-     * @return Returns ModuleDescription.
+     * Builds ModuleDescription for a given module archive file. This does not
+     * called the init method since there is no refernce to configuration context
+     * so who ever create module usieng this has to called module.init if it is
+     * required
+     * @param modulearchive  : Actual module archive file
+     * @param config : AxisConfiguration : for get classs loders etc..
+     * @return
      * @throws DeploymentException
      */
     public AxisModule buildModule(File modulearchive, AxisConfiguration config)
             throws DeploymentException {
         AxisModule axismodule;
-
         try {
             this.setPhasesinfo(config.getPhasesInfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, TYPE_MODULE);
@@ -340,15 +341,6 @@ public class DeploymentEngine implements DeploymentConstants {
             if (faultOutFlow != null) {
                 Utils.addFlowHandlers(faultOutFlow, moduleClassLoader);
             }
-
-            //initilization Module
-            Module module = axismodule.getModule();
-
-            if (module != null) {
-                //TODO : Need to fix this , I just comment this to remove compile errors
-//                module.init(axisConfig, null);
-            }
-
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }

@@ -86,7 +86,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/removeService</url-pattern>
+        <url-pattern>/inActivateService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/activateService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>

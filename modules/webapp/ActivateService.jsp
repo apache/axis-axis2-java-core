@@ -6,11 +6,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Turn off axisService</h1>
-<form method="get" name="serviceRemove" action="removeService">
+<form method="get" name="serviceActivate" action="activateService">
   <table width="100%"  border="0">
 <tr>
   <td colspan="2" >
-     <p>The axisService will be removed the from the running system, but if the system restarts then the axisService will be available again</p>
+     <p>The axisService will be marked as active , and only display the inactive services</p>
 <%--    <b>Remove Service :</b> The selected axisService will be removed from the file system and if the--%>
 <%--    &nbsp; system restart it wont be there next time--%>
   </td>
@@ -25,21 +25,23 @@
                        Collection col = services.values();
                        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                            AxisService axisServices = (AxisService) iterator.next();
-                   %> <option value="<%=axisServices.getName()%>">
+                           if(!axisServices.isActive()){
+                               %> <option value="<%=axisServices.getName()%>">
                            <%=axisServices.getName()%></option> <%
+                           }
                        }
                            %>
                   </td>
   </tr>
   <tr>
-    <td width="20%">Turn Off Service </td>
-    <td width="80%"><input type="checkbox" name="turnoff">
+    <td width="20%">Activate Service </td>
+    <td width="80%"><input type="checkbox" name="turnon">
     </td>
   </tr>
   <tr>
   <td>&nbsp;</td>
   <td>
-    <input name="submit" type="submit" value=" Save " >
+    <input name="submit" type="submit" value=" Activate " >
    <input name="reset" type="reset" value=" Clear " >
   </td>
   </tr>

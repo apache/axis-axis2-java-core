@@ -607,7 +607,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public Object getKey() {
-        return getAxis2HomeDirectory(); // TODO CheckMe
+        return toString();
     }
 
     public void stopService(String serviceName) throws AxisFault {

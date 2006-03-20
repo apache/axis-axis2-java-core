@@ -227,7 +227,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
             //adding weblocation property
-//            setWebLocationProperty(context);
+            setWebLocationProperty(context);
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoDir, null);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
@@ -318,7 +318,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         //RUNNING_PORT
         String port = System.getProperty(ListingAgent.RUNNING_PORT);
         if (port == null) {
-            // TODO : Need to fix this
             port = "8080";
         }
         return new EndpointReference("http://" + ip + ":" + port + "/axis2/services/" + serviceName);

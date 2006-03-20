@@ -20,6 +20,7 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
@@ -62,6 +63,17 @@ public class ServiceBuilder extends DescriptionBuilder {
             // Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(itr, service, service.getParent());
+
+            // Generating schema for the service if the imple class is JAVA
+            if (!service.isWsdlfound()) {
+                //trying to generate WSDL for the service using JAM  and Java refelection
+                try {
+                    Utils.fillAxisService(service, axisConfig);
+                } catch (Exception e) {
+                    log.info(Messages.getMessage("errorinscheamgen", e.getMessage()));
+                }
+            }
+
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -175,8 +187,14 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String mapping = (String) wsamappings.get(j);
                     service.mapActionToOperation(mapping, operationDesc);
                 }
-
                 service.addOperation(operationDesc);
+            }
+
+            //Removing exclude operations
+            OMElement excludeOperations = service_element.getFirstChildWithName(
+                    new QName(TAG_EXCLUDE_OPERATIONS));
+            if (excludeOperations != null) {
+                processExcludeOperations(excludeOperations);
             }
 
             // Set the default message receiver for the operations that were 
@@ -199,6 +217,25 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()));
         }
         return service;
+    }
+
+    /**
+     * If there is <excludeOperations>
+     * <operation>foo</operation>
+     * </excludeOperations>
+     * <p/>
+     * Then the operation object will be removed from the AxisService , so that
+     * the operation wont be exposed
+     *
+     * @param exculeOperations
+     */
+    private void processExcludeOperations(OMElement exculeOperations) {
+        Iterator excludeOp_itr = exculeOperations.getChildrenWithName(new QName(TAG_OPERATION));
+        while (excludeOp_itr.hasNext()) {
+            OMElement opName = (OMElement) excludeOp_itr.next();
+            service.removeOeration(new QName(opName.getText()));
+            log.info("removed the operation:" + opName.getText());
+        }
     }
 
     private void processMessages(Iterator messages, AxisOperation operation)

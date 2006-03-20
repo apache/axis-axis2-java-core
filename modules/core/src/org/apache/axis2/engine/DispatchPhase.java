@@ -45,7 +45,7 @@ public class DispatchPhase extends Phase {
         } else if (msgContext.getAxisOperation() == null) {
             throw new AxisFault(Messages.getMessage("operationnotfoundforepr",
                     ((toEPR != null) ? toEPR.getAddress()
-                    : ""), msgContext.getWSAAction()));
+                            : ""), msgContext.getWSAAction()));
         }
 
         validateTransport(msgContext);
@@ -64,11 +64,8 @@ public class DispatchPhase extends Phase {
         if ((msgContext.getAxisService() == null) && (msgContext.getServiceContext() != null)) {
             msgContext.setAxisService(msgContext.getServiceContext().getAxisService());
         }
-
-        // TODO : do post-dispatch execution chain setup...
         ArrayList operationChain = msgContext.getAxisOperation().getRemainingPhasesInFlow();
-
-        msgContext.setExecutionChain(operationChain);
+        msgContext.setExecutionChain((ArrayList) operationChain.clone());
     }
 
     /**
@@ -92,7 +89,7 @@ public class DispatchPhase extends Phase {
             }
         }
         EndpointReference toEPR = msgctx.getTo();
-       throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
-                    ((toEPR != null) ? toEPR.getAddress() : "")));
+        throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
+                ((toEPR != null) ? toEPR.getAddress() : "")));
     }
 }

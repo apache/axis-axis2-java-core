@@ -38,16 +38,12 @@ public class ServiceContext extends AbstractContext {
     private EndpointReference myEPR;
 
     private transient AxisService axisService;
-    private String serviceInstanceID;
     private ServiceGroupContext serviceGroupContext;
 
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
-        if (serviceConfig != null) {
-            serviceInstanceID = serviceConfig.getName();
-        }
     }
 
     public OperationContext createOperationContext(QName name) {
@@ -62,24 +58,6 @@ public class ServiceContext extends AbstractContext {
 
     public ConfigurationContext getConfigurationContext() {
         return (ConfigurationContext) parent.getParent();
-    }
-
-    /**
-     * @return Returns the serviceInstanceID.
-     */
-    public String getServiceInstanceID() {
-        return serviceInstanceID;
-    }
-
-    /**
-     * Sets service instance id.
-     *
-     * @param serviceInstanceID
-     */
-    public void setServiceInstanceID(String serviceInstanceID) {
-
-        // todo we do not need this , this ID should equal to serviceName
-        this.serviceInstanceID = serviceInstanceID;
     }
 
     public ServiceGroupContext getServiceGroupContext() {
