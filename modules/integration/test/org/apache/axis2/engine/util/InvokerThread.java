@@ -42,9 +42,13 @@ public class InvokerThread extends Thread {
     protected QName operationName = new QName("echoOMElement");
     protected Log log = LogFactory.getLog(getClass());
     private Exception thrownException = null;
+    ConfigurationContext configContext;
 
-    public InvokerThread(int threadNumber) {
+    public InvokerThread(int threadNumber) throws AxisFault {
         this.threadNumber = threadNumber;
+        configContext =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            "target/test-resources/integrationRepo", null);
     }
 
     public void run() {
@@ -55,9 +59,6 @@ public class InvokerThread extends Thread {
             Options options = new Options();
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                            "target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);
