@@ -896,93 +896,13 @@ public class AxisService extends AxisDescription {
                                                           QName wsdlServiceName,
                                                           String portName,
                                                           Options options) throws AxisFault {
-        AxisService axisService;
         try {
             InputStream in = wsdlURL.openConnection().getInputStream();
             Document doc = XMLUtils.newDocument(in);
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setFeature("javax.wsdl.importDocuments", true);
             Definition wsdlDefinition = reader.readWSDL(null, doc);
-            axisService = new AxisService();
-
-            Service wsdlService;
-            if (wsdlServiceName != null) {
-                wsdlService = wsdlDefinition.getService(wsdlServiceName);
-                if (wsdlService == null) {
-                    throw new AxisFault(
-                            Messages.getMessage("servicenotfoundinwsdl",
-                                    wsdlServiceName.getLocalPart()));
-                }
-
-            } else {
-                Collection col = wsdlDefinition.getServices().values();
-                if (col != null && col.size() > 0) {
-                    wsdlService = (Service) col.iterator().next();
-                    if (wsdlService == null) {
-                        throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
-                    }
-                } else {
-                    throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
-                }
-            }
-            axisService.setName(wsdlService.getQName().getLocalPart());
-
-            Port port;
-            if (portName != null) {
-                port = wsdlService.getPort(portName);
-                if (port == null) {
-                    throw new AxisFault(Messages.getMessage("noporttypefoundfor", portName));
-                }
-            } else {
-                Collection ports = wsdlService.getPorts().values();
-                if (ports != null && ports.size() > 0) {
-                    port = (Port) ports.iterator().next();
-                    if (port == null) {
-                        throw new AxisFault(Messages.getMessage("noporttypefound"));
-                    }
-                } else {
-                    throw new AxisFault(Messages.getMessage("noporttypefound"));
-                }
-            }
-            List exteElemts = port.getExtensibilityElements();
-            if (exteElemts != null) {
-                Iterator extItr = exteElemts.iterator();
-                while (extItr.hasNext()) {
-                    Object extensibilityElement = extItr.next();
-                    if (extensibilityElement instanceof SOAPAddress) {
-                        SOAPAddress address = (SOAPAddress) extensibilityElement;
-                        options.setTo(new EndpointReference(address.getLocationURI()));
-                    }
-                }
-            }
-
-            Binding binding = port.getBinding();
-            Iterator bindingOperations = binding.getBindingOperations().iterator();
-            while (bindingOperations.hasNext()) {
-                BindingOperation bindingOperation = (BindingOperation) bindingOperations.next();
-                AxisOperation axisOperation;
-                if (bindingOperation.getBindingInput() == null &&
-                        bindingOperation.getBindingOutput() != null) {
-                    axisOperation = new OutOnlyAxisOperation();
-                } else {
-                    axisOperation = new OutInAxisOperation();
-                }
-                axisOperation.setName(new QName(bindingOperation.getName()));
-                List list = bindingOperation.getExtensibilityElements();
-                if (list != null) {
-                    Iterator exteElements = list.iterator();
-                    while (exteElements.hasNext()) {
-                        Object extensibilityElement = exteElements.next();
-                        if (extensibilityElement instanceof SOAPOperation) {
-                            SOAPOperation soapOp = (SOAPOperation) extensibilityElement;
-                            axisOperation.addParameter(new Parameter(AxisOperation.SOAP_ACTION,
-                                    soapOp.getSoapActionURI()));
-                        }
-                    }
-                }
-                axisService.addOperation(axisOperation);
-            }
-
+            return createClientSideAxisService(wsdlDefinition,wsdlServiceName,portName,options);
         } catch (IOException e) {
             throw new AxisFault("IOException" + e.getMessage());
         } catch (ParserConfigurationException e) {
@@ -991,6 +911,92 @@ public class AxisService extends AxisDescription {
             throw new AxisFault("SAXException" + e.getMessage());
         } catch (WSDLException e) {
             throw new AxisFault("WSDLException" + e.getMessage());
+        }
+    }
+
+    public static AxisService createClientSideAxisService(Definition wsdlDefinition,
+                                                          QName wsdlServiceName,
+                                                          String portName,
+                                                          Options options) throws AxisFault {
+        AxisService axisService;
+        axisService = new AxisService();
+
+        Service wsdlService;
+        if (wsdlServiceName != null) {
+            wsdlService = wsdlDefinition.getService(wsdlServiceName);
+            if (wsdlService == null) {
+                throw new AxisFault(
+                        Messages.getMessage("servicenotfoundinwsdl",
+                                wsdlServiceName.getLocalPart()));
+            }
+
+        } else {
+            Collection col = wsdlDefinition.getServices().values();
+            if (col != null && col.size() > 0) {
+                wsdlService = (Service) col.iterator().next();
+                if (wsdlService == null) {
+                    throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
+                }
+            } else {
+                throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
+            }
+        }
+        axisService.setName(wsdlService.getQName().getLocalPart());
+
+        Port port;
+        if (portName != null) {
+            port = wsdlService.getPort(portName);
+            if (port == null) {
+                throw new AxisFault(Messages.getMessage("noporttypefoundfor", portName));
+            }
+        } else {
+            Collection ports = wsdlService.getPorts().values();
+            if (ports != null && ports.size() > 0) {
+                port = (Port) ports.iterator().next();
+                if (port == null) {
+                    throw new AxisFault(Messages.getMessage("noporttypefound"));
+                }
+            } else {
+                throw new AxisFault(Messages.getMessage("noporttypefound"));
+            }
+        }
+        List exteElemts = port.getExtensibilityElements();
+        if (exteElemts != null) {
+            Iterator extItr = exteElemts.iterator();
+            while (extItr.hasNext()) {
+                Object extensibilityElement = extItr.next();
+                if (extensibilityElement instanceof SOAPAddress) {
+                    SOAPAddress address = (SOAPAddress) extensibilityElement;
+                    options.setTo(new EndpointReference(address.getLocationURI()));
+                }
+            }
+        }
+
+        Binding binding = port.getBinding();
+        Iterator bindingOperations = binding.getBindingOperations().iterator();
+        while (bindingOperations.hasNext()) {
+            BindingOperation bindingOperation = (BindingOperation) bindingOperations.next();
+            AxisOperation axisOperation;
+            if (bindingOperation.getBindingInput() == null &&
+                    bindingOperation.getBindingOutput() != null) {
+                axisOperation = new OutOnlyAxisOperation();
+            } else {
+                axisOperation = new OutInAxisOperation();
+            }
+            axisOperation.setName(new QName(bindingOperation.getName()));
+            List list = bindingOperation.getExtensibilityElements();
+            if (list != null) {
+                Iterator exteElements = list.iterator();
+                while (exteElements.hasNext()) {
+                    Object extensibilityElement = exteElements.next();
+                    if (extensibilityElement instanceof SOAPOperation) {
+                        SOAPOperation soapOp = (SOAPOperation) extensibilityElement;
+                        axisOperation.addParameter(new Parameter(AxisOperation.SOAP_ACTION,
+                                soapOp.getSoapActionURI()));
+                    }
+                }
+            }
+            axisService.addOperation(axisOperation);
         }
         return axisService;
     }
