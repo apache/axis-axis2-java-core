@@ -1035,10 +1035,11 @@ public class AxisService extends AxisDescription {
         axisService.setClassLoader(axisConfig.getServiceClassLoader());
 
         ClassLoader serviceClassLoader = axisService.getClassLoader();
-        SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                implClass, axisService.getSchematargetNamespace(),
-                axisService.getSchematargetNamespacePrefix());
+        SchemaGenerator schemaGenerator;
         try {
+            schemaGenerator = new SchemaGenerator(serviceClassLoader,
+                    implClass, axisService.getSchematargetNamespace(),
+                    axisService.getSchematargetNamespacePrefix());
             axisService.setSchema(schemaGenerator.generateSchema());
         } catch (Exception e) {
             throw new AxisFault(e);
