@@ -55,8 +55,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
      * @return Axis Configuration
      * @throws AxisFault
      */
-    public AxisConfiguration getAxisConfiguration() throws AxisFault {
+    public synchronized AxisConfiguration getAxisConfiguration() throws AxisFault {
         return new DeploymentEngine(repoLocation, axis2xml).load();
-
     }
 }

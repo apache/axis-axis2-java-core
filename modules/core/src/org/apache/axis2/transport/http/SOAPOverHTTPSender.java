@@ -66,13 +66,16 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
         } else {
         }
-
-        //TODO : provide a way to enable and diable cookies
         //setting the coolie in the out path
         Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
         if (cookieString != null) {
-            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, (String) cookieString);
-            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE2, (String) cookieString);
+            String cookie =(String) cookieString;
+            int index = cookie.indexOf(";");
+            if(index >0){
+                cookie = cookie.substring(0,index);
+            }
+            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE,cookie);
+            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE2, cookie);
         }
 
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
@@ -80,13 +83,13 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         if (httpVersion != null) {
             if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
                 httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
-                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+//                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+//                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
             } else {
 
                 // allowing keep-alive for 1.1
-                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+//                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+//                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
                 postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
                         HTTPConstants.HEADER_EXPECT_100_Continue);
             }

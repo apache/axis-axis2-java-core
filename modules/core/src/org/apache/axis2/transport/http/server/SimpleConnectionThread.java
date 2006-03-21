@@ -86,15 +86,12 @@ public class SimpleConnectionThread implements Runnable {
 
     public void run() {
         try {
-            do {
-                this.conn.setKeepAlive(false);
-
-                SimpleRequest request = this.conn.readRequest();
-
-                if (request != null) {
-                    this.handler.processRequest(this.conn, request);
-                }
-            } while (this.conn.isKeepAlive());
+            //we do not support keep alive
+            this.conn.setKeepAlive(false);
+            SimpleRequest request = this.conn.readRequest();
+            if (request != null) {
+                this.handler.processRequest(this.conn, request);
+            }
         } catch (InterruptedIOException e) {
             log.error("Can not run SimpleConnectionThread ", e);
         }

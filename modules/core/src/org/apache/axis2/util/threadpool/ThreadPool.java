@@ -82,8 +82,12 @@ public class ThreadPool implements ThreadFactory {
         executor.shutdown();
     }
 
-    protected ThreadPoolExecutor createDefaultExecutor(final String name, final int priority, final boolean daemon) {
-        ThreadPoolExecutor rc = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 10, TimeUnit.SECONDS, new SynchronousQueue(), new edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory() {
+    protected ThreadPoolExecutor createDefaultExecutor(final String name,
+                                                       final int priority,
+                                                       final boolean daemon) {
+        ThreadPoolExecutor rc = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 10,
+                TimeUnit.SECONDS, new SynchronousQueue(),
+                new edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable, name);
                 thread.setDaemon(daemon);
