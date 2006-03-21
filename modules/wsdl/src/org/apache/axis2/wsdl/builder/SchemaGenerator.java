@@ -20,6 +20,7 @@ import org.codehaus.jam.JamServiceParams;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Locale;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -60,7 +61,8 @@ public class SchemaGenerator {
 
     public SchemaGenerator(ClassLoader loader, String className,
                            String schematargetNamespace,
-                           String schematargetNamespacePrefix) {
+                           String schematargetNamespacePrefix)
+            throws Exception {
         this.classLoader = loader;
         this.className = className;
 //        TARGET_NAMESPACE = "http://" + className;
@@ -84,12 +86,8 @@ public class SchemaGenerator {
         schema.setPrefixToNamespaceMap(prefixmap);
         this.typeTable = new TypeTable();
 
-        try {
-            Class clazz = Class.forName(className, true, loader);
-            methodTable = new MethodTable(clazz);
-        } catch (Exception e) {
-            log.info("Error in loading service impl class for byte code reading : " + e.getMessage());
-        }
+        Class clazz = Class.forName(className, true, loader);
+        methodTable = new MethodTable(clazz);
     }
 
     /**
@@ -231,7 +229,7 @@ public class SchemaGenerator {
         // adding this type to the table
         QName elementName = new QName(this.schemaTargetNameSpace,
                 eltOuter.getName(), this.schema_namespace_prefix);
-        typeTable.addComplexScheam(methodName + METHOD_REQUEST_WRAPPER, elementName);
+        typeTable.addComplexSchema(methodName + METHOD_REQUEST_WRAPPER, elementName);
 
         JParameter [] paras = method.getParameters();
         if (paras.length > 0) {
@@ -266,7 +264,7 @@ public class SchemaGenerator {
             } else {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
                 elt1.setName(paraName);
-                elt1.setSchemaTypeName(typeTable.getComplexScheamType(classTypeName));
+                elt1.setSchemaTypeName(typeTable.getComplexSchemaType(classTypeName));
                 sequence.getItems().add(elt1);
                 if (isArryType) {
                     elt1.setMaxOccurs(Long.MAX_VALUE);
@@ -290,7 +288,7 @@ public class SchemaGenerator {
             ret_eltOuter.setSchemaType(retuen_com_type);
             QName ret_comTypeName = new QName(this.schemaTargetNameSpace,
                     ret_eltOuter.getName(), this.schema_namespace_prefix);
-            typeTable.addComplexScheam(methodName + METHOD_RESPONSE_WRAPPER, ret_comTypeName);
+            typeTable.addComplexSchema(methodName + METHOD_RESPONSE_WRAPPER, ret_comTypeName);
             String classTypeName = retuenType.getQualifiedName();
             boolean isArryType = retuenType.isArrayType();
             XmlSchemaSequence sequence = new XmlSchemaSequence();
@@ -310,7 +308,7 @@ public class SchemaGenerator {
             } else {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
                 elt1.setName("return");
-                elt1.setSchemaTypeName(typeTable.getComplexScheamType(classTypeName));
+                elt1.setSchemaTypeName(typeTable.getComplexSchemaType(classTypeName));
                 sequence.getItems().add(elt1);
                 if (isArryType) {
                     elt1.setMaxOccurs(Long.MAX_VALUE);
@@ -326,19 +324,20 @@ public class SchemaGenerator {
      * so this method is to correct that error
      *
      * @param wrongName
-     * @return
+     * @return the right name, using english as the locale for case conversion
      */
     public static String getCorrectName(String wrongName) {
         if (wrongName.length() > 1) {
-            return wrongName.substring(0, 1).toLowerCase() + wrongName.substring(1, wrongName.length());
+            return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
+                    + wrongName.substring(1, wrongName.length());
         } else {
-            return wrongName.substring(0, 1).toLowerCase();
+            return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH);
         }
     }
 
     private void generateSchema(JClass javaType) {
         String name = javaType.getQualifiedName();
-        if (typeTable.getComplexScheamType(name) == null) {
+        if (typeTable.getComplexSchemaType(name) == null) {
             String simpleName = javaType.getSimpleName();
 
             XmlSchemaComplexType complexType = new XmlSchemaComplexType(schema);
@@ -358,7 +357,7 @@ public class SchemaGenerator {
 
             // adding this type to the table
             //  typeTable.addComplexScheam(name, complexType.getQName());
-            typeTable.addComplexScheam(name, eltOuter.getQName());
+            typeTable.addComplexSchema(name, eltOuter.getQName());
 
             JProperty [] properties = javaType.getDeclaredProperties();
             for (int i = 0; i < properties.length; i++) {
@@ -385,7 +384,7 @@ public class SchemaGenerator {
                     }
                     XmlSchemaElement elt1 = new XmlSchemaElement();
                     elt1.setName(getCorrectName(property.getSimpleName()));
-                    elt1.setSchemaTypeName(typeTable.getComplexScheamType(propertyName));
+                    elt1.setSchemaTypeName(typeTable.getComplexSchemaType(propertyName));
                     sequence.getItems().add(elt1);
                     if (isArryType) {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
