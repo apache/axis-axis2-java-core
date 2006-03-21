@@ -70,7 +70,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                 try {
                     Utils.fillAxisService(service, axisConfig);
                 } catch (Exception e) {
-                    log.info(Messages.getMessage("errorinscheamgen", e.getMessage()));
+                    //log.error(Messages.getMessage("errorinscheamgen", e.getMessage()),e);
+                    throw new DeploymentException(Messages.getMessage(
+                            "errorinscheamgen",
+                            e.getMessage()), e);
                 }
             }
 
