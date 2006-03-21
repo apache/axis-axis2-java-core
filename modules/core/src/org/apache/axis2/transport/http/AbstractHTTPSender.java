@@ -199,7 +199,7 @@ public abstract class AbstractHTTPSender {
                         HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
                     if (opContext != null) {
                         opContext.setProperty(
-                                HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
+                                HTTPConstants.MTOM_RECEIVED_CONTENT_TYPE,
                                 header.getValue());
                     }
                 } else if (charsetEnc != null) {

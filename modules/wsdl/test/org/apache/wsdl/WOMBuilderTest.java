@@ -88,13 +88,13 @@ public class WOMBuilderTest extends AbstractTestCase {
             //Will only work if the order is retained in the iteration
             while (wsdl4jOprationIterator.hasNext()) {
                 Operation wsdl4jOperation = (Operation) wsdl4jOprationIterator.next();
-                this.operationsWaliking(
+                this.operationsWalking(
                         wsdlInterface.getOperation(wsdl4jOperation.getName()),
                         wsdl4jOperation);
             }
             while (womOperationIterator.hasNext()) {
                 WSDLOperation womOperation = (WSDLOperation) womOperationIterator.next();
-                this.operationsWaliking(womOperation,
+                this.operationsWalking(womOperation,
                         porttype.getOperation(
                                 womOperation.getName().getLocalPart(),
                                 null,
@@ -121,8 +121,8 @@ public class WOMBuilderTest extends AbstractTestCase {
     }
 
 
-    private void operationsWaliking(WSDLOperation womOperation,
-                                    Operation wsdl4jOperation) {
+    private void operationsWalking(WSDLOperation womOperation,
+                                   Operation wsdl4jOperation) {
         assertEquals(womOperation.getName().getLocalPart(),
                 wsdl4jOperation.getName());
         //System.out.println(womOperation.getMessageExchangePattern());

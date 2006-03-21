@@ -180,7 +180,7 @@ public class MessageContext extends AbstractContext {
     private transient TransportOutDescription transportOut;
     private transient TransportInDescription transportIn;
 
-    //The value will be set by the tarnsport reciver and there will be validaation for the transport
+    //The value will be set by the tarnsport receiver and there will be validation for the transport
     //at the dispatch phase (its post condition)
     private String incomingTransportName;
 

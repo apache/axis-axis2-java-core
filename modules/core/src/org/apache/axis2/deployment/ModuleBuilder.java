@@ -233,7 +233,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // setting the mep of the operation
-            // loading the message recivers
+            // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
 
             if (receiverElement != null) {

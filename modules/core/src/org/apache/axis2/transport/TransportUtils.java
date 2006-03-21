@@ -74,7 +74,7 @@ public class TransportUtils {
             OperationContext opContext = msgContext.getOperationContext();
 
             if (opContext != null) {
-                contentType = opContext.getProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
+                contentType = opContext.getProperty(HTTPConstants.MTOM_RECEIVED_CONTENT_TYPE);
             } else {
                 throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
             }

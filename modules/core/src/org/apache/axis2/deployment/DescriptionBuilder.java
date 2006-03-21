@@ -109,13 +109,13 @@ public class DescriptionBuilder implements DeploymentConstants {
      */
     protected HashMap processMessageReceivers(OMElement messageReceivers) throws DeploymentException {
         HashMap mr_mep = new HashMap();
-        Iterator msgRecives = messageReceivers.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
-        while (msgRecives.hasNext()) {
-            OMElement msgRev = (OMElement) msgRecives.next();
-            MessageReceiver msgrecivere =
-                    loadMessageReceiver(Thread.currentThread().getContextClassLoader(), msgRev);
-            OMAttribute mepAtt = msgRev.getAttribute(new QName(TAG_MEP));
-            mr_mep.put(mepAtt.getAttributeValue(), msgrecivere);
+        Iterator msgReceivers = messageReceivers.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
+        while (msgReceivers.hasNext()) {
+            OMElement msgReceiver = (OMElement) msgReceivers.next();
+            MessageReceiver receiver =
+                    loadMessageReceiver(Thread.currentThread().getContextClassLoader(), msgReceiver);
+            OMAttribute mepAtt = msgReceiver.getAttribute(new QName(TAG_MEP));
+            mr_mep.put(mepAtt.getAttributeValue(), receiver);
         }
         return mr_mep;
     }

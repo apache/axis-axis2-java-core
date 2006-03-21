@@ -1053,7 +1053,7 @@ public class AxisService extends AxisDescription {
             }
             AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
 
-            // loading message recivers
+            // loading message receivers
             try {
                 MessageReceiver messageReceiver = (MessageReceiver) messageReceiverClass.newInstance();
                 operation.setMessageReceiver(messageReceiver);

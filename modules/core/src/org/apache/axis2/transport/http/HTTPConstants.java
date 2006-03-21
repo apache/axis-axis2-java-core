@@ -370,7 +370,7 @@ public class HTTPConstants {
      */
     public static final byte SENDER[] = "400".getBytes();
     public static final String PROXY = "PROXY";
-    public static final String MTOM_RECIVED_CONTENT_TYPE = "MTOM_RECEIVED";
+    public static final String MTOM_RECEIVED_CONTENT_TYPE = "MTOM_RECEIVED";
 
     /**
      * Field ISE[]

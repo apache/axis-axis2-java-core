@@ -59,7 +59,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processParameters(itr, axisConfig, axisConfig);
 
-            // process MessageReciver
+            // process MessageReceiver
             OMElement messageReceiver = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVERS));
             if (messageReceiver != null) {
                 HashMap mrs = processMessageReceivers(messageReceiver);
