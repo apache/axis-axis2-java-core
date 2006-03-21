@@ -25,9 +25,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXBuilder;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;

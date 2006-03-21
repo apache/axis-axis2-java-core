@@ -20,13 +20,8 @@ import org.apache.axis2.soap.impl.dom.SOAPFaultCodeImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
-import org.apache.ws.commons.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPFaultSubCode;
-import org.apache.ws.commons.soap.SOAPFaultValue;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.ws.commons.om.impl.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.ws.commons.soap.*;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

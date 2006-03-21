@@ -21,13 +21,9 @@ import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.*;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;

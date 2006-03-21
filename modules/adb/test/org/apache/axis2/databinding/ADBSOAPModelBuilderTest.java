@@ -23,7 +23,7 @@ import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

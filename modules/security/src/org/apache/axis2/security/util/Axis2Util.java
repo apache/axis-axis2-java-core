@@ -16,29 +16,27 @@
 
 package org.apache.axis2.security.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.ws.security.WSSecurityException;
+import org.apache.xml.security.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.ws.security.WSSecurityException;
-import org.apache.xml.security.utils.XMLUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Utility class for the Axis2-WSS4J Module

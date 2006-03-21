@@ -17,7 +17,7 @@
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
                 private  org.apache.ws.commons.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimzieContent){
-                org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder
+                org.apache.ws.commons.om.impl.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.builder.StAXOMBuilder
                 (org.apache.ws.commons.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
 
                 org.apache.ws.commons.om.OMElement documentElement = builder.getDocumentElement();
@@ -109,7 +109,7 @@
             try {
                 javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(param.getClass().getPackage()
                                                                                             .getName());
-                org.apache.ws.commons.om.impl.llom.builder.SAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.SAXOMBuilder();
+                org.apache.ws.commons.om.impl.builder.SAXOMBuilder builder = new org.apache.ws.commons.om.impl.builder.SAXOMBuilder();
                 javax.xml.bind.Marshaller marshaller = ctx.createMarshaller();
                 marshaller.marshal(param, builder);
                 return builder.getRootElement();
@@ -182,7 +182,7 @@
                 <xsl:if test="@type!=''">
                     private  org.apache.ws.commons.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder
+                            org.apache.ws.commons.om.impl.builder.StAXOMBuilder builder = new org.apache.ws.commons.om.impl.builder.StAXOMBuilder
                             (org.apache.ws.commons.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
                             org.apache.ws.commons.om.OMElement documentElement = builder.getDocumentElement();
                             ((org.apache.ws.commons.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link

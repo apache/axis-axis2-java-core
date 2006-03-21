@@ -18,9 +18,9 @@ package org.apache.axis2.transport.tcp;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXBuilder;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

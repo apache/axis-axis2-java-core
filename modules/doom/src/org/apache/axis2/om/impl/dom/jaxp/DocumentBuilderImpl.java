@@ -19,7 +19,7 @@ import org.apache.axis2.om.impl.dom.DOMImplementationImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;

@@ -22,7 +22,7 @@ import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

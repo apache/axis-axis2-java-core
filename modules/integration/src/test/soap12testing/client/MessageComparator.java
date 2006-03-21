@@ -21,9 +21,9 @@ import org.apache.axis2.transport.http.HTTPTransportReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.llom.exception.XMLComparisonException;
+import org.apache.ws.commons.om.impl.exception.XMLComparisonException;
 import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

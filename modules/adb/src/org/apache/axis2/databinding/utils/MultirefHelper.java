@@ -22,7 +22,7 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;

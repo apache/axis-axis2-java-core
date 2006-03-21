@@ -32,7 +32,7 @@ import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;

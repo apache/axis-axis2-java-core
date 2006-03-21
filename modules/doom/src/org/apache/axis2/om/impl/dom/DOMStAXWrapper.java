@@ -16,16 +16,9 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMComment;
-import org.apache.ws.commons.om.OMDocument;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
+import org.apache.ws.commons.om.*;
+import org.apache.ws.commons.om.impl.exception.OMStreamingException;
 import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
-import org.apache.ws.commons.om.impl.llom.exception.OMStreamingException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
@@ -791,7 +784,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * Not implemented yet
      * 
      * @return Returns int.
-     * @throws org.apache.ws.commons.om.impl.llom.exception.OMStreamingException
+     * @throws org.apache.ws.commons.om.impl.exception.OMStreamingException
      * 
      * @throws XMLStreamException
      */

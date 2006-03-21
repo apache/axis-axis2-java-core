@@ -27,26 +27,20 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.ws.commons.attachments.MIMEHelper;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.impl.MTOMConstants;
-import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.ws.commons.soap.impl.llom.soap11.SOAP11Factory;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 public class TransportUtils {
     private static final int BOM_SIZE = 4;

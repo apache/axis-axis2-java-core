@@ -32,7 +32,7 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.*;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLInputFactory;

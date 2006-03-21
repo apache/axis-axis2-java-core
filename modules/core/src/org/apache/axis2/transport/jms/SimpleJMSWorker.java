@@ -31,12 +31,12 @@ import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.impl.llom.builder.StAXBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.ws.commons.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.ws.commons.soap.impl.llom.soap12.SOAP12Factory;
 
 import javax.jms.BytesMessage;

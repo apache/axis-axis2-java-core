@@ -21,7 +21,7 @@ import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.security.trust.types.RequestSecurityTokenResponseType;
 import org.apache.axis2.security.trust.types.RequestSecurityTokenType;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 public class TokenRequestDispatcher {
 

@@ -29,7 +29,7 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

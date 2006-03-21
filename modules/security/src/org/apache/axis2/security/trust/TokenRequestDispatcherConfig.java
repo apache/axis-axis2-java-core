@@ -16,15 +16,14 @@
 
 package org.apache.axis2.security.trust;
 
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.ws.security.util.Loader;
+
+import javax.xml.namespace.QName;
 import java.io.FileInputStream;
 import java.util.Hashtable;
 import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.ws.security.util.Loader;
 
 public class TokenRequestDispatcherConfig {
 

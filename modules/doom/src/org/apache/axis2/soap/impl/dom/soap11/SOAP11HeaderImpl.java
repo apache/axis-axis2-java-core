@@ -21,12 +21,8 @@ import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.ws.commons.om.impl.traverse.OMChildrenWithSpecificAttributeIterator;
+import org.apache.ws.commons.soap.*;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;

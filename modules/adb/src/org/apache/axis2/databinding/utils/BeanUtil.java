@@ -24,7 +24,7 @@ import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.codehaus.jam.*;
 
