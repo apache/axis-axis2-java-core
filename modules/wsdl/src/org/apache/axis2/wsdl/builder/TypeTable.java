@@ -106,18 +106,18 @@ public class TypeTable {
         return false;
     }
 
-    public void addComplexScheam(String name, QName schemaType) {
+    public void addComplexSchema(String name, QName schemaType) {
         complecTypeMap.put(name, schemaType);
     }
 
-    public QName getComplexScheamType(String name) {
+    public QName getComplexSchemaType(String name) {
         return (QName) complecTypeMap.get(name);
     }
 
     public QName getQNamefortheType(String typeName) {
         QName type = getSimpleSchemaTypeName(typeName);
         if (type == null) {
-            type = getComplexScheamType(typeName);
+            type = getComplexSchemaType(typeName);
         }
         return type;
     }
