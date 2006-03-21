@@ -727,6 +727,8 @@ public class SchemaCompiler {
 
         }else if (content instanceof XmlSchemaComplexContentRestriction){
             //todo handle complex restriction here
+             throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Complex Content"));
         }
     }
 
@@ -778,7 +780,8 @@ public class SchemaCompiler {
                         }
 
                     }else if (content instanceof XmlSchemaSimpleContent){
-                        //todo
+                        throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content"));
                     }else{
                         throw new SchemaCompilationException(
                                 SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
@@ -791,13 +794,19 @@ public class SchemaCompiler {
         }
     }
 
-    private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder){
+    private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder)
+            throws SchemaCompilationException{
         XmlSchemaContent content;
         content = simpleContent.getContent();
         if (content instanceof XmlSchemaSimpleContentExtension){
             //todo - handle simple type extension here
+             throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Extension"));
         }else if (content instanceof XmlSchemaSimpleContentRestriction){
             //todo - Handle simple type restriction here
+            throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Restriction"));
+
         }
     }
 
@@ -927,7 +936,7 @@ public class SchemaCompiler {
 
                 if (elt.getQName()!=null){
                     clazzName = (String) processedElementTypeMap.get(elt.getQName());
-                    referencedQName = elt.getQName();                                
+                    referencedQName = elt.getQName();
                     metainfHolder.registerMapping(referencedQName,
                             elt.getSchemaType()!=null?elt.getSchemaType().getQName():elt.getSchemaTypeName(), //always get the schema type name from the schema it-self
                             clazzName,
@@ -1005,7 +1014,7 @@ public class SchemaCompiler {
      *
      * @param simpleType
      */
-    private void processSimpleSchemaType(XmlSchemaSimpleType simpleType) {
+    private void processSimpleSchemaType(XmlSchemaSimpleType simpleType) throws SchemaCompilationException{
         // handle the restriction
         XmlSchemaSimpleTypeContent content = simpleType.getContent();
         if (content != null) {
@@ -1028,9 +1037,13 @@ public class SchemaCompiler {
                 }
             }else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 //Todo - Handle unions here
+                throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Uniont"));
 
             }else if (content instanceof XmlSchemaSimpleTypeList){
                 //todo - Handle lists here
+                 throw new SchemaCompilationException(
+                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type List"));
             }
 
         }
