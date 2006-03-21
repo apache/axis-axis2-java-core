@@ -111,7 +111,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
             sender.setOptions(options);
 
             sender.sendReceiveNonBlocking(operationName, method, callback);
-
             int index = 0;
             while (!finish) {
                 Thread.sleep(1000);

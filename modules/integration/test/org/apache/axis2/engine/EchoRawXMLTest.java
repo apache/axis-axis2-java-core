@@ -105,7 +105,6 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         sender.setOptions(options);
         options.setTo(targetEPR);
         sender.sendReceiveNonBlocking(payload, callback);
-
         int index = 0;
         while (!finish) {
             Thread.sleep(1000);
