@@ -329,7 +329,8 @@ public class DescriptionBuilder implements DeploymentConstants {
             OMAttribute paramName = parameterElement.getAttribute(new QName(ATTRIBUTE_NAME));
             if (paramName == null) {
                 throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.BAD_PARAMETER_ARGUMENT));
+                        Messages.getMessage(DeploymentErrorMsgs.BAD_PARAMETER_ARGUMENT,
+                                parameterElement.toString()));
             }
             parameter.setName(paramName.getAttributeValue());
             // setting parameter Value (the chiled elemnt of the parameter)

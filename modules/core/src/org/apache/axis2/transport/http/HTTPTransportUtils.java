@@ -40,7 +40,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -109,10 +108,7 @@ public class HTTPTransportUtils {
             return false;
         }
 
-        boolean envelopeContainsOptimise =
-                HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
-
-        return enableMTOM && envelopeContainsOptimise;
+        return HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
     }
 
     public static boolean processHTTPGetRequest(MessageContext msgContext, InputStream in,
@@ -282,8 +278,6 @@ public class HTTPTransportUtils {
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
-        } catch (UnsupportedEncodingException e) {
             throw new AxisFault(e);
         } finally {
             if ((msgContext.getEnvelope() == null) && !soap11) {

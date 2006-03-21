@@ -60,11 +60,11 @@ public class TransportUtils {
         return createSOAPMessage(msgContext, inStream, soapNamespaceURI);
     }
 
-    private static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream,
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream,
                                                   String soapNamespaceURI)
             throws AxisFault {
         try {
-            Object contentType = null;
+            Object contentType ;
             OperationContext opContext = msgContext.getOperationContext();
 
             if (opContext != null) {
@@ -73,8 +73,8 @@ public class TransportUtils {
                 throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
             }
 
-            StAXBuilder builder = null;
-            SOAPEnvelope envelope = null;
+            StAXBuilder builder;
+            SOAPEnvelope envelope ;
             String charSetEnc =
                     (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 
@@ -161,8 +161,8 @@ public class TransportUtils {
 
     public static StAXBuilder selectBuilderForMIME(MessageContext msgContext, InputStream inStream,
                                                    String contentTypeString)
-            throws OMException, XMLStreamException, FactoryConfigurationError,
-            UnsupportedEncodingException {
+            throws OMException, XMLStreamException, FactoryConfigurationError
+             {
         StAXBuilder builder = null;
         Parameter parameter_cache_attachment =
                 msgContext.getParameter(Constants.Configuration.CACHE_ATTACHMENTS);

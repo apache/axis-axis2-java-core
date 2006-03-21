@@ -39,11 +39,13 @@ public class ServiceContext extends AbstractContext {
 
     private transient AxisService axisService;
     private ServiceGroupContext serviceGroupContext;
+    private ConfigurationContext configContext;
 
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
+        this.configContext =(ConfigurationContext) parent.getParent();
     }
 
     public OperationContext createOperationContext(QName name) {
@@ -57,7 +59,7 @@ public class ServiceContext extends AbstractContext {
     }
 
     public ConfigurationContext getConfigurationContext() {
-        return (ConfigurationContext) parent.getParent();
+        return configContext;
     }
 
     public ServiceGroupContext getServiceGroupContext() {

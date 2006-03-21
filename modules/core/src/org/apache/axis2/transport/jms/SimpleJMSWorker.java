@@ -168,8 +168,6 @@ public class SimpleJMSWorker implements Runnable {
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
             throw new AxisFault(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new AxisFault(e);
         } finally {
             if ((msgContext.getEnvelope() == null) && !soap11) {
                 msgContext.setEnvelope(new SOAP12Factory().createSOAPEnvelope());
@@ -181,7 +179,7 @@ public class SimpleJMSWorker implements Runnable {
      * This is where the incoming message is processed.
      */
     public void run() {
-        InputStream in = null;
+        InputStream in ;
 
         try {
 
@@ -204,7 +202,7 @@ public class SimpleJMSWorker implements Runnable {
 
         // if the incoming message has a contentType set,
         // pass it to my new Message
-        String contentType = null;
+        String contentType ;
 
         try {
             contentType = message.getStringProperty("contentType");
@@ -217,7 +215,7 @@ public class SimpleJMSWorker implements Runnable {
 
         // if the incoming message has a contentType set,
         // pass it to my new Message
-        String soapAction = null;
+        String soapAction ;
 
         try {
             soapAction = message.getStringProperty("SOAPAction");
