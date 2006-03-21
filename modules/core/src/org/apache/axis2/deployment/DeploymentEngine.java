@@ -411,23 +411,26 @@ public class DeploymentEngine implements DeploymentConstants {
                                 log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
+                                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(),
-                                        de.getMessage()));
+                                        de.getMessage()),
+                                        de);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
                             } catch (AxisFault axisFault) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
+                                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(),
-                                        axisFault.getMessage()));
+                                        axisFault.getMessage()),
+                                        axisFault);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
                             } catch (Exception e) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
+                                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(),
-                                        e.getMessage()));
+                                        e.getMessage()),
+                                        e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
@@ -456,16 +459,18 @@ public class DeploymentEngine implements DeploymentConstants {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                         metaData.getName().getLocalPart()));
                             } catch (DeploymentException e) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
+                                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
                                         currentArchiveFile.getName(),
-                                        e.getMessage()));
+                                        e.getMessage()),
+                                        e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
                             } catch (AxisFault axisFault) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
+                                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
                                         currentArchiveFile.getName(),
-                                        axisFault.getMessage()));
+                                        axisFault.getMessage()),
+                                        axisFault);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
@@ -480,7 +485,8 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 } catch (AxisFault axisFault) {
                     log.info(Messages.getMessage(DeploymentErrorMsgs.ERROR_SETTING_CLIENT_HOME,
-                            axisFault.getMessage()));
+                            axisFault.getMessage()),
+                            axisFault);
                 }
             }
         }
@@ -545,13 +551,21 @@ public class DeploymentEngine implements DeploymentConstants {
             }
             return axisConfig;
         } else {
-            InputStream in;
+            InputStream in=null;
             try {
                 in = new FileInputStream(axis2_xml_file_name);
+                populateAxisConfiguration(in);
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
+            } finally {
+                if (in!=null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        //swallow
+                    }
+                }
             }
-            populateAxisConfiguration(in);
             return findRepositoryFromAxisConfiguration();
         }
     }
