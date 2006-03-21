@@ -1,18 +1,20 @@
 package org.apache.axis2.rest;
 
+import java.io.ByteArrayInputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.llom.builder.StAXOMBuilder;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 //This Sample test Client is written for Yahoo Web Search
 
