@@ -18,10 +18,10 @@ package org.apache.axis2.security.trust;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.types.URI;
-import org.apache.axis2.security.trust.types.RequestSecurityTokenResponseType;
 import org.apache.axis2.security.trust.types.RequestSecurityTokenType;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public class TokenRequestDispatcher {
 
@@ -40,7 +40,14 @@ public class TokenRequestDispatcher {
         this(TokenRequestDispatcherConfig.load(configFilePath));
     }
 
-    public RequestSecurityTokenResponseType handle(
+    /**
+     * Processes the incoming request and returns a SOAPEnvelope
+     * @param request 
+     * @param ctx
+     * @return
+     * @throws TrustException
+     */
+    public SOAPEnvelope handle(
             RequestSecurityTokenType request, MessageContext ctx)
             throws TrustException {
         
@@ -59,17 +66,10 @@ public class TokenRequestDispatcher {
             } else {
                 issuer = config.getIssuer(tokenType.toString());
             }
-            OMElement responseToken = issuer.issue(new StAXOMBuilder(request
+            SOAPEnvelope response = issuer.issue(new StAXOMBuilder(request
                     .getPullParser(null)).getDocumentElement(), ctx);
-            OMElement reqSecTok = responseToken.getOMFactory().createOMElement(
-                    "RequestedSecurityToken", Constants.WST_NS,
-                    Constants.WST_PREFIX);
-            reqSecTok.addChild(responseToken);
             
-            RequestSecurityTokenResponseType rstrType = 
-                new RequestSecurityTokenResponseType();
-            rstrType.addExtraElement(reqSecTok);
-            return rstrType;
+            return response;
         } else if(Constants.REQ_TYPE_VALIDATE.equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "validate requests");

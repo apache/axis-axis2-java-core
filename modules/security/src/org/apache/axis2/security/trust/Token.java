@@ -75,6 +75,11 @@ public class Token {
     private boolean chnaged;
     
     /**
+     * The secret associated with the Token
+     */
+    private byte[] secret;
+    
+    /**
      * @return Returns the chnaged.
      */
     protected boolean isChnaged() {
@@ -162,6 +167,20 @@ public class Token {
      */
     protected void setPresivousToken(OMElement presivousToken) {
         this.presivousToken = presivousToken;
+    }
+
+    /**
+     * @return Returns the secret.
+     */
+    protected byte[] getSecret() {
+        return secret;
+    }
+
+    /**
+     * @param secret The secret to set.
+     */
+    protected void setSecret(byte[] secret) {
+        this.secret = secret;
     }
     
     

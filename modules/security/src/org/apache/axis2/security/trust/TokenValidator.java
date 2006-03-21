@@ -18,8 +18,9 @@ package org.apache.axis2.security.trust;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public interface TokenValidator {
 
-    public OMElement validate(OMElement request, MessageContext msgCtx) throws TrustException;
+    public SOAPEnvelope validate(OMElement request, MessageContext msgCtx) throws TrustException;
 }

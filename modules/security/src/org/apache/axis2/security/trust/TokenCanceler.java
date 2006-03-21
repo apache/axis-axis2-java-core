@@ -18,9 +18,10 @@ package org.apache.axis2.security.trust;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public interface TokenCanceler {
     
-    public OMElement cancel(OMElement request, MessageContext msgCtx) throws TrustException;
+    public SOAPEnvelope cancel(OMElement request, MessageContext msgCtx) throws TrustException;
     
 }

@@ -212,7 +212,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 
                 if (tempNode.equals(refChild)) {
                     // RefChild found
-                    if (tempNode.isFirstChild()) { // If the refChild is the
+                    if (this.firstChild == tempNode) { // If the refChild is the
                                                     // first child
 
                         if (newChild instanceof DocumentFragmentimpl) {
@@ -321,9 +321,22 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
                     child.parentNode = this;
                     this.replaceChild(child, oldChild);
                 } else {
-                    if (oldDomChild.isFirstChild()) {
-                        oldDomChild.detach();
-                        this.addChild(newDomChild);
+                    if (this.firstChild == oldDomChild) {
+                        
+                        newDomChild.parentNode = this;
+                        
+                        if(this.firstChild.nextSibling != null) {
+                            this.firstChild.nextSibling.previousSibling = newDomChild;
+                            newDomChild.nextSibling = this.firstChild.nextSibling;
+                        }
+                        
+                        //Cleanup the current first child
+                        this.firstChild.parentNode = null;
+                        this.firstChild.nextSibling = null;
+                        
+                        //Set the new first child
+                        this.firstChild = newDomChild;
+                        
                     } else {
                         newDomChild.nextSibling = oldDomChild.nextSibling;
                         newDomChild.previousSibling = oldDomChild.previousSibling;
@@ -379,7 +392,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
             ChildNode tempNode = (ChildNode) children.next();
             if (tempNode.equals(oldChild)) {
 
-                if (tempNode.isFirstChild()) {
+                if (this.firstChild == tempNode) {
                     // If this is the first child
                     this.firstChild = null;
                     this.lastChild = null;

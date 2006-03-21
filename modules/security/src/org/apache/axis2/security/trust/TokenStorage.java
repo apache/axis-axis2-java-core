@@ -68,4 +68,11 @@ public interface TokenStorage {
      */
     public ArrayList getRenewedTokens() throws TrustException;
     
+    /**
+     * Return the list of CANCELLED tokens
+     * @return
+     * @throws TrustException
+     */
+    public ArrayList getCancelledTokens() throws TrustException;
+    
 }
