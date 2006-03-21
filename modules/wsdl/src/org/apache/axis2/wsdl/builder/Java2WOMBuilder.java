@@ -177,7 +177,7 @@ public class Java2WOMBuilder {
             operation.setName(new QName(jmethod.getSimpleName()));
 
             MessageReference messageRefinput = wsdlComponentFactory.createMessageReference();
-            QName typeName = table.getComplexScheamType(jmethod.getSimpleName() +
+            QName typeName = table.getComplexSchemaType(jmethod.getSimpleName() +
                     SchemaGenerator.METHOD_REQUEST_WRAPPER);
             messageRefinput.setElementQName(typeName);
             messageRefinput.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
