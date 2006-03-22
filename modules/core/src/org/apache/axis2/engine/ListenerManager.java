@@ -100,7 +100,7 @@ public class ListenerManager {
             try {
                 TransportInDescription tranportIn = (TransportInDescription) tranportNames.next();
                 TransportListener listener = tranportIn.getReceiver();
-                if (listener != null) {
+                if (listener != null && startedTranports.get(tranportIn.getName().getLocalPart()) == null) {
                     listener.init(configctx, tranportIn);
                     listener.start();
                     if (startedTranports.get(tranportIn.getName().getLocalPart()) == null) {

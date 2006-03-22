@@ -285,16 +285,6 @@ public class Options {
     }
 
     public void setAction(String action) {
-        // setting addressing back on. This does not mean anything if addressing is engaged.
-        // this is working only if addressing is engaged, as one might already set this off.
-        // see ServiceClient(ConfigurationContext,AxisService).
-
-        // first check whether this is a "probable" URI. Well the best thing to do is to use the URI
-        // class itself. But its kinda slow, using a lazy method here
-        if (action != null && action.indexOf(":") != -1) {
-            this.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
-        }
-
         this.action = action;
     }
 

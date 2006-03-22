@@ -70,10 +70,15 @@ public class ServiceBuilder extends DescriptionBuilder {
                 try {
                     Utils.fillAxisService(service, axisConfig);
                 } catch (Exception e) {
-                    //log.error(Messages.getMessage("errorinscheamgen", e.getMessage()),e);
-                    throw new DeploymentException(Messages.getMessage(
-                            "errorinscheamgen",
-                            e.getMessage()), e);
+                    /**
+                     * I have log here if some error occours , since service impl
+                     * class can alos be non-java class , so in that case
+                     * it is not posible to generate scheam, so no pint of throwing that
+                     * error ,  I know we have to handle this , untill that I have
+                     * to log this
+                     * TODO : Pls fix this , you are doing worng this here : Deepal
+                     */
+                    log.error(Messages.getMessage("errorinscheamgen", e.getMessage()),e);
                 }
             }
 
