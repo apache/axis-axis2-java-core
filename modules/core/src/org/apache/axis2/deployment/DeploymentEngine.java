@@ -133,6 +133,11 @@ public class DeploymentEngine implements DeploymentConstants {
             axis2_xml_file_name = xmlFile;
             axis2repository = null;
         }
+
+        // All said and done, if both are still null, use the default.
+        if(axis2_xml_file_name == null && axis2repository == null) {
+            useDefault = true;
+        }
     }
 
     /**
