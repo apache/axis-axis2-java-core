@@ -145,11 +145,15 @@ public class Utils {
     }
 
     /**
-     * This guy will create a AxisService using java replection
+     * This guy will create a AxisService using java reflection
      */
     public static void fillAxisService(AxisService axisService,
                                        AxisConfiguration axisConfig) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
+        if(implInfoParam == null) {
+            // Nothing to do.
+            return;
+        }
         String serviceClass = (String) implInfoParam.getValue();
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
