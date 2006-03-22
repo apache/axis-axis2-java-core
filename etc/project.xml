@@ -166,7 +166,7 @@
 		</developer>
 		<developer>
 			<name>Ruchith Fernando</name>
-			<id>ruchith</id>
+			<id>ruchithf</id>
 			<email>ruchith AT wso2.com</email>
 			<organization>WSO2</organization>
 		</developer>
@@ -188,6 +188,21 @@
 			<email>sanka AT wso2.com</email>
 			<organization>WSO2</organization>
 		</developer>
+            <developer>
+			<name>Chatra Nakkawita</name>
+			<email>chatra AT WSO2.com</email>
+			<organization>WSO2</organization>
+		</developer>
+            <developer>
+			<name>Afkham Azeez</name>
+			<email>azeez AT wso2.com</email>
+			<organization>WSO2</organization>
+		</developer>
+             <developer>
+			<name>Robert Iazarski</name>
+			<email>robertlazarski AT gmail.com</email>
+			<organization>Brazil Outsource</organization>
+		</developer> 
 	</developers>
 	<contributors>
 		<contributor>
@@ -199,11 +214,6 @@
 			<name>Changshin Lee</name>
 			<email>iasandcb AT hotmail.com</email>
 			<organization>Tmax Soft, Korea</organization>
-		</contributor>
-		<contributor>
-			<name>Afkham Azeez</name>
-			<email>azeez AT wso2.com</email>
-			<organization>WSO2</organization>
 		</contributor>
 		<contributor>
 			<name>Nadana Gunarathna</name>
@@ -229,11 +239,6 @@
 			<name>Dharshana Dias</name>
 			<email/>
 			<organization>Lanka Software Foundation / University of Moratuwa</organization>
-		</contributor>
-		<contributor>
-			<name>Chatra Nakkawita</name>
-			<email>chatra AT WSO2.com</email>
-			<organization>WSO2</organization>
 		</contributor>
 		<contributor>
 			<name>Thilini Gunawardhana</name>
