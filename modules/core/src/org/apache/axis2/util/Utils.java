@@ -206,21 +206,23 @@ public class Utils {
         if (-1 != index) {
             int serviceStart = index + Constants.REQUEST_URL_PREFIX.length();
 
-            service = path.substring(serviceStart + 1);
+            if (path.length() > serviceStart + 1) {
+                service = path.substring(serviceStart + 1);
 
-            int queryIndex = service.indexOf('?');
+                int queryIndex = service.indexOf('?');
 
-            if (queryIndex > 0) {
-                service = service.substring(0, queryIndex);
-            }
+                if (queryIndex > 0) {
+                    service = service.substring(0, queryIndex);
+                }
 
-            int operationIndex = service.indexOf('/');
+                int operationIndex = service.indexOf('/');
 
-            if (operationIndex > 0) {
-                values[0] = service.substring(0, operationIndex);
-                values[1] = service.substring(operationIndex + 1);
-            } else {
-                values[0] = service;
+                if (operationIndex > 0) {
+                    values[0] = service.substring(0, operationIndex);
+                    values[1] = service.substring(operationIndex + 1);
+                } else {
+                    values[0] = service;
+                }
             }
         }
 
