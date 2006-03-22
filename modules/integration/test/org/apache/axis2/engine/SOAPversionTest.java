@@ -68,7 +68,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
     public void testSOAP11() throws AxisFault {
         OMElement payload = createEnvelope();
         ConfigurationContext configCtx = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                createConfigurationContextFromFileSystem(null, null);
         ServiceClient client = new ServiceClient(configCtx, null);
 
 
@@ -92,7 +92,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
     public void testSOAP12() throws AxisFault {
         OMElement payload = createEnvelope();
         ConfigurationContext configCtx = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                createConfigurationContextFromFileSystem(null, null);
         ServiceClient client = new ServiceClient(configCtx, null);
         Options options = new Options();
         options.setSoapVersionURI(
@@ -135,7 +135,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
     public void testSOAPfault() throws AxisFault {
         OMElement payload = createEnvelope();
         ConfigurationContext configCtx = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                createConfigurationContextFromFileSystem(null, null);
         ServiceClient client = new ServiceClient(configCtx, null);
         Options options = new Options();
         client.setOptions(options);

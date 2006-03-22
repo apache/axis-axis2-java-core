@@ -149,7 +149,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             clientOptions.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(clientOptions);
 

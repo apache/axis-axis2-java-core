@@ -99,7 +99,7 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);

@@ -48,7 +48,7 @@ public class InvokerThread extends Thread {
         this.threadNumber = threadNumber;
         configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                            "target/test-resources/integrationRepo", null);
+                            null, null);
     }
 
     public void run() {

@@ -44,7 +44,7 @@ public class ServiceCreateTest extends TestCase {
         UtilServer.start();
         configContext = UtilServer.getConfigurationContext();
         clinetConfigurationctx = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                createConfigurationContextFromFileSystem(null, null);
     }
 
     public void testServiceCreate() throws AxisFault {

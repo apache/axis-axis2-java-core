@@ -76,7 +76,7 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,null);
         ServiceClient sender = new ServiceClient(configContext, null);
 
         Options options = new Options();

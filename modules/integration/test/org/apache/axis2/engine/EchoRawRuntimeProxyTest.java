@@ -87,7 +87,7 @@ public class EchoRawRuntimeProxyTest extends TestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                       null, null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
