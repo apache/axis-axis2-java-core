@@ -206,7 +206,7 @@ public class ListingAgent {
                 configContext.getAxisConfiguration().getService(serviceName).getOperations());
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
 
-        String operationName = req.getParameter("operation");
+        String operationName = req.getParameter("axisOperation");
 
         if ((serviceName != null) && (moduleName != null) && (operationName != null)) {
             try {

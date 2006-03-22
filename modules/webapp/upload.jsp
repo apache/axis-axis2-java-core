@@ -57,8 +57,7 @@
 
     }
 %>
-<jsp:include page="include/adminheader.jsp">
-</jsp:include>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h2>Upload a axisService jar file</h2>
 <%
     boolean isMultipart = FileUpload.isMultipartContent(request);
@@ -119,5 +118,4 @@
                                       value=" Upload "/></td></tr>
     </table>
 </form>
-<jsp:include page="include/adminfooter.jsp">
-</jsp:include>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

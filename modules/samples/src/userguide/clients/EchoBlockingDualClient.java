@@ -39,6 +39,7 @@ public class EchoBlockingDualClient {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
+            options.setAction("urn:echo");
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);

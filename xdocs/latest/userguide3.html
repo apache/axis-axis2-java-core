@@ -203,7 +203,12 @@ code is as follows:</p>
        ServiceClient serviceClient = new ServiceClient();
        serviceClient.setOptions(options);
        serviceClient.fireAndForget(payload);
-
+        /**
+         * We have to bock this thread untill we send the request , the problem
+         * is if we go out of the main thread , then request wont send ,so
+         * you have to wait some time :)
+         */
+       Thread.sleep(500);
      } 
 catch (AxisFault axisFault) {
             axisFault.printStackTrace();
@@ -290,7 +295,8 @@ asynchrony!!</strong></p>
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
-<br>            options.setUseSeparateListener(true); 
+<br>            options.setUseSeparateListener(true);
+               options.setAction("urn:echo"); 
             
             ServiceClient serviceClinet = new ServiceClinet();
 <br>            serviceClinet.setOptions(options);</pre>

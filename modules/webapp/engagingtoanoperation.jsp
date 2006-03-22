@@ -49,10 +49,9 @@
         <td>
             <select name="axisOperation">
             <%
-                HashMap operations = (HashMap)request.getSession().getAttribute(Constants.OPERATION_MAP);
-                Collection serviceCol =  operations.values();
-                for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
-                    AxisOperation axisOperationtion = (AxisOperation)iterator.next();
+                Iterator operations = (Iterator)request.getSession().getAttribute(Constants.OPERATION_MAP);
+                while (operations.hasNext()) {
+                    AxisOperation axisOperationtion = (AxisOperation)operations.next();
                     String opname = axisOperationtion.getName().getLocalPart();
             %> <option  align="left" value="<%=opname%>"><%=opname%></option>
              <%
@@ -97,4 +96,3 @@
       </table>
    </form>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>
-

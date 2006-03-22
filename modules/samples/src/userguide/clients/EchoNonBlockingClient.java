@@ -42,6 +42,7 @@ public class EchoNonBlockingClient {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
+            options.setAction("urn:echo");
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             //Callback to handle the response

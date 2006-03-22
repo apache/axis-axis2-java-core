@@ -38,9 +38,17 @@ public class PingClient {
             options.setTo(targetEPR);
 
             serviceClient.fireAndForget(payload);
+            /**
+             * We have to bock this thread untill we send the request , the problem
+             * is if we go out of the main thread , then request wont send ,so
+             * you have to wait some time :)
+             */
+          Thread.sleep(500);
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
+        } catch (InterruptedException e) {
+            //
         }
     }
 

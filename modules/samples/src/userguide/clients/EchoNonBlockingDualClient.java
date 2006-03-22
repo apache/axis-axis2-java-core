@@ -46,6 +46,7 @@ public class EchoNonBlockingDualClient {
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
+            options.setAction("urn:echo");
 
             //Callback to handle the response
             Callback callback = new Callback() {
