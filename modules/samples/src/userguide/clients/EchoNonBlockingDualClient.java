@@ -40,6 +40,7 @@ public class EchoNonBlockingDualClient {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
+        ServiceClient sender = null;
         try {
             OMElement payload = ClientUtil.getEchoOMElement();
 
@@ -71,7 +72,7 @@ public class EchoNonBlockingDualClient {
             };
 
             //Non-Blocking Invocation
-            ServiceClient sender = new ServiceClient();
+            sender = new ServiceClient();
             sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
             sender.setOptions(options);
             sender.sendReceiveNonBlocking(payload, callback);
@@ -86,6 +87,12 @@ public class EchoNonBlockingDualClient {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally{
+            try {
+                sender.finalizeInvoke();
+            } catch (AxisFault axisFault) {
+                //have to ignore this
+            }
         }
 
     }
