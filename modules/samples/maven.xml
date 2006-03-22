@@ -287,16 +287,12 @@
         <fileset dir="target/security/secUtil"></fileset>
     </jar>
 
-    <mkdir dir="target/security/client_repo"/>
-    <mkdir dir="target/security/client_repo/modules"/>
-    <mkdir dir="target/security/client_repo/services"/>
-    <mkdir dir="target/security/client_repo/conf"/>
-    <ant:copy file="../addressing/target/modules/addressing-${addressing_version}.mar" tofile="target/samples/security/client_repo/modules/addressing-${addressing_version}.mar"/>
+    <mkdir dir="target/samples/security/client_repo/modules"/>
     <ant:copy file="resources/security/client.axis2.xml" tofile="target/samples/security/client_repo/conf/axis2.xml"/>
 
     <!-- Copy the sources and others ovrer to the target/samples/security-->
     <mkdir dir="target/samples/security/src/sample/security/"/>
-        <ant:copy todir="target/samples/security/src/sample/security/">
+    <ant:copy todir="target/samples/security/src/sample/security/">
          <ant:fileset dir="src/sample/security" />
     </ant:copy>
 

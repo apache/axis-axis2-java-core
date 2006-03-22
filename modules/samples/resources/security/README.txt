@@ -11,7 +11,7 @@ Setup the service
 ------------------------------------------------------------------------------
 Please follow each of the following steps:
 
-1.) Download the security-0.95.mar from 
+1.) Download the security-0.95.mar and addressing-0.95.mar from 
 	http://ws.apache.org/axis2/modules/
 2.) To engage the security (WSS4J) module add the following line to axis2.xml in axis
 	<module ref="security"/>
@@ -23,7 +23,7 @@ Please follow each of the following steps:
 Run the sample
 ------------------------------------------------------------------------------
 
-Copy the downloaded security-0.95.mar to samples/security/client_repo/modules/ directory
+Copy the downloaded security-0.95.mar and addressing-0.95.mar to samples/security/client_repo/modules/ directory
 
 To run the sample client run the securitySample ant task in the ant build file available in the samples directory.
 	$ ant securitySample
