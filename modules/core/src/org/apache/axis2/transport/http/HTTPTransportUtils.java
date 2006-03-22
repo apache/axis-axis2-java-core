@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
@@ -57,7 +58,8 @@ public class HTTPTransportUtils {
         return isOptimised(envelope);
     }
 
-    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map) {
+    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map ,
+                                                            ConfigurationContext configurationContext) throws AxisFault {
         String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl);
 
         if (values == null) {
@@ -65,19 +67,27 @@ public class HTTPTransportUtils {
         }
 
         if ((values[1] != null) && (values[0] != null)) {
+            String srvice = values[0];
+            AxisService service = configurationContext.getAxisConfiguration().getService(srvice);
+            if(service==null){
+                throw  new AxisFault("service not found: " + srvice);
+            }
             String operation = values[1];
             SOAPFactory soapFactory = new SOAP11Factory();
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
-            OMNamespace omNs = soapFactory.createOMNamespace(values[0], "services");
+//            OMNamespace omNs = soapFactory.createOMNamespace(values[0], "services");
+            OMNamespace omNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
+                    service.getSchematargetNamespacePrefix());
             //OMNamespace defualtNs = new OMNamespaceImpl("", null, soapFactory);
-            OMNamespace defualtNs = soapFactory.createOMNamespace("", null);
+            OMNamespace defualtNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
+                    service.getSchematargetNamespacePrefix());
             OMElement opElement = soapFactory.createOMElement(operation, omNs);
             Iterator it = map.keySet().iterator();
 
             while (it.hasNext()) {
                 String name = (String) it.next();
                 String value = (String) map.get(name);
-                OMElement omEle = soapFactory.createOMElement(name, defualtNs);
+                OMElement omEle = soapFactory.createOMElement(name, omNs);
 
                 omEle.setText(value);
                 opElement.addChild(omEle);
@@ -134,7 +144,7 @@ public class HTTPTransportUtils {
         msgContext.setServerSide(true);
 
         SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
-                requestParameters);
+                requestParameters, configurationContext);
 
         if (envelope == null) {
             return false;
