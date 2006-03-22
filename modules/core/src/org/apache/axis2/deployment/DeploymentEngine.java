@@ -514,6 +514,7 @@ public class DeploymentEngine implements DeploymentConstants {
             new RepositoryListener(this);
             org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
                     axisConfig.getModules(), axisConfig);
+            validateSystemPredefinedPhases();
             return axisConfig;
         } else if (axis2repository != null) {
             InputStream in;

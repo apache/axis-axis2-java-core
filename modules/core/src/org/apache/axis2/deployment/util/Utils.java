@@ -157,7 +157,7 @@ public class Utils {
         String serviceClass = (String) implInfoParam.getValue();
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                serviceClass, axisService.getSchematargetNamespace(),
+                serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());
         axisService.setSchema(schemaGenerator.generateSchema());
 

@@ -28,6 +28,7 @@ import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
 /**
@@ -71,6 +72,7 @@ public class EchoNonBlockingDualClient {
 
             //Non-Blocking Invocation
             ServiceClient sender = new ServiceClient();
+            sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
             sender.setOptions(options);
             sender.sendReceiveNonBlocking(payload, callback);
 
