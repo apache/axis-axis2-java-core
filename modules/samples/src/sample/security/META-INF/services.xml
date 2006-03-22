@@ -21,7 +21,6 @@
         <signatureKeyIdentifier>SKIKeyIdentifier</signatureKeyIdentifier>
         <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
         <encryptionUser>alice</encryptionUser>
-
         <optimizeParts>//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</optimizeParts>
       </action>
     </parameter>

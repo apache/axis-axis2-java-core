@@ -47,9 +47,16 @@ public class TokenRequestDispatcher {
      * @return
      * @throws TrustException
      */
-    public SOAPEnvelope handle(
-            RequestSecurityTokenType request, MessageContext ctx)
+    public SOAPEnvelope handle(MessageContext ctx)
             throws TrustException {
+
+        
+        RequestSecurityTokenType request = null;
+        try {
+            request = RequestSecurityTokenType.Factory.parse(ctx.getEnvelope().getXMLStreamReader());
+        } catch (Exception e) {
+            throw new TrustException(TrustException.INVALID_REQUEST, e);
+        }
         
         URI reqType = request.getRequestType();
         URI tokenType = request.getTokenType();

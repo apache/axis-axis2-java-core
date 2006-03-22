@@ -27,6 +27,9 @@ import java.util.Iterator;
 
 public class TokenRequestDispatcherConfig {
 
+    public final static String CONFIG_PARAM_KEY = "token-dispatcher-configuration";
+    public final static String CONFIG_FILE_KEY = "token-dispatcher-configuration-file";
+    
     private final static QName CONFIG = new QName("token-dispatcher-configuration");
     public final static QName ISSUER = new QName("issuer");
     public final static QName TOKEN_TYPE = new QName("tokenType");
