@@ -59,9 +59,9 @@
                 cache="true"/>
     </preGoal>
 
-    <preGoal name="build:start">
-        <property name="modules" value="core,common,xml,wsdl,adb"/>
-    </preGoal>
+    <!--<preGoal name="build:start">
+        <property name="modules" value="core,common,wsdl,adb"/>
+    </preGoal>-->
 
     <!-- ======= -->
     <!-- Modules -->
@@ -324,7 +324,6 @@
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes"/>
             <fileset dir="modules/common/target/classes"/>
-            <fileset dir="modules/xml/target/classes"/>
             <fileset dir="modules/wsdl/target/classes"/>
             <fileset dir="modules/adb/target/classes"/>
         </jar>
@@ -364,7 +363,6 @@
         <jar destfile="target/temp/min/bin/lib/axis2-core-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
-            <fileset dir="modules/xml/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
         </jar>
 
@@ -394,7 +392,7 @@
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
-                              mods="core,common,xml,wsdl,adb"/>
+                              mods="core,common,wsdl,adb"/>
             <property name="minDeps.uptodate" value="yes"/>
         </j:if>
     </goal>
@@ -416,7 +414,6 @@
                 <ant:pathelement location="modules/common/src"/>
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/wsdl/src"/>
-                <ant:pathelement location="modules/xml/src"/>
             </ant:sourcepath>
             <ant:classpath>
                 <ant:fileset dir="target/lib">

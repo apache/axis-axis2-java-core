@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 @axis2_version@ build (@release_date@)
+Apache Axis2 0.95 build (March 22, 2006)
 Standard Source Release
 
 http://ws.apache.org/axis2
@@ -12,7 +12,7 @@ Axis2 modules:
 
 1. core
 2. common
-3. xml
+3. addressing
 4. wsdl
 5. adb
 6. codegen
