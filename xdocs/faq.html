@@ -35,6 +35,15 @@ Files\Java\jre&lt;version&gt;\lib\security\java.security.</p>
   </li>
 </ol>
 
+<h1>Web Archive / Server side</h1>
+<ol>
+  <li><strong>I see an internal server error page when I try to view the WSDL file.</strong><br>
+    <p>This happens specifically with tomcat 4.x and 5.0 in a JDK 1.5 environment. The reason is that the system picks up a wrong transformer
+ factory class. This can be solved simply by putting the xalan-2.7.0.jar(found <a href="http://www.apache.org/dist/java-repository/xalan/jars/">here</a>) into the axis2/WEB-INF/lib directory</p>
+  </li>
+  
+</ol>
+
 <h1>Client API</h1>
 <ol>
   <li><strong>I want to do request response Messaging, Where should I
