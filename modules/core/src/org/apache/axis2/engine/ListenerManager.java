@@ -55,7 +55,7 @@ public class ListenerManager {
      * @param tranportName : name of the trasport can be null , if it is null then
      * @return String
      */
-    public EndpointReference getERPforService(String serviceName, String opName,
+    public synchronized EndpointReference getERPforService(String serviceName, String opName,
                                               String tranportName) throws AxisFault {
         if (tranportName == null || "".equals(tranportName)) {
             AxisService service = configctx.getAxisConfiguration().getService(serviceName);
@@ -93,7 +93,7 @@ public class ListenerManager {
     /**
      * To start all the tranports
      */
-    public void start() {
+    public synchronized void start() {
         Iterator tranportNames = configctx.getAxisConfiguration().
                 getTransportsIn().values().iterator();
         while (tranportNames.hasNext()) {
@@ -114,7 +114,7 @@ public class ListenerManager {
         stopped = false;
     }
 
-    public void startSystem(ConfigurationContext configurationContext) {
+    public synchronized void startSystem(ConfigurationContext configurationContext) {
         init(configurationContext);
         start();
     }
@@ -122,7 +122,7 @@ public class ListenerManager {
     /**
      * To stop all the tranport
      */
-    public void stop() throws AxisFault {
+    public synchronized void stop() throws AxisFault {
         Iterator itr_st = startedTranports.values().iterator();
         while (itr_st.hasNext()) {
             TransportListener transportListener = (TransportListener) itr_st.next();
@@ -136,7 +136,7 @@ public class ListenerManager {
      * @param started : whether transport Listener running or not
      * @throws AxisFault : will throw AxisFault if something goes wrong
      */
-    public void addListener(TransportInDescription trsIn, boolean started) throws AxisFault {
+    public synchronized void addListener(TransportInDescription trsIn, boolean started) throws AxisFault {
         configctx.getAxisConfiguration().addTransportIn(trsIn);
         TransportListener transportListener = trsIn.getReceiver();
         if (transportListener != null) {
@@ -149,7 +149,7 @@ public class ListenerManager {
         }
     }
 
-    public boolean isListenerRunning(String transportName) {
+    public synchronized boolean isListenerRunning(String transportName) {
         return startedTranports.get(transportName) != null;
     }
 

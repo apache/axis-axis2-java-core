@@ -17,7 +17,7 @@ import java.util.Iterator;
  */
 public class ClientUtils {
 
-    public static TransportOutDescription inferOutTransport(AxisConfiguration ac,
+    public static synchronized TransportOutDescription inferOutTransport(AxisConfiguration ac,
                                                             EndpointReference epr) throws AxisFault {
         if (epr == null || (epr.getAddress() == null)) {
             throw new AxisFault(Messages.getMessage("cannotInferTransport"));
@@ -33,7 +33,7 @@ public class ClientUtils {
         }
     }
 
-    public static TransportInDescription inferInTransport(AxisConfiguration ac,
+    public static synchronized TransportInDescription inferInTransport(AxisConfiguration ac,
                                                           Options options,
                                                           MessageContext msgCtxt) throws AxisFault {
         String listenerTransportProtocol = options.getTransportInProtocol();
