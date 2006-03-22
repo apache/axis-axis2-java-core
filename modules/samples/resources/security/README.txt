@@ -11,18 +11,21 @@ Setup the service
 ------------------------------------------------------------------------------
 Please follow each of the following steps:
 
-1.) Download the security-0.94.mar from 
-http://ws.apache.org/axis2/modules/%5Bpreferred%5D/ws/axis2/modules/addressing/0_94/security-0.94.mar
+1.) Download the security-0.95.mar from 
+	http://ws.apache.org/axis2/modules/
 2.) To engage the security (WSS4J) module add the following line to axis2.xml in axis
 	<module ref="security"/>
 3.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
 4.) Copy samples/security/secUtil.jar to axis2/WEB-INF/lib/
-5.) Copy the downloaded security-0.94.mar to Axis2/WEB-INF/modules/ directory
-6.) Copy the downloaded security-0.94.mar to samples/security/client_repo/modules/ directory
+5.) Copy all jars in the samples/security/lib directory to axis2/WEB-INF/lib/
+6.) Copy the downloaded security-0.95.mar to Axis2/WEB-INF/modules/ directory
 7.) Start Tomcat
 
 Run the sample
 ------------------------------------------------------------------------------
+
+Copy the downloaded security-0.95.mar to samples/security/client_repo/modules/ directory
+
 To run the sample client run the securitySample ant task in the ant build file available in the samples directory.
 	$ ant securitySample
 

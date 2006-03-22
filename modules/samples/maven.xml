@@ -301,7 +301,15 @@
     </ant:copy>
 
     <ant:copy file="target/security/SecureService.aar" tofile="target/samples/security/SecureService.aar"/>
-    <ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/secUtil.jar"/>
+    
+    <!-- copy the local libs -->
+    <mkdir dir="target/samples/security/lib"/>
+    <ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/lib/secUtil.jar"/>
+    <ant:copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/samples/security/lib/"/>
+    <ant:copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/samples/security/lib/"/>
+    <ant:copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/samples/security/lib/"/>
+    <ant:copy file="${maven.repo.local}/commons-discovery/jars/commons-discovery-${commons.discovery.version}.jar" todir="target/samples/security/lib/"/>
+    
     <ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
     <ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>
 

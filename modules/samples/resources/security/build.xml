@@ -3,7 +3,9 @@
         <fileset dir="../../lib">
             <include name="*.jar"/>
         </fileset>
-        <pathelement location="secUtil.jar"/>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
 

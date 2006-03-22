@@ -43,17 +43,17 @@ public class Client {
             // Get the repository location from the args
             String repo = args[0];
             String port = args[1];
-            //todo  : third argumnet should be axis2.xml
 
             OMElement payload = getEchoElement();
-            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, repo + "/axis2.xml");
+            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
-            serviceClient.setOptions(options);
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-
+            options.setAction("urn:echo");
+            serviceClient.setOptions(options);
+            
             //Blocking invocation
             OMElement result = serviceClient.sendReceive(payload);
 
