@@ -35,6 +35,7 @@ public class EchoBlockingDualClient {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
+        ServiceClient sender = null;
         try {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
@@ -46,7 +47,7 @@ public class EchoBlockingDualClient {
             options.setUseSeparateListener(true);
 
             //Blocking Invocation
-            ServiceClient sender = new ServiceClient();
+            sender = new ServiceClient();
             sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);
@@ -63,6 +64,12 @@ public class EchoBlockingDualClient {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally{
+            try {
+                sender.finalizeInvoke();
+            } catch (AxisFault axisFault) {
+                //
+            }
         }
 
     }

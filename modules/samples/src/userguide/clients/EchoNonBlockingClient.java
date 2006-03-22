@@ -38,6 +38,7 @@ public class EchoNonBlockingClient {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
+        ServiceClient sender = null;
         try {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
@@ -67,7 +68,7 @@ public class EchoNonBlockingClient {
             };
 
             //Non-Blocking Invocation
-            ServiceClient sender = new ServiceClient();
+            sender = new ServiceClient();
             sender.setOptions(options);
             sender.sendReceiveNonBlocking(payload, callback);
 
@@ -80,6 +81,12 @@ public class EchoNonBlockingClient {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally{
+            try {
+                sender.finalizeInvoke();
+            } catch (AxisFault axisFault) {
+                //
+            }
         }
 
     }
