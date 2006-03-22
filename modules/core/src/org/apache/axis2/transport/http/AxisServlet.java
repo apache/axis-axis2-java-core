@@ -55,8 +55,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
-    protected ConfigurationContext configContext;
-    protected AxisConfiguration axisConfiguration;
+    protected transient ConfigurationContext configContext;
+    protected transient AxisConfiguration axisConfiguration;
     protected ListingAgent lister;
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,

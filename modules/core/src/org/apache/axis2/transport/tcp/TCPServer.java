@@ -109,6 +109,7 @@ public class TCPServer implements Runnable, TransportListener {
             System.out.println("[Axis2] Using the Repository " + repository.getAbsolutePath());
             System.out.println("[Axis2] Starting the TCP Server on port " + args[1]);
             tcpServer.start();
+            Runtime.getRuntime().addShutdownHook(new Thread(tcpServer));
         }
     }
 

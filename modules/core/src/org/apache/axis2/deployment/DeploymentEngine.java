@@ -27,12 +27,7 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
@@ -42,14 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -99,12 +87,28 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public DeploymentEngine(String repositoryName, String xmlFile)
             throws DeploymentException {
+
         if ((repositoryName == null || "".equals(repositoryName.trim())) &&
                 (xmlFile == null || "".equals(xmlFile.trim()))) {
             String axis2_home = System.getProperty(Constants.AXIS2_HOME);
-            if (axis2_home != null && !"".equals("")) {
-                useDefault = false;
-                axis2repository = axis2_home;
+            if (axis2_home != null && !"".equals(axis2_home)) {
+                File axisRepo = new File(axis2_home);
+                if (!axisRepo.exists()) {
+                    throw new DeploymentException(
+                            Messages.getMessage("cannotfindrepo", axis2repository));
+                }
+                File axis2conf = new File(axisRepo, "conf");
+                if (axis2conf.exists()) {
+                    File axis2xml = new File(axis2conf, "axis2.xml");
+                    if (!axis2xml.exists()) {
+                        useDefault = true;
+                    } else {
+                        useDefault = false;
+                    }
+                } else {
+                    useDefault = true;
+                    axis2repository = axis2_home;
+                }
             } else {
                 useDefault = true;
                 axis2repository = null;
@@ -311,8 +315,9 @@ public class DeploymentEngine implements DeploymentConstants {
      * called the init method since there is no refernce to configuration context
      * so who ever create module usieng this has to called module.init if it is
      * required
-     * @param modulearchive  : Actual module archive file
-     * @param config : AxisConfiguration : for get classs loders etc..
+     *
+     * @param modulearchive : Actual module archive file
+     * @param config        : AxisConfiguration : for get classs loders etc..
      * @return
      * @throws DeploymentException
      */
@@ -564,14 +569,14 @@ public class DeploymentEngine implements DeploymentConstants {
             }
             return axisConfig;
         } else {
-            InputStream in=null;
+            InputStream in = null;
             try {
                 in = new FileInputStream(axis2_xml_file_name);
                 populateAxisConfiguration(in);
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
             } finally {
-                if (in!=null) {
+                if (in != null) {
                     try {
                         in.close();
                     } catch (IOException e) {

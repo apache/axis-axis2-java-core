@@ -325,7 +325,7 @@
                 <ant:include name="sample/sgccalculator/**"/>
             </ant:fileset>
         </ant:copy>
-        <jar destfile="${samples.dir}/SGCCalculator/SGCCalculator.jar">
+        <jar destfile="${samples.dir}/SGCCalculator/SGCCalculator.aar">
             <fileset dir="target/classes">
                 <include name="sample/sgccalculator/**"/>
             </fileset>
@@ -333,6 +333,15 @@
                 <include name="META-INF/**"/>
             </fileset>
         </jar>
+         <jar destfile="${samples.dir}/SGCCalculator/SGCCalculator.jar">
+            <fileset dir="target/classes">
+                <include name="sample/sgccalculator/**"/>
+            </fileset>
+            <fileset dir="src/sample/sgccalculator/">
+                <include name="META-INF/**"/>
+            </fileset>
+        </jar>
+
       <copy toDir="${samples.dir}/SGCCalculator"
             file="script/SGCCalculator/run.bat"/>
         <copy toDir="${samples.dir}/SGCCalculator"

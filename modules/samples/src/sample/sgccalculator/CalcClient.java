@@ -104,7 +104,9 @@ public class CalcClient {
                 System.out.println("Invoking...");
 
                 ServiceClient serviceClient = new ServiceClient();
+                serviceClient.engageModule(new QName("addressing"));
                 serviceClient.setOptions(options);
+                options.setAction("urn:" + opStr);
                 MessageContext requetMessageContext = new MessageContext();
                 requetMessageContext.setEnvelope(getRequestEnvelope(opStr, param1, param2,
                         serviceGroupContextId));
