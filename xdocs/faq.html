@@ -58,6 +58,22 @@ Files\Java\jre&lt;version&gt;\lib\security\java.security.</p>
     addressing module. You can enable it by un-commenting the entry in the
     axis2.xml file or Call.engageModule(QName). But addressing is enabled by default. </p>
   </li>
+    <li><strong>I have engaged addressing and when I trying to invoke a service I am getting an exception
+   </strong><br>
+
+    <p>If you have engaged addressing , then you have to have wsa:action , so you have to called  <br/>
+              option.setAction(“urn:myaction”); 
+             <br/>
+            It should be not that the action should be a URI.
+</p>
+  </li>
+
+
+
+
+
+
+
   <li><a name="b5"><strong>What is Axis Repository?</strong></a><br>
 
     <p>Repository stores the configuration of Axis2, the users should specify
