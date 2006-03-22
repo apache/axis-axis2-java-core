@@ -18,10 +18,10 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
-import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
 
 public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeaderElement {
 

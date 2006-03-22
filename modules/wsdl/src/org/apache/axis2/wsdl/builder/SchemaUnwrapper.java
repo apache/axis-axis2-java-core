@@ -1,16 +1,16 @@
 package org.apache.axis2.wsdl.builder;
 
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLInterface;
 import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.MessageReference;
-import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import java.util.Map;
 /*

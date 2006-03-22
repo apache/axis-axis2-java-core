@@ -16,8 +16,6 @@
 
 package org.apache.axis2.soap.impl.dom;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.om.impl.dom.AttrImpl;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMNamespace;
@@ -27,6 +25,8 @@ import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultReason;
 import org.apache.ws.commons.soap.SOAPFaultText;
 import org.apache.ws.commons.soap.SOAPProcessingException;
+
+import javax.xml.namespace.QName;
 
 public abstract class SOAPFaultTextImpl extends SOAPElement implements SOAPFaultText {
     

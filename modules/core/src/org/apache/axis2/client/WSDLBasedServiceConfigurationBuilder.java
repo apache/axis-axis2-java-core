@@ -23,7 +23,13 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
-import org.apache.wsdl.*;
+import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLEndpoint;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.extensions.SOAPAddress;
 import org.apache.wsdl.extensions.SOAPOperation;
 

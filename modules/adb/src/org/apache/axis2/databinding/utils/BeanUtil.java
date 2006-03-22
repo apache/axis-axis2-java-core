@@ -26,7 +26,12 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.codehaus.jam.*;
+import org.codehaus.jam.JClass;
+import org.codehaus.jam.JProperty;
+import org.codehaus.jam.JamClassIterator;
+import org.codehaus.jam.JamService;
+import org.codehaus.jam.JamServiceFactory;
+import org.codehaus.jam.JamServiceParams;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;

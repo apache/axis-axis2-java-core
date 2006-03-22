@@ -16,7 +16,6 @@
 package org.apache.axis2.om.impl.dom;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;

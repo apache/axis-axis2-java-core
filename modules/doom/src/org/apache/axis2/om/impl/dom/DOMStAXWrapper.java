@@ -16,7 +16,14 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.*;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMComment;
+import org.apache.ws.commons.om.OMDocument;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.exception.OMStreamingException;
 import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
 import org.w3c.dom.Attr;

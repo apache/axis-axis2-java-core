@@ -16,7 +16,6 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.ws.commons.soap.SOAPFaultDetail;
 
 import javax.xml.soap.Detail;

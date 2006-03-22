@@ -16,10 +16,10 @@
 
 package org.apache.wsdl.extensions.impl;
 
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
-import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;

@@ -16,7 +16,15 @@
 package org.apache.axis2.om.impl.dom;
 
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.*;
+import org.apache.ws.commons.om.OMAttribute;
+import org.apache.ws.commons.om.OMConstants;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMFactory;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.om.OMText;
+import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
@@ -24,7 +32,13 @@ import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.llom.util.EmptyIterator;
 import org.apache.ws.commons.om.impl.traverse.OMChildElementIterator;
 import org.apache.ws.commons.om.util.ElementHelper;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.TypeInfo;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;

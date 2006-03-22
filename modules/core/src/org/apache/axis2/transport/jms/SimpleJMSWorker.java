@@ -48,7 +48,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * SimpleJMSWorker is a worker thread that processes messages that are

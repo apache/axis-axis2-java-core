@@ -17,12 +17,11 @@
 package org.apache.axis2.wsdl.builder.wsdl4j;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
-import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;

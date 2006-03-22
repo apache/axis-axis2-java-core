@@ -24,7 +24,7 @@ import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.om.OMText;
 
 import javax.activation.DataHandler;
-import java.awt.Image;
+import java.awt.*;
 import java.io.FileOutputStream;
 
 public class MTOMService {

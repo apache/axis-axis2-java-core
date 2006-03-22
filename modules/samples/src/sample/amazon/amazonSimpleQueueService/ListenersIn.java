@@ -18,8 +18,7 @@ package sample.amazon.amazonSimpleQueueService;
 
 import sample.amazon.amazonSimpleQueueService.util.RunnableCreateQueue;
 
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

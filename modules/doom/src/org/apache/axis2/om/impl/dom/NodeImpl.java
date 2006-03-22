@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMFactory;
@@ -36,8 +35,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Map;
 
 public abstract class NodeImpl implements Node, NodeList, OMNodeEx, Cloneable {
 

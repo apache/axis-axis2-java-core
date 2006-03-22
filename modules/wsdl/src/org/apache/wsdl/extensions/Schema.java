@@ -16,8 +16,8 @@
 
 package org.apache.wsdl.extensions;
 
-import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;

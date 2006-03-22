@@ -17,8 +17,8 @@ package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
 
-import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.Detail;
+import javax.xml.soap.SOAPFactory;
 
 /**
  * 

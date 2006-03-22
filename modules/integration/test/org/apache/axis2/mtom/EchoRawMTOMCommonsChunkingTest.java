@@ -38,7 +38,7 @@ import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 import org.apache.ws.commons.soap.SOAP12Constants;
 
 import javax.activation.DataHandler;
-import java.awt.Image;
+import java.awt.*;
 import java.io.InputStream;
 
 public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestConstants {

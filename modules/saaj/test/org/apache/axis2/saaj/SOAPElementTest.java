@@ -18,19 +18,19 @@ package org.apache.axis2.saaj;
 import junit.framework.TestCase;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.Node;
-import javax.xml.soap.Text;
-import javax.xml.soap.Name;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPConstants;
-import java.util.List;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.Text;
 import java.util.Iterator;
+import java.util.List;
 
 public class SOAPElementTest extends TestCase {
 

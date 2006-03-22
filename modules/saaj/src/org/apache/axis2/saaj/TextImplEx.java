@@ -15,16 +15,16 @@
  */
 package org.apache.axis2.saaj;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Text;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
+
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.Text;
+import javax.xml.stream.XMLStreamException;
 
 public class TextImplEx extends NodeImplEx implements Text {
 

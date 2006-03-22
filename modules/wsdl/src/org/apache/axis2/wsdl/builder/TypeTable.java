@@ -1,7 +1,7 @@
 package org.apache.axis2.wsdl.builder;
 
-import org.apache.ws.commons.om.OMElement;
 import org.apache.axis2.namespace.Constants;
+import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

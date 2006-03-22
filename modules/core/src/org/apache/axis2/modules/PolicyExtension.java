@@ -16,11 +16,11 @@
 
 package org.apache.axis2.modules;
 
-import javax.xml.namespace.QName;
-
 import org.apache.ws.policy.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
 
 /**
  *

@@ -16,10 +16,6 @@
 
 package org.apache.axis2.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisModule;
@@ -31,6 +27,10 @@ import org.apache.ws.policy.AndCompositeAssertion;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
 import org.apache.ws.policy.XorCompositeAssertion;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class WSDLBasedPolicyProcessor {
 	private HashMap ns2modules = new HashMap();

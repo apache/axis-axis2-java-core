@@ -6,16 +6,16 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 public class AttachmentTest extends TestCase {
 

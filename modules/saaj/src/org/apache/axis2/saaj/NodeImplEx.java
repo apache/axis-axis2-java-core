@@ -15,9 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.SOAPBodyImpl;
 import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
 import org.apache.ws.commons.om.OMContainer;
@@ -26,10 +25,10 @@ import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNode;
 import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.TypeInfo;
-import org.w3c.dom.Text;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Text;
+import org.w3c.dom.TypeInfo;
 
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;

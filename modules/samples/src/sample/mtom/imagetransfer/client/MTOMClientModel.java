@@ -31,7 +31,7 @@ import org.apache.ws.commons.soap.SOAP11Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 

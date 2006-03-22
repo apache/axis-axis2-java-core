@@ -16,10 +16,6 @@
 
 package org.apache.axis2.soap.impl.dom;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;
@@ -32,6 +28,10 @@ import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 import org.apache.ws.commons.soap.SOAPProcessingException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
 

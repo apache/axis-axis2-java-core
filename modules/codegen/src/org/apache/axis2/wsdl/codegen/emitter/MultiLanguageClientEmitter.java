@@ -18,21 +18,6 @@ package org.apache.axis2.wsdl.codegen.emitter;
 
 //~--- non-JDK imports --------------------------------------------------------
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.URIResolver;
-
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.util.PolicyUtil;
@@ -72,6 +57,20 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.URIResolver;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 //~--- classes ----------------------------------------------------------------
 

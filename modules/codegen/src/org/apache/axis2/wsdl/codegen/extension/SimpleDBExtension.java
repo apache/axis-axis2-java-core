@@ -26,9 +26,6 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
@@ -40,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  * Extension for simple data binding.

@@ -16,14 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
@@ -46,6 +38,13 @@ import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *

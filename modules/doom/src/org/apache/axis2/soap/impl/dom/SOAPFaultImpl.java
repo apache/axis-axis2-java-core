@@ -18,11 +18,25 @@ package org.apache.axis2.soap.impl.dom;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.ParentNode;
-import org.apache.ws.commons.om.*;
+import org.apache.ws.commons.om.OMConstants;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMException;
+import org.apache.ws.commons.om.OMNode;
+import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
 import org.apache.ws.commons.om.impl.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.ws.commons.soap.*;
+import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.ws.commons.soap.SOAPBody;
+import org.apache.ws.commons.soap.SOAPConstants;
+import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.ws.commons.soap.SOAPFaultCode;
+import org.apache.ws.commons.soap.SOAPFaultDetail;
+import org.apache.ws.commons.soap.SOAPFaultNode;
+import org.apache.ws.commons.soap.SOAPFaultReason;
+import org.apache.ws.commons.soap.SOAPFaultRole;
+import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

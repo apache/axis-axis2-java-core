@@ -16,8 +16,6 @@
 
 package org.apache.axis2.security;
 
-import java.util.Vector;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -37,6 +35,8 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
+
+import java.util.Vector;
 
 public class WSDoAllSender extends WSDoAllHandler {
     

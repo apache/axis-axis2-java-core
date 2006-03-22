@@ -17,8 +17,8 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
+import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMContainer;
 import org.apache.ws.commons.om.OMException;
@@ -34,9 +34,9 @@ import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPConstants;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.Collection;

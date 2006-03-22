@@ -18,7 +18,6 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleConfiguration;

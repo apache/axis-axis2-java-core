@@ -16,9 +16,9 @@
 
 package org.apache.axis2.security.trust;
 
-import java.util.ArrayList;
-
 import junit.framework.TestCase;
+
+import java.util.ArrayList;
 
 public class SimpleTokenStoreTest extends TestCase {
 

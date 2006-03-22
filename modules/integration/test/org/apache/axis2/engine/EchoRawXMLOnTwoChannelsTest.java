@@ -36,8 +36,6 @@ import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
 import org.apache.ws.commons.om.OMNamespace;
 
-import javax.xml.namespace.QName;
-
 public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());

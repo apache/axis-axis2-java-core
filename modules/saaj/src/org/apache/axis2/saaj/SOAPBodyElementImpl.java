@@ -17,10 +17,10 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.ElementImpl;
 
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPBody;
 
 public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElement {
 

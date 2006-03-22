@@ -16,9 +16,9 @@
 
 package org.apache.axis2.security.trust;
 
-import java.util.HashMap;
-
 import org.apache.ws.commons.om.OMElement;
+
+import java.util.HashMap;
 
 /**
  * This represents a security token which can have either one of 4 states.

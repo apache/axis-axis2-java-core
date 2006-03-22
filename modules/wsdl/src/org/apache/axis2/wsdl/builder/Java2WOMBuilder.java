@@ -1,5 +1,6 @@
 package org.apache.axis2.wsdl.builder;
 
+import org.apache.axis2.namespace.Constants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
@@ -18,7 +19,6 @@ import org.apache.wsdl.extensions.impl.SOAPBindingImpl;
 import org.apache.wsdl.extensions.impl.SOAPBodyImpl;
 import org.apache.wsdl.extensions.impl.SOAPOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
-import org.apache.axis2.namespace.Constants;
 import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

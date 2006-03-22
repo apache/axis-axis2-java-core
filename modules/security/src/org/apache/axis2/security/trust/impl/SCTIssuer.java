@@ -16,11 +16,6 @@
 
 package org.apache.axis2.security.trust.impl;
 
-import java.security.Principal;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.om.DOOMAbstractFactory;
@@ -40,6 +35,10 @@ import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import java.security.Principal;
+import java.util.Vector;
 
 public class SCTIssuer implements TokenIssuer {
 

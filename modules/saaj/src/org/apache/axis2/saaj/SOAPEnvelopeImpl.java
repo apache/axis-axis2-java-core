@@ -16,7 +16,6 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.om.impl.dom.TextImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11BodyImpl;
@@ -27,9 +26,9 @@ import org.w3c.dom.Node;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPElement;
 
 /**
  *

@@ -16,30 +16,27 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
-
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.Text;
-import javax.xml.soap.Name;
-import javax.activation.DataHandler;
-import java.io.File;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
-import java.net.URL;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import javax.activation.DataHandler;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.soap.Text;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * 
