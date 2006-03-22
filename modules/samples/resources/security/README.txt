@@ -16,10 +16,9 @@ Please follow each of the following steps:
 2.) To engage the security (WSS4J) module add the following line to axis2.xml in axis
 	<module ref="security"/>
 3.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
-4.) Copy samples/security/secUtil.jar to axis2/WEB-INF/lib/
-5.) Copy all jars in the samples/security/lib directory to axis2/WEB-INF/lib/
-6.) Copy the downloaded security-0.95.mar to Axis2/WEB-INF/modules/ directory
-7.) Start Tomcat
+4.) Copy all jars in the samples/security/lib directory to axis2/WEB-INF/lib/
+5.) Copy the downloaded security-0.95.mar to Axis2/WEB-INF/modules/ directory
+6.) Start Tomcat
 
 Run the sample
 ------------------------------------------------------------------------------
