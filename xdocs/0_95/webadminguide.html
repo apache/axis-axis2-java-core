@@ -47,7 +47,8 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
       </li>
       <li><a href="#services">Services</a>
         <ul>
-          <li><a href="#turnoffservice">Undeploy service</a></li>
+          <li><a href="#turnoffservice">Inacivate Service</a></li>
+          <li><a href="#turnonservice">Acivate Service</a></li>
           <li><a href="#editservicepara">Edit service parameters</a></li>
         </ul>
       </li>
@@ -116,7 +117,8 @@ dynamically configure it.</p>
     <a name="services"/>
   <b>Services</b>
   <ul>
-    <li><a href="#turnoffservice">Undeploy service</a></li>
+    <li><a href="#turnoffservice">Inactivate service</a></li>
+   <li><a href="#turnonservice">Activate service</a></li>
     <li><a href="#editservicepara">Edit service parameters</a></li>
   </ul>
     <a name="context"/>
@@ -246,13 +248,24 @@ indicating whether it is engaged properly or not.</p>
 <p>&nbsp;</p>
 
 <a name="turnoffservice"></a>
-<h3>Undeploy Service</h3>
+<h3>Inactivate Service</h3>
 
 <p>This functionality provide a way to remove unnecessary services from the
 running system, but the removal is transient which means if you restart the
 system the service will be available.</p>
 
-<p align="center"><img alt="" src="images/removeservice.jpg"></p>
+<p>To inactivate service, select service from list box, tick 'Inactivate service' check box, then click on 'Inactivate' button. 'Clear' button will clear the 'Inactivate service' check box</p>
+
+<p align="center"><img alt="" src="images/inactivate.jpg"></p>
+<br/>
+
+<a name="turnonservice"></a><h3>Activate Service</h3>
+<p>This functionality provide a way to activate services while the system is running, but the activation is transient which means if you restart the
+system the service will be inactive.</p>
+
+<p>To activate service, select service from list box, tick 'Activate service' check box, then click on 'Activate' button. 'Clear' button will clear the 'Activate service' check box</p>
+
+<p align="center"><img alt="" src="images/activate.jpg"></p>
 <br/>
 
 <a name="editservicepara"></a>
