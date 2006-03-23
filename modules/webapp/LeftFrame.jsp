@@ -154,7 +154,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="inActivateService">In Activate Service</a>
+         <a href="inActivateService">Inactivate Service</a>
        </td>
     </tr>
     <tr>
