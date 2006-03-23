@@ -2,6 +2,7 @@
 	<parameter locked="false" name="ServiceClass">sample.security.Service</parameter>
 	<operation name="echo">
 		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+            <acionMapping>urn:echo</<acionMapping>
 	</operation>    
 
     <parameter name="InflowSecurity">
