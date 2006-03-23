@@ -312,6 +312,326 @@ via AXIOM, which is based on the StAX API. XML gives full schema support. Thus,
 serialization and de-serialization of XML is handled in Axis2 via the xml-data
 binding framework.</p>
 
+<p>Below is an example of migrating an WSDL based Axis 1.x Web Service to Axis2. </p>
+
+<p>First, lets take a look at a simple document / literal style WSDL used in an Axis 1.x 
+Web Service. This example assumes the name of simple.wsdl for the wsdl below: </p>
+
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;definitions name="SimpleService" targetNamespace="http://simpleNS" xmlns:tns="http://simpleNS" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://simpleNS/types"&gt;
+  &lt;types&gt;
+    &lt;schema targetNamespace="http://simpleNS/types" xmlns:tns="http://simpleNS/types" 
+xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns="http://www.w3.org/2001/XMLSchema"&gt;
+      &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
+      &lt;element name="simpleLogin"&gt;
+        &lt;complexType&gt;
+          &lt;sequence&gt;
+            &lt;element name="user_name" type="xsd:string"/&gt;
+            &lt;element name="user_password" type="xsd:string"/&gt;
+          &lt;/sequence&gt;
+        &lt;/complexType&gt;
+      &lt;/element&gt;
+      &lt;element name="simpleLoginResponse"&gt;
+        &lt;complexType&gt;
+          &lt;sequence&gt;
+            &lt;element name="soap_session_id" type="xsd:string"/&gt;
+            &lt;element name="web_user_name" type="xsd:string"/&gt;
+          &lt;/sequence&gt;
+        &lt;/complexType&gt;
+      &lt;/element&gt;
+&lt;/schema&gt;&lt;/types&gt;
+  &lt;message name="SimpleEndpoint_simpleLogin"&gt;
+     &lt;part name="parameters" element="ns2:simpleLogin"/&gt;
+  &lt;/message&gt;
+  &lt;message name="SimpleEndpoint_simpleLoginResponse"&gt;
+    &lt;part name="result" element="ns2:simpleLoginResponse"/&gt;
+  &lt;/message&gt;
+  &lt;portType name="SimpleEndpoint"&gt;
+    &lt;operation name="simpleLogin"&gt;
+      &lt;input message="tns:SimpleEndpoint_simpleLogin" name="SimpleEndpoint_simpleLogin"/&gt;
+      &lt;output message="tns:SimpleEndpoint_simpleLoginResponse" name="SimpleEndpoint_simpleLoginResponse"/&gt;
+    &lt;/operation&gt;
+  &lt;/portType&gt;
+  &lt;binding name="SimpleEndpointBinding" type="tns:SimpleEndpoint"&gt;
+    &lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;
+    &lt;operation name="simpleLogin"&gt;
+      &lt;soap:operation soapAction="simpleLogin"/&gt;
+      &lt;input name="SimpleEndpoint_simpleLogin"&gt;
+        &lt;soap:body use="literal"/&gt;
+      &lt;/input&gt;
+      &lt;output name="SimpleEndpoint_simpleLoginResponse"&gt;
+        &lt;soap:body use="literal"/&gt;
+      &lt;/output&gt;
+    &lt;/operation&gt;
+  &lt;/binding&gt;
+  &lt;service name="SimpleService"&gt;
+    &lt;port name="SimpleEndpointPort" binding="tns:SimpleEndpointBinding"&gt;
+      &lt;soap:address location="http://localhost:8080/axis/services/SimpleEndpointPort"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;</pre>
+
+<p>The next step is run WSDL2Java on the wsdl. For axis 1.x, this example uses the following ant task:</p>
+
+<pre>&lt;target name="wsdl2java" description="axis 1.x"&gt;
+       &lt;delete dir="output" /&gt;
+       &lt;mkdir dir="output" /&gt;
+       &lt;axis-wsdl2java
+         output="output"
+         verbose="true"
+         url="wsdl/simple.wsdl"
+         serverside="true"
+         skeletondeploy="true"
+         nowrapped="true"
+         &gt;
+       &lt;/axis-wsdl2java&gt;
+   &lt;/target&gt;</pre>
+
+<p>The axis 1.x ant task above takes the simple.wsdl under the directory 'wsdl' , and 
+from that creates files under the directory 'output'. The files created are shown below:</p>
+
+<pre>output/
+output/simpleNS
+output/simpleNS/types
+output/simpleNS/types/SimpleLoginResponse.java
+output/simpleNS/types/SimpleLogin.java
+output/simpleNS/SimpleEndpoint.java
+output/simpleNS/SimpleEndpointBindingStub.java
+output/simpleNS/SimpleEndpointBindingSkeleton.java
+output/simpleNS/SimpleEndpointBindingImpl.java
+output/simpleNS/SimpleService.java
+output/simpleNS/SimpleServiceLocator.java
+output/simpleNS/deploy.wsdd
+output/simpleNS/undeploy.wsdd</pre>
+
+<p>Now lets run WSDL2Java with Axis2. In this example, the only change to simple.wsdl required for axis2 is that 'soap:address location' be changed to: </p>
+
+<pre>&lt;soap:address location="http://localhost:8080/axis2/services/SimpleEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;</pre>
+
+<p>In Axis2 the default databinding uses ADB. However, xmlbeans and jaxme are also supported. This example uses 
+xmlbeans. For Axis2, our example uses the following ant task:</p>
+
+<pre>&lt;target name="wsdl2java"&gt;
+      &lt;delete dir="output" /&gt;
+      &lt;java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true"&gt;
+          &lt;classpath refid="axis.classpath"/&gt; 
+          &lt;arg value="-d"/&gt;
+          &lt;arg value="xmlbeans"/&gt;
+          &lt;arg value="-uri"/&gt;
+          &lt;arg file="wsdl/simple.wsdl"/&gt;
+          &lt;arg value="-ss"/&gt;
+          &lt;arg value="-g"/&gt;
+          &lt;arg value="-sd"/&gt;
+          &lt;arg value="-o"/&gt;
+          &lt;arg file="output"/&gt;
+          &lt;arg value="-p"/&gt;
+          &lt;arg value="org.simple.endpoint"/&gt;
+      &lt;/java&gt;
+
+      &lt;!-- Move the schema folder to classpath--&gt;
+      &lt;move todir="${build.classes}"&gt;
+          &lt;fileset dir="output/resources"&gt;
+              &lt;include name="*schema*/**/*.class"/&gt;
+              &lt;include name="*schema*/**/*.xsb"/&gt;
+          &lt;/fileset&gt;
+      &lt;/move&gt;
+
+  &lt;/target&gt;</pre>
+
+<p>For an explanation of the Axis2 WSDL2Java ant task and its options, see the CodegenToolReference guide.</p>
+
+<p>A feature of xmlbeans is that there is one class file created with WSDL2java, and a series of xsb files. 
+These must be referenced when compiling, and as the example shows these files are moved to a build directory </p>
+
+<p>The Axis2 WSDL2Java example also takes the simple.wsdl under the directory 'wsdl' , and 
+from that creates files under the directory 'output'. The relevant non-xmlbean files created are shown below:</p>
+
+<pre>output/resources/services.xml
+output/src/org/simple
+output/src/org/simple/endpoint
+output/src/org/simple/endpoint/SimpleEndpointSkeleton.java
+output/src/org/simple/endpoint/SimpleEndpointMessageReceiverInOut.java
+output/src/org/simple/endpoint/SimpleEndpointCallbackHandler.java
+output/src/org/simple/endpoint/SimpleEndpointStub.java
+output/src/simplens
+output/src/simplens/types
+output/src/simplens/types/SimpleLoginDocument.java
+output/src/simplens/types/impl
+output/src/simplens/types/impl/SimpleLoginDocumentImpl.java
+output/src/simplens/types/impl/SimpleLoginResponseDocumentImpl.java
+output/src/simplens/types/SimpleLoginResponseDocument.java</pre>
+
+<p>The first important distinction is that while the Axis 1.x example generated deploy.wsdd and undeploy.wsdd, 
+the Axis2 example created a services.xml. The files deploy.wsdd and services.xml are a breed apart, comming 
+from different architectures. There is no direct parallel between them. See the Axis2 user guide for an 
+explanation about services.xml</p>
+
+<p>Now we're ready to code. We'll start with Axis 1.x on the service side. To implement the business 
+logic we'll change simpleNS/SimpleEndpointBindingImpl.java from: </p>
+
+<pre class="code">package simpleNS;
+
+public class SimpleEndpointBindingImpl implements simpleNS.SimpleEndpoint{
+    public simpleNS.types.SimpleLoginResponse simpleLogin(simpleNS.types.SimpleLogin parameters) 
+        throws java.rmi.RemoteException {
+        return null;
+    }
+
+}</pre>
+
+<p>To: </p>
+
+<pre class="code">package simpleNS;
+
+public class SimpleEndpointBindingImpl implements simpleNS.SimpleEndpoint{
+    public simpleNS.types.SimpleLoginResponse simpleLogin(simpleNS.types.SimpleLogin parameters) 
+        throws java.rmi.RemoteException {
+
+        String userName = parameters.getUser_name();
+        String password = parameters.getUser_password();
+        // do something with those vars...
+        return new simpleNS.types.SimpleLoginResponse("mySessionID", "username");
+    }
+
+}</pre>
+
+<p>In Axis 1.x, the next step is to compile the classes and put them in the Axis.war, and then run the admin 
+client with the generated deploy.wsdd. You'll then look at the happy axis page to verify the service is 
+installed correctly. </p>
+
+<p>Now lets code Axis2. In Axis 1.x, while the ant task shown in the example created a skeleton, a peek inside 
+shows that the skeleton calls the binding implementation class. In Axis2 we work with the skeleton directly. 
+To implement the business logic in the Axis2 generated classes we'll change 
+org/simple/endpoint/SimpleEndpointSkeleton.java from: </p>
+
+<pre class="code">package org.simple.endpoint;
+    /**
+     *  SimpleEndpointSkeleton java skeleton for the axisService
+     */
+    public class SimpleEndpointSkeleton {
+
+        /**
+         * Auto generated method signature
+          * @param param0
+         */
+        public  simplens.types.SimpleLoginResponseDocument simpleLogin
+                  (simplens.types.SimpleLoginDocument param0 ) throws Exception {
+                //Todo fill this with the necessary business logic
+                throw new  java.lang.UnsupportedOperationException();
+        }
+}</pre>
+
+<p>To: </p>
+
+<pre class="code">package org.simple.endpoint;
+    
+    import simplens.types.*;
+    import simplens.types.SimpleLoginResponseDocument.*;
+    import simplens.types.SimpleLoginDocument.*;
+    /**
+     *  SimpleEndpointSkeleton java skeleton for the axisService
+     */
+    public class SimpleEndpointSkeleton {
+     
+        /**
+         * Modified 
+          * @param simpleLoginDocument
+         */
+        public SimpleLoginResponseDocument simpleLogin
+                  (simplens.types.SimpleLoginDocument simpleLoginDocument){
+                //Todo fill this with the necessary business logic
+
+                SimpleLoginResponseDocument retDoc =
+                    SimpleLoginResponseDocument.Factory.newInstance();
+                 
+                SimpleLoginResponse retElement =
+                    SimpleLoginResponse.Factory.newInstance();
+                // Get parameters passed in 
+                SimpleLogin simpleLogin = simpleLoginDocument.getSimpleLogin();
+                String userName = simpleLogin.getUserName();
+                String password = simpleLogin.getUserPassword();
+                // do something with those vars...
+
+                retElement.setWebUserName(userName);
+                retElement.setSoapSessionId("my random string");
+                retDoc.setSimpleLoginResponse(retElement);
+                return retDoc; 
+        }
+}</pre>
+
+<p>In Axis2, the next step is to compile the classes, put them along with the generated services.xml in an AAR, 
+and then hot deploy the AAR by placing it in the Axis2.war under WEB-INF/services . Point a browser to 
+http://localhost:8080/axis2/listServices , and you should see the service 'SimpleService' ready for action. 
+See the Axis2 user guide for more info.</p>
+
+<p>The last step is the client. Our Axis 1.x client for this example is: </p>
+
+<pre>package org;
+
+import simpleNS.*;
+import simpleNS.types.*;
+
+public class Tester {
+  public static void main(String [] args) throws Exception {
+    // Make a service
+    SimpleService service = new SimpleServiceLocator();
+
+    // Now use the service to get a stub which implements the SDI.
+    SimpleEndpoint port =  service.getSimpleEndpointPort();
+
+    // set the params
+    SimpleLogin parameters = new SimpleLogin("username","password");
+    // Make the actual call
+    SimpleLoginResponse simpleLoginResponse = port.simpleLogin(parameters);
+    String session = simpleLoginResponse.getSoap_session_id();
+    String user = simpleLoginResponse.getWeb_user_name();
+    System.out.println("simpleLoginResponse, session: " + session + ", user: " + user);
+  }
+}</pre>
+
+<p>Finally, our Axis2 client for this example is: </p>
+
+<pre>package org;
+import simplens.types.*;
+import simplens.types.SimpleLoginDocument.*;
+import simplens.types.SimpleLoginResponseDocument.*;
+import simplens.types.impl.*;
+import org.simple.endpoint.*;
+
+public class Tester {
+  public static void main(String [] args) throws Exception {
+
+    // you may not need to pass in the url to the constructor - try the default no arg one
+    SimpleEndpointStub stub =
+         new SimpleEndpointStub(null, "http://localhost:8080/axis2/services/SimpleService");
+
+    SimpleLogin simpleLogin = SimpleLogin.Factory.newInstance();
+    simpleLogin.setUserName("userName");
+    simpleLogin.setUserPassword("password");
+
+    SimpleLoginDocument simpleLoginDocument =
+        SimpleLoginDocument.Factory.newInstance();
+
+    simpleLoginDocument.setSimpleLogin(simpleLogin);
+
+    SimpleLoginResponseDocument simpleLoginResponseDocument
+        = stub.simpleLogin(simpleLoginDocument);
+
+    SimpleLoginResponse simpleLoginResponse =
+        simpleLoginResponseDocument.getSimpleLoginResponse();
+
+    String session = simpleLoginResponse.getSoapSessionId();
+    String user = simpleLoginResponse.getWebUserName();
+    System.out.println("simpleLoginResponse, session: " + session + ", user: " + user);
+
+  }
+}</pre>
+
+<p>Axis2 clients also have asynchronous options via a Callback and alternatively 'Fire and forget'. See the 
+user guide for more details. </p>
+
 <h2>Best Usage</h2>
 
 <p>Axis1.x and Axis2 have different ways of seeing the SOAP stack. So the best
