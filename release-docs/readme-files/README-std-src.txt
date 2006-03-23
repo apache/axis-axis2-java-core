@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 0.95 build (March 22, 2006)
+Apache Axis2 @axis2_version@ build (@release_date@)
 Standard Source Release
 
 http://ws.apache.org/axis2
