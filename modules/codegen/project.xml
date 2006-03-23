@@ -26,9 +26,14 @@
     <description>Axis2 Code Generation module</description>
 
     <dependencies>
+       <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom-api</artifactId>
+            <version>${axiom.version}</version>
+        </dependency>
         <dependency>
             <groupId>ws-commons</groupId>
-            <artifactId>axiom</artifactId>
+            <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>

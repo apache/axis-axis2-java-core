@@ -26,12 +26,16 @@
     <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>
 
     <dependencies>
-        <dependency>
+       <dependency>
             <groupId>ws-commons</groupId>
-            <artifactId>axiom</artifactId>
+            <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom-impl</artifactId>
+            <version>${axiom.version}</version>
+        </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-wsdl</artifactId>
