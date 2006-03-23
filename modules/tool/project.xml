@@ -59,19 +59,6 @@
                 <module>true</module>
             </properties>
         </dependency>
-	<!-- 
-             Adding the dependecy on the tracer. Since the tracer is not part of
-	     the source anymore, we have to include the dependency on the commons 
-             tracer
-         -->
-        <dependency>
-            <groupId>ws-commons</groupId>
-            <artifactId>HTTPtracer</artifactId>
-            <version>${tracer.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
     </dependencies>
 
     <build>
