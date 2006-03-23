@@ -3,19 +3,19 @@
 <body>
 <h1>Axis2 Release Notes</h1>
 
-<h2>This is Axis2 0.95 release of the Apache Axis2.</h2>
+<h2>This is the Apache Axis2 0.95 release</h2>
 
-<h3>Axis2 Complete Features List in this Release</h3>
+<h3>Complete Features List</h3>
 
 <ol type="1">
  <li>AXIOM, an XML object model working on StAX (Streaming API for XML) parsing optimized for SOAP 1.1/1.2 Messages. This has complete XML infoset support.</li>
- <li>Support for One-Way Messaging (In-Only) and Request Response Messaging (In-Out)</li>
- <li>Module Architecture, mechanism to extend the SOAP Processing Model</li>
- <li>Module version support , can have multiple versions of the same module and use them depending on the requirement.</li>
+ <li>Support for One-Way Messaging (In-Only) and Request Response Messaging (In-Out).</li>
+ <li>Module Architecture, mechanism to extend the SOAP Processing model.</li>
+ <li>Module version support, can have multiple versions of the same module and use them depending on the requirement.</li>
  <li>Content hierarchy</li>
- <li>Archive based deployment Model and Directory based deployment model</li>
+ <li>Archive based deployment model and Directory based deployment model</li>
  <li>JWS like deployment (making Java class into Web service)</li>
- <li>WSDL Code Generation Tool for Stub and skeletons</li>
+ <li>WSDL Code Generation tool for stubs and skeletons</li>
  <li>WS-Addressing, both the submission (2004/08) and final (2005/08) versions</li>
  <li>WSS4J module for security</li>
  <li>Improved and user friendly Client API</li>
@@ -29,20 +29,20 @@
  <li>Pack/Unpack capability for the generated code</li>
  <li>Axis Data Binding - ADB (Framework and Schema Compiler)</li>
  <li>Numerous bug fixes since last release</li>
- <li>Transport framework improvements (ListenerManager)-<span style="color: #FF0000">New</span></li>
- <li>AxisServlet auto start when application server get start up-<span style="color: #FF0000">New</span></li>
- <li>Module dis-engagemnt support-<span style="color: #FF0000">New</span></li>
- <li>Loading module (.mar) from classpath-<span style="color: #FF0000">New</span></li>
- <li>Sessions scoping for Application, SOAP, Transport and Request levels-<span style="color: #FF0000">New</span></li>
+ <li>Transport framework improvements (ListenerManager) - <span style="color: #FF0000">New</span></li>
+ <li>AxisServlet auto starts when the application server starts up - <span style="color: #FF0000">New</span></li>
+ <li>Module dis-engagemnt support - <span style="color: #FF0000">New</span></li>
+ <li>Loading modules (.mar files) from classpath - <span style="color: #FF0000">New</span></li>
+ <li>Sessions scoping for Application, SOAP, Transport and Request levels - <span style="color: #FF0000">New</span></li>
 </ol>
 
-<h4>Axis2 Experimental
+<h4>Experimental
 Features List</h4>
 
 <ol type="1">
- <li>Server side & client side Web Service Policy support</li>
+ <li>Server side and client side Web service Policy support</li>
  <li>?wsdl and ?xsd support</li>
- <li>Generating ServiceClient for a given WSDL and invoke the corresponding service using generated client.</li>
+ <li>Generating ServiceClient for a given WSDL and invoke the corresponding service using generated client</li>
 </ol>
 
 <h3>Major Changes Since
@@ -50,14 +50,14 @@ Last Release</h3>
 
 <ol type="1">
    <li>Transport framework improvements (ListenerManager)</li>
-   <li>Changed the way of adding action to mapping (wsamapping) from parameter to child element so with this version onward the way of adding mapping is as follows:</li>
+   <li>The way to add an action mapping (wsamapping) has been moved from being a parameter to a child element. With this version onwards the way of adding an action mapping is as follows:</li>
    <pre>
    
 &lt;actionMapping&gt;MyMapping&lt;/actionMapping&gt;
 
 </pre>
 
-<li>Refactored following packages in Axiom.
+<li>Refactored following packages in Axiom:
     <ul>
      <li>org.apache.ws.commons.om.impl.llom.builder to org.apache.ws.commons.om.impl.builder</li>
      <li>org.apache.ws.commons.om.impl.llom.mtom to org.apache.ws.commons.om.impl.mtom</li>
@@ -70,15 +70,15 @@ Last Release</h3>
 Release</h3>
 <ol type="1">
  <li>Axis2 Web Application (Web App)</li>
- <li>WSDL2WS- eclipse Plugin/ Command line version</li>
- <li>Service Archive Wizard- eclipse Plugin</li>
+ <li>WSDL2WS - eclipse Plugin/ Command line version</li>
+ <li>Service Archive Wizard - Eclipse Plugin</li>
 </ol>
 
 <h3>What's Still To
 Do?</h3>
 
 <p>See list of what we think needs to be done, and consider helping out if
-you're interested &amp; able!</p>
+you're interested and able!</p>
 <ol type="1">
  <li>JAX-RPC 1.1 and/or JAX-WS compliance</li>
  <li>SOAP Encoding</li>
@@ -90,9 +90,9 @@ you're interested &amp; able!</p>
 </ol>
 
 
-<p>Axis2 is taking shape, this 0.95 release is a glimpse of 1.0 that should be coming soon. 
-If you happen to have vision of how the next generation of the Web Service should be, and like to contribute to 
-Apache Axis2 please help us to shape the Apache Axis2. Any contribution in the form of coding, testing, submitting 
+<p>Axis2 is taking shape, this 0.95 release is a glimpse of 1.0 that is coming soon. 
+If you happen to have a vision of how the next generation Web services platform should be, contribute to 
+Apache Axis2, and help us shape it. Any contribution in the form of coding, testing, submitting 
 improvements to the documentation, and reporting bugs are always welcome.</p>
 
 <p>Thanks for your interest in Axis2!</p>
