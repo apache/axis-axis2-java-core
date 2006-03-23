@@ -158,6 +158,7 @@ List</a></h3>
  <li>AxisServlet auto start when application server get start up- <span style="color: #FF0000">New</span></li>
  <li>Module dis-engagemnt support- <span style="color: #FF0000">New</span></li>
  <li>Loading module (.mar) from classpath- <span style="color: #FF0000">New</span></li>
+ <li>Sessions scoping for Application, SOAP, Transport and Request levels-<span style="color: #FF0000">New</span></li>
 </ol>
 
 <h4><a name="Experimental_Features_List">Experimental Features List</a></h4>
@@ -175,7 +176,16 @@ Release</a></h4>
    <li>Changed the way of adding action to mapping (wsamapping) from parameter to child element so with this version onward the way of adding mapping is as follows:</li>
    <pre>
    
-&lt;actionMapping&gt;MyMapping&lt;/actionMapping&gt;</pre>
+&lt;actionMapping&gt;MyMapping&lt;/actionMapping&gt;
+
+</pre>
+<li>Refactored following packages in Axiom.
+    <ul>
+     <li>org.apache.ws.commons.om.impl.llom.builder to org.apache.ws.commons.om.impl.builder</li>
+     <li>org.apache.ws.commons.om.impl.llom.mtom to org.apache.ws.commons.om.impl.mtom</li>
+     <li>org.apache.ws.commons.om.impl.llom.serialize to org.apache.ws.commons.om.impl.serialize</li>
+     <li>org.apache.ws.commons.om.impl.llom.traverse to org.apache.ws.commons.om.impl.traverse</li> 
+   </li>
 </ol>
 
 <h3><a name="Tools_included_in this_Release">Tools Included In This
@@ -184,13 +194,13 @@ Release</a></h3>
   <li>Axis2 Web Application (Web App)</li>
   <li>WSDL2WS- <a href="CodegenTools-EclipsePlugin.html" target="_blank">Eclipse
     plugin</a><a>/</a><a href="CodegenToolReference.html" target="_blank">Command line
-    version</a><a>/</a><a
+    version</a><!--<a>/</a><a
     href="tools\idea\Idea_plug-in_userguide.html#WSDL2Java_Code_Generation" target="_blank">IntelliJ
-    IDEA plugin</a></li>
+    IDEA plugin</a>--></li>
   <li>Service Archive Wizard- <a
-    href="ServiceArchiveToolReference.html" target="_blank">Eclipse plugin</a>/ <a
+    href="ServiceArchiveToolReference.html" target="_blank">Eclipse plugin</a><!--/ <a
     href="tools\idea\Idea_plug-in_userguide.html#Create_Service_Archive" target="_blank">IntelliJ
-    IDEA plugin</a></li>
+    IDEA plugin</a>--></li>
 </ol>
 <a href="http://ws.apache.org/axis2/download.cgi" target="_blank">Download</a> above plugins
 
