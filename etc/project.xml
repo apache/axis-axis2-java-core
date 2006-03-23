@@ -203,6 +203,11 @@
 			<email>robertlazarski AT gmail.com</email>
 			<organization>Brazil Outsource</organization>
 		</developer> 
+            <developer>
+			<name>Steve Loughran</name>
+			<email>stevel AT apache.org</email>
+			<organization>HP labs</organization>
+		</developer> 
 	</developers>
 	<contributors>
 		<contributor>
