@@ -1,6 +1,9 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
@@ -16,9 +19,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.UUIDGenerator;
-import org.apache.ws.commons.soap.SOAPBody;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFault;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

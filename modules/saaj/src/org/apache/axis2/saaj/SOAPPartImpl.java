@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -82,7 +82,7 @@ public class SOAPPartImpl extends SOAPPart {
                     new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(isReader),
                                              new SOAP11Factory(),
                                              null);
-            org.apache.ws.commons.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
+            org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
             envelope = new SOAPEnvelopeImpl((org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
             envelope.element.build();
             this.document = envelope.getOwnerDocument();

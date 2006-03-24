@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -36,7 +37,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.soap.SOAP12Constants;
 
 import javax.activation.DataHandler;
 

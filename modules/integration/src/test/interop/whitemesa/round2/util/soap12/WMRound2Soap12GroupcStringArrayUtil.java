@@ -19,10 +19,10 @@ package test.interop.whitemesa.round2.util.soap12;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPHeader;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import test.interop.whitemesa.SunClientUtil;
 
 public class WMRound2Soap12GroupcStringArrayUtil implements SunClientUtil {

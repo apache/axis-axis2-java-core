@@ -20,6 +20,7 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -32,7 +33,6 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public class OneWayRawXMLTest extends TestCase implements TestConstants {
 

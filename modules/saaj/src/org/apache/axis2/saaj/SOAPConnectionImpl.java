@@ -166,7 +166,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @return the SAAJ SOAPMessage
      * @throws SOAPException If an exception occurs during this conversion
      */
-    private SOAPMessage getSOAPMessage(org.apache.ws.commons.soap.SOAPEnvelope respOMSoapEnv)
+    private SOAPMessage getSOAPMessage(org.apache.axiom.soap.SOAPEnvelope respOMSoapEnv)
             throws SOAPException {
 
         System.err.println("####### respOMSoapEnv=" + respOMSoapEnv);
@@ -184,8 +184,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
              hbIter.hasNext();) {
 
             // Converting a single OM SOAP HeaderBlock to a SAAJ SOAP HeaderBlock
-            org.apache.ws.commons.soap.SOAPHeaderBlock hb =
-                    (org.apache.ws.commons.soap.SOAPHeaderBlock) hbIter.next();
+            org.apache.axiom.soap.SOAPHeaderBlock hb =
+                    (org.apache.axiom.soap.SOAPHeaderBlock) hbIter.next();
             final QName hbQName = hb.getQName();
             final SOAPHeaderElement headerEle =
                     header.addHeaderElement(env.createName(hbQName.getLocalPart(),
@@ -285,10 +285,10 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @return
      * @throws SOAPException
      */
-    protected org.apache.ws.commons.soap.SOAPEnvelope toOMSOAPEnvelope(SOAPMessage saajSOAPMsg)
+    protected org.apache.axiom.soap.SOAPEnvelope toOMSOAPEnvelope(SOAPMessage saajSOAPMsg)
             throws SOAPException {
 
-        final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv =
+        final org.apache.axiom.soap.SOAPEnvelope omSOAPEnv =
                 SAAJUtil.toOMSOAPEnvelope(saajSOAPMsg.getSOAPPart().getDocumentElement());
         System.err.println("#### req OM Soap Env=" + omSOAPEnv);
 
@@ -370,7 +370,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         return null;
     }
 
-    /* private void printOMSOAPEnvelope(final org.apache.ws.commons.soap.SOAPEnvelope omSOAPEnv) {
+    /* private void printOMSOAPEnvelope(final org.apache.axiom.soap.SOAPEnvelope omSOAPEnv) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             omSOAPEnv.serialize(baos);

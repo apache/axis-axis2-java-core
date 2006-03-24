@@ -17,10 +17,10 @@
 package test.interop.whitemesa;
 
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.ws.commons.soap.SOAPBody;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
 
 import javax.xml.stream.XMLInputFactory;

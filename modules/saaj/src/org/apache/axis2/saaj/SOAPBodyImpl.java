@@ -16,12 +16,12 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
-import org.apache.ws.commons.soap.SOAPFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -43,13 +43,13 @@ import java.util.Locale;
 
 public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 
-    private org.apache.ws.commons.soap.SOAPBody omSOAPBody;
+    private org.apache.axiom.soap.SOAPBody omSOAPBody;
     private boolean isBodyElementAdded;
 
     /**
      * @param omSOAPBody
      */
-    public SOAPBodyImpl(org.apache.ws.commons.soap.SOAPBody omSOAPBody) {
+    public SOAPBodyImpl(org.apache.axiom.soap.SOAPBody omSOAPBody) {
         super((ElementImpl) omSOAPBody);
         this.omSOAPBody = omSOAPBody;
     }

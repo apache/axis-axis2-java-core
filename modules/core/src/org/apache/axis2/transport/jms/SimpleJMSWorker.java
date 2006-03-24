@@ -19,6 +19,12 @@ package org.apache.axis2.transport.jms;
 
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPProcessingException;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -32,12 +38,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPProcessingException;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.ws.commons.soap.impl.llom.soap12.SOAP12Factory;
 
 import javax.jms.BytesMessage;
 import javax.xml.namespace.QName;

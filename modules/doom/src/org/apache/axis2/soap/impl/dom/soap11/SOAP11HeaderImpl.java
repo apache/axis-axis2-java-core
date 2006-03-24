@@ -21,12 +21,12 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.traverse.OMChildrenWithSpecificAttributeIterator;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPHeaderImpl;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;

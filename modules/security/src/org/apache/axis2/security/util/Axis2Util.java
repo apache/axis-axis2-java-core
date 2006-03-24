@@ -18,13 +18,13 @@ package org.apache.axis2.security.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -45,7 +45,7 @@ public class Axis2Util {
 
 	/**
 	 * Creates a DOM Document using the SOAP Envelope.
-	 * @param env An org.apache.ws.commons.soap.SOAPEnvelope instance
+	 * @param env An org.apache.axiom.soap.SOAPEnvelope instance
 	 * @return Returns the DOM Document of the given SOAP Envelope.
 	 * @throws Exception
 	 */

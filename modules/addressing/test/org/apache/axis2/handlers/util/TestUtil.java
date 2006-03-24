@@ -16,7 +16,7 @@
 
 package org.apache.axis2.handlers.util;
 
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

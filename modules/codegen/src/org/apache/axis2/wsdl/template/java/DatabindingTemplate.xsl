@@ -32,8 +32,8 @@
                   return documentElement;
                 }
 
-                private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent){
-                    org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent){
+                    org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     if (param != null){
                         envelope.getBody().addChild(toOM(param, optimizeContent));
                     }
@@ -46,7 +46,7 @@
         /**
          *  get the default envelope
          */
-        private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory){
+        private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory){
             return factory.getDefaultEnvelope();
         }
 
@@ -118,9 +118,9 @@
             }
         }
 
-        private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(
-            org.apache.ws.commons.soap.SOAPFactory factory, Object param, boolean optimizeContent) {
-            org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
+            org.apache.axiom.soap.SOAPFactory factory, Object param, boolean optimizeContent) {
+            org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
             if (param != null){
                 envelope.getBody().addChild(toOM(param, optimizeContent));
             }
@@ -194,7 +194,7 @@
                         }
                     }
 
-                    private  org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent){
+                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
                                     org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME),
@@ -212,7 +212,7 @@
            /**
            *  get the default envelope
            */
-           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory){
+           private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory){
                 return factory.getDefaultEnvelope();
            }
 
@@ -247,8 +247,8 @@
                return param;
            }
 
-           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory, org.apache.axiom.om.OMElement param, boolean optimizeContent){
-                org.apache.ws.commons.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+           private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, org.apache.axiom.om.OMElement param, boolean optimizeContent){
+                org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                 envelope.getBody().addChild(param);
                 return envelope;
            }
@@ -256,7 +256,7 @@
            /**
            *  get the default envelope
            */
-           private org.apache.ws.commons.soap.SOAPEnvelope toEnvelope(org.apache.ws.commons.soap.SOAPFactory factory){
+           private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory){
                 return factory.getDefaultEnvelope();
            }
 

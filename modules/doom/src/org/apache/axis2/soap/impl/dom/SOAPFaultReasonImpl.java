@@ -21,12 +21,12 @@ import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.llom.OMSerializerUtil;
 import org.apache.axiom.om.impl.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axiom.om.util.ElementHelper;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPFaultText;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultText;
+import org.apache.axiom.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamException;
 

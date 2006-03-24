@@ -20,14 +20,14 @@ import org.apache.axiom.om.OMConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPBody;
-import org.apache.ws.commons.soap.SOAPConstants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPConstants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPProcessingException;
 
 public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 		OMConstants {

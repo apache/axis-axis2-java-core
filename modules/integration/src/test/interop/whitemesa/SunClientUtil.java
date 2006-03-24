@@ -16,7 +16,7 @@
 
 package test.interop.whitemesa;
 
-import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPEnvelope;
 
 public interface SunClientUtil {
     SOAPEnvelope getEchoSoapEnvelope();

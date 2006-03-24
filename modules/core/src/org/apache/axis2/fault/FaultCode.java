@@ -17,9 +17,9 @@
 
 package org.apache.axis2.fault;
 
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPFaultSubCode;
-import org.apache.ws.commons.soap.SOAPFaultValue;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultSubCode;
+import org.apache.axiom.soap.SOAPFaultValue;
 
 import javax.xml.namespace.QName;
 

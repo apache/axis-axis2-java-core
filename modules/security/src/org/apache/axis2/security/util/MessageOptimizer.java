@@ -19,7 +19,7 @@ package org.apache.axis2.security.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.xpath.AXIOMXPath;
-import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.jaxen.JaxenException;

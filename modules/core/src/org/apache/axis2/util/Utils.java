@@ -18,6 +18,11 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultSubCode;
+import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -44,11 +49,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPFaultSubCode;
-import org.apache.ws.commons.soap.SOAPFaultValue;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;

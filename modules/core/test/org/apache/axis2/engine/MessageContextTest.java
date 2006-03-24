@@ -17,13 +17,13 @@
 package org.apache.axis2.engine;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {

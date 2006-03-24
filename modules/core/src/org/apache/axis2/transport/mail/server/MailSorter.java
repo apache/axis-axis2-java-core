@@ -1,6 +1,10 @@
 package org.apache.axis2.transport.mail.server;
 
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -9,10 +13,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;

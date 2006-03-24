@@ -22,8 +22,8 @@ import org.apache.axis2.oasis.ping.PingPortStub;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.xmlsoap.ping.*;
 
 /**

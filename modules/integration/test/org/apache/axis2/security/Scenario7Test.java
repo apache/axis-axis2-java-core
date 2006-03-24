@@ -16,10 +16,10 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
-import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.security.WSConstants;
 
 /**

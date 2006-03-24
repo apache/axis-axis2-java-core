@@ -18,17 +18,17 @@ package org.apache.axis2.soap.impl.dom.soap11;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultNode;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultRole;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPFaultImpl;
-import org.apache.ws.commons.soap.SOAP11Constants;
-import org.apache.ws.commons.soap.SOAPBody;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPFaultDetail;
-import org.apache.ws.commons.soap.SOAPFaultNode;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPFaultRole;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamException;
 

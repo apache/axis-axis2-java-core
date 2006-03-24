@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;

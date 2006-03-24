@@ -1,10 +1,10 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.ws.commons.soap.SOAPHeader;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;

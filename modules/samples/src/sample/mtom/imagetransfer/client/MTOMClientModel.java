@@ -23,11 +23,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.ws.commons.soap.SOAP11Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;

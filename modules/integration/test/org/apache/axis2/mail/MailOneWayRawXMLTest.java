@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -34,7 +35,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.mail.SimpleMailListener;
-import org.apache.ws.commons.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
 

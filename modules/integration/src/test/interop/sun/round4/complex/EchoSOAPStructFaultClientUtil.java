@@ -20,7 +20,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP11Constants;
 
 public class EchoSOAPStructFaultClientUtil implements SunGroupHClientUtil{
 

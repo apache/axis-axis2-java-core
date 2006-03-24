@@ -19,10 +19,10 @@ package sample.google.search;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.ws.commons.soap.SOAPBody;
-import org.apache.ws.commons.soap.SOAPEnvelope;
 
 import java.util.Iterator;
 

@@ -8,11 +8,11 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.exception.XMLComparisonException;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.exception.XMLComparisonException;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 
 import test.interop.sun.round4.simple.EchoBlockingClient;
 import test.interop.sun.round4.simple.util.EchoEmptyFaultClientUtil;

@@ -19,12 +19,12 @@ package org.apache.axis2.soap.impl.dom;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultText;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.om.impl.dom.AttrImpl;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPFaultText;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 

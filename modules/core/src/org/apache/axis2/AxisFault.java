@@ -18,11 +18,11 @@
 package org.apache.axis2;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.fault.FaultCode;
 import org.apache.axis2.fault.FaultReasonList;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPHeader;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;

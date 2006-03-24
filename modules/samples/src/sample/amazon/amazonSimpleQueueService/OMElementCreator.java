@@ -19,7 +19,7 @@ package sample.amazon.amazonSimpleQueueService;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFactory;
 
 /**
  * This will create the OMElement needed to be used in invokeNonBlocking() method

@@ -18,6 +18,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -29,7 +30,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.commons.soap.SOAPHeader;
 
 import javax.xml.namespace.QName;
 

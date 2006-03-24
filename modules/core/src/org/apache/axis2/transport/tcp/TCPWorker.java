@@ -18,6 +18,8 @@
 package org.apache.axis2.transport.tcp;
 
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -29,8 +31,6 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

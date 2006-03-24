@@ -17,12 +17,12 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -37,14 +37,14 @@ import java.util.Iterator;
 
 public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 
-    private org.apache.ws.commons.soap.SOAPHeader omSOAPHeader;
+    private org.apache.axiom.soap.SOAPHeader omSOAPHeader;
 
     /**
      * Constructor
      *
      * @param header
      */
-    public SOAPHeaderImpl(org.apache.ws.commons.soap.SOAPHeader header) {
+    public SOAPHeaderImpl(org.apache.axiom.soap.SOAPHeader header) {
         super((ElementImpl) header);
         omSOAPHeader = header;
     }

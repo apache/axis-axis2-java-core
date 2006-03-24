@@ -20,15 +20,15 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAPConstants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.om.impl.dom.AttrImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.ParentNode;
-import org.apache.ws.commons.soap.SOAPConstants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPHeader;
-import org.apache.ws.commons.soap.SOAPHeaderBlock;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 

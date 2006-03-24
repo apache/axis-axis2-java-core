@@ -18,10 +18,10 @@ package org.apache.axis2.soap.impl.dom.soap12;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPFaultDetailImpl;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFault;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 public class SOAP12FaultDetailImpl extends SOAPFaultDetailImpl {
     

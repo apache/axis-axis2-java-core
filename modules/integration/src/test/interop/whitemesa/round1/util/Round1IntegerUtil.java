@@ -18,8 +18,8 @@ package test.interop.whitemesa.round1.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
 
 public class Round1IntegerUtil implements SunClientUtil {

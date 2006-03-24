@@ -2,6 +2,10 @@ package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
@@ -22,10 +26,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.CallbackReceiver;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 

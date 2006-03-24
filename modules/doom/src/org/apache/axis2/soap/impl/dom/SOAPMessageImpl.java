@@ -19,11 +19,11 @@ package org.apache.axis2.soap.impl.dom;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.OMOutputImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPMessage;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPMessage;
-import org.apache.ws.commons.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamException;
 

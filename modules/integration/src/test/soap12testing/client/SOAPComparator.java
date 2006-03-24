@@ -23,8 +23,8 @@ package test.soap12testing.client;
 
 import org.apache.axiom.om.impl.exception.XMLComparisonException;
 import org.apache.axiom.om.impl.llom.util.XMLComparator;
-import org.apache.ws.commons.soap.SOAPEnvelope;
-import org.apache.ws.commons.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFault;
 
 public class SOAPComparator extends XMLComparator {
 

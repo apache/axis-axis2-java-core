@@ -1,5 +1,11 @@
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultRole;
+import org.apache.axiom.soap.SOAPFaultText;
+import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
@@ -7,12 +13,6 @@ import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultTextImpl;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFaultCode;
-import org.apache.ws.commons.soap.SOAPFaultReason;
-import org.apache.ws.commons.soap.SOAPFaultRole;
-import org.apache.ws.commons.soap.SOAPFaultText;
-import org.apache.ws.commons.soap.SOAPFaultValue;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -28,7 +28,7 @@ import java.util.Locale;
 
 public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
-    protected org.apache.ws.commons.soap.SOAPFault fault;
+    protected org.apache.axiom.soap.SOAPFault fault;
     private boolean isDetailAdded;
     private Name faultCodeName;
     private Locale faultReasonLocale;
@@ -36,7 +36,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     /**
      * @param fault
      */
-    public SOAPFaultImpl(org.apache.ws.commons.soap.SOAPFault fault) {
+    public SOAPFaultImpl(org.apache.axiom.soap.SOAPFault fault) {
         super((ElementImpl) fault);
         this.fault = fault;
     }
@@ -57,7 +57,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #getFaultCode() getFaultCode()
      */
     public void setFaultCode(String faultCode) throws SOAPException {
-        org.apache.ws.commons.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+        org.apache.axiom.soap.SOAPFactory soapFactory = DOOMAbstractFactory.getSOAP11Factory();
         SOAPFaultCode fCode = soapFactory.createSOAPFaultCode(fault);
         SOAPFaultValue fValue = soapFactory.createSOAPFaultValue(fCode);
         fCode.setValue(fValue);
@@ -129,7 +129,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                 reason.setSOAPText(text);
             }
         } else {
-            org.apache.ws.commons.soap.SOAPFactory soapFactory =
+            org.apache.axiom.soap.SOAPFactory soapFactory =
                     DOOMAbstractFactory.getSOAP11Factory();
             SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
             SOAPFaultText fText = soapFactory.createSOAPFaultText(fReason);

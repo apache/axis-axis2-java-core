@@ -19,11 +19,11 @@ package org.apache.axis2.soap.impl.dom;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.util.ElementHelper;
-import org.apache.ws.commons.soap.SOAP12Constants;
-import org.apache.ws.commons.soap.SOAPFactory;
-import org.apache.ws.commons.soap.SOAPFaultSubCode;
-import org.apache.ws.commons.soap.SOAPFaultValue;
-import org.apache.ws.commons.soap.SOAPProcessingException;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFaultSubCode;
+import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axiom.soap.SOAPProcessingException;
 
 public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFaultSubCode {
 

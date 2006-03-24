@@ -17,7 +17,7 @@
 package test.interop.whitemesa.round1;
 
 import org.apache.axis2.AxisFault;
-import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPEnvelope;
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;

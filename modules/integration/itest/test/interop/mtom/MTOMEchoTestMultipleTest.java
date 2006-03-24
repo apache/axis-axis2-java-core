@@ -24,8 +24,8 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContextConstants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.soap.SOAP12Constants;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAP12Constants;
 import test.interop.util.BodyElements;
 
 import java.util.Iterator;

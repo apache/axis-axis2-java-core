@@ -34,8 +34,8 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
 /**
  * Sample for synchronous single channel blocking service invocation.
