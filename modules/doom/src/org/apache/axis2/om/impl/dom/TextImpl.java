@@ -18,7 +18,7 @@ package org.apache.axis2.om.impl.dom;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.UUIDGenerator;
-import org.apache.ws.commons.attachments.DataHandlerUtils;
+import org.apache.axiom.attachments.DataHandlerUtils;
 import org.apache.ws.commons.om.OMAttribute;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMException;

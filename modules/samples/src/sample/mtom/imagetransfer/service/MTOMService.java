@@ -16,7 +16,7 @@
 
 package sample.mtom.imagetransfer.service;
 
-import org.apache.ws.commons.attachments.utils.ImageIO;
+import org.apache.axiom.attachments.utils.ImageIO;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;

@@ -24,7 +24,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.ws.commons.attachments.MIMEHelper;
+import org.apache.axiom.attachments.MIMEHelper;
 import org.apache.ws.commons.om.OMException;
 import org.apache.ws.commons.om.impl.MTOMConstants;
 import org.apache.ws.commons.om.impl.builder.StAXBuilder;

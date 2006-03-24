@@ -32,7 +32,7 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.attachments.ByteArrayDataSource;
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMFactory;
