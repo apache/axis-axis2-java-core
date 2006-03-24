@@ -190,21 +190,25 @@
 		</developer>
             <developer>
 			<name>Chatra Nakkawita</name>
+                  <id>chatra</id>
 			<email>chatra AT WSO2.com</email>
 			<organization>WSO2</organization>
 		</developer>
             <developer>
 			<name>Afkham Azeez</name>
+                  <id>azeez</id>
 			<email>azeez AT wso2.com</email>
 			<organization>WSO2</organization>
 		</developer>
              <developer>
 			<name>Robert Lazarski</name>
+                  <id>robertlazarski</id>
 			<email>robertlazarski AT gmail.com</email>
 			<organization>Brazil Outsource</organization>
 		</developer> 
             <developer>
 			<name>Steve Loughran</name>
+                  <id>stevel</id>
 			<email>stevel AT apache.org</email>
 			<organization>HP labs</organization>
 		</developer> 
