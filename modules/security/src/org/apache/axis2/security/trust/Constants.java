@@ -19,7 +19,7 @@ package org.apache.axis2.security.trust;
 public interface Constants {
     
     public final static String WST_NS = "http://schemas.xmlsoap.org/ws/2005/02/trust";
-    public final static String WST_PREFIX = "http://schemas.xmlsoap.org/ws/2005/02/trust";
+    public final static String WST_PREFIX = "wst";
     
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";

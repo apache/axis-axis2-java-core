@@ -16,17 +16,21 @@
 
 package org.apache.axis2.security.trust;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-
-import javax.xml.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class STSMessageReceiver extends AbstractInOutSyncMessageReceiver {
-
+    
+    private Log log = LogFactory.getLog(getClass());
+    
     public void invokeBusinessLogic(MessageContext inMessage,
             MessageContext outMessage) throws AxisFault {
 
@@ -56,7 +60,9 @@ public class STSMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 throw new TrustException("missingDispatcherConfiguration");
             }
         } catch (TrustException e) {
-            throw new AxisFault(e.getFaultString(), e.getFaultCode(), e);
+            //Log the exception
+            log.error(e);
+            throw new AxisFault(e.getFaultString(), e.getFaultCode());
         }
     }
 

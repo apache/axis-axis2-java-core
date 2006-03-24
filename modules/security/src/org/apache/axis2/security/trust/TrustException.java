@@ -24,17 +24,17 @@ public class TrustException extends Exception {
 
     private static final long serialVersionUID = -445341784514373965L;
 
-    public final static String INVALID_REQUEST = "wst:InvalidRequest";
-    public final static String FAILED_AUTHENTICATION = "wst:FailedAuthentication";
-    public final static String REQUEST_FAILED = "wst:RequestFailed";
-    public final static String INVALID_SECURITY_TOKEN = "wst:InvalidSecurityToken";
-    public final static String AUTHENTICATION_BAD_ELEMENTS = "wst:AuthenticationBadElements";
-    public final static String BAD_REQUEST = "wst:BadRequest";
-    public final static String EXPIRED_DATA = "wst:ExpiredData";
-    public final static String INVALID_TIME_RANGE = "wst:InvalidTimeRange";
-    public final static String INVALID_SCOPE = "wst:InvalidScope";
-    public final static String RENEW_NEEDED = "wst:RenewNeeded";
-    public final static String UNABLE_TO_RENEW = "wst:UnableToRenew";
+    public final static String INVALID_REQUEST = "InvalidRequest";
+    public final static String FAILED_AUTHENTICATION = "FailedAuthentication";
+    public final static String REQUEST_FAILED = "RequestFailed";
+    public final static String INVALID_SECURITY_TOKEN = "InvalidSecurityToken";
+    public final static String AUTHENTICATION_BAD_ELEMENTS = "AuthenticationBadElements";
+    public final static String BAD_REQUEST = "BadRequest";
+    public final static String EXPIRED_DATA = "ExpiredData";
+    public final static String INVALID_TIME_RANGE = "InvalidTimeRange";
+    public final static String INVALID_SCOPE = "InvalidScope";
+    public final static String RENEW_NEEDED = "RenewNeeded";
+    public final static String UNABLE_TO_RENEW = "UnableToRenew";
     
     
     private static ResourceBundle resources;
@@ -52,10 +52,33 @@ public class TrustException extends Exception {
     
     public TrustException(String faultCode, Object[] args) {
         super(getMessage(faultCode, args));
-        this.faultCode = faultCode;
+        this.faultCode = getFaultCode(faultCode);
         this.faultString = getMessage(faultCode, args);
     }
     
+    /**
+     * Construct the fault properly code for the standard faults
+     * @param faultCode2
+     * @return
+     */
+    private String getFaultCode(String code) {
+        if(AUTHENTICATION_BAD_ELEMENTS.equals(code) ||
+           BAD_REQUEST.equals(code) ||
+           EXPIRED_DATA.equals(code) ||
+           FAILED_AUTHENTICATION.equals(code) ||
+           INVALID_REQUEST.equals(code) ||
+           INVALID_SCOPE.equals(code) ||
+           INVALID_SECURITY_TOKEN.equals(code) ||
+           INVALID_TIME_RANGE.equals(code) ||
+           RENEW_NEEDED.equals(code) ||
+           REQUEST_FAILED.equals(code) ||
+           UNABLE_TO_RENEW.equals(code)) {
+            return Constants.WST_PREFIX + ":" + code;
+        } else {
+            return code;
+        }
+    }
+
     public TrustException(String faultCode) {
         this(faultCode, (Object[])null);
     }

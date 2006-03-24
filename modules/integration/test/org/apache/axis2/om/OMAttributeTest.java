@@ -4,10 +4,10 @@ import junit.framework.TestCase;
 import za.co.eskom.nrs.xmlvend.base.x20.schema.AdviceReqDocument;
 import za.co.eskom.nrs.xmlvend.base.x20.schema.MsgID;
 import za.co.eskom.nrs.xmlvend.base.x20.schema.ConfirmationAdviceReq;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMAttribute;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axis2.util.StreamWrapper;
 
 import javax.xml.namespace.QName;
