@@ -17,6 +17,12 @@
 
 package org.apache.axis2.transport;
 
+import org.apache.axiom.attachments.MIMEHelper;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -24,12 +30,6 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axiom.attachments.MIMEHelper;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.impl.MTOMConstants;
-import org.apache.ws.commons.om.impl.builder.StAXBuilder;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.impl.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;

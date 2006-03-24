@@ -15,11 +15,11 @@
  */
 package userguide.clients;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.ws.commons.om.OMElement;
 
 /**
  * Sample for fire-and-forget service invocation

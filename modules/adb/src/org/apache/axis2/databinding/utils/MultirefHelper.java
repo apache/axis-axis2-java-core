@@ -17,12 +17,12 @@
 
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;

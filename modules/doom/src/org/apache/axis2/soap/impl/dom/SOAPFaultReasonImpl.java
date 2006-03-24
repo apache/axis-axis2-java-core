@@ -16,11 +16,11 @@
 
 package org.apache.axis2.soap.impl.dom;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
-import org.apache.ws.commons.om.impl.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.ws.commons.om.util.ElementHelper;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.llom.OMSerializerUtil;
+import org.apache.axiom.om.impl.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axiom.om.util.ElementHelper;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
@@ -68,7 +68,7 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements
                 SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
     }
 
-    protected void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(org.apache.axiom.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
         if (builder != null) {

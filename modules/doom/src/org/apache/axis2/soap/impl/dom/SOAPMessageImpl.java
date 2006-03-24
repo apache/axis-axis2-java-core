@@ -16,10 +16,10 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPMessage;

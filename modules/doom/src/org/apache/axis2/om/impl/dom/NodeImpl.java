@@ -15,14 +15,14 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMOutputFormat;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

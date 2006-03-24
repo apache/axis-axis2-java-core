@@ -17,6 +17,7 @@
 
 package org.apache.axis2.deployment.repository.util;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.deployment.AxisServiceBuilder;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
@@ -33,7 +34,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

@@ -17,9 +17,9 @@
 package org.apache.axis2.transport.http;
 
 import junit.framework.TestCase;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMText;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMText;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 

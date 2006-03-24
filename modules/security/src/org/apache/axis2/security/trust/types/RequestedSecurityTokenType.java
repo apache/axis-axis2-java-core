@@ -23,14 +23,14 @@ public class RequestedSecurityTokenType implements
      * field for ExtraElement
      */
 
-    protected org.apache.ws.commons.om.OMElement localExtraElement;
+    protected org.apache.axiom.om.OMElement localExtraElement;
 
     /**
      * Auto generated getter method
      * 
-     * @return org.apache.ws.commons.om.OMElement
+     * @return org.apache.axiom.om.OMElement
      */
-    public org.apache.ws.commons.om.OMElement getExtraElement() {
+    public org.apache.axiom.om.OMElement getExtraElement() {
         return localExtraElement;
     }
 
@@ -40,7 +40,7 @@ public class RequestedSecurityTokenType implements
      * @param param
      *            ExtraElement
      */
-    public void setExtraElement(org.apache.ws.commons.om.OMElement param) {
+    public void setExtraElement(org.apache.axiom.om.OMElement param) {
 
         this.localExtraElement = param;
     }

@@ -15,7 +15,7 @@
 */
 package sample.security;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 public class Service {
 

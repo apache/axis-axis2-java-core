@@ -1,5 +1,8 @@
 package org.apache.axis2.transport.http;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -20,9 +23,6 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMOutputFormat;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;

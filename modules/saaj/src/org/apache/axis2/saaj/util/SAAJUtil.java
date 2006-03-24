@@ -16,8 +16,8 @@
 
 package org.apache.axis2.saaj.util;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;

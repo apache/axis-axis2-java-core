@@ -16,10 +16,10 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.AttrImpl;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultReason;

@@ -16,10 +16,10 @@
 
 package org.apache.axis2.security.util;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;

@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.TextImpl;
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
 
 import javax.xml.soap.SOAPElement;
@@ -244,35 +244,35 @@ public class TextImplEx extends NodeImplEx implements Text {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.impl.OMNodeEx#setParent(org.apache.ws.commons.om.OMContainer)
+      * @see org.apache.axiom.om.impl.OMNodeEx#setParent(org.apache.axiom.om.OMContainer)
       */
     public void setParent(OMContainer element) {
         textNode.setParent(element);
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#getParent()
+      * @see org.apache.axiom.om.OMNode#getParent()
       */
     public OMContainer getParent() {
         return textNode.getParent();
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#discard()
+      * @see org.apache.axiom.om.OMNode#discard()
       */
     public void discard() throws OMException {
         textNode.discard();
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#serialize(org.apache.ws.commons.om.impl.OMOutputImpl)
+      * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
       */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         textNode.serialize(omOutput);
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#serializeAndConsume(org.apache.ws.commons.om.impl.OMOutputImpl)
+      * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
       */
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         textNode.serializeAndConsume(omOutput);

@@ -17,6 +17,8 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -29,8 +31,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

@@ -17,11 +17,11 @@
 
 package org.apache.axis2.addressing;
 
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;

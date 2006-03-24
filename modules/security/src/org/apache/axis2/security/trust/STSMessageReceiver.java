@@ -16,14 +16,14 @@
 
 package org.apache.axis2.security.trust;
 
-import javax.xml.namespace.QName;
-
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+
+import javax.xml.namespace.QName;
 
 public class STSMessageReceiver extends AbstractInOutSyncMessageReceiver {
 

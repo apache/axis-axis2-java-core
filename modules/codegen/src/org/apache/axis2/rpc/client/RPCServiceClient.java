@@ -1,12 +1,12 @@
 package org.apache.axis2.rpc.client;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.net.URL;

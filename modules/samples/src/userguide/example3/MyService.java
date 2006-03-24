@@ -15,7 +15,7 @@
  */
 package userguide.example3;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.stream.XMLStreamException;
 

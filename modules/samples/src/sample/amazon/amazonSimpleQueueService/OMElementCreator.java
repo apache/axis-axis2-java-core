@@ -16,9 +16,9 @@
 
 package sample.amazon.amazonSimpleQueueService;
 
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAPFactory;
 
 /**

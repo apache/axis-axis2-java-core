@@ -15,6 +15,11 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -26,11 +31,6 @@ import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;

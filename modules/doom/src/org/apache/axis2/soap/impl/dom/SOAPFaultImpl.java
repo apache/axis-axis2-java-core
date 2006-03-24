@@ -16,16 +16,16 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axiom.om.OMConstants;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.llom.OMSerializerUtil;
+import org.apache.axiom.om.impl.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.ParentNode;
-import org.apache.ws.commons.om.OMConstants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
-import org.apache.ws.commons.om.impl.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPConstants;
@@ -190,7 +190,7 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 		return null;
 	}
 
-	protected void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput,
+	protected void serialize(org.apache.axiom.om.impl.OMOutputImpl omOutput,
 			boolean cache) throws XMLStreamException {
 		// select the builder
 		short builderType = PULL_TYPE_BUILDER; // default is pull type
@@ -236,7 +236,7 @@ public abstract class SOAPFaultImpl extends SOAPElement implements SOAPFault,
 	}
 
 	protected abstract void serializeFaultNode(
-			org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+			org.apache.axiom.om.impl.OMOutputImpl omOutput)
 			throws XMLStreamException;
 
 }

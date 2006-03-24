@@ -1,5 +1,8 @@
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.databinding.types.Day;
 import org.apache.axis2.databinding.types.Duration;
 import org.apache.axis2.databinding.types.Entities;
@@ -31,9 +34,6 @@ import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
 import org.apache.axis2.util.Base64;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

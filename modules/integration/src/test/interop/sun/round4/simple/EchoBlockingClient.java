@@ -16,13 +16,13 @@
 
 package test.interop.sun.round4.simple;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContextConstants;
-import org.apache.ws.commons.om.OMElement;
 import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 
 public class EchoBlockingClient {

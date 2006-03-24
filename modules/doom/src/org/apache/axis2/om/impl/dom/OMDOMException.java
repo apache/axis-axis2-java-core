@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMException;
+import org.apache.axiom.om.OMException;
 /**
  * OMDOM specific exception
  */

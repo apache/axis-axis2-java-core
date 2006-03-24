@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMFactory;
+import org.apache.axiom.om.OMFactory;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.DOMException;
 

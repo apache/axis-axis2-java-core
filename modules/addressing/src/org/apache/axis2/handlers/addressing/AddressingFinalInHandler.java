@@ -1,9 +1,9 @@
 package org.apache.axis2.handlers.addressing;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPHeader;
 import org.apache.ws.commons.soap.SOAPHeaderBlock;
 

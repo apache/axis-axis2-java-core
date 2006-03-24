@@ -56,10 +56,10 @@
     <!-- ############################   none template!!!   ###############################  -->
     <xsl:template match="databinders[@dbtype='none']">
         //Create an OMElement and provide it as the test object
-        public org.apache.ws.commons.om.OMElement getTestObject(java.lang.Object dummy){
-           org.apache.ws.commons.om.OMFactory factory = org.apache.ws.commons.om.OMAbstractFactory.getOMFactory();
-           org.apache.ws.commons.om.OMNamespace defNamespace = factory.createOMNamespace("",null);
-           return org.apache.ws.commons.om.OMAbstractFactory.getOMFactory().createOMElement("test",defNamespace);
+        public org.apache.axiom.om.OMElement getTestObject(java.lang.Object dummy){
+           org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+           org.apache.axiom.om.OMNamespace defNamespace = factory.createOMNamespace("",null);
+           return org.apache.axiom.om.OMAbstractFactory.getOMFactory().createOMElement("test",defNamespace);
         }
     </xsl:template>
 

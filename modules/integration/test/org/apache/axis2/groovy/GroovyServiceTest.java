@@ -17,6 +17,10 @@
 package org.apache.axis2.groovy;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -26,10 +30,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.EchoRawXMLTest;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

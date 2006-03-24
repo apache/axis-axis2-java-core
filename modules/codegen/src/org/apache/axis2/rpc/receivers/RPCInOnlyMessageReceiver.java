@@ -1,5 +1,6 @@
 package org.apache.axis2.rpc.receivers;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -7,7 +8,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
-import org.apache.ws.commons.om.OMElement;
 
 import java.lang.reflect.Method;
 /*

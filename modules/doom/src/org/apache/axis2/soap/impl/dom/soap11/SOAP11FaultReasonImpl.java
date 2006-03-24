@@ -16,12 +16,12 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMOutputImpl;
+import org.apache.axiom.om.impl.llom.OMSerializerUtil;
+import org.apache.axiom.om.impl.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.soap.impl.dom.SOAPFaultReasonImpl;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
-import org.apache.ws.commons.om.impl.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;

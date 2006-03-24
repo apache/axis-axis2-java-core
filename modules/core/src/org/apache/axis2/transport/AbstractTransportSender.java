@@ -17,6 +17,8 @@
 
 package org.apache.axis2.transport;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -28,8 +30,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMOutputFormat;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;

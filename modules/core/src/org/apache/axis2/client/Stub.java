@@ -17,12 +17,12 @@
 
 package org.apache.axis2.client;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;

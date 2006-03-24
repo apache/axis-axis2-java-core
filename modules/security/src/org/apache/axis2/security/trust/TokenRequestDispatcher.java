@@ -16,14 +16,14 @@
 
 package org.apache.axis2.security.trust;
 
-import javax.xml.namespace.QName;
-
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.security.trust.types.RequestSecurityTokenType;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.soap.SOAPEnvelope;
+
+import javax.xml.namespace.QName;
 
 public class TokenRequestDispatcher {
 

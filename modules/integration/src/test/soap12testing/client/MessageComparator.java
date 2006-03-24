@@ -16,12 +16,12 @@
 
 package test.soap12testing.client;
 
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.exception.XMLComparisonException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.transport.http.HTTPTransportReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.exception.XMLComparisonException;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;
 

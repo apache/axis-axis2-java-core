@@ -97,7 +97,7 @@ public class RequestSecurityTokenType implements
      * field for ExtraElement* This was an Array!
      */
 
-    protected org.apache.ws.commons.om.OMElement[] localExtraElement;
+    protected org.apache.axiom.om.OMElement[] localExtraElement;
 
     /*
      * This tracker boolean wil be used to detect whether the user called the
@@ -109,9 +109,9 @@ public class RequestSecurityTokenType implements
     /**
      * Auto generated getter method
      * 
-     * @return org.apache.ws.commons.om.OMElement[]
+     * @return org.apache.axiom.om.OMElement[]
      */
-    public org.apache.ws.commons.om.OMElement[] getExtraElement() {
+    public org.apache.axiom.om.OMElement[] getExtraElement() {
         return localExtraElement;
     }
 
@@ -119,7 +119,7 @@ public class RequestSecurityTokenType implements
      * validate the array for ExtraElement
      */
     protected void validateExtraElement(
-            org.apache.ws.commons.om.OMElement[] param) {
+            org.apache.axiom.om.OMElement[] param) {
 
     }
 
@@ -129,7 +129,7 @@ public class RequestSecurityTokenType implements
      * @param param
      *            ExtraElement
      */
-    public void setExtraElement(org.apache.ws.commons.om.OMElement[] param) {
+    public void setExtraElement(org.apache.axiom.om.OMElement[] param) {
 
         validateExtraElement(param);
 
@@ -143,17 +143,17 @@ public class RequestSecurityTokenType implements
      * Auto generated add method for the array for convenience
      * 
      * @param param
-     *            org.apache.ws.commons.om.OMElement
+     *            org.apache.axiom.om.OMElement
      */
-    public void addExtraElement(org.apache.ws.commons.om.OMElement param) {
+    public void addExtraElement(org.apache.axiom.om.OMElement param) {
         if (localExtraElement == null) {
-            localExtraElement = new org.apache.ws.commons.om.OMElement[] {};
+            localExtraElement = new org.apache.axiom.om.OMElement[] {};
         }
         java.util.List list = org.apache.axis2.databinding.utils.ConverterUtil
                 .toList(localExtraElement);
         list.add(param);
-        this.localExtraElement = (org.apache.ws.commons.om.OMElement[]) list
-                .toArray(new org.apache.ws.commons.om.OMElement[list.size()]);
+        this.localExtraElement = (org.apache.axiom.om.OMElement[]) list
+                .toArray(new org.apache.axiom.om.OMElement[list.size()]);
 
     }
 
@@ -342,9 +342,9 @@ public class RequestSecurityTokenType implements
                         }
 
                         object
-                                .setExtraElement((org.apache.ws.commons.om.OMElement[]) org.apache.axis2.databinding.utils.ConverterUtil
+                                .setExtraElement((org.apache.axiom.om.OMElement[]) org.apache.axis2.databinding.utils.ConverterUtil
                                         .convertToArray(
-                                                org.apache.ws.commons.om.OMElement.class,
+                                                org.apache.axiom.om.OMElement.class,
                                                 list3));
 
                         

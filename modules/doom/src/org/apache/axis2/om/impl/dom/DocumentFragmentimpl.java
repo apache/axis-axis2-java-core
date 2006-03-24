@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
 
@@ -55,7 +55,7 @@ public class DocumentFragmentimpl extends ParentNode implements
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#getType()
+     * @see org.apache.axiom.om.OMNode#getType()
      */
     public int getType() throws OMException {
         return Node.DOCUMENT_FRAGMENT_NODE;
@@ -64,7 +64,7 @@ public class DocumentFragmentimpl extends ParentNode implements
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#setType(int)
+     * @see org.apache.axiom.om.OMNode#setType(int)
      */
     public void setType(int nodeType) throws OMException {
         // DO Nothing :-?
@@ -73,7 +73,7 @@ public class DocumentFragmentimpl extends ParentNode implements
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#serializeWithCache(org.apache.ws.commons.om.OMOutput)
+     * @see org.apache.axiom.om.OMNode#serializeWithCache(org.apache.axiom.om.OMOutput)
      */
     public void serializeWithCache(OMOutputImpl omOutput)
             throws XMLStreamException {
@@ -84,7 +84,7 @@ public class DocumentFragmentimpl extends ParentNode implements
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#serialize(org.apache.ws.commons.om.OMOutput)
+     * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.OMOutput)
      */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         // TODO

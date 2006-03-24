@@ -17,6 +17,8 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -24,8 +26,6 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

@@ -15,23 +15,23 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMConstants;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.OMOutputImpl;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.OMSerializerUtil;
+import org.apache.axiom.om.impl.llom.util.EmptyIterator;
+import org.apache.axiom.om.impl.traverse.OMChildElementIterator;
+import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMConstants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.impl.llom.OMSerializerUtil;
-import org.apache.ws.commons.om.impl.llom.util.EmptyIterator;
-import org.apache.ws.commons.om.impl.traverse.OMChildElementIterator;
-import org.apache.ws.commons.om.util.ElementHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Implementation of the org.w3c.dom.Element and org.apache.ws.commons.om.Element
+ * Implementation of the org.w3c.dom.Element and org.apache.axiom.om.Element
  * interfaces.
  */
 public class ElementImpl extends ParentNode implements Element, OMElement,
@@ -183,13 +183,13 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     }
 
     // /
-    // /org.apache.ws.commons.om.OMNode methods
+    // /org.apache.axiom.om.OMNode methods
     // /
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#getType()
+     * @see org.apache.axiom.om.OMNode#getType()
      */
     public int getType() throws OMException {
         return Node.ELEMENT_NODE;
@@ -198,7 +198,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#setType(int)
+     * @see org.apache.axiom.om.OMNode#setType(int)
      */
     public void setType(int nodeType) throws OMException {
         // Do nothing ...
@@ -642,8 +642,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     // /
 
     /**
-     * @see org.apache.ws.commons.om.OMElement#addAttribute
-     * (org.apache.ws.commons.om.OMAttribute)
+     * @see org.apache.axiom.om.OMElement#addAttribute
+     * (org.apache.axiom.om.OMAttribute)
      */
     public OMAttribute addAttribute(OMAttribute attr) {
         OMNamespace namespace = attr.getNamespace();
@@ -663,8 +663,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * The behaviour of this is the same as org.w3c.dom.Element#setAttributeNS
      * 
-     * @see org.apache.ws.commons.om.OMElement#addAttribute(java.lang.String,
-     *      java.lang.String, org.apache.ws.commons.om.OMNamespace)
+     * @see org.apache.axiom.om.OMElement#addAttribute(java.lang.String,
+     *      java.lang.String, org.apache.axiom.om.OMNamespace)
      */
     public OMAttribute addAttribute(String attributeName, String value,
             OMNamespace ns) {
@@ -683,8 +683,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Allows overriding an existing declaration if the same prefix was used.
      * 
-     * @see org.apache.ws.commons.om.OMElement#declareNamespace
-     * (org.apache.ws.commons.om.OMNamespace)
+     * @see org.apache.axiom.om.OMElement#declareNamespace
+     * (org.apache.axiom.om.OMNamespace)
      */
     public OMNamespace declareNamespace(OMNamespace namespace) {
         if (namespaces == null) {
@@ -703,7 +703,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Allows overriding an existing declaration if the same prefix was used.
      * 
-     * @see org.apache.ws.commons.om.OMElement#declareNamespace(java.lang.String,
+     * @see org.apache.axiom.om.OMElement#declareNamespace(java.lang.String,
      *      java.lang.String)
      */
     public OMNamespace declareNamespace(String uri, String prefix) {
@@ -712,7 +712,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     }
 
     /**
-     * @see org.apache.ws.commons.om.OMElement#findNamespace(java.lang.String,
+     * @see org.apache.axiom.om.OMElement#findNamespace(java.lang.String,
      *      java.lang.String)
      */
     public OMNamespace findNamespace(String uri, String prefix) {
@@ -796,7 +796,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Returns a named attribute if present.
      * 
-     * @see org.apache.ws.commons.om.OMElement#getAttribute
+     * @see org.apache.axiom.om.OMElement#getAttribute
      * (javax.xml.namespace.QName)
      */
     public OMAttribute getAttribute(QName qname) {
@@ -828,7 +828,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMElement#getBuilder()
+     * @see org.apache.axiom.om.OMElement#getBuilder()
      */
     public OMXMLParserWrapper getBuilder() {
         return this.builder;
@@ -837,7 +837,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Returns the first Element node.
      * 
-     * @see org.apache.ws.commons.om.OMElement#getFirstElement()
+     * @see org.apache.axiom.om.OMElement#getFirstElement()
      */
     public OMElement getFirstElement() {
         OMNode node = getFirstOMChild();
@@ -854,7 +854,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Returns the namespace of this element.
      * 
-     * @see org.apache.ws.commons.om.OMElement#getNamespace()
+     * @see org.apache.axiom.om.OMElement#getNamespace()
      */
     public OMNamespace getNamespace() throws OMException {
         return this.namespace;
@@ -863,7 +863,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Returns the QName of this element.
      * 
-     * @see org.apache.ws.commons.om.OMElement#getQName()
+     * @see org.apache.axiom.om.OMElement#getQName()
      */
     public QName getQName() {
         QName qName;
@@ -883,7 +883,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Gets all the text children and concatinates them to a single string.
      * 
-     * @see org.apache.ws.commons.om.OMElement#getText()
+     * @see org.apache.axiom.om.OMElement#getText()
      */
     public String getText() {
         String childText = "";
@@ -907,8 +907,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Removes an attribute from the element.
      * 
-     * @see org.apache.ws.commons.om.OMElement#removeAttribute
-     * (org.apache.ws.commons.om.OMAttribute)
+     * @see org.apache.axiom.om.OMElement#removeAttribute
+     * (org.apache.axiom.om.OMAttribute)
      */
     public void removeAttribute(OMAttribute attr) {
         this.removeAttributeNode((AttrImpl) attr);
@@ -917,8 +917,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Sets the OM builder.
      * 
-     * @see org.apache.ws.commons.om.OMElement#setBuilder
-     * (org.apache.ws.commons.om.OMXMLParserWrapper)
+     * @see org.apache.axiom.om.OMElement#setBuilder
+     * (org.apache.axiom.om.OMXMLParserWrapper)
      */
     public void setBuilder(OMXMLParserWrapper wrapper) {
         this.builder = wrapper;
@@ -927,7 +927,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Sets the local name.
      * 
-     * @see org.apache.ws.commons.om.OMElement#setLocalName(java.lang.String)
+     * @see org.apache.axiom.om.OMElement#setLocalName(java.lang.String)
      */
     public void setLocalName(String localName) {
         this.localName = localName;
@@ -936,8 +936,8 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Sets the namespace.
      * 
-     * @see org.apache.ws.commons.om.OMElement#setNamespace
-     * (org.apache.ws.commons.om.OMNamespace)
+     * @see org.apache.axiom.om.OMElement#setNamespace
+     * (org.apache.axiom.om.OMNamespace)
      */
     public void setNamespace(OMNamespace namespace) {
         this.namespace = namespace;
@@ -946,7 +946,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Creates a text node with the given value and adds it to the element.
      * 
-     * @see org.apache.ws.commons.om.OMElement#setText(java.lang.String)
+     * @see org.apache.axiom.om.OMElement#setText(java.lang.String)
      */
     public void setText(String text) {
         if (this.isReadonly()) {
@@ -974,7 +974,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#serialize(org.apache.ws.commons.om.OMOutput)
+     * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.OMOutput)
      */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serialize(omOutput, true);
@@ -985,7 +985,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
         this.serialize(omOutput, false);
     }
 
-    protected void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput,
+    protected void serialize(org.apache.axiom.om.impl.OMOutputImpl omOutput,
             boolean cache) throws XMLStreamException {
 
         if (cache) {
@@ -1032,7 +1032,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMElement#getXMLStreamReaderWithoutCaching()
+     * @see org.apache.axiom.om.OMElement#getXMLStreamReaderWithoutCaching()
      */
     public XMLStreamReader getXMLStreamReaderWithoutCaching() {
         return getXMLStreamReader(false);
@@ -1041,7 +1041,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMElement#getXMLStreamReader()
+     * @see org.apache.axiom.om.OMElement#getXMLStreamReader()
      */
     public XMLStreamReader getXMLStreamReader() {
         return getXMLStreamReader(true);
@@ -1083,14 +1083,14 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMElement#getChildElements()
+     * @see org.apache.axiom.om.OMElement#getChildElements()
      */
     public Iterator getChildElements() {
         return new OMChildElementIterator(getFirstElement());
     }
 
     /**
-     * @see org.apache.ws.commons.om.OMElement#getAllDeclaredNamespaces()
+     * @see org.apache.axiom.om.OMElement#getAllDeclaredNamespaces()
      */
     public Iterator getAllDeclaredNamespaces() throws OMException {
         if (namespaces == null) {
@@ -1100,7 +1100,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     }
 
     /**
-     * @see org.apache.ws.commons.om.OMElement#getAllAttributes()
+     * @see org.apache.axiom.om.OMElement#getAllAttributes()
      */
     public Iterator getAllAttributes() {
         if (attributes == null) {
@@ -1161,7 +1161,7 @@ public class ElementImpl extends ParentNode implements Element, OMElement,
     /**
      * Creates a clone which belongs to a new document.
      * 
-     * @see org.apache.ws.commons.om.OMElement#cloneOMElement()
+     * @see org.apache.axiom.om.OMElement#cloneOMElement()
      */
     public OMElement cloneOMElement() {
         ElementImpl elem = (ElementImpl) (new StAXOMBuilder(new OMDOMFactory(),

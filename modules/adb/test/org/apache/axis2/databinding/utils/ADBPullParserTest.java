@@ -1,15 +1,15 @@
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.Constants;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

@@ -16,16 +16,16 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMComment;
-import org.apache.ws.commons.om.OMDocument;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.exception.OMStreamingException;
-import org.apache.ws.commons.om.impl.llom.EmptyOMLocation;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMComment;
+import org.apache.axiom.om.OMDocument;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.exception.OMStreamingException;
+import org.apache.axiom.om.impl.llom.EmptyOMLocation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 /**
- * This is exactly the same as org.apache.ws.commons.om.impl.llom.OMStAXWrapper. BUT
+ * This is exactly the same as org.apache.axiom.om.impl.llom.OMStAXWrapper. BUT
  * this uses the org.apache.axis2.om.impl.dom.DOMNavigator.
  * 
  * Note - This class also implements the streaming constants interface to get
@@ -791,7 +791,7 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * Not implemented yet
      * 
      * @return Returns int.
-     * @throws org.apache.ws.commons.om.impl.exception.OMStreamingException
+     * @throws org.apache.axiom.om.impl.exception.OMStreamingException
      * 
      * @throws XMLStreamException
      */

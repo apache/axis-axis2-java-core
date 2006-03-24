@@ -16,9 +16,9 @@
 package org.apache.axis2.om.impl.dom;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMText;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMText;
 import org.w3c.dom.Text;
 
 public class TextImplTest extends TestCase {

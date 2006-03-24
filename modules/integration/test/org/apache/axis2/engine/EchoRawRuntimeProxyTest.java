@@ -1,6 +1,7 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -13,7 +14,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 /*

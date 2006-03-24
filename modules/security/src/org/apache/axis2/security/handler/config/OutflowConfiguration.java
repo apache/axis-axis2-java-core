@@ -16,12 +16,12 @@
 
 package org.apache.axis2.security.handler.config;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.security.handler.WSHandlerConstants;
 
 import java.util.HashMap;

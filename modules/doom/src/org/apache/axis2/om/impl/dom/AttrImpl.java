@@ -15,14 +15,14 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMConstants;
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMConstants;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -34,7 +34,7 @@ import javax.xml.stream.XMLStreamException;
 
 /**
  * Implementation of <code>org.w3c.dom.Attr</code> and
- * <code>org.apache.ws.commons.om.OMAttribute</code>
+ * <code>org.apache.axiom.om.OMAttribute</code>
  */
 public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 
@@ -168,7 +168,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * Not supported: Cannot detach attributes. Use the operations available in
      * the owner node.
      * 
-     * @see org.apache.ws.commons.om.OMNode#detach()
+     * @see org.apache.axiom.om.OMNode#detach()
      */
     public OMNode detach() throws OMException {
         throw new UnsupportedOperationException("Not supported");
@@ -178,7 +178,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * Not supported: Cannot discard attributes. Use the operations available in
      * the owner node.
      * 
-     * @see org.apache.ws.commons.om.OMNode#discard()
+     * @see org.apache.axiom.om.OMNode#discard()
      */
     public void discard() throws OMException {
         throw new UnsupportedOperationException("Not supported");
@@ -187,7 +187,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Returns the type of this attribute node.
      * 
-     * @see org.apache.ws.commons.om.OMNode#getType()
+     * @see org.apache.axiom.om.OMNode#getType()
      */
     public int getType() {
         return Node.ATTRIBUTE_NODE;
@@ -197,8 +197,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * This is not supported since attributes serialization is handled by the
      * serialization of the owner nodes.
      * 
-     * @see org.apache.ws.commons.om.impl.OMNodeEx#serialize
-     * (org.apache.ws.commons.om.impl.OMOutputImpl)
+     * @see org.apache.axiom.om.impl.OMNodeEx#serialize
+     * (org.apache.axiom.om.impl.OMOutputImpl)
      */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         throw new UnsupportedOperationException("Not supported");
@@ -208,8 +208,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
      * This is not supported since attributes serialization is handled by the
      * serialization of the owner nodes.
      * 
-     * @see org.apache.ws.commons.om.impl.OMNodeEx#serializeAndConsume
-     * (org.apache.ws.commons.om.impl.OMOutputImpl)
+     * @see org.apache.axiom.om.impl.OMNodeEx#serializeAndConsume
+     * (org.apache.axiom.om.impl.OMOutputImpl)
      */
     public void serializeAndConsume(OMOutputImpl omOutput)
             throws XMLStreamException {
@@ -219,7 +219,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Returns the namespace of the attribute as an <code>OMNamespace</code>.
      * 
-     * @see org.apache.ws.commons.om.OMAttribute#getNamespace()
+     * @see org.apache.axiom.om.OMAttribute#getNamespace()
      */
     public OMNamespace getNamespace() {
         return this.namespace;
@@ -228,7 +228,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Returns a qname representing the attribute.
      * 
-     * @see org.apache.ws.commons.om.OMAttribute#getQName()
+     * @see org.apache.axiom.om.OMAttribute#getQName()
      */
     public QName getQName() {
         return (this.namespace == null) ? new QName(this.attrName) : new QName(
@@ -240,7 +240,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Returns the attribute value.
      * 
-     * @see org.apache.ws.commons.om.OMAttribute#getAttributeValue()
+     * @see org.apache.axiom.om.OMAttribute#getAttributeValue()
      */
     public String getAttributeValue() {
         return this.attrValue.getText();
@@ -249,7 +249,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Sets the name of attribute.
      * 
-     * @see org.apache.ws.commons.om.OMAttribute#setLocalName(java.lang.String)
+     * @see org.apache.axiom.om.OMAttribute#setLocalName(java.lang.String)
      */
     public void setLocalName(String localName) {
         this.attrName = localName;
@@ -258,8 +258,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Sets the namespace of this attribute node.
      * 
-     * @see org.apache.ws.commons.om.OMAttribute#setOMNamespace
-     * (org.apache.ws.commons.om.OMNamespace)
+     * @see org.apache.axiom.om.OMAttribute#setOMNamespace
+     * (org.apache.axiom.om.OMNamespace)
      */
     public void setOMNamespace(OMNamespace omNamespace) {
         this.namespace = (NamespaceImpl) omNamespace;
@@ -268,7 +268,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Sets the attribute value.
      * 
-     * @see org.apache.ws.commons.om.OMAttribute#setAttributeValue(java.lang.String)
+     * @see org.apache.axiom.om.OMAttribute#setAttributeValue(java.lang.String)
      */
     public void setAttributeValue(String value) {
         if (isReadonly()) {
@@ -285,8 +285,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Sets the parent element to the given OMContainer.
      * 
-     * @see org.apache.ws.commons.om.impl.OMNodeEx#setParent
-     * (org.apache.ws.commons.om.OMContainer)
+     * @see org.apache.axiom.om.impl.OMNodeEx#setParent
+     * (org.apache.axiom.om.OMContainer)
      */
     public void setParent(OMContainer element) {
         this.parent = (ParentNode) element;
@@ -295,7 +295,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Sets the type. NOT IMPLEMENTED: Unnecessary.
      * 
-     * @see org.apache.ws.commons.om.impl.OMNodeEx#setType(int)
+     * @see org.apache.axiom.om.impl.OMNodeEx#setType(int)
      */
     public void setType(int nodeType) throws OMException {
         // not necessary ???
@@ -329,7 +329,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     /**
      * Returns the parent node of this attribute.
      * 
-     * @see org.apache.ws.commons.om.OMNode#getParent()
+     * @see org.apache.axiom.om.OMNode#getParent()
      */
     public OMContainer getParent() {
         return this.parent;

@@ -16,10 +16,10 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMComment;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
+import org.apache.axiom.om.OMComment;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 

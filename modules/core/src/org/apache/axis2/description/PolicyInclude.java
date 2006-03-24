@@ -16,8 +16,8 @@
 
 package org.apache.axis2.description;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.commons.om.util.UUIDGenerator;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyRegistry;

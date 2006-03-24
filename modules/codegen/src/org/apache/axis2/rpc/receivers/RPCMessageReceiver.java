@@ -21,6 +21,11 @@
 
 package org.apache.axis2.rpc.receivers;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
@@ -29,11 +34,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 

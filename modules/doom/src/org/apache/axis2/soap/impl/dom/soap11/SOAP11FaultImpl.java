@@ -16,9 +16,9 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.impl.dom.SOAPFaultImpl;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPFactory;
@@ -59,13 +59,13 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         return new SOAP11FaultDetailImpl(fault, (SOAPFactory)this.factory);
     }
 
-    public void serialize(org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+    public void serialize(org.apache.axiom.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         super.serialize(omOutput);
     }
 
     public void serializeAndConsume(
-            org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+            org.apache.axiom.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         super.serializeAndConsume(omOutput);
     }
@@ -125,7 +125,7 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
     }
 
     protected void serializeFaultNode(
-            org.apache.ws.commons.om.impl.OMOutputImpl omOutput)
+            org.apache.axiom.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         
     }

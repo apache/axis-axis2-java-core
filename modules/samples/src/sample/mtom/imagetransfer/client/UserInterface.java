@@ -16,7 +16,7 @@
 
 package sample.mtom.imagetransfer.client;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

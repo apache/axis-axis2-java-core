@@ -1,25 +1,21 @@
 <html>
-<%@ page import="org.apache.axis2.AxisFault,
+<%@ page import="org.apache.axiom.om.OMAbstractFactory,
+                 org.apache.axis2.AxisFault,
                  org.apache.axis2.Constants,
                  org.apache.axis2.addressing.EndpointReference,
                  org.apache.axis2.client.Options,
                  org.apache.axis2.client.ServiceClient,
-                 org.apache.ws.commons.om.OMAbstractFactory,
-                 org.apache.ws.commons.om.OMElement,
-                 org.apache.ws.commons.om.OMFactory,
-                 org.apache.ws.commons.om.OMNamespace,
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
                  javax.servlet.jsp.JspWriter,
-                 javax.xml.parsers.SAXParser"
+                 javax.xml.parsers.SAXParser,
+                 javax.xml.parsers.SAXParserFactory,
+                 javax.xml.stream.XMLOutputFactory,
+                 javax.xml.stream.XMLStreamException"
          session="false" %>
-<%@ page import="javax.xml.parsers.SAXParserFactory" %>
-<%@ page import="javax.xml.stream.XMLOutputFactory" %>
-<%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
-
 <%@ page import="java.io.StringWriter" %>
 
 <%

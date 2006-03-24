@@ -15,14 +15,14 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.impl.OMContainerEx;
-import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.traverse.OMChildrenIterator;
-import org.apache.ws.commons.om.impl.traverse.OMChildrenQNameIterator;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.OMContainerEx;
+import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.traverse.OMChildrenIterator;
+import org.apache.axiom.om.impl.traverse.OMChildrenQNameIterator;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -68,7 +68,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
     /**
      * Returns an iterator of child nodes having a given qname.
      * 
-     * @see org.apache.ws.commons.om.OMContainer#getChildrenWithName
+     * @see org.apache.axiom.om.OMContainer#getChildrenWithName
      * (javax.xml.namespace.QName)
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
@@ -78,7 +78,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
     /**
      * Returns the first OMElement child node.
      * 
-     * @see org.apache.ws.commons.om.OMContainer#getFirstChildWithName
+     * @see org.apache.axiom.om.OMContainer#getFirstChildWithName
      * (javax.xml.namespace.QName)
      */
     public OMElement getFirstChildWithName(QName elementQName)

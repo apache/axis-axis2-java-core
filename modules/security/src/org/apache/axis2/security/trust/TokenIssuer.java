@@ -16,8 +16,8 @@
 
 package org.apache.axis2.security.trust;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 
 /**

@@ -17,7 +17,7 @@
 
 package org.apache.axis2.databinding.typemapping;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;

@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.om.impl.dom.jaxp;
 
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.dom.DOMImplementationImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
@@ -54,7 +54,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
     }
 
     /**
-     * The StAX builder used is the org.apache.ws.commons.om.impl.llom.StAXOMBuilder
+     * The StAX builder used is the org.apache.axiom.om.impl.llom.StAXOMBuilder
      * is a validating builder.
      * 
      * @see javax.xml.parsers.DocumentBuilder#isValidating()

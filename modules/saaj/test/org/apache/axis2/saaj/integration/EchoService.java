@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.saaj.integration;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.stream.XMLStreamException;
 

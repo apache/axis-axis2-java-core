@@ -16,17 +16,17 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axiom.om.OMConstants;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.ws.commons.om.OMConstants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPBody;
@@ -78,7 +78,7 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 	 *
 	 * @return the <CODE>SOAPHeader</CODE> object or <CODE> null</CODE> if
 	 *         there is none
-	 * @throws org.apache.ws.commons.om.OMException
+	 * @throws org.apache.axiom.om.OMException
 	 *             if there is a problem obtaining the <CODE>SOAPHeader</CODE>
 	 *             object
 	 * @throws OMException
@@ -110,7 +110,7 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 	 *
 	 * @return the <CODE>SOAPBody</CODE> object for this <CODE> SOAPEnvelope</CODE>
 	 *         object or <CODE>null</CODE> if there is none
-	 * @throws org.apache.ws.commons.om.OMException
+	 * @throws org.apache.axiom.om.OMException
 	 *             if there is a problem obtaining the <CODE>SOAPBody</CODE>
 	 *             object
 	 * @throws OMException

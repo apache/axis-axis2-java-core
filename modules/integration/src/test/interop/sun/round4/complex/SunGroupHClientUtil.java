@@ -16,7 +16,7 @@
 
 package test.interop.sun.round4.complex;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 public interface SunGroupHClientUtil {
     OMElement getEchoOMElement();

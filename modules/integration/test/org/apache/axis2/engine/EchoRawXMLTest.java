@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
@@ -38,7 +39,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP12Constants;
 
 import javax.xml.namespace.QName;

@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.impl.OMContainerEx;
+import org.apache.axiom.om.impl.OMContainerEx;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

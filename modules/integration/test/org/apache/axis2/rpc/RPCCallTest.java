@@ -17,6 +17,10 @@
 package org.apache.axis2.rpc;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -37,10 +41,6 @@ import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;

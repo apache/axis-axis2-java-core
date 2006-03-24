@@ -17,6 +17,7 @@
 
 package org.apache.axis2.util;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -43,7 +44,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFaultCode;

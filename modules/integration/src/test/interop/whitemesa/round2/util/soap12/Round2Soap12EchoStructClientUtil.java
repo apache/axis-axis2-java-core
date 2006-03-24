@@ -16,8 +16,8 @@
 
 package test.interop.whitemesa.round2.util.soap12;
 
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;

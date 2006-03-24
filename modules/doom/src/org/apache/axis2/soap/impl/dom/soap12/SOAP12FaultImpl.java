@@ -16,10 +16,10 @@
 
 package org.apache.axis2.soap.impl.dom.soap12;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axis2.soap.impl.dom.SOAPFaultImpl;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;
@@ -107,7 +107,7 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
         }
     }
 
-    protected void serializeFaultNode(org.apache.ws.commons.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    protected void serializeFaultNode(org.apache.axiom.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         SOAPFaultNode faultNode = getNode();
         if (faultNode != null) {
             ((OMNodeEx)faultNode).serialize(omOutput);

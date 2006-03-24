@@ -16,13 +16,13 @@
 
 package sample.amazon.amazonSimpleQueueService.util;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.Callback;
-import org.apache.ws.commons.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
 import javax.swing.*;

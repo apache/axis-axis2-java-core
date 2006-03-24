@@ -15,16 +15,16 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.om.impl.dom.TextImpl;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -57,21 +57,21 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#discard()
+      * @see org.apache.axiom.om.OMNode#discard()
       */
     public void discard() throws OMException {
         element.discard();
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#serialize(org.apache.ws.commons.om.impl.OMOutputImpl)
+      * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
       */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         element.serialize(omOutput);
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.OMNode#serializeAndConsume(org.apache.ws.commons.om.impl.OMOutputImpl)
+      * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
       */
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         element.serializeAndConsume(omOutput);
@@ -325,8 +325,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         Iterator nsIter = element.getAllDeclaredNamespaces();
         while (nsIter.hasNext()) {
             Object o = nsIter.next();
-            if (o instanceof org.apache.ws.commons.om.OMNamespace) {
-                org.apache.ws.commons.om.OMNamespace ns = (org.apache.ws.commons.om.OMNamespace) o;
+            if (o instanceof org.apache.axiom.om.OMNamespace) {
+                org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) o;
                 prefixList.add(ns.getPrefix());
             }
         }
@@ -359,9 +359,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         //taken care of adding namespaces of this node.
         //now we have to take care of adding the namespaces that are in the scope till the level of
         //this nodes' parent.
-        org.apache.ws.commons.om.OMContainer parent = element.getParent();
-        if (parent != null && parent instanceof org.apache.ws.commons.om.OMElement) {
-            Iterator parentScopeNamespacesIter = ((org.apache.ws.commons.om.OMElement) parent).getAllDeclaredNamespaces();
+        org.apache.axiom.om.OMContainer parent = element.getParent();
+        if (parent != null && parent instanceof org.apache.axiom.om.OMElement) {
+            Iterator parentScopeNamespacesIter = ((org.apache.axiom.om.OMElement) parent).getAllDeclaredNamespaces();
             while (parentScopeNamespacesIter.hasNext()) {
                 Object o = parentScopeNamespacesIter.next();
                 if (o instanceof OMNamespace) {
@@ -379,7 +379,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#removeAttribute(javax.xml.soap.Name)
       */
     public boolean removeAttribute(Name name) {
-        org.apache.ws.commons.om.OMAttribute attr = element.getAttribute(new QName(name.getURI(),
+        org.apache.axiom.om.OMAttribute attr = element.getAttribute(new QName(name.getURI(),
                                                                                    name.getLocalName(),
                                                                                    name.getPrefix()));
         if (attr != null) {
@@ -398,8 +398,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
         while (childIter.hasNext()) {
             Object o = childIter.next();
-            if (o instanceof org.apache.ws.commons.om.OMNode) {
-                ((org.apache.ws.commons.om.OMNode) o).detach();
+            if (o instanceof org.apache.axiom.om.OMNode) {
+                ((org.apache.axiom.om.OMNode) o).detach();
             }
         }
     }
@@ -422,7 +422,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.ws.commons.om.impl.OMNodeEx#setParent(org.apache.ws.commons.om.OMContainer)
+      * @see org.apache.axiom.om.impl.OMNodeEx#setParent(org.apache.axiom.om.OMContainer)
       */
     public void setParent(OMContainer parentElement) {
         element.setParent(parentElement);

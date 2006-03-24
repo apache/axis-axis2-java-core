@@ -16,8 +16,8 @@
 
 package org.apache.axis2.security.trust;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.security.util.Loader;
 
 import javax.xml.namespace.QName;

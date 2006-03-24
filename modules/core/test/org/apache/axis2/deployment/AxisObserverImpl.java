@@ -16,6 +16,7 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
@@ -25,7 +26,6 @@ import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
-import org.apache.ws.commons.om.OMElement;
 
 import java.util.ArrayList;
 

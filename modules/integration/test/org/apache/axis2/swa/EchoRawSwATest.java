@@ -17,6 +17,8 @@
 package org.apache.axis2.swa;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
@@ -28,8 +30,6 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;

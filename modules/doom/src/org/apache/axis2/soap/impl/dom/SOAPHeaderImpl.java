@@ -16,12 +16,12 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPConstants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
@@ -64,7 +64,7 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @param ns
      * @return the new <CODE>SOAPHeaderBlock</CODE> object that was inserted
      *         into this <CODE>SOAPHeader</CODE> object
-     * @throws org.apache.ws.commons.om.OMException
+     * @throws org.apache.axiom.om.OMException
      *                     if a SOAP error occurs
      * @throws OMException
      */

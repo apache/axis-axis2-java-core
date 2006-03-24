@@ -16,12 +16,12 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNode;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
 
 /**
- * This is exactly the same as org.apache.ws.commons.om.impl.om.OMNavigator, only the
+ * This is exactly the same as org.apache.axiom.om.impl.om.OMNavigator, only the
  * llom specifics are changed to dom. Refer to the testClass to find out how to
  * use features like isNavigable, isComplete and step.
  */

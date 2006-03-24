@@ -15,15 +15,15 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NodeImpl;
 import org.apache.axis2.soap.impl.dom.SOAPBodyImpl;
 import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNode;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;

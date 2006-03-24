@@ -15,13 +15,13 @@
  */
 package org.apache.axis2.soap.impl.dom.factory;
 
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.dom.SOAPMessageImpl;
 import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;

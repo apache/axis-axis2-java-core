@@ -17,6 +17,14 @@
 package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
+import org.apache.axiom.attachments.utils.ImageDataSource;
+import org.apache.axiom.attachments.utils.ImageIO;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -27,14 +35,6 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
-import org.apache.axiom.attachments.utils.ImageDataSource;
-import org.apache.axiom.attachments.utils.ImageIO;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.impl.llom.OMTextImpl;
 import org.apache.ws.commons.soap.SOAP12Constants;
 
 import javax.activation.DataHandler;

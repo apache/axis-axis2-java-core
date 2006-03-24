@@ -16,9 +16,9 @@
 
 package org.apache.axis2.soap.impl.dom.soap12;
 
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.impl.dom.SOAPBodyImpl;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;
 import org.apache.ws.commons.soap.SOAPFault;

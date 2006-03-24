@@ -15,19 +15,19 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axiom.attachments.DataHandlerUtils;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMOutputImpl;
+import org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.UUIDGenerator;
-import org.apache.axiom.attachments.DataHandlerUtils;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
-import org.apache.ws.commons.om.impl.mtom.MTOMStAXSOAPModelBuilder;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -217,7 +217,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#getType()
+     * @see org.apache.axiom.om.OMNode#getType()
      */
     public int getType() throws OMException {
         return Node.TEXT_NODE;
@@ -226,7 +226,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#setType(int)
+     * @see org.apache.axiom.om.OMNode#setType(int)
      */
     public void setType(int nodeType) throws OMException {
         // do not do anything here
@@ -236,7 +236,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNode#serialize(org.apache.ws.commons.om.OMOutput)
+     * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.OMOutput)
      */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serializeLocal(omOutput);

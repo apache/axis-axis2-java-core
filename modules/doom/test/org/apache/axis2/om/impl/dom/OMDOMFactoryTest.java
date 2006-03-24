@@ -16,8 +16,8 @@
 package org.apache.axis2.om.impl.dom;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 

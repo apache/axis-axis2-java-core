@@ -15,8 +15,8 @@
  */
 package userguide.example1;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.stream.XMLStreamException;
 

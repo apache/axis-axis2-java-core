@@ -1,10 +1,10 @@
 package org.apache.axis2.schema;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -98,10 +98,10 @@ public class SchemaCompiler {
     public static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
-    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.ws.commons.om.OMElement[]";
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.axiom.om.OMElement[]";
 
     public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
-    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.ws.commons.om.OMAttribute[]";
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.axiom.om.OMAttribute[]";
 
 
     private static int typeCounter = 0;

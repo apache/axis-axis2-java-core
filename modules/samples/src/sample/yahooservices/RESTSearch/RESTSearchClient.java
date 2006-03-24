@@ -1,10 +1,10 @@
 package sample.yahooservices.RESTSearch;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.RESTCall;
-import org.apache.ws.commons.om.OMElement;
 
 public class RESTSearchClient {
     public static void main(String[] args) {

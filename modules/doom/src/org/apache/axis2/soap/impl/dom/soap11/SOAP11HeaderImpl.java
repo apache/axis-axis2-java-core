@@ -16,12 +16,12 @@
 
 package org.apache.axis2.soap.impl.dom.soap11;
 
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.axis2.soap.impl.dom.SOAPHeaderImpl;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
-import org.apache.ws.commons.om.impl.traverse.OMChildrenWithSpecificAttributeIterator;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.SOAPFactory;

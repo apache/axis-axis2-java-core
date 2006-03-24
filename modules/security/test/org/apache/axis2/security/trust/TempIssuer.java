@@ -16,8 +16,8 @@
 
 package org.apache.axis2.security.trust;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 
 public class TempIssuer implements TokenIssuer {
@@ -28,7 +28,7 @@ public class TempIssuer implements TokenIssuer {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axis2.security.trust.TokenIssuer#getResponseAction(org.apache.ws.commons.om.OMElement, org.apache.axis2.context.MessageContext)
+     * @see org.apache.axis2.security.trust.TokenIssuer#getResponseAction(org.apache.axiom.om.OMElement, org.apache.axis2.context.MessageContext)
      */
     public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
         // TODO TODO

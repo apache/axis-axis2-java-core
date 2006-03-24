@@ -1,8 +1,8 @@
 package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.util.StreamWrapper;
-import org.apache.ws.commons.om.OMElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

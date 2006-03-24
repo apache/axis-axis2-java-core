@@ -17,6 +17,10 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -35,10 +39,6 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
 import org.apache.ws.commons.soap.SOAP11Constants;
 
 import javax.xml.namespace.QName;

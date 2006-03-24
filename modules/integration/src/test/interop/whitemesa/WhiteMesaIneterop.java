@@ -16,8 +16,8 @@
 
 package test.interop.whitemesa;
 
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.AxisFault;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
 import org.apache.ws.commons.soap.SOAPBody;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;

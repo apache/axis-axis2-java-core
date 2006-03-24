@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;

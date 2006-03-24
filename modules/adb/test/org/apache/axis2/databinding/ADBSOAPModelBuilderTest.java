@@ -16,11 +16,11 @@
 
 package org.apache.axis2.databinding;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.databinding.utils.PrintEvents;
 import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 import org.apache.ws.commons.soap.impl.builder.StAXSOAPModelBuilder;

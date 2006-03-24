@@ -16,7 +16,7 @@
 
 package org.apache.axis2.security.trust;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 import java.util.HashMap;
 

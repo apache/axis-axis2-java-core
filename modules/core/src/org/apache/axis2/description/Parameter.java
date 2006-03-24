@@ -17,7 +17,7 @@
 
 package org.apache.axis2.description;
 
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 /**
  * Class ParameterImpl

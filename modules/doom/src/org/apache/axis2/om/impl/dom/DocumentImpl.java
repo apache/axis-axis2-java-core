@@ -15,18 +15,18 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axiom.om.OMConstants;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMDocument;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.util.XMLChar;
-import org.apache.ws.commons.om.OMConstants;
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMDocument;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNode;
-import org.apache.ws.commons.om.OMOutputFormat;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMOutputImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -412,7 +412,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
     /**
      * Returns the document element.
      * 
-     * @see org.apache.ws.commons.om.OMDocument#getOMDocumentElement()
+     * @see org.apache.axiom.om.OMDocument#getOMDocumentElement()
      */
     public OMElement getOMDocumentElement() {
         

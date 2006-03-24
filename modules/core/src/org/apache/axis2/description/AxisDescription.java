@@ -1,8 +1,8 @@
 package org.apache.axis2.description;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.commons.om.OMElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;

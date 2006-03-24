@@ -1,5 +1,8 @@
 package org.apache.axis2.deployment.util;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
@@ -15,9 +18,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.builder.TypeTable;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
 import org.apache.wsdl.WSDLConstants;
 import org.codehaus.jam.JMethod;
 

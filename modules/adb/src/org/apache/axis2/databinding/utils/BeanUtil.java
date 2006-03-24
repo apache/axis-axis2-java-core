@@ -17,15 +17,15 @@
 package org.apache.axis2.databinding.utils;
 
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.wsdl.builder.SchemaGenerator;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JProperty;
 import org.codehaus.jam.JamClassIterator;

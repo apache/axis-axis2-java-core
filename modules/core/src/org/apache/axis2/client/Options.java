@@ -1,5 +1,6 @@
 package org.apache.axis2.client;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -9,7 +10,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 
 import javax.xml.namespace.QName;

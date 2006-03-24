@@ -17,6 +17,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.OperationClient;
@@ -29,8 +31,6 @@ import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;

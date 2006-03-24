@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 
 public class NamespaceImpl implements OMNamespace {
 
@@ -39,7 +39,7 @@ public class NamespaceImpl implements OMNamespace {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNamespace#equals(java.lang.String,
+     * @see org.apache.axiom.om.OMNamespace#equals(java.lang.String,
      *      java.lang.String)
      */
     public boolean equals(String uri, String prefix) {
@@ -49,7 +49,7 @@ public class NamespaceImpl implements OMNamespace {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNamespace#getPrefix()
+     * @see org.apache.axiom.om.OMNamespace#getPrefix()
      */
     public String getPrefix() {
         return this.nsPrefix;
@@ -58,14 +58,14 @@ public class NamespaceImpl implements OMNamespace {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.ws.commons.om.OMNamespace#getName()
+     * @see org.apache.axiom.om.OMNamespace#getName()
      */
     public String getName() {
         return this.nsUri;
     }
 
     /* (non-Javadoc)
-     * @see org.apache.ws.commons.om.OMNamespace#getOMFactory()
+     * @see org.apache.axiom.om.OMNamespace#getOMFactory()
      */
     public OMFactory getOMFactory() {
         return this.factory;

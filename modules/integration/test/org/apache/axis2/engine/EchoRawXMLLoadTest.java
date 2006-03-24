@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -29,7 +30,6 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
-import org.apache.ws.commons.om.OMElement;
 
 public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
 

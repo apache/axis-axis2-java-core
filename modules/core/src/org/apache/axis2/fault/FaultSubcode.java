@@ -17,7 +17,7 @@
 
 package org.apache.axis2.fault;
 
-import org.apache.ws.commons.om.OMException;
+import org.apache.axiom.om.OMException;
 import org.apache.ws.commons.soap.SOAPFaultSubCode;
 import org.apache.ws.commons.soap.SOAPFaultValue;
 

@@ -1,7 +1,7 @@
 package org.apache.axis2.databinding.utils;
 
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;

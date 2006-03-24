@@ -18,7 +18,7 @@ package org.apache.axis2.addressing;
 
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
-import org.apache.ws.commons.om.OMElement;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.Map;

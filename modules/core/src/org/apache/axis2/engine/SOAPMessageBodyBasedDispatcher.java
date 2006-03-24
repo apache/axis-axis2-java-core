@@ -17,6 +17,8 @@
 
 package org.apache.axis2.engine;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -25,8 +27,6 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
 
 import javax.xml.namespace.QName;
 

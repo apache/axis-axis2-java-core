@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -31,7 +32,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
-import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;

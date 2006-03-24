@@ -17,6 +17,7 @@
 
 package org.apache.axis2.transport.mail;
 
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -29,7 +30,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.om.impl.builder.StAXBuilder;
 import org.apache.ws.commons.soap.SOAP11Constants;
 import org.apache.ws.commons.soap.SOAP12Constants;
 import org.apache.ws.commons.soap.SOAPEnvelope;

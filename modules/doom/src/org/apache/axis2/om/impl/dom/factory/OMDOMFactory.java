@@ -15,6 +15,19 @@
  */
 package org.apache.axis2.om.impl.dom.factory;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMComment;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMDocType;
+import org.apache.axiom.om.OMDocument;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMProcessingInstruction;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.dom.AttrImpl;
 import org.apache.axis2.om.impl.dom.CommentImpl;
 import org.apache.axis2.om.impl.dom.DocumentFragmentimpl;
@@ -24,19 +37,6 @@ import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.OMDOMException;
 import org.apache.axis2.om.impl.dom.ParentNode;
 import org.apache.axis2.om.impl.dom.TextImpl;
-import org.apache.ws.commons.om.OMAttribute;
-import org.apache.ws.commons.om.OMComment;
-import org.apache.ws.commons.om.OMContainer;
-import org.apache.ws.commons.om.OMDocType;
-import org.apache.ws.commons.om.OMDocument;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMException;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.OMProcessingInstruction;
-import org.apache.ws.commons.om.OMText;
-import org.apache.ws.commons.om.OMXMLParserWrapper;
-import org.apache.ws.commons.om.impl.OMNodeEx;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
@@ -137,7 +137,7 @@ public class OMDOMFactory implements OMFactory {
     /**
      * Creates an OMElement.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createOMElement(java.lang.String,
+     * @see org.apache.axiom.om.OMFactory#createOMElement(java.lang.String,
      *      java.lang.String, java.lang.String)
      */
     public OMElement createOMElement(String localName, String namespaceURI,
@@ -151,8 +151,8 @@ public class OMDOMFactory implements OMFactory {
      * Creates a new OMDOM Element node and adds it to the given parent.
      * 
      * @see #createOMElement(String, OMNamespace, OMContainer)
-     * @see org.apache.ws.commons.om.OMFactory#createOMElement(
-     * javax.xml.namespace.QName, org.apache.ws.commons.om.OMContainer)
+     * @see org.apache.axiom.om.OMFactory#createOMElement(
+     * javax.xml.namespace.QName, org.apache.axiom.om.OMContainer)
      */
     public OMElement createOMElement(QName qname, OMContainer parent)
             throws OMException {
@@ -168,7 +168,7 @@ public class OMDOMFactory implements OMFactory {
     /**
      * Creates a new OMNamespace.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createOMNamespace(java.lang.String,
+     * @see org.apache.axiom.om.OMFactory#createOMNamespace(java.lang.String,
      *      java.lang.String)
      */
     public OMNamespace createOMNamespace(String uri, String prefix) {
@@ -179,8 +179,8 @@ public class OMDOMFactory implements OMFactory {
      * Creates a new OMDOM Text node with the given value and appends it to the
      * given parent element.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createText(
-     *      org.apache.ws.commons.om.OMElement,java.lang.String)
+     * @see org.apache.axiom.om.OMFactory#createText(
+     *      org.apache.axiom.om.OMElement,java.lang.String)
      */
     public OMText createText(OMElement parent, String text) {
         ElementImpl parentElem = (ElementImpl) parent;
@@ -199,7 +199,7 @@ public class OMDOMFactory implements OMFactory {
     /**
      * Creates a OMDOM Text node carrying the given value.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createText(java.lang.String)
+     * @see org.apache.axiom.om.OMFactory#createText(java.lang.String)
      */
     public OMText createText(String s) {
         return new TextImpl(s, this);
@@ -208,7 +208,7 @@ public class OMDOMFactory implements OMFactory {
     /**
      * Creates a Character node of the given type.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createText(java.lang.String, int)
+     * @see org.apache.axiom.om.OMFactory#createText(java.lang.String, int)
      */
     public OMText createText(String text, int type) {
         switch (type) {
@@ -223,7 +223,7 @@ public class OMDOMFactory implements OMFactory {
      * Creates a new OMDOM Text node with the value of the given text value
      * along with the MTOM optimization parameters and returns it.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createText(java.lang.String,
+     * @see org.apache.axiom.om.OMFactory#createText(java.lang.String,
      *      java.lang.String, boolean)
      */
     public OMText createText(String text, String mimeType, boolean optimize) {
@@ -234,7 +234,7 @@ public class OMDOMFactory implements OMFactory {
      * Creates a new OMDOM Text node with the given datahandler and the given
      * MTOM optimization configuration and returns it.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createText(java.lang.Object, boolean)
+     * @see org.apache.axiom.om.OMFactory#createText(java.lang.Object, boolean)
      */
     public OMText createText(Object dataHandler, boolean optimize) {
         return new TextImpl(dataHandler, optimize, this);
@@ -244,7 +244,7 @@ public class OMDOMFactory implements OMFactory {
      * Creates an OMDOM Text node, adds it to the give parent element and
      * returns it.
      * 
-     * @see org.apache.ws.commons.om.OMFactory#createText(org.apache.ws.commons.om.OMElement,
+     * @see org.apache.axiom.om.OMFactory#createText(org.apache.axiom.om.OMElement,
      *      java.lang.String, java.lang.String, boolean)
      */
     public OMText createText(OMElement parent, String s, String mimeType,

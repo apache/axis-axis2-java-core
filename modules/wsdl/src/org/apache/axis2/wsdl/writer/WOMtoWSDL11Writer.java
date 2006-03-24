@@ -1,12 +1,12 @@
 package org.apache.axis2.wsdl.writer;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMFactory;
-import org.apache.ws.commons.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyFactory;
