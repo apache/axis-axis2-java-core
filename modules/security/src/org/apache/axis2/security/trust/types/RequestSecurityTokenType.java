@@ -7,6 +7,8 @@
 
 package org.apache.axis2.security.trust.types;
 
+import javax.xml.stream.XMLStreamReader;
+
 /**
  * RequestSecurityTokenType bean class
  */
@@ -287,55 +289,70 @@ public class RequestSecurityTokenType implements
 
                 org.apache.axis2.databinding.utils.ConverterUtil
                         .convertToanyURI(stateMachine2.getText()));
+                
+                // Move to a start element
+                event = reader.getEventType();
+                boolean done = false;
+                while (done) {
+                    if(event == XMLStreamReader.END_ELEMENT && "RequestSecurityToken".equals(reader.getLocalName())) {
+                        done = true;
+                    } else if(event == XMLStreamReader.START_ELEMENT) {
 
-                java.util.ArrayList list3 = new java.util.ArrayList();
-                boolean loopDone3 = false;
-                javax.xml.namespace.QName startQname3 = new javax.xml.namespace.QName(
-                        "", "extraElement");
+                        java.util.ArrayList list3 = new java.util.ArrayList();
+                        boolean loopDone3 = false;
+                        javax.xml.namespace.QName startQname3 = new javax.xml.namespace.QName(
+                                "", "extraElement");
 
-                boolean loopDone3_internal = false;
+                        boolean loopDone3_internal = false;
 
-                while (!loopDone3_internal) {
-                    if (reader.isStartElement()
-                            && startQname3.equals(reader.getName())) {
-                        loopDone3_internal = true;
+                        while (!loopDone3_internal) {
+                            if (reader.isStartElement()
+                                    && startQname3.equals(reader.getName())) {
+                                loopDone3_internal = true;
+                            } else {
+                                reader.next();
+                            }
+                        }
+
+                        while (!loopDone3) {
+                            event = reader.getEventType();
+                            if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                    && startQname3.equals(reader.getName())) {
+
+                                // We need to wrap the reader so that it produces a fake
+                                // START_DOCUEMENT event
+                                org.apache.axis2.databinding.utils.NamedStaxOMBuilder builder3 = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                                        new org.apache.axis2.util.StreamWrapper(reader),
+                                        startQname3);
+
+                                list3.add(builder3.getOMElement());
+
+                            } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                    && !startQname3.equals(reader.getName())) {
+                                loopDone3 = true;
+                            } else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event
+                                    && !startQname3.equals(reader.getName())) {
+                                loopDone3 = true;
+                            } else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event) {
+                                loopDone3 = true;
+                            } else {
+                                reader.next();
+                            }
+
+                        }
+
+                        object
+                                .setExtraElement((org.apache.ws.commons.om.OMElement[]) org.apache.axis2.databinding.utils.ConverterUtil
+                                        .convertToArray(
+                                                org.apache.ws.commons.om.OMElement.class,
+                                                list3));
+
+                        
                     } else {
-                        reader.next();
+                        event = reader.next();
                     }
+                    
                 }
-
-                while (!loopDone3) {
-                    event = reader.getEventType();
-                    if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
-                            && startQname3.equals(reader.getName())) {
-
-                        // We need to wrap the reader so that it produces a fake
-                        // START_DOCUEMENT event
-                        org.apache.axis2.databinding.utils.NamedStaxOMBuilder builder3 = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
-                                new org.apache.axis2.util.StreamWrapper(reader),
-                                startQname3);
-
-                        list3.add(builder3.getOMElement());
-
-                    } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
-                            && !startQname3.equals(reader.getName())) {
-                        loopDone3 = true;
-                    } else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event
-                            && !startQname3.equals(reader.getName())) {
-                        loopDone3 = true;
-                    } else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event) {
-                        loopDone3 = true;
-                    } else {
-                        reader.next();
-                    }
-
-                }
-
-                object
-                        .setExtraElement((org.apache.ws.commons.om.OMElement[]) org.apache.axis2.databinding.utils.ConverterUtil
-                                .convertToArray(
-                                        org.apache.ws.commons.om.OMElement.class,
-                                        list3));
 
             } catch (javax.xml.stream.XMLStreamException e) {
                 throw new java.lang.Exception(e);

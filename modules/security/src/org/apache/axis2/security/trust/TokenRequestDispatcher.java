@@ -16,6 +16,8 @@
 
 package org.apache.axis2.security.trust;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.security.trust.types.RequestSecurityTokenType;
@@ -43,18 +45,24 @@ public class TokenRequestDispatcher {
     /**
      * Processes the incoming request and returns a SOAPEnvelope
      * @param request 
-     * @param ctx
+     * @param inMsgCtx
      * @return
      * @throws TrustException
      */
-    public SOAPEnvelope handle(MessageContext ctx)
+    public SOAPEnvelope handle(MessageContext inMsgCtx, MessageContext outMsgCtx)
             throws TrustException {
 
         
         RequestSecurityTokenType request = null;
         try {
-            request = RequestSecurityTokenType.Factory.parse(ctx.getEnvelope().getXMLStreamReader());
+            request = RequestSecurityTokenType.Factory
+                    .parse(inMsgCtx.getEnvelope().getBody()
+                            .getFirstChildWithName(
+                                    new QName(Constants.WST_NS,
+                                            "RequestSecurityToken"))
+                            .getXMLStreamReader());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new TrustException(TrustException.INVALID_REQUEST, e);
         }
         
@@ -65,7 +73,7 @@ public class TokenRequestDispatcher {
                 || (reqType != null && "".equals(reqType.toString()))) {
             throw new TrustException(TrustException.INVALID_REQUEST);
         }
-        if (Constants.REQ_TYPE_ISSUE.equals(reqType)) {
+        if (Constants.REQ_TYPE_ISSUE.equals(reqType.toString())) {
             TokenIssuer issuer = null;
             if (tokenType == null
                     || (tokenType != null && "".equals(tokenType.toString()))) {
@@ -73,17 +81,23 @@ public class TokenRequestDispatcher {
             } else {
                 issuer = config.getIssuer(tokenType.toString());
             }
-            SOAPEnvelope response = issuer.issue(new StAXOMBuilder(request
-                    .getPullParser(null)).getDocumentElement(), ctx);
+            
+            SOAPEnvelope response = issuer.issue(inMsgCtx.getEnvelope().getBody().getFirstChildWithName(new QName(Constants.WST_NS, "RequestSecurityToken")), inMsgCtx);
+            
+            //set the response wsa/soap action in teh out message context
+            outMsgCtx.getOptions().setAction(
+                    issuer.getResponseAction(new StAXOMBuilder(request
+                            .getPullParser(null)).getDocumentElement(),
+                            inMsgCtx));
             
             return response;
-        } else if(Constants.REQ_TYPE_VALIDATE.equals(reqType)) {
+        } else if(Constants.REQ_TYPE_VALIDATE.equals(reqType.toString())) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "validate requests");
-        } else if(Constants.REQ_TYPE_RENEW.equals(reqType)) {
+        } else if(Constants.REQ_TYPE_RENEW.equals(reqType.toString())) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "renew requests");            
-        } else if(Constants.REQ_TYPE_CANCEL.equals(reqType)) {
+        } else if(Constants.REQ_TYPE_CANCEL.equals(reqType.toString())) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "cancel requests");
         } else {

@@ -20,7 +20,39 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPEnvelope;
 
+/**
+ * The <code>TokenIssuer</code> 
+ *
+ */
 public interface TokenIssuer {
 
-    public SOAPEnvelope issue(OMElement request, MessageContext msgCtx) throws TrustException;
+    /**
+     * Create the response <code>soap:Envelope</code> for the given issue
+     * request.
+     * 
+     * @param request
+     *            The contents of the <code>soap:Body</code> as an
+     *            <code>OMElement</code>
+     * @param inMsgCtx
+     *            The incoming messagge context
+     * @return The response <code>soap:Envelope</code> for the given issue
+     *         request.
+     * @throws TrustException
+     */
+    public SOAPEnvelope issue(OMElement request, MessageContext inMsgCtx)
+            throws TrustException;
+
+    /**
+     * Returns the <code>wsa:Action</code> of the response
+     * 
+     * @param request
+     *            The contents of the <code>soap:Body</code> as an
+     *            <code>OMElement</code>
+     * @param inMsgCtx
+     *            The incoming messagge context
+     * @return Returns the <code>wsa:Action</code> of the response
+     * @throws TrustException
+     */
+    public String getResponseAction(OMElement request, MessageContext inMsgCtx)
+            throws TrustException;
 }

@@ -29,4 +29,21 @@ public interface Constants {
     public final static String REQ_TYPE_VALIDATE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Validate";
     public final static String REQ_TYPE_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/Renew";
     public final static String REQ_TYPE_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/Cancel";
+
+    //Token types
+    public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
+    
+    //RST actions
+    public final static String RST_ACTON_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue";
+    public final static String RST_ACTON_VALIDATE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Renew";
+    public final static String RST_ACTON_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel";
+    public final static String RST_ACTON_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate";
+    public final static String RST_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT";
+    
+    //RSTR actions
+    public final static String RSTR_ACTON_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Issue";
+    public final static String RSTR_ACTON_VALIDATE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Renew";
+    public final static String RSTR_ACTON_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Cancel";
+    public final static String RSTR_ACTON_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Validate";
+    public final static String RSTR_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/SCT";
 }

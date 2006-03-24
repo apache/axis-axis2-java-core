@@ -19,6 +19,7 @@ package org.apache.axis2.security.trust.impl;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TokenIssuer;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.ws.commons.om.OMElement;
@@ -59,11 +60,11 @@ public class SCTIssuer implements TokenIssuer {
      *  <li>wst:BinarySecret (for secure transport)</li>
      * </ul> 
      */
-    public SOAPEnvelope issue(OMElement request, MessageContext msgCtx)
+    public SOAPEnvelope issue(OMElement request, MessageContext inMsgCtx)
             throws TrustException {
 
         Vector results = null;
-        if ((results = (Vector) msgCtx
+        if ((results = (Vector) inMsgCtx
                 .getProperty(WSHandlerConstants.RECV_RESULTS)) == null) {
             throw new TrustException(TrustException.REQUEST_FAILED);
         } else {
@@ -87,18 +88,19 @@ public class SCTIssuer implements TokenIssuer {
                 throw new TrustException(TrustException.REQUEST_FAILED);
             }
             
-            Parameter param = msgCtx.getParameter(SCT_ISSUER_CONFIG_PARAM);
+            Parameter param = inMsgCtx.getParameter(SCT_ISSUER_CONFIG_PARAM);
             SCTIssuerConfig config = new SCTIssuerConfig(param
                     .getParameterElement());
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
-                return this.doEncryptedKey(config, msgCtx, principal);
+                SOAPEnvelope responseEnv = this.doEncryptedKey(config, inMsgCtx, principal);
+                return responseEnv;
             } else if(BINARY_SECRET.equals(config.proofTokenType)) {
                 //TODO
             } else if(COMPUTED_KEY.equals(config.proofTokenType)) {
                 //TODO
             } else {
                 //Default behavior is to use EncrptedKey
-                this.doEncryptedKey(config, msgCtx, principal);
+                this.doEncryptedKey(config, inMsgCtx, principal);
             }
         }
 
@@ -152,9 +154,13 @@ public class SCTIssuer implements TokenIssuer {
                     new QName("proofToken")).next();
             this.proofTokenType = proofTokenElem.getText();
         }
-        
-        
-        
+    }
+
+
+
+
+    public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
+        return Constants.RSTR_ACTON_SCT;
     }
     
 }

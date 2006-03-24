@@ -52,6 +52,34 @@
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
         </delete>
+        
+        <!-- Create the sts.aar -->
+        <mkdir dir="target/sts"/>
+        <mkdir dir="target/METS-INF"/>
+        <mkdir dir="target/sts/lib"/>
+        <!-- Copy classes -->
+        <copy todir="target/sts">
+            <fileset dir="target/classes">
+                <include name="**/org/apache/axis2/security/trust/*/**/*.class"/>
+                <include name="**/org/apache/axis2/security/trust/*.class"/>
+            </fileset>
+        </copy>
+        <!-- copy jars -->
+        <copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
+        <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
+        <copy file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>
+        <copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
+        
+        <copy file="target/classes/META-INF/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
+        
+        <jar jarfile="target/SecurityTokenService.aar" basedir="target/sts/">
+            <include name="**/*"/>
+        </jar>
+        
+	<delete includeEmptyDirs="true">
+            <fileset dir="target/sts"/>
+        </delete>
+        
     </postGoal>
 
     <preGoal name="java:compile">

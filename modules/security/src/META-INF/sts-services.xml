@@ -1,0 +1,20 @@
+<!-- Security token service configuration -->
+<service name="STS">
+
+	<operation name="RequestSecurityToken">
+		<messageReceiver class="org.apache.axis2.security.trust.STSMessageReceiver"/>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Renew</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT</actionMapping>
+	</operation>
+	
+	<parameter name="token-dispatcher-configuration">
+		<token-dispatcher-configuration>
+			<issuer class="org.apache.axis2.security.trust.impl.SCTIssuer" default="true">
+				<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
+			</issuer>
+		</token-dispatcher-configuration>
+	</parameter>
+</service>
