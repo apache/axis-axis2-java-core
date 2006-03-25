@@ -50,7 +50,7 @@ public class SCTIssuer implements TokenIssuer {
     public final static String SCT_ISSUER_CONFIG_PARAM = "sct-issuer-config";
     
     /**
-     * Issue a SecuritycontextToken based on the wsse:Signature
+     * Issue a SecuritycontextToken based on the wsse:Signature or wsse:UsernameToken
      * 
      * This will support returning the SecurityContextToken with the following 
      * types of wst:RequestedProof tokens:
@@ -90,7 +90,8 @@ public class SCTIssuer implements TokenIssuer {
             
             Parameter param = inMsgCtx.getParameter(SCT_ISSUER_CONFIG_PARAM);
             SCTIssuerConfig config = new SCTIssuerConfig(param
-                    .getParameterElement());
+                    .getParameterElement().getFirstChildWithName(
+                            new QName(SCT_ISSUER_CONFIG_PARAM)));
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
                 SOAPEnvelope responseEnv = this.doEncryptedKey(config, inMsgCtx, principal);
                 return responseEnv;
@@ -141,8 +142,18 @@ public class SCTIssuer implements TokenIssuer {
     }
     
     
+
+    public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
+        return Constants.RSTR_ACTON_SCT;
+    }
     
     
+    
+    
+    /**
+     * SCTIssuer Configuration processor
+     *
+     */
     protected class SCTIssuerConfig {
         
         protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
@@ -153,13 +164,6 @@ public class SCTIssuer implements TokenIssuer {
                     new QName("proofToken")).next();
             this.proofTokenType = proofTokenElem.getText();
         }
-    }
-
-
-
-
-    public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
-        return Constants.RSTR_ACTON_SCT;
     }
     
 }

@@ -17,4 +17,12 @@
 			</issuer>
 		</token-dispatcher-configuration>
 	</parameter>
+	
+	<!-- Configuration of org.apache.axis2.security.trust.impl.SCTIssuer -->
+	<parameter name="sct-issuer-config">
+		<sct-issuer-config>
+			<proofToken>EncryptedKey</proofToken>
+			<crypto-properties>sctIssuer.properties</crypto-properties>
+		</sct-issuer-config>
+	</parameter>
 </service>
