@@ -118,11 +118,10 @@ public class SCTIssuer implements TokenIssuer {
         
         WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
         Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile);
-//        encrKeyBuilder.se
-//        encrKeyBuilder.setUserInfo("wss4jcert");
+
         encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
         try {
-            encrKeyBuilder.build(doc, crypto, secHeader);
+            encrKeyBuilder.prepare(doc, crypto);
         } catch (WSSecurityException e) {
             throw new TrustException(
                     "errorInBuildingTheEncryptedKeyForPrincipal",
