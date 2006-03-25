@@ -54,13 +54,13 @@ public class TokenRequestDispatcher {
 
         
         RequestSecurityTokenType request = null;
-        try {
-            request = RequestSecurityTokenType.Factory
-                    .parse(inMsgCtx.getEnvelope().getBody()
+        OMElement rstElem = inMsgCtx.getEnvelope().getBody()
                             .getFirstChildWithName(
                                     new QName(Constants.WST_NS,
-                                            "RequestSecurityToken"))
-                            .getXMLStreamReader());
+                                            "RequestSecurityToken"));
+        try {
+            request = RequestSecurityTokenType.Factory.parse(rstElem
+                    .getXMLStreamReader());
         } catch (Exception e) {
             e.printStackTrace();
             throw new TrustException(TrustException.INVALID_REQUEST, e);
@@ -82,13 +82,11 @@ public class TokenRequestDispatcher {
                 issuer = config.getIssuer(tokenType.toString());
             }
             
-            SOAPEnvelope response = issuer.issue(inMsgCtx.getEnvelope().getBody().getFirstChildWithName(new QName(Constants.WST_NS, "RequestSecurityToken")), inMsgCtx);
+            SOAPEnvelope response = issuer.issue(rstElem, inMsgCtx);
             
             //set the response wsa/soap action in teh out message context
             outMsgCtx.getOptions().setAction(
-                    issuer.getResponseAction(new StAXOMBuilder(request
-                            .getPullParser(null)).getDocumentElement(),
-                            inMsgCtx));
+                    issuer.getResponseAction(rstElem, inMsgCtx));
             
             return response;
         } else if(Constants.REQ_TYPE_VALIDATE.equals(reqType.toString())) {

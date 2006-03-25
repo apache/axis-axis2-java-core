@@ -34,11 +34,14 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecHeader;
+import org.apache.ws.security.message.token.SecurityContextToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+
 import java.security.Principal;
+import java.security.cert.X509Certificate;
 import java.util.Vector;
 
 public class SCTIssuer implements TokenIssuer {
@@ -70,6 +73,7 @@ public class SCTIssuer implements TokenIssuer {
         } else {
             System.out.println("Number of results: " + results.size());
             Principal principal = null;
+            X509Certificate cert = null;
             for (int i = 0; i < results.size(); i++) {
                 WSHandlerResult rResult = (WSHandlerResult) results.get(i);
                 Vector wsSecEngineResults = rResult.getResults();
@@ -79,6 +83,7 @@ public class SCTIssuer implements TokenIssuer {
                         (WSSecurityEngineResult) wsSecEngineResults.get(j);
                     if (wser.getAction() != WSConstants.ENCR
                             && wser.getPrincipal() != null) {
+                        cert = wser.getCertificate();
                         principal = wser.getPrincipal();
                     }
                 }
@@ -87,30 +92,46 @@ public class SCTIssuer implements TokenIssuer {
             if(principal == null) {
                 throw new TrustException(TrustException.REQUEST_FAILED);
             }
-            
+
+//            TEMPORARY - will remove this :-)
+//          X509Certificate cert = null;
+//        try {
+//            KeyStore ks = KeyStore.getInstance("JKS"); //KeyStore instance
+//              FileInputStream ksfis = new FileInputStream("wss4j.keystore");
+//              BufferedInputStream ksbufin = new BufferedInputStream(ksfis);
+//              ks.load(ksbufin,"security".toCharArray());
+//              
+//              cert = (X509Certificate)ks.getCertificate("wss4jcert");
+//        }catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
             Parameter param = inMsgCtx.getParameter(SCT_ISSUER_CONFIG_PARAM);
             SCTIssuerConfig config = new SCTIssuerConfig(param
                     .getParameterElement().getFirstChildWithName(
                             new QName(SCT_ISSUER_CONFIG_PARAM)));
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
-                SOAPEnvelope responseEnv = this.doEncryptedKey(config, inMsgCtx, principal);
+                SOAPEnvelope responseEnv = this.doEncryptedKey(config,
+                        inMsgCtx, cert);
                 return responseEnv;
             } else if(BINARY_SECRET.equals(config.proofTokenType)) {
-                //TODO
+                // TODO 
+                throw new UnsupportedOperationException("TODO");
             } else if(COMPUTED_KEY.equals(config.proofTokenType)) {
-                //TODO
+                // TODO 
+                throw new UnsupportedOperationException("TODO");
             } else {
-                //Default behavior is to use EncrptedKey
-                this.doEncryptedKey(config, inMsgCtx, principal);
+                // TODO 
+                throw new UnsupportedOperationException("TODO: Default");
             }
         }
 
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+
     }
     
     private SOAPEnvelope doEncryptedKey(SCTIssuerConfig config,
-            MessageContext msgCtx, Principal principal) throws TrustException {
+            MessageContext msgCtx, X509Certificate cert) throws TrustException {
+        
         SOAPEnvelope env = this.getSOAPEnvelope(msgCtx);
         //Get the document
         Document doc = ((Element)env).getOwnerDocument();
@@ -118,16 +139,46 @@ public class SCTIssuer implements TokenIssuer {
         secHeader.insertSecurityHeader(doc);
         
         WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
-        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile);
+        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
+                msgCtx.getAxisService().getClassLoader());
 
         encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
         try {
+            encrKeyBuilder.setUseThisCert(cert);
             encrKeyBuilder.prepare(doc, crypto);
         } catch (WSSecurityException e) {
             throw new TrustException(
                     "errorInBuildingTheEncryptedKeyForPrincipal",
-                    new String[] { principal.getName() });
+                    new String[] { cert.getSubjectDN().getName()});
         }
+        
+        SecurityContextToken sct = new SecurityContextToken(doc);
+        sct.setID("sctId-" + sct.getElement().hashCode());
+        
+        OMElement rstrElem = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS, "RequestSecurityTokenResponse",
+                        Constants.WST_PREFIX), env.getBody());
+        
+        OMElement rstElem = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS, "RequestSecurityToken",
+                        Constants.WST_PREFIX), rstrElem);
+        
+        rstElem.addChild((OMElement)sct.getElement());
+        
+        
+        
+        Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
+        Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
+        
+        OMElement reqProofTok = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS, "RequestedProofToken",
+                        Constants.WST_PREFIX), rstrElem);
+        
+        if(bstElem != null) {
+            reqProofTok.addChild((OMElement)bstElem);
+        }
+        
+        reqProofTok.addChild((OMElement)encryptedKeyElem);
         
         return env;
     }
@@ -155,14 +206,27 @@ public class SCTIssuer implements TokenIssuer {
      *
      */
     protected class SCTIssuerConfig {
-        
+
         protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
+
         protected String cryptoPropertiesFile = null;
-        
-        public SCTIssuerConfig(OMElement elem) {
-            OMElement proofTokenElem = (OMElement)elem.getChildrenWithName(
-                    new QName("proofToken")).next();
-            this.proofTokenType = proofTokenElem.getText();
+
+        public SCTIssuerConfig(OMElement elem) throws TrustException {
+            OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
+                    new QName("proofToken"));
+            if (proofTokenElem != null) {
+                this.proofTokenType = proofTokenElem.getText();
+            }
+
+            OMElement cryptoPropertiesElem = (OMElement) elem
+                    .getFirstChildWithName(new QName("cryptoProperties"));
+
+            if (!SCTIssuer.BINARY_SECRET.equals(proofTokenType)
+                    && cryptoPropertiesElem == null) {
+                throw new TrustException("sctIssuerCryptoPropertiesMissing");
+            }
+
+            this.cryptoPropertiesFile = cryptoPropertiesElem.getText();
         }
     }
     

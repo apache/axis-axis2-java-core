@@ -22,7 +22,7 @@
 	<parameter name="sct-issuer-config">
 		<sct-issuer-config>
 			<proofToken>EncryptedKey</proofToken>
-			<crypto-properties>sctIssuer.properties</crypto-properties>
+			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 		</sct-issuer-config>
 	</parameter>
 </service>

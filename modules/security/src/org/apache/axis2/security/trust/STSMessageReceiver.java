@@ -60,6 +60,7 @@ public class STSMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 throw new TrustException("missingDispatcherConfiguration");
             }
         } catch (TrustException e) {
+            e.printStackTrace();
             //Log the exception
             log.error(e);
             throw new AxisFault(e.getFaultString(), e.getFaultCode());
