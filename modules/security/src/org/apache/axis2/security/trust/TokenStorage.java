@@ -24,6 +24,8 @@ import java.util.ArrayList;
  */
 public interface TokenStorage {
     
+    public final static String TOKEN_STORAGE_KEY = "tokenStorage";
+    
     /**
      * Add the given token to the list.
      * @param token The token to be added

@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.OMOutputImpl;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPConstants;
@@ -32,9 +31,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -54,9 +51,7 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 		super(
 				doc,
 				SOAPConstants.SOAPENVELOPE_LOCAL_NAME,
-				(NamespaceImpl)factory
-						.createOMNamespace((factory instanceof SOAP11Factory) ? SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI
-								: SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
+                null,
 				builder, factory);
 	}
 	/**

@@ -22,7 +22,10 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.security.trust.Constants;
+import org.apache.axis2.security.trust.SimpleTokenStore;
+import org.apache.axis2.security.trust.Token;
 import org.apache.axis2.security.trust.TokenIssuer;
+import org.apache.axis2.security.trust.TokenStorage;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
@@ -149,7 +152,8 @@ public class SCTIssuer implements TokenIssuer {
         }
         
         SecurityContextToken sct = new SecurityContextToken(doc);
-        sct.setID("sctId-" + sct.getElement().hashCode());
+        String sctId = "sctId-" + sct.getElement().hashCode();
+        sct.setID(sctId);
         
         OMElement rstrElem = env.getOMFactory().createOMElement(
                 new QName(Constants.WST_NS, "RequestSecurityTokenResponse",
@@ -175,6 +179,10 @@ public class SCTIssuer implements TokenIssuer {
         }
         
         reqProofTok.addChild((OMElement)encryptedKeyElem);
+    
+        //Store the tokens
+        Token sctToken = new Token(sctId, (OMElement)sct.getElement());
+        this.getTokenStore(msgCtx).add(sctToken);
         
         return env;
     }
@@ -206,6 +214,25 @@ public class SCTIssuer implements TokenIssuer {
      */
     public void setConfigurationElement(OMElement configElement) {
         this.configElement = configElement;
+    }
+    
+    /**
+     * Returns the token store.
+     * If the token store is aleady available in the service context then
+     * fetch it and return it. If not create a new one, hook it up in the 
+     * service context and return it
+     * @param msgCtx
+     * @return
+     */
+    private TokenStorage getTokenStore(MessageContext msgCtx) {
+        TokenStorage storage = (TokenStorage) msgCtx.getServiceContext()
+                .getProperty(TokenStorage.TOKEN_STORAGE_KEY);
+        if (storage == null) {
+            storage = new SimpleTokenStore();
+            msgCtx.getServiceContext().setProperty(
+                    TokenStorage.TOKEN_STORAGE_KEY, storage);
+        }
+        return storage;
     }
     
 }
