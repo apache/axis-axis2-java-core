@@ -20,7 +20,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TokenIssuer;

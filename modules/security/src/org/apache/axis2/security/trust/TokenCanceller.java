@@ -20,7 +20,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 
-public interface TokenCanceler {
+public interface TokenCanceller {
     
     public SOAPEnvelope cancel(OMElement request, MessageContext msgCtx) throws TrustException;
     
