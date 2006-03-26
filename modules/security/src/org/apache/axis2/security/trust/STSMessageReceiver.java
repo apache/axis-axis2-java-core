@@ -45,7 +45,7 @@ public class STSMessageReceiver extends AbstractInOutSyncMessageReceiver {
                         .getParameterElement().getFirstChildWithName(
                                 new QName("token-dispatcher-configuration")));
             } else if (paramFile != null) {
-                dispatcher = new TokenRequestDispatcher((String) param
+                dispatcher = new TokenRequestDispatcher((String) paramFile
                         .getValue());
             } else {
                 dispatcher = new TokenRequestDispatcher(

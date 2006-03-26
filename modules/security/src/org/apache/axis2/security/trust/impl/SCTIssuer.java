@@ -33,7 +33,6 @@ import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
-import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,11 +48,14 @@ public class SCTIssuer implements TokenIssuer {
     public final static String ENCRYPTED_KEY = "EncryptedKey";
     public final static String COMPUTED_KEY = "ComputedKey";
     public final static String BINARY_SECRET = "BinarySecret";
-
-    public final static String SCT_ISSUER_CONFIG_PARAM = "sct-issuer-config";
+    
+    private String configFile;
+    
+    private OMElement configElement;
     
     /**
-     * Issue a SecuritycontextToken based on the wsse:Signature or wsse:UsernameToken
+     * Issue a SecuritycontextToken based on the wsse:Signature or 
+     * wsse:UsernameToken
      * 
      * This will support returning the SecurityContextToken with the following 
      * types of wst:RequestedProof tokens:
@@ -92,10 +94,21 @@ public class SCTIssuer implements TokenIssuer {
                 throw new TrustException(TrustException.REQUEST_FAILED);
             }
             
-            Parameter param = inMsgCtx.getParameter(SCT_ISSUER_CONFIG_PARAM);
-            SCTIssuerConfig config = new SCTIssuerConfig(param
-                    .getParameterElement().getFirstChildWithName(
-                            new QName(SCT_ISSUER_CONFIG_PARAM)));
+            SCTIssuerConfig config = null;
+            if(this.configElement != null) {
+                config = SCTIssuerConfig
+                        .load(configElement.getFirstChildWithName(SCTIssuerConfig.SCT_ISSUER_CONFIG));
+            } else {
+                //Look for the file
+                if(this.configFile != null) {
+                    config = SCTIssuerConfig.load(this.configFile);
+                } else {
+                    throw new TrustException(
+                            "missingConfiguration",
+                            new String[] { SCTIssuerConfig.SCT_ISSUER_CONFIG.getLocalPart()});
+                }
+            }
+            
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
                 SOAPEnvelope responseEnv = this.doEncryptedKey(config,
                         inMsgCtx, cert);
@@ -181,37 +194,19 @@ public class SCTIssuer implements TokenIssuer {
     public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
         return Constants.RSTR_ACTON_SCT;
     }
-    
-    
-    
-    
+
     /**
-     * SCTIssuer Configuration processor
-     *
+     * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationFile(java.lang.String)
      */
-    protected class SCTIssuerConfig {
+    public void setConfigurationFile(String configFile) {
+        this.configFile = configFile;
+    }
 
-        protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
-
-        protected String cryptoPropertiesFile = null;
-
-        public SCTIssuerConfig(OMElement elem) throws TrustException {
-            OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
-                    new QName("proofToken"));
-            if (proofTokenElem != null) {
-                this.proofTokenType = proofTokenElem.getText();
-            }
-
-            OMElement cryptoPropertiesElem = (OMElement) elem
-                    .getFirstChildWithName(new QName("cryptoProperties"));
-
-            if (!SCTIssuer.BINARY_SECRET.equals(proofTokenType)
-                    && cryptoPropertiesElem == null) {
-                throw new TrustException("sctIssuerCryptoPropertiesMissing");
-            }
-
-            this.cryptoPropertiesFile = cryptoPropertiesElem.getText();
-        }
+    /**
+     * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationElement(java.lang.String)
+     */
+    public void setConfigurationElement(OMElement configElement) {
+        this.configElement = configElement;
     }
     
 }

@@ -24,4 +24,23 @@ public interface TokenCanceler {
     
     public SOAPEnvelope cancel(OMElement request, MessageContext msgCtx) throws TrustException;
     
+    /**
+     * Set the configuration file of this TokenCanceller.
+     * 
+     * This is the text value of the &lt;configuration-file&gt; element of the 
+     * token-dispatcher-configuration
+     * @param configFile
+     */
+    public void setConfigurationFile(String configFile);
+    
+    /**
+     * Set the configuration element of this TokenCanceller.
+     * 
+     * This is the &lt;configuration&gt; element of the 
+     * token-dispatcher-configuration
+     * 
+     * @param configElement <code>OMElement</code> representing the configuation
+     */
+    public void setConfigurationElement(String configElement);
+    
 }

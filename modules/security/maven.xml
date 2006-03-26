@@ -71,6 +71,8 @@
         <copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
         
         <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
+		<copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/META-INF/sct-issuer-config.xml"/>
+		<copy file="test-resources/trust/impl/token-dispatcher-configuration.xml" toFile="target/sts/token-dispatcher-configuration.xml"/>
         <copy file="test-resources/trust/impl/sctIssuer.properties" toFile="target/sts/sctIssuer.properties"/>
         <copy file="test-resources/trust/impl/sts.jks" toFile="target/sts/sts.jks"/>
         

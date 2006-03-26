@@ -10,27 +10,20 @@
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT</actionMapping>
 	</operation>
 	
-	<parameter name="token-dispatcher-configuration">
-		<token-dispatcher-configuration>
-			<issuer class="org.apache.axis2.security.trust.impl.SCTIssuer" default="true">
-				<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
-			</issuer>
-		</token-dispatcher-configuration>
-	</parameter>
-	
-	<!-- Configuration of org.apache.axis2.security.trust.impl.SCTIssuer -->
-	<parameter name="sct-issuer-config">
-		<sct-issuer-config>
-			<proofToken>EncryptedKey</proofToken>
-			<cryptoProperties>sctIssuer.properties</cryptoProperties>
-		</sct-issuer-config>
-	</parameter>
+	<!-- Using the config file -->
+	<parameter name="token-dispatcher-configuration-file">token-dispatcher-configuration.xml</parameter>
 	
 	<parameter name="InflowSecurity">
-        	<action>
-            		<items>Timestamp Signature</items>
-            		<!--<passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass> -->
-            		<signaturePropFile>sctIssuer.properties</signaturePropFile>
-        	</action>
-    	</parameter>
+		<action>
+            <items>Timestamp Signature</items>
+            <signaturePropFile>sctIssuer.properties</signaturePropFile>
+        </action>
+    </parameter>
+	
+	<parameter name="OutflowSecurity">
+      	<action>
+        	<items>Timestamp</items>
+		</action>
+    </parameter>
+	
 </service>

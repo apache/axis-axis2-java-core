@@ -35,4 +35,16 @@ public class TempIssuer implements TokenIssuer {
         throw new UnsupportedOperationException("TODO");
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationFile(java.lang.String)
+     */
+    public void setConfigurationFile(String configFile) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationElement(org.apache.axiom.om.OMElement)
+     */
+    public void setConfigurationElement(OMElement configElement) {
+    }
+
 }
