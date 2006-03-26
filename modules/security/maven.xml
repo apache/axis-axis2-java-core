@@ -72,7 +72,7 @@
         
         <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
         <copy file="test-resources/trust/impl/sctIssuer.properties" toFile="target/sts/sctIssuer.properties"/>
-        <copy file="test-resources/trust/impl/wss4j.keystore" toFile="target/sts/wss4j.keystore"/>
+        <copy file="test-resources/trust/impl/sts.jks" toFile="target/sts/sts.jks"/>
         
         <jar jarfile="target/SecurityTokenService.aar" basedir="target/sts/">
             <include name="**/*"/>

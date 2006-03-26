@@ -25,4 +25,12 @@
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 		</sct-issuer-config>
 	</parameter>
+	
+	<parameter name="InflowSecurity">
+        	<action>
+            		<items>Timestamp Signature</items>
+            		<!--<passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass> -->
+            		<signaturePropFile>sctIssuer.properties</signaturePropFile>
+        	</action>
+    	</parameter>
 </service>

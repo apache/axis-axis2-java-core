@@ -71,7 +71,6 @@ public class SCTIssuer implements TokenIssuer {
                 .getProperty(WSHandlerConstants.RECV_RESULTS)) == null) {
             throw new TrustException(TrustException.REQUEST_FAILED);
         } else {
-            System.out.println("Number of results: " + results.size());
             Principal principal = null;
             X509Certificate cert = null;
             for (int i = 0; i < results.size(); i++) {
@@ -92,20 +91,7 @@ public class SCTIssuer implements TokenIssuer {
             if(principal == null) {
                 throw new TrustException(TrustException.REQUEST_FAILED);
             }
-
-//            TEMPORARY - will remove this :-)
-//          X509Certificate cert = null;
-//        try {
-//            KeyStore ks = KeyStore.getInstance("JKS"); //KeyStore instance
-//              FileInputStream ksfis = new FileInputStream("wss4j.keystore");
-//              BufferedInputStream ksbufin = new BufferedInputStream(ksfis);
-//              ks.load(ksbufin,"security".toCharArray());
-//              
-//              cert = (X509Certificate)ks.getCertificate("wss4jcert");
-//        }catch (Exception e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+            
             Parameter param = inMsgCtx.getParameter(SCT_ISSUER_CONFIG_PARAM);
             SCTIssuerConfig config = new SCTIssuerConfig(param
                     .getParameterElement().getFirstChildWithName(
@@ -135,8 +121,6 @@ public class SCTIssuer implements TokenIssuer {
         SOAPEnvelope env = this.getSOAPEnvelope(msgCtx);
         //Get the document
         Document doc = ((Element)env).getOwnerDocument();
-        WSSecHeader secHeader = new WSSecHeader();
-        secHeader.insertSecurityHeader(doc);
         
         WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
         Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
