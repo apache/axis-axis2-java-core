@@ -64,7 +64,7 @@ public class AddressingOutHandler extends AddressingHandler {
             }
         }
         if (property != null && property.booleanValue()) {
-            log.info("Addressing is disbaled .....");
+            log.debug("Addressing is disabled .....");
             return;
         }
 
