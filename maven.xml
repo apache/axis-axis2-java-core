@@ -387,6 +387,11 @@
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the java2wsdl jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- Copy the doom jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
