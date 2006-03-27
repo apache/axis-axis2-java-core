@@ -18,18 +18,22 @@
 package org.apache.axis2;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultNode;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axis2.fault.FaultCode;
-import org.apache.axis2.fault.FaultReasonList;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -51,35 +55,31 @@ import java.util.ListIterator;
  *      a SOAP1.1 fault is created, spurious information can be discarded.
  *      Mapping
  *      <pre>
- *           SOAP1.2              SOAP1.1
- *           node                 faultactor
- *           reason(0).text       faultstring
- *           faultcode.value      faultcode
- *           faultcode.subcode    (discarded)
- *           detail               detail
- *           role                 (discarded)
- *           </pre>
+ *                                         SOAP1.2              SOAP1.1
+ *                                         node                 faultactor
+ *                                         reason(0).text       faultstring
+ *                                         faultcode.value      faultcode
+ *                                         faultcode.subcode    (discarded)
+ *                                         detail               detail
+ *                                         role                 (discarded)
+ *                                         </pre>
  */
 public class AxisFault extends RemoteException {
 
-	private static final long serialVersionUID = -374933082062124907L;
-
-	/**
-     * Contains the faultcode
-     */
-    private FaultCode faultCode = new FaultCode();
-
-    /**
-     * our failt reasons
-     */
-    private FaultReasonList reasons = new FaultReasonList();
+    private static final long serialVersionUID = -374933082062124907L;
 
     /**
      * assume headers are not used very often
      */
     private List headers = new ArrayList(0);
+
+    private List faultReasonList = new ArrayList(1);
+    private QName faultCode;
+    private String faultNode;
+    private String faultRole;
     private OMElement detail;
 
+    private Map faultElements;
     /**
      * SOAP1.2: URI of faulting node. Null for unknown.
      * <p/>
@@ -92,20 +92,6 @@ public class AxisFault extends RemoteException {
      */
     private String nodeURI;
 
-    /**
-     * An incoming SOAPFault
-     */
-    private SOAPFault soapFault;
-
-    /**
-     * Make an AxisFault from an incoming SOAPFault
-     *
-     * @param fault that caused the failure
-     */
-    public AxisFault(SOAPFault fault) {
-        soapFault = fault;
-        init(soapFault);
-    }
 
     /**
      * @param message
@@ -113,6 +99,56 @@ public class AxisFault extends RemoteException {
     public AxisFault(String message) {
         super(message);
         addReason(message);
+    }
+
+    /**
+     * These are the absolute minimum to construct a meaningful SOAPFault from user's information
+     *
+     * @param faultCode   - fault code of the message as a QName
+     * @param faultReason - the reason for the fault. The language will be defaulted to 'en'
+     * @param cause
+     */
+    public AxisFault(QName faultCode, String faultReason, Throwable cause) {
+        this(faultReason, cause);
+        setFaultCode(faultCode);
+    }
+
+    public AxisFault(QName faultCode, String faultReason, String faultNode, String faultRole, OMElement faultDetail) {
+        this(faultReason, faultCode);
+        this.faultNode = faultNode;
+        this.faultRole = faultRole;
+        setDetail(faultDetail);
+    }
+
+    /**
+     * This is just a convenience method for the user. If you set these, do not use other methods
+     * in this class to get and set things.
+     * Any of the parameters can be null
+     *
+     * @param soapFaultCode
+     * @param soapFaultReason
+     * @param soapFaultNode
+     * @param soapFaultRole
+     * @param soap
+     */
+    public AxisFault(SOAPFaultCode soapFaultCode, SOAPFaultReason soapFaultReason,
+                     SOAPFaultNode soapFaultNode, SOAPFaultRole soapFaultRole, SOAPFaultDetail soapFaultDetail) {
+        if (faultElements == null) {
+            // assuming that most of the times fault code, fault string and fault details are set
+            faultElements = new HashMap(3);
+        }
+        setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
+        setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
+        setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME, soapFaultNode);
+        setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, soapFaultRole);
+        setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
+
+    }
+
+    private void setToElementsListIfNotNull(String soapFaultElementName, OMElement soapFaultElement) {
+        if (soapFaultElement != null) {
+            faultElements.put(soapFaultElementName, soapFaultElement);
+        }
     }
 
     /**
@@ -192,7 +228,7 @@ public class AxisFault extends RemoteException {
      * @param text text message
      */
     public void addReason(String text) {
-        addReason(text, "");
+        faultReasonList.add(new FaultReason(text, ""));
     }
 
     /**
@@ -202,11 +238,19 @@ public class AxisFault extends RemoteException {
      * @param language language
      */
     public void addReason(String text, String language) {
-        reasons.add(text, language);
+        faultReasonList.add(new FaultReason(text, language));
     }
 
+    /**
+     * Returns the first fault reason, if available. If not found, returns null.
+     *
+     * @return faultReason
+     */
     public String getReason() {
-        return reasons.getFirstReasonText();
+        if (faultReasonList.size() >= 1)
+            return ((FaultReason) faultReasonList.get(0)).getText();
+
+        return null;
     }
 
     /**
@@ -225,20 +269,6 @@ public class AxisFault extends RemoteException {
      */
     public List headers() {
         return headers;
-    }
-
-    /**
-     * Initialise from a SOAPFault. This is how incoming fault messages
-     * get turned into AxisFaults.
-     *
-     * @param fault incoming fault
-     */
-    private void init(SOAPFault fault) {
-        SOAPFaultCode faultcodesource = fault.getCode();
-
-        faultCode = new FaultCode(faultcodesource);
-        detail = fault.getDetail();
-        fault.getNode();
     }
 
     /**
@@ -277,7 +307,7 @@ public class AxisFault extends RemoteException {
     }
 
     public QName getFaultCode() {
-        return faultCode.getValue();
+        return faultCode;
     }
 
     /**
@@ -300,11 +330,11 @@ public class AxisFault extends RemoteException {
     }
 
     public void setFaultCode(QName soapFaultCode) {
-        faultCode.setValue(soapFaultCode);
+        this.faultCode = soapFaultCode;
     }
 
     public void setFaultCode(String soapFaultCode) {
-        faultCode.setValueString(soapFaultCode);
+        faultCode = new QName(soapFaultCode);
     }
 
     /**
@@ -312,5 +342,65 @@ public class AxisFault extends RemoteException {
      */
     public void setNodeURI(String nodeURI) {
         this.nodeURI = nodeURI;
+    }
+
+
+    public Map getFaultElements() {
+        return faultElements;
+    }
+
+    public String getFaultNode() {
+        return faultNode;
+    }
+
+    public String getFaultRole() {
+        return faultRole;
+    }
+
+    class FaultReason {
+
+        /**
+         * Language of the reason.
+         * xml:lang="en" "en-GB" or just ""
+         */
+        private String language = "";
+
+        /**
+         * env:reasontext
+         */
+        private String text;
+
+        public FaultReason() {
+        }
+
+        public FaultReason(String text, String language) {
+            this.text = text;
+            this.language = language;
+        }
+
+        /**
+         * Returns a string representation of the object.
+         *
+         * @return the text value
+         */
+        public String toString() {
+            return text;
+        }
+
+        public String getLanguage() {
+            return language;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setLanguage(String language) {
+            this.language = language;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
     }
 }
