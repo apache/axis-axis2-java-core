@@ -1,9 +1,7 @@
-package org.apache.axis2.wsdl.builder;
+package org.apache.ws.java2wsdl;
 
-import org.apache.axis2.wsdl.writer.WOMWriter;
-import org.apache.axis2.wsdl.writer.WOMWriterFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.wsdl.WSDLDescription;
 
 import java.io.OutputStream;
 /*
@@ -21,11 +19,9 @@ import java.io.OutputStream;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
+*
 */
 
-/**
- * The WSDL builder to be used when WSDL's need to be generated from a Java class
- */
 public class Java2WSDLBuilder {
 
     private OutputStream out;
@@ -33,17 +29,44 @@ public class Java2WSDLBuilder {
     private ClassLoader classLoader;
     private String wsdlPrefix = "wsdl";
 
-    private String serviceName  = null;
+    private String serviceName = null;
 
     //these apply for the WSDL
     private String targetNamespace = null;
     private String targetNamespacePrefix = null;
 
-    private String  schemaTargetNamespace = null;
-    private String  schemaTargetNamespacePrefix = null;
+    private String schemaTargetNamespace = null;
+    private String schemaTargetNamespacePrefix = null;
+    private String style = Constants.DOCUMNT;
+    private String use = Constants.LITERAL;
+    private String locationUri = Constants.DEFAULT_LOCATION_URL;
 
     public String getSchemaTargetNamespace() {
         return schemaTargetNamespace;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public String getLocationUri() {
+        return locationUri;
+    }
+
+    public void setLocationUri(String locationUri) {
+        this.locationUri = locationUri;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getUse() {
+        return use;
+    }
+
+    public void setUse(String use) {
+        this.use = use;
     }
 
     public void setSchemaTargetNamespace(String schemaTargetNamespace) {
@@ -92,7 +115,6 @@ public class Java2WSDLBuilder {
     }
 
     /**
-     *
      * @param out
      * @param className
      * @param classLoader
@@ -106,30 +128,30 @@ public class Java2WSDLBuilder {
 
     /**
      * Externally visible generator method
+     *
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
         SchemaGenerator sg = new SchemaGenerator(classLoader, className,
                 schemaTargetNamespace, schemaTargetNamespacePrefix);
         XmlSchema schema = sg.generateSchema();
-        WSDLDescription wommodel = new Java2WOMBuilder(
-                sg.getTypeTable(),
-                sg.getMethods(),
+        Java2OMBuilder java2OMBuilder = new Java2OMBuilder(sg.getMethods(),
                 schema,
-                serviceName==null?simpleClassName(className):serviceName,
+                serviceName == null ? simpleClassName(className) : serviceName,
                 targetNamespace,
-                targetNamespacePrefix).generateWOM();
-        
-        WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
-        womWriter.setdefaultWSDLPrefix(wsdlPrefix);
-        womWriter.writeWOM(wommodel, out);
-
+                style,
+                use,
+                locationUri);
+        OMElement wsdlElemnet = java2OMBuilder.generateOM();
+        wsdlElemnet.serialize(out);
+        out.flush();
+        out.close();
     }
 
     /**
      * A method to strip the fully qualified className to a simple classname
+     *
      * @param qualifiedName
-     * @return
      */
     private String simpleClassName(String qualifiedName) {
         int index = qualifiedName.lastIndexOf(".");
@@ -139,3 +161,4 @@ public class Java2WSDLBuilder {
         return qualifiedName;
     }
 }
+

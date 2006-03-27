@@ -21,14 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.Utils;
@@ -36,12 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class AxisConfigurationImpl
@@ -307,6 +295,11 @@ public class AxisConfiguration extends AxisDescription {
             while (serviceItr.hasNext()) {
                 AxisService axisService = (AxisService) serviceItr.next();
                 axisService.disEngageModule(module);
+            }
+            Iterator serviceGroups = getServiceGroups();
+            while (serviceGroups.hasNext()) {
+                AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
+                axisServiceGroup.removeFromEngageList(module.getName());
             }
             engagedModules.remove(module.getName());
         }

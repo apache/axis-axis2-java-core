@@ -97,6 +97,15 @@ public class ModuleDisEngagementTest extends TestCase {
         assertEquals(0, userPhase.getHandlerCount());
     }
 
+
+    public void testGlobalChcek() throws AxisFault {
+        AxisModule module = er.getModule(new QName("testModule"));
+        assertNotNull(module);
+        er.engageModule(module.getName());
+        er.disEngageModule(module);
+        er.engageModule(module.getName());
+    }
+
     public void testOperationDisengagement() throws AxisFault {
         AxisModule module = er.getModule(new QName("testModule"));
         assertNotNull(module);

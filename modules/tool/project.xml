@@ -35,11 +35,18 @@
                 <module>true</module>
             </properties>
         </dependency>
+
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+ <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+
         
         <dependency>
             <groupId>axis2</groupId>

@@ -25,7 +25,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
-import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JProperty;
 import org.codehaus.jam.JamClassIterator;
@@ -43,6 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 
 
 public class BeanUtil {
@@ -84,7 +84,7 @@ public class BeanUtil {
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
                 PropertyDescriptor propDesc = (PropertyDescriptor) propertMap.get(
-                        SchemaGenerator.getCorrectName(property.getSimpleName()));
+                        getCorrectName(property.getSimpleName()));
                 if (propDesc == null) {
                     // JAM does bad thing so I need to add this
                     continue;
@@ -504,5 +504,22 @@ public class BeanUtil {
                         OMAbstractFactory.getSOAP11Factory(), xr);
         return stAXOMBuilder.getDocumentElement();
     }
+
+    /**
+        * JAM convert first name of an attribute into UpperCase as an example
+        * if there is a instance variable called foo in a bean , then Jam give that as Foo
+        * so this method is to correct that error
+        *
+        * @param wrongName
+        * @return the right name, using english as the locale for case conversion
+        */
+       private static String getCorrectName(String wrongName) {
+           if (wrongName.length() > 1) {
+               return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
+                       + wrongName.substring(1, wrongName.length());
+           } else {
+               return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH);
+           }
+       }
 
 }

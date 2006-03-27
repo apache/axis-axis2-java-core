@@ -1,6 +1,5 @@
-package org.apache.axis2.wsdl.builder.bytecode;
+package org.apache.ws.java2wsdl.bytecode;
 
-import org.apache.axis2.i18n.Messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,8 +62,8 @@ public class ClassReader extends ByteArrayInputStream {
     protected static byte[] getBytes(Class c) throws IOException {
         InputStream fin = c.getResourceAsStream('/' + c.getName().replace('.', '/') + ".class");
         if (fin == null) {
-            throw new IOException(
-                    Messages.getMessage("cantLoadByecode", c.getName()));
+            throw new IOException("Unable to load bytecode for class " + c.getName()
+                   );
         }
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -170,7 +169,7 @@ public class ClassReader extends ByteArrayInputStream {
         while (n > 0) {
             int c = (int) skip(n);
             if (c <= 0)
-                throw new EOFException(Messages.getMessage("unexpectedEOF00"));
+                throw new EOFException("Error looking for paramter names in bytecode: unexpected end of file");
             n -= c;
         }
     }
@@ -333,8 +332,7 @@ public class ClassReader extends ByteArrayInputStream {
 
                 default:
                     // corrupt class file
-                    throw new IllegalStateException(
-                            Messages.getMessage("unexpectedBytes00"));
+                    throw new IllegalStateException("Error looking for paramter names in bytecode: unexpected bytes in file");
             }
         }
     }

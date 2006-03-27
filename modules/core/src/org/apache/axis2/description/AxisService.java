@@ -18,11 +18,7 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.PortImpl;
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
-import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import com.ibm.wsdl.extensions.soap.*;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -38,28 +34,21 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.builder.SchemaGenerator;
-import org.apache.axis2.wsdl.builder.TypeTable;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.java2wsdl.SchemaGenerator;
+import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
@@ -70,12 +59,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -880,10 +864,14 @@ public class AxisService extends AxisDescription {
     }
 
     public boolean isEngaged(QName moduleName) {
+        AxisModule module = getAxisConfiguration().getModule(moduleName);
+        if (module == null) {
+            return false;
+        }
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {
             AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().getLocalPart().equals(moduleName.getLocalPart())) {
+            if (axisModule.getName().getLocalPart().equals(module.getName().getLocalPart())) {
                 return true;
             }
         }
@@ -918,7 +906,7 @@ public class AxisService extends AxisDescription {
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setFeature("javax.wsdl.importDocuments", true);
             Definition wsdlDefinition = reader.readWSDL(null, doc);
-            return createClientSideAxisService(wsdlDefinition,wsdlServiceName,portName,options);
+            return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName, options);
         } catch (IOException e) {
             throw new AxisFault("IOException" + e.getMessage());
         } catch (ParserConfigurationException e) {

@@ -334,6 +334,7 @@
         <ant:mkdir dir="modules/saaj/target/classes"/>
 
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes"/>
             <!-- adding the tool classes. This is needed to get the ant task -->
             <fileset dir="modules/tool/target/classes"/>

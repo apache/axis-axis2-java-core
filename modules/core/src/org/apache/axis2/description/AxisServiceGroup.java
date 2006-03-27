@@ -115,6 +115,10 @@ public class AxisServiceGroup extends AxisDescription {
         engagedModules.add(moduleName);
     }
 
+    public void removeFromEngageList(QName moduleName) {
+        engagedModules.remove(moduleName);
+    }
+
     public void engageModule(AxisModule module) throws AxisFault {
         QName moduleName = module.getName();
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {

@@ -16,9 +16,9 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.wsdl.builder.SchemaGenerator;
-import org.apache.axis2.wsdl.builder.TypeTable;
 import org.apache.wsdl.WSDLConstants;
+import org.apache.ws.java2wsdl.SchemaGenerator;
+import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;

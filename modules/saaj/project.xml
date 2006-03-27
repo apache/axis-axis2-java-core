@@ -94,6 +94,11 @@
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>

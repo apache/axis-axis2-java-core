@@ -1,14 +1,10 @@
-package org.apache.axis2.wsdl.builder;
+package org.apache.ws.java2wsdl.utils;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.namespace.Constants;
+import org.apache.ws.java2wsdl.Constants;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -23,6 +19,7 @@ import java.util.Vector;
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
+*
 *
 */
 
@@ -122,4 +119,5 @@ public class TypeTable {
         return type;
     }
 }
+
 

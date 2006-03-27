@@ -2,11 +2,11 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.wsdl.builder.SchemaGenerator;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
+import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;

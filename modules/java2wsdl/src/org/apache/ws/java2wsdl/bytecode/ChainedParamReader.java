@@ -1,4 +1,4 @@
-package org.apache.axis2.wsdl.builder.bytecode;
+package org.apache.ws.java2wsdl.bytecode;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;

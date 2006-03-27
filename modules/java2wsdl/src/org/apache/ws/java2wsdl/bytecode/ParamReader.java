@@ -1,6 +1,5 @@
-package org.apache.axis2.wsdl.builder.bytecode;
+package org.apache.ws.java2wsdl.bytecode;
 
-import org.apache.axis2.i18n.Messages;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -51,7 +50,7 @@ public class ParamReader
         // check the magic number
         if (readInt() != 0xCAFEBABE) {
             // not a class file!
-            throw new IOException(Messages.getMessage("badClassFile00"));
+            throw new IOException("Error looking for paramter names in bytecode: input does not appear to be a valid class file");
         }
 
         readShort(); // minor version

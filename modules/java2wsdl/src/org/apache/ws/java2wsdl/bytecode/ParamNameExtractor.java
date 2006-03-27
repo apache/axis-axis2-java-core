@@ -1,6 +1,5 @@
-package org.apache.axis2.wsdl.builder.bytecode;
+package org.apache.ws.java2wsdl.bytecode;
 
-import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +41,6 @@ public class ParamNameExtractor {
             return pr.getParameterNames(method);
         } catch (IOException e) {
             // log it and leave
-            log.info(Messages.getMessage("error00") + ":" + e);
             return null;
         }
     }
