@@ -19,10 +19,10 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
-import org.apache.axis2.om.impl.dom.NodeImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.NamespaceImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;

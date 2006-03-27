@@ -17,7 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.saaj.util.IDGenerator;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -83,7 +83,7 @@ public class SOAPPartImpl extends SOAPPart {
                                              new SOAP11Factory(),
                                              null);
             org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder.getSOAPEnvelope();
-            envelope = new SOAPEnvelopeImpl((org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
+            envelope = new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
         } catch (XMLStreamException e) {

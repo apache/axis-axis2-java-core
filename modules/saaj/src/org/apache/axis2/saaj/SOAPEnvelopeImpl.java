@@ -16,11 +16,11 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.NodeImpl;
-import org.apache.axis2.om.impl.dom.TextImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11BodyImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11HeaderImpl;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11BodyImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -35,9 +35,9 @@ import javax.xml.soap.SOAPHeader;
  */
 public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.SOAPEnvelope {
 
-    private org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl omSOAPEnvelope;
+    private org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl omSOAPEnvelope;
 
-    public SOAPEnvelopeImpl(final org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl envelope) {
+    public SOAPEnvelopeImpl(final org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl envelope) {
         super(envelope);
         omSOAPEnvelope = envelope;
     }

@@ -22,7 +22,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.om.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -69,7 +69,7 @@ public class SAAJUtil {
      * @param env An org.apache.axiom.soap.SOAPEnvelope instance
      * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
      */
-    public static org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl
+    public static org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl
              toDOOMSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
         env.build();
 
@@ -89,7 +89,7 @@ public class SAAJUtil {
         SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
         envelope.build();
 
-        return (org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl) envelope;
+        return (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl) envelope;
     }
 
     public static org.apache.axiom.soap.SOAPEnvelope

@@ -21,10 +21,10 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NodeImpl;
-import org.apache.axis2.om.impl.dom.TextImpl;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.om.impl.dom.TextImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -46,7 +46,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     /**
      * Using a delegate because we can't extend from
-     * org.apache.axis2.om.impl.dom.ElementImpl since this class
+     * org.apache.axiom.om.impl.dom.ElementImpl since this class
      * must extend SNodeImpl
      */
     protected ElementImpl element;

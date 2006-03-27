@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -125,7 +125,7 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage() throws SOAPException {
         final SOAPEnvelopeImpl soapEnvelope =
-                new SOAPEnvelopeImpl((org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl)
+                new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
                         new SOAP11Factory().getDefaultEnvelope());
         SOAPMessageImpl soapMessage = new SOAPMessageImpl(soapEnvelope);
         soapMessage.setSaveRequired();

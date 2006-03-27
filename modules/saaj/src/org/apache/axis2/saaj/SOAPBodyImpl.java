@@ -17,11 +17,11 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axis2.om.impl.dom.DocumentImpl;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.NamespaceImpl;
-import org.apache.axis2.om.impl.dom.NodeImpl;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11FaultImpl;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.NamespaceImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

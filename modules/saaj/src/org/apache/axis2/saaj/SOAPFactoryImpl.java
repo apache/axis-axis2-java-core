@@ -17,9 +17,9 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.impl.dom.ElementImpl;
-import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;

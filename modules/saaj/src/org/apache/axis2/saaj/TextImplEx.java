@@ -18,8 +18,8 @@ package org.apache.axis2.saaj;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.OMOutputImpl;
-import org.apache.axis2.om.DOOMAbstractFactory;
-import org.apache.axis2.om.impl.dom.TextImpl;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.TextImpl;
 import org.w3c.dom.DOMException;
 
 import javax.xml.soap.SOAPElement;

@@ -24,6 +24,10 @@ import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
 
+/**
+ * Ref: JIRA- Axis2-517
+ *
+ */
 public class SOAPNamespaceTest extends TestCase {
 
     public SOAPNamespaceTest(String arg0) {

@@ -59,7 +59,11 @@
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-
+		<dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom-dom</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
@@ -86,11 +90,6 @@
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-doom</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency> 
 
         <!-- external JARs -->
         <dependency>
