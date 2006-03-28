@@ -28,6 +28,8 @@ import org.w3c.dom.NodeList;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
     private static String TARGETNAMESPACE_STRING = "targetNamespace";
 
@@ -69,9 +71,14 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
                         break;
                     }
                 }
-                if (!targetnamespaceFound)
+                if (!targetnamespaceFound) {
+                    
+                    // if there's no targetNamespace there's probably no name, but try it anyway
+                    QName qname = schema.getName();
+                    String name = qname == null ? "unknown schema" : qname.toString();
                     throw new CodeGenerationException(
-                            CodegenMessages.getMessage("extension.invalidWSDL",schema.getName().toString()));
+                        CodegenMessages.getMessage("extension.invalidWSDL",name));
+                }
 
             }
 
