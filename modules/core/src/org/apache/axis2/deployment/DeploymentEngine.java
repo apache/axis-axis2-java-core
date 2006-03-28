@@ -449,10 +449,15 @@ public class DeploymentEngine implements DeploymentConstants {
                                 axisFault.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
                             } catch (Exception e) {
-                                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
-                                        currentArchiveFile.getName(),
-                                        e.getMessage()),
-                                        e);
+                                if (log.isInfoEnabled()) {
+                                    StringWriter sw = new StringWriter();
+                                    PrintWriter pw = new PrintWriter(sw);
+                                    e.printStackTrace(pw);
+                                    log.info(Messages.getMessage(
+                                            DeploymentErrorMsgs.INVALID_SERVICE,
+                                            currentArchiveFile.getName(),
+                                            sw.getBuffer().toString()));
+                                }
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
