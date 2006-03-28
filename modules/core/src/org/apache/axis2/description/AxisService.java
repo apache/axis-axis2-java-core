@@ -34,8 +34,6 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.writer.WOMWriter;
-import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -43,7 +41,6 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
 import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -483,20 +480,19 @@ public class AxisService extends AxisDescription {
     }
 
     private void printUsingWOM(OutputStream out, String [] serviceURL) throws AxisFault {
-        AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(),
-                this,
-                targetNamespace,
-                targetNamespacePrefix,
-                serviceURL);
+        AxisService2OM axisService2WOM = new AxisService2OM(getSchema(), this, serviceURL, "document", "literal");
         try {
-            WSDLDescription desc = axisService2WOM.generateWOM();
-
-            // populate it with policy information ..
-            PolicyUtil.populatePolicy(desc, this);
-
-            WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
-            womWriter.setdefaultWSDLPrefix("wsdl");
-            womWriter.writeWOM(desc, out);
+            OMElement wsdlElement = axisService2WOM.generateOM();
+            wsdlElement.serialize(out);
+            out.flush();
+            out.close();
+//
+//            // populate it with policy information ..
+//            PolicyUtil.populatePolicy(desc, this);
+//
+//            WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
+//            womWriter.setdefaultWSDLPrefix("wsdl");
+//            womWriter.writeWOM(desc, out);
 
         } catch (Exception e) {
             throw new AxisFault(e);

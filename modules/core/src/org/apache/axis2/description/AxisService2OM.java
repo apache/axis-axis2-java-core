@@ -1,4 +1,4 @@
-package org.apache.ws.java2wsdl;
+package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -6,12 +6,12 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.codehaus.jam.JMethod;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -27,15 +27,17 @@ import java.io.StringWriter;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @author : Deepal Jayasinghe (deepal@apache.org)
 *
 */
 
-public class Java2OMBuilder implements Constants {
+public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
 
-    private JMethod method [];
     private XmlSchema schema;
-    private String serviceName;
+
+    private AxisService axisService;
+
+    private String [] url;
+
     private String targetNamespace;
     private OMNamespace ns1;
     private OMNamespace soap;
@@ -44,16 +46,13 @@ public class Java2OMBuilder implements Constants {
 
     private String style;
     private String use;
-    private String locationURL;
 
-    public Java2OMBuilder(JMethod[] method,
-                          XmlSchema schema,
-                          String serviceName,
-                          String targetNamespace,
-                          String style,
-                          String use,
-                          String locationURL) {
-        this.method = method;
+    public AxisService2OM(XmlSchema schema, AxisService service,
+                          String [] serviceURL, String style, String use) {
+        this.schema = schema;
+        this.axisService = service;
+        url = serviceURL;
+
         this.schema = schema;
         if (style == null) {
             this.style = DOCUMNT;
@@ -65,19 +64,7 @@ public class Java2OMBuilder implements Constants {
         } else {
             this.use = use;
         }
-
-        if (locationURL == null) {
-            this.locationURL = DEFAULT_LOCATION_URL;
-        } else {
-            this.locationURL = locationURL;
-        }
-        this.serviceName = serviceName;
-
-        if (targetNamespace != null && !targetNamespace.trim().equals("")) {
-            this.targetNamespace = targetNamespace;
-        } else {
-            this.targetNamespace = DEFAULT_TARGET_NAMESPACE;
-        }
+        this.targetNamespace = service.getTargetNamespace();
     }
 
     public OMElement generateOM() throws Exception {
@@ -109,29 +96,31 @@ public class Java2OMBuilder implements Constants {
 
     private void generateMessages(OMFactory fac,
                                   OMElement defintions) {
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
+        Iterator operations = axisService.getOperations();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            String operationName = axisOperation.getName().getLocalPart();
             //Request Message
             OMElement requestMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
-            requestMessge.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName()
+            requestMessge.addAttribute(ATTRIBUTE_NAME, operationName
                     + REQUEST_MESSAGE, null);
             defintions.addChild(requestMessge);
             OMElement requestPart = fac.createOMElement(PART_ATTRIBUTE_NAME, wsdl);
             requestMessge.addChild(requestPart);
             requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
             requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                    ns1.getPrefix() + ":" + jmethod.getSimpleName()
+                    ns1.getPrefix() + ":" + operationName
                             + REQUEST, null);
             //Response Message
             OMElement responseMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
             responseMessge.addAttribute(ATTRIBUTE_NAME,
-                    jmethod.getSimpleName() + RESPONSE_MESSAGE, null);
+                    operationName + RESPONSE_MESSAGE, null);
             defintions.addChild(responseMessge);
             OMElement responsePart = fac.createOMElement(PART_ATTRIBUTE_NAME, wsdl);
             responseMessge.addChild(responsePart);
             responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
             responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                    ns1.getPrefix() + ":" + jmethod.getSimpleName() + RESPONSE, null);
+                    ns1.getPrefix() + ":" + operationName + RESPONSE, null);
         }
     }
 
@@ -142,25 +131,29 @@ public class Java2OMBuilder implements Constants {
                                   OMElement defintions) {
         OMElement portType = fac.createOMElement(PORT_TYPE_LOCAL_NAME, wsdl);
         defintions.addChild(portType);
-        portType.addAttribute(ATTRIBUTE_NAME, serviceName + PORT_TYPE_SUFFIX, null);
-        //adding message refs
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
+        portType.addAttribute(ATTRIBUTE_NAME, axisService.getName() + PORT_TYPE_SUFFIX, null);
+
+        Iterator operations = axisService.getOperations();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
+            String operationName = axisOperation.getName().getLocalPart();
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME, wsdl);
             portType.addChild(operation);
-            operation.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName(), null);
+            operation.addAttribute(ATTRIBUTE_NAME, operationName, null);
 
             OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
             input.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix() + ":"
-                    + jmethod.getSimpleName() + REQUEST_MESSAGE, null);
+                    + operationName + REQUEST_MESSAGE, null);
             operation.addChild(input);
 
             OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
             output.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix() + ":"
-                    + jmethod.getSimpleName() + RESPONSE_MESSAGE, null);
+                    + operationName + RESPONSE_MESSAGE, null);
             operation.addChild(output);
         }
-
     }
 
     /**
@@ -170,16 +163,20 @@ public class Java2OMBuilder implements Constants {
                                 OMElement defintions) {
         OMElement service = fac.createOMElement(SERVICE_LOCAL_NAME, wsdl);
         defintions.addChild(service);
-        service.addAttribute(ATTRIBUTE_NAME, serviceName, null);
-        OMElement port = fac.createOMElement(PORT, wsdl);
-        service.addChild(port);
-        port.addAttribute(ATTRIBUTE_NAME, serviceName + PORT, null);
-        port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":" +
-                serviceName + BINDING_NAME_SUFFIX, null);
-        addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION,
-                locationURL + serviceName);
-    }
+        service.addAttribute(ATTRIBUTE_NAME, axisService.getName(), null);
+        for (int i = 0; i < url.length; i++) {
+            String urlString = url[i];
+            OMElement port = fac.createOMElement(PORT, wsdl);
+            service.addChild(port);
+            port.addAttribute(ATTRIBUTE_NAME, axisService.getName() + PORT + i, null);
+            port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":" +
+                    axisService.getName() + BINDING_NAME_SUFFIX, null);
+            addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION,
+                    urlString);
+        }
 
+
+    }
 
     /**
      * Generate the bindings
@@ -188,21 +185,25 @@ public class Java2OMBuilder implements Constants {
                                  OMElement defintions) {
         OMElement binding = fac.createOMElement(BINDING_LOCAL_NAME, wsdl);
         defintions.addChild(binding);
-        binding.addAttribute(ATTRIBUTE_NAME, serviceName + BINDING_NAME_SUFFIX, null);
-        binding.addAttribute("type", tns.getPrefix() + ":" + serviceName + PORT_TYPE_SUFFIX, null);
+        binding.addAttribute(ATTRIBUTE_NAME, axisService.getName() + BINDING_NAME_SUFFIX, null);
+        binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
 
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME,
                 TRANSPORT, TRANSPORT_URI,
                 STYLE, style);
-
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
+        Iterator operations = axisService.getOperations();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
+            String opeartionName = axisOperation.getName().getLocalPart();
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME, wsdl);
             binding.addChild(operation);
             addExtensionElemnet(fac, operation, OPERATION_LOCAL_NAME,
-                    SOAP_ACTION, jmethod.getSimpleName(),
+                    SOAP_ACTION, opeartionName,
                     STYLE, style);
-            operation.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName(), null);
+            operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
 
             OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
             addExtensionElemnet(fac, input, SOAP_BODY, SOAP_USE, use, "namespace",
