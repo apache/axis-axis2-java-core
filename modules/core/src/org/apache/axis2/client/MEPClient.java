@@ -179,22 +179,14 @@ public abstract class MEPClient {
 
         String soapVersionURI = clientOptions.getSoapVersionURI();
         String soapFactory =
-                (String) clientOptions.getProperty(OMAbstractFactory.SOAP_FACTORY_NAME_PROPERTY);
+                (String) clientOptions.getProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
 
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             String factory = (String) clientOptions.getProperty(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY);
-            if (factory != null) {
-                return OMAbstractFactory.getSOAPFactory(soapFactory).getDefaultEnvelope();
-            } else {
-                return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
-            }
+            return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             String factory = (String) clientOptions.getProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
-            if (factory != null) {
-                return OMAbstractFactory.getSOAPFactory(soapFactory).getDefaultEnvelope();
-            } else {
-                return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
-            }
+            return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         } else if ("".equals(soapVersionURI) || (soapVersionURI == null)) {
             return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         } else {
