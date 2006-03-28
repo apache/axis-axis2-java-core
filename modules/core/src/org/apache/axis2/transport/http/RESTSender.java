@@ -147,23 +147,14 @@ public class RESTSender extends AbstractHTTPSender {
                                        + charEncoding);
         }
 
-        this.httpClient = new HttpClient();
+        HttpClient httpClient = getHttpClient(msgContext);
 
         HostConfiguration hostConfig = this.getHostConfiguration(httpClient, msgContext, url);
-
-        // Get the timeout values set in the runtime
-        getTimeoutValues(msgContext);
-
-        // SO_TIMEOUT -- timeout for blocking reads
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
-
-        // timeout for initial connection
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
 
         /**
          * with HostConfiguration
          */
-        this.httpClient.executeMethod(hostConfig, getMethod, null);
+        httpClient.executeMethod(hostConfig, getMethod, null);
 
         if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(getMethod, msgContext);
@@ -192,16 +183,7 @@ public class RESTSender extends AbstractHTTPSender {
 
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
-        httpClient = new HttpClient();
-
-        // Get the timeout values set in the runtime
-        getTimeoutValues(msgContext);
-
-        // SO_TIMEOUT -- timeout for blocking reads
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
-
-        // timeout for initial connection
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+        HttpClient httpClient = getHttpClient(msgContext);
 
         // todo giving proxy and NTLM support
         PostMethod postMethod = new PostMethod(url.toString());
@@ -274,7 +256,7 @@ public class RESTSender extends AbstractHTTPSender {
         try {
             HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
-            this.httpClient.executeMethod(config, postMethod);
+            httpClient.executeMethod(config, postMethod);
 
             if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
                 processResponse(postMethod, msgContext);

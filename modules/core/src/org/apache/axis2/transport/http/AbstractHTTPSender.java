@@ -19,6 +19,7 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
@@ -50,7 +51,6 @@ public abstract class AbstractHTTPSender {
     protected TransportOutDescription proxyOutSetting = null;
     protected OMOutputFormat format = new OMOutputFormat();
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
-    protected HttpClient httpClient;
 
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
@@ -469,5 +469,21 @@ public abstract class AbstractHTTPSender {
         public boolean isRepeatable() {
             return true;
         }
+    }
+
+    protected HttpClient getHttpClient(MessageContext msgContext) {
+        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+
+        HttpClient httpClient = new HttpClient(connectionManager);
+
+        // Get the timeout values set in the runtime
+        getTimeoutValues(msgContext);
+
+        // SO_TIMEOUT -- timeout for blocking reads
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+
+        // timeout for initial connection
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+        return httpClient;
     }
 }

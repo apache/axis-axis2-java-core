@@ -32,17 +32,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
-        httpClient = new HttpClient();
-
-        // Get the timeout values set in the runtime
-        getTimeoutValues(msgContext);
-
-        // SO_TIMEOUT -- timeout for blocking reads
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
-
-        // timeout for initial connection
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
-
+        HttpClient httpClient = getHttpClient(msgContext);
         PostMethod postMethod = new PostMethod(url.toString());
 
         String charEncoding =
@@ -100,7 +90,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
          */
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
-        this.httpClient.executeMethod(config, postMethod);
+        httpClient.executeMethod(config, postMethod);
 
         /*
          *   Execution is over
