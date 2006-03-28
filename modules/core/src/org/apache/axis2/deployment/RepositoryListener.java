@@ -72,7 +72,9 @@ public class RepositoryListener implements DeploymentConstants {
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
-
+                if (isSourceControlDir(file)) {
+                    continue;
+                }
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
@@ -84,6 +86,17 @@ public class RepositoryListener implements DeploymentConstants {
                 }
             }
         }
+    }
+
+
+    private boolean isSourceControlDir(File file) {
+        if (file.isDirectory()) {
+            String name = file.getName();
+            if (name.equalsIgnoreCase("CVS") || name.equalsIgnoreCase(".svn")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void loadClassPathModules() {
@@ -166,7 +179,9 @@ public class RepositoryListener implements DeploymentConstants {
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
-
+                if (isSourceControlDir(file)) {
+                    continue;
+                }
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isServiceArchiveFile(file.getName())) {
                         wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
