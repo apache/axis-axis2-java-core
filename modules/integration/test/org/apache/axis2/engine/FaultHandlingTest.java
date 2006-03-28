@@ -35,7 +35,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.wsdl.WSDLConstants;
 
@@ -51,19 +50,27 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-    }
 
-    public void testFaultHandling() throws AxisFault {
         ConfigurationContext configurationContext = UtilServer.getConfigurationContext();
         ArrayList inPhasesUptoAndIncludingPostDispatch = configurationContext.getAxisConfiguration().getGlobalInFlow();
         Phase phaseOne = (Phase) inPhasesUptoAndIncludingPostDispatch.get(0);
         phaseOne.addHandler(new FaultHandler());
+    }
 
+    public void testFaultHandlingWithParamsSetToMsgCtxt() throws AxisFault {
+        OMElement payload = getOMElement(FaultHandler.ERR_HANDLING_WITH_MSG_CTXT);
+        testFaultHandling(payload);
+    }
+
+    public void testFaultHandlingWithParamsSetToAxisFault() throws AxisFault {
+        OMElement payload = getOMElement(FaultHandler.ERR_HANDLING_WITH_AXIS_FAULT);
+        testFaultHandling(payload);
+    }
+
+    private void testFaultHandling(OMElement payload) throws AxisFault {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
-
-        OMElement payload = TestingUtils.createDummyOMElement();
 
         // test with SOAP 1.2
         Options options = new Options();
@@ -92,7 +99,10 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         assertTrue(result.indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
         assertTrue(result.indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
         assertTrue(result.indexOf(FaultHandler.FAULT_REASON) > -1);
+    }
 
+    private OMElement getOMElement(String elementLocalName) {
+        return OMAbstractFactory.getOMFactory().createOMElement(elementLocalName, null);
     }
 
     public void testTwoHeadersSOAPMessage() throws AxisFault, XMLStreamException {
@@ -113,11 +123,12 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         assertEquals(fault.getCode().getValue().getText().trim(), SOAP11Constants.FAULT_CODE_SENDER);
 
     }
-     public void testRefParamsWithFaultTo() throws AxisFault, XMLStreamException {
+
+    public void testRefParamsWithFaultTo() throws AxisFault, XMLStreamException {
         SOAPEnvelope soapEnvelope = getSOAPEnvelopeWithRefParamsInFaultTo();
         SOAPEnvelope resposeEnvelope = getResponse(soapEnvelope);
 
-         System.out.println("resposeEnvelope = " + resposeEnvelope);
+        System.out.println("resposeEnvelope = " + resposeEnvelope);
     }
 
     private SOAPEnvelope getSOAPEnvelopeWithRefParamsInFaultTo() throws XMLStreamException {

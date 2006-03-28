@@ -13,6 +13,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 
+import javax.xml.namespace.QName;
+
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
@@ -35,6 +37,9 @@ public class FaultHandler extends AbstractHandler {
     public static final String DETAIL_MORE_INFO = "This error is a result due to a fake problem in Axis2 engine. Do not worry ;)";
     public static final String M_FAULT_EXCEPTION = "m:FaultException";
 
+    public static final String ERR_HANDLING_WITH_MSG_CTXT = "ErrorHandlingWithParamsSetToMsgCtxt";
+    public static final String ERR_HANDLING_WITH_AXIS_FAULT = "ErrorHandlingWithParamsSetToAxisFault";
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         // this handler will be used to check the fault handling of Axis2.
         // this will create some dummy faults and send
@@ -42,28 +47,36 @@ public class FaultHandler extends AbstractHandler {
         SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
 
         // I have a sudden fake error ;)
-
-        SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
-        soapFaultCode.declareNamespace("http://someuri.org", "m");
-        SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
-        soapFaultValue.setText(M_FAULT_EXCEPTION);
-
-        SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
-        soapFaultText.setLang("en");
-        soapFaultText.setText(FAULT_REASON);
-        SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason();
-        soapFaultReason.setSOAPText(soapFaultText);
+        OMElement firstElement = msgContext.getEnvelope().getBody().getFirstElement();
 
         OMElement detailEntry = soapFac.createOMElement("MoreInfo", null);
         detailEntry.setText(DETAIL_MORE_INFO);
-        SOAPFaultDetail faultDetail = soapFac.createSOAPFaultDetail();
-        faultDetail.addDetailEntry(detailEntry);
 
-        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
-        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
-        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, faultDetail);
+        if (ERR_HANDLING_WITH_MSG_CTXT.equals(firstElement.getLocalName())) {
+            SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
+            soapFaultCode.declareNamespace("http://someuri.org", "m");
+            SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
+            soapFaultValue.setText(M_FAULT_EXCEPTION);
 
-        throw new AxisFault("A dummy exception has occurred");
+            SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
+            soapFaultText.setLang("en");
+            soapFaultText.setText(FAULT_REASON);
+            SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason();
+            soapFaultReason.setSOAPText(soapFaultText);
+
+
+            SOAPFaultDetail faultDetail = soapFac.createSOAPFaultDetail();
+            faultDetail.addDetailEntry(detailEntry);
+
+            msgContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
+            msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
+            msgContext.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, faultDetail);
+
+            throw new AxisFault("A dummy exception has occurred");
+        } else if (ERR_HANDLING_WITH_AXIS_FAULT.equals(firstElement.getLocalName())) {
+            throw new AxisFault(new QName(M_FAULT_EXCEPTION), FAULT_REASON, null, null, detailEntry);
+        }
+
 
     }
 }
