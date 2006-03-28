@@ -20,7 +20,7 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <name>Apache Axis 2.0 - Core</name>
+    <name>Apache Axis 2.0 - Java2WSDL</name>
     <id>axis2-java2wsdl</id>
     <groupId>axis2</groupId>
     <description>To generate WSDL file for a given Java class</description>
@@ -44,6 +44,7 @@
                 <module>true</module>
             </properties>
         </dependency>
+
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
