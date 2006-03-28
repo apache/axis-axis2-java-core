@@ -402,6 +402,11 @@
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the jibx jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- copy the addressing mar -->
         <ant:copy toDir="target/temp/war/toWEB-INF/modules">
             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
@@ -620,6 +625,7 @@
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy addressing mar -->
@@ -672,6 +678,7 @@
                 <ant:include name="**/modules/codegen/**"/>
                 <ant:include name="**/modules/webapp/**"/>
                 <ant:include name="**/modules/doom/**"/>
+                <ant:include name="**/modules/jibx/**"/>
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
@@ -798,6 +805,7 @@
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/doom/src"/>
                 <ant:pathelement location="modules/jaxws/src"/>
+                <ant:pathelement location="modules/jibx/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
                 <ant:pathelement location="modules/security/src"/>
                 <ant:pathelement location="modules/tool/src"/>
@@ -887,6 +895,7 @@
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
     </goal>
 

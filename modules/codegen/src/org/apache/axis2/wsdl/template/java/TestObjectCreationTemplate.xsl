@@ -53,6 +53,15 @@
 
     </xsl:template>
     <!-- #################################################################################  -->
+    <!-- ############################   jaxme template   ##############################  -->
+    <xsl:template match="databinders[@dbtype='jibx']">
+        // create the desired object and provide it as the test object
+        public java.lang.Object getTestObject(java.lang.Class type) throws Exception {
+            return type.newInstance();
+        }
+
+    </xsl:template>
+    <!-- #################################################################################  -->
     <!-- ############################   none template!!!   ###############################  -->
     <xsl:template match="databinders[@dbtype='none']">
         //Create an OMElement and provide it as the test object

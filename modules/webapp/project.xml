@@ -210,6 +210,14 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>jibx</groupId>
+            <artifactId>jibx-run</artifactId>
+            <version>${jibx.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 
     </dependencies>
 

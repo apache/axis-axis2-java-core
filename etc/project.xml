@@ -212,6 +212,12 @@
 			<email>stevel AT apache.org</email>
 			<organization>HP labs</organization>
 		</developer> 
+    <developer>
+        <name>Dennis Sosnoski</name>
+        <id>dsosnoski</id>
+        <email>dms AT sosnoski.com</email>
+        <organization>Sosnoski Software</organization>
+    </developer>
 	</developers>
 	<contributors>
 		<contributor>

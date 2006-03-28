@@ -62,9 +62,16 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -161,6 +168,25 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected MultiLanguageClientEmitter() {
          // put whatever is needed here
+    }
+    
+    private void debugLogDocument(String description, Document doc) {
+        if (log.isDebugEnabled()) {
+            try {
+                DOMSource source = new DOMSource(doc);
+                StringWriter swrite = new StringWriter();
+                swrite.write(description);
+                swrite.write("\n");
+                Transformer transformer =
+                    TransformerFactory.newInstance().newTransformer();
+                transformer.setOutputProperty("omit-xml-declaration", "yes");
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.transform(source, new StreamResult(swrite));
+                log.debug(swrite.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -348,7 +374,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // this.loadOperations(boundInterface, doc, rootElement, "on", "Complete");
         doc.appendChild(rootElement);
-
         return doc;
     }
 
@@ -1195,6 +1220,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // Write the service xml in a folder with the
         Document skeletonModel = createDOMDocumentForAntBuild();
+        debugLogDocument("Document for ant build:", skeletonModel);
         AntBuildWriter antBuildWriter = new AntBuildWriter(this.configuration.getOutputLocation(),
                 this.configuration.getOutputLanguage());
 
@@ -1208,6 +1234,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeCallBackHandlers() throws Exception {
         if (configuration.isAsyncOn()) {
             Document interfaceModel = createDOMDocumentForCallbackHandler();
+            debugLogDocument("Document for callback handler:", interfaceModel);
             CallbackHandlerWriter callbackWriter =
                     new CallbackHandlerWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                             this.configuration.getOutputLanguage());
@@ -1243,6 +1270,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeInterface(boolean writeDatabinders) throws Exception {
         Document interfaceModel = createDOMDocumentForInterface(writeDatabinders);
+        debugLogDocument("Document for interface:", interfaceModel);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
@@ -1259,6 +1287,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // first check for the policies in this service and write them
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
+        debugLogDocument("Document for interface implementation:", interfaceImplModel);
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(getOutputDirectory(this.configuration.getOutputLocation(), "src"),
                         this.configuration.getOutputLanguage());
@@ -1273,6 +1302,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             while (it.hasNext()) {
                 String mep = (String) it.next();
                 Document classModel = createDocumentForMessageReceiver(mep);
+                debugLogDocument("Document for message receiver:", classModel);
                 //write the class only if any methods are found
                 if (infoHolder.getProperty(mep).equals(Boolean.TRUE)) {
                     MessageReceiverWriter writer =
@@ -1295,6 +1325,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
             // Write the service xml in a folder with the
             Document serviceXMLModel = createDOMDocumentForServiceXML();
+            debugLogDocument("Document for service XML:", serviceXMLModel);
             ClassWriter serviceXmlWriter =
                     new ServiceXMLWriter(getOutputDirectory(this.configuration.getOutputLocation(), "resources"),
                             this.configuration.getOutputLanguage());
@@ -1312,6 +1343,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         // Note -  One can generate the skeleton using the interface XML
         Document skeletonModel = createDOMDocumentForSkeleton();
+        debugLogDocument("Document for skeleton:", skeletonModel);
         ClassWriter skeletonWriter = new SkeletonWriter(getOutputDirectory(this.configuration.getOutputLocation(),
                 "src"), this.configuration.getOutputLanguage());
 
@@ -1324,6 +1356,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeTestClasses() throws Exception {
         if (configuration.isWriteTestCase()) {
             Document classModel = createDOMDocumentForTestCase();
+            debugLogDocument("Document for test case:", classModel);
             TestClassWriter callbackWriter =
                     new TestClassWriter(getOutputDirectory(this.configuration.getOutputLocation(), "test"),
                             this.configuration.getOutputLanguage());
