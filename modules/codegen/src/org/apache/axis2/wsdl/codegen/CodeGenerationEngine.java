@@ -175,7 +175,8 @@ public class CodeGenerationEngine {
             Class extensionClass = getClass().getClassLoader().loadClass(className);
             return extensionClass.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
+            log.debug(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
+            return null;
         } catch (InstantiationException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.extensionInstantiationProblem"), e);
         } catch (IllegalAccessException e) {
