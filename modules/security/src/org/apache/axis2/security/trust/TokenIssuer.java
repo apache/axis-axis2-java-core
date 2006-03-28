@@ -74,4 +74,17 @@ public interface TokenIssuer {
      * @param configElement <code>OMElement</code> representing the configuation
      */
     public void setConfigurationElement(OMElement configElement);
+    
+    /**
+     * Set the name of the configuration parameter.
+     * 
+     * If this is used then there must be a 
+     * <code>org.apache.axis2.description.Parameter</code> object available in 
+     * the via the messageContext when the <code>TokenIssuer</code> is called.
+     * 
+     * @see org.apache.axis2.description.Parameter
+     * @param configParamName
+     */
+    public void setConfigurationParamName(String configParamName); 
+    
 }

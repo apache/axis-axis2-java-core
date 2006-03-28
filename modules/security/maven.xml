@@ -21,13 +21,10 @@
         <mkdir dir="target/temp-mar/META-INF"/>
         <mkdir dir="target/temp-mar/lib"/>
         
-        <copy file="src/META-INF/module.xml"
-            tofile="target/temp-mar/META-INF/module.xml"/>
-        <copy file="./test-resources/axis2.xml"
-            tofile="target/axis2.xml"/>
         <mkdir dir="target/modules"/>
 
         <!-- Copy the required content for the mar into the temp dir-->
+
         <copy todir="target/temp-mar">
             <fileset dir="target/classes">
                 <include name="**/org/apache/axis2/*/**/*.class"/>
@@ -44,16 +41,40 @@
         <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
         <copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
         
+
+		<copy file="src/META-INF/rahas-module.xml"
+            tofile="target/temp-mar/META-INF/module.xml" overwrite="true"/>
+
+        <jar jarfile="target/rahas-${security_version}.mar" basedir="target/temp-mar/">
+            <include name="**/*"/>
+        </jar>
+
+        <copy file="target/rahas-${security_version}.mar" tofile="target/modules/rahas-${security_version}.mar"/>
+        <copy file="target/rahas-${security_version}.mar" tofile="${maven.repo.local}/axis2/mars/rahas-${security_version}.mar"/>
+
+		<!-- Replace the maven.xml remove unwanted classes and create the security module -->
+
+		<copy file="src/META-INF/module.xml"
+            tofile="target/temp-mar/META-INF/module.xml" overwrite="true"/>
+        
+		<delete includeEmptyDirs="true">
+            <fileset dir="target/temp-mar/org/apache/axis2/security/rahas"/>
+			<fileset dir="target/temp-mar/org/apache/axis2/security/trust"/>
+        </delete>
+
         <jar jarfile="target/security-${security_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
+
         <copy file="target/security-${security_version}.mar" tofile="target/modules/security-${security_version}.mar"/>
         <copy file="target/security-${security_version}.mar" tofile="${maven.repo.local}/axis2/mars/security-${security_version}.mar"/>
+		
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
         </delete>
-        
-        <!-- Create the sts.aar -->
+
+        <!-- Create the sts.aar : STATRT -->
+
         <mkdir dir="target/sts"/>
         <mkdir dir="target/METS-INF"/>
         <mkdir dir="target/sts/lib"/>
@@ -79,10 +100,11 @@
         <jar jarfile="target/SecurityTokenService.aar" basedir="target/sts/">
             <include name="**/*"/>
         </jar>
-        
-	<delete includeEmptyDirs="true">
+
+		<delete includeEmptyDirs="true">
             <fileset dir="target/sts"/>
         </delete>
+        <!-- Create the sts.aar : END -->
         
     </postGoal>
 

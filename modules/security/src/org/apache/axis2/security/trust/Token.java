@@ -79,19 +79,6 @@ public class Token {
      */
     private byte[] secret;
     
-    /**
-     * @return Returns the chnaged.
-     */
-    protected boolean isChnaged() {
-        return chnaged;
-    }
-
-    /**
-     * @param chnaged The chnaged to set.
-     */
-    protected void setChnaged(boolean chnaged) {
-        this.chnaged = chnaged;
-    }
 
     /**
      * Create a new token
@@ -107,79 +94,93 @@ public class Token {
     }
 
     /**
+     * @return Returns the chnaged.
+     */
+    public boolean isChnaged() {
+        return chnaged;
+    }
+
+    /**
+     * @param chnaged The chnaged to set.
+     */
+    public void setChnaged(boolean chnaged) {
+        this.chnaged = chnaged;
+    }
+    
+    /**
      * @return Returns the properties.
      */
-    protected HashMap getProperties() {
+    public HashMap getProperties() {
         return properties;
     }
 
     /**
      * @param properties The properties to set.
      */
-    protected void setProperties(HashMap properties) {
+    public void setProperties(HashMap properties) {
         this.properties = properties;
     }
 
     /**
      * @return Returns the state.
      */
-    protected int getState() {
+    public int getState() {
         return state;
     }
 
     /**
      * @param state The state to set.
      */
-    protected void setState(int state) {
+    public void setState(int state) {
         this.state = state;
     }
 
     /**
      * @return Returns the token.
      */
-    protected OMElement getToken() {
+    public OMElement getToken() {
         return token;
     }
 
     /**
      * @param token The token to set.
      */
-    protected void setToken(OMElement token) {
+    public void setToken(OMElement token) {
         this.token = token;
     }
 
     /**
      * @return Returns the id.
      */
-    protected String getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * @return Returns the presivousToken.
      */
-    protected OMElement getPresivousToken() {
+    public OMElement getPresivousToken() {
         return presivousToken;
     }
 
     /**
      * @param presivousToken The presivousToken to set.
      */
-    protected void setPresivousToken(OMElement presivousToken) {
+    public void setPresivousToken(OMElement presivousToken) {
         this.presivousToken = presivousToken;
     }
 
     /**
      * @return Returns the secret.
      */
-    protected byte[] getSecret() {
+    public byte[] getSecret() {
         return secret;
     }
 
     /**
      * @param secret The secret to set.
      */
-    protected void setSecret(byte[] secret) {
+    public void setSecret(byte[] secret) {
         this.secret = secret;
     }
     

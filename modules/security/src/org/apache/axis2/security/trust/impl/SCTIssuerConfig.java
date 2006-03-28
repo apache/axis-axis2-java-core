@@ -31,6 +31,9 @@ public class SCTIssuerConfig {
 
     public final static QName SCT_ISSUER_CONFIG = new QName("sct-issuer-config");
     
+    public final static String SCT_ISSUER_CONFIG_PARAM = 
+                                            "sct-issuer-config-param";
+    
     protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
 
     protected String cryptoPropertiesFile = null;

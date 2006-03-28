@@ -47,4 +47,10 @@ public class TempIssuer implements TokenIssuer {
     public void setConfigurationElement(OMElement configElement) {
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationParamName(java.lang.String)
+     */
+    public void setConfigurationParamName(String configParamName) {
+    }
+
 }

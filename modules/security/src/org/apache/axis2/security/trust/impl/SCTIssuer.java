@@ -21,6 +21,7 @@ import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.SimpleTokenStore;
 import org.apache.axis2.security.trust.Token;
@@ -54,6 +55,8 @@ public class SCTIssuer implements TokenIssuer {
     private String configFile;
     
     private OMElement configElement;
+    
+    private String configParamName;
     
     /**
      * Issue a SecuritycontextToken based on the wsse:Signature or 
@@ -99,16 +102,31 @@ public class SCTIssuer implements TokenIssuer {
             SCTIssuerConfig config = null;
             if(this.configElement != null) {
                 config = SCTIssuerConfig
-                        .load(configElement.getFirstChildWithName(SCTIssuerConfig.SCT_ISSUER_CONFIG));
-            } else {
-                //Look for the file
-                if(this.configFile != null) {
-                    config = SCTIssuerConfig.load(this.configFile);
+                        .load(configElement
+                                .getFirstChildWithName(SCTIssuerConfig.SCT_ISSUER_CONFIG));
+            } 
+
+            //Look for the file
+            if(config == null && this.configFile != null) {
+                config = SCTIssuerConfig.load(this.configFile);
+            }
+            
+            //Look for the file
+            if(config == null && this.configParamName != null) {
+                Parameter param = inMsgCtx
+                        .getParameter(SCTIssuerConfig.SCT_ISSUER_CONFIG_PARAM);
+                if(param != null && param.getParameterElement() != null) {
+                    config = SCTIssuerConfig.load(param.getParameterElement());
                 } else {
-                    throw new TrustException(
-                            "missingConfiguration",
-                            new String[] { SCTIssuerConfig.SCT_ISSUER_CONFIG.getLocalPart()});
+                    throw new TrustException("expectedParameterMissing",
+                            new String[] { this.configParamName });
                 }
+            }
+            
+            if(config == null) {
+                throw new TrustException("missingConfiguration",
+                        new String[] { SCTIssuerConfig.SCT_ISSUER_CONFIG
+                                .getLocalPart() });
             }
             
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
@@ -152,8 +170,7 @@ public class SCTIssuer implements TokenIssuer {
         }
         
         SecurityContextToken sct = new SecurityContextToken(doc);
-        String sctId = "sctId-" + sct.getElement().hashCode();
-        sct.setID(sctId);
+        sct.setID("sctId-" + sct.getElement().hashCode());
         
         OMElement rstrElem = env.getOMFactory().createOMElement(
                 new QName(Constants.WST_NS, "RequestSecurityTokenResponse",
@@ -181,7 +198,7 @@ public class SCTIssuer implements TokenIssuer {
         reqProofTok.addChild((OMElement)encryptedKeyElem);
     
         //Store the tokens
-        Token sctToken = new Token(sctId, (OMElement)sct.getElement());
+        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
         this.getTokenStore(msgCtx).add(sctToken);
         
         return env;
@@ -233,6 +250,13 @@ public class SCTIssuer implements TokenIssuer {
                     TokenStorage.TOKEN_STORAGE_KEY, storage);
         }
         return storage;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationParamName(java.lang.String)
+     */
+    public void setConfigurationParamName(String configParamName) {
+        this.configParamName = configParamName;
     }
     
 }

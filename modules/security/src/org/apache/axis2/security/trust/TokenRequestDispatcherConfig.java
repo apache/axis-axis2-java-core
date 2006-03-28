@@ -37,6 +37,7 @@ public class TokenRequestDispatcherConfig {
     public final static QName DEFAULT_ATTR = new QName("default");
     
     public final static QName CONFIGURATION_FILE = new QName("configuration-file");
+    public final static QName CONFIGURATION_PARAM = new QName("configuration-param");
     public final static QName CONFIGURATION_ELEMENT = new QName("configuration");
     
     private Hashtable issuers;
@@ -44,6 +45,8 @@ public class TokenRequestDispatcherConfig {
     private Hashtable configFiles = new Hashtable();
     
     private Hashtable configElements = new Hashtable();
+
+    private Hashtable configParamNames = new Hashtable();
     
     private String defaultIssuerClassName;
     
@@ -84,6 +87,13 @@ public class TokenRequestDispatcherConfig {
             OMElement issuerConfigElement = element.getFirstChildWithName(CONFIGURATION_ELEMENT);
             if(issuerConfigElement != null) {
                 conf.configElements.put(issuerClass, issuerConfigElement);    
+            }
+
+            //Process configuration parameter name information
+            OMElement issuerParamNameElem = element.getFirstChildWithName(CONFIGURATION_ELEMENT);
+            String issuerParamName = (issuerParamNameElem != null) ? issuerParamNameElem.getText() : null;
+            if(issuerConfigElement != null) {
+                conf.configParamNames.put(issuerClass, issuerParamName);    
             }
             
             //Process token types
@@ -177,6 +187,8 @@ public class TokenRequestDispatcherConfig {
         issuer.setConfigurationElement((OMElement) this.configElements
                 .get(issuerClassName));
         issuer.setConfigurationFile((String) this.configFiles
+                .get(issuerClassName));
+        issuer.setConfigurationParamName((String) this.configParamNames
                 .get(issuerClassName));
         return issuer;
     }
