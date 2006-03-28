@@ -20,6 +20,7 @@ import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
@@ -472,10 +473,19 @@ public abstract class AbstractHTTPSender {
     }
 
     protected HttpClient getHttpClient(MessageContext msgContext) {
-        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
-
-        HttpClient httpClient = new HttpClient(connectionManager);
-
+        HttpClient httpClient = null;
+        Boolean reuse = (Boolean) msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
+        if(reuse != null && reuse.booleanValue()) {
+            httpClient = (HttpClient) msgContext.getConfigurationContext().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+            if(httpClient == null){
+                MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+                httpClient = new HttpClient(connectionManager);
+                msgContext.getConfigurationContext().setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
+            }
+        } else {
+            httpClient = new HttpClient();
+        }
+        
         // Get the timeout values set in the runtime
         getTimeoutValues(msgContext);
 
@@ -485,5 +495,11 @@ public abstract class AbstractHTTPSender {
         // timeout for initial connection
         httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
         return httpClient;
+    }
+
+    protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url, HttpMethod method) throws IOException {
+        HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
+        msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+        httpClient.executeMethod(config, method);
     }
 }

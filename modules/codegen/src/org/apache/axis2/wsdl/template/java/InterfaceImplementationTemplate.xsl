@@ -285,6 +285,9 @@
                 <xsl:choose>
                     <xsl:when test="$style='doc'">
                            java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+                          
+                           _messageContext.getTransportOut().getSender().cleanUp(_messageContext);
+
                            return (<xsl:value-of select="$outputtype"/>)object;
                     </xsl:when>
                     <xsl:otherwise>

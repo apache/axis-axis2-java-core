@@ -148,13 +148,7 @@ public class RESTSender extends AbstractHTTPSender {
         }
 
         HttpClient httpClient = getHttpClient(msgContext);
-
-        HostConfiguration hostConfig = this.getHostConfiguration(httpClient, msgContext, url);
-
-        /**
-         * with HostConfiguration
-         */
-        httpClient.executeMethod(hostConfig, getMethod, null);
+        executeMethod(httpClient, msgContext, url, getMethod);
 
         if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(getMethod, msgContext);
@@ -254,9 +248,7 @@ public class RESTSender extends AbstractHTTPSender {
          * main excecution takes place..
          */
         try {
-            HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
-
-            httpClient.executeMethod(config, postMethod);
+            executeMethod(httpClient, msgContext, url, postMethod);
 
             if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
                 processResponse(postMethod, msgContext);

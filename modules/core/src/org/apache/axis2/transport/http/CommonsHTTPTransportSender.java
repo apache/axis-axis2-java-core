@@ -49,7 +49,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     private static final long serialVersionUID = 7929963795196215199L;
     protected static final String PROXY_HOST_NAME = "proxy_host";
     protected static final String PROXY_PORT = "proxy_port";
-    public static final String HTTP_METHOD = "HTTP_METHOD";
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     /**
@@ -68,7 +67,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
     public void cleanUp(MessageContext msgContext) throws AxisFault {
         HttpMethod httpMethod =
-                (HttpMethod) msgContext.getProperty(HTTP_METHOD);
+                (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
 
         if (httpMethod != null) {
             httpMethod.releaseConnection();

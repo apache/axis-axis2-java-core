@@ -408,6 +408,21 @@ public class HTTPConstants {
     public static final String CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
 
     /**
+     * Field CACHED_HTTP_CLIENT
+     */
+    public static final String CACHED_HTTP_CLIENT = "CACHED_HTTP_CLIENT";
+
+    /**
+     * Field CACHED_HTTP_CLIENT
+     */
+    public static final String REUSE_HTTP_CLIENT = "REUSE_HTTP_CLIENT";
+
+    /**
+     * Field HTTP_METHOD
+     */
+    public static final String HTTP_METHOD = "HTTP_METHOD";
+    
+    /**
      * Method getBytes.
      *
      * @param data

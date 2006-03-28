@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -73,13 +74,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         if (httpVersion != null) {
             if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
                 httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
-//                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-//                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
             } else {
-
-                // allowing keep-alive for 1.1
-//                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-//                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
                 postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
                         HTTPConstants.HEADER_EXPECT_100_Continue);
             }
@@ -88,9 +83,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         /*
          *   main excecution takes place..
          */
-        HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
-
-        httpClient.executeMethod(config, postMethod);
+        executeMethod(httpClient, msgContext, url, postMethod);
 
         /*
          *   Execution is over
