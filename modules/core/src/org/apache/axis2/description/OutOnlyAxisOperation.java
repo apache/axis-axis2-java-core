@@ -315,7 +315,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();
             senderTransport = ClientUtils.inferOutTransport(cc
-                    .getAxisConfiguration(), toEPR);
+                    .getAxisConfiguration(), toEPR,mc);
         }
         mc.setTransportOut(senderTransport);
 

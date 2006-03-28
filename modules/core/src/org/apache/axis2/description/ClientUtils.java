@@ -5,6 +5,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
@@ -18,24 +19,35 @@ import java.util.Iterator;
 public class ClientUtils {
 
     public static synchronized TransportOutDescription inferOutTransport(AxisConfiguration ac,
-                                                            EndpointReference epr) throws AxisFault {
-        if (epr == null || (epr.getAddress() == null)) {
-            throw new AxisFault(Messages.getMessage("cannotInferTransport"));
-        }
-
-        String uri = epr.getAddress();
-        int index = uri.indexOf(':');
-        String transport = (index > 0) ? uri.substring(0, index) : null;
-        if (transport != null) {
-            return ac.getTransportOut(new QName(transport));
+                                                                         EndpointReference epr,
+                                                                         MessageContext msgctx) throws AxisFault {
+        String transportURI = (String) msgctx.getProperty(MessageContextConstants.TRANSPORT_URL);
+        if (transportURI != null && !"".equals(transportURI)) {
+            int index = transportURI.indexOf(':');
+            String transport = (index > 0) ? transportURI.substring(0, index) : null;
+            if (transport != null) {
+                return ac.getTransportOut(new QName(transport));
+            } else {
+                throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+            }
         } else {
-            throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+            if (epr == null || (epr.getAddress() == null)) {
+                throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+            }
+            String uri = epr.getAddress();
+            int index = uri.indexOf(':');
+            String transport = (index > 0) ? uri.substring(0, index) : null;
+            if (transport != null) {
+                return ac.getTransportOut(new QName(transport));
+            } else {
+                throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+            }
         }
     }
 
     public static synchronized TransportInDescription inferInTransport(AxisConfiguration ac,
-                                                          Options options,
-                                                          MessageContext msgCtxt) throws AxisFault {
+                                                                       Options options,
+                                                                       MessageContext msgCtxt) throws AxisFault {
         String listenerTransportProtocol = options.getTransportInProtocol();
         TransportInDescription transportIn = null;
         if (options.isUseSeparateListener()) {
