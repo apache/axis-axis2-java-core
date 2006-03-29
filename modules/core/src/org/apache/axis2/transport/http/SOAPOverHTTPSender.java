@@ -9,11 +9,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 

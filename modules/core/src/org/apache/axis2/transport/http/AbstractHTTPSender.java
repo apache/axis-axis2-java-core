@@ -5,6 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
@@ -36,6 +37,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
     protected static final String ANONYMOUS = "anonymous";
@@ -229,6 +231,21 @@ public abstract class AbstractHTTPSender {
         obtainHTTPHeaderInformation(httpMethod, msgContext);
 
         InputStream in = httpMethod.getResponseBodyAsStream();
+
+        Header contentEncoding =
+            httpMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
+        if (contentEncoding != null) {
+            if (contentEncoding.getValue().
+                    equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
+                in =
+                    new GZIPInputStream(in);
+            } else {
+                throw new AxisFault("HTTP :"
+                        + "unsupported content-encoding of '"
+                        + contentEncoding.getValue()
+                        + "' found");
+            }
+        }
 
         if (in == null) {
             throw new AxisFault(
@@ -485,7 +502,7 @@ public abstract class AbstractHTTPSender {
         } else {
             httpClient = new HttpClient();
         }
-        
+
         // Get the timeout values set in the runtime
         getTimeoutValues(msgContext);
 
@@ -500,6 +517,17 @@ public abstract class AbstractHTTPSender {
     protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url, HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
         msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+
+        // add compression headers if needed
+        if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_ACCEPT_GZIP)) {
+            method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
+                    HTTPConstants.COMPRESSION_GZIP);
+        }
+        if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_GZIP_REQUEST)) {
+            method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                    HTTPConstants.COMPRESSION_GZIP);
+        }
+
         httpClient.executeMethod(config, method);
     }
 }

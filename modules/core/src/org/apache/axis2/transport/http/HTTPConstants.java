@@ -421,7 +421,25 @@ public class HTTPConstants {
      * Field HTTP_METHOD
      */
     public static final String HTTP_METHOD = "HTTP_METHOD";
-    
+
+    public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+    public static final String HEADER_CONTENT_ENCODING = "Content-Encoding";
+
+    public static final String COMPRESSION_GZIP = "gzip";
+
+    /**
+     * If you want the HTTP sender to indicate that it can accept a gziped
+     * response, set this message context property to true. The sender will
+     * automatically unzip the response if its gzipped.
+     */
+    public static final String MC_ACCEPT_GZIP = "transport.http.acceptGzip";
+
+    /**
+     * by default the HTTP request body is not compressed. set this message
+     * context property to true to have the request body gzip compressed.
+     */
+    public static final String MC_GZIP_REQUEST = "transport.http.gzipRequest";
+
     /**
      * Method getBytes.
      *

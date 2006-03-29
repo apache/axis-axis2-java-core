@@ -339,4 +339,12 @@ public class Utils {
         }
         messageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
     }
+
+    public static boolean isExplicitlyTrue(MessageContext messageContext, String propertyName) {
+        Boolean flag = (Boolean) messageContext.getProperty(propertyName);
+        if(flag != null) {
+            return flag.booleanValue();
+        }
+        return false;
+    }
 }
