@@ -24,8 +24,15 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.trust.TokenStorage;
+import org.apache.axis2.security.util.Axis2Util;
+import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.components.crypto.Crypto;
+import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.wsdl.WSDLConstants;
+import org.w3c.dom.Document;
 
+import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
 
 import java.util.Hashtable;
@@ -55,6 +62,9 @@ public class RahasConfiguration {
     
     public final static QName CRYPTO_PROPERTIES_FILE = new QName(
             "cryptoProperties");
+    
+    public final static QName PW_CALLBACK_CLASS = new QName(
+            WSHandlerConstants.PW_CALLBACK_CLASS);
     
     private String scope = SCOPE_SERVICE;
     
@@ -100,30 +110,62 @@ public class RahasConfiguration {
      */
     private String cryptoPropertiesFile;
     
+    private String passwordCallbackClass;
+    
+    /**
+     * WSPasswordCallback handler reference
+     */
+    private CallbackHandler passwordCallbackRef;
+    
+    /**
+     * Whether this configuration instance is created/used by the sender 
+     * handler or not
+     */
     private boolean sender;
     
+    private Document doc;
+    
+    private Crypto crypto;
+    
+    private ClassLoader classLoader;
+    
+    private SecurityContextToken sct;
+    
     public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
-            throws RahasException, AxisFault {
+            throws RahasException, WSSecurityException, AxisFault {
         Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
+        if(param == null) {
+            param = (Parameter)msgCtx.getProperty(RAHAS_CONFIG);
+        }
         if(param != null) {
             OMElement elem = param.getParameterElement();
-            if(elem != null && elem.getLocalName().equals(RAHAS_CONFIG)) {
+            if (elem != null
+                    && elem.getFirstElement() != null
+                    && elem.getFirstElement().getLocalName().equals(
+                            RAHAS_CONFIG)) {
+                
+                OMElement conFileElem = elem.getFirstElement();
                 
                 RahasConfiguration config = new RahasConfiguration();
                 
-                config.scope = getStringValue(elem.getFirstChildWithName(SCOPE));
+                config.msgCtx = msgCtx;
                 
-                config.stsEPRAddress = getStringValue(elem
+                config.scope = getStringValue(conFileElem.getFirstChildWithName(SCOPE));
+                
+                config.stsEPRAddress = getStringValue(conFileElem
                         .getFirstChildWithName(STS_EPR_ADDRESS));
 
-                config.keyDerivationAlgorithmClass = getStringValue(elem
+                config.keyDerivationAlgorithmClass = getStringValue(conFileElem
                         .getFirstChildWithName(KEY_DERIVATION_ALGORITHM_CLASS));
                 
-                config.tokenStoreClass = getStringValue(elem
+                config.tokenStoreClass = getStringValue(conFileElem
                         .getFirstChildWithName(TOKEN_STORE_CLASS));
                 
-                config.cryptoPropertiesFile = getStringValue(elem
+                config.cryptoPropertiesFile = getStringValue(conFileElem
                         .getFirstChildWithName(CRYPTO_PROPERTIES_FILE));
+
+                config.passwordCallbackClass = getStringValue(conFileElem
+                        .getFirstChildWithName(PW_CALLBACK_CLASS));
                 
                 //Get the action<->ctx-identifier map
                 config.contextMap = (Hashtable) msgCtx
@@ -154,7 +196,7 @@ public class RahasConfiguration {
                         MessageContext inMsgCtx;
                         RahasConfiguration inConfig = null;
                         if(opCtx != null && (inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
-                            inConfig = (RahasConfiguration)inMsgCtx.getProperty(RahasHandlerConstants.RAHAS_CONFIG_KEY);
+                            inConfig = (RahasConfiguration)inMsgCtx.getProperty(RAHAS_CONFIG);
                         }
                         if(inConfig != null && inConfig.contextIdentifier != null) {
                             config.contextIdentifier = inConfig.contextIdentifier;
@@ -171,7 +213,14 @@ public class RahasConfiguration {
                 config.cryptoClassName = (String) msgCtx
                         .getProperty(RahasHandlerConstants.CRYPTO_CLASS_KEY);
                 
+                config.passwordCallbackRef = (CallbackHandler)msgCtx
+                        .getProperty(WSHandlerConstants.PW_CALLBACK_REF);
+                
                 config.sender = sender;
+                
+                //Convert the Envelop to DOOM
+                config.doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
+                
                 return config;
             } else {
                 throw new RahasException("missingConfiguration",
@@ -185,19 +234,13 @@ public class RahasConfiguration {
     }
 
     /**
-     * @param scopeElem
+     * @param elem
      * @throws RahasException
      */
-    private static String getStringValue(OMElement scopeElem) throws RahasException {
-        if(scopeElem != null) {
-            String tempScope = scopeElem.getText();
-            if(tempScope != null && 
-                   (SCOPE_SERVICE.equals(tempScope) || 
-                   SCOPE_OPERATION.equals(tempScope))) {
-                return tempScope;
-            } else {
-                throw new RahasException("missingScopeValue");
-            }
+    private static String getStringValue(OMElement elem) throws RahasException {
+        if(elem != null) {
+            String tempVal = elem.getText();
+            return tempVal;
         }
         return null;
     }
@@ -206,20 +249,36 @@ public class RahasConfiguration {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement elem = factory.createOMElement(RAHAS_CONFIG, null);
         if (this.scope != null) {
-            factory.createOMElement(SCOPE, elem).setText(this.scope);
+            OMElement tempElem = factory.createOMElement(SCOPE, elem);
+            tempElem.setText(this.scope);
+            elem.addChild(tempElem);
         }
         if (this.stsEPRAddress != null) {
-            factory.createOMElement(STS_EPR_ADDRESS, elem).setText(
-                    this.stsEPRAddress);
+            OMElement tempElem = factory.createOMElement(STS_EPR_ADDRESS, elem);
+            tempElem.setText(this.stsEPRAddress);
+            elem.addChild(tempElem);
         }
         if (this.derivedKeyLength != null) {
-            factory.createOMElement(DERIVED_KEY_LENGTH, elem).setText(
-                    this.derivedKeyLength);
+            OMElement tempElem = factory.createOMElement(DERIVED_KEY_LENGTH, elem);
+            tempElem.setText(this.derivedKeyLength);
+            elem.addChild(tempElem);
         }
         if (this.keyDerivationAlgorithmClass != null) {
-            factory.createOMElement(KEY_DERIVATION_ALGORITHM_CLASS, elem)
-                    .setText(this.keyDerivationAlgorithmClass);
+            OMElement tempElem = factory.createOMElement(KEY_DERIVATION_ALGORITHM_CLASS, elem);
+            tempElem.setText(this.keyDerivationAlgorithmClass);
+            elem.addChild(tempElem);
         }
+        if (this.passwordCallbackClass != null) {
+            OMElement tempElem = factory.createOMElement(PW_CALLBACK_CLASS, elem);
+            tempElem.setText(this.passwordCallbackClass);
+            elem.addChild(tempElem);
+        }
+        if(this.cryptoPropertiesFile != null) {
+            OMElement tempElem = factory.createOMElement(CRYPTO_PROPERTIES_FILE, elem);
+            tempElem.setText(this.cryptoPropertiesFile);
+            elem.addChild(tempElem);
+        }
+        
         return elem;
     }
     
@@ -410,6 +469,83 @@ public class RahasConfiguration {
      */
     protected boolean isSender() {
         return sender;
+    }
+
+    /**
+     * @return Returns the doc.
+     */
+    protected Document getDocument() {
+        return doc;
+    }
+
+    /**
+     * @param doc The doc to set.
+     */
+    protected void setDocument(Document doc) {
+        this.doc = doc;
+    }
+
+    /**
+     * @return Returns the passwordCallbackClass.
+     */
+    public String getPasswordCallbackClass() {
+        return passwordCallbackClass;
+    }
+
+    /**
+     * @return Returns the passwordCallbackRef.
+     */
+    public CallbackHandler getPasswordCallbackRef() {
+        return passwordCallbackRef;
+    }
+
+    /**
+     * @return Returns the crypto.
+     */
+    protected Crypto getCrypto() {
+        return crypto;
+    }
+
+    /**
+     * @param crypto The crypto to set.
+     */
+    protected void setCrypto(Crypto crypto) {
+        this.crypto = crypto;
+    }
+
+    /**
+     * @return Returns the classLoader.
+     */
+    protected ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    /**
+     * @param classLoader The classLoader to set.
+     */
+    protected void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    /**
+     * @return Returns the sct.
+     */
+    protected SecurityContextToken getSecurityContextToken() {
+        return sct;
+    }
+
+    /**
+     * @param sct The sct to set.
+     */
+    protected void setSecurityContextToken(SecurityContextToken sct) {
+        this.sct = sct;
+    }
+
+    /**
+     * @param passwordCallbackClass The passwordCallbackClass to set.
+     */
+    public void setPasswordCallbackClass(String passwordCallbackClass) {
+        this.passwordCallbackClass = passwordCallbackClass;
     }
     
 }

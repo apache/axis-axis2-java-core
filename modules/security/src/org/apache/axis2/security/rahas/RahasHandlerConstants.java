@@ -52,11 +52,4 @@ public interface RahasHandlerConstants {
      */
     public final static String CRYPTO_CLASS_KEY = "cryptoClass";
     
-    /**
-     * Rahas Configuration of a certain message will be held in the message 
-     * context using this key
-     * @see RahasConfiguration
-     */
-    public final static String RAHAS_CONFIG_KEY = "rahasConfiguration";
-    
 }

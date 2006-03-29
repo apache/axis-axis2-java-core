@@ -17,6 +17,7 @@
 package org.apache.axis2.security.util;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -174,4 +175,19 @@ public class Axis2Util {
 			factory.setNamespaceAware(true);
 			return factory.newDocumentBuilder().parse(bais).getDocumentElement();
 	}
+    
+    /**
+     * This will build a DOOM Element that is of the same <code>Document</code>
+     * @param factory
+     * @param element
+     * @return
+     * @throws Exception
+     */
+    public static OMElement toDOOM(OMFactory factory, OMElement element) throws Exception {
+        StAXOMBuilder builder = new StAXOMBuilder(factory, element.getXMLStreamReader());
+        OMElement elem = builder.getDocumentElement();
+        elem.build();
+        return elem;
+    }
+    
 }

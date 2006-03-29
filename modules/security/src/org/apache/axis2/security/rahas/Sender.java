@@ -16,26 +16,22 @@
 
 package org.apache.axis2.security.rahas;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.security.trust.Token;
-import org.apache.axis2.security.util.Axis2Util;
+import org.apache.axis2.security.WSDoAllSender;
+import org.apache.axis2.security.trust.Constants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.components.crypto.Crypto;
-import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.message.WSSecDKEncrypt;
 import org.apache.ws.security.message.WSSecHeader;
-import org.apache.ws.security.message.WSSecSecurityContextToken;
+import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-
-import java.security.SecureRandom;
 
 /**
  * Rahas outflow handler
@@ -49,22 +45,33 @@ public class Sender implements Handler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         
         try {
+            System.out.println(msgContext.getWSAAction());
+            if(Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction())) {
+                WSDoAllSender secSender = new WSDoAllSender();
+                secSender.init(this.handlerDescription);
+                secSender.invoke(msgContext);
+                return;
+            }
+            
             //Parse the configuration
             RahasConfiguration config = RahasConfiguration.load(msgContext, true);
+
+            if(config.getContextIdentifier() == null && config.getStsEPRAddress() != null) {
+
+                String sts = config.getStsEPRAddress();
+                if(sts != null) { 
+                  //Use a security token service
+                  STSRequester.issueRequest(config);
+                } else {
+                    //Create a token
+                }
+                
+                
+                
+            }
+            
             
 
-            if(config.getContextIdentifier() != null) {
-                
-            } else {
-                this.constructMessage(config);
-            }
-            
-            
-            String sts = config.getStsEPRAddress();
-            
-            if(sts != null) { //Use a security token service
-                
-            }
             
             
             
@@ -85,32 +92,17 @@ public class Sender implements Handler {
         
         DocumentBuilderFactoryImpl.setDOOMRequired(true);
         
-        Crypto crypto = null;
-        if (config.getCryptoClassName() != null) {
-            //we can let the crypto properties be null since there can be a 
-            //crypto impl that doesn't use any expernal properties
-            crypto = CryptoFactory.getInstance(config.getCryptoClassName(),
-                    config.getCryptoProperties());
-        } else if (config.getCryptoPropertiesFile() != null) {
-            crypto = CryptoFactory
-                    .getInstance(config.getCryptoPropertiesFile());
-        }
+        Crypto crypto = Util.getCryptoInstace(config);
         
-        //convert the envelope to DOOM
-        Document doc = Axis2Util.getDocumentFromSOAPEnvelope(config.getMsgCtx()
-                .getEnvelope(), false);
+        Document doc = config.getDocument();
         
         WSSecHeader secHeader = new WSSecHeader();
         secHeader.insertSecurityHeader(doc);
+        
+        byte[] tempSecret = config.getTokenStore().getToken(
+                config.getContextIdentifier()).getSecret();
 
-        WSSecSecurityContextToken sctBuilder = new WSSecSecurityContextToken();
-        sctBuilder.prepare(doc, crypto);
-
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        byte[] tempSecret = new byte[16];
-        random.nextBytes(tempSecret);
-
-        String tokenId = sctBuilder.getSctId();
+        String tokenId = config.getSecurityContextToken().getID();
 
         // Derived key encryption
         WSSecDKEncrypt encrBuilder = new WSSecDKEncrypt();
@@ -118,17 +110,8 @@ public class Sender implements Handler {
         encrBuilder.setExternalKey(tempSecret, tokenId);
         encrBuilder.build(doc, crypto, secHeader);
 
-        sctBuilder.prependSCTElementToHeader(doc, secHeader);
-        
-        Token tok = new Token(sctBuilder.getIdentifier(), (OMElement) sctBuilder
-                .getSct().getElement());
-        
-        tok.setSecret(tempSecret);
-        
-        config.getTokenStore().add(tok);
-        
-        
-        
+        WSSecurityUtil.prependChildElement(doc, secHeader.getSecurityHeader(),
+                config.getSecurityContextToken().getElement(), false);
     }
     
     

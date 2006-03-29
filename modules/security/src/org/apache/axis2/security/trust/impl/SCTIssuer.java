@@ -173,11 +173,13 @@ public class SCTIssuer implements TokenIssuer {
         sct.setID("sctId-" + sct.getElement().hashCode());
         
         OMElement rstrElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS, "RequestSecurityTokenResponse",
+                new QName(Constants.WST_NS,
+                        Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
                         Constants.WST_PREFIX), env.getBody());
-        
+
         OMElement rstElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS, "RequestSecurityToken",
+                new QName(Constants.WST_NS,
+                        Constants.REQUESTED_SECURITY_TOKEN_LN,
                         Constants.WST_PREFIX), rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
@@ -188,7 +190,7 @@ public class SCTIssuer implements TokenIssuer {
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
         
         OMElement reqProofTok = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS, "RequestedProofToken",
+                new QName(Constants.WST_NS, Constants.REQUESTED_PROOF_TOKEN_LN,
                         Constants.WST_PREFIX), rstrElem);
         
         if(bstElem != null) {

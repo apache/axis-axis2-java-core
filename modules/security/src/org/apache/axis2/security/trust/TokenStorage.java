@@ -77,4 +77,12 @@ public interface TokenStorage {
      */
     public ArrayList getCancelledTokens() throws TrustException;
     
+    /**
+     * Returns the <code>Token</code> of the given id
+     * @param id
+     * @return
+     * @throws TrustException
+     */
+    public Token getToken(String id) throws TrustException;
+    
 }

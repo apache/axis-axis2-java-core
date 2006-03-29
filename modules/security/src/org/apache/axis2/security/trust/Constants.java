@@ -23,6 +23,11 @@ public interface Constants {
     
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";
+    public final static String REQUEST_SECURITY_TOKEN_LN = "RequestSecurityToken";
+    public static final String REQUESTED_PROOF_TOKEN_LN = "RequestedProofToken";
+    public static final String REQUEST_SECURITY_TOKEN_RESPONSE_LN = "RequestSecurityTokenResponse";
+    public static final String REQUESTED_SECURITY_TOKEN_LN = "RequestedSecurityToken";
+    public final static String BINARY_SECRET = "BinarySecret";
     
     //RequestTypes
     public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";

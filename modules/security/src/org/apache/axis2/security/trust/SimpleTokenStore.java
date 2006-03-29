@@ -110,4 +110,8 @@ public class SimpleTokenStore implements TokenStorage {
         }
              
     }
+
+    public Token getToken(String id) throws TrustException {
+        return (Token)this.tokens.get(id);
+    }
 }
