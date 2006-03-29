@@ -20,8 +20,10 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.zip.GZIPOutputStream;
 
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
@@ -169,6 +171,10 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
         public void writeRequest(OutputStream out) throws IOException {
+            Boolean gzip = (Boolean) msgCtxt.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
+            if(gzip != null && gzip.booleanValue() && chunked) {
+                out = new GZIPOutputStream(out);
+            }
             try {
                 if (chunked) {
                     this.handleOMOutput(out, doingMTOM);
@@ -180,6 +186,9 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                     out.write(bytes);
                 }
 
+                if(out instanceof GZIPOutputStream){
+                    ((GZIPOutputStream)out).finish();
+                }
                 out.flush();
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);

@@ -49,8 +49,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class HTTPTransportUtils {
 
@@ -166,6 +168,14 @@ public class HTTPTransportUtils {
         boolean soap11 = false;
 
         try {
+
+            Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+            if(headers != null) {
+                if(HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING))||
+                   HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase()))){
+                    in = new GZIPInputStream(in);
+                }
+            }
 
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.startsWith("\"")
@@ -291,6 +301,8 @@ public class HTTPTransportUtils {
             throw new AxisFault(e);
         } catch (AxisFault e) {
             throw e;
+        } catch (IOException e) {
+            throw new AxisFault(e);
         } catch (OMException e) {
             throw new AxisFault(e);
         } catch (XMLStreamException e) {
