@@ -231,6 +231,10 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
         return forceTree().getText();
     }
 
+    public QName getTextAsQName() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMElement#getLocalName()
      */
