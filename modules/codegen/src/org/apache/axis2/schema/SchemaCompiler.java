@@ -1,10 +1,9 @@
 package org.apache.axis2.schema;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
+
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -33,6 +32,8 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -98,10 +99,10 @@ public class SchemaCompiler {
     public static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
-    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.axiom.om.OMElement[]";
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.ws.commons.om.OMElement[]";
 
     public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
-    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.axiom.om.OMAttribute[]";
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.ws.commons.om.OMAttribute[]";
 
 
     private static int typeCounter = 0;
@@ -381,7 +382,8 @@ public class SchemaCompiler {
                         //set a name
                         schemaType.setName(generatedTypeName.getLocalPart());
                         writeComplexType((XmlSchemaComplexType)schemaType,
-                                (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(xsElt));
+                                (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(xsElt),
+                                null);
                         //remove the reference from the anon list since we named the type
                         processedAnonymousComplexTypesMap.remove(xsElt);
                         innerElementMap.put(
@@ -423,7 +425,8 @@ public class SchemaCompiler {
                     referenceSchemaType.setName(generatedTypeName.getLocalPart());
 
                     writeComplexType((XmlSchemaComplexType)referenceSchemaType,
-                            (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement));
+                            (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement),
+                            null);
                     //remove the reference from the anon list since we named the type
                     processedAnonymousComplexTypesMap.remove(referencedElement);
 
@@ -601,11 +604,15 @@ public class SchemaCompiler {
             return;
         }
 
+        // Must do this up front to support recursive types
+        String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(complexType.getQName());
+        processedTypemap.put(complexType.getQName(), fullyQualifiedClassName);
+
         BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType,parentSchema);
 
         //write the class. This type mapping would have been populated right now
         //Note - We always write classes for named complex types
-        writeComplexType(complexType, metaInfHolder);
+        writeComplexType(complexType, metaInfHolder, fullyQualifiedClassName);
 
 
     }
@@ -614,12 +621,12 @@ public class SchemaCompiler {
      * Writes a complex type
      * @param complexType
      * @param metaInfHolder
+     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws SchemaCompilationException
      */
-    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
-        String fullyQualifiedClassName = writer.write(complexType, processedTypemap, metaInfHolder);
-        //populate the type map with the type QName
-        processedTypemap.put(complexType.getQName(), fullyQualifiedClassName);
+    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder, String fullyQualifiedClassName)
+    throws SchemaCompilationException {
+        writer.write(complexType, processedTypemap, metaInfHolder, fullyQualifiedClassName);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
     }
 

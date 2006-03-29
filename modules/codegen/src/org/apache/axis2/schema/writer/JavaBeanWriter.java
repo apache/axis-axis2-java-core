@@ -143,7 +143,7 @@ public class JavaBeanWriter implements BeanWriter {
         try {
             QName qName = element.getQName();
 
-            return process(qName, metainf, typeMap, true);
+            return process(qName, metainf, typeMap, true, null);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -155,16 +155,18 @@ public class JavaBeanWriter implements BeanWriter {
      * @param complexType
      * @param typeMap
      * @param metainf
+     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws org.apache.axis2.schema.SchemaCompilationException
      *
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf, String fullyQualifiedClassName)
+    throws SchemaCompilationException {
 
         try {
             //determine the package for this type.
             QName qName = complexType.getQName();
-            return process(qName, metainf, typeMap, false);
+            return process(qName, metainf, typeMap, false, fullyQualifiedClassName);
 
         } catch (SchemaCompilationException e) {
             throw e;
@@ -228,19 +230,11 @@ public class JavaBeanWriter implements BeanWriter {
     }
 
 
-    /**
-     * A util method that holds common code
-     * for the complete schema that the generated XML complies to
-     * look under other/beanGenerationSchema.xsd
-     *
-     * @param qName
-     * @param metainf
-     * @param typeMap
-     * @param isElement
-     * @return Returns String.
-     * @throws Exception
+    /** Make the fully qualified class name for an element or named type
+     * @param qName the qualified Name for this element or type in the schema
+     * @return the appropriate fully qualified class name to use in generated code
      */
-    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
+    public String makeFullyQualifiedClassName(QName qName) {
 
         String nameSpaceFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
 
@@ -254,6 +248,45 @@ public class JavaBeanWriter implements BeanWriter {
         String packagePrefix = null;
 
         String fullyqualifiedClassName;
+        if (wrapClasses)
+            packagePrefix =  (this.packageName == null ? DEFAULT_PACKAGE+"." : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME;
+        else if (writeClasses)
+            packagePrefix = packageName;
+        if (packagePrefix!=null)
+            fullyqualifiedClassName = packagePrefix + (packagePrefix.endsWith(".")?"":".") + className;
+        else
+            fullyqualifiedClassName = className;
+        //return the fully qualified class name
+        return fullyqualifiedClassName;
+    }
+    
+    /**
+     * A util method that holds common code
+     * for the complete schema that the generated XML complies to
+     * look under other/beanGenerationSchema.xsd
+     *
+     * @param qName
+     * @param metainf
+     * @param typeMap
+     * @param isElement
+     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
+     * @return Returns String.
+     * @throws Exception
+     */
+    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement, String fullyQualifiedClassName) throws Exception {
+        
+        if (fullyQualifiedClassName == null)
+            fullyQualifiedClassName = makeFullyQualifiedClassName(qName);
+        String className = fullyQualifiedClassName.substring(1+fullyQualifiedClassName.lastIndexOf('.'));
+
+        String nameSpaceFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
+
+        String packageName = this.packageName == null ?
+                nameSpaceFromURL :
+                this.packageName + nameSpaceFromURL;
+
+        String originalName = qName.getLocalPart();
+
         ArrayList propertyNames = new ArrayList();
 
         if (!templateLoaded) {
@@ -266,7 +299,6 @@ public class JavaBeanWriter implements BeanWriter {
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
             );
-            packagePrefix =  (this.packageName == null ? DEFAULT_PACKAGE+"." : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME;
 
         } else {
             //create the model
@@ -279,8 +311,6 @@ public class JavaBeanWriter implements BeanWriter {
                 File out = createOutFile(packageName, className);
                 //parse with the template and create the files
                 parse(model, out);
-
-                packagePrefix = packageName ;
             }
 
             //add the model to the model map
@@ -291,13 +321,8 @@ public class JavaBeanWriter implements BeanWriter {
 
         }
 
-        if (packagePrefix!=null){
-            fullyqualifiedClassName = packagePrefix + (packagePrefix.endsWith(".")?"":".") + className;
-        }else{
-            fullyqualifiedClassName = className;
-        }
         //return the fully qualified class name
-        return fullyqualifiedClassName;
+        return fullyQualifiedClassName;
 
     }
 

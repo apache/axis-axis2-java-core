@@ -1,5 +1,6 @@
 package org.apache.axis2.schema.writer;
 
+import javax.xml.namespace.QName;
 import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
@@ -51,6 +52,12 @@ public interface BeanWriter {
      * of the schema compiler may be exposed.
      */
     public Map getModelMap();
+    
+    /** Make the fully qualified class name for an element or named type
+     * @param qName the qualified Name for this element or type in the schema
+     * @return the appropriate fully qualified class name to use in generated code
+     */
+    public String makeFullyQualifiedClassName(QName qName);
 
     /**
      * Write a complex type
@@ -58,10 +65,12 @@ public interface BeanWriter {
      * @param complexType
      * @param typeMap
      * @param metainf
+     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @return Returns String.
      * @throws SchemaCompilationException
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf, String fullyQualifiedClassName)
+    throws SchemaCompilationException;
 
     /**
      * Write a element
