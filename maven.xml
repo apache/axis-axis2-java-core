@@ -358,6 +358,7 @@
         <ant:mkdir dir="target/temp/war/lib"/>
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
@@ -377,6 +378,7 @@
         
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
@@ -512,6 +514,7 @@
 
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/min/bin/lib/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
@@ -543,6 +546,7 @@
         <ant:copy toDir="target/temp/min/src">
             <ant:fileset dir=".">
                 <ant:include name="**/etc/**"/>
+                <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/core/**"/>
                 <ant:include name="**/modules/common/**"/>
                 <ant:include name="**/modules/wsdl/**"/>
@@ -616,6 +620,7 @@
 
         <!-- Create axis2-core.jar -->
         <jar destfile="${std.bin.temp.dir}/lib/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes/"/>
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
@@ -671,6 +676,7 @@
         <ant:copy toDir="${std.src.temp.dir}">
             <ant:fileset dir=".">
                 <ant:include name="**/etc/**"/>
+                <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/core/**"/>
                 <ant:include name="**/modules/common/**"/>
                 <ant:include name="**/modules/wsdl/**"/>
@@ -801,6 +807,7 @@
                 <ant:pathelement location="modules/adb/src"/>
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/codegen/src"/>
+                <ant:pathelement location="modules/java2wsdl/src"/>
                 <ant:pathelement location="modules/common/src"/>
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/doom/src"/>
@@ -883,6 +890,7 @@
 
         <!-- Create axis2-core.jar -->
         <jar destfile="${destdir}/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes/"/>
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
             <fileset dir="modules/wsdl/target/classes/"/>
@@ -896,6 +904,7 @@
             <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
     </goal>
 

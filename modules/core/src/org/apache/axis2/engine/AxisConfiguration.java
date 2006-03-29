@@ -124,6 +124,15 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
+     * To remove a given module from the system
+     * @param module
+     */
+    public void removeModule(AxisModule module) {
+        allModules.remove(module);
+        //TODO dis-engage has to be done here
+    }
+
+    /**
      * Adds module configuration, if there is moduleConfig tag in service.
      *
      * @param moduleConfiguration

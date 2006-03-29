@@ -91,7 +91,9 @@ public class AxisOperationFactory implements WSDLConstants {
             abOpdesc = new OutInAxisOperation();
         } else if (MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else {
+        } else if (MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
+            abOpdesc = new InOutAxisOperation();
+        }else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }
         abOpdesc.setMessageExchangePattern(mepURI);

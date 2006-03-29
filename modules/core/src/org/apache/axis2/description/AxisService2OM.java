@@ -6,7 +6,9 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.wsdl.WSDLConstants;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
@@ -39,7 +41,6 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
     private String [] url;
 
     private String targetNamespace;
-    private OMNamespace ns1;
     private OMNamespace soap;
     private OMNamespace tns;
     private OMNamespace wsdl;
@@ -72,7 +73,7 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
         wsdl = fac.createOMNamespace(WSDL_NAMESPACE,
                 DEFAULT_WSDL_NAMESPACE_PREFIX);
         OMElement ele = fac.createOMElement("definitions", wsdl);
-        ns1 = ele.declareNamespace(AXIS2_XSD, "ns1");
+        ele.declareNamespace(AXIS2_XSD, "ns1");
         ele.declareNamespace(SCHEMA_NAME_SPACE, DEFAULT_SCHEMA_NAMESPACE_PREFIX);
         soap = ele.declareNamespace(DEFAULT_SOAP_NAMESPACE, DEFAULT_SOAP_NAMESPACE_PREFIX);
         tns = ele.declareNamespace(DEFAULT_TARGET_NAMESPACE, TARGETNAMESPACE_PREFIX);
@@ -99,28 +100,52 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
         Iterator operations = axisService.getOperations();
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-            String operationName = axisOperation.getName().getLocalPart();
-            //Request Message
-            OMElement requestMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
-            requestMessge.addAttribute(ATTRIBUTE_NAME, operationName
-                    + REQUEST_MESSAGE, null);
-            defintions.addChild(requestMessge);
-            OMElement requestPart = fac.createOMElement(PART_ATTRIBUTE_NAME, wsdl);
-            requestMessge.addChild(requestPart);
-            requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
-            requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                    ns1.getPrefix() + ":" + operationName
-                            + REQUEST, null);
-            //Response Message
-            OMElement responseMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
-            responseMessge.addAttribute(ATTRIBUTE_NAME,
-                    operationName + RESPONSE_MESSAGE, null);
-            defintions.addChild(responseMessge);
-            OMElement responsePart = fac.createOMElement(PART_ATTRIBUTE_NAME, wsdl);
-            responseMessge.addChild(responsePart);
-            responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
-            responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                    ns1.getPrefix() + ":" + operationName + RESPONSE, null);
+
+            String MEP = axisOperation.getMessageExchangePattern();
+            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage inaxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (inaxisMessage != null) {
+                    QName scheamElementName = inaxisMessage.getElementQName();
+                    OMElement requestMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
+                    requestMessge.addAttribute(ATTRIBUTE_NAME, scheamElementName.getLocalPart()
+                            + MESSAGE_SUFFIX, null);
+                    defintions.addChild(requestMessge);
+                    OMElement requestPart = fac.createOMElement(PART_ATTRIBUTE_NAME, wsdl);
+                    requestMessge.addChild(requestPart);
+                    requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                    requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                            scheamElementName.getPrefix() + ":" + scheamElementName.getLocalPart()
+                                    + REQUEST, null);
+                }
+            }
+
+            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage outAxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (outAxisMessage != null) {
+                    QName scheamElementName = outAxisMessage.getElementQName();
+                    OMElement responseMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
+                    responseMessge.addAttribute(ATTRIBUTE_NAME,
+                            scheamElementName.getLocalPart() + MESSAGE_SUFFIX, null);
+                    defintions.addChild(responseMessge);
+                    OMElement responsePart = fac.createOMElement(PART_ATTRIBUTE_NAME, wsdl);
+                    responseMessge.addChild(responsePart);
+                    responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                    responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                            scheamElementName.getPrefix() + ":" + scheamElementName.getLocalPart() + RESPONSE, null);
+                }
+            }
         }
     }
 
@@ -138,21 +163,48 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
             AxisOperation axisOperation = (AxisOperation) operations.next();
             if (axisOperation.isControlOperation()) {
                 continue;
+
             }
+
             String operationName = axisOperation.getName().getLocalPart();
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME, wsdl);
             portType.addChild(operation);
             operation.addAttribute(ATTRIBUTE_NAME, operationName, null);
 
-            OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
-            input.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix() + ":"
-                    + operationName + REQUEST_MESSAGE, null);
-            operation.addChild(input);
+            String MEP = axisOperation.getMessageExchangePattern();
+            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage inaxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (inaxisMessage != null) {
+                    QName scheamElementName = inaxisMessage.getElementQName();
+                    OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
+                    input.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix() + ":"
+                            + scheamElementName.getLocalPart() + MESSAGE_SUFFIX, null);
+                    operation.addChild(input);
+                }
+            }
 
-            OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
-            output.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix() + ":"
-                    + operationName + RESPONSE_MESSAGE, null);
-            operation.addChild(output);
+            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage outAxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (outAxisMessage != null) {
+                    QName scheamElementName = outAxisMessage.getElementQName();
+                    OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
+                    output.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix() + ":"
+                            + scheamElementName.getLocalPart() + MESSAGE_SUFFIX, null);
+                    operation.addChild(output);
+                }
+            }
         }
     }
 
