@@ -76,7 +76,7 @@ public class IntegrationTest extends TestCase {
             String requestStr = printSOAPMessage(request);
             String responseStr = printSOAPMessage(response);
 //            assertEquals(requestStr, responseStr);
-            assertTrue(responseStr.indexOf("echo")  != -1);
+            assertTrue(responseStr.indexOf("echo") != -1);
             sCon.close();
         } catch (SOAPException e) {
             e.printStackTrace();
@@ -124,7 +124,6 @@ public class IntegrationTest extends TestCase {
         request.addAttachmentPart(jpegAttach);
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-
         SOAPMessage response = sCon.call(request, ADDRESS);
 
         int attachmentCount = response.countAttachments();
@@ -177,6 +176,51 @@ public class IntegrationTest extends TestCase {
 //        sCon.call(response, ADDRESS);
 
 //        printSOAPMessage(response);
+    }
+
+    public void testSendReceiveNonRefAttachment() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
+
+        //create the SOAPPart
+        createSimpleSOAPPart(request);
+
+        //Attach a text/plain object with the SOAP request
+        String sampleMessage = "Sample Message: Hello World!";
+        AttachmentPart textAttach = request.createAttachmentPart(sampleMessage, "text/plain");
+//        textAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
+        request.addAttachmentPart(textAttach);
+
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, ADDRESS);
+/*
+        int attachmentCount = response.countAttachments();
+        assertTrue(attachmentCount == 2);
+
+        Iterator attachIter = response.getAttachments();
+
+        int i = 0;
+        while (attachIter.hasNext()) {
+            AttachmentPart attachment = (AttachmentPart) attachIter.next();
+            final Object content = attachment.getDataHandler().getContent();
+            if (content instanceof String) {
+                assertEquals(sampleMessage, (String) content);
+            } else if (content instanceof ByteArrayInputStream) {
+                ByteArrayInputStream bais = (ByteArrayInputStream) content;
+                byte[] b = new byte[15000];
+                final int lengthRead = bais.read(b);
+                FileOutputStream fos =
+                        new FileOutputStream(new File("target/test-resources/result" + (i++) + ".jpg"));
+                fos.write(b, 0, lengthRead);
+                fos.flush();
+                fos.close();
+
+                assertTrue(attachment.getContentType().equals("image/jpeg")
+                           || attachment.getContentType().equals("text/plain"));
+            }
+        }*/
+
+        sCon.close();
     }
 
     private void createSOAPPart(SOAPMessage message) throws SOAPException {

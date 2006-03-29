@@ -19,6 +19,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.activation.DataHandler;
@@ -27,6 +28,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -37,12 +39,11 @@ import java.util.Iterator;
 public class AttachmentPartImpl extends AttachmentPart {
     private DataHandler dataHandler;
 
-    /**
-     * Field mimeHeaders.
-     */
     private MimeHeaders mimeHeaders = new MimeHeaders();
+    private String attachmentFile;
 
     private OMText omText;
+    private boolean isAttachmentReferenced;
 
     /**
      * Check whether at least one of the headers of this object matches a provided header
@@ -74,6 +75,14 @@ public class AttachmentPartImpl extends AttachmentPart {
         return true;
     }
 
+    public boolean isAttachmentReferenced() {
+        return isAttachmentReferenced;
+    }
+
+    public void setAttachmentReferenced(boolean attachmentReferenced) {
+        isAttachmentReferenced = attachmentReferenced;
+    }
+
     /**
      * Returns the number of bytes in this <CODE>
      * AttachmentPart</CODE> object.
@@ -92,10 +101,7 @@ public class AttachmentPartImpl extends AttachmentPart {
         try {
             dataHandler.writeTo(bout);
         } catch (Exception ex) {
-//            System.err.println("####################################################");
-//            ex.printStackTrace();
             throw new SOAPException(ex);
-//            System.err.println("####################################################");
         }
         return bout.size();
     }
@@ -147,15 +153,15 @@ public class AttachmentPartImpl extends AttachmentPart {
      *                                      into this <CODE>AttachmentPart</CODE> object or if there
      *                                      was a data transformation error
      */
-    public Object getContent() throws SOAPException {
+     public Object getContent() throws SOAPException {
         if (dataHandler == null) {
             throw new SOAPException("No content is present in this AttachmentPart");
         }
         try {
-            String ContentType = dataHandler.getContentType();
-            if (ContentType.equals("text/plain") ||
-                ContentType.equals("text/xml") ||
-                ContentType.equals("text/html")) {
+            String contentType = dataHandler.getContentType();
+            if (contentType.equals("text/plain") ||
+                contentType.equals("text/xml") ||
+                contentType.equals("text/html")) {
 
                 //For these content types underlying DataContentHandler surely does
                 //the conversion to appropriate java object and we will return that java object
@@ -195,9 +201,47 @@ public class AttachmentPartImpl extends AttachmentPart {
      * @see #getContent()
      */
     public void setContent(Object object, String contentType) {
-        //TODO: need to check whether the type of the content object matches contentType
-        //TODO: need to check whether there is a DataContentHandler for this object
-        setDataHandler(new DataHandler(object, contentType));
+        SAAJDataSource source;
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType);
+        Object contentObject;
+        if (object instanceof String) {
+            try {
+                String s = (String) object;
+                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(s.getBytes());
+                source = new SAAJDataSource(bais,
+                                            SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                                            contentType, true);
+                extractFilename(source);
+                dataHandler = new DataHandler(source);
+                contentObject = object;
+            } catch (java.io.IOException io) {
+                throw new java.lang.IllegalArgumentException("Illegal Argument");
+            }
+        } else if (object instanceof java.io.InputStream) {
+            try {
+                source = new SAAJDataSource((java.io.InputStream) object,
+                                            SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                                            contentType, true);
+                extractFilename(source);
+                dataHandler = new DataHandler(source);
+                contentObject = null; // the stream has been consumed
+            } catch (java.io.IOException io) {
+                throw new java.lang.IllegalArgumentException("Illegal Argument");
+            }
+        } else if (object instanceof StreamSource) {
+            try {
+                source = new SAAJDataSource(((StreamSource) object).getInputStream(),
+                                            SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                                            contentType, true);
+                extractFilename(source);
+                dataHandler = new DataHandler(source);
+                contentObject = null; // the stream has been consumed
+            } catch (java.io.IOException io) {
+                throw new java.lang.IllegalArgumentException("Illegal Argument");
+            }
+        } else {
+            throw new java.lang.IllegalArgumentException("Illegal Argument");
+        }
     }
 
     /**
@@ -370,5 +414,41 @@ public class AttachmentPartImpl extends AttachmentPart {
 
     public TextImpl getText(DocumentImpl doc) {
         return new TextImpl(doc, omText.getText(), doc.getOMFactory());
+    }
+
+    /**
+     * Set the filename of this attachment part.
+     *
+     * @param path the new file path
+     */
+    protected void setAttachmentFile(String path) {
+        attachmentFile = path;
+    }
+
+    /**
+     * Detach the attachment file from this class, so it is not cleaned up.
+     * This has the side-effect of making subsequent calls to
+     * getAttachmentFile() return <code>null</code>.
+     */
+    public void detachAttachmentFile() {
+        attachmentFile = null;
+    }
+
+    /**
+     * Get the filename of this attachment.
+     *
+     * @return the filename or null for an uncached file
+     */
+    public String getAttachmentFile() {
+        return attachmentFile;
+    }
+
+    private void extractFilename(SAAJDataSource source) {
+
+        //check for there being a file
+        if (source.getDiskCacheFile() != null) {
+            String path = source.getDiskCacheFile().getAbsolutePath();
+            setAttachmentFile(path);
+        }
     }
 }

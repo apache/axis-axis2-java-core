@@ -19,12 +19,14 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
@@ -97,6 +99,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void doGet(HttpServletRequest httpServletRequest,
                          HttpServletResponse httpServletResponse)
             throws ServletException, IOException {
+
+        //TODO: Remove impl after reviewing
         MessageContext msgContext = null;
         OutputStream out = null;
 
@@ -327,5 +331,48 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             port = "8080";
         }
         return new EndpointReference("http://" + ip + ":" + port + "/axis2/services/" + serviceName);
+    }
+
+    protected MessageContext createMessageContext(HttpServletRequest req,
+                                                HttpServletResponse resp) throws IOException {
+        MessageContext msgContext = new MessageContext();
+        String trsPrefix = req.getRequestURL().toString();
+        int sepindex = trsPrefix.indexOf(':');
+        if (sepindex >= 0) {
+            trsPrefix = trsPrefix.substring(0, sepindex);
+            msgContext.setIncomingTransportName(trsPrefix);
+        } else {
+            msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+        }
+        msgContext.setConfigurationContext(configContext);
+        msgContext.setTransportIn(configContext.getAxisConfiguration().
+                getTransportIn(new QName(Constants.TRANSPORT_HTTP)));
+        TransportOutDescription transportOut =
+                configContext.getAxisConfiguration().getTransportOut(
+                        new QName(Constants.TRANSPORT_HTTP));
+        msgContext.setTransportOut(transportOut);
+        msgContext.setServerSide(true);
+
+        String requestURI = req.getRequestURI();
+        requestURI = requestURI.replaceFirst("rest", "services");
+        msgContext.setTo(new EndpointReference(requestURI));
+        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
+                               new ServletBasedOutTransportInfo(resp));
+        msgContext.setProperty(MessageContext.TRANSPORT_OUT, resp.getOutputStream());
+
+        // set the transport Headers
+        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(req));
+        msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
+        return msgContext;
+    }
+
+    protected Map getHeaders(HttpServletRequest request) {
+        HashMap headerMap = new HashMap();
+        Enumeration e = request.getAttributeNames();
+        while (e.hasMoreElements()) {
+            String field = (String) e.nextElement();
+            headerMap.put(field, request.getAttribute(field));
+        }
+        return headerMap;
     }
 }

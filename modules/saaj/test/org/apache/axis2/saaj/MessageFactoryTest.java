@@ -20,8 +20,12 @@ import junit.framework.TestCase;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 
@@ -103,6 +107,20 @@ public class MessageFactoryTest extends TestCase {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
+        }
+    }
+
+    public void _testMessageFactory3() {
+        MimeHeaders headers = new MimeHeaders();
+        headers.addHeader("Content-Type",
+                          "multipart/related; boundary=MIMEBoundaryurn:uuid:F02ECC18873CFB73E211412748909307; type=\"application/xop+xml\"; start=\"<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>\"; start-info=\"text/xml\"; charset=UTF-16");
+
+        try {
+            FileInputStream fis = new FileInputStream("test-resources" + File.separator + "message.bin");
+            SOAPMessage msg1 = mf.createMessage(headers, fis);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception : " + e);
         }
     }
 }

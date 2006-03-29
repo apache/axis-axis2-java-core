@@ -150,6 +150,13 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage(MimeHeaders mimeheaders,
                                      InputStream inputstream) throws IOException, SOAPException {
+
+        /*System.err.println("@@@@@@@@@@ MessageFactoryImpl#createMessage");
+        byte[] b = new byte[10240];
+        inputstream.read(b);
+        System.err.println("byte=" + new String(b));
+        System.err.println("@@@@@@@@@@ END MessageFactoryImpl#createMessage");*/
+
         SOAPMessageImpl soapMessage = new SOAPMessageImpl(inputstream, mimeheaders);
         soapMessage.setSaveRequired();
         return soapMessage;

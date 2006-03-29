@@ -65,7 +65,11 @@ public class SOAPMessageImpl extends SOAPMessage {
         }
 
         setCharsetEncoding(contentType);
-        soapPart = new SOAPPartImpl(this, inputstream);
+        if (contentType != null && contentType.indexOf("multipart/related;") == 0) {
+//            soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
+        } else {
+            soapPart = new SOAPPartImpl(this, inputstream);
+        }
 
         this.mimeHeaders = (mimeHeaders == null) ?
                            new MimeHeadersEx() :
@@ -248,7 +252,7 @@ public class SOAPMessageImpl extends SOAPMessage {
         // TODO not sure of the implementation
     }
 
-    public void setSaveRequired(){
+    public void setSaveRequired() {
         this.saveRequired = true;
     }
 
