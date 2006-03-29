@@ -180,7 +180,7 @@
 
             <xsl:for-each select="param">
                 <xsl:if test="@type!=''">
-                    private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                    private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
                             org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
                             (org.apache.axiom.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
