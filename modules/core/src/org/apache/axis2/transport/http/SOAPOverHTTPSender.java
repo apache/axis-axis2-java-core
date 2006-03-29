@@ -54,7 +54,13 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         postMethod.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
 
         if (msgContext.isSOAP11()) {
-            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
+            if ("".equals(soapActionString)){
+               //if the soap action is empty then we should add two ""
+               postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, "\"\"");
+            }else{
+              postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
+            }
+
         } else {
         }
         //setting the coolie in the out path
