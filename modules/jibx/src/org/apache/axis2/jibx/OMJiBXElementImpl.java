@@ -16,17 +16,6 @@
 
 package org.apache.axis2.jibx;
 
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -46,6 +35,16 @@ import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IXMLWriter;
 import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.StAXWriter;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * Element wrapping an object to be serialized using JiBX marshalling.
@@ -219,6 +218,10 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
      */
     public void setText(String text) {
         forceTree().setText(text);
+    }
+
+    public void setText(QName text) {
+        throw new UnsupportedOperationException();
     }
 
     /* (non-Javadoc)
