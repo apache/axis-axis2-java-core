@@ -42,7 +42,6 @@ public class SchemaGenerator {
        //to store byte code method using Axis 1.x codes
        private MethodTable methodTable;
 
-       public static String METHOD_REQUEST_WRAPPER = "Request";
        public static String METHOD_RESPONSE_WRAPPER = "Response";
        public static String TARGET_NAMESPACE = "http://org.apache.axis2/";
        public static String SCHEMA_TARGET_NAMESPACE = "http://org.apache.axis2/xsd";
@@ -211,7 +210,7 @@ public class SchemaGenerator {
            XmlSchemaSequence sequence = new XmlSchemaSequence();
 
            XmlSchemaElement eltOuter = new XmlSchemaElement();
-           eltOuter.setName(methodName + METHOD_REQUEST_WRAPPER);
+           eltOuter.setName(methodName);
 //        String complexTypeName = methodName + METHOD_REQUEST_WRAPPER;
 //        complexType.setName(complexTypeName);
            schema.getItems().add(eltOuter);
@@ -221,7 +220,7 @@ public class SchemaGenerator {
            // adding this type to the table
            QName elementName = new QName(this.schemaTargetNameSpace,
                    eltOuter.getName(), this.schema_namespace_prefix);
-           typeTable.addComplexSchema(methodName + METHOD_REQUEST_WRAPPER, elementName);
+           typeTable.addComplexSchema(methodName, elementName);
 
            JParameter [] paras = method.getParameters();
            if (paras.length > 0) {

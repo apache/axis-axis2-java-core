@@ -186,8 +186,7 @@ public class Utils {
                 AxisMessage inMessage = operation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (inMessage != null) {
-                    inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() +
-                            SchemaGenerator.METHOD_REQUEST_WRAPPER));
+                    inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
                 }
                 if (!jmethod.getReturnType().isVoidType()) {
                     AxisMessage outMessage = operation.getMessage(
@@ -232,8 +231,7 @@ public class Utils {
         operation.setName(new QName(opName));
         AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         if (inMessage != null) {
-            inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() +
-                    SchemaGenerator.METHOD_REQUEST_WRAPPER));
+            inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
         }
         return operation;
     }

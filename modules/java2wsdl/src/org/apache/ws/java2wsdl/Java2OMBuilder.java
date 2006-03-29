@@ -121,7 +121,7 @@ public class Java2OMBuilder implements Constants {
             requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
             requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                     ns1.getPrefix() + ":" + jmethod.getSimpleName()
-                            + REQUEST, null);
+                           , null);
             //Response Message
             OMElement responseMessge = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
             responseMessge.addAttribute(ATTRIBUTE_NAME,

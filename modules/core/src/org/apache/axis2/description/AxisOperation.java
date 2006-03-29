@@ -48,6 +48,8 @@ public abstract class AxisOperation extends AxisDescription
     // To store deploytime module refs
     private ArrayList modulerefs;
 
+    private ArrayList faultMessages;
+
     private QName name;
 
     private ArrayList wsamappingList;
@@ -56,6 +58,7 @@ public abstract class AxisOperation extends AxisDescription
         mepURI = MEP_URI_IN_OUT;
         modulerefs = new ArrayList();
         moduleConfigmap = new HashMap();
+        faultMessages = new ArrayList();
     }
 
     public AxisOperation(QName name) {
@@ -492,5 +495,13 @@ public abstract class AxisOperation extends AxisDescription
 
     public Object getKey() {
         return getName();
+    }
+
+    public ArrayList getFaultMessages() {
+        return faultMessages;
+    }
+
+    public void setFaultMessages(AxisMessage faultMessage) {
+        faultMessages.add(faultMessage);
     }
 }

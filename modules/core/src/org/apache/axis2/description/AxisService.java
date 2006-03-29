@@ -55,6 +55,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.net.URL;
 import java.util.*;
 
@@ -85,7 +86,8 @@ public class AxisService extends AxisDescription {
     private ClassLoader serviceClassLoader;
 
     //to keep the XMLScheam getting either from WSDL or java2wsdl
-    private XmlSchema schema;
+    private ArrayList schemaList;
+    //private XmlSchema schema;
 
     //wsdl is there for this service or not (in side META-INF)
     private boolean wsdlfound = false;
@@ -113,10 +115,17 @@ public class AxisService extends AxisDescription {
     private boolean enableAllTransport = true;
     private String [] exposeTransports;
 
+
+    /////////////////////////////////////////
+    // WSDL related stuff ////////////////////
+    ////////////////////////////////////////
+    private Map nameSpacesMap;
+
     /**
      * Constructor AxisService.
      */
     public AxisService() {
+        super();
         this.operationsAliasesMap = new HashMap();
         moduleConfigmap = new HashMap();
         //by dafault service scope is for the request
@@ -124,6 +133,7 @@ public class AxisService extends AxisDescription {
         messageReceivers = new HashMap();
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
+        schemaList = new ArrayList();
     }
 
     /**
@@ -339,7 +349,17 @@ public class AxisService extends AxisDescription {
 
 
     public void printSchema(OutputStream out) throws AxisFault {
-        schema.write(out);
+        for (int i = 0; i < schemaList.size(); i++) {
+            XmlSchema schema = (XmlSchema) schemaList.get(i);
+            schema.write(out);
+        }
+    }
+
+     public void printSchema(Writer writer) throws AxisFault {
+        for (int i = 0; i < schemaList.size(); i++) {
+            XmlSchema schema = (XmlSchema) schemaList.get(i);
+            schema.write(writer);
+        }
     }
 
     public void printPolicy(OutputStream out) throws AxisFault {
@@ -480,7 +500,7 @@ public class AxisService extends AxisDescription {
     }
 
     private void printUsingWOM(OutputStream out, String [] serviceURL) throws AxisFault {
-        AxisService2OM axisService2WOM = new AxisService2OM(getSchema(), this, serviceURL, "document", "literal");
+        AxisService2OM axisService2WOM = new AxisService2OM(this, serviceURL, "document", "literal");
         try {
             OMElement wsdlElement = axisService2WOM.generateOM();
             wsdlElement.serialize(out);
@@ -706,13 +726,13 @@ public class AxisService extends AxisDescription {
         this.definition = difDefinition;
     }
 
-    public XmlSchema getSchema() {
-        return schema;
+    public ArrayList getSchema() {
+        return schemaList;
     }
 
     public void setSchema(XmlSchema schema) {
+        schemaList.add(schema);
         //todo : need to support multiple schemas
-        this.schema = schema;
     }
 
     public boolean isWsdlfound() {
@@ -796,8 +816,15 @@ public class AxisService extends AxisDescription {
     }
 
     public XmlSchemaElement getSchemaElement(QName elementQName) {
-        if (schema != null) {
-            return schema.getElementByName(elementQName);
+        XmlSchemaElement element;
+        for (int i = 0; i < schemaList.size(); i++) {
+            XmlSchema schema = (XmlSchema) schemaList.get(i);
+            if (schema != null) {
+                element = schema.getElementByName(elementQName);
+                if (element != null) {
+                    return element;
+                }
+            }
         }
         return null;
     }
@@ -1105,5 +1132,13 @@ public class AxisService extends AxisDescription {
             }
             operationsAliasesMap.remove(operation.getName().getLocalPart());
         }
+    }
+
+    public Map getNameSpacesMap() {
+        return nameSpacesMap;
+    }
+
+    public void setNameSpacesMap(Map nameSpacesMap) {
+        this.nameSpacesMap = nameSpacesMap;
     }
 }

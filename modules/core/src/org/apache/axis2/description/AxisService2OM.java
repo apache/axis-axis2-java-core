@@ -34,8 +34,6 @@ import java.util.Iterator;
 
 public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
 
-    private XmlSchema schema;
-
     private AxisService axisService;
 
     private String [] url;
@@ -48,13 +46,10 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
     private String style;
     private String use;
 
-    public AxisService2OM(XmlSchema schema, AxisService service,
+    public AxisService2OM(AxisService service,
                           String [] serviceURL, String style, String use) {
-        this.schema = schema;
         this.axisService = service;
         url = serviceURL;
-
-        this.schema = schema;
         if (style == null) {
             this.style = DOCUMNT;
         } else {
@@ -80,7 +75,7 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
         ele.addAttribute("targetNamespace", DEFAULT_TARGET_NAMESPACE, null);
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
         StringWriter writer = new StringWriter();
-        schema.write(writer);
+        axisService.printSchema(writer);
         XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
                 ByteArrayInputStream(writer.toString().getBytes()));
 
@@ -121,7 +116,7 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
                     requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
                     requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                             scheamElementName.getPrefix() + ":" + scheamElementName.getLocalPart()
-                                    + REQUEST, null);
+                                    , null);
                 }
             }
 
@@ -143,7 +138,7 @@ public class AxisService2OM implements org.apache.ws.java2wsdl.Constants {
                     responseMessge.addChild(responsePart);
                     responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
                     responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                            scheamElementName.getPrefix() + ":" + scheamElementName.getLocalPart() + RESPONSE, null);
+                            scheamElementName.getPrefix() + ":" + scheamElementName.getLocalPart() , null);
                 }
             }
         }
