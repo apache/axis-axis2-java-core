@@ -46,6 +46,10 @@ public class PrimitiveTypeFinder {
      * @return
      */
     public static boolean isPrimitive(String className){
+        //if an array type is passed, strip out the [] part
+        if (className.indexOf("[]")!=-1){
+           className = className.substring(0,className.indexOf("[]"));
+        }
         return primitiveClassNameList.contains(className);
     }
 }
