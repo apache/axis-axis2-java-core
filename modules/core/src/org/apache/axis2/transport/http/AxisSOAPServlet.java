@@ -57,6 +57,5 @@ public class AxisSOAPServlet extends AxisServlet {
                 (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
         servletContext.setAttribute("AxisSOAPServlet" + System.currentTimeMillis(),
                                     this);
-        System.err.println("####### AxisSOAPServlet inited");
     }
 }
