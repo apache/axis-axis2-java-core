@@ -394,11 +394,6 @@
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-        <!-- Copy the doom jar -->
-        <ant:copy toDir="target/temp/war/lib">
-            <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
-        </ant:copy>
-
         <!-- Copy the codegen jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
@@ -629,7 +624,6 @@
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
@@ -683,7 +677,6 @@
                 <ant:include name="**/modules/adb/**"/>
                 <ant:include name="**/modules/codegen/**"/>
                 <ant:include name="**/modules/webapp/**"/>
-                <ant:include name="**/modules/doom/**"/>
                 <ant:include name="**/modules/jibx/**"/>
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
@@ -773,7 +766,7 @@
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="codegen,doom"/>
+                              mods="codegen"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
     </goal>
@@ -810,7 +803,6 @@
                 <ant:pathelement location="modules/java2wsdl/src"/>
                 <ant:pathelement location="modules/common/src"/>
                 <ant:pathelement location="modules/core/src"/>
-                <ant:pathelement location="modules/doom/src"/>
                 <ant:pathelement location="modules/jaxws/src"/>
                 <ant:pathelement location="modules/jibx/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
@@ -901,7 +893,6 @@
             <ant:fileset file="modules/core/target/axis2-core-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/common/target/axis2-common-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
