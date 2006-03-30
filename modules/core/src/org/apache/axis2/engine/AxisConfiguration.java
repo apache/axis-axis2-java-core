@@ -127,7 +127,7 @@ public class AxisConfiguration extends AxisDescription {
      * To remove a given module from the system
      * @param module
      */
-    public void removeModule(AxisModule module) {
+    public void removeModule(QName module) {
         allModules.remove(module);
         //TODO dis-engage has to be done here
     }
