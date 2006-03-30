@@ -757,7 +757,7 @@
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
-                              mods="core,common,wsdl,adb"/>
+                              mods="core,common,wsdl,adb,java2wsdl"/>
             <property name="minDeps.uptodate" value="yes"/>
         </j:if>
     </goal>
