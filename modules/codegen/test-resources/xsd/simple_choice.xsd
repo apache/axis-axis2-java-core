@@ -2,8 +2,7 @@
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         xmlns:tns="http://soapinterop.org/types"
         targetNamespace="http://soapinterop.org/types">
-    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
-    <complexType name="SOAPStruct">
+      <complexType name="SOAPStruct">
         <choice>
             <element name="varString" type="xsd:string"/>
             <element name="varInt" type="xsd:int"/>
