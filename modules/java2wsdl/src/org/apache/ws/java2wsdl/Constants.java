@@ -37,10 +37,10 @@ public interface Constants {
     String MESSAGE_LOCAL_NAME = "message";
     String ATTRIBUTE_NAME = "name";
     String REQUEST_MESSAGE = "RequestMessage";
-    String RESPONSE_MESSAGE = "ReponseMessage";
+    String RESPONSE_MESSAGE = "ResponseMessage";
     String MESSAGE_SUFFIX = "Message";
     String REQUEST = "Request";
-    String RESPONSE = "Reponse";
+    String RESPONSE = "Response";
     String PORT_TYPE_LOCAL_NAME = "portType";
     String OPERATION_LOCAL_NAME = "operation";
     String IN_PUT_LOCAL_NAME = "input";
