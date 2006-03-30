@@ -16,7 +16,6 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -51,6 +50,8 @@ public class AddressingOutHandler extends AddressingHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
 
+        SOAPFactory factory = (SOAPFactory)msgContext.getEnvelope().getOMFactory();
+        
         OMNamespace addressingNamespaceObject;
 
         // it should be able to disable addressing by some one.
@@ -90,7 +91,7 @@ public class AddressingOutHandler extends AddressingHandler {
         if (addressingNamespace == null || "".equals(addressingNamespace)) {
             addressingNamespace = Final.WSA_NAMESPACE;
         }
-        addressingNamespaceObject = OMAbstractFactory.getOMFactory().createOMNamespace(
+        addressingNamespaceObject = factory.createOMNamespace(
                 addressingNamespace, WSA_DEFAULT_PREFIX);
         anonymousURI = addressingNamespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
 
@@ -101,8 +102,8 @@ public class AddressingOutHandler extends AddressingHandler {
 
         // if there is no soap header in the envelope being processed, add one.
         if (soapHeader == null) {
-            SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
-            soapHeader = soapFac.createSOAPHeader(envelope);
+//            SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
+            soapHeader = factory.createSOAPHeader(envelope);
         }
 
         // by this time, we definitely have some addressing information to be sent. This is because,
@@ -163,7 +164,7 @@ public class AddressingOutHandler extends AddressingHandler {
             if (faultyHeaderQName != null && !"".equals(faultyHeaderQName)) {
                 // add to header
                 SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
-                OMElement probHeaderQName = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
+                OMElement probHeaderQName = envelope.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
                 probHeaderQName.setText(faultyHeaderQName);
 
                 String messageID = (String) faultInfo.get(AddressingConstants.WSA_RELATES_TO);
@@ -175,7 +176,7 @@ public class AddressingOutHandler extends AddressingHandler {
                 // add to header
                 SOAPFault fault = envelope.getBody().getFault();
                 if (fault != null && fault.getDetail() != null) {
-                    OMElement probHeaderQName2 = OMAbstractFactory.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, fault.getDetail());
+                    OMElement probHeaderQName2 = envelope.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, fault.getDetail());
                     probHeaderQName2.setText(faultyHeaderQName);
                 }
 
@@ -290,7 +291,7 @@ public class AddressingOutHandler extends AddressingHandler {
             SOAPHeaderBlock soapHeaderBlock =
                     soapEnvelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
             soapHeaderBlock.addChild(
-                    OMAbstractFactory.getOMFactory().createText(value));
+                    soapEnvelope.getOMFactory().createText(value));
             return soapHeaderBlock;
         }
         return null;
@@ -310,7 +311,7 @@ public class AddressingOutHandler extends AddressingHandler {
         // add epr address
         String address = epr.getAddress();
         if (!"".equals(address) && address != null) {
-            OMElement addressElement = OMAbstractFactory.getOMFactory().createOMElement(EPR_ADDRESS, addressingNamespaceObject, soapHeaderBlock);
+            OMElement addressElement = envelope.getOMFactory().createOMElement(EPR_ADDRESS, addressingNamespaceObject, soapHeaderBlock);
             addressElement.setText(address);
         }
 
@@ -318,7 +319,7 @@ public class AddressingOutHandler extends AddressingHandler {
         Map referenceParameters = epr.getAllReferenceParameters();
         if (referenceParameters != null) {
             OMElement reference =
-                    OMAbstractFactory.getOMFactory().createOMElement(
+                    envelope.getOMFactory().createOMElement(
                             EPR_REFERENCE_PARAMETERS,
                             addressingNamespaceObject, soapHeaderBlock);
             processReferenceInformation(referenceParameters, reference);
@@ -337,7 +338,7 @@ public class AddressingOutHandler extends AddressingHandler {
         ArrayList metaDataList = epr.getMetaData();
         if (metaDataList != null) {
             OMElement metadata =
-                    OMAbstractFactory.getOMFactory().createOMElement(
+                    envelope.getOMFactory().createOMElement(
                             Final.WSA_METADATA,
                             addressingNamespaceObject, soapHeaderBlock);
             for (int i = 0; i < metaDataList.size(); i++) {

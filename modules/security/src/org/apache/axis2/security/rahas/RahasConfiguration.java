@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.security.trust.SimpleTokenStore;
 import org.apache.axis2.security.trust.TokenStorage;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.ws.security.WSSecurityException;
@@ -378,11 +379,15 @@ public class RahasConfiguration {
      * @return Returns the tokenStore.
      */
     protected TokenStorage getTokenStore() throws Exception {
-        if(this.tokenStore == null && this.tokenStoreClass != null) {
-            this.tokenStore = (TokenStorage) Class
-                    .forName(this.tokenStoreClass).newInstance();
-            this.msgCtx.getConfigurationContext().setProperty(
-                    RahasHandlerConstants.TOKEN_STORE_KEY, this.tokenStore);
+        if(this.tokenStore == null) {
+            if(this.tokenStoreClass != null) {
+                 this.tokenStore = (TokenStorage) Class
+                        .forName(this.tokenStoreClass).newInstance();
+                this.msgCtx.getConfigurationContext().setProperty(
+                        RahasHandlerConstants.TOKEN_STORE_KEY, this.tokenStore);
+            } else {
+                this.tokenStore = new SimpleTokenStore();
+            }
         }
         return tokenStore;
     }

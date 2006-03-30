@@ -21,6 +21,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.security.WSDoAllReceiver;
+import org.apache.axis2.security.trust.Constants;
 
 import javax.xml.namespace.QName;
 
@@ -35,8 +37,13 @@ public class Receiver  implements Handler {
     private HandlerDescription handlerDescription;
     
     public void invoke(MessageContext msgContext) throws AxisFault {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        if(Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction()) ||
+                Constants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) {
+            WSDoAllReceiver secReceiver = new WSDoAllReceiver();
+            secReceiver.init(this.handlerDescription);
+            secReceiver.invoke(msgContext);
+            return;
+        }
     }
     
     public void cleanup() throws AxisFault {

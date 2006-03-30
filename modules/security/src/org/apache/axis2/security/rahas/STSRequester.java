@@ -19,6 +19,7 @@ package org.apache.axis2.security.rahas;
 import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -93,8 +94,8 @@ public class STSRequester {
             
             OMElement tempResult = client.sendReceive(rstQn, builder.getDocumentElement());
             
-            OMElement elem = Axis2Util.toDOOM(((OMDocument) config.getDocument())
-                    .getOMFactory(), tempResult);
+            OMElement tempelem = Axis2Util.toDOOM(DOOMAbstractFactory.getOMFactory(), tempResult);
+            OMElement elem = (OMElement)config.getDocument().importNode((Element)tempelem, true);
             processRSTR(elem, config);
             
         } catch (Exception e) {
@@ -114,6 +115,8 @@ public class STSRequester {
             if(sctElem != null) {
                 SecurityContextToken sct = new SecurityContextToken((Element)sctElem);
                 token = new Token(sct.getIdentifier(), sctElem);
+                config.setSecurityContextToken(sct);
+                config.setContextIdentifier(sct.getIdentifier());
             } else {
                 throw new RahasException("sctMissingInResponse");
             }

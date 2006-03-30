@@ -16,14 +16,10 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPFaultReason;
-import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
@@ -33,10 +29,10 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -192,16 +188,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);
-
-    private void handleNoServiceGroupContextIDCase(MessageContext msgContext) {
-        SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
-        SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason(null);
-        SOAPFaultText soapFaultText = soapFac.createSOAPFaultText(soapFaultReason);
-        soapFaultText.setLang("en");
-        soapFaultText.setText(Messages.getMessage("serviceGroupIDNotFound"));
-
-        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
-    }
 
 
     private void extractRelatesToInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, Options messageContextOptions) {

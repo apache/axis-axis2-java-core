@@ -17,6 +17,7 @@
 package org.apache.axis2.security.rahas;
 
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -45,8 +46,8 @@ public class Sender implements Handler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         
         try {
-            System.out.println(msgContext.getWSAAction());
-            if(Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction())) {
+            if(Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction()) ||
+                    Constants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) {
                 WSDoAllSender secSender = new WSDoAllSender();
                 secSender.init(this.handlerDescription);
                 secSender.invoke(msgContext);
@@ -62,6 +63,9 @@ public class Sender implements Handler {
                 if(sts != null) { 
                   //Use a security token service
                   STSRequester.issueRequest(config);
+                  this.constructMessage(config);
+                  msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
+                            .getDocumentElement());
                 } else {
                     //Create a token
                 }
@@ -76,6 +80,7 @@ public class Sender implements Handler {
             
             
         } catch (Exception e) {
+            e.printStackTrace();
             if(e instanceof RahasException) {
                 RahasException re = (RahasException)e;
                 throw new AxisFault(re.getFaultString(), re.getFaultCode());
