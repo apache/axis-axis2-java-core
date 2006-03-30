@@ -61,6 +61,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient AxisConfiguration axisConfiguration;
     protected ListingAgent lister;
 
+    private ServletConfig servletConfig;
+
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                                 MessageContext msgContext, HttpServletResponse httpServletResponse,
                                                                 HttpServletRequest httpServletRequest)
@@ -205,6 +207,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      */
     public void init(ServletConfig config) throws ServletException {
         try {
+            this.servletConfig = config;
             configContext = initConfigContext(config);
             lister = new ListingAgent(configContext);
             axisConfiguration = configContext.getAxisConfiguration();
@@ -217,6 +220,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             listenerManager.addListener(transportInDescription, true);
         } catch (Exception e) {
             throw new ServletException(e);
+        }
+    }
+
+    public void init() throws ServletException {
+        if(this.servletConfig != null){
+            init(this.servletConfig);
         }
     }
 
@@ -358,7 +367,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                                new ServletBasedOutTransportInfo(resp));
-        msgContext.setProperty(MessageContext.TRANSPORT_OUT, resp.getOutputStream());
+//        msgContext.setProperty(MessageContext.TRANSPORT_OUT, resp.getOutputStream());
 
         // set the transport Headers
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(req));

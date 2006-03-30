@@ -15,23 +15,15 @@
  */
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.transport.http.util.RESTUtil;
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.util.UUIDGenerator;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.transport.http.util.RESTUtil;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import javax.servlet.ServletConfig;
-import javax.xml.namespace.QName;
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Enumeration;
 
 /**
  * 
@@ -54,7 +46,10 @@ public class AxisRESTServlet extends AxisServlet {
     }
 
     public void init(ServletConfig config) throws ServletException {
+        ServletContext servletContext = config.getServletContext();
         this.configContext =
-                (ConfigurationContext) config.getServletContext().getAttribute(CONFIGURATION_CONTEXT);
+                (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
+        servletContext.setAttribute("AxisRESTServlet" + System.currentTimeMillis(),
+                                    this);
     }
 }

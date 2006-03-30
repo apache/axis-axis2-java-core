@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import java.io.IOException;
 
 /**
@@ -51,7 +52,11 @@ public class AxisSOAPServlet extends AxisServlet {
     }
 
     public void init(ServletConfig config) throws ServletException {
+        ServletContext servletContext = config.getServletContext();
         this.configContext =
-                (ConfigurationContext) config.getServletContext().getAttribute(CONFIGURATION_CONTEXT);
+                (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
+        servletContext.setAttribute("AxisSOAPServlet" + System.currentTimeMillis(),
+                                    this);
+        System.err.println("####### AxisSOAPServlet inited");
     }
 }
