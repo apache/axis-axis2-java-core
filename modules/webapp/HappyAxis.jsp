@@ -1,5 +1,6 @@
 <html>
 <%@ page import="org.apache.axiom.om.OMAbstractFactory,
+				 org.apache.axiom.om.*,
                  org.apache.axis2.AxisFault,
                  org.apache.axis2.Constants,
                  org.apache.axis2.addressing.EndpointReference,
