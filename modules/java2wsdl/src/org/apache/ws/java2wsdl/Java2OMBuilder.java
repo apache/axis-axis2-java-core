@@ -31,7 +31,7 @@ import java.io.StringWriter;
 *
 */
 
-public class Java2OMBuilder implements Constants {
+public class Java2OMBuilder implements Java2WSDLConstants {
 
     private JMethod method [];
     private XmlSchema schema;
@@ -86,7 +86,7 @@ public class Java2OMBuilder implements Constants {
                 DEFAULT_WSDL_NAMESPACE_PREFIX);
         OMElement ele = fac.createOMElement("definitions", wsdl);
         ns1 = ele.declareNamespace(AXIS2_XSD, "ns1");
-        ele.declareNamespace(SCHEMA_NAME_SPACE, DEFAULT_SCHEMA_NAMESPACE_PREFIX);
+        ele.declareNamespace(URI_2001_SCHEMA_XSD, DEFAULT_SCHEMA_NAMESPACE_PREFIX);
         soap = ele.declareNamespace(DEFAULT_SOAP_NAMESPACE, DEFAULT_SOAP_NAMESPACE_PREFIX);
         tns = ele.declareNamespace(DEFAULT_TARGET_NAMESPACE, TARGETNAMESPACE_PREFIX);
         ele.addAttribute("targetNamespace", DEFAULT_TARGET_NAMESPACE, null);

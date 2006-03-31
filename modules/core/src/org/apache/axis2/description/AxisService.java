@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.java2wsdl.SchemaGenerator;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.apache.wsdl.WSDLConstants;
 import org.codehaus.jam.JMethod;
@@ -64,6 +65,7 @@ import java.util.*;
  */
 public class AxisService extends AxisDescription {
 
+    private int nsCount = 0;
     private Definition definition = null;
     private Log log = LogFactory.getLog(getClass());
     private String fileName = "";
@@ -105,12 +107,12 @@ public class AxisService extends AxisDescription {
     private boolean active = true;
 
     //to keep the service target name space
-    private String targetNamespace = SchemaGenerator.TARGET_NAMESPACE;
-    private String targetNamespacePrefix = SchemaGenerator.TARGET_NAMESPACE_PREFIX;
+    private String targetNamespace = Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE;
+    private String targetNamespacePrefix = Java2WSDLConstants.TARGETNAMESPACE_PREFIX;
 
     // to store the target namespace for the schema
-    private String schematargetNamespace = SchemaGenerator.SCHEMA_TARGET_NAMESPACE;
-    private String schematargetNamespacePrefix = SchemaGenerator.SCHEMA_NAMESPACE_PRFIX;
+    private String schematargetNamespace = Java2WSDLConstants.AXIS2_XSD;
+    private String schematargetNamespacePrefix = Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
 
     private boolean enableAllTransport = true;
     private String [] exposeTransports;
@@ -232,8 +234,12 @@ public class AxisService extends AxisDescription {
             axisOperation.setMessageReceiver(
                     loadDefaultMessageReceiver(axisOperation.getMessageExchangePattern(), this));
         }
+        if (axisOperation.getSoapAction() == null) {
+            axisOperation.setSoapAction("urn:" + axisOperation.getName().getLocalPart());
+        }
         addChild(axisOperation);
         operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
+        operationsAliasesMap.put(axisOperation.getSoapAction(), axisOperation);
     }
 
 
@@ -350,16 +356,29 @@ public class AxisService extends AxisDescription {
 
     public void printSchema(OutputStream out) throws AxisFault {
         for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema schema = (XmlSchema) schemaList.get(i);
+            XmlSchema schema = addNameSpaces(i);
             schema.write(out);
         }
     }
 
-     public void printSchema(Writer writer) throws AxisFault {
+    public void printSchema(Writer writer) throws AxisFault {
         for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema schema = (XmlSchema) schemaList.get(i);
+            XmlSchema schema = addNameSpaces(i);
             schema.write(writer);
         }
+    }
+
+    private XmlSchema addNameSpaces(int i) {
+        XmlSchema schema = (XmlSchema) schemaList.get(i);
+        Iterator keys = nameSpacesMap.keySet().iterator();
+        Hashtable prefixTable = schema.getPrefixToNamespaceMap();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            if (prefixTable.get(key) == null) {
+                prefixTable.put(key, nameSpacesMap.get(key));
+            }
+        }
+        return schema;
     }
 
     public void printPolicy(OutputStream out) throws AxisFault {
@@ -732,7 +751,7 @@ public class AxisService extends AxisDescription {
 
     public void setSchema(XmlSchema schema) {
         schemaList.add(schema);
-        //todo : need to support multiple schemas
+        addScheamNameSpace(schema.getTargetNamespace());
     }
 
     public boolean isWsdlfound() {
@@ -1140,5 +1159,25 @@ public class AxisService extends AxisDescription {
 
     public void setNameSpacesMap(Map nameSpacesMap) {
         this.nameSpacesMap = nameSpacesMap;
+    }
+
+    private void addScheamNameSpace(String tragetNameSpace) {
+        boolean found = false;
+        if (nameSpacesMap != null && nameSpacesMap.size() > 0) {
+            Iterator itr = nameSpacesMap.values().iterator();
+            while (itr.hasNext()) {
+                String value = (String) itr.next();
+                if (value.equals(tragetNameSpace)) {
+                    found = true;
+                }
+            }
+        }
+        if (nameSpacesMap == null) {
+            nameSpacesMap = new HashMap();
+        }
+        if (!found) {
+            nameSpacesMap.put("ns" + nsCount, tragetNameSpace);
+            nsCount ++;
+        }
     }
 }

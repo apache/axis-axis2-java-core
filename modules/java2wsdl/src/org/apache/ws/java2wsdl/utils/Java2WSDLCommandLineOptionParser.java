@@ -1,7 +1,7 @@
 package org.apache.ws.java2wsdl.utils;
 
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-import org.apache.ws.java2wsdl.Constants;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import java.util.*;
 /*
@@ -22,7 +22,7 @@ import java.util.*;
 *
 */
 
-public class Java2WSDLCommandLineOptionParser implements Constants {
+public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
     private static int STARTED = 0;
     private static int NEW_OPTION = 1;
     private static int SUB_PARAM_OF_OPTION = 2;

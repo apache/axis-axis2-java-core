@@ -9,6 +9,7 @@ import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.extensions.DefaultExtensibilityElement;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.PolicyExtensibilityElement;
@@ -30,8 +31,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -69,7 +68,6 @@ public class WSDL2AxisServiceBuilder {
     private static final String AXIS2WRAPPED = "axis2wrapped";
     private static final String XSD_TYPE = "type";
     private static final String XSD_REF = "ref";
-    private static final String BOUND_INTERFACE_NAME = "BoundInterface";
 
 
     private static int nsCount = 0;
@@ -104,28 +102,32 @@ public class WSDL2AxisServiceBuilder {
             this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(), dif
                     , axisService, AxisExtensiblityElementWrapper.PORT);
         }
+        Binding binding = findBinding(dif);
         //////////////////(1.2) /////////////////////////////
         // create new Schema extensions element for wrapping
-        Element[] schemaElements = generateWrapperSchema(dif);
+        Element[] schemaElements = generateWrapperSchema(dif, binding);
         if (schemaElements != null && schemaElements.length > 0) {
             for (int i = 0; i < schemaElements.length; i++) {
                 Element schemaElement = schemaElements[i];
                 if (schemaElement != null) {
+                    System.out.println(schemaElement.getNamespaceURI());
                     ExtensionFactoryImpl extensionFactory = new ExtensionFactoryImpl();
-                    org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
-                            ExtensionConstants.SCHEMA);
+                    org.apache.wsdl.extensions.Schema schemaExtensibilityElement =
+                            (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
+                                    ExtensionConstants.SCHEMA);
                     schemaExtensibilityElement.setElement(schemaElement);
                     axisService.setSchema(getXMLSchema(schemaExtensibilityElement.getElement()));
                 }
             }
         }
-        processServices(dif);
+        processBinding(binding, dif);
         return axisService;
     }
 
-    private void processServices(Definition dif) throws AxisFault {
+    private Binding findBinding(Definition dif) throws AxisFault {
         Map services = dif.getServices();
         Service service;
+        Binding binding = null;
         Port port = null;
         if (serviceName != null) {
             service = (Service) services.get(serviceName);
@@ -153,20 +155,77 @@ public class WSDL2AxisServiceBuilder {
                 port = (Port) ports.values().toArray()[0];
             }
         }
+        axisService.setName(service.getQName().getLocalPart());
         if (port != null) {
             copyExtensibleElements(port.getExtensibilityElements(),
                     dif, axisService, AxisExtensiblityElementWrapper.PORT);
-            Binding binding = port.getBinding();
-            processBinding(binding, dif);
+            binding = port.getBinding();
         }
-        axisService.setName(service.getQName().getLocalPart());
+        return binding;
     }
 
     private void processBinding(Binding binding, Definition dif) throws AxisFault {
         if (binding != null) {
             PortType portType = binding.getPortType();
+
+
             processPortType(portType, dif);
-            //NOT yet  complte
+
+
+            List list = binding.getBindingOperations();
+            copyExtensibleElements(binding.getExtensibilityElements(),
+                    dif, axisService, AxisExtensiblityElementWrapper.PORT_BINDING);
+            for (int i = 0; i < list.size(); i++) {
+                BindingOperation wsdl4jBindingOperation = (BindingOperation) list.get(i);
+                AxisOperation operation = axisService.getOperation(
+                        new QName(wsdl4jBindingOperation.getName()));
+                copyExtensibleElements(wsdl4jBindingOperation.getExtensibilityElements(),
+                        dif, operation, AxisExtensiblityElementWrapper.PORT_BINDING);
+                ArrayList extElemntList = operation.getWsdlExtElements();
+                if (extElemntList != null) {
+                    Iterator elements = extElemntList.iterator();
+                    while (elements.hasNext()) {
+                        AxisExtensiblityElementWrapper element = (AxisExtensiblityElementWrapper) elements.next();
+                        WSDLExtensibilityElement wsdlextElement = element.getExtensibilityElement();
+                        if (wsdlextElement instanceof org.apache.wsdl.extensions.SOAPOperation) {
+                            org.apache.wsdl.extensions.SOAPOperation soapOperation =
+                                    (org.apache.wsdl.extensions.SOAPOperation) wsdlextElement;
+                            operation.setSoapAction(soapOperation.getSoapAction());
+                        }
+                    }
+                }
+                BindingInput bindingInput = wsdl4jBindingOperation.getBindingInput();
+                BindingOutput bindingOutput = wsdl4jBindingOperation.getBindingOutput();
+                String MEP = operation.getMessageExchangePattern();
+                if (bindingInput != null) {
+                    if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                            WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                            WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                            WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                            WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                            WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                        AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                        copyExtensibleElements(bindingInput.getExtensibilityElements(),
+                                dif, inMessage, AxisExtensiblityElementWrapper.PORT_BINDING);
+                    }
+                }
+                if (bindingOutput != null) {
+                    if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                            WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                            WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                            WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                            WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                            WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                        AxisMessage outAxisMessage = operation
+                                .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                        copyExtensibleElements(
+                                bindingOutput.getExtensibilityElements(),
+                                dif, outAxisMessage,
+                                AxisExtensiblityElementWrapper.PORT_BINDING);
+                    }
+                }
+            }
+
         }
     }
 
@@ -206,8 +265,7 @@ public class WSDL2AxisServiceBuilder {
         //Copy Name Attribute
         String MEP = getMEP(wsdl4jOperation);
         AxisOperation axisOperation = AxisOperationFactory.getOperationDescription(MEP);
-        axisOperation.setName(new QName(nameSpaceOfTheOperation,
-                wsdl4jOperation.getName()));
+        axisOperation.setName(new QName(wsdl4jOperation.getName()));
 
         Input wsdl4jInputMessage = wsdl4jOperation.getInput();
         QName wrappedInputName = axisOperation.getName();
@@ -223,9 +281,9 @@ public class WSDL2AxisServiceBuilder {
                         wrappedInputName
                         , message,
                         findWrapppable(message)));
+                inMessage.setName(message.getQName().getLocalPart());
                 copyExtensibleElements(message.getExtensibilityElements(),
                         dif, inMessage, AxisExtensiblityElementWrapper.PORT_TYPE);
-                //TODO : ExtensibilityAttribute have to handle here
             }
         }
         //Create an output message and add
@@ -238,9 +296,9 @@ public class WSDL2AxisServiceBuilder {
                         wrappedOutputName
                         , message,
                         findWrapppable(message)));
+                outMessage.setName(message.getQName().getLocalPart());
                 copyExtensibleElements(message.getExtensibilityElements(),
                         dif, outMessage, AxisExtensiblityElementWrapper.PORT_TYPE);
-                //TODO : ExtensibilityAttribute have to handle here
             }
         }
 
@@ -257,7 +315,9 @@ public class WSDL2AxisServiceBuilder {
                         faultMessage, findWrapppable(faultMessage)));
                 copyExtensibleElements(faultMessage.getExtensibilityElements(),
                         dif, faultyMessge, AxisExtensiblityElementWrapper.PORT_TYPE);
+                faultyMessge.setName(faultMessage.getQName().getLocalPart());
             }
+
             axisOperation.setFaultMessages(faultyMessge);
         }
         return axisOperation;
@@ -295,7 +355,8 @@ public class WSDL2AxisServiceBuilder {
     }
 
 
-    private Element[] generateWrapperSchema(Definition wsdl4jDefinition) {
+    private Element[] generateWrapperSchema(Definition wsdl4jDefinition,
+                                            Binding binding) {
 
 
         List schemaElementList = new ArrayList();
@@ -307,27 +368,9 @@ public class WSDL2AxisServiceBuilder {
         // list, in which case we'll generate a schema per porttype
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        Map bindingsMap = wsdl4jDefinition.getBindings();
-        Map porttypeMap = wsdl4jDefinition.getPortTypes();
-
-        if (bindingsMap != null && !bindingsMap.isEmpty()) {
-            Binding[] bindings = (Binding[]) bindingsMap.values().toArray(new Binding[bindingsMap.size()]);
-            Binding binding;
-            for (int i = 0; i < bindings.length; i++) {
-                binding = bindings[i];
-                schemaElementList.add(
-                        createSchemaForPorttype(binding.getPortType(), targetNamespaceUri,
-                                findWrapForceable(binding)));
-            }
-        } else {
-            PortType[] porttypesArray = (PortType[]) porttypeMap.values().toArray(new PortType[porttypeMap.size()]);
-            for (int i = 0; i < porttypesArray.length; i++) {
-                schemaElementList.add(
-                        createSchemaForPorttype(porttypesArray[i], targetNamespaceUri, false));
-            }
-
-        }
-
+        schemaElementList.add(
+                createSchemaForPorttype(binding.getPortType(), targetNamespaceUri,
+                        findWrapForceable(binding)));
         return (Element[]) schemaElementList.toArray(new Element[schemaElementList.size()]);
     }
 
@@ -338,6 +381,7 @@ public class WSDL2AxisServiceBuilder {
         Map messagesMap = new HashMap();
         Map inputOperationsMap = new HashMap();
         Map outputOperationsMap = new HashMap();
+        Map faultyOperationsMap = new HashMap();
         //this contains the required namespace imports. the key in this
         //map would be the namaspace URI
         Map namespaceImportsMap = new HashMap();
@@ -373,7 +417,20 @@ public class WSDL2AxisServiceBuilder {
                 messagesMap.put(message.getQName(), message);
                 outputOperationsMap.put(op.getName(), message);
             }
-            //todo also handle the faults here
+
+            Map faultMap = op.getFaults();
+            if (faultMap != null && faultMap.size() > 0) {
+                Iterator keys = faultMap.keySet().iterator();
+                while (keys.hasNext()) {
+                    Object key = keys.next();
+                    Fault fault = (Fault) faultMap.get(key);
+                    if (fault != null) {
+                        message = fault.getMessage();
+                        messagesMap.put(message.getQName(), message);
+                        faultyOperationsMap.put(key, message);
+                    }
+                }
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -531,6 +588,27 @@ public class WSDL2AxisServiceBuilder {
             resolvedRpcWrappedElementMap.put(outputOpName, new QName(
                     targetNamespaceUri,
                     outputOpName,
+                    AXIS2WRAPPED
+            ));
+
+        }
+
+        //loop through the faultoutput op map and generate the elements
+        String[] faultyOperationtNames = (String[]) faultyOperationsMap.keySet().toArray(
+                new String[faultyOperationsMap.size()]);
+        for (int j = 0; j < faultyOperationtNames.length; j++) {
+
+            String baseFaultOpName = faultyOperationtNames[j];
+            elementDeclaration = document.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+            elementDeclaration.setAttribute(XSD_NAME,
+                    baseFaultOpName);
+            String typeValue = ((Message) faultyOperationsMap.get(baseFaultOpName)).getQName().getLocalPart();
+            elementDeclaration.setAttribute(XSD_TYPE,
+                    AXIS2WRAPPED + ":" + typeValue);
+            elementElementsList.add(elementDeclaration);
+            resolvedRpcWrappedElementMap.put(baseFaultOpName, new QName(
+                    targetNamespaceUri,
+                    baseFaultOpName,
                     AXIS2WRAPPED
             ));
 

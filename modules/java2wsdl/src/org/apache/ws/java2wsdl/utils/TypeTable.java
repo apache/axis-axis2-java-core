@@ -1,7 +1,7 @@
 package org.apache.ws.java2wsdl.utils;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.ws.java2wsdl.Constants;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -36,56 +36,56 @@ public class TypeTable {
     private void populateSimpleTypes() {
         //todo pls use the types from org.apache.ws.commons.schema.constants.Constants
         simpleTypetoxsd.put("int",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "int", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "int", "xs"));
         simpleTypetoxsd.put("java.lang.String",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "string", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "string", "xs"));
         simpleTypetoxsd.put("boolean",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "boolean", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "boolean", "xs"));
         simpleTypetoxsd.put("float",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "float", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "float", "xs"));
         simpleTypetoxsd.put("double",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "double", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "double", "xs"));
         simpleTypetoxsd.put("short",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "short", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "short", "xs"));
         simpleTypetoxsd.put("long",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "long", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "long", "xs"));
         simpleTypetoxsd.put("byte",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "byte", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "byte", "xs"));
         simpleTypetoxsd.put("char",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put("java.lang.Integer",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "int", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "int", "xs"));
         simpleTypetoxsd.put("java.lang.Double",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "double", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "double", "xs"));
         simpleTypetoxsd.put("java.lang.Float",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "float", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "float", "xs"));
         simpleTypetoxsd.put("java.lang.Long",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "long", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "long", "xs"));
         simpleTypetoxsd.put("java.lang.Character",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put("java.lang.Boolean",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "boolean", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "boolean", "xs"));
         simpleTypetoxsd.put("java.lang.Byte",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "byte", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "byte", "xs"));
         simpleTypetoxsd.put("java.lang.Short",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "short", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "short", "xs"));
         simpleTypetoxsd.put("java.util.Date",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
         simpleTypetoxsd.put("java.util.Calendar",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
 
         simpleTypetoxsd.put("java.lang.Object",
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
 
         // Any types
         simpleTypetoxsd.put(OMElement.class.getName(),
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(ArrayList.class.getName(),
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(Vector.class.getName(),
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(List.class.getName(),
-                new QName(Constants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
     }
 
     public QName getSimpleSchemaTypeName(String typename) {

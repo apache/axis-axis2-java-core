@@ -23,17 +23,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -70,25 +64,6 @@ public class ServiceBuilder extends DescriptionBuilder {
             // Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(itr, service, service.getParent());
-
-            // Generating schema for the service if the imple class is JAVA
-            if (!service.isWsdlfound()) {
-                //trying to generate WSDL for the service using JAM  and Java refelection
-                try {
-                    Utils.fillAxisService(service, axisConfig);
-                } catch (Exception e) {
-                    /**
-                     * I have log here if some error occours , since service impl
-                     * class can alos be non-java class , so in that case
-                     * it is not posible to generate scheam, so no pint of throwing that
-                     * error ,  I know we have to handle this , untill that I have
-                     * to log this
-                     * TODO : Pls fix this , you are doing worng this here : Deepal
-                     */
-                    log.error(Messages.getMessage("errorinscheamgen", e.getMessage()),e);
-                }
-            }
-
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -119,6 +94,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
                     service.setTargetNamespace(nameSpeceVale);
                 }
+            } else {
+                service.setTargetNamespace(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
             }
             //Setting schema namespece if any
             OMElement scheamElement = service_element.getFirstChildWithName(new QName(SCHEMA));
@@ -132,6 +109,25 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
+
+            // Generating schema for the service if the imple class is JAVA
+            if (!service.isWsdlfound()) {
+                //trying to generate WSDL for the service using JAM  and Java refelection
+                try {
+                    Utils.fillAxisService(service, axisConfig);
+                } catch (Exception e) {
+                    /**
+                     * I have log here if some error occours , since service impl
+                     * class can alos be non-java class , so in that case
+                     * it is not posible to generate scheam, so no pint of throwing that
+                     * error ,  I know we have to handle this , untill that I have
+                     * to log this
+                     * TODO : Pls fix this , you are doing worng this here : Deepal
+                     */
+                    log.error(Messages.getMessage("errorinscheamgen", e.getMessage()), e);
+                }
+            }
+
             //<schema targetNamespace="http://x.y.z"/>
             // setting the PolicyInclude
             // processing <wsp:Policy> .. </..> elements

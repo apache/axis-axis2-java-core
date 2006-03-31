@@ -26,7 +26,7 @@ import java.util.HashMap;
 *
 */
 
-public class Java2WSDLTask extends Task implements Constants{
+public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
         private String className = null;
         private String outputLocation = null;

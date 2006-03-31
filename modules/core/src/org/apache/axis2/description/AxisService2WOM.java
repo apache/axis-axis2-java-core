@@ -7,6 +7,7 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.java2wsdl.SchemaGenerator;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
@@ -84,13 +85,13 @@ public class AxisService2WOM {
         if (targetNamespece != null && !targetNamespece.trim().equals("")) {
             this.targetNamespece = targetNamespece;
         } else {
-            this.targetNamespece = SchemaGenerator.TARGET_NAMESPACE;
+            this.targetNamespece = Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE;
         }
         if (targetNamespecheprefix != null
                 && !targetNamespecheprefix.trim().equals("")) {
             this.targetNamespecheprefix = targetNamespecheprefix;
         } else {
-            this.targetNamespecheprefix = SchemaGenerator.TARGET_NAMESPACE_PREFIX;
+            this.targetNamespecheprefix = Java2WSDLConstants.TARGETNAMESPACE_PREFIX;
         }
 
     }

@@ -1,6 +1,6 @@
 package org.apache.ws.java2wsdl.utils;
 
-import org.apache.ws.java2wsdl.Constants;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import java.util.ArrayList;
 /*
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 *
 */
 
-public class Java2WSDLCommandLineOption implements Constants {
+public class Java2WSDLCommandLineOption implements Java2WSDLConstants {
 
     private String type;
        private ArrayList optionValues;

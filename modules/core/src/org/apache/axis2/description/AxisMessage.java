@@ -32,6 +32,7 @@ import java.util.Iterator;
  */
 public class AxisMessage extends AxisDescription {
     private ArrayList handlerChain;
+    private String name;
 
     //to keep data in WSDL message refference and to keep the Java2WSDL data
     // such as SchemaElementName , direction etc.
@@ -105,5 +106,13 @@ public class AxisMessage extends AxisDescription {
             }
         }
         return null;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

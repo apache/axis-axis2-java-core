@@ -1,7 +1,7 @@
 package org.apache.ws.java2wsdl.utils;
 
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-import org.apache.ws.java2wsdl.Constants;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -21,7 +21,7 @@ import org.apache.ws.java2wsdl.Constants;
 *
 */
 
-public class Java2WSDLOptionsValidator implements Constants {
+public class Java2WSDLOptionsValidator implements Java2WSDLConstants {
     public boolean isInvalid(Java2WSDLCommandLineOption option) {
         boolean invalid;
         String optionType = option.getOptionType();

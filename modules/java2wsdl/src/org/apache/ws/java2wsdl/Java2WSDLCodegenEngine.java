@@ -27,7 +27,7 @@ import java.util.Map;
 *
 */
 
-public class Java2WSDLCodegenEngine implements Constants {
+public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
     private Java2WSDLBuilder java2WsdlBuilder;
     public static final String WSDL_FILENAME_SUFFIX = ".wsdl";
 

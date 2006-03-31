@@ -54,6 +54,8 @@ public abstract class AxisOperation extends AxisDescription
 
     private ArrayList wsamappingList;
 
+    private String soapAction;
+
     public AxisOperation() {
         mepURI = MEP_URI_IN_OUT;
         modulerefs = new ArrayList();
@@ -503,5 +505,13 @@ public abstract class AxisOperation extends AxisDescription
 
     public void setFaultMessages(AxisMessage faultMessage) {
         faultMessages.add(faultMessage);
+    }
+
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    public void setSoapAction(String soapAction) {
+        this.soapAction = soapAction;
     }
 }

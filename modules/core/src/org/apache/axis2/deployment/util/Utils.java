@@ -6,19 +6,14 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.wsdl.WSDLConstants;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.wsdl.WSDLConstants;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
@@ -27,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -156,7 +153,7 @@ public class Utils {
     public static void fillAxisService(AxisService axisService,
                                        AxisConfiguration axisConfig) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
-        if(implInfoParam == null) {
+        if (implInfoParam == null) {
             // Nothing to do.
             return;
         }
@@ -170,6 +167,14 @@ public class Utils {
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
         PhasesInfo pinfo = axisConfig.getPhasesInfo();
+        // adding name spaces
+        Map map = new HashMap();
+        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
+                Java2WSDLConstants.AXIS2_XSD);
+        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
+                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
+        axisService.setNameSpacesMap(map);
+
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
@@ -186,13 +191,15 @@ public class Utils {
                 AxisMessage inMessage = operation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (inMessage != null) {
+                    inMessage.setName(opName);
                     inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
                 }
                 if (!jmethod.getReturnType().isVoidType()) {
                     AxisMessage outMessage = operation.getMessage(
                             WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
-                            SchemaGenerator.METHOD_RESPONSE_WRAPPER));
+                            Java2WSDLConstants.RESPONSE));
+                    outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
                 }
             } else {
                 operation = getAxisOperationforJmethod(jmethod, table);
@@ -207,12 +214,12 @@ public class Utils {
                 pinfo.setOperationPhases(operation);
                 axisService.addOperation(operation);
             }
-
+            operation.setSoapAction("urn:" + opName);
         }
     }
 
     public static AxisOperation getAxisOperationforJmethod(JMethod jmethod,
-                                                            TypeTable table) throws AxisFault {
+                                                           TypeTable table) throws AxisFault {
         AxisOperation operation;
         String opName = jmethod.getSimpleName();
         if ("init".equals(opName)) {
@@ -225,7 +232,7 @@ public class Utils {
             AxisMessage outMessage = operation.getMessage(
                     WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
-                    SchemaGenerator.METHOD_RESPONSE_WRAPPER));
+                    Java2WSDLConstants.RESPONSE));
         }
 
         operation.setName(new QName(opName));
