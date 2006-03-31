@@ -61,7 +61,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient AxisConfiguration axisConfiguration;
     protected ListingAgent lister;
 
-    private ServletConfig servletConfig;
+    protected ServletConfig servletConfig;
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                                 MessageContext msgContext, HttpServletResponse httpServletResponse,

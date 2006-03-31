@@ -49,7 +49,13 @@ public class AxisRESTServlet extends AxisServlet {
         ServletContext servletContext = config.getServletContext();
         this.configContext =
                 (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
-        servletContext.setAttribute("AxisRESTServlet" + System.currentTimeMillis(),
-                                    this);
+        servletContext.setAttribute(this.getClass().getName(), this);
+        this.servletConfig = config;
+    }
+
+    public void init() throws ServletException {
+        if(this.servletConfig != null){
+            init(this.servletConfig);
+        }
     }
 }
