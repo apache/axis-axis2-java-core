@@ -29,6 +29,7 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.message.WSSecDKEncrypt;
 import org.apache.ws.security.message.WSSecHeader;
+import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
@@ -44,7 +45,7 @@ public class Sender implements Handler {
     private HandlerDescription handlerDescription;
     
     public void invoke(MessageContext msgContext) throws AxisFault {
-        
+        DocumentBuilderFactoryImpl.setDOOMRequired(true);
         try {
             if(Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction()) ||
                     Constants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) {
@@ -57,21 +58,30 @@ public class Sender implements Handler {
             //Parse the configuration
             RahasConfiguration config = RahasConfiguration.load(msgContext, true);
 
-            if(config.getContextIdentifier() == null && config.getStsEPRAddress() != null) {
-
-                String sts = config.getStsEPRAddress();
-                if(sts != null) { 
-                  //Use a security token service
-                  STSRequester.issueRequest(config);
-                  this.constructMessage(config);
-                  msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
-                            .getDocumentElement());
+            if(config.getMsgCtx().isServerSide()) {
+                this.constructMessage(config);
+                msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
+                        .getDocumentElement());
+            } else {
+                
+                if(config.getContextIdentifier() == null && config.getStsEPRAddress() != null && !config.getMsgCtx().isServerSide()) {
+    
+                    String sts = config.getStsEPRAddress();
+                    if(sts != null) {
+                      //Use a security token service
+                      STSRequester.issueRequest(config);
+                      this.constructMessage(config);
+                      msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
+                                .getDocumentElement());
+                    } else {
+                        //Create a token
+                    }
+                    
                 } else {
-                    //Create a token
+                    this.constructMessage(config);
+                    msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
+                              .getDocumentElement());
                 }
-                
-                
-                
             }
             
             
@@ -95,8 +105,6 @@ public class Sender implements Handler {
     
     private void constructMessage(RahasConfiguration config) throws Exception {
         
-        DocumentBuilderFactoryImpl.setDOOMRequired(true);
-        
         Crypto crypto = Util.getCryptoInstace(config);
         
         Document doc = config.getDocument();
@@ -107,7 +115,11 @@ public class Sender implements Handler {
         byte[] tempSecret = config.getTokenStore().getToken(
                 config.getContextIdentifier()).getSecret();
 
-        String tokenId = config.getSecurityContextToken().getID();
+        SecurityContextToken sct = config.getSecurityContextToken();
+        if(sct == null) {
+            
+        }
+        String tokenId = sct.getID();
 
         // Derived key encryption
         WSSecDKEncrypt encrBuilder = new WSSecDKEncrypt();
@@ -116,7 +128,7 @@ public class Sender implements Handler {
         encrBuilder.build(doc, crypto, secHeader);
 
         WSSecurityUtil.prependChildElement(doc, secHeader.getSecurityHeader(),
-                config.getSecurityContextToken().getElement(), false);
+                sct.getElement(), false);
     }
     
     

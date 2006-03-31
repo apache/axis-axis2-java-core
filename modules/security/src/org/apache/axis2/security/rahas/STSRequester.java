@@ -16,7 +16,6 @@
 
 package org.apache.axis2.security.rahas;
 
-import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
@@ -88,12 +87,14 @@ public class STSRequester {
             rst.setRequestType(new URI(Constants.REQ_TYPE_ISSUE));
             rst.setTokenType(new URI(Constants.TOK_TYPE_SCT));
             rst.setContext(new URI("http://get.optional.attrs.working"));
+            
+            Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(rst
                     .getPullParser(new QName(Constants.WST_NS,
                             Constants.REQUEST_SECURITY_TOKEN_LN)));
-            
+
             OMElement tempResult = client.sendReceive(rstQn, builder.getDocumentElement());
-            
+            Axis2Util.useDOOM(true);
             OMElement tempelem = Axis2Util.toDOOM(DOOMAbstractFactory.getOMFactory(), tempResult);
             OMElement elem = (OMElement)config.getDocument().importNode((Element)tempelem, true);
             processRSTR(elem, config);
@@ -116,7 +117,7 @@ public class STSRequester {
                 SecurityContextToken sct = new SecurityContextToken((Element)sctElem);
                 token = new Token(sct.getIdentifier(), sctElem);
                 config.setSecurityContextToken(sct);
-                config.setContextIdentifier(sct.getIdentifier());
+                config.resgisterContext(sct.getIdentifier());
             } else {
                 throw new RahasException("sctMissingInResponse");
             }

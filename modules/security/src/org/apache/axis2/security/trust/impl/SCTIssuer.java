@@ -201,6 +201,7 @@ public class SCTIssuer implements TokenIssuer {
     
         //Store the tokens
         Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
         this.getTokenStore(msgCtx).add(sctToken);
         
         return env;
@@ -244,12 +245,12 @@ public class SCTIssuer implements TokenIssuer {
      * @return
      */
     private TokenStorage getTokenStore(MessageContext msgCtx) {
-        TokenStorage storage = (TokenStorage) msgCtx.getServiceContext()
-                .getProperty(TokenStorage.TOKEN_STORAGE_KEY);
+        String tempKey = TokenStorage.TOKEN_STORAGE_KEY
+                                + msgCtx.getAxisService().getName();
+        TokenStorage storage = (TokenStorage) msgCtx.getProperty(tempKey);
         if (storage == null) {
             storage = new SimpleTokenStore();
-            msgCtx.getServiceContext().setProperty(
-                    TokenStorage.TOKEN_STORAGE_KEY, storage);
+            msgCtx.getConfigurationContext().setProperty(tempKey, storage);
         }
         return storage;
     }

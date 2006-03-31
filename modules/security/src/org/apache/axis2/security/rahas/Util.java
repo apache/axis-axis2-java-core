@@ -39,7 +39,11 @@ public class Util {
             if(config.getCryptoClassName() != null && config.getCryptoProperties() != null) {
                 crypto = CryptoFactory.getInstance(config.getCryptoClassName(), config.getCryptoProperties());
             } else if(config.getCryptoPropertiesFile() != null) {
-                crypto = CryptoFactory.getInstance(config.getCryptoPropertiesFile());
+                if(config.getClassLoader() != null) {
+                    crypto = CryptoFactory.getInstance(config.getCryptoPropertiesFile(), config.getClassLoader());
+                } else {
+                    crypto = CryptoFactory.getInstance(config.getCryptoPropertiesFile());
+                }
             } else {
                 throw new RahasException("cannotCrateCryptoInstance");
             }

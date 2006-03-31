@@ -24,7 +24,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.trust.SimpleTokenStore;
+import org.apache.axis2.security.trust.Token;
 import org.apache.axis2.security.trust.TokenStorage;
+import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
@@ -32,6 +34,7 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
@@ -133,7 +136,7 @@ public class RahasConfiguration {
     private SecurityContextToken sct;
     
     public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
-            throws RahasException, WSSecurityException, AxisFault {
+            throws Exception {
         Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
         if(param == null) {
             param = (Parameter)msgCtx.getProperty(RAHAS_CONFIG);
@@ -150,6 +153,7 @@ public class RahasConfiguration {
                 RahasConfiguration config = new RahasConfiguration();
                 
                 config.msgCtx = msgCtx;
+                msgCtx.setProperty(RAHAS_CONFIG, config);
                 
                 config.scope = getStringValue(conFileElem.getFirstChildWithName(SCOPE));
                 
@@ -171,10 +175,13 @@ public class RahasConfiguration {
                 //Get the action<->ctx-identifier map
                 config.contextMap = (Hashtable) msgCtx
                         .getProperty(RahasHandlerConstants.CONTEXT_MAP_KEY);
+
+                //Convert the Envelop to DOOM
+                config.doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
                 
                 //Token store
                 config.tokenStore = (TokenStorage) msgCtx
-                        .getProperty(RahasHandlerConstants.TOKEN_STORE_KEY);
+                        .getProperty(TokenStorage.TOKEN_STORAGE_KEY);
     
                 // Context identifier
                 if(sender) {
@@ -191,6 +198,11 @@ public class RahasConfiguration {
                             config.contextIdentifier = (String) config.getContextMap()
                                     .get(serviceAddress);
                         }
+                        if(config.sct == null && config.contextIdentifier != null) {
+                            OMElement tokElem = config.getTokenStore().getToken(config.contextIdentifier).getToken();
+                            config.sct = new SecurityContextToken((Element)config.doc.importNode((Element)tokElem, true));
+                        }
+                        
                     } else {
                         //Server side sender
                         OperationContext opCtx = msgCtx.getOperationContext();
@@ -201,9 +213,14 @@ public class RahasConfiguration {
                         }
                         if(inConfig != null && inConfig.contextIdentifier != null) {
                             config.contextIdentifier = inConfig.contextIdentifier;
+                            config.tokenStore = inConfig.tokenStore;
+                            OMElement token = config.tokenStore.getToken(config.contextIdentifier).getToken();
+                            config.sct = new SecurityContextToken((Element)config.doc.importNode((Element)token, true));
                         } else {
                             throw new RahasException("canotFindContextIdentifier");
                         }
+                        
+                        config.setClassLoader(msgCtx.getAxisService().getClassLoader());
                     }
                 }
 
@@ -218,9 +235,6 @@ public class RahasConfiguration {
                         .getProperty(WSHandlerConstants.PW_CALLBACK_REF);
                 
                 config.sender = sender;
-                
-                //Convert the Envelop to DOOM
-                config.doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
                 
                 return config;
             } else {
@@ -285,17 +299,19 @@ public class RahasConfiguration {
     
     
     protected void resgisterContext(String identifier) throws RahasException {
+        this.contextIdentifier = identifier;
+        
         if(this.scope.equals(SCOPE_OPERATION)) {
             String action = msgCtx.getSoapAction();
             if(action != null) {
-                this.contextMap.put(action, identifier);
+                this.getContextMap().put(action, identifier);
             } else {
                 throw new RahasException("missingWSAAction");
             }
         } else {
             String to = msgCtx.getTo().getAddress();
             if(to != null) {
-                this.contextMap.put(to, identifier);
+                this.getContextMap().put(to, identifier);
             } else {
                 throw new RahasException("missingWSATo");
             }
@@ -380,13 +396,33 @@ public class RahasConfiguration {
      */
     protected TokenStorage getTokenStore() throws Exception {
         if(this.tokenStore == null) {
-            if(this.tokenStoreClass != null) {
-                 this.tokenStore = (TokenStorage) Class
-                        .forName(this.tokenStoreClass).newInstance();
+            
+            //First check the context hierarchy
+            this.tokenStore = (TokenStorage) this.msgCtx
+                    .getProperty(TokenStorage.TOKEN_STORAGE_KEY
+                            + msgCtx.getWSAAction());
+            if(this.tokenStore == null) {
+                this.tokenStore = (TokenStorage) this.msgCtx
+                .getProperty(TokenStorage.TOKEN_STORAGE_KEY
+                        + msgCtx.getAxisService().getName()); 
+            }
+            
+            //Create a new store
+            if(this.tokenStore == null) {
+                if(this.tokenStoreClass != null) {
+                     this.tokenStore = (TokenStorage) Class
+                            .forName(this.tokenStoreClass).newInstance();
+                } else {
+                    this.tokenStore = new SimpleTokenStore();
+                }
+            }
+            
+            if(SCOPE_SERVICE.equals(this.scope)) {
                 this.msgCtx.getConfigurationContext().setProperty(
-                        RahasHandlerConstants.TOKEN_STORE_KEY, this.tokenStore);
+                        TokenStorage.TOKEN_STORAGE_KEY, this.tokenStore);
             } else {
-                this.tokenStore = new SimpleTokenStore();
+                this.msgCtx.getConfigurationContext().setProperty(
+                        TokenStorage.TOKEN_STORAGE_KEY, this.tokenStore);
             }
         }
         return tokenStore;
@@ -406,12 +442,13 @@ public class RahasConfiguration {
         return contextIdentifier;
     }
 
-    /**
-     * @param contextIdentifier The contextIdentifier to set.
-     */
-    protected void setContextIdentifier(String contextIdentifier) {
-        this.contextIdentifier = contextIdentifier;
-    }
+//    /**
+//     * @param contextIdentifier The contextIdentifier to set.
+//     */
+//    protected void setContextIdentifier(String contextIdentifier) throws RahasException {
+//        this.contextIdentifier = contextIdentifier;
+//        this.resgisterContext(contextIdentifier);
+//    }
 
     /**
      * @return Returns the cryptoProperties.

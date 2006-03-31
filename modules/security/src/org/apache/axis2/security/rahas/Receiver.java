@@ -16,6 +16,7 @@
 
 package org.apache.axis2.security.rahas;
 
+import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -23,6 +24,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.security.WSDoAllReceiver;
 import org.apache.axis2.security.trust.Constants;
+import org.apache.axis2.security.util.Axis2Util;
+import org.apache.ws.security.WSSecurityEngine;
 
 import javax.xml.namespace.QName;
 
@@ -30,22 +33,51 @@ import javax.xml.namespace.QName;
  * 
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class Receiver  implements Handler {
+public class Receiver implements Handler {
 
     private static final long serialVersionUID = 8450183308062119444L;
-    
+
     private HandlerDescription handlerDescription;
-    
+
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if(Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction()) ||
-                Constants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) {
-            WSDoAllReceiver secReceiver = new WSDoAllReceiver();
-            secReceiver.init(this.handlerDescription);
-            secReceiver.invoke(msgContext);
-            return;
+        DocumentBuilderFactoryImpl.setDOOMRequired(true);
+        
+        try {
+            if (Constants.RST_ACTON_SCT.equals(msgContext.getWSAAction())
+                    || Constants.RSTR_ACTON_SCT.equals(msgContext
+                            .getWSAAction())) {
+                WSDoAllReceiver secReceiver = new WSDoAllReceiver();
+                secReceiver.init(this.handlerDescription);
+                secReceiver.invoke(msgContext);
+                return;
+            }
+
+            // Parse the configuration
+            RahasConfiguration config = RahasConfiguration.load(msgContext,
+                    false);
+            WSSecurityEngine secEngine = new WSSecurityEngine();
+            secEngine.processSecurityHeader(config.getDocument(), null,
+                    new RahasCallbackHandler(config), config
+                            .getCrypto());
+
+            //Convert back to llom since the inflow cannot use llom
+            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(
+                    config.getDocument(), false));
+            
+        } catch (Exception e) {
+            if (e instanceof RahasException) {
+                RahasException re = (RahasException) e;
+                throw new AxisFault(re.getFaultString(), re.getFaultCode());
+            } else {
+                throw new AxisFault(e.getMessage());
+            }
+        } finally {
+            DocumentBuilderFactoryImpl.setDOOMRequired(false);
+            Axis2Util.useDOOM(false);
         }
+
     }
-    
+
     public void cleanup() throws AxisFault {
     }
 

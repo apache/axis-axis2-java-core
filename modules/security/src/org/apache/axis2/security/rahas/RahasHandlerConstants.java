@@ -22,14 +22,6 @@ package org.apache.axis2.security.rahas;
 public interface RahasHandlerConstants {
 
     /**
-     * Key to hold the <code>TokenStore</code> to store the 
-     * <code>SecurityContextToken</code>s 
-     * 
-     * @see org.apache.axis2.security.trust.TokenStorage
-     */
-    public final static String TOKEN_STORE_KEY = "tokenStore";
-
-    /**
      * Key to hod the map of security context identifiers against the 
      * service epr addresses (service scope) or wsa:Action values (operation 
      * scope).
