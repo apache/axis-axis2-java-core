@@ -5,6 +5,7 @@ import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -44,19 +45,44 @@ public class ConfigPropertyFileLoader {
     private static final String DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY = "codegen.databinding.testobject.template";
 
 
-    public static final String CODEGEN_CONFIG_PROPERTIES = "/org/apache/axis2/wsdl/codegen/codegen-config.properties";
+    public static final String DEFAULT_CODEGEN_CONFIG_PROPERTIES =
+            "/org/apache/axis2/wsdl/codegen/codegen-config.properties";
 
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
     private static final String SEPARATOR_CHAR = ",";
 
+    /**
+     * Loads a stream from the given
+     * @param propertiesReference
+     * @return
+     * @throws FileNotFoundException
+     */
+    private static InputStream getStream(String propertiesReference) throws FileNotFoundException {
+        InputStream stream = ConfigPropertyFileLoader.class.getResourceAsStream(propertiesReference);
+        if (stream == null) {
+            URL url = ConfigPropertyFileLoader.class.getResource(propertiesReference);
+            stream = new FileInputStream(url.toString());
+        }
+        return stream;
+    }
+
     static {
         try {
+            //look for the system property "org.apache.axis2.codegen.config" to for a property
+            //entry refering to the config properties
+            String property = System.getProperty("org.apache.axis2.codegen.config");
+            InputStream stream = null;
 
-            InputStream stream = ConfigPropertyFileLoader.class.getResourceAsStream(CODEGEN_CONFIG_PROPERTIES);
-            if (stream == null) {
-                URL url = ConfigPropertyFileLoader.class.getResource(CODEGEN_CONFIG_PROPERTIES);
-                stream = new FileInputStream(url.toString());
+            if (property!=null){
+                stream = getStream(property);
+            }else{
+                stream = getStream(DEFAULT_CODEGEN_CONFIG_PROPERTIES);
             }
+
+            if (stream==null){
+                throw new RuntimeException(CodegenMessages.getMessage("propfileload.generalException"));
+            }
+
             Properties props = new Properties();
             props.load(stream);
 
