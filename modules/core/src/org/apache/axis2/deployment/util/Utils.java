@@ -233,12 +233,14 @@ public class Utils {
                     WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
                     Java2WSDLConstants.RESPONSE));
+            outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
         }
 
         operation.setName(new QName(opName));
         AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         if (inMessage != null) {
             inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
+            inMessage.setName(opName);
         }
         return operation;
     }

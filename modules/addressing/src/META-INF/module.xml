@@ -1,5 +1,5 @@
 <module name="addressing">
-    <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Candidate Recommendation (2005/08). This is not complete as far as the fault handling is concerned. But we are working on that. </Description>
+    <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Proposed Recommendation. This is not complete as far as the fault handling is concerned. But we are working on that. </Description>
     <inflow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
             <order phase="PreDispatch"/>

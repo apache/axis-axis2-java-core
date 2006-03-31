@@ -6,10 +6,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.extensions.*;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -81,9 +81,9 @@ public class AxisService2OM implements Java2WSDLConstants {
         }
         soap = ele.declareNamespace(DEFAULT_SOAP_NAMESPACE, DEFAULT_SOAP_NAMESPACE_PREFIX);
         String prefix = getPrefix(axisService.getTargetNamespace());
-        if(prefix==null||"".equals(prefix)){
+        if (prefix == null || "".equals(prefix)) {
             prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
-            axisService.getNameSpacesMap().put(prefix,axisService.getTargetNamespace());
+            axisService.getNameSpacesMap().put(prefix, axisService.getTargetNamespace());
         }
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
@@ -102,7 +102,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
         generateMessages(fac, ele);
         generatePortType(fac, ele);
-        generateBinding(fac, ele);
+        generateSOAPBinding(fac, ele);
         generateService(fac, ele);
         return ele;
     }
@@ -326,8 +326,8 @@ public class AxisService2OM implements Java2WSDLConstants {
     /**
      * Generate the bindings
      */
-    private void generateBinding(OMFactory fac,
-                                 OMElement defintions) throws Exception {
+    private void generateSOAPBinding(OMFactory fac,
+                                     OMElement defintions) throws Exception {
         OMElement binding = fac.createOMElement(BINDING_LOCAL_NAME, wsdl);
         defintions.addChild(binding);
         binding.addAttribute(ATTRIBUTE_NAME, axisService.getName() + BINDING_NAME_SUFFIX, null);
@@ -348,8 +348,12 @@ public class AxisService2OM implements Java2WSDLConstants {
             String opeartionName = axisOperation.getName().getLocalPart();
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME, wsdl);
             binding.addChild(operation);
+            String soapAction = axisOperation.getSoapAction();
+            if (soapAction == null) {
+                soapAction = "";
+            }
             addExtensionElemnet(fac, operation, OPERATION_LOCAL_NAME,
-                    SOAP_ACTION, axisOperation.getSoapAction(),
+                    SOAP_ACTION, soapAction,
                     STYLE, style);
             //writing ext elements
             writeOperationExtensibleElements(axisOperation, fac, operation);
