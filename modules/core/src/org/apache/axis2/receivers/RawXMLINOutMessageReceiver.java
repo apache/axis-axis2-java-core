@@ -94,7 +94,13 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                     throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
                 }
 
-                OMElement result = (OMElement) method.invoke(obj, args);
+                OMElement result;
+                try {
+                    result = (OMElement) method.invoke(obj, args);
+                } catch (Exception e) {
+                    throw new AxisFault(e.getMessage());
+                }
+
                 AxisService service = msgContext.getAxisService();
                 service.getTargetNamespace();
                 result.declareNamespace(service.getTargetNamespace(),

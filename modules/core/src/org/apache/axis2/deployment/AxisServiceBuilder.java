@@ -148,7 +148,6 @@ public class AxisServiceBuilder {
         logger.debug("Entering AxisServiceBuilder:getAxisService(javax.wsdl.Definition)");
 
         AxisService axisService = new AxisService();
-        axisService.setWSDLDefinition(wsdlDefinition);
         Map services = wsdlDefinition.getServices();
 
         if (services.isEmpty()) {

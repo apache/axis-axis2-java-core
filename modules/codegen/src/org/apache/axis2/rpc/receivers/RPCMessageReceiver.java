@@ -83,7 +83,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     .getFirstElement();
 
             OMNamespace namespace = methodElement.getNamespace();
-            if (namespace==null || !service.getSchematargetNamespace().equals(namespace.getName())) {
+            if (namespace == null || !service.getSchematargetNamespace().equals(namespace.getName())) {
                 throw new AxisFault("namespace mismatch require " +
                         service.getSchematargetNamespace() +
                         " found " + methodElement.getNamespace().getName());
@@ -99,7 +99,12 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 
             Object[] objectArray = processRequest(methodElement);
-            Object resObject = method.invoke(obj, objectArray);
+            Object resObject;
+            try {
+                resObject = method.invoke(obj, objectArray);
+            } catch (Exception e) {
+                throw new AxisFault(e.getMessage());
+            }
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response

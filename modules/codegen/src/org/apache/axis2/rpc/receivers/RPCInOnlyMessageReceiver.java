@@ -60,10 +60,12 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     break;
                 }
             }
-
-
             Object[] objectArray = processRequest(methodElement);
-            method.invoke(obj, objectArray);
+            try {
+                method.invoke(obj, objectArray);
+            } catch (Exception e) {
+                throw new AxisFault(e.getMessage());
+            }
         } catch (Exception e) {
             throw new AxisFault(e);
         }

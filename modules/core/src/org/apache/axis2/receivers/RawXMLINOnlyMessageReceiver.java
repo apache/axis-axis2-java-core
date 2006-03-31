@@ -97,7 +97,11 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
                 parmeter = methodElement;
                 Object[] parms = new Object[]{parmeter};
                 // Need not have a return here
-                method.invoke(obj, parms);
+                try {
+                    method.invoke(obj, parms);
+                } catch (Exception e) {
+                    throw new AxisFault(e.getMessage());
+                }
 
             } else {
                 throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));

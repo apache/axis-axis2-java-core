@@ -80,48 +80,63 @@ public class WSDL2AxisServiceBuilder {
     private AxisService axisService;
     private QName serviceName;
     private String portName;
+    private QName bindingName;
 
-    public WSDL2AxisServiceBuilder(InputStream in, QName serviceName, String portName) {
+    public WSDL2AxisServiceBuilder(InputStream in,
+                                   QName serviceName,
+                                   String portName) {
         this.in = in;
         this.serviceName = serviceName;
         this.portName = portName;
         this.axisService = new AxisService();
     }
 
-    public AxisService populateService() throws Exception {
-        Definition dif = readInTheWSDLFile(in);
-        //setting target name space
-        axisService.setTargetNamespace(dif.getTargetNamespace());
-        //adding ns in the original WSDL
-        axisService.setNameSpacesMap(dif.getNamespaces());
-        //TODO : add extensiblity elements
-        //scheam generation
-        processImports(dif);
-        Types wsdl4jTypes = dif.getTypes();
-        if (null != wsdl4jTypes) {
-            this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(), dif
-                    , axisService, AxisExtensiblityElementWrapper.PORT);
-        }
-        Binding binding = findBinding(dif);
-        //////////////////(1.2) /////////////////////////////
-        // create new Schema extensions element for wrapping
-        Element[] schemaElements = generateWrapperSchema(dif, binding);
-        if (schemaElements != null && schemaElements.length > 0) {
-            for (int i = 0; i < schemaElements.length; i++) {
-                Element schemaElement = schemaElements[i];
-                if (schemaElement != null) {
-                    System.out.println(schemaElement.getNamespaceURI());
-                    ExtensionFactoryImpl extensionFactory = new ExtensionFactoryImpl();
-                    org.apache.wsdl.extensions.Schema schemaExtensibilityElement =
-                            (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
-                                    ExtensionConstants.SCHEMA);
-                    schemaExtensibilityElement.setElement(schemaElement);
-                    axisService.setSchema(getXMLSchema(schemaExtensibilityElement.getElement()));
+    public WSDL2AxisServiceBuilder(InputStream in) {
+        this.in = in;
+    }
+
+    public WSDL2AxisServiceBuilder(QName bindingName, InputStream in) {
+        this.bindingName = bindingName;
+        this.in = in;
+    }
+
+    public AxisService populateService() throws AxisFault {
+        try {
+            Definition dif = readInTheWSDLFile(in);
+            //setting target name space
+            axisService.setTargetNamespace(dif.getTargetNamespace());
+            //adding ns in the original WSDL
+            axisService.setNameSpacesMap(dif.getNamespaces());
+            //scheam generation
+            processImports(dif);
+            Types wsdl4jTypes = dif.getTypes();
+            if (null != wsdl4jTypes) {
+                this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(), dif
+                        , axisService, AxisExtensiblityElementWrapper.PORT);
+            }
+            Binding binding = findBinding(dif);
+            //////////////////(1.2) /////////////////////////////
+            // create new Schema extensions element for wrapping
+            Element[] schemaElements = generateWrapperSchema(dif, binding);
+            if (schemaElements != null && schemaElements.length > 0) {
+                for (int i = 0; i < schemaElements.length; i++) {
+                    Element schemaElement = schemaElements[i];
+                    if (schemaElement != null) {
+                        System.out.println(schemaElement.getNamespaceURI());
+                        ExtensionFactoryImpl extensionFactory = new ExtensionFactoryImpl();
+                        org.apache.wsdl.extensions.Schema schemaExtensibilityElement =
+                                (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
+                                        ExtensionConstants.SCHEMA);
+                        schemaExtensibilityElement.setElement(schemaElement);
+                        axisService.setSchema(getXMLSchema(schemaExtensibilityElement.getElement()));
+                    }
                 }
             }
+            processBinding(binding, dif);
+            return axisService;
+        } catch (WSDLException e) {
+            throw new AxisFault(e);
         }
-        processBinding(binding, dif);
-        return axisService;
     }
 
     private Binding findBinding(Definition dif) throws AxisFault {
@@ -129,6 +144,15 @@ public class WSDL2AxisServiceBuilder {
         Service service;
         Binding binding = null;
         Port port = null;
+        if (bindingName != null) {
+            binding = dif.getBinding(bindingName);
+            if (binding == null) {
+                throw new AxisFault("No biding found for the given biding name: "
+                        + bindingName.getLocalPart());
+            } else {
+                return binding;
+            }
+        }
         if (serviceName != null) {
             service = (Service) services.get(serviceName);
             if (service == null) {
