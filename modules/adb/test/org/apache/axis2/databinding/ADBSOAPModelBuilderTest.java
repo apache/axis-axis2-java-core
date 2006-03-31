@@ -18,12 +18,12 @@ package org.apache.axis2.databinding;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.databinding.utils.PrintEvents;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -68,7 +68,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         XMLStreamReader r = getTestEnvelope().getXMLStreamReader();
         PrintEvents.print(r);
     }
-    
+
     public void testPrintEvents2() throws Exception {
         //TODO: FIXME. Check the output difference between this method and the testPrintEvents method
         XMLStreamReader r = getTestEnvelope().getXMLStreamReaderWithoutCaching();
@@ -81,14 +81,17 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(getTestEnvelope().getXMLStreamReader(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         SOAPEnvelope envelope = builder2.getSOAPEnvelope();
         envelope.build();
-        
+
         StringWriter writer = new StringWriter();
         envelope.serialize(writer);
         writer.flush();
-        
-        XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(writer.toString()));
+
+        String s2 = writer.toString();
+        System.out.println("s2 = " + s2);
+
+        XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(s2));
         PrintEvents.print(r);
-        
+
         assertXMLEqual(writer.toString(),xml);
     }
 
@@ -134,7 +137,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(writer.toString()));
         PrintEvents.print(r);
 
-        //TODO: FIXME. Simpler test in testPrintEvents2 
+        //TODO: FIXME. Simpler test in testPrintEvents2
         //assertXMLEqual(writer.toString(),xml);
     }
 

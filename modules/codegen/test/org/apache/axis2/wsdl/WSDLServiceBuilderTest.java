@@ -66,7 +66,6 @@ public class WSDLServiceBuilderTest extends TestCase {
                         AxisService service = builder.populateService();
                         System.out.println("Testinf file: " + file1.getName());
                         configContext.getAxisConfiguration().addService(service);
-                        System.out.println("");
                         OutputStream out = new FileOutputStream(new File(outLocation, file1.getName()));
                         service.printWSDL(out, "http://google.com/axis2/services");
                         out.flush();

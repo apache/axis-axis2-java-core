@@ -101,6 +101,14 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
         return forceTree().declareNamespace(uri, prefix);
     }
 
+    public OMNamespace declareDefaultNamespace(String uri) {
+        throw new UnsupportedOperationException();  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public OMNamespace getDefaultNamespace() {
+        throw new UnsupportedOperationException();  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMElement#declareNamespace(org.apache.axiom.om.OMNamespace)
      */
@@ -232,7 +240,7 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
     }
 
     public QName getTextAsQName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException();  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /* (non-Javadoc)

@@ -34,7 +34,7 @@ public class TextTest extends TestCase {
         Name bodyName = soapFactory.createName("VBGenReceiver", "xsi",
                                                "http://www.w3.org/2001/XMLSchema-instance");
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
-
+                                                           
         // Create the MetaData Tag
         Name name = soapFactory.createName("MetaData");
         SOAPElement metaData = bodyElement.addChildElement(name);

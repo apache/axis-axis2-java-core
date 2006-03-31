@@ -9,7 +9,13 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.extensions.*;
+import org.apache.wsdl.extensions.DefaultExtensibilityElement;
+import org.apache.wsdl.extensions.PolicyExtensibilityElement;
+import org.apache.wsdl.extensions.SOAPAddress;
+import org.apache.wsdl.extensions.SOAPBinding;
+import org.apache.wsdl.extensions.SOAPBody;
+import org.apache.wsdl.extensions.SOAPHeader;
+import org.apache.wsdl.extensions.SOAPOperation;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -77,7 +83,11 @@ public class AxisService2OM implements Java2WSDLConstants {
         Iterator keys = nameSpaceMap.keySet().iterator();
         while (keys.hasNext()) {
             String key = (String) keys.next();
-            ele.declareNamespace((String) nameSpaceMap.get(key), key);
+            if ("".equals(key)) {
+                ele.declareDefaultNamespace((String) nameSpaceMap.get(key));
+            }else {
+                ele.declareNamespace((String) nameSpaceMap.get(key), key);
+            }
         }
         soap = ele.declareNamespace(DEFAULT_SOAP_NAMESPACE, DEFAULT_SOAP_NAMESPACE_PREFIX);
         String prefix = getPrefix(axisService.getTargetNamespace());

@@ -102,7 +102,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
       */
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        return addChildElement(name.getLocalName(), name.getPrefix(), name.getURI());
+        String prefix = name.getPrefix();
+        return addChildElement(name.getLocalName(), "".equals(prefix) ? null : prefix  , name.getURI());
     }
 
     /* (non-Javadoc)
@@ -158,8 +159,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
-        element.declareNamespace(uri, prefix);
-        return addChildElement(localName, prefix);
+        OMNamespace omNamespace = element.declareNamespace(uri, prefix);
+        return addChildElement(localName, omNamespace.getPrefix());
     }
 
     /* (non-Javadoc)
