@@ -9,6 +9,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.extensions.*;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -36,7 +37,7 @@ import java.util.Map;
 *
 */
 
-public class AxisService2OM implements org.apache.ws.java2wsdl.Java2WSDLConstants {
+public class AxisService2OM implements Java2WSDLConstants {
 
     private AxisService axisService;
 

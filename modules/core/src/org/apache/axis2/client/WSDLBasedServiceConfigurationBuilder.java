@@ -46,7 +46,8 @@ public class WSDLBasedServiceConfigurationBuilder {
 //		ConfigurationContext configurationContext = configctx;
     }
 
-    public AxisService buildAxisService(QName servicename, String endpointname, Options clientOptions) throws AxisFault {
+    public AxisService buildAxisService(QName servicename, String endpointname,
+                                        Options clientOptions) throws AxisFault {
         WSDLService service = findService(servicename);
         AxisService serviceDesc = new AxisService();
 
