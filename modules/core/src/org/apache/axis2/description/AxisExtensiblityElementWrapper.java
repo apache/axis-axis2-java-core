@@ -21,9 +21,10 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 
 public class AxisExtensiblityElementWrapper {
     //from where this element came from , Port, Portype , biding etc
-    public static final int PORT = 1;
-    public static final int PORT_TYPE = 2;
-    public static final int PORT_BINDING = 3;
+    public static final int SERVICE = 1;
+    public static final int PORT = 2;
+    public static final int PORT_TYPE = 3;
+    public static final int PORT_BINDING = 4;
 
     private int type;
     private WSDLExtensibilityElement extensibilityElement;
