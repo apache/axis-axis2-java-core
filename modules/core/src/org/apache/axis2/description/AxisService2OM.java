@@ -9,13 +9,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.extensions.DefaultExtensibilityElement;
-import org.apache.wsdl.extensions.PolicyExtensibilityElement;
-import org.apache.wsdl.extensions.SOAPAddress;
-import org.apache.wsdl.extensions.SOAPBinding;
-import org.apache.wsdl.extensions.SOAPBody;
-import org.apache.wsdl.extensions.SOAPHeader;
-import org.apache.wsdl.extensions.SOAPOperation;
+import org.apache.wsdl.extensions.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -85,7 +79,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             String key = (String) keys.next();
             if ("".equals(key)) {
                 ele.declareDefaultNamespace((String) nameSpaceMap.get(key));
-            }else {
+            } else {
                 ele.declareNamespace((String) nameSpaceMap.get(key), key);
             }
         }
@@ -100,16 +94,18 @@ public class AxisService2OM implements Java2WSDLConstants {
 
         ele.addAttribute("targetNamespace", axisService.getTargetNamespace(), null);
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
+        ele.addChild(wsdlTypes);
         StringWriter writer = new StringWriter();
         axisService.printSchema(writer);
-        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLStreamReader xmlReader = xmlInputFactory.createXMLStreamReader(new
-                ByteArrayInputStream(writer.toString().getBytes()));
+        if (!"".equals(writer.toString())) {
+            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            XMLStreamReader xmlReader = xmlInputFactory.createXMLStreamReader(new
+                    ByteArrayInputStream(writer.toString().getBytes()));
 
-        StAXOMBuilder staxOMBuilder = new
-                StAXOMBuilder(fac, xmlReader);
-        ele.addChild(wsdlTypes);
-        wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+            StAXOMBuilder staxOMBuilder = new
+                    StAXOMBuilder(fac, xmlReader);
+            wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+        }
         generateMessages(fac, ele);
         generatePortType(fac, ele);
         generateSOAPBinding(fac, ele);

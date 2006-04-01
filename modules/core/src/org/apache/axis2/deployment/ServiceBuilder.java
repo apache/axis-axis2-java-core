@@ -28,6 +28,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -198,7 +199,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String mapping = (String) wsamappings.get(j);
                     service.mapActionToOperation(mapping, operationDesc);
                 }
-                service.addOperation(operationDesc);
+                if (service.getOperation(operationDesc.getName()) == null) {
+                    service.addOperation(operationDesc);
+                }
             }
 
             //Removing exclude operations
@@ -366,6 +369,32 @@ public class ServiceBuilder extends DescriptionBuilder {
                     op_descrip = AxisOperationFactory.getOperationDescription(mepurl);
                 }
                 op_descrip.setName(new QName(opname));
+                String MEP = op_descrip.getMessageExchangePattern();
+                if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                        WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                        WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                        WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                        WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                        WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                    AxisMessage inaxisMessage = op_descrip
+                            .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    if (inaxisMessage != null) {
+                        inaxisMessage.setName(opname);
+                    }
+                }
+
+                if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                        WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                        WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                        WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                        WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                        WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                    AxisMessage outAxisMessage = op_descrip
+                            .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    if (outAxisMessage != null) {
+                        outAxisMessage.setName(opname + Java2WSDLConstants.RESPONSE);
+                    }
+                }
             }
 
             // setting the PolicyInclude

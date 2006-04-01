@@ -157,6 +157,13 @@ public class Utils {
             // Nothing to do.
             return;
         }
+        // adding name spaces
+        Map map = new HashMap();
+        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
+                Java2WSDLConstants.AXIS2_XSD);
+        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
+                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
+        axisService.setNameSpacesMap(map);
         String serviceClass = (String) implInfoParam.getValue();
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
@@ -167,13 +174,6 @@ public class Utils {
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
         PhasesInfo pinfo = axisConfig.getPhasesInfo();
-        // adding name spaces
-        Map map = new HashMap();
-        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
-                Java2WSDLConstants.AXIS2_XSD);
-        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
-                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
-        axisService.setNameSpacesMap(map);
 
 
         for (int i = 0; i < method.length; i++) {
