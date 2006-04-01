@@ -19,7 +19,6 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -31,6 +30,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,9 +59,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     public static final String SESSION_ID = "SessionId";
     protected transient ConfigurationContext configContext;
     protected transient AxisConfiguration axisConfiguration;
-    protected ListingAgent lister;
+    protected transient ListingAgent lister;
 
-    protected ServletConfig servletConfig;
+    protected transient ServletConfig servletConfig;
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                                 MessageContext msgContext, HttpServletResponse httpServletResponse,
@@ -224,7 +224,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     public void init() throws ServletException {
-        if(this.servletConfig != null){
+        if (this.servletConfig != null) {
             init(this.servletConfig);
         }
     }
@@ -239,18 +239,28 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = config.getInitParameter("repository");
-            if(repoDir == null || repoDir.trim().length() == 0){
-                repoDir = context.getRealPath("/WEB-INF");
-            } else {
-                repoDir = context.getRealPath(repoDir);
+            File rootDir = null;
+            if (repoDir == null) {
+                try {
+                    repoDir = context.getRealPath("/WEB-INF");
+                    rootDir = new File(context.getRealPath("/WEB-INF"));
+                    setWebLocationProperty(context);
+                } catch (Exception e) {
+                    String user_home = System.getProperty("user.home");
+                    File axis2repo = new File(user_home, "axis2repository");
+                    if (axis2repo.exists()) {
+                        repoDir = axis2repo.getAbsolutePath();
+                        log.error("Axis2 run using the repositoty found in : " + repoDir);
+                    } else {
+                        log.error("Axis2 run without having a repository");
+                    }
+                }
             }
-
             //adding weblocation property
-            setWebLocationProperty(context);
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoDir, null);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
-            configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
+            configContext.setRootDir(rootDir);
             return configContext;
         } catch (Exception e) {
             throw new ServletException(e);
@@ -343,7 +353,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,
-                                                HttpServletResponse resp) throws IOException {
+                                                  HttpServletResponse resp) throws IOException {
         MessageContext msgContext = new MessageContext();
         String trsPrefix = req.getRequestURL().toString();
         int sepindex = trsPrefix.indexOf(':');
@@ -366,7 +376,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         requestURI = requestURI.replaceFirst("rest", "services");
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                               new ServletBasedOutTransportInfo(resp));
+                new ServletBasedOutTransportInfo(resp));
 //        msgContext.setProperty(MessageContext.TRANSPORT_OUT, resp.getOutputStream());
 
         // set the transport Headers

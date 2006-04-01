@@ -25,7 +25,7 @@ import java.io.IOException;
  * 
  */
 public class AxisAdminServlet extends AxisServlet {
-    protected ListingAgent lister;
+    protected transient ListingAgent lister;
 
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
