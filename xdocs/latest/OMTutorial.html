@@ -423,8 +423,8 @@ output and hence the same serialization mechanism can be used to write
 different types of outputs (such as text, binary, etc.,).</p>
 
 <p>A caching flag is provided by OM to control the building of the in-memory
-OM. The OMNode has two methods, serializeWithCache and serialize When
-serialize is called the cache flag is reset and the serializer does not cache
+OM. The OMNode has two methods, serializeAndConsume and serialize. When
+serializeAndConsume is called the cache flag is reset and the serializer does not cache
 the stream. Hence the object model will not be built if the cache flag is not
 set.</p>
 
@@ -452,7 +452,7 @@ envelope.</p>
 </div>
 <pre class="code">XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 //dump the output to console with caching
-envelope.serializeWithCache(writer); 
+envelope.serialize(writer); 
 writer.flush();</pre>
 <pre class="code"></pre>
 
