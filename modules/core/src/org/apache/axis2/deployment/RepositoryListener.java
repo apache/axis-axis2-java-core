@@ -23,15 +23,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.net.URI;
 
 public class RepositoryListener implements DeploymentConstants {
     protected Log log = LogFactory.getLog(getClass());
     private DeploymentEngine deploymentEngine;
+    private File rootDir;
 
     /**
      * The parent directory of the modules and services directories
      */
-    private String folderName;
+    private URI folderName;
 
     /**
      * Reference to a WSInfoList
@@ -46,8 +48,9 @@ public class RepositoryListener implements DeploymentConstants {
      * @param folderName       path to parent directory that the listener should listen to
      * @param deploymentEngine reference to engine registry for updates
      */
-    public RepositoryListener(String folderName, DeploymentEngine deploymentEngine) {
+    public RepositoryListener(URI folderName, DeploymentEngine deploymentEngine) {
         this.folderName = folderName;
+        rootDir = new File(this.folderName);
         wsInfoList = new WSInfoList(deploymentEngine);
         this.deploymentEngine = deploymentEngine;
         init();
@@ -65,8 +68,7 @@ public class RepositoryListener implements DeploymentConstants {
      * Finds a list of modules in the folder and adds to wsInfoList.
      */
     public void checkModules() {
-        String modulepath = folderName + MODULE_PATH;
-        File root = new File(modulepath);
+        File root = new File(rootDir, MODULE_PATH);
         File[] files = root.listFiles();
 
         if (files != null) {
@@ -152,9 +154,7 @@ public class RepositoryListener implements DeploymentConstants {
      * Finds a list of services in the folder and adds to wsInfoList.
      */
     public void checkServices() {
-        String servicedir = folderName + SERVICE_PATH;
-
-        findServicesInDirectory(servicedir);
+        findServicesInDirectory();
         update();
     }
 
@@ -172,8 +172,8 @@ public class RepositoryListener implements DeploymentConstants {
      * Searches a given folder for jar files and adds them to a list in the
      * WSInfolist class.
      */
-    private void findServicesInDirectory(String folderName) {
-        File root = new File(folderName);
+    private void findServicesInDirectory() {
+        File root = new File(rootDir, SERVICE_PATH);
         File[] files = root.listFiles();
 
         if (files != null) {

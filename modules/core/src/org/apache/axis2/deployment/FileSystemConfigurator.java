@@ -4,6 +4,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.net.URI;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -25,11 +30,12 @@ import org.apache.axis2.engine.AxisConfigurator;
 
 public class FileSystemConfigurator implements AxisConfigurator {
 
+    private Log log = LogFactory.getLog(getClass());
     /**
      * To check whether need to create a service side or client side
      */
-    private String axis2xml;
-    private String repoLocation;
+    private URI axis2xml = null;
+    private URI repoLocation = null;
 
     /**
      * Load an AxisConfiguration from the repository directory specified
@@ -37,16 +43,49 @@ public class FileSystemConfigurator implements AxisConfigurator {
      * @param repoLocation
      * @param axis2xml
      */
-    public FileSystemConfigurator(String repoLocation, String axis2xml) {
+    public FileSystemConfigurator(URI repoLocation, URI axis2xml) {
         if (repoLocation == null) {
             //checking wether user has set the system property
-            repoLocation = System.getProperty(Constants.AXIS2_REPO);
+            String propertyRepo = System.getProperty(Constants.AXIS2_REPO);
+            if (propertyRepo != null) {
+                try {
+                    File repo = new File(propertyRepo);
+                    if (repo.exists()) {
+                        this.repoLocation = repo.toURI();
+                    } else {
+                        this.repoLocation = null;
+                    }
+                } catch (Exception e) {
+                    this.repoLocation = null;
+                    log.info("Error in file creation inside FileSystemConfigurator");
+                }
+            } else {
+                this.repoLocation = null;
+            }
+        } else {
+            this.repoLocation = repoLocation;
         }
         if (axis2xml == null) {
-            axis2xml  = System.getProperty(Constants.AXIS2_CONF);
+            String propertyAxis2xml = System.getProperty(Constants.AXIS2_CONF);
+            if (propertyAxis2xml != null) {
+                try {
+                    File axis2discriptor = new File(propertyAxis2xml);
+                    if (axis2discriptor.exists()) {
+                        this.axis2xml = axis2discriptor.toURI();
+                    } else {
+                        this.axis2xml = null;
+                    }
+                } catch (Exception e) {
+                    this.axis2xml = null;
+                    log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+                }
+
+            } else {
+                this.axis2xml = null;
+            }
+        } else {
+            this.axis2xml = axis2xml;
         }
-        this.repoLocation = repoLocation;
-        this.axis2xml = axis2xml;
     }
 
     /**

@@ -25,6 +25,7 @@ import org.apache.axis2.phaseresolver.PhaseException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import java.io.File;
 
 public class TransportDeploymentTest extends AbstractTestCase {
     /**
@@ -38,8 +39,12 @@ public class TransportDeploymentTest extends AbstractTestCase {
             PhaseException,
             DeploymentException,
             XMLStreamException {
+        String repositoryName = testResourceDir + "/deployment";
+        File repo = new File(repositoryName);
+        String xmlFile = testResourceDir + "/deployment/server-transport.xml";
+        File xml = new File(xmlFile);
         DeploymentEngine engine = new DeploymentEngine(
-                testResourceDir + "/deployment", testResourceDir + "/deployment/server-transport.xml");
+                repo.toURI(), xml.toURI());
         engine.load();
         AxisConfiguration er = engine.getAxisConfig();
         TransportInDescription transport = er.getTransportIn(new QName("http"));

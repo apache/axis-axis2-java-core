@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class Utils {
         }
     }
 
-    public static ClassLoader getClassLoader(ClassLoader parent, String path)
+    public static ClassLoader getClassLoader(ClassLoader parent, URI path)
             throws DeploymentException {
         return getClassLoader(parent, new File(path));
     }

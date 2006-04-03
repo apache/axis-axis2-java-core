@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.*;
+import java.net.URI;
 
 /**
  * Class AxisConfigurationImpl
@@ -54,7 +55,7 @@ public class AxisConfiguration extends AxisDescription {
 
     // to store AxisObserver Objects
     private ArrayList observersList = null;
-    private String axis2Repository = null;
+    private URI axis2Repository = null;
     private HashMap allservices = new HashMap();
 
     /**
@@ -441,7 +442,7 @@ public class AxisConfiguration extends AxisDescription {
         return phasesinfo;
     }
 
-    public String getRepository() {
+    public URI getRepository() {
         return axis2Repository;
     }
 
@@ -569,7 +570,7 @@ public class AxisConfiguration extends AxisDescription {
         this.phasesinfo = phasesInfo;
     }
 
-    public void setRepository(String axis2Repository) {
+    public void setRepository(URI axis2Repository) {
         this.axis2Repository = axis2Repository;
     }
 

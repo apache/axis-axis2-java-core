@@ -56,6 +56,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -65,7 +66,7 @@ public class AxisService extends AxisDescription {
 
     private int nsCount = 0;
     private Log log = LogFactory.getLog(getClass());
-    private String fileName = "";
+    private URI fileName;
 
     private HashMap operationsAliasesMap = null;
 //    private HashMap operations = new HashMap();
@@ -586,7 +587,7 @@ public class AxisService extends AxisDescription {
         return engagedModules;
     }
 
-    public String getFileName() {
+    public URI getFileName() {
         return fileName;
     }
 
@@ -719,7 +720,7 @@ public class AxisService extends AxisDescription {
         this.serviceClassLoader = classLoader;
     }
 
-    public void setFileName(String fileName) {
+    public void setFileName(URI fileName) {
         this.fileName = fileName;
     }
 

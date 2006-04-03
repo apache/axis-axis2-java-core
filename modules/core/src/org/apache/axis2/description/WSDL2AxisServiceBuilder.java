@@ -39,20 +39,20 @@ import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- * 
- *  
+ *
+ *
  */
 
 public class WSDL2AxisServiceBuilder {
@@ -307,7 +307,7 @@ public class WSDL2AxisServiceBuilder {
 
 	/**
 	 * Simply Copy information.
-	 * 
+	 *
 	 * @param wsdl4jPortType
 	 */
 	// FIXME Evaluate a way of injecting features and priperties with a general
@@ -412,7 +412,7 @@ public class WSDL2AxisServiceBuilder {
 
 	/**
 	 * Generates a referenceQName
-	 * 
+	 *
 	 * @param wsdl4jMessage
 	 */
 	private QName generateReferenceQname(QName outerName,
@@ -783,7 +783,7 @@ public class WSDL2AxisServiceBuilder {
 	 * The intention of this procedure is to process the imports. When
 	 * processing the imports the imported documents will be populating the
 	 * items in the main document recursivley
-	 * 
+	 *
 	 * @param wsdl4JDefinition
 	 */
 	private void processImports(Definition wsdl4JDefinition) {
@@ -873,7 +873,7 @@ public class WSDL2AxisServiceBuilder {
 	/**
 	 * Get the Extensible elements form wsdl4jExtensibleElements
 	 * <code>Vector</code> if any and copy them to <code>Component</code>
-	 * 
+	 *
 	 * @param wsdl4jExtensibleElements
 	 * @param description
 	 * @param location :
@@ -1245,58 +1245,6 @@ public class WSDL2AxisServiceBuilder {
 				return WSDLConstants.MEP_URI_OUT_IN;
 		}
 		throw new WSDLProcessingException("Cannot Determine the MEP");
-	}
-
-	private int getProperLocation(int location, AxisDescription description) {
-		switch (location) {
-
-		case AxisExtensiblityElementWrapper.PORT_TYPE:
-			if (description instanceof AxisOperation) {
-
-				// wsdl:portType -> wsdl:operation
-				return PolicyInclude.OPERATION_POLICY;
-
-			} else if (description instanceof AxisMessage) {
-
-				String direction = ((AxisMessage) description).getDirection();
-
-				return (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN
-						.equals(direction))
-				// wsdl:portType -> wsdl:operation -> wsdl:input
-						? PolicyInclude.INPUT_POLICY
-						// wsdl:portType -> wsdl:operation -> wsdl:output
-						: PolicyInclude.OUTPUT_POLICY;
-
-			} // else (descript instanceof AxisFaultMessage) {
-			break;
-
-		case AxisExtensiblityElementWrapper.PORT_BINDING:
-			if (description instanceof AxisOperation) {
-
-				// wsdl:binding -> wsdl:operation
-				return PolicyInclude.BINDING_OPERATION_POLICY;
-
-			} else if (description instanceof AxisMessage) {
-
-				String direction = ((AxisMessage) description).getDirection();
-
-				return (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN
-						.equals(direction))
-				// wsdl:binding -> wsdl:operation -> wsdl:input
-						? PolicyInclude.BINDING_INPUT_POLICY
-						// wsdl:binding -> wsdl:operation -> wsdl:output
-						: PolicyInclude.BINDING_OUTPUT_POLICY;
-
-			} // else (descript instanceof AxisFaultMessage) {
-			break;
-
-		case AxisExtensiblityElementWrapper.PORT:
-			// wsdl:service -> wsdl:port
-			return PolicyInclude.PORT_POLICY;
-		}
-
-		return PolicyInclude.ANON_POLICY; // TODO something more like
-		// PolicyInclude.UNKNOWN_POLICY
 	}
 
 	private void populatePolicyInclude(int location, AxisDescription description) {

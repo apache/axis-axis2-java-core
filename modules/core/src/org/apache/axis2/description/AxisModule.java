@@ -26,6 +26,7 @@ import org.apache.axis2.modules.Module;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.net.URI;
 
 /**
  * <p>This holds the information about a Module. </p>
@@ -50,7 +51,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private Module module;
     private ClassLoader moduleClassLoader;
     // To keep the File that moduel came from
-    private String fileName = "";
+    private URI fileName ;
 
     /**
      * Field name
@@ -264,11 +265,11 @@ public class AxisModule implements FlowInclude, ParameterInclude {
         this.supportedPolicyNames = supportedPolicyNamespaces;
     }
 
-    public String getFileName() {
+    public URI getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    public void setFileName(URI fileName) {
         this.fileName = fileName;
     }
 }
