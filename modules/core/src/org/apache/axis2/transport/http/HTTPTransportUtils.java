@@ -47,9 +47,9 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -252,7 +252,7 @@ public class HTTPTransportUtils {
                                 SOAPFactory soapFactory = new SOAP11Factory();
 
                                 builder = new StAXOMBuilder(xmlreader);
-                                builder.setOmbuilderFactory(soapFactory);
+             builder.setOMBuilderFactory(soapFactory);
                                 envelope = soapFactory.getDefaultEnvelope();
                                 envelope.getBody().addChild(builder.getDocumentElement());
                             }

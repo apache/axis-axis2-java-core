@@ -273,6 +273,10 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
         throw new UnsupportedOperationException("Cannot set namespace on element from binding");
     }
 
+    public void setNamespaceWithNoFindInCurrentScope(OMNamespace namespace) {
+        throw new UnsupportedOperationException();
+    }
+
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMElement#getQName()
      */

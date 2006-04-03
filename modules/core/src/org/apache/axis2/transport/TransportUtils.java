@@ -102,7 +102,7 @@ public class TransportUtils {
                 SOAPFactory soapFactory = new SOAP11Factory();
 
                 builder = new StAXOMBuilder(xmlreader);
-                builder.setOmbuilderFactory(soapFactory);
+                builder.setOMBuilderFactory(soapFactory);
                 envelope = soapFactory.getDefaultEnvelope();
                 envelope.getBody().addChild(builder.getDocumentElement());
                 
