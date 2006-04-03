@@ -28,6 +28,7 @@ import org.apache.axis2.security.trust.Token;
 import org.apache.axis2.security.trust.TokenIssuer;
 import org.apache.axis2.security.trust.TokenStorage;
 import org.apache.axis2.security.trust.TrustException;
+import org.apache.axis2.util.Base64;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
@@ -43,6 +44,7 @@ import org.w3c.dom.Element;
 import javax.xml.namespace.QName;
 
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Vector;
 
@@ -113,10 +115,11 @@ public class SCTIssuer implements TokenIssuer {
             
             //Look for the file
             if(config == null && this.configParamName != null) {
-                Parameter param = inMsgCtx
-                        .getParameter(SCTIssuerConfig.SCT_ISSUER_CONFIG_PARAM);
+                Parameter param = inMsgCtx.getParameter(this.configParamName);
                 if(param != null && param.getParameterElement() != null) {
-                    config = SCTIssuerConfig.load(param.getParameterElement());
+                    config = SCTIssuerConfig.load(param.getParameterElement()
+                            .getFirstChildWithName(
+                                    SCTIssuerConfig.SCT_ISSUER_CONFIG));
                 } else {
                     throw new TrustException("expectedParameterMissing",
                             new String[] { this.configParamName });
@@ -134,8 +137,9 @@ public class SCTIssuer implements TokenIssuer {
                         inMsgCtx, cert);
                 return responseEnv;
             } else if(BINARY_SECRET.equals(config.proofTokenType)) {
-                // TODO 
-                throw new UnsupportedOperationException("TODO");
+                SOAPEnvelope responseEnv = this.doBinarySecret(config,
+                        inMsgCtx);
+                return responseEnv;
             } else if(COMPUTED_KEY.equals(config.proofTokenType)) {
                 // TODO 
                 throw new UnsupportedOperationException("TODO");
@@ -148,6 +152,52 @@ public class SCTIssuer implements TokenIssuer {
 
     }
     
+    /**
+     * @param config
+     * @param inMsgCtx
+     * @param cert
+     * @return
+     */
+    private SOAPEnvelope doBinarySecret(SCTIssuerConfig config, MessageContext msgCtx) throws TrustException {
+        
+        SOAPEnvelope env = this.getSOAPEnvelope(msgCtx);
+        //Get the document
+        Document doc = ((Element)env).getOwnerDocument();
+        
+        SecurityContextToken sct = new SecurityContextToken(doc);
+        sct.setID("sctId-" + sct.getElement().hashCode());
+        
+        OMElement rstrElem = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS,
+                        Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
+                        Constants.WST_PREFIX), env.getBody());
+
+        OMElement rstElem = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS,
+                        Constants.REQUESTED_SECURITY_TOKEN_LN,
+                        Constants.WST_PREFIX), rstrElem);
+        
+        rstElem.addChild((OMElement)sct.getElement());
+        
+        OMElement reqProofTok = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS, Constants.REQUESTED_PROOF_TOKEN_LN,
+                        Constants.WST_PREFIX), rstrElem);
+        
+        OMElement binSecElem = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS, Constants.BINARY_SECRET,
+                        Constants.WST_PREFIX), reqProofTok);
+
+        byte[] secret = this.generateEphemeralKey();
+        binSecElem.setText(Base64.encode(secret));
+    
+        //Store the tokens
+        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        sctToken.setSecret(secret);
+        this.getTokenStore(msgCtx).add(sctToken);
+        
+        return env;
+    }
+
     private SOAPEnvelope doEncryptedKey(SCTIssuerConfig config,
             MessageContext msgCtx, X509Certificate cert) throws TrustException {
         
@@ -255,6 +305,23 @@ public class SCTIssuer implements TokenIssuer {
         return storage;
     }
 
+    /**
+     * Create an ephemeral key
+     * 
+     * @return
+     * @throws WSSecurityException
+     */
+    private byte[] generateEphemeralKey() throws TrustException {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            byte[] temp = new byte[16];
+            random.nextBytes(temp);
+            return temp;
+        } catch (Exception e) {
+            throw new TrustException ("errorCreatingSymmKey", e);
+        }
+    }
+    
     /* (non-Javadoc)
      * @see org.apache.axis2.security.trust.TokenIssuer#setConfigurationParamName(java.lang.String)
      */

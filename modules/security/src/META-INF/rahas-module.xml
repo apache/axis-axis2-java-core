@@ -26,12 +26,7 @@
 		<parameter name="token-dispatcher-configuration">
 			<token-dispatcher-configuration>
 				<issuer class="org.apache.axis2.security.trust.impl.SCTIssuer" default="true">
-					<configuration>
-						<sct-issuer-config>
-							<proofToken>EncryptedKey</proofToken>
-							<cryptoProperties>sctIssuer.properties</cryptoProperties>
-						</sct-issuer-config>
-					</configuration>
+					<configuration-param>sct-issuer-config</configuration-param>
 					<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
 				</issuer>
 			</token-dispatcher-configuration>

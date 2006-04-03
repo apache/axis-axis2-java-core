@@ -90,9 +90,9 @@ public class TokenRequestDispatcherConfig {
             }
 
             //Process configuration parameter name information
-            OMElement issuerParamNameElem = element.getFirstChildWithName(CONFIGURATION_ELEMENT);
+            OMElement issuerParamNameElem = element.getFirstChildWithName(CONFIGURATION_PARAM);
             String issuerParamName = (issuerParamNameElem != null) ? issuerParamNameElem.getText() : null;
-            if(issuerConfigElement != null) {
+            if(issuerParamName != null) {
                 conf.configParamNames.put(issuerClass, issuerParamName);    
             }
             

@@ -106,7 +106,11 @@ public class TrustException extends Exception {
         } catch (MissingResourceException e) {
             throw new RuntimeException("Undefined '" + faultCode + "' resource property");
         }
-        return msg;
+        if(msg != null) {
+            return msg;
+        } else {
+            return faultCode;
+        }
     }
 
     /**
