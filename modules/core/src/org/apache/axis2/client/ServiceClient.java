@@ -365,6 +365,7 @@ public class ServiceClient {
          * sending this out InOnlyMEPClient mepClient = new
          * InOnlyMEPClient(serviceContext); mepClient.send("foo", mc);
          */
+       // sendReceive(operation,elem);
         throw new UnsupportedOperationException(
                 "ServiceClient.sendRobust is not yet implemented");
 

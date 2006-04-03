@@ -87,7 +87,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         OMElement ele = fac.createOMElement("definitions", wsdl);
         ns1 = ele.declareNamespace(AXIS2_XSD, "ns1");
         ele.declareNamespace(URI_2001_SCHEMA_XSD, DEFAULT_SCHEMA_NAMESPACE_PREFIX);
-        soap = ele.declareNamespace(DEFAULT_SOAP_NAMESPACE, DEFAULT_SOAP_NAMESPACE_PREFIX);
+        soap = ele.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
         tns = ele.declareNamespace(DEFAULT_TARGET_NAMESPACE, TARGETNAMESPACE_PREFIX);
         ele.addAttribute("targetNamespace", DEFAULT_TARGET_NAMESPACE, null);
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);

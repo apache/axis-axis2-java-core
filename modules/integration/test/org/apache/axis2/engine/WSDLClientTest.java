@@ -55,7 +55,7 @@ public class WSDLClientTest extends TestCase implements TestConstants {
                     "/axis2/services/EchoXMLService?wsdl");
             ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
                     new QName("http://ws.apache.org/axis2", "EchoXMLService"),
-                    "EchoXMLServiceport0");
+                    "EchoXMLServiceSOAP11port0");
             OMElement payload = TestingUtils.createDummyOMElement();
             OMElement response = serviceClient.sendReceive(
                     new QName("http://org.apache.axis2/xsd", "echoOMElement"), payload);

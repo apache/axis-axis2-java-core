@@ -20,7 +20,8 @@ package org.apache.ws.java2wsdl;
 
 public interface Java2WSDLConstants {
 
-    String DEFAULT_SOAP_NAMESPACE_PREFIX = "soap";
+    String SOAP11_PREFIX = "soap";
+    String SOAP12_PREFIX = "soap12";
     String DEFAULT_WSDL_NAMESPACE_PREFIX = "wsdl";
     String DEFAULT_SCHEMA_NAMESPACE_PREFIX = "xs";
     String DEFAULT_TARGET_NAMESPACE_PREFIX = "axis2";
@@ -30,11 +31,13 @@ public interface Java2WSDLConstants {
     String DEFAULT_TARGET_NAMESPACE = "http://ws.apache.org/axis2";
     String WSDL_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
     String AXIS2_XSD = "http://org.apache.axis2/xsd";
-    String DEFAULT_SOAP_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/soap/";
+    String URI_WSDL12_SOAP = "http://schemas.xmlsoap.org/wsdl/soap12/";
+    String URI_WSDL11_SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
     String TRANSPORT_URI = "http://schemas.xmlsoap.org/soap/http";
     String DEFAULT_LOCATION_URL = "http://localhost:8080/axis2/services/";
 
-    String BINDING_NAME_SUFFIX = "Binding";
+    String BINDING_NAME_SUFFIX = "SOAP11Binding";
+    String SOAP12BINDING_NAME_SUFFIX = "SOAP12Binding";
     String PORT_TYPE_SUFFIX = "PortType";
     String PORT_NAME_SUFFIX = "Port";
     String MESSAGE_LOCAL_NAME = "message";
@@ -51,6 +54,8 @@ public interface Java2WSDLConstants {
     String SERVICE_LOCAL_NAME = "service";
     String BINDING_LOCAL_NAME = "binding";
     String PORT = "port";
+    String SOAP12PORT = "SOAP12port";
+    String SOAP11PORT = "SOAP11port";
     String PART_ATTRIBUTE_NAME = "part";
     String ELEMENT_ATTRIBUTE_NAME = "element";
     String FAULT_LOCAL_NAME = "fault";
