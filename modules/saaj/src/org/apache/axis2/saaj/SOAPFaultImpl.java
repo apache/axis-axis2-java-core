@@ -119,14 +119,14 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public void setFaultString(String faultString) throws SOAPException {
         if (this.fault.getReason() != null) {
             SOAPFaultReason reason = this.fault.getReason();
-            if (reason.getSOAPText() != null) {
-                reason.getSOAPText().getFirstOMChild().detach();
-                reason.getSOAPText().setText(faultString);
+            if (reason.getFirstSOAPText() != null) {
+                reason.getFirstSOAPText().getFirstOMChild().detach();
+                reason.getFirstSOAPText().setText(faultString);
             } else {
                 SOAPFaultText text = new SOAP11FaultTextImpl(reason,
                         (SOAPFactory) this.element.getOMFactory());
                 text.setText(faultString);
-                reason.setSOAPText(text);
+                reason.addSOAPText(text);
             }
         } else {
             org.apache.axiom.soap.SOAPFactory soapFactory =
@@ -134,7 +134,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
             SOAPFaultText fText = soapFactory.createSOAPFaultText(fReason);
             fText.setText(faultString);
-            fReason.setSOAPText(fText);
+            fReason.addSOAPText(fText);
         }
     }
 
@@ -142,8 +142,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       * @see javax.xml.soap.SOAPFault#getFaultString()
       */
     public String getFaultString() {
-        if (this.fault.getReason() != null && this.fault.getReason().getSOAPText() != null) {
-            return this.fault.getReason().getSOAPText().getText();
+        if (this.fault.getReason() != null && this.fault.getReason().getFirstSOAPText() != null) {
+            return this.fault.getReason().getFirstSOAPText().getText();
         }
         return null;
     }
@@ -192,15 +192,15 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public void setFaultString(String faultString, Locale locale) throws SOAPException {
         if (this.fault.getReason() != null) {
             SOAPFaultReason reason = this.fault.getReason();
-            if (reason.getSOAPText() != null) {
-                reason.getSOAPText().setText(faultString);
-                reason.getSOAPText().setLang(locale.getLanguage());
+            if (reason.getFirstSOAPText() != null) {
+                reason.getFirstSOAPText().setText(faultString);
+                reason.getFirstSOAPText().setLang(locale.getLanguage());
             } else {
                 SOAPFaultText text = new SOAP11FaultTextImpl(reason,
                         (SOAPFactory) this.element.getOMFactory());
                 text.setText(faultString);
                 text.setLang(locale.getLanguage());
-                reason.setSOAPText(text);
+                reason.addSOAPText(text);
             }
         } else {
             SOAPFaultReason reason = new SOAP11FaultReasonImpl(this.fault,
@@ -209,7 +209,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                     (SOAPFactory) this.element.getOMFactory());
             text.setText(faultString);
             text.setLang(locale.getLanguage());
-            reason.setSOAPText(text);
+            reason.addSOAPText(text);
             this.fault.setReason(reason);
         }
         this.faultReasonLocale = locale;

@@ -267,15 +267,15 @@ public class TextImplEx extends NodeImplEx implements Text {
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-        textNode.serialize(omOutput);
+    public void internalSerialize(OMOutputImpl omOutput) throws XMLStreamException {
+        textNode.internalSerialize(omOutput);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-        textNode.serializeAndConsume(omOutput);
+    public void internalSerializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
+        textNode.internalSerializeAndConsume(omOutput);
     }
 
     /**

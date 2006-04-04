@@ -66,15 +66,15 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-        element.serialize(omOutput);
+    public void internalSerialize(OMOutputImpl omOutput) throws XMLStreamException {
+        element.internalSerialize(omOutput);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-        element.serializeAndConsume(omOutput);
+    public void internalSerializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
+        element.internalSerializeAndConsume(omOutput);
     }
 
     /**
