@@ -263,7 +263,7 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
     public OMNamespace getNamespace() throws OMException {
         int index = outObject.JiBX_getIndex();
         return new OMNamespaceImpl(bindingFactory.getElementNamespaces()[index],
-            "", OMAbstractFactory.getOMFactory());
+            "");
     }
 
     /* (non-Javadoc)
@@ -342,8 +342,8 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
      */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-        forceTree().serialize(omOutput);
+    public void internalSerialize(OMOutputImpl omOutput) throws XMLStreamException {
+        forceTree().internalSerialize(omOutput);
     }
 
     /* (non-Javadoc)
