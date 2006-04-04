@@ -19,16 +19,12 @@ package org.apache.axis2.security.rahas;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.trust.SimpleTokenStore;
-import org.apache.axis2.security.trust.Token;
 import org.apache.axis2.security.trust.TokenStorage;
-import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.security.util.Axis2Util;
-import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.token.SecurityContextToken;
@@ -260,7 +256,18 @@ public class RahasConfiguration {
         return null;
     }
 
-    public OMElement getOMElement() {
+    public Parameter getParameter() {
+        Parameter param = new Parameter();
+        OMElement element = this.getOMElement();
+        OMElement paramElem = element.getOMFactory().createOMElement("parameter", null);
+        paramElem.addAttribute("name", RahasConfiguration.RAHAS_CONFIG, null);
+        paramElem.addChild(element);
+        param.setParameterElement(paramElem);
+        System.out.println(paramElem);
+        return param;
+    }
+    
+    private OMElement getOMElement() {
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement elem = factory.createOMElement(RAHAS_CONFIG, null);
         if (this.scope != null) {
