@@ -107,7 +107,7 @@ public class SOAP12InFlowHandlerDefaultB extends AbstractHandler implements Head
                                     SOAPFaultText text = factory.createSOAPFaultText(reason);
                                     text.setLang("en-US");
                                     text.setText("Header not understood");
-                                    reason.setSOAPText(text);
+                                    reason.addSOAPText(text);
                                     //fault.setReason(reason);
                                     if (roleValue != null && roleValue.equals(SAMPLE_ROLE + "/" + ROLE_BY_B)) {
                                         SOAPFaultNode node = factory.createSOAPFaultNode(fault);

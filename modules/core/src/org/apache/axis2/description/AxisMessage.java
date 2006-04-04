@@ -8,6 +8,7 @@ import org.apache.wsdl.impl.MessageReferenceImpl;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -114,5 +115,16 @@ public class AxisMessage extends AxisDescription {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * This will return a list of WSDLExtensibilityAttribute
+     * @return
+     */
+    public List getExtensibilityAttributes() {
+        // TODO : Deepal implement this properly.
+
+        // the list should contain list of WSDLExtensibilityAttribute
+        return new ArrayList(0);
     }
 }

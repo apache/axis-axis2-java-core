@@ -62,7 +62,7 @@ public class FaultHandler extends AbstractHandler {
             soapFaultText.setLang("en");
             soapFaultText.setText(FAULT_REASON);
             SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason();
-            soapFaultReason.setSOAPText(soapFaultText);
+            soapFaultReason.addSOAPText(soapFaultText);
 
 
             SOAPFaultDetail faultDetail = soapFac.createSOAPFaultDetail();

@@ -339,7 +339,7 @@ public class AxisEngine {
 
         if (faultReason != null) {
             fault.setReason((SOAPFaultReason) faultReason);
-            message = fault.getReason().getSOAPText().getText();
+            message = fault.getReason().getFirstSOAPText().getText();
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (axisFault != null) {
@@ -360,8 +360,8 @@ public class AxisEngine {
             message = ("".equals(message) || (message == null))
                     ? "unknown"
                     : message;
-            fault.getReason().getSOAPText().setLang("en-US");
-            fault.getReason().getSOAPText().setText(message);
+            fault.getReason().getFirstSOAPText().setLang("en-US");
+            fault.getReason().getFirstSOAPText().setText(message);
         }
 
 

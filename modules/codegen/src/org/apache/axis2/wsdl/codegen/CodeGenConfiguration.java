@@ -16,6 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
@@ -28,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
+
+    private AxisService axisService;
 
     private WSDLDescription wom;
 
@@ -372,5 +375,13 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     
     public String getRepositoryPath() {
     	return repositoryPath;    	
+    }
+
+    public AxisService getAxisService() {
+        return axisService;
+    }
+
+    public void setAxisService(AxisService axisService) {
+        this.axisService = axisService;
     }
 }

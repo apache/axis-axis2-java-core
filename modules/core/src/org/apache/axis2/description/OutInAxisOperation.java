@@ -284,9 +284,9 @@ class OutInAxisOperationClient implements OperationClient {
                                     .getText();
                             message = (message + "Reason ="
                                     + soapFault.getReason() == null) ? ""
-                                    : (soapFault.getReason().getSOAPText() == null) ? ""
+                                    : (soapFault.getReason().getFirstSOAPText() == null) ? ""
                                     : soapFault.getReason()
-                                    .getSOAPText().getText();
+                                    .getFirstSOAPText().getText();
 
                             throw new AxisFault(message);
                         }

@@ -21,12 +21,33 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Import;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.schema.SchemaImport;
-import javax.wsdl.extensions.soap.*;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPHeader;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -35,7 +56,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.Vector;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -110,7 +138,7 @@ public class WSDL2AxisServiceBuilder {
 	}
 
 	public WSDL2AxisServiceBuilder(InputStream in) {
-		this.in = in;
+		this(in, null, null);
 	}
 
 	public WSDL2AxisServiceBuilder(QName bindingName, InputStream in) {
@@ -120,23 +148,23 @@ public class WSDL2AxisServiceBuilder {
 
 	public AxisService populateService() throws AxisFault {
 		try {
-			Definition dif = readInTheWSDLFile(in);
+			Definition definition = readInTheWSDLFile(in);
 			//setting target name space
-			axisService.setTargetNamespace(dif.getTargetNamespace());
+			axisService.setTargetNamespace(definition.getTargetNamespace());
 			//adding ns in the original WSDL
-			axisService.setNameSpacesMap(dif.getNamespaces());
+			axisService.setNameSpacesMap(definition.getNamespaces());
 			//scheam generation
-			processImports(dif);
-			Types wsdl4jTypes = dif.getTypes();
+			processImports(definition);
+			Types wsdl4jTypes = definition.getTypes();
 			if (null != wsdl4jTypes) {
 				this.copyExtensibleElements(wsdl4jTypes
-						.getExtensibilityElements(), dif, axisService,
+						.getExtensibilityElements(), definition, axisService,
 						AxisExtensiblityElementWrapper.PORT);
 			}
-			Binding binding = findBinding(dif);
+			Binding binding = findBinding(definition);
 			//////////////////(1.2) /////////////////////////////
 			// create new Schema extensions element for wrapping
-			Element[] schemaElements = generateWrapperSchema(dif, binding);
+			Element[] schemaElements = generateWrapperSchema(definition, binding);
 			if (schemaElements != null && schemaElements.length > 0) {
 				for (int i = 0; i < schemaElements.length; i++) {
 					Element schemaElement = schemaElements[i];
@@ -152,7 +180,7 @@ public class WSDL2AxisServiceBuilder {
 					}
 				}
 			}
-			processBinding(binding, dif);
+			processBinding(binding, definition);
 			return axisService;
 		} catch (WSDLException e) {
 			throw new AxisFault(e);

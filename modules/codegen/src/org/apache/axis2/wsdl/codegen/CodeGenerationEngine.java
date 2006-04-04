@@ -16,6 +16,8 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.WSDL2AxisServiceBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
@@ -31,6 +33,8 @@ import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +77,13 @@ public class CodeGenerationEngine {
         }
 
         configuration = new CodeGenConfiguration(wom, allOptions);
+        try {
+            configuration.setAxisService(new WSDL2AxisServiceBuilder(new FileInputStream(wsdlUri)).populateService());
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         configuration.setBaseURI(getBaseURI(wsdlUri));
         loadExtensions();
     }
