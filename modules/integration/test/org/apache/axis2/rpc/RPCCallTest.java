@@ -129,7 +129,7 @@ public class RPCCallTest extends TestCase {
     private void configureSystem(String opName) throws AxisFault {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
-                        +5000 //+ (UtilServer.TESTING_PORT)
+                        + (UtilServer.TESTING_PORT)
                         + "/axis2/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
         operationName = new QName("http://org.apache.axis2/xsd", opName, "req");
