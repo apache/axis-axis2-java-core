@@ -20,8 +20,10 @@ package org.apache.axis2.addressing;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
@@ -228,5 +230,36 @@ public class EndpointReference implements Serializable {
     public void toOM() {
         throw new UnsupportedOperationException("Yet to be implemented !!");
     }
+    
+    
+    public OMElement toOM(String nsurl,String localName,String prefix) throws AxisFault{
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        if(prefix!=null){
+            OMNamespace wrapNs = fac.createOMNamespace(nsurl,prefix);
+            OMElement epr = fac.createOMElement(localName,wrapNs);
+            OMNamespace wsans = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE,AddressingConstants.WSA_DEFAULT_PREFIX);
+            OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS,wsans,epr);
+            addressE.setText(address);
+            OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA,wsans,epr);
+
+            if(this.metaData != null){
+                Iterator metadata = this.metaData.iterator();
+                while(metadata.hasNext()){
+                    metadataE.addChild((OMNode)metadata.next());
+                }
+            }
+
+            if(this.referenceParameters != null){
+                Iterator refParms = referenceParameters.values().iterator();
+                while(refParms.hasNext()){
+                    metadataE.addChild((OMNode)refParms.next());
+                }
+            }
+            return epr;
+        }else{
+        	throw new AxisFault("prefix must ne specified");
+        }
+    }
+
 
 }
