@@ -100,7 +100,8 @@ public class ClientInfo
         elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSsn));
 
 
-        return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), attribList.toArray());
+        return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl
+                (qName, elementList.toArray(), attribList.toArray());
 
 
     }

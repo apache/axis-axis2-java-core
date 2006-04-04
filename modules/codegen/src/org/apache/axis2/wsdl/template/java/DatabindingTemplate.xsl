@@ -19,8 +19,7 @@
                 private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimzieContent){
                 org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
                 (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
-
-                org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
+                 org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
 
 		<xsl:if test="$base64">
 		if (optimzieContent) {
@@ -182,8 +181,10 @@
                 <xsl:if test="@type!=''">
                     private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
-                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(), param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME));
+                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder
+                                       = new org.apache.axiom.om.impl.builder.StAXOMBuilder
+                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
+                               new org.apache.axis2.util.StreamWrapper(param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME)));
                             org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
                             ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
                             return documentElement;

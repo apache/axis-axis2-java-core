@@ -27,9 +27,12 @@ public class StreamWrapper implements XMLStreamReader {
     private static final int STATE_SWITCHED = 0;
     private static final int STATE_INIT = 1;
     private static final int STATE_SWITCH_AT_NEXT = 2;
+    private static final int STATE_COMPLETE_AT_NEXT = 3;
+    private static final int STATE_COMPLETED = 4;
     private XMLStreamReader realReader = null;
     private int state = STATE_INIT;
     private int prevState = state;
+
 
     public StreamWrapper(XMLStreamReader realReader) {
         if (realReader == null) {
@@ -49,26 +52,42 @@ public class StreamWrapper implements XMLStreamReader {
 
     public int next() throws XMLStreamException {
         prevState = state;
+        int returnEvent = -1;
 
-        if (state == STATE_SWITCHED) {
-            return realReader.next();
-        } else if (state == STATE_INIT) {
-            if (realReader.getEventType() == START_DOCUMENT) {
+        switch (state) {
+            case STATE_INIT:
+                if (realReader.getEventType() == START_DOCUMENT) {
+                    state = STATE_SWITCHED;
+                    returnEvent = realReader.getEventType();
+                } else {
+                    state = STATE_SWITCH_AT_NEXT;
+                    returnEvent = START_DOCUMENT;
+                }
+                break;
+            case STATE_SWITCHED:
+                returnEvent = realReader.next();
+                if (returnEvent == END_DOCUMENT) {
+                    state = STATE_COMPLETED;
+                } else if (!realReader.hasNext()) {
+                    state = STATE_COMPLETE_AT_NEXT;
+                }
+                break;
+            case STATE_SWITCH_AT_NEXT:
                 state = STATE_SWITCHED;
-
-                return realReader.getEventType();
-            } else {
-                state = STATE_SWITCH_AT_NEXT;
-
-                return START_DOCUMENT;
-            }
-        } else if (state == STATE_SWITCH_AT_NEXT) {
-            state = STATE_SWITCHED;
-
-            return realReader.getEventType();
-        } else {
-            throw new UnsupportedOperationException();
+                returnEvent = realReader.getEventType();
+                break;
+            case STATE_COMPLETE_AT_NEXT:
+                state = STATE_COMPLETED;
+                returnEvent = END_DOCUMENT;
+                break;
+            case STATE_COMPLETED:
+                //oops - no way we can go beyond this
+                throw new XMLStreamException("end reached!");
+            default:
+                throw new UnsupportedOperationException();
         }
+
+        return returnEvent;
     }
 
     public int nextTag() throws XMLStreamException {
@@ -350,7 +369,11 @@ public class StreamWrapper implements XMLStreamReader {
     }
 
     public boolean hasNext() throws XMLStreamException {
-        if (prevState != STATE_INIT) {
+        if (state == STATE_COMPLETE_AT_NEXT) {
+            return true;
+        } else if (state == STATE_COMPLETED) {
+            return false;
+        } else if (prevState != STATE_INIT) {
             return realReader.hasNext();
         } else {
             return true;

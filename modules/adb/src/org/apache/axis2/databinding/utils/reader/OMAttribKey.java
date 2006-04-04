@@ -1,6 +1,4 @@
-package org.apache.axis2.databinding.utils;
-
-import org.apache.axis2.databinding.utils.reader.OMAttribKey;
+package org.apache.axis2.databinding.utils.reader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,11 +14,12 @@ import org.apache.axis2.databinding.utils.reader.OMAttribKey;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-                                              
-public interface Constants {
 
-    static  String NIL="nil";
-    static  String TRUE="true";
+/**
+ * A dummy object that acts as the key for the OMAttribute in the
+ * attribute array - this will be provided as part of the constants
+ * 
+ */
+public class OMAttribKey {
 
-    static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
 }

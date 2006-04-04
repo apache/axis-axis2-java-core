@@ -29,6 +29,7 @@ import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.StreamWrapper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -161,7 +162,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                         new QName(RETURN_WRAPPER));
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
-                                OMAbstractFactory.getOMFactory(), xr);
+                                OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
                 OMElement documentElement = stAXOMBuilder.getDocumentElement();
                 if (documentElement != null) {
                     bodyContent.addChild(documentElement);

@@ -285,17 +285,19 @@
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:choose>
                         <xsl:when test="@anyAtt">
-                            attribList.add(null);
+                            attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
                             attribList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <xsl:otherwise>
-                            attribList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
-                            attribList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                            attribList.add(
+                            new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
+                            attribList.add(
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>
 
-                return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList.toArray(), attribList.toArray());
+                return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
             <!-- end of when for type & anon -->
             </xsl:when>
             <!-- Not a type and not anon. So it better be only one inclusion-->
@@ -313,7 +315,7 @@
                         <xsl:choose>
                             <xsl:when test="$nillable">
                                 if (<xsl:value-of select="$varName"/>==null){
-                                   return new org.apache.axis2.databinding.utils.NullablePullParser(MY_QNAME);
+                                   return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(MY_QNAME);
                                 }else{
                                    return <xsl:value-of select="$varName"/>.getPullParser(MY_QNAME);
                                 }
@@ -325,19 +327,19 @@
                         <xsl:choose>
                             <xsl:when test="$nillable and not($primitive)">
                                 if (<xsl:value-of select="$varName"/>==null){
-                                      return new org.apache.axis2.databinding.utils.NullablePullParser(MY_QNAME);
+                                      return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(MY_QNAME);
                                 }else{
-                                   return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(MY_QNAME,
+                                   return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
                                        new Object[]{
-                                       org.apache.axis2.databinding.utils.ADBPullParser.ELEMENT_TEXT,
+                                      org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                                        org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                                        },
                                        new Object[]{});
                                 }
                             </xsl:when>
-                            <xsl:otherwise> return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(MY_QNAME,
+                            <xsl:otherwise> return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
                             new Object[]{
-                            org.apache.axis2.databinding.utils.ADBPullParser.ELEMENT_TEXT,
+                            org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                             org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                             },
                             new Object[]{});</xsl:otherwise>

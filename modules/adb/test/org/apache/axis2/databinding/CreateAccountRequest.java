@@ -85,8 +85,8 @@ public class CreateAccountRequest implements
         elementList.add(org.apache.axis2.databinding.utils.ConverterUtil
                 .convertToString(localPassword));
 
-        return org.apache.axis2.databinding.utils.ADBPullParser
-                .createPullParser(qName, elementList.toArray(), attribList
+        return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl
+                (qName, elementList.toArray(), attribList
                         .toArray());
 
     }

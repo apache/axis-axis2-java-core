@@ -1,4 +1,4 @@
-package org.apache.axis2.databinding.utils;
+package org.apache.axis2.databinding.utils.reader;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -21,21 +21,21 @@ import javax.xml.stream.XMLStreamReader;
  * limitations under the License.
  */
 
-public class NullablePullParser implements XMLStreamReader {
+public class NullXMLStreamReader implements ADBXMLStreamReader {
 
     private QName outerQName = null;
 
-    private static final int INIT_STATE = 0;
+
     private static final int START_ELEMENT_STATE = 1;
     private static final int END_ELEMENT_STATE = 2;
-    private static final int FINISHED_STATE = 3;
+
 
     private static final QName NIL_QNAME = new QName("http://www.w3.org/2001/XMLSchema-instance","nil","xsi");
     private static final String NIL_VALUE_TRUE ="true";
 
-    private int currentState = INIT_STATE;
+    private int currentState = START_ELEMENT;
 
-    public NullablePullParser(QName outerQName) {
+    public NullXMLStreamReader(QName outerQName) {
         this.outerQName = outerQName;
     }
 
@@ -46,20 +46,13 @@ public class NullablePullParser implements XMLStreamReader {
     public int next() throws XMLStreamException {
         int returnEvent = START_DOCUMENT;
         switch(currentState){
-            case INIT_STATE:
-                currentState = START_ELEMENT_STATE;
-                returnEvent =  START_ELEMENT;
-                break;
             case START_ELEMENT_STATE:
                 currentState = END_ELEMENT_STATE;
                 returnEvent =  END_ELEMENT;
                 break;
             case END_ELEMENT_STATE:
-                currentState = FINISHED_STATE;
-                returnEvent =  END_DOCUMENT;
-                break;
-            case FINISHED_STATE:
-                throw new XMLStreamException("parser completed!");
+               throw new XMLStreamException("parser completed!");
+
         }
 
         return returnEvent;
@@ -125,19 +118,19 @@ public class NullablePullParser implements XMLStreamReader {
     }
 
     public QName getAttributeName(int i) {
-        return (i==1)? NIL_QNAME:null;
+        return (i==0)? NIL_QNAME:null;
     }
 
     public String getAttributeNamespace(int i) {
-        return (i==1)? NIL_QNAME.getNamespaceURI():null;
+        return (i==0)? NIL_QNAME.getNamespaceURI():null;
     }
 
     public String getAttributeLocalName(int i) {
-        return (i==1)? NIL_QNAME.getLocalPart():null;
+        return (i==0)? NIL_QNAME.getLocalPart():null;
     }
 
     public String getAttributePrefix(int i) {
-        return (i==1)? NIL_QNAME.getPrefix():null;
+        return (i==0)? NIL_QNAME.getPrefix():null;
     }
 
     public String getAttributeType(int i) {
@@ -145,11 +138,11 @@ public class NullablePullParser implements XMLStreamReader {
     }
 
     public String getAttributeValue(int i) {
-        return (i==1)? NIL_VALUE_TRUE:null;
+        return (i==0)? NIL_VALUE_TRUE:null;
     }
 
     public boolean isAttributeSpecified(int i) {
-        return (i == 1);
+        return (i == 0);
     }
 
     public int getNamespaceCount() {
@@ -171,17 +164,13 @@ public class NullablePullParser implements XMLStreamReader {
     public int getEventType() {
         int returnEvent = START_DOCUMENT;
         switch(currentState){
-            case INIT_STATE:
-                returnEvent =  START_DOCUMENT;
-                break;
             case START_ELEMENT_STATE:
                 returnEvent =  START_ELEMENT;
                 break;
             case END_ELEMENT_STATE:
                 returnEvent =  END_ELEMENT;
                 break;
-            case FINISHED_STATE:
-               returnEvent = END_DOCUMENT;
+
         }
        return returnEvent;
     }
@@ -215,7 +204,27 @@ public class NullablePullParser implements XMLStreamReader {
     }
 
     public Location getLocation() {
-        throw new UnsupportedOperationException();
+        return new Location(){
+            public int getLineNumber() {
+                return 0;
+            }
+
+            public int getColumnNumber() {
+                return 0;
+            }
+
+            public int getCharacterOffset() {
+                return 0;
+            }
+
+            public String getPublicId() {
+                return null;
+            }
+
+            public String getSystemId() {
+                return null;
+            }
+        };
     }
 
     public QName getName() {
@@ -260,5 +269,17 @@ public class NullablePullParser implements XMLStreamReader {
 
     public String getPIData() {
         throw new UnsupportedOperationException();
+    }
+
+    public boolean isDone() {
+        return (currentState==END_ELEMENT_STATE);
+    }
+
+    public void addNamespaceContext(NamespaceContext nsContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void init() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

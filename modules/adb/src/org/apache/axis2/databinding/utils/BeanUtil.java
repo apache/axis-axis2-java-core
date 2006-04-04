@@ -23,8 +23,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.StreamWrapper;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
+import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JProperty;
 import org.codehaus.jam.JamClassIterator;
@@ -34,6 +37,9 @@ import org.codehaus.jam.JamServiceParams;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -43,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.io.ByteArrayOutputStream;
 
 
 public class BeanUtil {
@@ -142,7 +149,7 @@ public class BeanUtil {
                     object.add(value);
                 }
             }
-            return ADBPullParser.createPullParser(beanName, object.toArray(), null);
+            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null);
         } catch (Exception e) {
             return null;
         }
@@ -498,10 +505,30 @@ public class BeanUtil {
             argCount ++;
         }
 
-        XMLStreamReader xr = ADBPullParser.createPullParser(opName, objects.toArray(), null);
+        XMLStreamReader xr = new ADBXMLStreamReaderImpl(opName, objects.toArray(), null);
+
+        StreamWrapper parser = new StreamWrapper(xr);
+//      /////////////////////////////////////////////////////////////////////////
+//      /////////////////////////////////////////////////////////////////////////
+//        StreamWrapper parser = null;
+//        try {
+//
+//            StreamingOMSerializer ser = new StreamingOMSerializer();
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+//            ser.serialize(
+//                    new StreamWrapper(parser),
+//                    writer);
+//            writer.flush();
+//        } catch (XMLStreamException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
+//
+////       ////////////////////////////////////
         StAXOMBuilder stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(
-                        OMAbstractFactory.getSOAP11Factory(), xr);
+                        OMAbstractFactory.getSOAP11Factory(), parser);
+        stAXOMBuilder.setDoDebug(true);
         return stAXOMBuilder.getDocumentElement();
     }
 

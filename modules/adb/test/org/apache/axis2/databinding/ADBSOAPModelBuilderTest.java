@@ -22,8 +22,9 @@ import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.databinding.utils.PrintEvents;
+import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
+import org.apache.axis2.util.StreamWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -42,7 +43,21 @@ import java.util.ArrayList;
 
 public class ADBSOAPModelBuilderTest extends XMLTestCase {
     public void testSimpleArrayList() throws Exception {
-        String expectedXML = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><Person xmlns=\"\"><Name xmlns=\"\">FooOne</Name><DependentOne xmlns=\"\"><Name xmlns=\"\">FooTwo</Name><Age xmlns=\"\">25</Age><Sex xmlns=\"\">Male</Sex></DependentOne><DependentTwo xmlns=\"\"><Name xmlns=\"\">FooTwo</Name><Age xmlns=\"\">25</Age><Sex xmlns=\"\">Male</Sex></DependentTwo><Organization xmlns=\"\">Apache</Organization></Person></soapenv:Body></soapenv:Envelope>";
+        String expectedXML = "<?xml version='1.0' encoding='utf-8'?>" +
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "<soapenv:Header />" +
+                "<soapenv:Body>" +
+                "<Person xmlns=\"\">" +
+                "<Name xmlns=\"\">FooOne</Name>" +
+                "<DependentOne xmlns=\"\"><Name xmlns=\"\">FooTwo</Name>" +
+                "<Age xmlns=\"\">25</Age>" +
+                "<Sex xmlns=\"\">Male</Sex></DependentOne>" +
+                "<DependentTwo xmlns=\"\">" +
+                "<Name xmlns=\"\">FooTwo</Name>" +
+                "<Age xmlns=\"\">25</Age>" +
+                "<Sex xmlns=\"\">Male</Sex></DependentTwo>" +
+                "<Organization xmlns=\"\">Apache</Organization>" +
+                "</Person></soapenv:Body></soapenv:Envelope>";
         ArrayList propertyList = new ArrayList();
         propertyList.add("Name");
         propertyList.add("FooOne");
@@ -54,8 +69,9 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         propertyList.add("Apache");
         QName projectQName = new QName("Person");
 
-        XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
-        ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(pullParser, OMAbstractFactory.getSOAP11Factory());
+        XMLStreamReader pullParser =new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+        ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(
+                pullParser, OMAbstractFactory.getSOAP11Factory());
 
         OMElement root = builder.getDocumentElement();
         assertTrue("Root element can not be null", root != null);
@@ -161,7 +177,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         }
 
         public XMLStreamReader getPullParser(QName adbBeanQName) {
-            return ADBPullParser.createPullParser(adbBeanQName, propertyList.toArray(), null);
+            return new ADBXMLStreamReaderImpl(adbBeanQName, propertyList.toArray(), null);
         }
     }
 

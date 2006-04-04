@@ -225,8 +225,8 @@ public class RequestSecurityTokenResponseType implements
         attribList.add(org.apache.axis2.databinding.utils.ConverterUtil
                 .convertToString(localContext));
 
-        return org.apache.axis2.databinding.utils.ADBPullParser
-                .createPullParser(qName, elementList.toArray(), attribList
+        return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl
+                (qName, elementList.toArray(), attribList
                         .toArray());
 
     }
