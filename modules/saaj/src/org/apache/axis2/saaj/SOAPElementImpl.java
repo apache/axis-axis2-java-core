@@ -20,7 +20,6 @@ import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
@@ -64,17 +63,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void internalSerialize(OMOutputImpl omOutput) throws XMLStreamException {
-        element.internalSerialize(omOutput);
+    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+        element.internalSerialize(writer);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void internalSerializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-        element.internalSerializeAndConsume(omOutput);
+    public void internalSerializeAndConsume(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+        element.internalSerializeAndConsume(writer);
     }
 
     /**

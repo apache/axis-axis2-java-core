@@ -17,7 +17,6 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.TextImpl;
 import org.w3c.dom.DOMException;
@@ -264,18 +263,12 @@ public class TextImplEx extends NodeImplEx implements Text {
         textNode.discard();
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
-      */
-    public void internalSerialize(OMOutputImpl omOutput) throws XMLStreamException {
-        textNode.internalSerialize(omOutput);
+    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+        textNode.internalSerialize(writer);
     }
 
-    /* (non-Javadoc)
-      * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
-      */
-    public void internalSerializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-        textNode.internalSerializeAndConsume(omOutput);
+    public void internalSerializeAndConsume(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+        textNode.internalSerializeAndConsume(writer);
     }
 
     /**

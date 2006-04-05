@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.OMContainerEx;
-import org.apache.axiom.om.impl.OMOutputImpl;
 import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.om.impl.llom.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.OMNodeImpl;
@@ -340,18 +339,11 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
      */
-    public void internalSerialize(OMOutputImpl omOutput) throws XMLStreamException {
-        forceTree().internalSerialize(omOutput);
+    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+        forceTree().internalSerialize(writer);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axiom.om.OMNode#serialize(org.apache.axiom.om.impl.OMOutputImpl)
-     */
-    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-        serialize(omOutput.getXmlStreamWriter());
-    }
 
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMNode#serialize(javax.xml.stream.XMLStreamWriter)
@@ -423,7 +415,7 @@ public class OMJiBXElementImpl extends OMNodeImpl implements OMElement, OMContai
     /* (non-Javadoc)
      * @see org.apache.axiom.om.OMNode#serializeAndConsume(javax.xml.stream.XMLStreamWriter)
      */
-    public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
+    public void serializeAndConsume(javax.xml.stream.XMLStreamWriter xmlWriter) throws XMLStreamException {
         try {
             IXMLWriter writer = new StAXWriter(bindingFactory.getNamespaces(),
                 xmlWriter);
