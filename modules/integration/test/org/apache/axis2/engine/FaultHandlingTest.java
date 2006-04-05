@@ -22,8 +22,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -105,24 +103,7 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         return OMAbstractFactory.getOMFactory().createOMElement(elementLocalName, null);
     }
 
-    public void testTwoHeadersSOAPMessage() throws AxisFault, XMLStreamException {
-        SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
-        SOAPEnvelope soapEnvelope = getTwoHeadersSOAPEnvelope(fac);
-        SOAPEnvelope resposeEnvelope = getResponse(soapEnvelope);
 
-        checkSOAPFaultContent(resposeEnvelope);
-        SOAPFault fault = resposeEnvelope.getBody().getFault();
-        assertEquals(fault.getCode().getValue().getText().trim(), SOAP12Constants.FAULT_CODE_SENDER);
-
-        fac = OMAbstractFactory.getSOAP11Factory();
-        soapEnvelope = getTwoHeadersSOAPEnvelope(fac);
-        resposeEnvelope = getResponse(soapEnvelope);
-
-        checkSOAPFaultContent(resposeEnvelope);
-        fault = resposeEnvelope.getBody().getFault();
-        assertEquals(fault.getCode().getValue().getText().trim(), SOAP11Constants.FAULT_CODE_SENDER);
-
-    }
 
     public void testRefParamsWithFaultTo() throws AxisFault, XMLStreamException {
         SOAPEnvelope soapEnvelope = getSOAPEnvelopeWithRefParamsInFaultTo();
@@ -157,16 +138,6 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         return (SOAPEnvelope) new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(soap.getBytes())), SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI).getDocumentElement();
     }
 
-
-    private void checkSOAPFaultContent(SOAPEnvelope soapEnvelope) {
-        assertTrue(soapEnvelope.getBody().hasFault());
-        SOAPFault fault = soapEnvelope.getBody().getFault();
-        assertNotNull(fault.getCode());
-        assertNotNull(fault.getCode().getValue());
-        assertNotNull(fault.getReason());
-        assertNotNull(fault.getReason().getText());
-    }
-
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
         ConfigurationContext confctx = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
@@ -183,14 +154,6 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         opClient.addMessageContext(msgctx);
         opClient.execute(true);
         return opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
-    }
-
-    private SOAPEnvelope getTwoHeadersSOAPEnvelope(SOAPFactory fac) {
-        SOAPEnvelope soapEnvelope = fac.createSOAPEnvelope();
-        fac.createSOAPHeader(soapEnvelope);
-        fac.createSOAPHeader(soapEnvelope);
-        fac.createSOAPBody(soapEnvelope);
-        return soapEnvelope;
     }
 
     public File getTestResourceFile(String relativePath) {
