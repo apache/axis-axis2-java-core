@@ -3,7 +3,6 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axis2.databinding.utils.reader.OMAttribKey;
 import org.apache.axis2.databinding.utils.reader.OMElementKey;
 
-import javax.xml.namespace.QName;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

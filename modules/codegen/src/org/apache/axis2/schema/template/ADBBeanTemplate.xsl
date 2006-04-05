@@ -748,6 +748,7 @@
                    <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                    <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                    <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
+                   <xsl:variable name="nillable"><xsl:value-of select="@nillable"/></xsl:variable>
 
 
                    <xsl:choose>
@@ -774,11 +775,15 @@
                                             }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event
                                                  &amp;&amp;  !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
                                                //we've found an end element that does not belong to this type
-                                               //since this can occur zero times, this may well be empty.So return
-                                               //the empty object
-                                               return object;
+                                               //since this can occur zero times, this may well be empty.
 
-                                          </xsl:if>
+                                               object.set<xsl:value-of select="$javaName"/>(
+                                                        (<xsl:value-of select="$propertyType"/>)
+                                                        org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                                                        <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                                break;
+
+                                            </xsl:if>
                                            }else{
                                                reader.next();
                                            }
@@ -791,7 +796,16 @@
                                            event = reader.getEventType();
                                            if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
                                                    &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
-                                              <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                            if (org.apache.axis2.databinding.utils.Constants.TRUE.equals(
+                                     reader.getAttributeValue(
+                                           org.apache.axis2.databinding.utils.Constants.XSI_NAMESPACE,
+                                          org.apache.axis2.databinding.utils.Constants.NIL))){
+                                            <xsl:value-of select="$listName"/>.add(null);
+                                        }else{
+                                             <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                        }
+
+
                                            }else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
                                                    &amp;&amp; !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
                                               <xsl:value-of select="$loopBoolName"/> = true;
