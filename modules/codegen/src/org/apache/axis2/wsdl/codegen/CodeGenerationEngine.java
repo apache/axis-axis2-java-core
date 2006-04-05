@@ -77,6 +77,8 @@ public class CodeGenerationEngine {
         }
 
         configuration = new CodeGenConfiguration(wom, allOptions);
+
+        /////////////////////////////////////////////////////////////////
         try {
             configuration.setAxisService(new WSDL2AxisServiceBuilder(new FileInputStream(wsdlUri)).populateService());
         } catch (AxisFault axisFault) {
@@ -84,6 +86,8 @@ public class CodeGenerationEngine {
         } catch (FileNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        ///////////////////////////////////////////////////////////////////////
+        
         configuration.setBaseURI(getBaseURI(wsdlUri));
         loadExtensions();
     }

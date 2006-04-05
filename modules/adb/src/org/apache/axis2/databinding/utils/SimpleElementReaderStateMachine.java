@@ -55,7 +55,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
      */
     public void setElementNameToTest(QName elementNameToTest) {
         this.elementNameToTest = elementNameToTest;
-        
+
     }
 
     /**
@@ -114,77 +114,158 @@ public class SimpleElementReaderStateMachine implements States,Constants{
     private void updateState(XMLStreamReader reader) throws XMLStreamException{
         int event = reader.getEventType();
 
-        //start_document found at init
-        if (event==XMLStreamConstants.START_DOCUMENT && currentState==INIT_STATE){
-            currentState = STARTED_STATE;
-            //start element found at init
-        }else  if (event==XMLStreamConstants.START_ELEMENT  && currentState==INIT_STATE){
-            if (elementNameToTest.equals(reader.getName())){
-                currentState = START_ELEMENT_FOUND_STATE;
-            }else{
-                currentState = STARTED_STATE;
-            }
-            //start element found after started
-        }else if  (event==XMLStreamConstants.START_ELEMENT  && currentState==STARTED_STATE) {
-            if (elementNameToTest.equals(reader.getName())){
-                currentState = START_ELEMENT_FOUND_STATE;
-            }
-            //characteres found after start element
-        }else if (event==XMLStreamConstants.CHARACTERS && currentState==START_ELEMENT_FOUND_STATE){
-            currentState  = TEXT_FOUND_STATE;
 
-            //characters found - if this is a characters event that was in the correct place then
-            //it would have been handled already. we need to check whether this is a ignorable
-            //whitespace and if not push the state machine to a illegal state.
-        }else if (event==XMLStreamConstants.CHARACTERS){
-            if (reader.getText().trim().length()==0){
-                //the text is empty - don't change the state
-            }else{
-                //we do NOT handle mixed content
-                currentState = ILLEGAL_STATE;
-                errorMessage = "Mixed Content " +reader.getText();  //todo I18n this
-            }
+        switch(currentState){
+            case INIT_STATE:
+                if (event==XMLStreamConstants.START_DOCUMENT){
+                    currentState = STARTED_STATE;
+                    //start element found at init
+                }else  if (event==XMLStreamConstants.START_ELEMENT){
+                    if (elementNameToTest.equals(reader.getName())){
+                        currentState = START_ELEMENT_FOUND_STATE;
+                    }else{
+                        currentState = STARTED_STATE;
+                    }
+                }
+                break;
 
-            //End element  found after starting This means we've found an empty element like <foo/>
-        }else if (event==XMLStreamConstants.END_ELEMENT && currentState==START_ELEMENT_FOUND_STATE){
-            //force the text to be empty!
-            text = "";
+            case  STARTED_STATE:
+                if (event==XMLStreamConstants.START_ELEMENT ) {
+                    if (elementNameToTest.equals(reader.getName())){
+                        currentState = START_ELEMENT_FOUND_STATE;
+                    }
+                }
+                break;
 
-            if (elementNameToTest.equals(reader.getName())){
+            case  START_ELEMENT_FOUND_STATE:
+                if (event==XMLStreamConstants.CHARACTERS){
+                    currentState  = TEXT_FOUND_STATE;
+                }else if (event==XMLStreamConstants.END_ELEMENT){
+                    //force the text to be empty!
+                    text = "";
+                    if (elementNameToTest.equals(reader.getName())){
+                        currentState = END_ELEMENT_FOUND_STATE;
+                    }else{
+                        currentState = ILLEGAL_STATE;
+                        errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
+                    }
+                }
+                break;
+
+            case  TEXT_FOUND_STATE:
+                if (event==XMLStreamConstants.END_ELEMENT){
+                    if (elementNameToTest.equals(reader.getName())){
+                        currentState = END_ELEMENT_FOUND_STATE;
+                    }else{
+                        currentState = ILLEGAL_STATE;
+                        //set the error message
+                        errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
+                    }
+                }else if (event==XMLStreamConstants.CHARACTERS){
+                    text = text +  reader.getText();  //append the text
+                    //do not change the state
+                }
+                break;
+
+            case END_ELEMENT_FOUND_STATE:
+                 currentState = FINISHED_STATE;
+                break;
+
+                //the element was found to be null and this state was forced.
+                //we are sure here that the parser was at the START_ELEMENT_FOUND_STATE before
+                //being forced. Hence we need to advance the parser upto the end element and
+                //set the state to be end element found
+            case NULLED_STATE:
+                while (event!= XMLStreamConstants.END_ELEMENT){
+                    event=reader.next();
+                }
                 currentState = END_ELEMENT_FOUND_STATE;
-            }else{
-                currentState = ILLEGAL_STATE;
-                errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
-            }
+                break;
 
-            // end element found after characters
-        } else if (event==XMLStreamConstants.END_ELEMENT && currentState==TEXT_FOUND_STATE){
-            if (elementNameToTest.equals(reader.getName())){
-                currentState = END_ELEMENT_FOUND_STATE;
-            }else{
-                currentState = ILLEGAL_STATE;
-                //set the error message
-                errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
-            }
-
-            //end has been reached
-        }else if (currentState==END_ELEMENT_FOUND_STATE) {
-            currentState = FINISHED_STATE;
-            //the element was found to be null and this state was forced.
-            //we are sure here that the parser was at the START_ELEMENT_FOUND_STATE before
-            //being forced. Hence we need to advance the parser upto the end element and
-            //set the state to be end element found
-        }else if (currentState==NULLED_STATE){
-            while (event!= XMLStreamConstants.END_ELEMENT){
-                event=reader.next();
-            }
-            currentState = END_ELEMENT_FOUND_STATE;
-            //all other combinations are invalid
-
-        }else{
-            currentState = ILLEGAL_STATE;
-            errorMessage = "Current state is " + currentState ;  //todo I18n this
+            default:
+                if (event==XMLStreamConstants.CHARACTERS){
+                    if (reader.getText().trim().length()==0){
+                        //the text is empty - don't change the state
+                    }else{
+                        //we do NOT handle mixed content
+                        currentState = ILLEGAL_STATE;
+                        errorMessage = "Mixed Content " +reader.getText();  //todo I18n this
+                    }
+                }else{
+                    currentState = ILLEGAL_STATE;
+                    errorMessage = "Current state is " + currentState ;  //todo I18n this
+                }
+                break;
         }
+
+//        //start_document found at init
+//        if (event==XMLStreamConstants.START_DOCUMENT && currentState==INIT_STATE){
+//            currentState = STARTED_STATE;
+//            //start element found at init
+//        }else  if (event==XMLStreamConstants.START_ELEMENT  && currentState==INIT_STATE){
+//            if (elementNameToTest.equals(reader.getName())){
+//                currentState = START_ELEMENT_FOUND_STATE;
+//            }else{
+//                currentState = STARTED_STATE;
+//            }
+//            //start element found after started
+//        }else if  (event==XMLStreamConstants.START_ELEMENT  && currentState==STARTED_STATE) {
+//            if (elementNameToTest.equals(reader.getName())){
+//                currentState = START_ELEMENT_FOUND_STATE;
+//            }
+//            //characteres found after start element
+//        }else if (event==XMLStreamConstants.CHARACTERS && currentState==START_ELEMENT_FOUND_STATE){
+//            currentState  = TEXT_FOUND_STATE;
+//
+//            //characters found - if this is a characters event that was in the correct place then
+//            //it would have been handled already. we need to check whether this is a ignorable
+//            //whitespace and if not push the state machine to a illegal state.
+//        }else if (event==XMLStreamConstants.CHARACTERS){
+//            if (reader.getText().trim().length()==0){
+//                //the text is empty - don't change the state
+//            }else{
+//                //we do NOT handle mixed content
+//                currentState = ILLEGAL_STATE;
+//                errorMessage = "Mixed Content " +reader.getText();  //todo I18n this
+//            }
+//
+//            //End element  found after starting This means we've found an empty element like <foo/>
+//        }else if (event==XMLStreamConstants.END_ELEMENT && currentState==START_ELEMENT_FOUND_STATE){
+//            //force the text to be empty!
+//            text = "";
+//
+//            if (elementNameToTest.equals(reader.getName())){
+//                currentState = END_ELEMENT_FOUND_STATE;
+//            }else{
+//                currentState = ILLEGAL_STATE;
+//                errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
+//            }
+//
+//            // end element found after characters
+//        } else if (event==XMLStreamConstants.END_ELEMENT && currentState==TEXT_FOUND_STATE){
+//            if (elementNameToTest.equals(reader.getName())){
+//                currentState = END_ELEMENT_FOUND_STATE;
+//            }else{
+//                currentState = ILLEGAL_STATE;
+//                //set the error message
+//                errorMessage = "Wrong element name " +reader.getName();  //todo I18n this
+//            }
+//
+//            //end has been reached
+//        }else if (currentState==END_ELEMENT_FOUND_STATE) {
+//            currentState = FINISHED_STATE;
+//
+//        }else if (currentState==NULLED_STATE){
+//            while (event!= XMLStreamConstants.END_ELEMENT){
+//                event=reader.next();
+//            }
+//            currentState = END_ELEMENT_FOUND_STATE;
+//            //all other combinations are invalid
+//
+//        }else{
+//            currentState = ILLEGAL_STATE;
+//            errorMessage = "Current state is " + currentState ;  //todo I18n this
+//        }
     }
 
 

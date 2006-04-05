@@ -24,30 +24,12 @@ import javax.xml.namespace.NamespaceContext;
 public class WrappingXMLStreamReader implements ADBXMLStreamReader{
 
     private XMLStreamReader reader;
-    private int depth = 0;
-    private boolean initState = true;
 
     public WrappingXMLStreamReader(XMLStreamReader reader) {
         this.reader = reader;
     }
 
     public boolean isDone() {
-        /////////////////////////////////
-//        try {
-//            System.out.println("1 -----------" + this.reader.hasNext());
-//            System.out.println("2  -----------" +(depth==0 && !initState));
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//        ////////////////////////////////
-//        try {
-//            boolean b = hasNext();
-//            System.out.println("######" + b + "#####");
-//            System.out.println("----------" + (depth==0 && !initState && !b) + " -------");
-//            return (depth==0 && !initState && !b);
-//        } catch (XMLStreamException e) {
-//            throw new RuntimeException(e);
-//        }
         try {
             return !hasNext();
         } catch (XMLStreamException e) {
@@ -60,14 +42,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public int next() throws XMLStreamException {
-        int event = reader.next();
-        initState = false;
-        if (event==START_ELEMENT || event==START_DOCUMENT){
-            depth++;
-        }else if (event==END_ELEMENT || event==END_DOCUMENT){
-            depth = depth!=0?depth--:depth;
-        }
-        return event;
+         return reader.next();
     }
 
     public void require(int i, String string, String string1) throws XMLStreamException {

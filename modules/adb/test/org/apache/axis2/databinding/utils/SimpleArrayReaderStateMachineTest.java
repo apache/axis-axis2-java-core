@@ -84,20 +84,21 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
         assertEquals("200",sm.getTextArray()[0]);
     }
 
-//     public void testStateMachine3() throws Exception{
-//        String xmlDoc="<myIntVal>200<a/></myIntVal>";
-//        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
-//                new StringReader(xmlDoc));
-//        SimpleElementReaderStateMachine  sm = new SimpleElementReaderStateMachine();
-//        sm.setElementNameToTest(new QName("myIntVal"));
-//        try {
-//            sm.read(reader);
-//            fail();
-//        } catch (Exception e) {
-//
-//        }
-//
-//
-//    }
+     public void testStateMachineEmptyArray() throws Exception{
+        String xmlDoc="<wrapper></wrapper>";
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+                new StringReader(xmlDoc));
+        SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
+        sm.setElementNameToTest(new QName("myIntVal"));
+        try {
+            sm.read(reader);
+        } catch (Exception e) {
+
+        }
+
+        assertEquals(0,sm.getTextArray().length);
+
+
+    }
 
 }
