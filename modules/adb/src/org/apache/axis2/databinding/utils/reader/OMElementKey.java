@@ -1,9 +1,4 @@
-package org.apache.axis2.databinding.utils;
-
-import org.apache.axis2.databinding.utils.reader.OMAttribKey;
-import org.apache.axis2.databinding.utils.reader.OMElementKey;
-
-import javax.xml.namespace.QName;
+package org.apache.axis2.databinding.utils.reader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -19,13 +14,10 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-                                              
-public interface Constants {
 
-    static  String NIL="nil";
-    static  String TRUE="true";
-    static  String XSI_NAMESPACE ="http://www.w3.org/2001/XMLSchema-instance";
-
-    static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
-    static Object OM_ELEMENT_KEY = new OMElementKey();
+/**
+ * A dummy class that creates nothing but a key for the
+ * OMElement when it is passed to the ADBPullparser
+ */
+public class OMElementKey {
 }

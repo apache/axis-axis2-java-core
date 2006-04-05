@@ -38,11 +38,23 @@ import java.util.Map;
  * The common types of name value pairs we'll come across are
  * 1. String name/QName name - String value
  * 2. String name/QName name - String[] value
- * 3. null - OMElement[] value
+ * 3. OMElementkey - OMElement value
+ * 4. QName name/String name  - ADBBean value
+ * 5. QName name/String name  - Java bean
+ *
+ * As for the attributes, these are the possible combinations in the
+ * array
+ * 1. String name/QName name - String value
+ * 2. OMAttributeKey - OMAttribute
+ *
+ * Note that certain array methods have  been deliberately removed to avoid
+ * complications. The generated code will take the trouble to lay the
+ * elements of the array in the correct order
+ *
  * <p/>
  * Hence there will be a parser impl that knows how to handle these types, and
  * this parent parser will always delegate these tasks to the child pullparasers
- * in effect this is one huge state machine that has only three states and delegates
+ * in effect this is one huge state machine that has only a few states and delegates
  * things down to the child parsers whenever possible
  * <p/>
  * the possible inputs for this class
@@ -840,6 +852,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             }
         } else if (propPointer instanceof QName) {
             propertyQName = (QName) propPointer;
+        } else if (propPointer instanceof OMElementKey) {
+            // ah - in this case there's nothing to be done
+            //about the propertyQName in this case - we'll just leave
+            //it as it is
         } else {
             //oops - we've no idea what kind of key this is
             throw new XMLStreamException(

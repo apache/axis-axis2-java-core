@@ -81,7 +81,7 @@ public class SimpleElementReaderStateMachine implements States,Constants{
             //test for the nillable attribute
             if (currentState==START_ELEMENT_FOUND_STATE &&
                     nillable){
-                if (TRUE.equals(reader.getAttributeValue("",NIL))){
+                if (TRUE.equals(reader.getAttributeValue(XSI_NAMESPACE,NIL))){
                     text = null;
                     //force the state to be null found
                     currentState= NULLED_STATE;
