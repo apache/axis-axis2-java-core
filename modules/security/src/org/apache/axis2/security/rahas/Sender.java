@@ -25,6 +25,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.security.WSDoAllSender;
 import org.apache.axis2.security.trust.Constants;
+import org.apache.axis2.security.trust.Token;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.message.WSSecDKEncrypt;
@@ -32,6 +33,7 @@ import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
@@ -108,10 +110,12 @@ public class Sender implements Handler {
         WSSecHeader secHeader = new WSSecHeader();
         secHeader.insertSecurityHeader(doc);
         
-        byte[] tempSecret = config.getTokenStore().getToken(
-                config.getContextIdentifier()).getSecret();
+        Token tempToken = config.getTokenStore().getToken(
+                config.getContextIdentifier());
+        byte[] tempSecret = tempToken.getSecret();
 
-        SecurityContextToken sct = config.getSecurityContextToken();
+        SecurityContextToken sct = new SecurityContextToken((Element) doc
+                .importNode((Element) tempToken.getToken(), true));
         if(sct == null) {
             
         }

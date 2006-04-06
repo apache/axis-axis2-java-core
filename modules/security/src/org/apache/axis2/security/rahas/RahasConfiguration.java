@@ -131,6 +131,10 @@ public class RahasConfiguration {
     
     private SecurityContextToken sct;
     
+    private byte[] requesterEntropy;
+    
+    private byte[] issuerEntropy;
+    
     public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
             throws Exception {
         Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
@@ -448,14 +452,6 @@ public class RahasConfiguration {
         return contextIdentifier;
     }
 
-//    /**
-//     * @param contextIdentifier The contextIdentifier to set.
-//     */
-//    protected void setContextIdentifier(String contextIdentifier) throws RahasException {
-//        this.contextIdentifier = contextIdentifier;
-//        this.resgisterContext(contextIdentifier);
-//    }
-
     /**
      * @return Returns the cryptoProperties.
      */
@@ -576,24 +572,38 @@ public class RahasConfiguration {
     }
 
     /**
-     * @return Returns the sct.
-     */
-    protected SecurityContextToken getSecurityContextToken() {
-        return sct;
-    }
-
-    /**
-     * @param sct The sct to set.
-     */
-    protected void setSecurityContextToken(SecurityContextToken sct) {
-        this.sct = sct;
-    }
-
-    /**
      * @param passwordCallbackClass The passwordCallbackClass to set.
      */
     public void setPasswordCallbackClass(String passwordCallbackClass) {
         this.passwordCallbackClass = passwordCallbackClass;
+    }
+
+    /**
+     * @return Returns the issuerEntropy.
+     */
+    protected byte[] getIssuerEntropy() {
+        return issuerEntropy;
+    }
+
+    /**
+     * @param issuerEntropy The issuerEntropy to set.
+     */
+    protected void setIssuerEntropy(byte[] issuerEntropy) {
+        this.issuerEntropy = issuerEntropy;
+    }
+
+    /**
+     * @return Returns the requesterEntropy.
+     */
+    protected byte[] getRequesterEntropy() {
+        return requesterEntropy;
+    }
+
+    /**
+     * @param requesterEntropy The requesterEntropy to set.
+     */
+    protected void setRequesterEntropy(byte[] requesterEntropy) {
+        this.requesterEntropy = requesterEntropy;
     }
     
 }

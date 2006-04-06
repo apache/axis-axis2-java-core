@@ -117,7 +117,6 @@ public class STSRequester {
             if(sctElem != null) {
                 SecurityContextToken sct = new SecurityContextToken((Element)sctElem);
                 token = new Token(sct.getIdentifier(), sctElem.cloneOMElement());
-                config.setSecurityContextToken(sct);
                 config.resgisterContext(sct.getIdentifier());
             } else {
                 throw new RahasException("sctMissingInResponse");
