@@ -120,7 +120,28 @@
                  basedir="target/temp-rahas"/>
 
             <!-- Rahas Test - 1 :END -->
-			
+
+            <!-- Rahas Test - 2  -->
+
+            <mkdir dir="target/test-resources/rahas_service_repo_2"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_2/conf"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_2/services"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_2/modules"/>
+
+			<copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_2/modules/addressing-${addressing_version}.mar"/>
+			<copy file="../security/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_2/modules/rahas-${rahas_version}.mar"/>
+
+			<!-- copy the services.xml and create the aar -->
+			<copy overwrite="yes" file="test-resources/security/rahas/s2-services.xml"
+                  tofile="target/temp-rahas/META-INF/services.xml"/>
+
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_2/services/Service.aar"
+                 basedir="target/temp-rahas"/>
+
+            <!-- Rahas Test - 2 :END -->
+
 			<!-- clean up temp rahas stuff -->
 			<!--<delete dir="target/temp-rahas"/> -->
 

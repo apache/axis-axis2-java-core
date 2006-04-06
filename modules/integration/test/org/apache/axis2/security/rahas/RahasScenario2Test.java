@@ -15,15 +15,16 @@
  */
 
 package org.apache.axis2.security.rahas;
-import org.apache.axiom.om.OMElement;
 
-public class Service {
+public class RahasScenario2Test extends RahasScenario1Test {
 
-	public OMElement echo(OMElement elem) {
-		elem.build();
-		elem.detach();
-        System.out.println("Service invoked");
-		return elem;
-	}
-	
+    public RahasScenario2Test(String name) {
+        super(name);
+    }
+
+    public String getServiceRepo() {
+        return "rahas_service_repo_2";
+    }
+
+    
 }

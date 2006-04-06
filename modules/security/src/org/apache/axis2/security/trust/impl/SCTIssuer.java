@@ -253,10 +253,6 @@ public class SCTIssuer implements TokenIssuer {
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
         this.getTokenStore(msgCtx).add(sctToken);
         
-        String bodyStr = env.getBody().toString();
-        System.out.println(bodyStr);
-        System.out.println(env);
-        
         return env;
     }
 
