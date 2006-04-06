@@ -56,7 +56,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
-import java.net.URI;
 import java.util.*;
 
 /**
@@ -121,6 +120,9 @@ public class AxisService extends AxisDescription {
     ////////////////////////////////////////
     private Map nameSpacesMap;
 
+    private String soapNsUri;
+    private String endpoint;
+
     /**
      * Constructor AxisService.
      */
@@ -138,21 +140,26 @@ public class AxisService extends AxisDescription {
 
     /**
      * get the SOAPVersion
-     * @return
      */
-    public String getSoapNsUri(){
-        //todo - deepal implement me
-        return null;
+    public String getSoapNsUri() {
+        return soapNsUri;
     }
 
-     /**
-     * get the endpoint
-     * @return
-     */
-    public String getEndpoint(){
-        //todo - deepal implement me
-        return null;
+    public void setSoapNsUri(String soapNsUri) {
+        this.soapNsUri = soapNsUri;
     }
+
+    /**
+     * get the endpoint
+     */
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
     /**
      * Constructor AxisService.
      */

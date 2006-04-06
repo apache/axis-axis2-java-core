@@ -3,6 +3,7 @@ package org.apache.axis2.description;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.extensions.SOAPHeader;
 import org.apache.wsdl.impl.MessageReferenceImpl;
 
 import javax.xml.namespace.QName;
@@ -32,8 +33,10 @@ import java.util.List;
  * which are representd by this class.
  */
 public class AxisMessage extends AxisDescription {
+
     private ArrayList handlerChain;
     private String name;
+    private ArrayList soapHeaders;
 
     //to keep data in WSDL message refference and to keep the Java2WSDL data
     // such as SchemaElementName , direction etc.
@@ -43,6 +46,7 @@ public class AxisMessage extends AxisDescription {
 
 
     public AxisMessage() {
+        soapHeaders = new ArrayList();
         handlerChain = new ArrayList();
         messageReference = new MessageReferenceImpl();
     }
@@ -119,6 +123,7 @@ public class AxisMessage extends AxisDescription {
 
     /**
      * This will return a list of WSDLExtensibilityAttribute
+     *
      * @return
      */
     public List getExtensibilityAttributes() {
@@ -126,5 +131,13 @@ public class AxisMessage extends AxisDescription {
 
         // the list should contain list of WSDLExtensibilityAttribute
         return new ArrayList(0);
+    }
+
+    public void addSopaHeader(SOAPHeader soapHeader) {
+        soapHeaders.add(soapHeader);
+    }
+
+    public ArrayList getSoapHeaders() {
+        return soapHeaders;
     }
 }

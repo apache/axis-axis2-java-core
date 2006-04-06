@@ -1,38 +1,25 @@
 package org.apache.axis2.wsdl.codegen.emitter;
 
-import org.apache.axis2.description.AxisExtensiblityElementWrapper;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
-import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
-import org.apache.axis2.wsdl.codegen.writer.MessageReceiverWriter;
-import org.apache.axis2.wsdl.codegen.writer.InterfaceWriter;
-import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
-import org.apache.axis2.wsdl.codegen.writer.InterfaceImplementationWriter;
-import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
+import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
-import org.apache.axis2.namespace.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.Policy;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.SOAPHeader;
-import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,12 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -166,30 +148,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
 
-
     /**
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitStub()
      */
     public void emitStub() throws CodeGenerationException {
 
         try {
-             emitStubFromService();
+            emitStubFromService();
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
     }
 
     /**
-       * Update mapper for the stub
-       * @param boundInterface
-       */
-      private void updateMapperForStub() {
-          String packageName = codeGenConfiguration.getPackageName();
-          String localPart = makeJavaClassName(axisService.getName());
-          String stubName = localPart + STUB_SUFFIX;
+     * Update mapper for the stub
+     */
+    private void updateMapperForStub() {
+        String packageName = codeGenConfiguration.getPackageName();
+        String localPart = makeJavaClassName(axisService.getName());
+        String stubName = localPart + STUB_SUFFIX;
 
-          updateMapperClassnames(packageName + "." + stubName + ".");
-      }
+        updateMapperClassnames(packageName + "." + stubName + ".");
+    }
 
     /**
      * Emits the stubcode with bindings.
@@ -230,6 +210,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Writes the Ant build.
+     *
      * @throws Exception
      */
     protected void writeAntBuild() throws Exception {
@@ -244,7 +225,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         writeClass(skeletonModel, antBuildWriter);
     }
 
-      /**
+    /**
      * Creates the DOM tree for the Ant build. Uses the interface.
      */
     protected Document createDOMDocumentForAntBuild() {
@@ -261,46 +242,47 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         return doc;
     }
-    /**
-         *  Write the test classes
-         */
-        protected void writeTestClasses() throws Exception {
-            if (codeGenConfiguration.isWriteTestCase()) {
-                Document classModel = createDOMDocumentForTestCase();
-                debugLogDocument("Document for test case:", classModel);
-                TestClassWriter callbackWriter =
-                        new TestClassWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "test"),
-                                codeGenConfiguration.getOutputLanguage());
 
-                writeClass(classModel, callbackWriter);
-            }
+    /**
+     * Write the test classes
+     */
+    protected void writeTestClasses() throws Exception {
+        if (codeGenConfiguration.isWriteTestCase()) {
+            Document classModel = createDOMDocumentForTestCase();
+            debugLogDocument("Document for test case:", classModel);
+            TestClassWriter callbackWriter =
+                    new TestClassWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "test"),
+                            codeGenConfiguration.getOutputLanguage());
+
+            writeClass(classModel, callbackWriter);
         }
+    }
 
     protected Document createDOMDocumentForTestCase() {
-           String coreClassName = makeJavaClassName(axisService.getName());
-           Document doc = getEmptyDocument();
-           Element rootElement = doc.createElement("class");
+        String coreClassName = makeJavaClassName(axisService.getName());
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("class");
 
-           addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-           addAttribute(doc, "name", coreClassName + TEST_SUFFIX, rootElement);
-          //todo is this right ???
-           addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
-           addAttribute(doc, "interfaceName", coreClassName, rootElement);
-           addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
-           addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
+        addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+        addAttribute(doc, "name", coreClassName + TEST_SUFFIX, rootElement);
+        //todo is this right ???
+        addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
+        addAttribute(doc, "interfaceName", coreClassName, rootElement);
+        addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
 
-           fillSyncAttributes(doc, rootElement);
-           loadOperations(doc, rootElement,null);
+        fillSyncAttributes(doc, rootElement);
+        loadOperations(doc, rootElement, null);
 
-           // add the databind supporters. Now the databind supporters are completly contained inside
-           // the stubs implementation and not visible outside
-           rootElement.appendChild(createDOMElementforDatabinders(doc));
-           doc.appendChild(rootElement);
+        // add the databind supporters. Now the databind supporters are completly contained inside
+        // the stubs implementation and not visible outside
+        rootElement.appendChild(createDOMElementforDatabinders(doc));
+        doc.appendChild(rootElement);
 
-           return doc;
-       }
+        return doc;
+    }
 
-     /**
+    /**
      * Writes the implementations.
      *
      * @throws Exception
@@ -378,7 +360,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //if some extension has added the stub methods property, add them to the
         //main document
         if ((stubMethods = codeGenConfiguration.getProperty("stubMethods")) != null) {
-        	rootElement.appendChild(doc.importNode((Element) stubMethods, true));
+            rootElement.appendChild(doc.importNode((Element) stubMethods, true));
         }
 
         doc.appendChild(rootElement);
@@ -417,11 +399,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     /**
      * Looks for the SOAPVersion and adds it.
      *
-     * @param binding
      * @param doc
      * @param rootElement
      */
-    protected void addSoapVersion( Document doc, Element rootElement) {
+    protected void addSoapVersion(Document doc, Element rootElement) {
 
         // loop through the extensibility elements to get to the bindings element
 
@@ -481,6 +462,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         writeClass(interfaceModel, interfaceWriter);
     }
+
     /**
      * Creates the DOM tree for the interface creation. Uses the interface.
      */
@@ -494,7 +476,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(doc, rootElement,null);
+        loadOperations(doc, rootElement, null);
 
         // ###########################################################################################
         // this block of code specifically applies to the integration of databinding code into the
@@ -517,7 +499,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         return doc;
     }
-
 
     /**
      * Emits the stubcode with bindings.
@@ -586,6 +567,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Emit the skeltons
+     *
      * @throws CodeGenerationException
      */
     public void emitSkeleton() throws CodeGenerationException {
@@ -600,7 +582,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Update mapper for message receiver
-     * @param boundInterface
      */
     private void updateMapperForMessageReceiver() {
         String packageName = codeGenConfiguration.getPackageName();
@@ -631,29 +612,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     /**
-     *
      * @throws Exception
      */
     protected void writeMessageReceiver() throws Exception {
 
-           if (codeGenConfiguration.isWriteMessageReceiver()) {
-               //loop through the meps and generate code for each mep
-               Iterator it = MEPtoClassMap.keySet().iterator();
-               while (it.hasNext()) {
-                   String mep = (String) it.next();
-                   Document classModel = createDocumentForMessageReceiver(mep);
-                   debugLogDocument("Document for message receiver:", classModel);
-                   //write the class only if any methods are found
-                   if (Boolean.TRUE.equals(infoHolder.get(mep))) {
-                       MessageReceiverWriter writer =
-                               new MessageReceiverWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
-                                       codeGenConfiguration.getOutputLanguage());
+        if (codeGenConfiguration.isWriteMessageReceiver()) {
+            //loop through the meps and generate code for each mep
+            Iterator it = MEPtoClassMap.keySet().iterator();
+            while (it.hasNext()) {
+                String mep = (String) it.next();
+                Document classModel = createDocumentForMessageReceiver(mep);
+                debugLogDocument("Document for message receiver:", classModel);
+                //write the class only if any methods are found
+                if (Boolean.TRUE.equals(infoHolder.get(mep))) {
+                    MessageReceiverWriter writer =
+                            new MessageReceiverWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                                    codeGenConfiguration.getOutputLanguage());
 
-                       writeClass(classModel, writer);
-                   }
-               }
-           }
-       }
+                    writeClass(classModel, writer);
+                }
+            }
+        }
+    }
 
     protected Document createDocumentForMessageReceiver(String mep) {
 
@@ -666,7 +646,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
         addAttribute(doc, "skeletonname", localPart + SERVICE_CLASS_SUFFIX, rootElement);
-        addAttribute(doc, "basereceiver", (String)MEPtoClassMap.get(mep), rootElement);
+        addAttribute(doc, "basereceiver", (String) MEPtoClassMap.get(mep), rootElement);
         fillSyncAttributes(doc, rootElement);
 
         // ###########################################################################################
@@ -685,10 +665,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         // #############################################################################################
 
-        boolean isOpsFound = loadOperations(doc,rootElement,mep);
+        boolean isOpsFound = loadOperations(doc, rootElement, mep);
 
         //put the result in the property map
-        infoHolder.put(mep,isOpsFound?Boolean.TRUE:Boolean.FALSE);
+        infoHolder.put(mep, isOpsFound ? Boolean.TRUE : Boolean.FALSE);
         // ///////////////////////
         rootElement.appendChild(createDOMElementforDatabinders(doc));
 
@@ -700,9 +680,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * create a dom doc for databinders
+     *
      * @param doc
-     * @param binding
-     * @return
      */
     protected Element createDOMElementforDatabinders(Document doc) {
 
@@ -711,7 +690,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Iterator operationsIterator = axisService.getOperations();
 
         while (operationsIterator.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation)operationsIterator.next();
+            AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
             // Add the parameters to a map with their type as the key
             // this step is needed to remove repetitions
 
@@ -772,35 +751,35 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     /**
-         * Gets the base64 types. If not available this will be empty!!!
-         *
-         * @param doc
-         * @return Returns Element.
-         */
-        private Element getBase64Elements(Document doc) {
-            Element root = doc.createElement("base64Elements");
-            Element elt;
-            QName qname;
+     * Gets the base64 types. If not available this will be empty!!!
+     *
+     * @param doc
+     * @return Returns Element.
+     */
+    private Element getBase64Elements(Document doc) {
+        Element root = doc.createElement("base64Elements");
+        Element elt;
+        QName qname;
 
-            // this is a list of QNames
-            List list = (List) codeGenConfiguration.getProperties().get(XSLTConstants.BASE_64_PROPERTY_KEY);
+        // this is a list of QNames
+        List list = (List) codeGenConfiguration.getProperties().get(XSLTConstants.BASE_64_PROPERTY_KEY);
 
-            if ((list != null) && !list.isEmpty()) {
-                int count = list.size();
+        if ((list != null) && !list.isEmpty()) {
+            int count = list.size();
 
-                for (int i = 0; i < count; i++) {
-                    qname = (QName) list.get(i);
-                    elt = doc.createElement("name");
-                    addAttribute(doc, "ns-url", qname.getNamespaceURI(), elt);
-                    addAttribute(doc, "localName", qname.getLocalPart(), elt);
-                    root.appendChild(elt);
-                }
+            for (int i = 0; i < count; i++) {
+                qname = (QName) list.get(i);
+                elt = doc.createElement("name");
+                addAttribute(doc, "ns-url", qname.getNamespaceURI(), elt);
+                addAttribute(doc, "localName", qname.getLocalPart(), elt);
+                root.appendChild(elt);
             }
-
-            return root;
         }
 
-             /**
+        return root;
+    }
+
+    /**
      * @param objectMappings
      * @param root
      * @param doc
@@ -820,6 +799,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
         }
     }
+
     /**
      * we need to modify the mapper's class name list. The issue here is that in this case we do not
      * expect the fully qulified class names to be present in the class names list due to the simple
@@ -827,7 +807,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * to suit the expected package to be written
      * in this case we modify the package name to have make the class a inner class of the stub,
      * interface or the message receiver depending on the style
-     *
      */
     private void updateMapperClassnames(String fullyQulifiedIncludingClassNamePrefix) {
         Map classNameMap = mapper.getAllMappedNames();
@@ -841,6 +820,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Write the service XML
+     *
      * @throws Exception
      */
     private void writeServiceXml() throws Exception {
@@ -1118,39 +1098,40 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Adds the soap action
+     *
      * @param doc
      * @param rootElement
      * @param axisOperation
      */
     private void addSOAPAction(Document doc, Element rootElement, AxisOperation axisOperation) {
-           addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
+        addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
     }
 
     private void addHeaderOperations(List soapHeaderParameterQNameList, AxisOperation axisOperation,
                                      boolean input) {
-        Iterator extIterator;
-
-        if (input) {
-            extIterator = (axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE) == null)
-                    ? null
-                    : axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getWsdlExtElements().iterator();
-        } else {
-            extIterator = (axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE) == null)
-                    ? null
-                    : axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getWsdlExtElements().iterator();
-        }
-
-        while ((extIterator != null) && extIterator.hasNext()) {
-            AxisExtensiblityElementWrapper axisExtensibilityElement = (AxisExtensiblityElementWrapper) extIterator.next();
-
-            WSDLExtensibilityElement element = axisExtensibilityElement.getExtensibilityElement();
-
-            if (ExtensionConstants.SOAP_11_HEADER.equals(element.getType())) {
-                SOAPHeader header = (SOAPHeader) element;
-
-                soapHeaderParameterQNameList.add(header.getElement());
-            }
-        }
+//        Iterator extIterator;
+//
+//        if (input) {
+//            extIterator = (axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE) == null)
+//                    ? null
+//                    : axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getWsdlExtElements().iterator();
+//        } else {
+//            extIterator = (axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE) == null)
+//                    ? null
+//                    : axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getWsdlExtElements().iterator();
+//        }
+//
+//        while ((extIterator != null) && extIterator.hasNext()) {
+//            AxisExtensiblityElementWrapper axisExtensibilityElement = (AxisExtensiblityElementWrapper) extIterator.next();
+//
+//            WSDLExtensibilityElement element = axisExtensibilityElement.getExtensibilityElement();
+//
+//            if (ExtensionConstants.SOAP_11_HEADER.equals(element.getType())) {
+//                SOAPHeader header = (SOAPHeader) element;
+//
+//                soapHeaderParameterQNameList.add(header.getElement());
+//            }
+//        }
     }
 
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {

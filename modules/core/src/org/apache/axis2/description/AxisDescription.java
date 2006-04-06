@@ -19,14 +19,11 @@ public abstract class AxisDescription implements ParameterInclude,
 
     private HashMap children;
 
-    //To store wsdl extensibleElements
-    private ArrayList wsdlExtElements;
 
     public AxisDescription() {
         parameterInclude = new ParameterIncludeImpl();
         policyInclude = new PolicyInclude(this);
         children = new HashMap();
-        wsdlExtElements = new ArrayList();
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -107,14 +104,6 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public void removeChild(Object key) {
         children.remove(key);
-    }
-
-    public ArrayList getWsdlExtElements() {
-        return wsdlExtElements;
-    }
-
-    public void setWsdlExtElements(AxisExtensiblityElementWrapper wsdlExtElements) {
-        this.wsdlExtElements.add(wsdlExtElements);
     }
 
     public abstract Object getKey();
