@@ -119,7 +119,7 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
                 assertEquals("HTTP/1.1 500 Internal server error",
                         httppost.getStatusLine().toString());
             }
-
+        } catch (NoHttpResponseException e) {
         } finally {
             httppost.releaseConnection();
         }
