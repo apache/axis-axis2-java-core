@@ -155,6 +155,14 @@ public class STSRequester {
             throw new TrustException("rptMissing");
         }
         
+        //Check for attached ref
+        OMElement reqAttRef = rstr.getFirstChildWithName(new QName(
+                Constants.WST_NS, Constants.REQUESTED_ATTACHED_REFERENCE));
+        OMElement reqUnattRef = rstr.getFirstChildWithName(new QName(
+                Constants.WST_NS, Constants.REQUESTED_UNATTACHED_REFERENCE));
+        
+        token.setAttachedReference(reqAttRef);
+        token.setUnattachedReference(reqUnattRef);
         token.setSecret(secret);
         config.getTokenStore().add(token);
     }

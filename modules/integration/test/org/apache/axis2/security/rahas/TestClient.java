@@ -91,10 +91,11 @@ public abstract class TestClient extends TestCase {
             serviceClient.setOptions(options);
             
             //Blocking invocation
-            OMElement result = serviceClient.sendReceive(payload);
+            serviceClient.sendReceive(payload);
             
-            result = serviceClient.sendReceive(getEchoElement());
-            result = serviceClient.sendReceive(getEchoElement());
+            serviceClient.sendReceive(getEchoElement());
+            
+            OMElement result = serviceClient.sendReceive(getEchoElement());
             
             StringWriter writer = new StringWriter();
             result.serialize(XMLOutputFactory.newInstance()

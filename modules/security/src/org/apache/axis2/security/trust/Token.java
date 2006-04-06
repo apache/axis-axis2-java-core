@@ -70,6 +70,26 @@ public class Token {
     private OMElement presivousToken;
     
     /**
+     * The RequestedAttachedReference element
+     * NOTE : The oasis-200401-wss-soap-message-security-1.0 spec allows 
+     * an extensibility mechanism for wsse:SecurityTokenRefence and 
+     * wsse:Refernce. Hence we cannot limit to the 
+     * wsse:SecurityTokenRefence\wsse:Refernce case and only hold the URI and 
+     * the ValueType values.
+     */
+    private OMElement attachedReference;
+    
+    /**
+     * The RequestedUnattachedReference element
+     * NOTE : The oasis-200401-wss-soap-message-security-1.0 spec allows 
+     * an extensibility mechanism for wsse:SecurityTokenRefence and 
+     * wsse:Refernce. Hence we cannot limit to the 
+     * wsse:SecurityTokenRefence\wsse:Refernce case and only hold the URI and 
+     * the ValueType values.
+     */
+    private OMElement unattachedReference;
+    
+    /**
      * A bag to hold anyother properties
      */
     private HashMap properties;
@@ -188,6 +208,38 @@ public class Token {
     public void setSecret(byte[] secret) {
         this.secret = secret;
     }
-    
-    
+
+    /**
+     * @return Returns the attachedReference.
+     */
+    public OMElement getAttachedReference() {
+        return attachedReference;
+    }
+
+    /**
+     * @param attachedReference The attachedReference to set.
+     */
+    public void setAttachedReference(OMElement attachedReference) {
+        if(attachedReference != null) {
+            this.attachedReference = (OMElement) dummyDoc.importNode(
+                (Element) attachedReference, true);
+        }
+    }
+
+    /**
+     * @return Returns the unattachedReference.
+     */
+    public OMElement getUnattachedReference() {
+        return unattachedReference;
+    }
+
+    /**
+     * @param unattachedReference The unattachedReference to set.
+     */
+    public void setUnattachedReference(OMElement unattachedReference) {
+        if(unattachedReference != null) {
+            this.unattachedReference = (OMElement) dummyDoc.importNode(
+                (Element) unattachedReference, true);
+        }
+    }
 }

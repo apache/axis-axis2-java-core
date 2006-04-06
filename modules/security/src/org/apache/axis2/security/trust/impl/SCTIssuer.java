@@ -237,6 +237,21 @@ public class SCTIssuer implements TokenIssuer {
         
         rstElem.addChild((OMElement)sct.getElement());
         
+        OMElement reqAttRef = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS,
+                        Constants.REQUESTED_ATTACHED_REFERENCE,
+                        Constants.WST_PREFIX), rstrElem);
+        OMElement reqUnattRef = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS,
+                        Constants.REQUESTED_UNATTACHED_REFERENCE,
+                        Constants.WST_PREFIX), rstrElem);
+        
+        reqAttRef.addChild((OMElement) this.createSecurityTokenReference(doc,
+                sctId, Constants.TOK_TYPE_SCT));
+        
+        reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(doc,
+                sct.getIdentifier(), Constants.TOK_TYPE_SCT));
+        
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
         
@@ -250,13 +265,6 @@ public class SCTIssuer implements TokenIssuer {
         
         reqProofTok.addChild((OMElement)encryptedKeyElem);
     
-        OMElement reqAttRef = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUESTED_ATTACHED_REFERENCE,
-                        Constants.WST_PREFIX), rstrElem);
-        reqAttRef.addChild((OMElement) this.createSecurityTokenReference(doc,
-                sctId, Constants.TOK_TYPE_SCT));
-        
         //Store the tokens
         Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
