@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.utils.reader;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.apache.axis2.util.StreamWrapper;
+import org.apache.axis2.util.Base64;
 import org.apache.axis2.databinding.utils.Constants;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axiom.om.OMFactory;
@@ -10,6 +11,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 
@@ -21,6 +23,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.activation.DataHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
@@ -611,6 +614,40 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
                     new QName("http://testElementText.org", "testElementText", "ns1"),
                     properties.toArray(),
                     attributes);
+
+            String actualXML = getStringXML(pullParser);
+
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }catch (Exception e) {
+            fail("Error has occurred " + e);
+        }
+    }
+    /**
+     * test for base64
+     */
+    public void testBase64EncodedText() {
+
+        String textTobeSent = "33344MthwrrewrIOTEN)(&**^E(W)EW";
+
+        String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\">" +
+                "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
+                Base64.encode(textTobeSent.getBytes()) +
+                "</ns2:QualifiedElement></ns1:testElementText>";
+        try {
+            ArrayList properties = new ArrayList();
+            properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
+            properties.add(new DataHandler(new ByteArrayDataSource(textTobeSent.getBytes())));
+
+           XMLStreamReader pullParser =new ADBXMLStreamReaderImpl(
+                    new QName("http://testElementText.org", "testElementText", "ns1"),
+                    properties.toArray(),
+                    null);
 
             String actualXML = getStringXML(pullParser);
 
