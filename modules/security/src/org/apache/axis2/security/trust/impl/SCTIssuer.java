@@ -37,7 +37,9 @@ import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
+import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.message.token.SecurityContextToken;
+import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -191,7 +193,7 @@ public class SCTIssuer implements TokenIssuer {
         binSecElem.setText(Base64.encode(secret));
     
         //Store the tokens
-        Token sctToken = new Token(sct.getIdentifier(), ((OMElement)sct.getElement()).cloneOMElement());
+        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
         sctToken.setSecret(secret);
         this.getTokenStore(msgCtx).add(sctToken);
         
@@ -220,7 +222,8 @@ public class SCTIssuer implements TokenIssuer {
         }
         
         SecurityContextToken sct = new SecurityContextToken(doc);
-        sct.setID("sctId-" + sct.getElement().hashCode());
+        String sctId = "sctId-" + sct.getElement().hashCode();
+        sct.setID(sctId);
         
         OMElement rstrElem = env.getOMFactory().createOMElement(
                 new QName(Constants.WST_NS,
@@ -240,16 +243,22 @@ public class SCTIssuer implements TokenIssuer {
         OMElement reqProofTok = env.getOMFactory().createOMElement(
                 new QName(Constants.WST_NS, Constants.REQUESTED_PROOF_TOKEN_LN,
                         Constants.WST_PREFIX), rstrElem);
-        
+
         if(bstElem != null) {
             reqProofTok.addChild((OMElement)bstElem);
         }
         
         reqProofTok.addChild((OMElement)encryptedKeyElem);
     
+        OMElement reqAttRef = env.getOMFactory().createOMElement(
+                new QName(Constants.WST_NS,
+                        Constants.REQUESTED_ATTACHED_REFERENCE,
+                        Constants.WST_PREFIX), rstrElem);
+        reqAttRef.addChild((OMElement) this.createSecurityTokenReference(doc,
+                sctId, Constants.TOK_TYPE_SCT));
+        
         //Store the tokens
-        OMElement clonedElem = ((OMElement)sct.getElement()).cloneOMElement();
-        Token sctToken = new Token(sct.getIdentifier(), clonedElem);
+        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
         this.getTokenStore(msgCtx).add(sctToken);
         
@@ -326,6 +335,17 @@ public class SCTIssuer implements TokenIssuer {
      */
     public void setConfigurationParamName(String configParamName) {
         this.configParamName = configParamName;
+    }
+    
+    private Element createSecurityTokenReference(Document doc, String refUri, String refValueType) {
+        
+        Reference ref = new Reference(doc);
+        ref.setURI(refUri);
+        ref.setValueType(refValueType);
+        SecurityTokenReference str = new SecurityTokenReference(doc);
+        str.setReference(ref);
+        
+        return str.getElement();
     }
     
 }

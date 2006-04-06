@@ -28,6 +28,8 @@ public interface Constants {
     public static final String REQUEST_SECURITY_TOKEN_RESPONSE_LN = "RequestSecurityTokenResponse";
     public static final String REQUESTED_SECURITY_TOKEN_LN = "RequestedSecurityToken";
     public final static String BINARY_SECRET = "BinarySecret";
+    public final static String REQUESTED_ATTACHED_REFERENCE = "RequestedAttachedReference";
+    public final static String REQUESTED_UNATTACHED_REFERENCE = "RequestedUnattachedReference";
     
     //RequestTypes
     public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";

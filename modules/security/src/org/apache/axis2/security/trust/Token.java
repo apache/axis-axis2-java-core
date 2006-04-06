@@ -17,6 +17,9 @@
 package org.apache.axis2.security.trust;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.HashMap;
 
@@ -38,6 +41,8 @@ import java.util.HashMap;
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class Token {
+    
+    private static Document dummyDoc = new OMDOMFactory().getDocument();
     
     public final static int ISSUED = 1;
     public final static int EXPIRED = 2;
@@ -90,7 +95,7 @@ public class Token {
     
     public Token(String id, OMElement tokenElem) {
         this.id = id;
-        this.token = tokenElem; 
+        this.token = (OMElement)dummyDoc.importNode((Element)tokenElem, true);
     }
 
     /**
