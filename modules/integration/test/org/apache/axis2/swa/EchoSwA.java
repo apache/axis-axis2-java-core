@@ -22,7 +22,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -33,19 +36,19 @@ import javax.xml.namespace.QName;
 
 public class EchoSwA {
     private MessageContext msgcts;
+
     public EchoSwA() {
     }
 
-    public void init(MessageContext msgcts) {
-        this.msgcts = msgcts;
-
+    public void setOperationContext(OperationContext oc) throws AxisFault {
+        msgcts = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
     }
 
     public OMElement echoAttachment(OMElement omEle) {
-        OMElement child  = (OMElement)omEle.getFirstOMChild();
+        OMElement child = (OMElement) omEle.getFirstOMChild();
         OMAttribute attr = child.getAttribute(new QName("href"));
         String contentID = attr.getAttributeValue();
-        MIMEHelper attachment = (MIMEHelper)msgcts.getProperty(MTOMConstants.ATTACHMENTS);
+        MIMEHelper attachment = (MIMEHelper) msgcts.getProperty(MTOMConstants.ATTACHMENTS);
         contentID = contentID.trim();
 
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {

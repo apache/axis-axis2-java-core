@@ -90,6 +90,30 @@ public class UtilServer {
         count++;
     }
 
+     public static synchronized void start(String repository , String axis2xml) throws Exception {
+        if (count == 0) {
+            ConfigurationContext er = getNewConfigurationContext(repository,axis2xml);
+
+            receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
+
+            try {
+                receiver.start();
+                System.out.print("Server started on port "
+                        + Constants.TESTING_PORT + ".....");
+            } finally {
+
+            }
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e1) {
+                throw new AxisFault("Thread interuptted", e1);
+            }
+
+        }
+        count++;
+    }
+
     public static ConfigurationContext getNewConfigurationContext(
             String repository) throws Exception {
         File file = new File(repository);
@@ -97,7 +121,19 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),
+                file.getAbsolutePath() + "/conf/axis2.xml");
+    }
+
+      public static ConfigurationContext getNewConfigurationContext(
+            String repository , String axis2xml) throws Exception {
+        File file = new File(repository);
+        if (!file.exists()) {
+            throw new Exception("repository directory "
+                    + file.getAbsolutePath() + " does not exists");
+        }
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),
+                axis2xml);
     }
 
     public static synchronized void stop() throws AxisFault {
@@ -165,7 +201,8 @@ public class UtilServer {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
-                "target/test-resources/integrationRepo", null);
+                "target/test-resources/integrationRepo",
+                "target/test-resources/integrationRepo/conf/axis2.xml");
         AxisModule axisModule = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);

@@ -22,25 +22,25 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
  */
 public class ConfigurationContext extends AbstractContext {
 
+    protected Log log = LogFactory.getLog(getClass());
     /**
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
@@ -319,6 +319,7 @@ public class ConfigurationContext extends AbstractContext {
                 if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
                         serviceGroupContextTimoutInterval) {
                     sgCtxtMapKeyIter.remove();
+                    cleanupServiceContextes(serviceGroupContext);
                 }
             }
         }
@@ -330,5 +331,17 @@ public class ConfigurationContext extends AbstractContext {
 
     public void setTransportManager(ListenerManager listenerManager) {
         this.listenerManager = listenerManager;
+    }
+
+    private void cleanupServiceContextes(ServiceGroupContext serviceGroupContext) {
+        Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
+        while (serviceContecxtes.hasNext()) {
+            ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
+            try {
+                DependencyManager.destroyServiceClass(serviceContext);
+            } catch (AxisFault axisFault) {
+                log.info(axisFault.getMessage());
+            }
+        }
     }
 }

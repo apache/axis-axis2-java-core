@@ -19,15 +19,13 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.server.HttpRequestHandler;
 import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
@@ -45,11 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class HTTPWorker implements HttpRequestHandler {
 
@@ -408,7 +402,26 @@ public class HTTPWorker implements HttpRequestHandler {
                 if ((currentTime - sessionContext.getLastTouchedTime()) >
                         sessionContext.sessionContextTimeoutInterval) {
                     sgCtxtMapKeyIter.remove();
+                    Iterator serviceGroupContext = sessionContext.getServiceGroupContext();
+                    if (serviceGroupContext != null) {
+                        while (serviceGroupContext.hasNext()) {
+                            ServiceGroupContext groupContext = (ServiceGroupContext) serviceGroupContext.next();
+                            cleanupServiceContextes(groupContext);
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    private void cleanupServiceContextes(ServiceGroupContext serviceGroupContext) {
+        Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
+        while (serviceContecxtes.hasNext()) {
+            ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
+            try {
+                DependencyManager.destroyServiceClass(serviceContext);
+            } catch (AxisFault axisFault) {
+                log.info(axisFault.getMessage());
             }
         }
     }

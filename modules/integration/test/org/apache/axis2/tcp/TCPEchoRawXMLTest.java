@@ -189,9 +189,8 @@ public class TCPEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLSyncMC() throws Exception {
-        //TODO : Fix Me deepal , I am not complete
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         Options options = new Options();

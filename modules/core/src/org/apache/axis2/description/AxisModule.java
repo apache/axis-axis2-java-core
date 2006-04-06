@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * <p>This holds the information about a Module. </p>
@@ -51,7 +52,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private Module module;
     private ClassLoader moduleClassLoader;
     // To keep the File that moduel came from
-    private URI fileName ;
+    private URL fileName ;
 
     /**
      * Field name
@@ -265,11 +266,11 @@ public class AxisModule implements FlowInclude, ParameterInclude {
         this.supportedPolicyNames = supportedPolicyNamespaces;
     }
 
-    public URI getFileName() {
+    public URL getFileName() {
         return fileName;
     }
 
-    public void setFileName(URI fileName) {
+    public void setFileName(URL fileName) {
         this.fileName = fileName;
     }
 }

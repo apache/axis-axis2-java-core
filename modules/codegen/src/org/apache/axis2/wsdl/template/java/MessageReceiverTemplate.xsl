@@ -40,7 +40,7 @@
         Object obj = getTheImplementationObject(msgContext);
 
         //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext, newMsgContext);
+        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
 
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
@@ -157,7 +157,7 @@
         Object obj = getTheImplementationObject(inMessage);
 
         //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, inMessage);
+        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, inMessage.getOperationContext());
 
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop

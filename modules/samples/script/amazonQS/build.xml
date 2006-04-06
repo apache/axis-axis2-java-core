@@ -9,13 +9,13 @@
     <target name="cq">
         <java classname="sample.amazon.amazonSimpleQueueService.RunGUICQ"
               classpathref="axis.classpath" fork="true">
-            <jvmarg value="-Daxis2.home=${mainDir}"/>
+            <jvmarg value="-Daxis2.repo=${mainDir}"/>
         </java>
     </target>
     <target name="rq">
         <java classname="sample.amazon.amazonSimpleQueueService.RunGUIRQ"
               classpathref="axis.classpath" fork="true">
-            <jvmarg value="-Daxis2.home=${mainDir}"/>
+            <jvmarg value="-Daxis2.repo=${mainDir}"/>
         </java>
     </target>
     <target name="all" depends="cq,rq"/>

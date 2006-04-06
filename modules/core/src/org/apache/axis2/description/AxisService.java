@@ -66,7 +66,7 @@ public class AxisService extends AxisDescription {
 
     private int nsCount = 0;
     private Log log = LogFactory.getLog(getClass());
-    private URI fileName;
+    private URL fileName;
 
     private HashMap operationsAliasesMap = null;
 //    private HashMap operations = new HashMap();
@@ -587,7 +587,7 @@ public class AxisService extends AxisDescription {
         return engagedModules;
     }
 
-    public URI getFileName() {
+    public URL getFileName() {
         return fileName;
     }
 
@@ -720,7 +720,7 @@ public class AxisService extends AxisDescription {
         this.serviceClassLoader = classLoader;
     }
 
-    public void setFileName(URI fileName) {
+    public void setFileName(URL fileName) {
         this.fileName = fileName;
     }
 

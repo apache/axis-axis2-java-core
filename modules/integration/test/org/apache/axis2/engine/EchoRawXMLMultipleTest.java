@@ -80,7 +80,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                        "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -118,7 +119,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                        "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         for (int i = 0; i < 5; i++) {
             Options options = new Options();
@@ -185,7 +187,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         options.setUseSeparateListener(true);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                        "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
 

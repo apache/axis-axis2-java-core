@@ -67,7 +67,8 @@ public class UtilsTCPServer {
             }
 
             ConfigurationContext er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
-                    .getAbsolutePath(), null);
+                    .getAbsolutePath(), file
+                    .getAbsolutePath() + "/conf/axis2.xml");
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {

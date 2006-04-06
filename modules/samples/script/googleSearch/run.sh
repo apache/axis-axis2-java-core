@@ -9,6 +9,6 @@ done
 export AXIS2_CLASSPATH
 echo classpath: $AXIS2_CLASSPATH
 
-java -classpath $AXIS2_CLASSPATH -Daxis2.home=$AXIS2_HOME  sample.google.search.AsynchronousClient
+java -classpath $AXIS2_CLASSPATH -Daxis2.repo=$AXIS2_HOME  sample.google.search.AsynchronousClient
 
 

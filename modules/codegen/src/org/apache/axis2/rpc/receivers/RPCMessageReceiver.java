@@ -76,7 +76,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             Object obj = getTheImplementationObject(inMessage);
 
             Class ImplClass = obj.getClass();
-            DependencyManager.configureBusinessLogicProvider(obj, inMessage, null);
+            DependencyManager.configureBusinessLogicProvider(obj,
+                    inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
             AxisService service = inMessage.getAxisService();

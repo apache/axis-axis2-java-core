@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.net.URI;
 
 public class RepositoryListener implements DeploymentConstants {
     protected Log log = LogFactory.getLog(getClass());
@@ -33,7 +32,6 @@ public class RepositoryListener implements DeploymentConstants {
     /**
      * The parent directory of the modules and services directories
      */
-    private URI folderName;
 
     /**
      * Reference to a WSInfoList
@@ -48,9 +46,8 @@ public class RepositoryListener implements DeploymentConstants {
      * @param folderName       path to parent directory that the listener should listen to
      * @param deploymentEngine reference to engine registry for updates
      */
-    public RepositoryListener(URI folderName, DeploymentEngine deploymentEngine) {
-        this.folderName = folderName;
-        rootDir = new File(this.folderName);
+    public RepositoryListener(String folderName, DeploymentEngine deploymentEngine) {
+        rootDir = new File(folderName);
         wsInfoList = new WSInfoList(deploymentEngine);
         this.deploymentEngine = deploymentEngine;
         init();

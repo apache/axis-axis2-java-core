@@ -20,9 +20,13 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DependencyManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * All the engine components are stateless across the executions and all the states should be kept in the
@@ -33,6 +37,7 @@ public class SessionContext extends AbstractContext {
     private transient HashMap serviceContextMap = new HashMap();
     private transient HashMap serviceGroupContextMap = new HashMap();
     private String cookieID;
+    protected Log log = LogFactory.getLog(getClass());
 
     // current time out interval is 30 secs. Need to make this configurable
     public long sessionContextTimeoutInterval = 30 * 1000;
@@ -55,7 +60,8 @@ public class SessionContext extends AbstractContext {
         serviceContextMap.put(serviceContext.getAxisService().getName(), serviceContext);
     }
 
-    public void addServiceGroupContext(ServiceGroupContext serviceGroupContext, String serviceGroupID) {
+    public void addServiceGroupContext(ServiceGroupContext serviceGroupContext,
+                                       String serviceGroupID) {
         serviceGroupContextMap.put(serviceGroupID, serviceGroupContext);
     }
 
@@ -91,5 +97,34 @@ public class SessionContext extends AbstractContext {
         return lastTouchedTime;
     }
 
+    public Iterator getServiceGroupContext() {
+        if (serviceGroupContextMap != null) {
+            return serviceGroupContextMap.values().iterator();
+        } else {
+            return null;
+        }
+    }
 
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (serviceGroupContextMap != null && !serviceGroupContextMap.isEmpty()) {
+            Iterator valuse = serviceGroupContextMap.values().iterator();
+            while (valuse.hasNext()) {
+                ServiceGroupContext serviceGroupContext = (ServiceGroupContext) valuse.next();
+                cleanupServiceContextes(serviceGroupContext);
+            }
+        }
+    }
+
+    private void cleanupServiceContextes(ServiceGroupContext serviceGroupContext) {
+        Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
+        while (serviceContecxtes.hasNext()) {
+            ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
+            try {
+                DependencyManager.destroyServiceClass(serviceContext);
+            } catch (AxisFault axisFault) {
+                log.info(axisFault.getMessage());
+            }
+        }
+    }
 }

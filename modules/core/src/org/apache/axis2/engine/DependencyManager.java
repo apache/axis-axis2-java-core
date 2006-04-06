@@ -18,7 +18,8 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,10 +29,12 @@ import java.lang.reflect.Method;
  * the DependencyManager calls the init method with appropriate parameters.
  */
 public class DependencyManager {
-    private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";
+    private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
+    private final static String SERVICE_INIT_METHOD = "init";
+    private final static String SERVICE_DESTROY_METHOD = "destroy";
 
-    public static void configureBusinessLogicProvider(Object obj, MessageContext requestMsgCtx,
-                                                      MessageContext responseMsgCtx)
+    public static void configureBusinessLogicProvider(Object obj,
+                                                      OperationContext opCtx)
             throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
@@ -40,13 +43,9 @@ public class DependencyManager {
             for (int i = 0; i < methods.length; i++) {
                 if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
                         && (methods[i].getParameterTypes().length == 1)
-                        && (methods[i].getParameterTypes()[0] == MessageContext.class)) {
-                    methods[i].invoke(obj, new Object[]{requestMsgCtx});
-                } else if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
-                        && (methods[i].getParameterTypes().length == 2)
-                        && (methods[i].getParameterTypes()[0] == MessageContext.class)
-                        && (methods[i].getParameterTypes()[1] == MessageContext.class)) {
-                    methods[i].invoke(obj, new Object[]{requestMsgCtx, responseMsgCtx});
+                        && (methods[i].getParameterTypes()[0] == OperationContext.class)) {
+                    methods[i].invoke(obj, new Object[]{opCtx});
+                    break;
                 }
             }
         } catch (SecurityException e) {
@@ -60,18 +59,19 @@ public class DependencyManager {
         }
     }
 
-     public static void configureBusinessLogicProvider(Object obj, MessageContext requestMsgCtx )
-            throws AxisFault {
+    public static void initServiceClass(Object obj,
+                                        ServiceContext serviceContext) throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
             Method[] methods = classToLoad.getMethods();
 
             for (int i = 0; i < methods.length; i++) {
-                if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
+                if (SERVICE_INIT_METHOD.equals(methods[i].getName())
                         && (methods[i].getParameterTypes().length == 1)
-                        && (methods[i].getParameterTypes()[0] == MessageContext.class)) {
-                    methods[i].invoke(obj, new Object[]{requestMsgCtx});
-                } 
+                        && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
+                    methods[i].invoke(obj, new Object[]{serviceContext});
+                    break;
+                }
             }
         } catch (SecurityException e) {
             throw new AxisFault(e);
@@ -83,4 +83,33 @@ public class DependencyManager {
             throw new AxisFault(e);
         }
     }
+
+    public static void destroyServiceClass(ServiceContext serviceContext) throws AxisFault {
+        try {
+            Object obj = serviceContext.getProperty(ServiceContext.SERVICE_CLASS);
+            if (obj != null) {
+                Class classToLoad = obj.getClass();
+                Method[] methods = classToLoad.getMethods();
+
+                for (int i = 0; i < methods.length; i++) {
+                    if (SERVICE_DESTROY_METHOD.equals(methods[i].getName())
+                            && (methods[i].getParameterTypes().length == 1)
+                            && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
+                        methods[i].invoke(obj, new Object[]{serviceContext});
+                        break;
+                    }
+                }
+            }
+        } catch (SecurityException e) {
+            throw new AxisFault(e);
+        } catch (IllegalArgumentException e) {
+            throw new AxisFault(e);
+        } catch (IllegalAccessException e) {
+            throw new AxisFault(e);
+        } catch (InvocationTargetException e) {
+            throw new AxisFault(e);
+        }
+
+    }
+
 }

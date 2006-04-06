@@ -618,6 +618,22 @@
                   tofile="target/Repository/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
                   tofile="target/Repository/conf/axis2.xml"/>
+           
+           <mkdir dir="target/perf2/build/repo/conf"/>
+           <mkdir dir="target/perf/build/repo/conf"/>
+
+           <copy file="../core/conf/axis2.xml"
+                  tofile="target/perf2/build/repo/conf/axis2.xml"/>
+<copy file="../core/conf/axis2.xml"
+                  tofile="target/perf/build/repo/conf/axis2.xml"/>
+
+<mkdir dir="target/perf2/build/repo/modules"/>
+                        <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/perf2/build/repo/modules/addressing-${addressing_version}.mar"/>
+
+<mkdir dir="target/perf/build/repo/modules"/>
+                        <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/perf/build/repo/modules/addressing-${addressing_version}.mar"/>
 
             <j:jelly xmlns="jelly:ant">
                 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"

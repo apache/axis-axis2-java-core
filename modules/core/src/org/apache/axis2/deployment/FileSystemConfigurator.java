@@ -2,13 +2,16 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.net.URI;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -34,8 +37,8 @@ public class FileSystemConfigurator implements AxisConfigurator {
     /**
      * To check whether need to create a service side or client side
      */
-    private URI axis2xml = null;
-    private URI repoLocation = null;
+    private String axis2xml = null;
+    private String repoLocation = null;
 
     /**
      * Load an AxisConfiguration from the repository directory specified
@@ -43,7 +46,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
      * @param repoLocation
      * @param axis2xml
      */
-    public FileSystemConfigurator(URI repoLocation, URI axis2xml) {
+    public FileSystemConfigurator(String repoLocation, String axis2xml) {
         if (repoLocation == null) {
             //checking wether user has set the system property
             String propertyRepo = System.getProperty(Constants.AXIS2_REPO);
@@ -51,7 +54,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
                 try {
                     File repo = new File(propertyRepo);
                     if (repo.exists()) {
-                        this.repoLocation = repo.toURI();
+                        this.repoLocation = repo.getAbsolutePath();
                     } else {
                         this.repoLocation = null;
                     }
@@ -71,7 +74,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
                 try {
                     File axis2discriptor = new File(propertyAxis2xml);
                     if (axis2discriptor.exists()) {
-                        this.axis2xml = axis2discriptor.toURI();
+                        this.axis2xml = axis2discriptor.getAbsolutePath();
                     } else {
                         this.axis2xml = null;
                     }
@@ -95,6 +98,27 @@ public class FileSystemConfigurator implements AxisConfigurator {
      * @throws AxisFault
      */
     public synchronized AxisConfiguration getAxisConfiguration() throws AxisFault {
-        return new DeploymentEngine(repoLocation, axis2xml).load();
+        DeploymentEngine deploymentEngine = new DeploymentEngine();
+        InputStream axis2xmlSream;
+        AxisConfiguration axisConfiguration;
+        try {
+            if (axis2xml != null && !"".equals(axis2xml)) {
+                axis2xmlSream = new FileInputStream(axis2xml);
+            } else {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                axis2xmlSream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+            }
+            axisConfiguration = deploymentEngine.populateAxisConfiguration(axis2xmlSream);
+        } catch (FileNotFoundException e) {
+            throw new AxisFault("System can not find the given axis2.xml " + axis2xml);
+        }
+        Parameter axis2repoPara = axisConfiguration.getParameter(DeploymentConstants.AXIS2_REPO);
+        if (axis2repoPara != null) repoLocation = (String) axis2repoPara.getValue();
+        if (!(repoLocation == null || "".equals(repoLocation))) {
+            deploymentEngine.loadRepository(repoLocation);
+        } else {
+            deploymentEngine.loadFromClassPath();
+        }
+        return axisConfiguration;
     }
 }

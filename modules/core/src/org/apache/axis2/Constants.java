@@ -75,7 +75,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String SCOPE_TRANSPORT_SESSION = "transportsession";
     public static final String SCOPE_REQUEST = "request";
 
-    public static final String AXIS2_HOME = "axis2.home";
     public static final String AXIS2_REPO = "axis2.repo";
     public static final String AXIS2_CONF = "axis2.xml";
     public static final String USER_HOME = "user.home";

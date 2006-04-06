@@ -26,6 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 
@@ -87,6 +88,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         } else {
             // create a new service impl class for that service
             serviceimpl = makeNewServiceObject(msgContext);
+            //Service initialization
+            DependencyManager.initServiceClass(serviceimpl,
+                    msgContext.getServiceContext());
             serviceContext.setProperty(ServiceContext.SERVICE_CLASS, serviceimpl);
             return serviceimpl;
         }

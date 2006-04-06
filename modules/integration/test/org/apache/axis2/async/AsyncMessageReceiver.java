@@ -46,7 +46,8 @@ public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
             Class ImplClass = obj.getClass();
 
             // Inject the Message Context if it is asked for
-            DependencyManager.configureBusinessLogicProvider(obj, msgContext, newmsgContext);
+            DependencyManager.configureBusinessLogicProvider(obj,
+                    msgContext.getOperationContext());
 
             AxisOperation opDesc = msgContext.getOperationContext().getAxisOperation();
             Method method = findOperation(opDesc, ImplClass);

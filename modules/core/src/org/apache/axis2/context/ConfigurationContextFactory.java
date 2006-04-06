@@ -3,6 +3,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.FileSystemConfigurator;
+import org.apache.axis2.deployment.URLBasedAxisConfigurator;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -12,8 +13,7 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,31 +81,12 @@ public class ConfigurationContextFactory {
     public static ConfigurationContext createConfigurationContextFromFileSystem(
             String path,
             String axis2xml) throws AxisFault {
-        URI pathURI = null;
-        URI xmlURI = null;
-        try {
-            File repo = new File(path);
-            if (repo.exists()) {
-                pathURI = repo.toURI();
-            }
-        } catch (Exception e) {
-            //sorry I have to ignore this
-        }
-        try {
-            File axis2discriptor = new File(axis2xml);
-            if (axis2discriptor.exists()) {
-                xmlURI = axis2discriptor.toURI();
-            }
-        } catch (Exception e) {
-            //sorry I have to ignore this
-        }
-        return createConfigurationContext(new FileSystemConfigurator(pathURI, xmlURI));
+        return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
     }
 
     public static ConfigurationContext createConfigurationContextFromURIs(
-            URI path,
-            URI axis2xml) throws AxisFault {
-        return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
+            URL axis2xml, URL repositoy) throws AxisFault {
+        return createConfigurationContext(new URLBasedAxisConfigurator(axis2xml, repositoy));
     }
 
     /**

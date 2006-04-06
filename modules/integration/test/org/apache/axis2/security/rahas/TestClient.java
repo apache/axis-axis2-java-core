@@ -56,7 +56,7 @@ public abstract class TestClient extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + getServiceRepo());
+        UtilServer.start(Constants.TESTING_PATH + getServiceRepo() ,null);
     }
     
     protected void tearDown() throws Exception {
@@ -73,7 +73,8 @@ public abstract class TestClient extends TestCase {
             String repo = Constants.TESTING_PATH + "rahas_client_repo";
 
             OMElement payload = getEchoElement();
-            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, null);
+            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
+                    null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/Service"));

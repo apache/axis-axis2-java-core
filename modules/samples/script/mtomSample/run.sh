@@ -9,5 +9,5 @@ done
 export AXIS2_CLASSPATH
 echo classpath: $AXIS2_CLASSPATH
 
-java -classpath $AXIS2_CLASSPATH -Daxis2.home=$AXIS2_HOME sample.mtom.imagetransfer.client.MTOMClient &
+java -classpath $AXIS2_CLASSPATH -Daxis2.repo=$AXIS2_HOME sample.mtom.imagetransfer.client.MTOMClient &
 

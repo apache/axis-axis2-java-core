@@ -9,7 +9,7 @@
     <target name="run">
         <java classname="sample.google.spellcheck.SuggestionForm"
               classpathref="axis.classpath" fork="true">
-            <jvmarg value="-Daxis2.home=${mainDir}"/>
+            <jvmarg value="-Daxis2.repo=${mainDir}"/>
         </java>
     </target>
 </project>

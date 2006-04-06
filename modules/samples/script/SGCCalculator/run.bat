@@ -35,6 +35,6 @@ FOR %%c in (%AXIS2_HOME%\lib\*.jar) DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%
 
 set AXIS2_CLASS_PATH=%AXIS2_CLASS_PATH%;"%CURRENT_DIR%\SGCCalculator.jar"
 
-java -cp %AXIS2_CLASS_PATH% -Daxis2.home=%AXIS2_HOME% sample.sgccalculator.CalcClient
+java -cp %AXIS2_CLASS_PATH% -Daxis2.repo=%AXIS2_HOME% sample.sgccalculator.CalcClient
 endlocal
 :end

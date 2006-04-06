@@ -34,7 +34,7 @@ set AXIS2_CLASS_PATH=%AXIS2_HOME%
 FOR %%c in (%AXIS2_HOME%\lib\*.jar) DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
 set AXIS2_CLASS_PATH=%AXIS2_CLASS_PATH%;"%CURRENT_DIR%\googleSearch.jar"
 
-start javaw -cp %AXIS2_CLASS_PATH% -Daxis2.home=%AXIS2_HOME% sample.google.search.AsynchronousClient
+start javaw -cp %AXIS2_CLASS_PATH% -Daxis2.repo=%AXIS2_HOME% sample.google.search.AsynchronousClient
 
 endlocal
 

@@ -1,10 +1,13 @@
 package org.apache.axis2.oasis.ping;
 
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.AxisFault;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
+import org.apache.wsdl.WSDLConstants;
 import org.xmlsoap.ping.PingDocument;
 import org.xmlsoap.ping.PingResponse;
 import org.xmlsoap.ping.PingResponseDocument;
@@ -18,8 +21,8 @@ public class PingPortSkeleton {
 
     private MessageContext mc;
 
-    public void init(MessageContext mc) {
-        this.mc = mc;
+    public void setOperationContext(OperationContext oc) throws AxisFault {
+        mc = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
     }
 
     /**

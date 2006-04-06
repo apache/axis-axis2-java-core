@@ -424,9 +424,7 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public void receive
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void receive(MessageContext msgContext) throws AxisFault {
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
                 confContext.getAxisConfiguration().getGlobalInFlow();

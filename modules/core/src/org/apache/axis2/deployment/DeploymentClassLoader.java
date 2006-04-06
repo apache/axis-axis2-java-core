@@ -21,8 +21,6 @@ import org.apache.axis2.i18n.Messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -65,14 +63,14 @@ public class DeploymentClassLoader extends URLClassLoader {
      *         returns null or ClassNotFoundException.
      *         <p/>
      *         The method finds the class in the following way:
-     *         <br>     
+     *         <br>
      *         1. Calls the super class to check to see whether the class is there.
      *         If the class is found then return that , else go to step 2 </br>
-     *         <br>     
+     *         <br>
      *         2. Check wether the class name exist in one of jar files
-     *         in /lib directory. If it is found, get the byte array and create a Class 
+     *         in /lib directory. If it is found, get the byte array and create a Class
      *         object from it by calling "defineClass()", else throws ClassNotFoundException.
-     *         </br>     
+     *         </br>
      * @throws ClassNotFoundException
      */
     protected Class findClass(final String name) throws ClassNotFoundException {
@@ -128,7 +126,7 @@ public class DeploymentClassLoader extends URLClassLoader {
     }
 
     /**
-     * Searches for jar files in /lib directory. If they exist, they are 
+     * Searches for jar files in /lib directory. If they exist, they are
      * will be added to the arraylist (only the name of the jar file).
      */
     private void findLibJars() {
@@ -138,10 +136,8 @@ public class DeploymentClassLoader extends URLClassLoader {
          * is created by Deployment , so there wont be any chance to have more the one urls for
          * the URL array list
          */
-        File file = new File(urls[0].getFile());
-
         try {
-            ZipInputStream zin = new ZipInputStream(new FileInputStream(file));
+            ZipInputStream zin = new ZipInputStream(urls[0].openStream());
             ZipEntry entry;
             String entryName;
             while ((entry = zin.getNextEntry()) != null) {
@@ -263,6 +259,10 @@ public class DeploymentClassLoader extends URLClassLoader {
                 return is;
             }
         } else {
+            InputStream in = getResourceFromArchieve(name);
+            if (in != null) {
+                return in;
+            }
             byte data[] = getBytes(name);
             if (data != null) {
                 return new ByteArrayInputStream(data);
@@ -273,5 +273,23 @@ public class DeploymentClassLoader extends URLClassLoader {
 
     public void setParentFirst(boolean parentFirst) {
         this.parentFirst = parentFirst;
+    }
+
+    private InputStream getResourceFromArchieve(String name) {
+        try {
+            ZipInputStream zin = new ZipInputStream(urls[0].openStream());
+            ZipEntry entry;
+            String entryName;
+            while ((entry = zin.getNextEntry()) != null) {
+                entryName = entry.getName();
+                if (entryName.equals(name)) {
+                    return zin;
+                }
+
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
     }
 }

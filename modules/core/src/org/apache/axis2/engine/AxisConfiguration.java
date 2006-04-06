@@ -18,8 +18,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
@@ -29,8 +27,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.net.URL;
 import java.util.*;
-import java.net.URI;
 
 /**
  * Class AxisConfigurationImpl
@@ -55,7 +53,7 @@ public class AxisConfiguration extends AxisDescription {
 
     // to store AxisObserver Objects
     private ArrayList observersList = null;
-    private URI axis2Repository = null;
+    private URL axis2Repository = null;
     private HashMap allservices = new HashMap();
 
     /**
@@ -126,6 +124,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * To remove a given module from the system
+     *
      * @param module
      */
     public void removeModule(QName module) {
@@ -442,7 +441,7 @@ public class AxisConfiguration extends AxisDescription {
         return phasesinfo;
     }
 
-    public URI getRepository() {
+    public URL getRepository() {
         return axis2Repository;
     }
 
@@ -570,7 +569,7 @@ public class AxisConfiguration extends AxisDescription {
         this.phasesinfo = phasesInfo;
     }
 
-    public void setRepository(URI axis2Repository) {
+    public void setRepository(URL axis2Repository) {
         this.axis2Repository = axis2Repository;
     }
 
@@ -580,18 +579,6 @@ public class AxisConfiguration extends AxisDescription {
 
     public void setSystemClassLoader(ClassLoader classLoader) {
         this.systemClassLoader = classLoader;
-    }
-
-    public static String getAxis2HomeDirectory() {
-        // if user has set the axis2 home variable try to get that from System properties
-        String axis2home = System.getProperty(Constants.AXIS2_HOME);
-        if (axis2home == null) {
-            axis2home = System.getProperty(Constants.USER_HOME);
-            if (axis2home != null) {
-                axis2home = axis2home + '/' + DeploymentConstants.DIRECTORY_AXIS2_HOME;
-            }
-        }
-        return axis2home;
     }
 
     /**

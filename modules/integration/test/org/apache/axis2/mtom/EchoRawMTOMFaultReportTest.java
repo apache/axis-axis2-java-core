@@ -26,11 +26,7 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.swa.EchoRawSwATest;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NoHttpResponseException;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -50,8 +46,6 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
 
     private QName operationName = new QName("mtomSample");
 
-    private AxisService service;
-
     public EchoRawMTOMFaultReportTest() {
         super(EchoRawSwATest.class.getName());
     }
@@ -62,7 +56,7 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = new AxisService(serviceName.getLocalPart());
+        AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS,
                 EchoService.class.getName()));

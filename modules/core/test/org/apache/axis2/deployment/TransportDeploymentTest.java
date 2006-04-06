@@ -43,10 +43,8 @@ public class TransportDeploymentTest extends AbstractTestCase {
         File repo = new File(repositoryName);
         String xmlFile = testResourceDir + "/deployment/server-transport.xml";
         File xml = new File(xmlFile);
-        DeploymentEngine engine = new DeploymentEngine(
-                repo.toURI(), xml.toURI());
-        engine.load();
-        AxisConfiguration er = engine.getAxisConfig();
+        FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
+        AxisConfiguration er = fsc.getAxisConfiguration();
         TransportInDescription transport = er.getTransportIn(new QName("http"));
         assertNotNull(transport);
         TransportOutDescription transport1 = er.getTransportOut(
