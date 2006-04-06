@@ -36,6 +36,7 @@ import org.apache.axis2.security.trust.types.RequestSecurityTokenType;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.StreamWrapper;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.ws.security.processor.EncryptedKeyProcessor;
@@ -89,9 +90,9 @@ public class STSRequester {
             rst.setContext(new URI("http://get.optional.attrs.working"));
             
             Axis2Util.useDOOM(false);
-            StAXOMBuilder builder = new StAXOMBuilder(rst
+            StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
                     .getPullParser(new QName(Constants.WST_NS,
-                            Constants.REQUEST_SECURITY_TOKEN_LN)));
+                            Constants.REQUEST_SECURITY_TOKEN_LN))));
 
             OMElement tempResult = client.sendReceive(rstQn, builder.getDocumentElement());
             Axis2Util.useDOOM(true);
@@ -115,7 +116,7 @@ public class STSRequester {
             OMElement sctElem = rstElem.getFirstChildWithName(SecurityContextToken.TOKEN);
             if(sctElem != null) {
                 SecurityContextToken sct = new SecurityContextToken((Element)sctElem);
-                token = new Token(sct.getIdentifier(), sctElem);
+                token = new Token(sct.getIdentifier(), sctElem.cloneOMElement());
                 config.setSecurityContextToken(sct);
                 config.resgisterContext(sct.getIdentifier());
             } else {

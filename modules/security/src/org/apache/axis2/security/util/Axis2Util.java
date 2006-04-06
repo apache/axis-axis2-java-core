@@ -82,6 +82,10 @@ public class Axis2Util {
 	public static Document getDocumentFromSOAPEnvelope(SOAPEnvelope env, boolean disableDoom)
 			throws WSSecurityException {
 		try {
+            if(env instanceof Element) {
+                return ((Element)env).getOwnerDocument();
+            }
+            
             if(!disableDoom) {
     			env.build();
     			

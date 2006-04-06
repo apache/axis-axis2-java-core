@@ -71,7 +71,61 @@
 
     <postGoal name="test:compile">
         <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
-            <mkdir dir="target/test-resources/samples/modules"/>
+
+			<!-- Service classes for the Rahas tests -->
+			<mkdir dir="target/temp-rahas"/>
+			<mkdir dir="target/temp-rahas/META-INF"/>
+			
+			<copy overwrite="yes" file="target/test-classes/org/apache/axis2/security/rahas/Service.class"
+                  tofile="target/temp-rahas/org/apache/axis2/security/rahas/Service.class"/>
+			<copy overwrite="yes" file="target/test-classes/org/apache/axis2/security/rahas/PWCallback.class"
+                  tofile="target/temp-rahas/org/apache/axis2/security/rahas/PWCallback.class"/>
+				  
+			<copy overwrite="yes" todir="target/temp-rahas">
+            	<fileset dir="test-resources/security/rahas">
+					<include name="sctIssuer.properties"/>
+					<include name="sts.jks"/>
+				</fileset>
+			</copy>
+
+			<ant:path id="rahas.client.props" location="test-resources/security/rahas"/>
+            <maven:addPath id="maven.dependency.classpath" refid="rahas.client.props"/>
+			
+			<mkdir dir="target/test-resources/rahas_client_repo"/>
+            <mkdir dir="target/test-resources/rahas_client_repo/conf"/>
+            <mkdir dir="target/test-resources/rahas_client_repo/modules"/>
+			
+			<copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_client_repo/modules/addressing-${addressing_version}.mar"/>
+			<copy file="../security/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_client_repo/modules/rahas-${rahas_version}.mar"/>
+
+            <!-- Rahas Test - 1  -->
+
+            <mkdir dir="target/test-resources/rahas_service_repo_1"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_1/conf"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_1/services"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_1/modules"/>
+
+			<copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_1/modules/addressing-${addressing_version}.mar"/>
+			<copy file="../security/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_1/modules/rahas-${rahas_version}.mar"/>
+
+			<!-- copy the services.xml and create the aar -->
+			<copy overwrite="yes" file="test-resources/security/rahas/s1-services.xml"
+                  tofile="target/temp-rahas/META-INF/services.xml"/>
+
+		    <jar jarfile="target/test-resources/rahas_service_repo_1/services/Service.aar"
+                 basedir="target/temp-rahas"/>
+
+            <!-- Rahas Test - 1 :END -->
+			
+			<!-- clean up temp rahas stuff -->
+			<!--<delete dir="target/temp-rahas"/> -->
+
+		
+			<mkdir dir="target/test-resources/samples/modules"/>
             <mkdir dir="target/test-resources/samples/conf"/>
             <mkdir dir="target/test-resources/repository-client/modules"/>
             <mkdir dir="target/test-resources/repository-client/conf"/>
@@ -533,7 +587,6 @@
             <!-- Create the .aar file -->
             <jar jarfile="target/test-resources/complete_service_repo/services/PingPort.aar"
                  basedir="../security/target/interop/classes"/>
-
 
             <!-- Standard repository -->
             <mkdir dir="target/Repository"/>

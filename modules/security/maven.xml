@@ -45,12 +45,12 @@
 		<copy file="src/META-INF/rahas-module.xml"
             tofile="target/temp-mar/META-INF/module.xml" overwrite="true"/>
 
-        <jar jarfile="target/rahas-${security_version}.mar" basedir="target/temp-mar/">
+        <jar jarfile="target/rahas-${rahas_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
 
-        <copy file="target/rahas-${security_version}.mar" tofile="target/modules/rahas-${security_version}.mar"/>
-        <copy file="target/rahas-${security_version}.mar" tofile="${maven.repo.local}/axis2/mars/rahas-${security_version}.mar"/>
+        <copy file="target/rahas-${rahas_version}.mar" tofile="target/modules/rahas-${rahas_version}.mar"/>
+        <copy file="target/rahas-${rahas_version}.mar" tofile="${maven.repo.local}/axis2/mars/rahas-${rahas_version}.mar"/>
 
 		<!-- Replace the maven.xml remove unwanted classes and create the security module -->
 

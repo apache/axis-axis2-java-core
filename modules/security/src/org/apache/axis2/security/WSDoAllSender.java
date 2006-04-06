@@ -17,6 +17,7 @@
 package org.apache.axis2.security;
 
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -196,7 +197,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                 ((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY,
                         doc);
             } else {
-                msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc, disableDoom));
+                msgContext.setEnvelope((SOAPEnvelope)doc.getDocumentElement());
                 ((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY, null);
             }
             

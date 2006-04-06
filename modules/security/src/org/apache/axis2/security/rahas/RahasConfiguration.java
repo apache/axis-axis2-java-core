@@ -263,7 +263,6 @@ public class RahasConfiguration {
         paramElem.addAttribute("name", RahasConfiguration.RAHAS_CONFIG, null);
         paramElem.addChild(element);
         param.setParameterElement(paramElem);
-        System.out.println(paramElem);
         return param;
     }
     

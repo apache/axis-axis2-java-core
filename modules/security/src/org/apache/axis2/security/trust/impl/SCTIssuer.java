@@ -191,7 +191,7 @@ public class SCTIssuer implements TokenIssuer {
         binSecElem.setText(Base64.encode(secret));
     
         //Store the tokens
-        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        Token sctToken = new Token(sct.getIdentifier(), ((OMElement)sct.getElement()).cloneOMElement());
         sctToken.setSecret(secret);
         this.getTokenStore(msgCtx).add(sctToken);
         
@@ -234,8 +234,6 @@ public class SCTIssuer implements TokenIssuer {
         
         rstElem.addChild((OMElement)sct.getElement());
         
-        
-        
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
         
@@ -250,9 +248,14 @@ public class SCTIssuer implements TokenIssuer {
         reqProofTok.addChild((OMElement)encryptedKeyElem);
     
         //Store the tokens
-        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        OMElement clonedElem = ((OMElement)sct.getElement()).cloneOMElement();
+        Token sctToken = new Token(sct.getIdentifier(), clonedElem);
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
         this.getTokenStore(msgCtx).add(sctToken);
+        
+        String bodyStr = env.getBody().toString();
+        System.out.println(bodyStr);
+        System.out.println(env);
         
         return env;
     }

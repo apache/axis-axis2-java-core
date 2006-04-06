@@ -85,10 +85,6 @@ public class Sender implements Handler {
             }
             
             
-
-            
-            
-            
         } catch (Exception e) {
             e.printStackTrace();
             if(e instanceof RahasException) {
