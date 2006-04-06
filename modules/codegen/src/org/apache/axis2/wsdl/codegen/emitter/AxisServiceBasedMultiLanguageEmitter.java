@@ -68,7 +68,7 @@ import java.util.Map;
  * from the AxisService.
  */
 
-public class AxisServiceBasedMultiLanguageClientEmitter implements Emitter {
+public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
@@ -141,7 +141,7 @@ public class AxisServiceBasedMultiLanguageClientEmitter implements Emitter {
 
     private AxisService axisService;
 
-    public AxisServiceBasedMultiLanguageClientEmitter() {
+    public AxisServiceBasedMultiLanguageEmitter() {
         infoHolder = new HashMap();
     }
 
