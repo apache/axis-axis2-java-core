@@ -1116,28 +1116,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         writer.parse(model, resolver);
     }
 
+    /**
+     * Adds the soap action
+     * @param doc
+     * @param rootElement
+     * @param axisOperation
+     */
     private void addSOAPAction(Document doc, Element rootElement, AxisOperation axisOperation) {
-        List extensibilityElements = axisOperation.getWsdlExtElements();
-        boolean actionAdded = false;
-
-        if ((extensibilityElements != null) && !extensibilityElements.isEmpty()) {
-            Iterator extIterator = extensibilityElements.iterator();
-
-            while (extIterator.hasNext()) {
-                AxisExtensiblityElementWrapper axisExtensibilityElement = (AxisExtensiblityElementWrapper) extIterator.next();
-                WSDLExtensibilityElement element = axisExtensibilityElement.getExtensibilityElement();
-
-                if (element != null && ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())
-                        || ExtensionConstants.SOAP_12_OPERATION.equals(element.getType())) {
-                    addAttribute(doc, "soapaction", ((SOAPOperation) element).getSoapAction(), rootElement);
-                    actionAdded = true;
-                }
-            }
-        }
-
-        if (!actionAdded) {
-            addAttribute(doc, "soapaction", "", rootElement);
-        }
+           addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
     }
 
     private void addHeaderOperations(List soapHeaderParameterQNameList, AxisOperation axisOperation,
