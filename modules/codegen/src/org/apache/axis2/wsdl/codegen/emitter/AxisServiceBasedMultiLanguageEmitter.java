@@ -13,9 +13,17 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
+import org.apache.axis2.wsdl.codegen.writer.MessageReceiverWriter;
+import org.apache.axis2.wsdl.codegen.writer.InterfaceWriter;
+import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
+import org.apache.axis2.wsdl.codegen.writer.InterfaceImplementationWriter;
+import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.XSLTConstants;
+import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
+import org.apache.axis2.namespace.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.Policy;
@@ -28,6 +36,7 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -47,6 +56,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -148,55 +158,691 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.codeGenConfiguration = configuration;
         this.axisService = codeGenConfiguration.getAxisService();
+        resolver = new XSLTIncludeResolver(this.codeGenConfiguration.getProperties());
     }
 
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
     }
 
+
+
+    /**
+     * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitStub()
+     */
     public void emitStub() throws CodeGenerationException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
-    public void emitSkeleton() throws CodeGenerationException {
         try {
-
-            // get the interface
-            int codegenStyle = this.codeGenConfiguration.getCodeGenerationStyle();
-
-            if (codegenStyle == XSLTConstants.CodegenStyle.INTERFACE) {
-                emitSkeletonInterface();
-            } else if (codegenStyle == XSLTConstants.CodegenStyle.BINDING) {
-                emitSkeletonBinding();
-            } else if (codegenStyle == XSLTConstants.CodegenStyle.AUTOMATIC) {
-                emitSkeletonAutomatic();
-            } else {
-                throw new Exception(CodegenMessages.getMessage("emitter.unknownStyle", codegenStyle + ""));
-            }
+             emitStubFromService();
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
     }
 
-    private void emitSkeletonAutomatic() {
-        // TODO
+    /**
+       * Update mapper for the stub
+       * @param boundInterface
+       */
+      private void updateMapperForStub() {
+          String packageName = codeGenConfiguration.getPackageName();
+          String localPart = makeJavaClassName(axisService.getName());
+          String stubName = localPart + STUB_SUFFIX;
+
+          updateMapperClassnames(packageName + "." + stubName + ".");
+      }
+
+    /**
+     * Emits the stubcode with bindings.
+     *
+     * @throws Exception
+     */
+    private void emitStubFromService() throws Exception {
+
+        // see the comment at updateMapperClassnames for details and reasons for
+        // calling this method
+        if (mapper.isObjectMappingPresent()) {
+            updateMapperForStub();
+        }
+
+        // write the inteface
+        // feed the binding information also
+        // note that we do not create this interface if the user switched on the wrap classes mode
+        if (!codeGenConfiguration.isPackClasses()) {
+            writeInterface(false);
+        }
+
+        // write the call back handlers
+        writeCallBackHandlers();
+
+        // write interface implementations
+        writeInterfaceImplementation();
+
+        // write the test classes
+        writeTestClasses();
+
+        // write a dummy implementation call for the tests to run.
+        // writeTestSkeletonImpl(axisBinding);
+        // write a testservice.xml that will load the dummy skeleton impl for testing
+        // writeTestServiceXML(axisBinding);
+        // write an ant build file
+        writeAntBuild();
     }
 
-    private void emitSkeletonBinding() {
+    /**
+     * Writes the Ant build.
+     * @throws Exception
+     */
+    protected void writeAntBuild() throws Exception {
 
-        // TODO
+        // Write the service xml in a folder with the
+        Document skeletonModel = createDOMDocumentForAntBuild();
+        debugLogDocument("Document for ant build:", skeletonModel);
+        AntBuildWriter antBuildWriter = new AntBuildWriter(codeGenConfiguration.getOutputLocation(),
+                codeGenConfiguration.getOutputLanguage());
+
+        antBuildWriter.setDatabindingFramework(codeGenConfiguration.getDatabindingType());
+        writeClass(skeletonModel, antBuildWriter);
     }
+
+      /**
+     * Creates the DOM tree for the Ant build. Uses the interface.
+     */
+    protected Document createDOMDocumentForAntBuild() {
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("ant");
+        String serviceName = makeJavaClassName(axisService.getName());
+        String packageName = codeGenConfiguration.getPackageName();
+        String[]      dotSeparatedValues = packageName.split("\\.");
+
+        addAttribute(doc, "package", dotSeparatedValues[0], rootElement);
+        addAttribute(doc, "name", serviceName, rootElement);
+        addAttribute(doc, "servicename", serviceName, rootElement);
+        doc.appendChild(rootElement);
+
+        return doc;
+    }
+    /**
+         *  Write the test classes
+         */
+        protected void writeTestClasses() throws Exception {
+            if (codeGenConfiguration.isWriteTestCase()) {
+                Document classModel = createDOMDocumentForTestCase();
+                debugLogDocument("Document for test case:", classModel);
+                TestClassWriter callbackWriter =
+                        new TestClassWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "test"),
+                                codeGenConfiguration.getOutputLanguage());
+
+                writeClass(classModel, callbackWriter);
+            }
+        }
+
+    protected Document createDOMDocumentForTestCase() {
+           String coreClassName = makeJavaClassName(axisService.getName());
+           Document doc = getEmptyDocument();
+           Element rootElement = doc.createElement("class");
+
+           addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+           addAttribute(doc, "name", coreClassName + TEST_SUFFIX, rootElement);
+          //todo is this right ???
+           addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
+           addAttribute(doc, "interfaceName", coreClassName, rootElement);
+           addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
+           addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
+
+           fillSyncAttributes(doc, rootElement);
+           loadOperations(doc, rootElement,null);
+
+           // add the databind supporters. Now the databind supporters are completly contained inside
+           // the stubs implementation and not visible outside
+           rootElement.appendChild(createDOMElementforDatabinders(doc));
+           doc.appendChild(rootElement);
+
+           return doc;
+       }
+
+     /**
+     * Writes the implementations.
+     *
+     * @throws Exception
+     */
+    protected void writeInterfaceImplementation() throws Exception {
+
+        // first check for the policies in this service and write them
+        Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
+        debugLogDocument("Document for interface implementation:", interfaceImplModel);
+        InterfaceImplementationWriter writer =
+                new InterfaceImplementationWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                        codeGenConfiguration.getOutputLanguage());
+
+        writeClass(interfaceImplModel, writer);
+    }
+
+    /**
+     * Creates the DOM tree for implementations.
+     */
+    protected Document createDOMDocumentForInterfaceImplementation() throws Exception {
+
+        String packageName = codeGenConfiguration.getPackageName();
+        String localPart = makeJavaClassName(axisService.getName());
+        String stubName = localPart + STUB_SUFFIX;
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("class");
+
+        addAttribute(doc, "package", packageName, rootElement);
+        addAttribute(doc, "name", stubName, rootElement);
+        addAttribute(doc, "servicename", localPart, rootElement);
+        //todo is this right ??
+        addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
+        addAttribute(doc, "interfaceName", localPart, rootElement);
+        addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
+
+        // add the wrap classes flag
+        if (codeGenConfiguration.isPackClasses()) {
+            addAttribute(doc, "wrapped", "yes", rootElement);
+        }
+
+        // add SOAP version
+        addSoapVersion(doc, rootElement);
+
+        // add the end point
+        addEndpoint(doc, rootElement);
+
+        // set the sync/async attributes
+        fillSyncAttributes(doc, rootElement);
+
+        // ###########################################################################################
+        // this block of code specifically applies to the integration of databinding code into the
+        // generated classes tightly (probably as inner classes)
+        // ###########################################################################################
+        // check for the special models in the mapper and if they are present process them
+        if (mapper.isObjectMappingPresent()) {
+
+            // add an attribute to the root element showing that the writing has been skipped
+            addAttribute(doc, "skip-write", "yes", rootElement);
+
+            // process the mapper objects
+            processModelObjects(mapper.getAllMappedObjects(), rootElement, doc);
+        }
+
+        // #############################################################################################
+
+        // load the operations
+        loadOperations(doc, rootElement, null);
+
+        // add the databind supporters. Now the databind supporters are completly contained inside
+        // the stubs implementation and not visible outside
+        rootElement.appendChild(createDOMElementforDatabinders(doc));
+
+        Object stubMethods;
+
+        //if some extension has added the stub methods property, add them to the
+        //main document
+        if ((stubMethods = codeGenConfiguration.getProperty("stubMethods")) != null) {
+        	rootElement.appendChild(doc.importNode((Element) stubMethods, true));
+        }
+
+        doc.appendChild(rootElement);
+        return doc;
+    }
+
+    /**
+     * Adds the endpoint to the document.
+     *
+     * @param doc
+     * @param rootElement
+     */
+    protected void addEndpoint(Document doc, Element rootElement) throws Exception {
+
+        //todo
+//        Policy endpointPolicy = attachmentUtil.getPolicyForEndPoint(
+//                codeGenConfiguration.getPortName()
+//        );
+//
+//        if (endpointPolicy != null) {
+//        	String policyString = PolicyUtil.getPolicyAsString(endpointPolicy);
+//        	addAttribute(doc, "policy", policyString, rootElement);
+//        }
+
+        Element endpointElement = doc.createElement("endpoint");
+
+        String endpoint = axisService.getEndpoint();
+        Text text = doc.createTextNode((endpoint != null)
+                ? endpoint
+                : "");
+
+        endpointElement.appendChild(text);
+        rootElement.appendChild(endpointElement);
+    }
+
+    /**
+     * Looks for the SOAPVersion and adds it.
+     *
+     * @param binding
+     * @param doc
+     * @param rootElement
+     */
+    protected void addSoapVersion( Document doc, Element rootElement) {
+
+        // loop through the extensibility elements to get to the bindings element
+
+        String soapNsUri = axisService.getSoapNsUri();
+        if (Constants.URI_WSDL11_SOAP.equals(soapNsUri)) {
+            addAttribute(doc, "soap-version", "1.1", rootElement);
+        } else if (Constants.URI_WSDL12_SOAP.equals(soapNsUri)) {
+            addAttribute(doc, "soap-version", "1.2", rootElement);
+        }
+
+    }
+
+
+    /**
+     * Writes the callback handlers.
+     */
+    protected void writeCallBackHandlers() throws Exception {
+        if (codeGenConfiguration.isAsyncOn()) {
+            Document interfaceModel = createDOMDocumentForCallbackHandler();
+            debugLogDocument("Document for callback handler:", interfaceModel);
+            CallbackHandlerWriter callbackWriter =
+                    new CallbackHandlerWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                            codeGenConfiguration.getOutputLanguage());
+
+            writeClass(interfaceModel, callbackWriter);
+        }
+    }
+
+    /**
+     * Generates the model for the callbacks.
+     */
+    protected Document createDOMDocumentForCallbackHandler() {
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("callback");
+
+        addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+        addAttribute(doc, "name", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+
+        // TODO JAXRPC mapping support should be considered
+        this.loadOperations(doc, rootElement, null);
+
+        doc.appendChild(rootElement);
+        return doc;
+    }
+
+    /**
+     * Writes the interfaces.
+     *
+     * @throws Exception
+     */
+    protected void writeInterface(boolean writeDatabinders) throws Exception {
+        Document interfaceModel = createDOMDocumentForInterface(writeDatabinders);
+        debugLogDocument("Document for interface:", interfaceModel);
+        InterfaceWriter interfaceWriter =
+                new InterfaceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                        this.codeGenConfiguration.getOutputLanguage());
+
+        writeClass(interfaceModel, interfaceWriter);
+    }
+    /**
+     * Creates the DOM tree for the interface creation. Uses the interface.
+     */
+    protected Document createDOMDocumentForInterface(boolean writeDatabinders) {
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("interface");
+        String localPart = makeJavaClassName(axisService.getName());
+
+        addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+        addAttribute(doc, "name", localPart, rootElement);
+        addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX,
+                rootElement);
+        fillSyncAttributes(doc, rootElement);
+        loadOperations(doc, rootElement,null);
+
+        // ###########################################################################################
+        // this block of code specifically applies to the integration of databinding code into the
+        // generated classes tightly (probably as inner classes)
+        // ###########################################################################################
+        // check for the special models in the mapper and if they are present process them
+        if (writeDatabinders) {
+            if (mapper.isObjectMappingPresent()) {
+
+                // add an attribute to the root element showing that the writing has been skipped
+                addAttribute(doc, "skip-write", "yes", rootElement);
+
+                // process the mapper objects
+                processModelObjects(mapper.getAllMappedObjects(), rootElement, doc);
+            }
+        }
+
+        // #############################################################################################
+        doc.appendChild(rootElement);
+
+        return doc;
+    }
+
+
+    /**
+     * Emits the stubcode with bindings.
+     *
+     * @throws Exception
+     */
+//    private void emitStubBinding() throws Exception {
+//        WSDLInterface axisInterface = infoHolder.getWSDLinterface();
+//
+//        // see the comment at updateMapperClassnames for details and reasons for
+//        // calling this method
+//        if (mapper.isObjectMappingPresent()) {
+//            updateMapperForStub(axisInterface);
+//        }
+//
+//        // write the inteface
+//        // feed the binding information also
+//        // note that we do not create this interface if the user switched on the wrap classes mode
+//        if (!configuration.isPackClasses()) {
+//            writeInterface(false);
+//        }
+//
+//        // write the call back handlers
+//        writeCallBackHandlers();
+//
+//        // write interface implementations
+//        writeInterfaceImplementation();
+//
+//        // write the test classes
+//        writeTestClasses();
+//
+//        // write a dummy implementation call for the tests to run.
+//        // writeTestSkeletonImpl(axisBinding);
+//        // write a testservice.xml that will load the dummy skeleton impl for testing
+//        // writeTestServiceXML(axisBinding);
+//        // write an ant build file
+//        writeAntBuild();
+//    }
+
+//    /**
+//     * Emits the stub code with interfaces only.
+//     *
+//     * @throws Exception
+//     */
+//    private void emitStubInterface() throws Exception {
+//        WSDLInterface axisInterface = infoHolder.getWSDLinterface();
+//
+//        if (mapper.isObjectMappingPresent()) {
+//            updateMapperForInterface(axisInterface);
+//        }
+//
+//        // Write the interfaces
+//        // note that this case we do not care about the wrapping flag
+//        writeInterface(true);
+//
+//        // write the call back handlers
+//        writeCallBackHandlers();
+//
+//        // log the message stating that the binding dependent parts are not generated
+//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
+//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface3"));
+//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface4"));
+//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface5"));
+//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface6"));
+//    }
+
+    /**
+     * Emit the skeltons
+     * @throws CodeGenerationException
+     */
+    public void emitSkeleton() throws CodeGenerationException {
+        try {
+
+            emitSkeletonInterface();
+
+        } catch (Exception e) {
+            throw new CodeGenerationException(e);
+        }
+    }
+
+    /**
+     * Update mapper for message receiver
+     * @param boundInterface
+     */
+    private void updateMapperForMessageReceiver() {
+        String packageName = codeGenConfiguration.getPackageName();
+        String localPart = makeJavaClassName(axisService.getName());
+        String messageReceiver = localPart + MESSAGE_RECEIVER_SUFFIX;
+        updateMapperClassnames(packageName + "." + messageReceiver + ".");
+    }
+
 
     private void emitSkeletonInterface() throws Exception {
+        // see the comment at updateMapperClassnames for details and reasons for
+        // calling this method
+        if (mapper.isObjectMappingPresent()) {
+            updateMapperForMessageReceiver();
+        }
+
         // write skeleton
         writeSkeleton();
 
+        // write a MessageReceiver for this particular service.
+        writeMessageReceiver();
+
         // write interface implementations
         writeServiceXml();
+
         log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
         log.info(CodegenMessages.getMessage("emitter.logEntryInterface2"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
+    protected void writeMessageReceiver() throws Exception {
+
+           if (codeGenConfiguration.isWriteMessageReceiver()) {
+               //loop through the meps and generate code for each mep
+               Iterator it = MEPtoClassMap.keySet().iterator();
+               while (it.hasNext()) {
+                   String mep = (String) it.next();
+                   Document classModel = createDocumentForMessageReceiver(mep);
+                   debugLogDocument("Document for message receiver:", classModel);
+                   //write the class only if any methods are found
+                   if (Boolean.TRUE.equals(infoHolder.get(mep))) {
+                       MessageReceiverWriter writer =
+                               new MessageReceiverWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                                       codeGenConfiguration.getOutputLanguage());
+
+                       writeClass(classModel, writer);
+                   }
+               }
+           }
+       }
+
+    protected Document createDocumentForMessageReceiver(String mep) {
+
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("interface");
+
+        addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+
+        String localPart = makeJavaClassName(axisService.getName());
+
+        addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
+        addAttribute(doc, "skeletonname", localPart + SERVICE_CLASS_SUFFIX, rootElement);
+        addAttribute(doc, "basereceiver", (String)MEPtoClassMap.get(mep), rootElement);
+        fillSyncAttributes(doc, rootElement);
+
+        // ###########################################################################################
+        // this block of code specifically applies to the integration of databinding code into the
+        // generated classes tightly (probably as inner classes)
+        // ###########################################################################################
+        // check for the special models in the mapper and if they are present process them
+        if (mapper.isObjectMappingPresent()) {
+
+            // add an attribute to the root element showing that the writing has been skipped
+            addAttribute(doc, "skip-write", "yes", rootElement);
+
+            // process the mapper objects
+            processModelObjects(mapper.getAllMappedObjects(), rootElement, doc);
+        }
+
+        // #############################################################################################
+
+        boolean isOpsFound = loadOperations(doc,rootElement,mep);
+
+        //put the result in the property map
+        infoHolder.put(mep,isOpsFound?Boolean.TRUE:Boolean.FALSE);
+        // ///////////////////////
+        rootElement.appendChild(createDOMElementforDatabinders(doc));
+
+        // ///////////////////////
+        doc.appendChild(rootElement);
+
+        return doc;
+    }
+
+    /**
+     * create a dom doc for databinders
+     * @param doc
+     * @param binding
+     * @return
+     */
+    protected Element createDOMElementforDatabinders(Document doc) {
+
+        // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
+        Map parameterMap = new HashMap();
+        Iterator operationsIterator = axisService.getOperations();
+
+        while (operationsIterator.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation)operationsIterator.next();
+            // Add the parameters to a map with their type as the key
+            // this step is needed to remove repetitions
+
+            // process the input and output parameters
+            Element inputParamElement = getInputParamElement(doc, axisOperation);
+
+            if (inputParamElement != null) {
+                parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
+            }
+
+            Element outputParamElement = getOutputParamElement(doc, axisOperation);
+
+            if (outputParamElement != null) {
+                parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
+            }
+
+            // todo process the exceptions
+            // process the header parameters
+            Element newChild;
+            List headerParameterQNameList = new ArrayList();
+
+            addHeaderOperations(headerParameterQNameList, axisOperation, true);
+
+            List parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
+
+            for (int i = 0; i < parameterElementList.size(); i++) {
+                newChild = (Element) parameterElementList.get(i);
+                parameterMap.put(newChild.getAttribute("type"), newChild);
+            }
+
+            headerParameterQNameList.clear();
+            parameterElementList.clear();
+            addHeaderOperations(headerParameterQNameList, axisOperation, false);
+            parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
+
+            for (int i = 0; i < parameterElementList.size(); i++) {
+                newChild = (Element) parameterElementList.get(i);
+                parameterMap.put(newChild.getAttribute("type"), newChild);
+            }
+        }
+
+        Element rootElement = doc.createElement("databinders");
+
+        addAttribute(doc, "dbtype", codeGenConfiguration.getDatabindingType(), rootElement);
+
+        // add the names of the elements that have base 64 content
+        // if the base64 name list is missing then this whole step is skipped
+        rootElement.appendChild(getBase64Elements(doc));
+
+        // Now run through the parameters and add them to the root element
+        Collection parameters = parameterMap.values();
+
+        for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
+            rootElement.appendChild((Element) iterator.next());
+        }
+
+        return rootElement;
+    }
+
+    /**
+         * Gets the base64 types. If not available this will be empty!!!
+         *
+         * @param doc
+         * @return Returns Element.
+         */
+        private Element getBase64Elements(Document doc) {
+            Element root = doc.createElement("base64Elements");
+            Element elt;
+            QName qname;
+
+            // this is a list of QNames
+            List list = (List) codeGenConfiguration.getProperties().get(XSLTConstants.BASE_64_PROPERTY_KEY);
+
+            if ((list != null) && !list.isEmpty()) {
+                int count = list.size();
+
+                for (int i = 0; i < count; i++) {
+                    qname = (QName) list.get(i);
+                    elt = doc.createElement("name");
+                    addAttribute(doc, "ns-url", qname.getNamespaceURI(), elt);
+                    addAttribute(doc, "localName", qname.getLocalPart(), elt);
+                    root.appendChild(elt);
+                }
+            }
+
+            return root;
+        }
+
+             /**
+     * @param objectMappings
+     * @param root
+     * @param doc
+     */
+    private void processModelObjects(Map objectMappings, Element root, Document doc) {
+        Iterator objectIterator = objectMappings.values().iterator();
+
+        while (objectIterator.hasNext()) {
+            Object o = objectIterator.next();
+
+            if (o instanceof Document) {
+                root.appendChild(doc.importNode(((Document) o).getDocumentElement(), true));
+            } else {
+
+                // oops we have no idea how to do this, if the model provided is not a DOM document
+                // we are done. we might as well skip  it here
+            }
+        }
+    }
+    /**
+     * we need to modify the mapper's class name list. The issue here is that in this case we do not
+     * expect the fully qulified class names to be present in the class names list due to the simple
+     * reason that they've not been written yet! Hence the mappers class name list needs to be updated
+     * to suit the expected package to be written
+     * in this case we modify the package name to have make the class a inner class of the stub,
+     * interface or the message receiver depending on the style
+     *
+     */
+    private void updateMapperClassnames(String fullyQulifiedIncludingClassNamePrefix) {
+        Map classNameMap = mapper.getAllMappedNames();
+        Iterator keys = classNameMap.keySet().iterator();
+
+        while (keys.hasNext()) {
+            Object key = keys.next();
+            classNameMap.put(key, fullyQulifiedIncludingClassNamePrefix + classNameMap.get(key));
+        }
+    }
+
+    /**
+     * Write the service XML
+     * @throws Exception
+     */
     private void writeServiceXml() throws Exception {
         if (this.codeGenConfiguration.isGenerateDeployementDescriptor()) {
 
@@ -275,7 +921,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     }
 
-    private void loadOperations(Document doc, Element rootElement, String mep) {
+    private boolean loadOperations(Document doc, Element rootElement, String mep) {
         Element methodElement;
         String portTypeName = makeJavaClassName(axisService.getName());
 
@@ -365,6 +1011,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
 
         }
+
+        return opsFound;
     }
 
     // ==================================================================
@@ -615,9 +1263,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (outputMessage != null) {
             parameterName = this.mapper.getParameterName(outputMessage.getElementQName());
-
             String typeMapping = this.mapper.getTypeMappingName(outputMessage.getElementQName());
-
             typeMappingStr = (typeMapping == null)
                     ? ""
                     : typeMapping;
