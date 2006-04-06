@@ -24,6 +24,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.deployment.WarBasedAxisConfigurator;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -237,30 +238,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      */
     protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
         try {
-            ServletContext context = config.getServletContext();
-            String repoDir = config.getInitParameter("repository");
-            File rootDir = null;
-            if (repoDir == null) {
-                try {
-                    repoDir = context.getRealPath("/WEB-INF");
-                    rootDir = new File(context.getRealPath("/WEB-INF"));
-                    setWebLocationProperty(context);
-                } catch (Exception e) {
-                    String user_home = System.getProperty("user.home");
-                    File axis2repo = new File(user_home, "axis2repository");
-                    if (axis2repo.exists()) {
-                        repoDir = axis2repo.getAbsolutePath();
-                        log.error("Axis2 run using the repositoty found in : " + repoDir);
-                    } else {
-                        log.error("Axis2 run without having a repository");
-                    }
-                }
-            }
-            //adding weblocation property
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoDir, null);
+                    ConfigurationContextFactory.createConfigurationContext(new WarBasedAxisConfigurator(config));
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
-            configContext.setRootDir(rootDir);
             return configContext;
         } catch (Exception e) {
             throw new ServletException(e);

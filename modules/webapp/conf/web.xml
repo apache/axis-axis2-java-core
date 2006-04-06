@@ -9,8 +9,14 @@
         <display-name>Apache-Axis Servlet</display-name>
         <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
         <!--<init-param>-->
-            <!--<param-name>repository</param-name>-->
+            <!--<param-name>axis2.xml.path</param-name>-->
+            <!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
+            <!--<param-name>axis2.xml.url</param-name>-->
+            <!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
+            <!--<param-name>axis2.repository.path</param-name>-->
             <!--<param-value>/WEB-INF</param-value>-->
+            <!--<param-name>axis2.repository.url</param-name>-->
+            <!--<param-value>http://localhot/myrepo</param-value>-->
         <!--</init-param>-->
         <load-on-startup>1</load-on-startup>
     </servlet>

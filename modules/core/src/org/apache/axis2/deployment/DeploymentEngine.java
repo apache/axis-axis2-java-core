@@ -29,11 +29,13 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -210,7 +212,9 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private ArrayList populateService(AxisServiceGroup serviceGroup, URL servicesURL, String serviceName) throws DeploymentException {
+    private ArrayList populateService(AxisServiceGroup serviceGroup,
+                                      URL servicesURL,
+                                      String serviceName) throws DeploymentException {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
@@ -272,6 +276,16 @@ public class DeploymentEngine implements DeploymentConstants {
                                     new WSDL2AxisServiceBuilder(wsdlStream, axisService);
                             axisService = wsdl2AxisServiceBuilder.populateService();
                             axisService.setWsdlfound(true);
+                            // Set the default message receiver for the operations that were
+                            // not listed in the services.xml
+                            Iterator operations = axisService.getOperations();
+                            while (operations.hasNext()) {
+                                AxisOperation operation = (AxisOperation) operations.next();
+                                if (operation.getMessageReceiver() == null) {
+                                    operation.setMessageReceiver(loadDefaultMessageReceiver(
+                                            operation.getMessageExchangePattern(), axisService));
+                                }
+                            }
                         }
                     }
                 }
@@ -283,6 +297,19 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new DeploymentException(e);
         }
         return null;
+    }
+
+    protected MessageReceiver loadDefaultMessageReceiver(String mepURL, AxisService service) {
+        MessageReceiver messageReceiver;
+        if (mepURL == null) {
+            mepURL = WSDLConstants.MEP_URI_IN_OUT;
+        }
+        if (service != null) {
+            messageReceiver = service.getMessageReceiver(mepURL);
+            if (messageReceiver != null)
+                return messageReceiver;
+        }
+        return axisConfig.getMessageReceiver(mepURL);
     }
 
     /**

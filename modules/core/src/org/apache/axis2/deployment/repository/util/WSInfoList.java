@@ -30,7 +30,7 @@ public class WSInfoList implements DeploymentConstants {
     /**
      * This is to store all the jar files in a specified folder (WEB_INF)
      */
-    private static List jarList = new ArrayList();
+    private List jarList = new ArrayList();
     private boolean check = false;
 
     /**
