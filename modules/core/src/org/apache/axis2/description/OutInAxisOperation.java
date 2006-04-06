@@ -223,7 +223,7 @@ class OutInAxisOperationClient implements OperationClient {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();
             transportOut = ClientUtils.inferOutTransport(cc
-                    .getAxisConfiguration(), toEPR ,mc);
+                    .getAxisConfiguration(), toEPR, mc);
         }
         mc.setTransportOut(transportOut);
 
@@ -266,30 +266,15 @@ class OutInAxisOperationClient implements OperationClient {
                 // Send the SOAP Message and receive a response
                 MessageContext response = send(mc);
                 // check for a fault and return the result
-                SOAPEnvelope resenvelope = response.getEnvelope();
-                if (resenvelope.getBody().hasFault()) {
-                    SOAPFault soapFault = resenvelope.getBody().getFault();
-                    Exception ex = soapFault.getException();
+                SOAPEnvelope resEnvelope = response.getEnvelope();
+                if (resEnvelope.getBody().hasFault()) {
+                    SOAPFault soapFault = resEnvelope.getBody().getFault();
                     if (options.isExceptionToBeThrownOnSOAPFault()) {
                         // does the SOAPFault has a detail element for Excpetion
-                        if (ex != null) {
-                            throw new AxisFault(ex);
-                        } else {
-                            // if detail element not present create a new
-                            // Exception from the detail
-                            String message = "";
-                            message = (message + "Code =" + soapFault.getCode() == null) ? ""
-                                    : (soapFault.getCode().getValue() == null) ? ""
-                                    : soapFault.getCode().getValue()
-                                    .getText();
-                            message = (message + "Reason ="
-                                    + soapFault.getReason() == null) ? ""
-                                    : (soapFault.getReason().getFirstSOAPText() == null) ? ""
-                                    : soapFault.getReason()
-                                    .getFirstSOAPText().getText();
 
-                            throw new AxisFault(message);
-                        }
+                        throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
+                                soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+
                     }
                 }
                 completed = true;

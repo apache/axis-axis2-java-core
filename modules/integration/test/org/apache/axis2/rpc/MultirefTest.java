@@ -295,7 +295,7 @@ public class MultirefTest extends TestCase {
 
             fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");
         } catch (AxisFault axisFault) {
-            String val = axisFault.getMessage();
+            String val = axisFault.getFaultDetailElement().toString();
             int index = val.indexOf("org.apache.axis2.AxisFault: Invalid reference :2");
             if (index < 0) {
                 fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");

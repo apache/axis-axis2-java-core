@@ -25,6 +25,7 @@ import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPConstants;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
@@ -55,14 +56,14 @@ import java.util.Map;
  *      a SOAP1.1 fault is created, spurious information can be discarded.
  *      Mapping
  *      <pre>
- *                                         SOAP1.2              SOAP1.1
- *                                         node                 faultactor
- *                                         reason(0).text       faultstring
- *                                         faultcode.value      faultcode
- *                                         faultcode.subcode    (discarded)
- *                                         detail               detail
- *                                         role                 (discarded)
- *                                         </pre>
+ *                                                   SOAP1.2              SOAP1.1
+ *                                                   node                 faultactor
+ *                                                   reason(0).text       faultstring
+ *                                                   faultcode.value      faultcode
+ *                                                   faultcode.subcode    (discarded)
+ *                                                   detail               detail
+ *                                                   role                 (discarded)
+ *                                                   </pre>
  */
 public class AxisFault extends RemoteException {
 
@@ -80,6 +81,10 @@ public class AxisFault extends RemoteException {
     private OMElement detail;
 
     private Map faultElements;
+
+    private String message;
+    private Throwable cause;
+
     /**
      * SOAP1.2: URI of faulting node. Null for unknown.
      * <p/>
@@ -129,10 +134,10 @@ public class AxisFault extends RemoteException {
      * @param soapFaultReason
      * @param soapFaultNode
      * @param soapFaultRole
-     * @param soap
      */
     public AxisFault(SOAPFaultCode soapFaultCode, SOAPFaultReason soapFaultReason,
                      SOAPFaultNode soapFaultNode, SOAPFaultRole soapFaultRole, SOAPFaultDetail soapFaultDetail) {
+
         if (faultElements == null) {
             // assuming that most of the times fault code, fault string and fault details are set
             faultElements = new HashMap(3);
@@ -142,6 +147,18 @@ public class AxisFault extends RemoteException {
         setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME, soapFaultNode);
         setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, soapFaultRole);
         setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
+
+        if (soapFaultReason != null) {
+            message = soapFaultReason.getFirstSOAPText().getText();
+        }
+
+        if (soapFaultDetail != null) {
+            OMElement exceptionElement = soapFaultDetail.getFirstChildWithName(
+                    new QName(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY));
+            if (exceptionElement != null && exceptionElement.getText() != null) {
+                cause = new Exception(exceptionElement.getText());
+            }
+        }
 
     }
 
@@ -311,6 +328,46 @@ public class AxisFault extends RemoteException {
     }
 
     /**
+     * @return SOAPFaultCode if, user has set a {@link SOAPFaultCode} element when constructing the
+     *         {@link #AxisFault(org.apache.axiom.soap.SOAPFaultCode, org.apache.axiom.soap.SOAPFaultReason, org.apache.axiom.soap.SOAPFaultNode, org.apache.axiom.soap.SOAPFaultRole, org.apache.axiom.soap.SOAPFaultDetail) AxisFault}
+     */
+    public SOAPFaultCode getFaultCodeElement() {
+        return (SOAPFaultCode) (faultElements != null ? faultElements.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME) : null);
+    }
+
+    /**
+     * @return SOAPFaultCode if, user has set a {@link SOAPFaultReason} element when constructing the
+     *         {@link #AxisFault(org.apache.axiom.soap.SOAPFaultCode, org.apache.axiom.soap.SOAPFaultReason, org.apache.axiom.soap.SOAPFaultNode, org.apache.axiom.soap.SOAPFaultRole, org.apache.axiom.soap.SOAPFaultDetail) AxisFault}
+     */
+    public SOAPFaultReason getFaultReasonElement() {
+        return (SOAPFaultReason) (faultElements != null ? faultElements.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME) : null);
+    }
+
+    /**
+     * @return SOAPFaultCode if, user has set a {@link SOAPFaultNode} element when constructing the
+     *         {@link #AxisFault(org.apache.axiom.soap.SOAPFaultCode, org.apache.axiom.soap.SOAPFaultReason, org.apache.axiom.soap.SOAPFaultNode, org.apache.axiom.soap.SOAPFaultRole, org.apache.axiom.soap.SOAPFaultDetail) AxisFault}
+     */
+    public SOAPFaultNode getFaultNodeElement() {
+        return (SOAPFaultNode) (faultElements != null ? faultElements.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME) : null);
+    }
+
+    /**
+     * @return SOAPFaultCode if, user has set a {@link SOAPFaultRole} element when constructing the
+     *         {@link #AxisFault(org.apache.axiom.soap.SOAPFaultCode, org.apache.axiom.soap.SOAPFaultReason, org.apache.axiom.soap.SOAPFaultNode, org.apache.axiom.soap.SOAPFaultRole, org.apache.axiom.soap.SOAPFaultDetail) AxisFault}
+     */
+    public SOAPFaultRole getFaultRoleElement() {
+        return (SOAPFaultRole) (faultElements != null ? faultElements.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME) : null);
+    }
+
+    /**
+     * @return SOAPFaultCode if, user has set a {@link SOAPFaultDetail} element when constructing the
+     *         {@link #AxisFault(org.apache.axiom.soap.SOAPFaultCode, org.apache.axiom.soap.SOAPFaultReason, org.apache.axiom.soap.SOAPFaultNode, org.apache.axiom.soap.SOAPFaultRole, org.apache.axiom.soap.SOAPFaultDetail) AxisFault}
+     */
+    public SOAPFaultDetail getFaultDetailElement() {
+        return (SOAPFaultDetail) (faultElements != null ? faultElements.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) : null);
+    }
+
+    /**
      * Get the faulting node uri.
      * SOAP1.2
      *
@@ -355,6 +412,14 @@ public class AxisFault extends RemoteException {
 
     public String getFaultRole() {
         return faultRole;
+    }
+
+    public String getMessage() {
+        return message != null ? message : super.getMessage();
+    }
+
+    public Throwable getCause() {
+        return cause != null ? cause : super.getCause();
     }
 
     class FaultReason {
@@ -403,4 +468,5 @@ public class AxisFault extends RemoteException {
             this.text = text;
         }
     }
+
 }

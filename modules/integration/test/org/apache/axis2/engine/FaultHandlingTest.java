@@ -41,6 +41,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class FaultHandlingTest extends TestCase implements TestConstants {
 
@@ -104,7 +105,6 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
     }
 
 
-
     public void testRefParamsWithFaultTo() throws AxisFault, XMLStreamException {
         SOAPEnvelope soapEnvelope = getSOAPEnvelopeWithRefParamsInFaultTo();
         SOAPEnvelope resposeEnvelope = getResponse(soapEnvelope);
@@ -162,6 +162,30 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.stop();
+    }
+
+    public void testExceptionInformationExtractionFromAxisFault() {
+        try {
+            ConfigurationContext configContext =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+            ServiceClient sender = new ServiceClient(configContext, null);
+
+            OMElement payload = getOMElement(FaultHandler.ERR_HANDLING_WITH_AXIS_FAULT);
+
+            // test with SOAP 1.2
+            Options options = new Options();
+            options.setTo(targetEPR);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+            options.setExceptionToBeThrownOnSOAPFault(true);
+            options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            sender.setOptions(options);
+
+           sender.sendReceive(payload).toString();
+        } catch (AxisFault axisFault) {
+            assertTrue(axisFault.getFaultCodeElement().toString().indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
+            assertTrue(axisFault.getFaultDetailElement().toString().indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);
+            assertTrue(axisFault.getFaultReasonElement().toString().indexOf(FaultHandler.FAULT_REASON) > -1);
+        }
     }
 
 }
