@@ -3,6 +3,7 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.databinding.types.Day;
 import org.apache.axis2.databinding.types.Duration;
 import org.apache.axis2.databinding.types.Entities;
@@ -39,7 +40,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.activation.DataHandler;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -216,6 +219,10 @@ public class ConverterUtil {
         return Base64.encode(bytes);
     }
 
+     public static String convertToString(javax.activation.DataHandler handler) {
+        return getStringFromDatahandler(handler);
+     }
+
     /* ################################################################################ */
     /* String to java type conversions
        These methods have a special signature structure
@@ -315,8 +322,13 @@ public class ConverterUtil {
         return new HexBinary(s);
     }
 
-    public static byte[] convertTobase64Binary(String s) throws Exception{
-        return Base64.decode(s);
+    public static javax.activation.DataHandler convertTobase64Binary(String s)
+            throws Exception{
+        // reusing the byteArrayDataSource from the Axiom classes
+        ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
+                s.getBytes()
+        );
+        return new DataHandler(byteArrayDataSource);
     }
 
     /**
@@ -702,4 +714,31 @@ public class ConverterUtil {
         }
     }
 
+    /**
+     * Converts the given datahandler to a string
+     * @return
+     * @throws XMLStreamException
+     */
+    public static String getStringFromDatahandler(DataHandler dataHandler){
+        try {
+            InputStream inStream;
+            inStream = dataHandler.getDataSource().getInputStream();
+            byte[] data;
+            StringBuffer text = new StringBuffer();
+            do {
+                data = new byte[1024];
+                int len;
+                while ((len = inStream.read(data)) > 0) {
+                    byte[] temp = new byte[len];
+                    System.arraycopy(data, 0, temp, 0, len);
+                    text.append(Base64.encode(temp));
+                }
+
+            } while (inStream.available() > 0);
+
+            return text.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

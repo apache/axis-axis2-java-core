@@ -1,5 +1,7 @@
 package org.apache.axis2.databinding.utils.reader;
 
+import org.apache.axis2.databinding.utils.Constants;
+
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.namespace.NamespaceContext;
 /*
@@ -18,7 +20,7 @@ import javax.xml.namespace.NamespaceContext;
  * limitations under the License.
  */
 
-public interface ADBXMLStreamReader extends XMLStreamReader {
+public interface ADBXMLStreamReader extends XMLStreamReader,Constants {
 
     // this will help to handle Text within the current element.
     // user should pass the element text to the property list as this

@@ -80,13 +80,14 @@ public class SchemaConstants {
     public static final QName XSD_NORMALIZEDSTRING = new QName(URI_DEFAULT_SCHEMA_XSD, "normalizedString");
     public static final QName XSD_TOKEN = new QName(URI_DEFAULT_SCHEMA_XSD, "token");
 
-    public static final Integer ATTRIBUTE_TYPE = new Integer(0);
-    public static final Integer ANY = new Integer(1);
-    public static final Integer ELEMENT_TYPE = new Integer(2);
-    public static final Integer ANY_ATTRIBUTE_TYPE = new Integer(3);
-    public static final Integer ARRAY_TYPE = new Integer(4);
-    public static final Integer ANY_TYPE = new Integer(5);
-    public static final Integer ANY_ARRAY_TYPE = new Integer(6);
+    //bit patterns for the types
+    public static final int ATTRIBUTE_TYPE = 0x01;
+    //public static final int ANY = 0x02;
+    public static final int ELEMENT_TYPE = 0x02;
+    //public static final int ANY_ATTRIBUTE_TYPE = 0x08;
+    public static final int ARRAY_TYPE = 0x04;
+    public static final int ANY_TYPE = 0x08;
+    public static final int BINARY_TYPE = 0x10;
 
 
     public static class SchemaPropertyNames{

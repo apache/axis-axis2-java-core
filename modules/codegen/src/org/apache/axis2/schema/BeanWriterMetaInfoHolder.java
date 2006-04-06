@@ -50,6 +50,7 @@ public class BeanWriterMetaInfoHolder {
 
 
 
+
     //the parent metainfo holder, useful in handling extensions and
     //restrictions
     protected BeanWriterMetaInfoHolder parent = null;
@@ -186,10 +187,10 @@ public class BeanWriterMetaInfoHolder {
      * @param javaClassName
      * @param type
      */
-    public void registerMapping(QName qName, QName schemaName, String javaClassName, Integer type) {
+    public void registerMapping(QName qName, QName schemaName, String javaClassName, int type) {
         this.elementToJavaClassMap.put(qName, javaClassName);
         this.elementToSchemaQNameMap.put(qName, schemaName);
-        this.specialTypeFlagMap.put(qName, type);
+        addtStatus(qName, type);
 
     }
 
@@ -220,9 +221,9 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getAttributeStatusForQName(QName qName) {
-        Integer attribState = (Integer) specialTypeFlagMap.get(qName);
-        return attribState != null && (attribState.equals(SchemaConstants.ATTRIBUTE_TYPE)
-                || attribState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE));
+
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),SchemaConstants.ATTRIBUTE_TYPE);
     }
 
     /**
@@ -232,8 +233,8 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getAnyStatusForQName(QName qName) {
-        Integer anyState = (Integer) specialTypeFlagMap.get(qName);
-        return anyState != null && anyState.equals(SchemaConstants.ANY);
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),SchemaConstants.ANY_TYPE);
     }
 
     /**
@@ -244,11 +245,21 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean getArrayStatusForQName(QName qName) {
         Integer state = (Integer) specialTypeFlagMap.get(qName);
-        return state != null && (
-                state.equals(SchemaConstants.ARRAY_TYPE) ||
-                state.equals(SchemaConstants.ANY_ARRAY_TYPE));
+        return state != null && getStatus(state.intValue(),
+                SchemaConstants.ARRAY_TYPE);
     }
 
+    /**
+     * Gets whether a given QName refers to an array.
+     *
+     * @param qName
+     * @return Returns boolean.
+     */
+    public boolean getBinaryStatusForQName(QName qName) {
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),
+                SchemaConstants.BINARY_TYPE);
+    }
     /**
      * Gets whether a given QName has the any attribute status.
      *
@@ -256,9 +267,8 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getAnyAttributeStatusForQName(QName qName) {
-        Integer anyState = (Integer) specialTypeFlagMap.get(qName);
-        return anyState != null &&
-                anyState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE);
+       return getArrayStatusForQName(qName) &&
+               getAnyStatusForQName(qName);
     }
 
     /**
@@ -391,7 +401,31 @@ public class BeanWriterMetaInfoHolder {
      */
     public void setAsParent(BeanWriterMetaInfoHolder metaInfo){
         parent = metaInfo;
+    }
+
+    /**
+     * Adds a another status to a particular Qname.
+     * A Qname can be associated with multiple status flags
+     * and they all will be preserved
+     * @param type
+     * @param mask
+     */
+
+    public void addtStatus(QName type,int mask){
+        Object obj = this.specialTypeFlagMap.get(type);
+        if (obj!=null){
+            int preValue = ((Integer)obj).intValue();
+            this.specialTypeFlagMap.put(type, new Integer((preValue | mask)));
+        }else{
+            this.specialTypeFlagMap.put(type, new Integer(mask));
+        }
+
+    }
 
 
+    private boolean getStatus(int storedStatus,int mask){
+        //when the mask is anded with the status then we should get
+        //the mask it self!
+        return (mask==(mask & storedStatus));
     }
 }

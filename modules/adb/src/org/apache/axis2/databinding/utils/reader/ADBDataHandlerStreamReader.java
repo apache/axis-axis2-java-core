@@ -1,9 +1,15 @@
 package org.apache.axis2.databinding.utils.reader;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.Location;
+import org.apache.axis2.databinding.utils.Constants;
+import org.apache.axis2.databinding.utils.ConverterUtil;
+import org.apache.axis2.util.Base64;
+
 import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.Location;
+import javax.activation.DataHandler;
+import java.io.InputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,8 +26,7 @@ import javax.xml.namespace.NamespaceContext;
  * limitations under the License.
  */
 
-public class NameValuePairStreamReader implements ADBXMLStreamReader {
-
+public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     private static final int START_ELEMENT_STATE = 0;
     private static final int TEXT_STATE = 1;
     private static final int END_ELEMENT_STATE = 2;
@@ -30,7 +35,7 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
             new ADBNamespaceContext();
 
     private QName name;
-    private String value;
+    private DataHandler value;
 
     private int state = START_ELEMENT_STATE;
     //initiate at the start element state
@@ -39,25 +44,32 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     //false by default
     private boolean nsDeclared = false;
 
-    public NameValuePairStreamReader(QName name, String value) {
+    public ADBDataHandlerStreamReader(QName name, DataHandler value) {
         this.name = name;
         this.value = value;
     }
 
-    public Object getProperty(String key) throws IllegalArgumentException {
-        //since optimization is a global property
-        //we've to implement it everywhere
-        if (OPTIMIZATION_ENABLED.equals(key)){
+    private String convertedText = null;
+
+    /**
+     * Return the right properties for the optimization
+     * @param propKey
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public Object getProperty(String propKey) throws IllegalArgumentException {
+        if (OPTIMIZATION_ENABLED.equals(propKey)){
             return Boolean.TRUE;
-        }else if (state==TEXT_STATE){
-            if (IS_BINARY.equals(key)){
-                return Boolean.FALSE;
-            }else{
-                return null;
-            }
-        }else{
-            return null;
         }
+        if (state==TEXT_STATE){
+            if (IS_BINARY.equals(propKey)){
+                return Boolean.TRUE;
+            }else if (DATA_HANDLER.equals(propKey)){
+                return value;
+            }
+        }
+        return null;
+
     }
 
     public int next() throws XMLStreamException {
@@ -86,7 +98,10 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
         if (state==START_ELEMENT){
             //move to the end state and return the value
             state = END_ELEMENT_STATE;
-            return value;
+            if (convertedText==null){
+                convertedText = ConverterUtil.getStringFromDatahandler(value);
+            }
+            return convertedText;
         }else{
             throw new XMLStreamException();
         }
@@ -194,7 +209,11 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
 
     public String getText() {
         if (state==TEXT_STATE){
-            return value;
+            if (convertedText==null){
+                convertedText =
+                        ConverterUtil.getStringFromDatahandler(value);
+            }
+            return convertedText;
         }else{
             throw new IllegalStateException();
         }
@@ -202,7 +221,11 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
 
     public char[] getTextCharacters() {
         if (state==TEXT_STATE){
-            return value.toCharArray();
+            if (convertedText==null){
+                convertedText =
+                        ConverterUtil.getStringFromDatahandler(value);
+            }
+            return convertedText.toCharArray();
         }else{
             throw new IllegalStateException();
         }
@@ -223,7 +246,11 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
 
     public int getTextLength() {
         if (state==TEXT_STATE){
-            return value.length();
+            if (convertedText==null){
+                convertedText =
+                        ConverterUtil.getStringFromDatahandler(value);
+            }
+            return convertedText.length();
         }else{
             throw new  IllegalStateException();
         }
@@ -352,5 +379,6 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
             nsDeclared = true;
         }
     }
+
 
 }

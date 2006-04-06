@@ -275,13 +275,13 @@
                             <!--we've opened a bracket for the nulls - fix it here-->
                             <xsl:if test="@nillable">}</xsl:if>
                         </xsl:when>
-                        <!-- handle non ADB arrays -->
-                        <xsl:when test="@array">
+                        <!-- handle non ADB arrays - Not any however -->
+                        <xsl:when test="@array and not(@any)">
                              <xsl:choose>
                                 <xsl:when test="@nillable">
                                     // this property is nillable
                                     if (<xsl:value-of select="$varName"/>!=null){
-                                    <!--this barcket needs to be closed!-->
+                                    <!--this bracket needs to be closed!-->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
@@ -298,9 +298,28 @@
                             <!--we've opened a bracket for the nulls - fix it here-->
                             <xsl:if test="@nillable">}</xsl:if>
                         </xsl:when>
-                        <!-- handle any-->
+
+                         <!-- handle non ADB arrays  - Any case  - any may not be
+                         nillable -->
+                        <xsl:when test="@array and @any">
+                            for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                              elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
+                              elementList.add(
+                              org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                            }
+                            <!--we've opened a bracket for the nulls - fix it here-->
+                        </xsl:when>
+                        <!-- handle any - non array case-->
                          <xsl:when test="@any">
                             elementList.add(org.apache.axis2.databinding.utils.Constants.OM_ELEMENT_KEY);
+                            elementList.add(<xsl:value-of select="$varName"/>);
+                        </xsl:when>
+                        <!-- handle binary - Since it is a Datahandler, we can just add it to the list
+                          and the ADB pullparser would handle it right-->
+                         <xsl:when test="@binary">
+                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
                             elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <!-- the usual case!!!!-->
@@ -327,10 +346,16 @@
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:choose>
-                        <xsl:when test="@anyAtt">
+                        <xsl:when test="@any and not(@array)">
                             attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
                             attribList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
+                         <xsl:when test="@any and @array">
+                             for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+                               attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
+                               attribList.add(<xsl:value-of select="$varName"/>[i]);
+                             }
+                         </xsl:when>
                         <xsl:otherwise>
                             attribList.add(
                             new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
@@ -377,7 +402,7 @@
                                       org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                                        org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                                        },
-                                       new Object[]{});
+                                       null);
                                 }
                             </xsl:when>
                             <xsl:otherwise> return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
@@ -1027,7 +1052,7 @@
 
 
      <!-- end of the template -->
-   
+
         </xsl:otherwise>
     </xsl:choose>
         }

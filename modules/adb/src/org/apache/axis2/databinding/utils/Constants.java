@@ -18,7 +18,7 @@ import org.apache.axis2.databinding.utils.reader.OMElementKey;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-                                              
+
 public interface Constants {
 
     static  String NIL="nil";
@@ -27,4 +27,8 @@ public interface Constants {
 
     static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
     static Object OM_ELEMENT_KEY = new OMElementKey();
+
+    static final String IS_BINARY = "Axiom.IsBinary";
+    static final String DATA_HANDLER = "Axiom.DataHandler";
+    static final String OPTIMIZATION_ENABLED = "Axiom.opt.enabled";
 }

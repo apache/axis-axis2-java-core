@@ -494,10 +494,9 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "any", "yes", property);
             }
 
-            if (metainf.getAnyAttributeStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "anyAtt", "yes", property);
+             if (metainf.getBinaryStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "binary", "yes", property);
             }
-
             //put the min occurs count irrespective of whether it's an array or not
             long minOccurs = metainf.getMinOccurs(name);
             XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);

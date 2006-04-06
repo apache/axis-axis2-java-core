@@ -625,7 +625,7 @@ public class SchemaCompiler {
      * @throws SchemaCompilationException
      */
     private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder, String fullyQualifiedClassName)
-    throws SchemaCompilationException {
+            throws SchemaCompilationException {
         writer.write(complexType, processedTypemap, metaInfHolder, fullyQualifiedClassName);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
     }
@@ -734,8 +734,8 @@ public class SchemaCompiler {
 
         }else if (content instanceof XmlSchemaComplexContentRestriction){
             //todo handle complex restriction here
-             throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Complex Content"));
+            throw new SchemaCompilationException(
+                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Complex Content"));
         }
     }
 
@@ -807,12 +807,12 @@ public class SchemaCompiler {
         content = simpleContent.getContent();
         if (content instanceof XmlSchemaSimpleContentExtension){
             //todo - handle simple type extension here
-             throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Extension"));
+            throw new SchemaCompilationException(
+                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Extension"));
         }else if (content instanceof XmlSchemaSimpleContentRestriction){
             //todo - Handle simple type restriction here
             throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Restriction"));
+                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Restriction"));
 
         }
     }
@@ -826,10 +826,14 @@ public class SchemaCompiler {
         //The best thing we can do here is to add a set of OMAttributes
         //since attributes do not have the notion of minoccurs/maxoccurs the
         //safest option here is to have an OMAttribute array
-        metainf.registerMapping(new QName(EXTRA_ATTRIBUTE_FIELD_NAME),
+        QName qName = new QName(EXTRA_ATTRIBUTE_FIELD_NAME);
+        metainf.registerMapping(qName,
                 null,
-                DEFAULT_ATTRIB_ARRAY_CLASS_NAME,
-                SchemaConstants.ANY_ATTRIBUTE_TYPE);
+                DEFAULT_ATTRIB_ARRAY_CLASS_NAME,//always generate an array of
+                                                //OMAttributes
+                SchemaConstants.ANY_TYPE);
+        metainf.addtStatus(qName, SchemaConstants.ATTRIBUTE_TYPE);
+        metainf.addtStatus(qName, SchemaConstants.ARRAY_TYPE);
 
     }
 
@@ -950,6 +954,7 @@ public class SchemaCompiler {
                             ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
                                     SchemaConstants.ARRAY_TYPE :
                                     SchemaConstants.ELEMENT_TYPE);
+
                 }else{ //probably this is referenced
                     referencedQName = elt.getRefName();
                     boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
@@ -980,6 +985,11 @@ public class SchemaCompiler {
                     metainfHolder.registerNillableQName(elt.getQName());
                 }
 
+                //get the binary state and add that to the status map
+                if (isBinary(elt)){
+                    metainfHolder.addtStatus(elt.getQName(),
+                           SchemaConstants.BINARY_TYPE);
+                }
                 // process the XMLSchemaAny
             }else if (child instanceof XmlSchemaAny){
                 XmlSchemaAny any = (XmlSchemaAny)child;
@@ -994,8 +1004,12 @@ public class SchemaCompiler {
                 metainfHolder.registerMapping(anyElementFieldName,
                         null,
                         isArray?DEFAULT_CLASS_ARRAY_NAME:DEFAULT_CLASS_NAME,
-                        isArray?SchemaConstants.ANY_ARRAY_TYPE:SchemaConstants.ANY);
-
+                        SchemaConstants.ANY_TYPE);
+                //if it's an array register an extra status flag with the system
+                if (isArray){
+                    metainfHolder.addtStatus(anyElementFieldName,
+                            SchemaConstants.ARRAY_TYPE);
+                }
                 metainfHolder.addMaxOccurs(anyElementFieldName,any.getMaxOccurs());
                 metainfHolder.addMinOccurs(anyElementFieldName,any.getMinOccurs());
 
@@ -1005,15 +1019,21 @@ public class SchemaCompiler {
                     metainfHolder.registerQNameIndex(anyElementFieldName,
                             startingItemNumberOrder + integer.intValue());
                 }
-
-
             }
-
-
         }
 
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
+    }
+
+    /**
+     * Checks whether a given element is a binary element
+     * @param elt
+     * @return
+     */
+    private boolean isBinary(XmlSchemaElement elt) {
+        return elt.getSchemaType()!=null &&
+                SchemaConstants.XSD_BASE64.equals(elt.getSchemaType().getQName());
     }
 
     /**
@@ -1045,12 +1065,12 @@ public class SchemaCompiler {
             }else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 //Todo - Handle unions here
                 throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Uniont"));
+                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Uniont"));
 
             }else if (content instanceof XmlSchemaSimpleTypeList){
                 //todo - Handle lists here
-                 throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type List"));
+                throw new SchemaCompilationException(
+                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type List"));
             }
 
         }

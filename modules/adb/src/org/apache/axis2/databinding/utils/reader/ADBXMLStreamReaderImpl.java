@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.activation.DataHandler;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,11 +131,31 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         populateNamespaceContext();
     }
 
-    public Object getProperty(String string) throws IllegalArgumentException {
+    /**
+     *
+     * @param key
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public Object getProperty(String key) throws IllegalArgumentException {
         if (state == START_ELEMENT_STATE || state == END_ELEMENT_STATE) {
+            if (OPTIMIZATION_ENABLED.equals(key)){
+                return Boolean.TRUE;
+            }else{
+                return null;
+            }
+        }else if (state==TEXT_STATE){
+            if (IS_BINARY.equals(key)){
+                return Boolean.FALSE;
+            }else{
+                return null;
+            }
+        }else if (state==DELEGATED_STATE){
+            return childReader.getProperty(key);
+        }else{
             return null;
         }
-        return childReader.getProperty(string);
+
     }
 
     public int next() throws XMLStreamException {
@@ -584,7 +605,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * check the validity of this implementation
-     *
      * @return
      */
     public boolean hasText() {
@@ -876,6 +896,16 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //if the value is null we delegate the work to a nullable
             // parser
             childReader = new NullXMLStreamReader(propertyQName);
+            childReader.addNamespaceContext(this.namespaceContext);
+            childReader.init();
+
+            //we've a special pullparser for a datahandler!
+        } else if (propertyValue instanceof DataHandler) {
+            childReader = new ADBDataHandlerStreamReader(propertyQName,
+                    (DataHandler)propertyValue);
+            childReader.addNamespaceContext(this.namespaceContext);
+            childReader.init();
+
         } else if (propertyValue instanceof String) {
             //strings are handled by the NameValuePairStreamReader
             childReader =
@@ -887,7 +917,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //string[] are handled by the  NameValueArrayStreamReader
             //if the array is empty - skip it
             if (((String[])propertyValue).length==0){
-                 //advance the index
+                //advance the index
                 currentPropertyIndex = currentPropertyIndex + 2;
                 return processProperties();
             }else{

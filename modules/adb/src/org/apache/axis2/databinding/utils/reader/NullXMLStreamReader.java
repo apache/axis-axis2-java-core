@@ -39,8 +39,14 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
         this.outerQName = outerQName;
     }
 
-    public Object getProperty(String string) throws IllegalArgumentException {
-        throw new UnsupportedOperationException();
+    public Object getProperty(String key) throws IllegalArgumentException {
+         //since optimization is a global property
+        //we've to implement it everywhere
+        if (OPTIMIZATION_ENABLED.equals(key)){
+               return Boolean.TRUE;
+           }else{
+               return null;
+           }
     }
 
     public int next() throws XMLStreamException {
