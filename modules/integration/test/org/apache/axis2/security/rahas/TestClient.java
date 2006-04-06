@@ -48,7 +48,7 @@ import junit.framework.TestCase;
 public abstract class TestClient extends TestCase {
     
     private static final String AXIS2_ECHO_STRING = "Axis2 Echo String";
-    protected int port = 5556; //UtilServer.TESTING_PORT;
+    protected int port = UtilServer.TESTING_PORT;
     private QName rahasModule = new QName("rahas");
     
     public TestClient(String name) {
