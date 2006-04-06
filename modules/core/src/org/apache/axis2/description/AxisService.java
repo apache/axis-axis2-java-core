@@ -137,6 +137,23 @@ public class AxisService extends AxisDescription {
     }
 
     /**
+     * get the SOAPVersion
+     * @return
+     */
+    public String getSoapNsUri(){
+        //todo - deepal implement me
+        return null;
+    }
+
+     /**
+     * get the endpoint
+     * @return
+     */
+    public String getEndpoint(){
+        //todo - deepal implement me
+        return null;
+    }
+    /**
      * Constructor AxisService.
      */
     public AxisService(String name) {
