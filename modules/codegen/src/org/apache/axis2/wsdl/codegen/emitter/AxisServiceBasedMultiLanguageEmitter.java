@@ -934,8 +934,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
                 String style = axisOperation.getStyle();
 
-                System.out.println("##############" + style);
-
                 addAttribute(doc, "style", style, methodElement);
                 addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                         methodElement);
