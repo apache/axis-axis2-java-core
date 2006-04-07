@@ -19,6 +19,9 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
@@ -45,6 +48,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -54,12 +58,14 @@ import java.util.Iterator;
 public class PolicyEvaluator implements CodeGenExtension {
 
 	CodeGenConfiguration configuration;
+    
+    AxisService axisService;
 
 //HashMap ns2modules = new HashMap();
 	
 	HashMap ns2Exts = new HashMap();
 
-	PolicyAttachmentUtil util;
+//	PolicyAttachmentUtil util;
 
 	Element rootElement;
 
@@ -68,7 +74,7 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 	public void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;
-		util = new PolicyAttachmentUtil(configuration.getWom());
+        this.axisService = configuration.getAxisService();
         
        // adding default PolicyExtensions
        ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization", new MTOMPolicyExtension());
@@ -80,14 +86,11 @@ public class PolicyEvaluator implements CodeGenExtension {
        
 		String repository = configuration.getRepositoryPath();
         
-		if (repository == null) {
-			return;
-		}
+		if (repository == null) {    return;    }
 
 
 		try {
             
-           
 			ConfigurationContext configurationCtx = ConfigurationContextFactory
 					.createConfigurationContextFromFileSystem(repository, null);
 			AxisConfiguration axisConfiguration = configurationCtx
@@ -124,87 +127,32 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 	public void engage() {
         
-        // TODO XSLTConstants.BASE_64_PROPERTY_KEY
-        
-        
-		WSDLDescription womDescription = configuration.getWom();
-		String serviceName = configuration.getServiceName();
-
 		Document document = getEmptyDocument();
 		Element rootElement = document.createElement("stubMethods");
-
-		WSDLService wsdlService = null;
-		WSDLInterface wsdlInterface = null;
-
-		if (serviceName != null) {
-			wsdlService = womDescription.getService(new QName(serviceName));
-		} else {
-			for (Iterator iterator = womDescription.getServices().values()
-					.iterator(); iterator.hasNext();) {
-				wsdlService = (WSDLService) iterator.next();
-				serviceName = wsdlService.getName().getLocalPart();
-				configuration.setServiceName(serviceName);
-				break;
-			}
-		}
-
-		if (wsdlService != null) {
-
-			String port = configuration.getPortName();
-			WSDLEndpoint wsdlEndpoint = null;
-
-			if (port == null) {
-				for (Iterator iterator = wsdlService.getEndpoints().values()
-						.iterator(); iterator.hasNext();) {
-					wsdlEndpoint = (WSDLEndpoint) iterator.next();
-					port = wsdlEndpoint.getName().getLocalPart();
-					configuration.setPortName(port);
-					break;
-
-				}
-			} else {
-				wsdlEndpoint = wsdlService.getEndpoint(new QName(port));
-			}
-			if (wsdlEndpoint == null) {
-				System.err.println("no wsdl:port found for the service");
-				return;
-			}
-
-			WSDLBinding wsdlBinding = wsdlEndpoint.getBinding();
-			wsdlInterface = wsdlBinding.getBoundInterface();
-
-			for (Iterator iterator = wsdlInterface.getOperations().values()
-					.iterator(); iterator.hasNext();) {
-				WSDLOperation wsdlOperation = (WSDLOperation) iterator.next();
-				Policy policy = util.getPolicyForOperation(wsdlEndpoint.getName(),
-						wsdlOperation.getName());
-
-				if (policy != null) {
-					processPolicies(document, rootElement, policy,
-							wsdlEndpoint, wsdlOperation);
-				}
-			}
-
-		}
-
-		for (Iterator iterator = womDescription.getWsdlInterfaces().values()
-				.iterator(); iterator.hasNext();) {
-			wsdlInterface = (WSDLInterface) iterator.next();
-			break;
-		}
-
-		if (wsdlInterface == null) {
-			System.err.println("cannot find a wsdl:Service or a wsdl:portType");
-			// TODO exception ?
-			return;
-		}
-
-		// TODO wsdl:portType processing..
-
+        
+        AxisOperation axisOperation;
+        QName opName;
+        PolicyInclude policyInclude;
+        Policy policy;
+        Iterator a = axisService.getOperations();
+        
+        for (Iterator iterator = axisService.getOperations(); iterator.hasNext(); ) {
+            axisOperation = (AxisOperation) iterator.next();
+            opName = axisOperation.getName();
+            
+            policyInclude = axisOperation.getPolicyInclude();
+            policy = policyInclude.getEffectivePolicy();
+            
+            if (policy != null) {
+            	processPolicies(document, rootElement, policy, opName);
+            }
+        }
+        
+        configuration.putProperty("stubMethods", rootElement);
 	}
 
 	private void processPolicies(Document document, Element rootElement,
-			Policy policy, WSDLEndpoint wsdlEndpoint, WSDLOperation operation) {
+			Policy policy, QName opName) {
         
 		if (!policy.isNormalized()) {
 			policy = (Policy) policy.normalize();
@@ -258,12 +206,9 @@ public class PolicyEvaluator implements CodeGenExtension {
 			AndCompositeAssertion nAND = (AndCompositeAssertion) map
 					.get(namespace);
 			nXOR.addTerm(nAND);
-
-            QName operationName = operation.getName();
-			policyExtension.addMethodsToStub(document, rootElement, operationName, nPolicy);
+            
+			policyExtension.addMethodsToStub(document, rootElement, opName, nPolicy);
 		}
-
-		configuration.putProperty("stubMethods", rootElement);
 	}
 
 	private Document getEmptyDocument() {
