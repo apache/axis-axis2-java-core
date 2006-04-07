@@ -364,4 +364,8 @@ class OutOnlyAxisOperationClient implements OperationClient {
         }
     }
 
+    public OperationContext getOperationContext() {
+        return oc;
+    }
+
 }

@@ -3,6 +3,7 @@ package org.apache.axis2.client;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 
 /**
  * An operation client is the way an advanced user interacts with Axis2. Actual
@@ -102,4 +103,10 @@ public interface OperationClient {
      * @throws AxisFault : throws AxisFault if something goes worng
      */
     public void complete(MessageContext msgCtxt) throws AxisFault;
+
+    /**
+     * To get the operation context of the operation cleint
+     * @return OperationContext
+     */
+    public OperationContext getOperationContext();
 }

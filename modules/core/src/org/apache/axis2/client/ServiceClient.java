@@ -618,4 +618,12 @@ public class ServiceClient {
             return msgctx;
         }
     }
+
+    /**
+     * To get the service context
+     * @return ServiceContext
+     */
+    public ServiceContext getServiceContext() {
+        return serviceContext;
+    }
 }

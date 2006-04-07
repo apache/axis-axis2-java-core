@@ -372,6 +372,10 @@ class OutInAxisOperationClient implements OperationClient {
         msgCtxt.getConfigurationContext().getListenerManager().stop();
     }
 
+    public OperationContext getOperationContext() {
+        return oc;
+    }
+
     /**
      * This class is the workhorse for a non-blocking invocation that uses a two
      * way transport.

@@ -6,10 +6,10 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.policy.util.DOMPolicyReader;
-import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
+import org.apache.ws.policy.util.DOMPolicyReader;
+import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
@@ -18,24 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Fault;
-import javax.wsdl.Import;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -52,14 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -267,7 +243,7 @@ public class WSDL2AxisServiceBuilder {
             throws AxisFault {
         if (binding != null) {
             copyExtensibleElements(binding.getExtensibilityElements(), wsdl4jDefinition,
-                    axisService,BINDING);
+                    axisService, BINDING);
             PortType portType = binding.getPortType();
             processPortType(portType, dif);
 
@@ -376,36 +352,70 @@ public class WSDL2AxisServiceBuilder {
         QName wrappedOutputName = new QName(wrappedInputName.getNamespaceURI(),
                 wrappedInputName.getLocalPart() + "Response", wrappedInputName
                 .getPrefix());
-        if (null != wsdl4jInputMessage) {
-            AxisMessage inMessage = axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            Message message = wsdl4jInputMessage.getMessage();
-            if (null != message) {
-                inMessage.setElementQName(generateReferenceQname(
-                        wrappedInputName, message, findWrapppable(message)));
-                inMessage.setName(message.getQName().getLocalPart());
-                copyExtensibleElements(message.getExtensibilityElements(), dif,
-                        inMessage, PORT_TYPE_OPERATION_INPUT);
+        if (isServerSide) {
+            if (null != wsdl4jInputMessage) {
+                AxisMessage inMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                Message message = wsdl4jInputMessage.getMessage();
+                if (null != message) {
+                    inMessage.setElementQName(generateReferenceQname(
+                            wrappedInputName, message, findWrapppable(message)));
+                    inMessage.setName(message.getQName().getLocalPart());
+                    copyExtensibleElements(message.getExtensibilityElements(), dif,
+                            inMessage, PORT_TYPE_OPERATION_INPUT);
 
+                }
+            }
+            //Create an output message and add
+            Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
+            if (null != wsdl4jOutputMessage) {
+                AxisMessage outMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                Message message = wsdl4jOutputMessage.getMessage();
+                if (null != message) {
+                    outMessage.setElementQName(generateReferenceQname(
+                            wrappedOutputName, message, findWrapppable(message)));
+                    outMessage.setName(message.getQName().getLocalPart());
+                    copyExtensibleElements(message.getExtensibilityElements(), dif,
+                            outMessage, PORT_TYPE_OPERATION_OUTPUT);
+
+                    // wsdl:portType -> wsdl:operation -> wsdl:output
+                    populatePolicyInclude(PolicyInclude.OUTPUT_POLICY, outMessage);
+                }
+            }
+        } else {
+            if (null != wsdl4jInputMessage) {
+                AxisMessage inMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                Message message = wsdl4jInputMessage.getMessage();
+                if (null != message) {
+                    inMessage.setElementQName(generateReferenceQname(
+                            wrappedInputName, message, findWrapppable(message)));
+                    inMessage.setName(message.getQName().getLocalPart());
+                    copyExtensibleElements(message.getExtensibilityElements(), dif,
+                            inMessage, PORT_TYPE_OPERATION_OUTPUT);
+
+                }
+            }
+            //Create an output message and add
+            Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
+            if (null != wsdl4jOutputMessage) {
+                AxisMessage outMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                Message message = wsdl4jOutputMessage.getMessage();
+                if (null != message) {
+                    outMessage.setElementQName(generateReferenceQname(
+                            wrappedOutputName, message, findWrapppable(message)));
+                    outMessage.setName(message.getQName().getLocalPart());
+                    copyExtensibleElements(message.getExtensibilityElements(), dif,
+                            outMessage, PORT_TYPE_OPERATION_INPUT);
+
+                    // wsdl:portType -> wsdl:operation -> wsdl:output
+                    populatePolicyInclude(PolicyInclude.OUTPUT_POLICY, outMessage);
+                }
             }
         }
-        //Create an output message and add
-        Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
-        if (null != wsdl4jOutputMessage) {
-            AxisMessage outMessage = axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            Message message = wsdl4jOutputMessage.getMessage();
-            if (null != message) {
-                outMessage.setElementQName(generateReferenceQname(
-                        wrappedOutputName, message, findWrapppable(message)));
-                outMessage.setName(message.getQName().getLocalPart());
-                copyExtensibleElements(message.getExtensibilityElements(), dif,
-                        outMessage, PORT_TYPE_OPERATION_OUTPUT);
 
-                // wsdl:portType -> wsdl:operation -> wsdl:output
-                populatePolicyInclude(PolicyInclude.OUTPUT_POLICY, outMessage);
-            }
-        }
 
         Map faults = wsdl4jOperation.getFaults();
         Iterator faultKeyIterator = faults.keySet().iterator();

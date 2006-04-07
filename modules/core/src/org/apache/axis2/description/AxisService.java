@@ -44,9 +44,8 @@ import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -978,86 +977,12 @@ public class AxisService extends AxisDescription {
                                                           QName wsdlServiceName,
                                                           String portName,
                                                           Options options) throws AxisFault {
-        AxisService axisService;
-        axisService = new AxisService();
-
-        Service wsdlService;
-        if (wsdlServiceName != null) {
-            wsdlService = wsdlDefinition.getService(wsdlServiceName);
-            if (wsdlService == null) {
-                throw new AxisFault(
-                        Messages.getMessage("servicenotfoundinwsdl",
-                                wsdlServiceName.getLocalPart()));
-            }
-
-        } else {
-            Collection col = wsdlDefinition.getServices().values();
-            if (col != null && col.size() > 0) {
-                wsdlService = (Service) col.iterator().next();
-                if (wsdlService == null) {
-                    throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
-                }
-            } else {
-                throw new AxisFault(Messages.getMessage("noservicefoundinwsdl"));
-            }
-        }
-        axisService.setName(wsdlService.getQName().getLocalPart());
-
-        Port port;
-        if (portName != null) {
-            port = wsdlService.getPort(portName);
-            if (port == null) {
-                throw new AxisFault(Messages.getMessage("noporttypefoundfor", portName));
-            }
-        } else {
-            Collection ports = wsdlService.getPorts().values();
-            if (ports != null && ports.size() > 0) {
-                port = (Port) ports.iterator().next();
-                if (port == null) {
-                    throw new AxisFault(Messages.getMessage("noporttypefound"));
-                }
-            } else {
-                throw new AxisFault(Messages.getMessage("noporttypefound"));
-            }
-        }
-        List exteElemts = port.getExtensibilityElements();
-        if (exteElemts != null) {
-            Iterator extItr = exteElemts.iterator();
-            while (extItr.hasNext()) {
-                Object extensibilityElement = extItr.next();
-                if (extensibilityElement instanceof SOAPAddress) {
-                    SOAPAddress address = (SOAPAddress) extensibilityElement;
-                    options.setTo(new EndpointReference(address.getLocationURI()));
-                }
-            }
-        }
-
-        Binding binding = port.getBinding();
-        Iterator bindingOperations = binding.getBindingOperations().iterator();
-        while (bindingOperations.hasNext()) {
-            BindingOperation bindingOperation = (BindingOperation) bindingOperations.next();
-            AxisOperation axisOperation;
-            if (bindingOperation.getBindingInput() == null &&
-                    bindingOperation.getBindingOutput() != null) {
-                axisOperation = new OutOnlyAxisOperation();
-            } else {
-                axisOperation = new OutInAxisOperation();
-            }
-            axisOperation.setName(new QName(bindingOperation.getName()));
-            List list = bindingOperation.getExtensibilityElements();
-            if (list != null) {
-                Iterator exteElements = list.iterator();
-                while (exteElements.hasNext()) {
-                    Object extensibilityElement = exteElements.next();
-                    if (extensibilityElement instanceof SOAPOperation) {
-                        SOAPOperation soapOp = (SOAPOperation) extensibilityElement;
-                        axisOperation.addParameter(new Parameter(AxisOperation.SOAP_ACTION,
-                                soapOp.getSoapActionURI()));
-                    }
-                }
-            }
-            axisService.addOperation(axisOperation);
-        }
+        WSDL2AxisServiceBuilder serviceBuilder =
+                new WSDL2AxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
+        serviceBuilder.setServerSide(false);
+        AxisService axisService = serviceBuilder.populateService();
+        options.setTo(new EndpointReference(axisService.getEndpoint()));
+        options.setSoapVersionURI(axisService.getSoapNsUri());
         return axisService;
     }
 
