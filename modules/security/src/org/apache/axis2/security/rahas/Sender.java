@@ -105,12 +105,12 @@ public class Sender implements Handler {
     private void constructMessage(RahasConfiguration config) throws Exception {
         
         Crypto crypto = Util.getCryptoInstace(config);
-        
+
         Document doc = config.getDocument();
-        
+
         WSSecHeader secHeader = new WSSecHeader();
         secHeader.insertSecurityHeader(doc);
-        
+
         Token tempToken = config.getTokenStore().getToken(
                 config.getContextIdentifier());
         byte[] tempSecret = tempToken.getSecret();

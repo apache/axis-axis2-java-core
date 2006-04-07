@@ -98,6 +98,7 @@ public class WSDL2AxisServiceBuilder {
     private QName serviceName;
 
     private String portName;
+    
 
     private boolean isServreSideService = true;
     private static final String BINDING = "Binding";

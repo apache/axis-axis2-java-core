@@ -19,11 +19,13 @@ package org.apache.axis2.deployment.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 
@@ -92,21 +94,23 @@ public class PhasesInfo {
         return phase;
     }
 
-    public ArrayList getGlobalInflow() {
+    public ArrayList getGlobalInflow() throws DeploymentException {
         ArrayList globalphase = new ArrayList();
-
+        boolean foundDispathcPase = false;
         for (int i = 0; i < INPhases.size(); i++) {
             Phase phase = (Phase) INPhases.get(i);
             String phaseName = phase.getPhaseName();
-
-            if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName)
-                    || PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName)
-                    || PhaseMetadata.PHASE_DISPATCH.equals(phaseName)
-                    || PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
+            if (!foundDispathcPase) {
+                if (PhaseMetadata.PHASE_DISPATCH.equals(phaseName)) {
+                    foundDispathcPase = true;
+                }
                 globalphase.add(phase);
             }
         }
-
+        if (!foundDispathcPase) {
+            throw new DeploymentException(
+                    Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
+        }
         return globalphase;
     }
 
@@ -169,20 +173,17 @@ public class PhasesInfo {
 
     public ArrayList getOperationInPhases() throws DeploymentException {
         ArrayList operationINPhases = new ArrayList();
-
+        boolean foundDispathPhase = false;
         for (int i = 0; i < INPhases.size(); i++) {
             Phase phase = (Phase) INPhases.get(i);
             String phaseName = phase.getPhaseName();
-
-            if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName)
-                    || PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName)
-                    || PhaseMetadata.PHASE_DISPATCH.equals(phaseName)
-                    || PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
-            } else {
+            if (foundDispathPhase) {
                 operationINPhases.add(copyPhase(phase));
             }
+            if (PhaseMetadata.PHASE_DISPATCH.equals(phaseName)) {
+                foundDispathPhase = true;
+            }
         }
-
         return operationINPhases;
     }
 

@@ -30,9 +30,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLConstants;
@@ -785,23 +783,6 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws DeploymentException
      */
     private void validateSystemPredefinedPhases() throws DeploymentException {
-        ArrayList inPhases = phasesinfo.getINPhases();
-
-        try {
-            String phase1 = ((Phase) inPhases.get(0)).getPhaseName();
-            String phases = ((Phase) inPhases.get(1)).getPhaseName();
-            String phase3 = ((Phase) inPhases.get(2)).getPhaseName();
-
-            if (!(phase1.equals(PhaseMetadata.PHASE_TRANSPORTIN)
-                    && phases.equals(PhaseMetadata.PHASE_PRE_DISPATCH)
-                    && phase3.equals(PhaseMetadata.PHASE_DISPATCH))) {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
-            }
-        } catch (Exception e) {
-            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
-        }
-
         axisConfig.setInPhasesUptoAndIncludingPostDispatch(phasesinfo.getGlobalInflow());
         axisConfig.setInFaultPhases(phasesinfo.getIN_FaultPhases());
         axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());

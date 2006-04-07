@@ -54,7 +54,7 @@ public class ModuleDisEngagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = er.getGlobalInFlow();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(1);
+        predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = er.getService(serviceName);
@@ -79,7 +79,7 @@ public class ModuleDisEngagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = er.getGlobalInFlow();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(1);
+        predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = er.getService(serviceName);
@@ -113,7 +113,7 @@ public class ModuleDisEngagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = er.getGlobalInFlow();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(1);
+        predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = er.getService(serviceName);
@@ -138,7 +138,7 @@ public class ModuleDisEngagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = er.getGlobalInFlow();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(1);
+        predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = er.getService(serviceName);
@@ -163,7 +163,7 @@ public class ModuleDisEngagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = er.getGlobalInFlow();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(1);
+        predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = er.getService(serviceName);
@@ -188,7 +188,7 @@ public class ModuleDisEngagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = er.getGlobalInFlow();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(1);
+        predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = er.getService(serviceName);

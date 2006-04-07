@@ -2,7 +2,7 @@
 	    <Description>RAHAS - Implementation of WS-SecureConversation specification</Description>
     <inflow>
         <handler name="inflowHandler" class="org.apache.axis2.security.rahas.Receiver">
-            <order phase="Dispatch" after="SOAPActionBasedDispatcher"/>
+             <order phase="Security" phaseFirst="true"/>
         </handler>
     </inflow>
 

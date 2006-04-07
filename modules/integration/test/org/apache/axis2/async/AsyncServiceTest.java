@@ -125,7 +125,7 @@ public class AsyncServiceTest extends TestCase implements TestConstants {
             while (!finish) {
                 Thread.sleep(1000);
                 index++;
-                if (index > 42) {
+                if (index > 45) {
                     throw new AxisFault(
                             "Server was shutdown as the async response take too long to complete");
                 }

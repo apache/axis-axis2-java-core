@@ -112,19 +112,19 @@
     <!-- ================================================= -->
     <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
-        <phase name="TransportIn"/>
-        <phase name="PreDispatch"/>
-        <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
+         <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-
             <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-
+        </phase>
+        <phase name="Security"/>
+        <phase name="PreDispatch"/>
+        <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
@@ -183,7 +183,7 @@
     </phaseOrder>
     <phaseOrder type="Outfaultflow">
         <!--      user can add his own phases to this area  -->
-        <phase name="OperationOutPhase"/>
+        <phase name="OperationOutFaultPhase"/>
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>

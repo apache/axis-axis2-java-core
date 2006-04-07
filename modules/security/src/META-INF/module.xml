@@ -2,7 +2,7 @@
 	    <Description>This module provides the WS-Security functionalities for Axis2, based on Apache WSS4J and Apache XML-Security implementations</Description>
     <inflow>
         <handler name="SecurityInHandler" class="org.apache.axis2.security.WSDoAllReceiver">
-            <order phase="Dispatch" after="SOAPActionBasedDispatcher"/>
+            <order phase="Security" phaseFirst="true"/>
         </handler>
     </inflow>
 

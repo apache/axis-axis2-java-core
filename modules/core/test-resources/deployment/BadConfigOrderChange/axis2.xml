@@ -11,7 +11,7 @@
 
     <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
-        <phase name="Dispatch"/>
+        
         <phase name="PostDispatch"/>
         <phase name="TransportIn"/>
         <phase name="PreDispatch"/>
