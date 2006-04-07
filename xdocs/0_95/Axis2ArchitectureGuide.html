@@ -11,7 +11,7 @@
 <body lang="en-US" dir="ltr">
 <h1 align="center">Axis2 Architecture Guide</h1>
 
-<p><i>Version 0.94</i></p>
+<p><i>Version 0.95</i></p>
 <i>Feedback: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
 
@@ -414,7 +414,7 @@ happen either in the server or in the Client. </p>
   <li>Dispatch Phase - The Dispatchers run in this phase and find the Service
     if the service is not found already. <br>
     The post condition of the dispatch phase work as follows; That checks
-    weather the service and operation are found or not. If the service or
+    whether the service and operation are found or not. If the service or
     operation has not been found by this point the execution will halt and
     send a "service not found error".</li>
   <li>User Defined Phases - Users are allowed to engage their custom handlers
@@ -507,8 +507,8 @@ be available once the system is restarted.</p>
 
 <p>The Deployment Model provides a concrete mechanism to configure Axis2.
 This model has three entities that provide the configuration.</p>
-
-<h3><a name="xmlfile">The <em>axis2.xml</em> file</a></h3>
+<a name="xmlfile"></a>
+<h3>The axis2.xml file</h3>
 
 <p>This file holds the global configuration for the client and server, and
 provide following information:</p>
