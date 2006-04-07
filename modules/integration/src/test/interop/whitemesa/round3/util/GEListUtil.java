@@ -44,10 +44,10 @@ public class GEListUtil implements SunClientUtil {
 
         OMElement value00 = omfactory.createOMElement("varInt", "", null);
         value00.addAttribute("xsi:type", "xsd:int", null);
-        value00.addChild(omfactory.createText("255"));
+        value00.addChild(omfactory.createOMText("255"));
         OMElement value01 = omfactory.createOMElement("varString", "", null);
         value01.addAttribute("xsi:type", "xsd:string", null);
-        value01.addChild(omfactory.createText("Axis2"));
+        value01.addChild(omfactory.createOMText("Axis2"));
 //        OMElement value02 = omfactory.createOMElement("child", "", null);
 //        value02.addAttribute("href", "#ID1", null);
 

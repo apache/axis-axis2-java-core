@@ -42,7 +42,7 @@ public class GroupcFloatArrayUtil implements SunClientUtil {
         OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns");
         SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
         block1.addAttribute("xsi:type", "xsd:string", null);
-        block1.addChild(omfactory.createText("string"));
+        block1.addChild(omfactory.createOMText("string"));
         // header.addChild(headerChild);
         header.addChild(block1);
 
@@ -51,15 +51,15 @@ public class GroupcFloatArrayUtil implements SunClientUtil {
 
         OMElement h2Val1 = omfactory.createOMElement("varString", null);
         h2Val1.addAttribute("xsi:type", "xsd:string", null);
-        h2Val1.addChild(omfactory.createText("string"));
+        h2Val1.addChild(omfactory.createOMText("string"));
 
         OMElement h2Val2 = omfactory.createOMElement("varInt", null);
         h2Val2.addAttribute("xsi:type", "xsd:int", null);
-        h2Val2.addChild(omfactory.createText("150"));
+        h2Val2.addChild(omfactory.createOMText("150"));
 
         OMElement h2Val3 = omfactory.createOMElement("varFloat", null);
         h2Val3.addAttribute("xsi:type", "xsd:float", null);
-        h2Val3.addChild(omfactory.createText("456.321"));
+        h2Val3.addChild(omfactory.createOMText("456.321"));
 
         block2.addChild(h2Val1);
         block2.addChild(h2Val2);
@@ -76,13 +76,13 @@ public class GroupcFloatArrayUtil implements SunClientUtil {
 
         OMElement value0 = omfactory.createOMElement("varString", "", null);
         value0.addAttribute("xsi:type", "xsd:float", null);
-        value0.addChild(omfactory.createText("45.76876"));
+        value0.addChild(omfactory.createOMText("45.76876"));
         OMElement value1 = omfactory.createOMElement("varInt", "", null);
         value1.addAttribute("xsi:type", "xsd:float", null);
-        value1.addChild(omfactory.createText("43.454"));
+        value1.addChild(omfactory.createOMText("43.454"));
         OMElement value2 = omfactory.createOMElement("varFloat", "", null);
         value2.addAttribute("xsi:type", "xsd:float", null);
-        value2.addChild(omfactory.createText("2523.542"));
+        value2.addChild(omfactory.createOMText("2523.542"));
 
         part.addChild(value0);
         part.addChild(value1);

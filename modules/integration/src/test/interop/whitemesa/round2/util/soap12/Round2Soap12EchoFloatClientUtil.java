@@ -40,7 +40,7 @@ public class Round2Soap12EchoFloatClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputFloat", "", null);
         part.addAttribute("xsi:type", "xsd:float", null);
-        part.addChild(omfactory.createText("50.25"));
+        part.addChild(omfactory.createOMText("50.25"));
 
         operation.addChild(part);
         return reqEnv;

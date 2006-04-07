@@ -41,7 +41,7 @@ public class Round1StringUtil implements SunClientUtil {
         OMElement value = omFactory.createOMElement("inputString", "http://soapinterop.org/", null);
         value.declareNamespace(typeNs);
         value.addAttribute("type", "xsd:string", typeNs);
-        value.addChild(omFactory.createText("Lanka Software Foundation"));
+        value.addChild(omFactory.createOMText("Lanka Software Foundation"));
         method.addChild(value);
 
         return reqEnv;

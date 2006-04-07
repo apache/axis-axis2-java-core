@@ -87,25 +87,25 @@ public class ClientUtil {
 
 
         value1 = omFactory.createOMElement("SubscriptionId", nulNS);
-        value1.addChild(omFactory.createText(AsynchronousClient.amazonkey));
+        value1.addChild(omFactory.createOMText(AsynchronousClient.amazonkey));
         //this is a valid sample key :- "0Y6WJGPB6TW8AVAHGFR2"));
 
         value2 = omFactory.createOMElement("Request", nulNS);
 
         subValue1 = omFactory.createOMElement("ResponseGroup", nulNS);
-        subValue1.addChild(omFactory.createText("Web"));
+        subValue1.addChild(omFactory.createOMText("Web"));
 
         subValue2 = omFactory.createOMElement("Query", nulNS);
-        subValue2.addChild(omFactory.createText(AsynchronousClient.search));
+        subValue2.addChild(omFactory.createOMText(AsynchronousClient.search));
 
         subValue3 = omFactory.createOMElement("Count", nulNS);
-        subValue3.addChild(omFactory.createText(AsynchronousClient.maxResults));
+        subValue3.addChild(omFactory.createOMText(AsynchronousClient.maxResults));
 
         subValue4 = omFactory.createOMElement("IgnoreWords", nulNS);
-        subValue4.addChild(omFactory.createText("90"));
+        subValue4.addChild(omFactory.createOMText("90"));
 
         subValue5 = omFactory.createOMElement("AdultFilter", nulNS);
-        subValue5.addChild(omFactory.createText("yes"));
+        subValue5.addChild(omFactory.createOMText("yes"));
 
         value2.addChild(subValue5);
         value2.addChild(subValue4);

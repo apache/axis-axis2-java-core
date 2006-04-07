@@ -42,7 +42,7 @@ public class GDImport1EchoStringUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("x", "", null);
         part.addAttribute("xsi:type", "xsd:string", null);
-        part.addChild(omfactory.createText("strss fdfing1"));
+        part.addChild(omfactory.createOMText("strss fdfing1"));
 
         operation.addChild(part);
         return reqEnv;

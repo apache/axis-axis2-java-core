@@ -40,7 +40,7 @@ public class Round2Soap12EchoBase64ClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputBase64", "", null);
         part.addAttribute("xsi:type", "xsd:base64Binary", null);
-        part.addChild(omfactory.createText("UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi"));
+        part.addChild(omfactory.createOMText("UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi"));
 
         operation.addChild(part);
         return reqEnv;

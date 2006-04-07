@@ -123,7 +123,7 @@ public class ClientUtil {
                                           String type, String text) {
         OMElement part = factory.createOMElement(elementName, ns);
         part.addAttribute("xsi:type", type, null);
-        part.addChild(factory.createText(text));
+        part.addChild(factory.createOMText(text));
         return part;
     }
 }

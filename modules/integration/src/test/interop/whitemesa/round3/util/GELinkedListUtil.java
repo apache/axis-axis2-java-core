@@ -49,10 +49,10 @@ public class GELinkedListUtil implements SunClientUtil {
 
         OMElement value00 = omfactory.createOMElement("varInt", "", null);
         value00.addAttribute("xsi:type", "xsd:int", null);
-        value00.addChild(omfactory.createText("255"));
+        value00.addChild(omfactory.createOMText("255"));
         OMElement value01 = omfactory.createOMElement("varString", "", null);
         value01.addAttribute("xsi:type", "xsd:string", null);
-        value01.addChild(omfactory.createText("Axis2"));
+        value01.addChild(omfactory.createOMText("Axis2"));
         OMElement value02 = omfactory.createOMElement("child", "", null);
         value02.addAttribute("href", "#ID1", null);
 
@@ -66,10 +66,10 @@ public class GELinkedListUtil implements SunClientUtil {
 
         OMElement value10 = omfactory.createOMElement("varInt", "", null);
         value10.addAttribute("xsi:type", "xsd:int", null);
-        value10.addChild(omfactory.createText("21"));
+        value10.addChild(omfactory.createOMText("21"));
         OMElement value11 = omfactory.createOMElement("varString", "", null);
         value11.addAttribute("xsi:type", "xsd:string", null);
-        value11.addChild(omfactory.createText("LSF"));
+        value11.addChild(omfactory.createOMText("LSF"));
         OMElement value12 = omfactory.createOMElement("child", "", null);
         value12.addAttribute("xsi:type", "xsd:anyType", null);
         value12.addAttribute(" xsi:nil", "1", null);

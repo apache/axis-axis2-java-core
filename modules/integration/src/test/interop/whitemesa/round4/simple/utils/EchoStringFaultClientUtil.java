@@ -42,7 +42,7 @@ public class EchoStringFaultClientUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("param", null);
         part.declareNamespace(typeNs);
         part.addAttribute("type", "xsd:string", typeNs);
-        part.addChild(omfactory.createText("String"));
+        part.addChild(omfactory.createOMText("String"));
 
         operation.addChild(part);
 

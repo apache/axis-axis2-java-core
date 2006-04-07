@@ -50,19 +50,19 @@ public class GroupbEcho2DStringArrayUtil implements SunClientUtil {
         OMElement value0 = omfactory.createOMElement("varString", null);
         value0.declareNamespace(typeNs);
         value0.addAttribute("type", "xsd:string", typeNs);
-        value0.addChild(omfactory.createText("strss fdfing1"));
+        value0.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value1 = omfactory.createOMElement("varString", null);
         value1.declareNamespace(typeNs);
         value1.addAttribute("type", "xsd:string", typeNs);
-        value1.addChild(omfactory.createText("sdfsdf25"));
+        value1.addChild(omfactory.createOMText("sdfsdf25"));
         OMElement value2 = omfactory.createOMElement("varString", null);
         value2.declareNamespace(typeNs);
         value2.addAttribute("type", "xsd:string", typeNs);
-        value2.addChild(omfactory.createText("25dsasd dfasdas23"));
+        value2.addChild(omfactory.createOMText("25dsasd dfasdas23"));
         OMElement value3 = omfactory.createOMElement("varString", null);
         value3.declareNamespace(typeNs);
         value3.addAttribute("type", "xsd:string", typeNs);
-        value3.addChild(omfactory.createText("25dsasd dfasdas23"));
+        value3.addChild(omfactory.createOMText("25dsasd dfasdas23"));
 
         part.addChild(value0);
         part.addChild(value1);

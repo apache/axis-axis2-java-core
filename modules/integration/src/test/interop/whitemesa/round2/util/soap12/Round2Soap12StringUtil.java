@@ -41,7 +41,7 @@ public class Round2Soap12StringUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputString", "", null);
         part.addAttribute("xsi:type", "xsd:string", null);
-        part.addChild(omfactory.createText("String Argument"));
+        part.addChild(omfactory.createOMText("String Argument"));
 
         operation.addChild(part);
         return reqEnv;

@@ -50,15 +50,15 @@ public class Round2EchoStringArrayClientUtil implements SunClientUtil {
         OMElement value0 = omfactory.createOMElement("varString", null);
         value0.declareNamespace(typeNs);
         value0.addAttribute("xsi:type", "xsd:string", null);
-        value0.addChild(omfactory.createText("String Value1"));
+        value0.addChild(omfactory.createOMText("String Value1"));
         OMElement value1 = omfactory.createOMElement("varString", null);
         value1.declareNamespace(typeNs);
         value1.addAttribute("xsi:type", "xsd:string", null);
-        value1.addChild(omfactory.createText("String Value2"));
+        value1.addChild(omfactory.createOMText("String Value2"));
         OMElement value2 = omfactory.createOMElement("varString", null);
         value2.declareNamespace(typeNs);
         value2.addAttribute("xsi:type", "xsd:string", null);
-        value2.addChild(omfactory.createText("String Value3"));
+        value2.addChild(omfactory.createOMText("String Value3"));
 
         part.addChild(value0);
         part.addChild(value1);

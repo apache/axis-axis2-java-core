@@ -45,7 +45,7 @@ public class Round1FloatUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("inputFloat", null);
         part.declareNamespace(typeNs);
         part.addAttribute("type", "xsd:float", typeNs);
-        part.addChild(omfactory.createText("50.25"));
+        part.addChild(omfactory.createOMText("50.25"));
 
         operation.addChild(part);
         return reqEnv;

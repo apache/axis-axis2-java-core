@@ -44,29 +44,29 @@ public class GroupbSoap12EchoNestedStructUtil implements SunClientUtil {
 
         OMElement value0 = omfactory.createOMElement("varString", "", null);
         value0.addAttribute("xsi:type", "xsd:string", null);
-        value0.addChild(omfactory.createText("strss fdfing1"));
+        value0.addChild(omfactory.createOMText("strss fdfing1"));
 
         OMElement value1 = omfactory.createOMElement("varInt", "", null);
         value1.addAttribute("xsi:type", "xsd:int", null);
-        value1.addChild(omfactory.createText("25"));
+        value1.addChild(omfactory.createOMText("25"));
 
         OMElement value2 = omfactory.createOMElement("varFloat", "", null);
         value2.addAttribute("xsi:type", "xsd:float", null);
-        value2.addChild(omfactory.createText("25.23"));
+        value2.addChild(omfactory.createOMText("25.23"));
 
         OMElement value3 = omfactory.createOMElement("varStruct", "", null);
 
         OMElement value30 = omfactory.createOMElement("varString", "", null);
         value30.addAttribute("xsi:type", "xsd:string", null);
-        value30.addChild(omfactory.createText("strss fdfing1"));
+        value30.addChild(omfactory.createOMText("strss fdfing1"));
 
         OMElement value31 = omfactory.createOMElement("varInt", "", null);
         value31.addAttribute("xsi:type", "xsd:int", null);
-        value31.addChild(omfactory.createText("25"));
+        value31.addChild(omfactory.createOMText("25"));
 
         OMElement value32 = omfactory.createOMElement("varFloat", "", null);
         value32.addAttribute("xsi:type", "xsd:float", null);
-        value32.addChild(omfactory.createText("25.23"));
+        value32.addChild(omfactory.createOMText("25.23"));
 
         value3.addChild(value30);
         value3.addChild(value31);

@@ -40,15 +40,15 @@ public class GroupbSoap12EchoSimpleTypesAsStructUtil implements SunClientUtil {
 
         OMElement part0 = omfactory.createOMElement("inputString", "", null);
         part0.addAttribute("xsi:type", "xsd:string", null);
-        part0.addChild(omfactory.createText("45ascasc  acasa asd52"));
+        part0.addChild(omfactory.createOMText("45ascasc  acasa asd52"));
 
         OMElement part1 = omfactory.createOMElement("inputInteger", "", null);
         part1.addAttribute("xsi:type", "xsd:int", null);
-        part1.addChild(omfactory.createText("4552"));
+        part1.addChild(omfactory.createOMText("4552"));
 
         OMElement part2 = omfactory.createOMElement("inputFloat", "", null);
         part2.addAttribute("xsi:type", "xsd:float", null);
-        part2.addChild(omfactory.createText("450.52"));
+        part2.addChild(omfactory.createOMText("450.52"));
 
         operation.addChild(part0);
         operation.addChild(part1);

@@ -50,15 +50,15 @@ public class Round1StringArrayUtil implements SunClientUtil {
         OMElement value0 = omfactory.createOMElement("item", "", null);
         value0.declareNamespace(typeNs);
         value0.addAttribute("type", "xsd:string", typeNs);
-        value0.addChild(omfactory.createText("Apache Axis2"));
+        value0.addChild(omfactory.createOMText("Apache Axis2"));
         OMElement value1 = omfactory.createOMElement("item", "", null);
         value1.declareNamespace(typeNs);
         value1.addAttribute("type", "xsd:string", typeNs);
-        value1.addChild(omfactory.createText("Lanka Software Foundation"));
+        value1.addChild(omfactory.createOMText("Lanka Software Foundation"));
         OMElement value2 = omfactory.createOMElement("item", "", null);
         value2.declareNamespace(typeNs);
         value2.addAttribute("type", "xsd:string", typeNs);
-        value2.addChild(omfactory.createText("www.opensource.lk"));
+        value2.addChild(omfactory.createOMText("www.opensource.lk"));
 
         part.addChild(value0);
         part.addChild(value1);

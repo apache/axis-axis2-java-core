@@ -42,7 +42,7 @@ public class GroupcStructArrayUtil implements SunClientUtil {
         OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns");
         SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
         block1.addAttribute("xsi:type", "xsd:string", null);
-        block1.addChild(omfactory.createText("string"));
+        block1.addChild(omfactory.createOMText("string"));
         header.addChild(block1);
 
         SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest", hns);
@@ -50,15 +50,15 @@ public class GroupcStructArrayUtil implements SunClientUtil {
 
         OMElement h2Val1 = omfactory.createOMElement("varString", null);
         h2Val1.addAttribute("xsi:type", "xsd:string", null);
-        h2Val1.addChild(omfactory.createText("string"));
+        h2Val1.addChild(omfactory.createOMText("string"));
 
         OMElement h2Val2 = omfactory.createOMElement("varInt", null);
         h2Val2.addAttribute("xsi:type", "xsd:int", null);
-        h2Val2.addChild(omfactory.createText("150"));
+        h2Val2.addChild(omfactory.createOMText("150"));
 
         OMElement h2Val3 = omfactory.createOMElement("varFloat", null);
         h2Val3.addAttribute("xsi:type", "xsd:float", null);
-        h2Val3.addChild(omfactory.createText("456.321"));
+        h2Val3.addChild(omfactory.createOMText("456.321"));
 
         block2.addChild(h2Val1);
         block2.addChild(h2Val2);
@@ -76,37 +76,37 @@ public class GroupcStructArrayUtil implements SunClientUtil {
 
         OMElement value00 = omfactory.createOMElement("varString", "", null);
         value00.addAttribute("xsi:type", "xsd:string", null);
-        value00.addChild(omfactory.createText("strss fdfing1"));
+        value00.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value01 = omfactory.createOMElement("varInt", "", null);
         value01.addAttribute("xsi:type", "xsd:int", null);
-        value01.addChild(omfactory.createText("25"));
+        value01.addChild(omfactory.createOMText("25"));
         OMElement value02 = omfactory.createOMElement("varFloat", "", null);
         value02.addAttribute("xsi:type", "xsd:float", null);
-        value02.addChild(omfactory.createText("25.23"));
+        value02.addChild(omfactory.createOMText("25.23"));
 
         OMElement item1 = omfactory.createOMElement("item0", null);
 
         OMElement value10 = omfactory.createOMElement("varString", "", null);
         value10.addAttribute("xsi:type", "xsd:string", null);
-        value10.addChild(omfactory.createText("strss fdfing1"));
+        value10.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value11 = omfactory.createOMElement("varInt", "", null);
         value11.addAttribute("xsi:type", "xsd:int", null);
-        value11.addChild(omfactory.createText("25"));
+        value11.addChild(omfactory.createOMText("25"));
         OMElement value12 = omfactory.createOMElement("varFloat", "", null);
         value12.addAttribute("xsi:type", "xsd:float", null);
-        value12.addChild(omfactory.createText("25.23"));
+        value12.addChild(omfactory.createOMText("25.23"));
 
         OMElement item2 = omfactory.createOMElement("item0", null);
 
         OMElement value20 = omfactory.createOMElement("varString", "", null);
         value20.addAttribute("xsi:type", "xsd:string", null);
-        value20.addChild(omfactory.createText("strss fdfing1"));
+        value20.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value21 = omfactory.createOMElement("varInt", "", null);
         value21.addAttribute("xsi:type", "xsd:int", null);
-        value21.addChild(omfactory.createText("25"));
+        value21.addChild(omfactory.createOMText("25"));
         OMElement value22 = omfactory.createOMElement("varFloat", "", null);
         value22.addAttribute("xsi:type", "xsd:float", null);
-        value22.addChild(omfactory.createText("25.23"));
+        value22.addChild(omfactory.createOMText("25.23"));
 
         item0.addChild(value00);
         item0.addChild(value01);

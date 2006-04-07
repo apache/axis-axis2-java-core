@@ -40,7 +40,7 @@ public class Round2Soap12IntegerUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputInteger", "", null);
         part.addAttribute("xsi:type", "xsd:int", null);
-        part.addChild(omfactory.createText("52"));
+        part.addChild(omfactory.createOMText("52"));
         operation.addChild(part);
         return reqEnv;
 

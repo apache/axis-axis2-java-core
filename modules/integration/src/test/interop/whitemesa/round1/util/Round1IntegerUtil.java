@@ -44,7 +44,7 @@ public class Round1IntegerUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("inputInteger", "", null);
         part.declareNamespace(typeNs);
         part.addAttribute("type", "xsd:int", typeNs);
-        part.addChild(omfactory.createText("52"));
+        part.addChild(omfactory.createOMText("52"));
         operation.addChild(part);
         return reqEnv;
 

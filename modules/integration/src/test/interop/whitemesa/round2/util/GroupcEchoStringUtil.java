@@ -44,7 +44,7 @@ public class GroupcEchoStringUtil implements SunClientUtil {
         SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
         block1.declareNamespace(typeNs);
         block1.addAttribute("type", "xsd:string", typeNs);
-        block1.addChild(omfactory.createText("string"));
+        block1.addChild(omfactory.createOMText("string"));
         header.addChild(block1);
 
         SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest", hns);
@@ -54,17 +54,17 @@ public class GroupcEchoStringUtil implements SunClientUtil {
         OMElement h2Val1 = omfactory.createOMElement("varString", null);
         h2Val1.declareNamespace(typeNs);
         h2Val1.addAttribute("type", "xsd:string", typeNs);
-        h2Val1.addChild(omfactory.createText("string"));
+        h2Val1.addChild(omfactory.createOMText("string"));
 
         OMElement h2Val2 = omfactory.createOMElement("varInt", null);
         h2Val2.declareNamespace(typeNs);
         h2Val2.addAttribute("type", "xsd:int", typeNs);
-        h2Val2.addChild(omfactory.createText("150"));
+        h2Val2.addChild(omfactory.createOMText("150"));
 
         OMElement h2Val3 = omfactory.createOMElement("varFloat", null);
         h2Val3.declareNamespace(typeNs);
         h2Val3.addAttribute("type", "xsd:float", typeNs);
-        h2Val3.addChild(omfactory.createText("456.321"));
+        h2Val3.addChild(omfactory.createOMText("456.321"));
 
         block2.addChild(h2Val1);
         block2.addChild(h2Val2);
@@ -80,7 +80,7 @@ public class GroupcEchoStringUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("inputString", null);
         part.declareNamespace(typeNs);
         part.addAttribute("type", "xsd:string", typeNs);
-        part.addChild(omfactory.createText("strssfdfing1"));
+        part.addChild(omfactory.createOMText("strssfdfing1"));
 
         operation.addChild(part);
         return reqEnv;

@@ -40,7 +40,7 @@ public class Round2Soap12EchoBooleanClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputBoolean", "", null);
         part.addAttribute("xsi:type", "xsd:boolean", null);
-        part.addChild(omfactory.createText("true"));
+        part.addChild(omfactory.createOMText("true"));
 
         operation.addChild(part);
         return reqEnv;

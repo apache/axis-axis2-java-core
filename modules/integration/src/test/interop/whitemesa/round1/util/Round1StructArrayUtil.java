@@ -53,45 +53,45 @@ public class Round1StructArrayUtil implements SunClientUtil {
         OMElement value00 = omfactory.createOMElement("varString", null);
         value00.declareNamespace(typeNs);
         value00.addAttribute("type", "xsd:string", typeNs);
-        value00.addChild(omfactory.createText("strss fdfing1"));
+        value00.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value01 = omfactory.createOMElement("varInt", null);
         value01.declareNamespace(typeNs);
         value01.addAttribute("type", "xsd:int", typeNs);
-        value01.addChild(omfactory.createText("25"));
+        value01.addChild(omfactory.createOMText("25"));
         OMElement value02 = omfactory.createOMElement("varFloat", null);
         value02.declareNamespace(typeNs);
         value02.addAttribute("type", "xsd:float", typeNs);
-        value02.addChild(omfactory.createText("25.23"));
+        value02.addChild(omfactory.createOMText("25.23"));
 
         OMElement item1 = omfactory.createOMElement("item0", null);
 
         OMElement value10 = omfactory.createOMElement("varString", null);
         value10.declareNamespace(typeNs);
         value10.addAttribute("type", "xsd:string", typeNs);
-        value10.addChild(omfactory.createText("strss fdfing1"));
+        value10.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value11 = omfactory.createOMElement("varInt", null);
         value11.declareNamespace(typeNs);
         value11.addAttribute("type", "xsd:int", typeNs);
-        value11.addChild(omfactory.createText("25"));
+        value11.addChild(omfactory.createOMText("25"));
         OMElement value12 = omfactory.createOMElement("varFloat", null);
         value12.declareNamespace(typeNs);
         value12.addAttribute("type", "xsd:float", typeNs);
-        value12.addChild(omfactory.createText("25.23"));
+        value12.addChild(omfactory.createOMText("25.23"));
 
         OMElement item2 = omfactory.createOMElement("item0", null);
 
         OMElement value20 = omfactory.createOMElement("varString", null);
         value20.declareNamespace(typeNs);
         value20.addAttribute("type", "xsd:string", typeNs);
-        value20.addChild(omfactory.createText("strss fdfing1"));
+        value20.addChild(omfactory.createOMText("strss fdfing1"));
         OMElement value21 = omfactory.createOMElement("varInt", null);
         value21.declareNamespace(typeNs);
         value21.addAttribute("type", "xsd:int", typeNs);
-        value21.addChild(omfactory.createText("25"));
+        value21.addChild(omfactory.createOMText("25"));
         OMElement value22 = omfactory.createOMElement("varFloat", null);
         value22.declareNamespace(typeNs);
         value22.addAttribute("type", "xsd:float", typeNs);
-        value22.addChild(omfactory.createText("25.23"));
+        value22.addChild(omfactory.createOMText("25.23"));
 
         item0.addChild(value00);
         item0.addChild(value01);

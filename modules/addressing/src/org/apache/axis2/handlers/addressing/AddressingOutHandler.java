@@ -291,7 +291,7 @@ public class AddressingOutHandler extends AddressingHandler {
             SOAPHeaderBlock soapHeaderBlock =
                     soapEnvelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
             soapHeaderBlock.addChild(
-                    soapEnvelope.getOMFactory().createText(value));
+                    soapEnvelope.getOMFactory().createOMText(value));
             return soapHeaderBlock;
         }
         return null;

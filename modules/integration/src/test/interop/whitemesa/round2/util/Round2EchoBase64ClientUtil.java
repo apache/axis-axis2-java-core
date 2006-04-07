@@ -44,7 +44,7 @@ public class Round2EchoBase64ClientUtil implements SunClientUtil {
 //        DataHandler data = new DataHandler(new ByteArrayDataSource("WebServices".getBytes()));
 //        OMText base64EncodedText = omfactory.createOMText(data, true );
 //        part.addChild(base64EncodedText);
-        part.addChild(omfactory.createText("SGVsbG8gV29ybGQ="));
+        part.addChild(omfactory.createOMText("SGVsbG8gV29ybGQ="));
 
         operation.addChild(part);
         return reqEnv;

@@ -42,13 +42,13 @@ public class Round2SOAP12EchoIntegerArrayclientUtil implements SunClientUtil {
         part.addAttribute("SOAP-ENC:arrayType", "xsd:int[3]", null);
         OMElement value0 = omfactory.createOMElement("varString", "", null);
         value0.addAttribute("xsi:type", "xsd:int", null);
-        value0.addChild(omfactory.createText("451"));
+        value0.addChild(omfactory.createOMText("451"));
         OMElement value1 = omfactory.createOMElement("varString", "", null);
         value1.addAttribute("xsi:type", "xsd:int", null);
-        value1.addChild(omfactory.createText("425"));
+        value1.addChild(omfactory.createOMText("425"));
         OMElement value2 = omfactory.createOMElement("varString", "", null);
         value2.addAttribute("xsi:type", "xsd:int", null);
-        value2.addChild(omfactory.createText("2523"));
+        value2.addChild(omfactory.createOMText("2523"));
 
         part.addChild(value0);
         part.addChild(value1);

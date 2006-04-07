@@ -48,15 +48,15 @@ public class EchoIntArrayFaultClientUtil implements SunClientUtil {
         OMElement item0 = omfactory.createOMElement("item0", null);
         item0.declareNamespace(typeNs);
         item0.addAttribute("type", "m0:int", typeNs);
-        item0.addChild(omfactory.createText("451"));
+        item0.addChild(omfactory.createOMText("451"));
         OMElement item1 = omfactory.createOMElement("item1", null);
         item1.declareNamespace(typeNs);
         item1.addAttribute("type", "m0:int", typeNs);
-        item1.addChild(omfactory.createText("425"));
+        item1.addChild(omfactory.createOMText("425"));
         OMElement item2 = omfactory.createOMElement("item2", null);
         item2.declareNamespace(typeNs);
         item2.addAttribute("type", "m0:int", typeNs);
-        item2.addChild(omfactory.createText("2523"));
+        item2.addChild(omfactory.createOMText("2523"));
 
         part.addChild(item0);
         part.addChild(item1);

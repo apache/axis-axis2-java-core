@@ -49,15 +49,15 @@ public class Round1IntArrayUtil implements SunClientUtil {
         OMElement value0 = omfactory.createOMElement("varString", "", null);
         value0.declareNamespace(typeNs);
         value0.addAttribute("type", "xsd:int", typeNs);
-        value0.addChild(omfactory.createText("451"));
+        value0.addChild(omfactory.createOMText("451"));
         OMElement value1 = omfactory.createOMElement("varString", null);
         value1.declareNamespace(typeNs);
         value1.addAttribute("type", "xsd:int", typeNs);
-        value1.addChild(omfactory.createText("425"));
+        value1.addChild(omfactory.createOMText("425"));
         OMElement value2 = omfactory.createOMElement("varString", null);
         value2.declareNamespace(typeNs);
         value2.addAttribute("type", "xsd:int", typeNs);
-        value2.addChild(omfactory.createText("2523"));
+        value2.addChild(omfactory.createOMText("2523"));
 
         part.addChild(value0);
         part.addChild(value1);

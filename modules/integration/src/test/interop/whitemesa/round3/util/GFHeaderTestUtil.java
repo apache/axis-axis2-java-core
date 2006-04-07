@@ -38,7 +38,7 @@ public class GFHeaderTestUtil implements SunClientUtil {
 
         OMElement operation = omfactory.createOMElement("echoStringParam", "http://soapinterop.org/xsd", null);
         reqEnv.getBody().addChild(operation);
-        operation.addChild(omfactory.createText("apache axis2"));
+        operation.addChild(omfactory.createOMText("apache axis2"));
         return reqEnv;
     }
 }

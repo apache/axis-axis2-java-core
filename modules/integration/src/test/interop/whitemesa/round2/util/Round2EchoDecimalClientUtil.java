@@ -43,7 +43,7 @@ public class Round2EchoDecimalClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputDecimal", "", null);
         part.addAttribute("xsi:type", "xsd:decimal", null);
-        part.addChild(omfactory.createText("455646152"));
+        part.addChild(omfactory.createOMText("455646152"));
 
         operation.addChild(part);
         return reqEnv;

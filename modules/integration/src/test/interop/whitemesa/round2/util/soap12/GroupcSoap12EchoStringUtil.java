@@ -41,7 +41,7 @@ public class GroupcSoap12EchoStringUtil implements SunClientUtil {
         OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns");
         SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
         block1.addAttribute("xsi:type", "xsd:string", null);
-        block1.addChild(omfactory.createText("string"));
+        block1.addChild(omfactory.createOMText("string"));
         header.addChild(block1);
 
         SOAPHeaderBlock block2 = header.addHeaderBlock("echoMeStructRequest", hns);
@@ -49,15 +49,15 @@ public class GroupcSoap12EchoStringUtil implements SunClientUtil {
 
         OMElement h2Val1 = omfactory.createOMElement("varString", null);
         h2Val1.addAttribute("xsi:type", "xsd:string", null);
-        h2Val1.addChild(omfactory.createText("string"));
+        h2Val1.addChild(omfactory.createOMText("string"));
 
         OMElement h2Val2 = omfactory.createOMElement("varInt", null);
         h2Val2.addAttribute("xsi:type", "xsd:int", null);
-        h2Val2.addChild(omfactory.createText("150"));
+        h2Val2.addChild(omfactory.createOMText("150"));
 
         OMElement h2Val3 = omfactory.createOMElement("varFloat", null);
         h2Val3.addAttribute("xsi:type", "xsd:float", null);
-        h2Val3.addChild(omfactory.createText("456.321"));
+        h2Val3.addChild(omfactory.createOMText("456.321"));
 
         block2.addChild(h2Val1);
         block2.addChild(h2Val2);
@@ -70,7 +70,7 @@ public class GroupcSoap12EchoStringUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputString", null);
         part.addAttribute("xsi:type", "xsd:string", null);
-        part.addChild(omfactory.createText("strssfdfing1"));
+        part.addChild(omfactory.createOMText("strssfdfing1"));
 
         operation.addChild(part);
         return reqEnv;

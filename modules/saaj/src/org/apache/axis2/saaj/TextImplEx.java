@@ -36,14 +36,14 @@ public class TextImplEx extends NodeImplEx implements Text {
 
     public TextImplEx(String data, SOAPElement parent) {
         super(((SOAPElementImpl)parent).getOMFactory());
-        textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
+        textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createOMText(data);
         this.parentElement = parent;
     }
 
     public TextImplEx(String data, SOAPElement parent,
                       org.w3c.dom.Node prevSibling, org.w3c.dom.Node nextSibling) {
         super(((SOAPElementImpl)parent).getOMFactory());
-        textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createText(data);
+        textNode = (TextImpl) DOOMAbstractFactory.getOMFactory().createOMText(data);
         this.parentElement = parent;
         this.previousSibling = prevSibling;
         this.nextSibling = nextSibling;

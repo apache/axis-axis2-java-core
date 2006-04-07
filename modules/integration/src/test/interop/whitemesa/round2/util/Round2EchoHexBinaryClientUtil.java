@@ -44,7 +44,7 @@ public class Round2EchoHexBinaryClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputHexBinary", "", null);
         part.addAttribute("xsi:type", "xsd:hexBinary", null);
-        part.addChild(omfactory.createText("AAABBAAE"));
+        part.addChild(omfactory.createOMText("AAABBAAE"));
 
         operation.addChild(part);
         return reqEnv;

@@ -45,13 +45,13 @@ public class R2MSaxms2DStringArrayUtil implements SunClientUtil {
 
         OMElement value0 = omfactory.createOMElement("varString", "", null);
         value0.addAttribute("xsi:type", "xsd:string", null);
-        value0.addChild(omfactory.createText("Apache Axis2"));
+        value0.addChild(omfactory.createOMText("Apache Axis2"));
         OMElement value1 = omfactory.createOMElement("varString", "", null);
         value1.addAttribute("xsi:type", "xsd:string", null);
-        value1.addChild(omfactory.createText("Lanka Software Foundation"));
+        value1.addChild(omfactory.createOMText("Lanka Software Foundation"));
         OMElement value2 = omfactory.createOMElement("varString", "", null);
         value2.addAttribute("xsi:type", "xsd:string", null);
-        value2.addChild(omfactory.createText("www.opensource.lk"));
+        value2.addChild(omfactory.createOMText("www.opensource.lk"));
 
         part.addChild(value0);
         part.addChild(value1);

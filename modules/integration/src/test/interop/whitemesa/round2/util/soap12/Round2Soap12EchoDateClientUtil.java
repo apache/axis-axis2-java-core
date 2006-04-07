@@ -40,7 +40,7 @@ public class Round2Soap12EchoDateClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputDate", "", null);
         part.addAttribute("xsi:type", "xsd:dateTime", null);
-        part.addChild(omfactory.createText("2002-07-18T19:40:30.387-06:00"));
+        part.addChild(omfactory.createOMText("2002-07-18T19:40:30.387-06:00"));
 
         operation.addChild(part);
         return reqEnv;

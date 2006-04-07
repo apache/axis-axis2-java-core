@@ -46,7 +46,7 @@ public class Round2EchoStringclientUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("inputString", null);
         part.declareNamespace(typeNs);
         part.addAttribute("type", "xsd:string", typeNs);
-        part.addChild(omfactory.createText("String Argument"));
+        part.addChild(omfactory.createOMText("String Argument"));
 
         operation.addChild(part);
         return reqEnv;

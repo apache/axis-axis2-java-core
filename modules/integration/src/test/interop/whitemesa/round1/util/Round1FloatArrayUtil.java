@@ -52,15 +52,15 @@ public class Round1FloatArrayUtil implements SunClientUtil {
         OMElement value0 = omfactory.createOMElement("varString", null);
         value0.declareNamespace(typeNs);
         value0.addAttribute("type", "xsd:float", typeNs);
-        value0.addChild(omfactory.createText("45.76876"));
+        value0.addChild(omfactory.createOMText("45.76876"));
         OMElement value1 = omfactory.createOMElement("varInt", null);
         value1.declareNamespace(typeNs);
         value1.addAttribute("type", "xsd:float", typeNs);
-        value1.addChild(omfactory.createText("43.454"));
+        value1.addChild(omfactory.createOMText("43.454"));
         OMElement value2 = omfactory.createOMElement("varFloat", null);
         value2.declareNamespace(typeNs);
         value2.addAttribute("type", "xsd:float", typeNs);
-        value2.addChild(omfactory.createText("2523.542"));
+        value2.addChild(omfactory.createOMText("2523.542"));
 
         part.addChild(value0);
         part.addChild(value1);
