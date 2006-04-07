@@ -13,10 +13,10 @@ public class PerfPortTypeSkeleton {
      *
      * @param param0
      */
-    public OutputElementDocument handleStringArray(
-        InputElementDocument param0) {
+    public samples.wsdl.perf.OutputElementDocument handleStringArray(
+        samples.wsdl.perf.InputElementDocument param0) {
 
-        OutputElementDocument output = OutputElementDocument.Factory.newInstance();
+        samples.wsdl.perf.OutputElementDocument output = samples.wsdl.perf.OutputElementDocument.Factory.newInstance();
         output.setOutputElement("The Array length is - " + param0.getInputElement().getItemArray().length);
         return output;
     } 

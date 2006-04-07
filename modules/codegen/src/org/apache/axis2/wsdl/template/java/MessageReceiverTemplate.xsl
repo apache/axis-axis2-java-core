@@ -80,7 +80,7 @@
                     //rpc style  -- this needs to be filled
 
                 </xsl:when>
-                <xsl:when test="$style='doc'">
+                <xsl:when test="$style='document'">
                     //doc style
                     <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
                     <xsl:variable name="paramCount"> <xsl:value-of select="count(input/param[@location='body'])"/></xsl:variable>
@@ -106,7 +106,7 @@
 
                 <xsl:otherwise>
                     //Unknown style!! No code is generated
-                    throw UnsupportedOperationException("Unknown Style");
+                    throw new UnsupportedOperationException("Unknown Style");
                 </xsl:otherwise>
             </xsl:choose>
 
@@ -186,7 +186,7 @@
                     //rpc style  -- this needs to be filled
 
                 </xsl:when>
-                <xsl:when test="$style='doc'">
+                <xsl:when test="$style='document'">
                     //doc style
                     <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@location='body'])"/></xsl:variable>
                     <xsl:choose>
@@ -201,7 +201,7 @@
 
                 <xsl:otherwise>
                     //Unknown style!! No code is generated
-                    throw UnsupportedOperationException("Unknown Style");
+                    throw new UnsupportedOperationException("Unknown Style");
                 </xsl:otherwise>
             </xsl:choose>
 

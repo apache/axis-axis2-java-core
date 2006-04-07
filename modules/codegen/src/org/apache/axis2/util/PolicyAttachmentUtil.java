@@ -66,8 +66,6 @@ import java.util.List;
 public class PolicyAttachmentUtil {
 
     private WSDLDescription wsdlDescription = null;
-
-    //private HashMap loadedPolicies = new HashMap();
     private PolicyRegistry reg = new PolicyRegistry();
 
     private SchemaRegistry schemaRegistry = new SchemaRegistry();

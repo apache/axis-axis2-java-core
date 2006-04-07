@@ -17,8 +17,8 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.description.WSDL2AxisServiceBuilder;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
@@ -29,12 +29,17 @@ import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.WSDLDescription;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.WSDLException;
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.namespace.QName;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,34 +69,46 @@ public class CodeGenerationEngine {
      * @throws CodeGenerationException
      */
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
-        WSDLDescription wom;
         Map allOptions = parser.getAllOptions();
         String wsdlUri;
         try {
 
-            CommandLineOption option = (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
+            CommandLineOption option =
+                    (CommandLineOption)allOptions.
+                            get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
             wsdlUri = option.getOptionValue();
-            wom = this.getWOM(wsdlUri);
+            configuration = new CodeGenConfiguration(allOptions);
+            Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
+            QName serviceQname = null;
+            if (configuration.getServiceName()!=null){
+                serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
+            }
+
+            configuration.setAxisService(new WSDL2AxisServiceBuilder(
+                    wsdl4jDef,
+                    serviceQname,
+                    configuration.getPortName()).
+                    populateService()
+            );
+        } catch (AxisFault axisFault) {
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
         } catch (WSDLException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
-        }
-
-        configuration = new CodeGenConfiguration(wom, allOptions);
-
-        /////////////////////////////////////////////////////////////////
-        try {
-            configuration.setAxisService(new WSDL2AxisServiceBuilder(new FileInputStream(wsdlUri)).populateService());
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
         ///////////////////////////////////////////////////////////////////////
-        
+
         configuration.setBaseURI(getBaseURI(wsdlUri));
         loadExtensions();
     }
 
+    /**
+     * Loads the relevant extensions
+     *
+     * @throws CodeGenerationException
+     */
     private void loadExtensions() throws CodeGenerationException {
 
         String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
@@ -102,6 +119,10 @@ public class CodeGenerationEngine {
 
     }
 
+    /**
+     * Adds a given extension to the list
+     * @param ext
+     */
     private void addExtension(CodeGenExtension ext) {
         if(ext != null) {
             ext.init(configuration);
@@ -109,7 +130,10 @@ public class CodeGenerationEngine {
         }
     }
 
-
+    /**
+     * Generate a WSDL
+     * @throws CodeGenerationException
+     */
     public void generate() throws CodeGenerationException {
         try {
             for (int i = 0; i < extensions.size(); i++) {
@@ -142,7 +166,7 @@ public class CodeGenerationEngine {
 
             if (configuration.isServerSide()) {
                 emitter.emitSkeleton();
-                //if the users want both client and server, it would be in the 
+                // if the users want both client and server, it would be in the
                 // generate all option
 
                 if (configuration.isGenerateAll()) {
@@ -166,17 +190,47 @@ public class CodeGenerationEngine {
 
 
     /**
-     *
+     * Read the WSDL file
      * @param uri
      * @return
      * @throws WSDLException
      */
-    private WSDLDescription getWOM(String uri) throws WSDLException {
-        //assume that the builder is always WSDL 1.1 - later we'll have to edit this to allow
-        //WSDL version to be passed
-        return WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(uri)
-                .getDescription();
+    private Definition readInTheWSDLFile(String uri) throws WSDLException {
+
+        WSDLReader reader =
+                WSDLFactory.newInstance().newWSDLReader();
+        reader.setFeature("javax.wsdl.importDocuments", true);
+
+        File file = new File(uri);
+        String baseURI;
+
+        if (uri.startsWith("http://")){
+            baseURI = uri;
+        } else{
+            baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
+        }
+
+
+        Document doc;
+        try {
+            doc = XMLUtils.newDocument(uri);
+        } catch (ParserConfigurationException e) {
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser Configuration Error",
+                    e);
+        } catch (SAXException e) {
+            throw new WSDLException(WSDLException.PARSER_ERROR,
+                    "Parser SAX Error",
+                    e);
+
+        } catch (IOException e) {
+            throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
+        }
+
+        return reader.readWSDL(baseURI, doc);
     }
+
+
 
 
     /**
@@ -221,8 +275,8 @@ public class CodeGenerationEngine {
                 throw new RuntimeException("Cannot find baseuri for :" + currentURI);
             }
         }
-        String uriFrag = currentURI.substring(0, currentURI.lastIndexOf("/"));
-        baseURI = uriFrag + (uriFrag.endsWith("/") ? "" : "/");
+        String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
+        baseURI = uriFragment + (uriFragment.endsWith("/") ? "" : "/");
         return baseURI;
     }
 }

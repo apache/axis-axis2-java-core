@@ -217,7 +217,7 @@
                                     new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
                                     new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                                 </xsl:when>
-                                <xsl:when test="$style='doc'">
+                                <xsl:when test="$style='document'">
                                     //Style is Doc.
                                     <!-- Let's assume there is only one parameters here -->
                                     <xsl:for-each select="input/param[@location='body']">
@@ -240,7 +240,7 @@
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
-                                    throw java.lang.UnsupportedOperationException("Unknown Style");
+                                    throw new java.lang.UnsupportedOperationException("Unknown Style");
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -251,13 +251,13 @@
                                     //Style is RPC. No input parameters
                                     org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                                 </xsl:when>
-                                <xsl:when test="$style='doc'">
+                                <xsl:when test="$style='document'">
                                     //Style is Doc. No input parameters
                                     <!-- setValueDoc(env,null); -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
-                                    throw UnsupportedOperationException("Unknown Style");
+                                    throw new UnsupportedOperationException("Unknown Style");
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
@@ -283,7 +283,7 @@
                 org.apache.axiom.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
                 <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
                 <xsl:choose>
-                    <xsl:when test="$style='doc'">
+                    <xsl:when test="$style='document'">
                            java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
                           
                            _messageContext.getTransportOut().getSender().cleanUp(_messageContext);
@@ -292,7 +292,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                         //Unsupported style!! No code is generated
-                        throw java.lang.UnsupportedOperationException("Unsupported Style");
+                        throw new java.lang.UnsupportedOperationException("Unsupported Style");
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -335,7 +335,7 @@
                                     new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
                                     new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                                 </xsl:when>
-                                <xsl:when test="$style='doc'">
+                                <xsl:when test="$style='document'">
                                     //Style is Doc.
                                     <xsl:for-each select="input/param[@location='body']">
                                         <xsl:choose>
@@ -356,7 +356,7 @@
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
-                                    throw java.lang.UnsupportedOperationException("Unknown Style");
+                                    throw new java.lang.UnsupportedOperationException("Unknown Style");
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -367,13 +367,13 @@
                                     //Style is RPC. No input parameters
                                     org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                                 </xsl:when>
-                                <xsl:when test="$style='doc'">
+                                <xsl:when test="$style='document'">
                                     //Style is Doc. No input parameters
                                     <!-- setValueDoc(env,null); -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
-                                    throw UnsupportedOperationException("Unknown Style");
+                                    throw new UnsupportedOperationException("Unknown Style");
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
@@ -396,7 +396,7 @@
                     public void onComplete(
                             org.apache.axis2.client.async.AsyncResult result) {
                         java.lang.Object object = fromOM(getElement(
-                                result.getResponseEnvelope(), "doc"),
+                                result.getResponseEnvelope(), "document"),
                                <xsl:value-of select="$outputtype"/>.class);
                         callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>) object);
                     }
@@ -449,14 +449,14 @@
                                 new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
                                 new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                             </xsl:when>
-                            <xsl:when test="$style='doc'">
+                            <xsl:when test="$style='document'">
                                 <!-- for the doc lit case there can be only one element. So take the first element -->
                                 //Style is Doc.
                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
-                                throw java.lang.UnsupportedOperationException("Unknown Style");
+                                throw new java.lang.UnsupportedOperationException("Unknown Style");
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
@@ -467,13 +467,13 @@
                                 //Style is RPC. No input parameters
                                 org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                             </xsl:when>
-                            <xsl:when test="$style='doc'">
+                            <xsl:when test="$style='document'">
                                 //Style is Doc. No input parameters
                                 <!-- setValueDoc(env,null); -->
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
-                                throw UnsupportedOperationException("Unknown Style");
+                                throw new UnsupportedOperationException("Unknown Style");
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>

@@ -32,10 +32,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private AxisService axisService;
 
-    private WSDLDescription wom;
-
     private String baseURI;
-    
+
     private String repositoryPath;
 
     /**
@@ -69,9 +67,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.configurationProperties = configurationProperties;
     }
 
-    public void setWom(WSDLDescription wom) {
-        this.wom = wom;
-    }
 
     public void setOutputLanguage(String outputLanguage) {
         this.outputLanguage = outputLanguage;
@@ -206,13 +201,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.policyMap = policyMap;
     }
 
-    /* Code generation style means whether to use the binding or the interface for code generation.
-    * the default is automatic where the code generator looks for the binding and if the binding is
-    * absent, switches to the interface. The user however, can switch to the interface or the binding
-    * modes explicitly by specifying this parameter
-    */
-    private int codeGenerationStyle = XSLTConstants.CodegenStyle.AUTOMATIC;
-
 
     /**
      * Puts a property into the configuration.
@@ -245,19 +233,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private TypeMapper typeMapper;
 
-    /**
-     * @return Returns int.
-     */
-    public int getCodeGenerationStyle() {
-        return codeGenerationStyle;
-    }
-
-    /**
-     * @param codeGenerationStyle
-     */
-    public void setCodeGenerationStyle(int codeGenerationStyle) {
-        this.codeGenerationStyle = codeGenerationStyle;
-    }
 
     /**
      * @return Returns TypeMapper.
@@ -294,18 +269,21 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @param wom
      * @param optionMap
      */
-    public CodeGenConfiguration(WSDLDescription wom, Map optionMap) {
-        this.wom = wom;
+    public CodeGenConfiguration(AxisService service, Map optionMap) {
+        this.axisService = service;
         CodegenConfigLoader.loadConfig(this,optionMap);
     }
 
-
     /**
-     * @return Returns the wom.
+     * Constructor for the configuration. It populates the values using the options map.
+     *
+     * @param wom
+     * @param optionMap
      */
-    public WSDLDescription getWom() {
-        return wom;
+    public CodeGenConfiguration(Map optionMap) {
+        CodegenConfigLoader.loadConfig(this,optionMap);
     }
+
 
 
     /**
@@ -368,13 +346,13 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setWriteMessageReceiver(boolean writeMessageReceiver) {
         this.writeMessageReceiver = writeMessageReceiver;
     }
-    
+
     public void setRepositoryPath(String repositoryPath) {
-    	this.repositoryPath = repositoryPath;    	
+        this.repositoryPath = repositoryPath;
     }
-    
+
     public String getRepositoryPath() {
-    	return repositoryPath;    	
+        return repositoryPath;
     }
 
     public AxisService getAxisService() {

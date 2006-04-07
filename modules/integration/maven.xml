@@ -31,7 +31,7 @@
             <classpath refid="maven.dependency.classpath"/>
             <arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -t -ss -sd -g -uri test/samples/wsdl/perf/perf.wsdl"/>
         </java>
-        <ant:copy overwrite="yes" todir="target/perf/test/samples/perf">
+        <ant:copy overwrite="yes" todir="target/perf/src/samples/wsdl/perf">
             <ant:fileset dir="test/samples/wsdl/perf">
                 <ant:include name="*Skeleton.java"/>
             </ant:fileset>
@@ -40,15 +40,23 @@
                  target="make.repo"/>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
                  target="jar.client"/>
-        <ant:path id="samples.wsdl.perf.client.jar"
+         <ant:move file="target/perf/build/lib/PerfPortType-test-client.jar" 
+              tofile="target/perf/build/lib/PerfSoapService-test-client.jar" />
+              
+          <ant:move file="target/perf/build/lib/PerfPortType.aar" 
+              tofile="target/perf/build/lib/PerfSoapService.aar" />
+              
+         <ant:path id="samples.wsdl.perf.client.jar"
                   location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
+        
         <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf.client.jar"/>
-
+        <!-- $$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
+		<ant:echo>${maven.dependency.classpath}</ant:echo>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
             <classpath refid="maven.dependency.classpath"/>
             <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -t -ss -sd -g -uri test/samples/wsdl/perf2/perf.wsdl"/>
         </java>
-        <ant:copy overwrite="yes" todir="target/perf2/test/samples/perf2">
+        <ant:copy overwrite="yes" todir="target/perf2/src/samples/wsdl/perf2">
             <ant:fileset dir="test/samples/wsdl/perf2">
                 <ant:include name="*Skeleton.java"/>
             </ant:fileset>
@@ -57,6 +65,8 @@
                  target="make.repo"/>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
                  target="jar.client"/>
+        <ant:move file="target/perf2/build/lib/PerfPortType-test-client.jar" 
+                tofile="target/perf2/build/lib/PerfSoapService2-test-client.jar" />
         <ant:path id="samples.wsdl.perf2.client.jar"
                   location="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
         <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf2.client.jar"/>

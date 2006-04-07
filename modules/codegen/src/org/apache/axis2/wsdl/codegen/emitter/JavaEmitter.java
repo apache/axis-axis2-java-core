@@ -20,7 +20,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 
-public class JavaEmitter extends MultiLanguageClientEmitter {
+public class JavaEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
     public JavaEmitter() {
         super();
@@ -31,7 +31,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter {
      */
     public JavaEmitter(CodeGenConfiguration configuration) {
         super();
-        this.configuration = configuration;
+        this.codeGenConfiguration = configuration;
         this.mapper = new DefaultTypeMapper();
 
 
@@ -45,7 +45,7 @@ public class JavaEmitter extends MultiLanguageClientEmitter {
      */
     public JavaEmitter(CodeGenConfiguration configuration, TypeMapper mapper) {
         super();
-        this.configuration = configuration;
+        this.codeGenConfiguration = configuration;
         this.mapper = mapper;
 
 

@@ -25,16 +25,11 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
     public void engage() {
         String packageName = this.configuration.getPackageName();
         if (packageName == null || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
-            WSDLBinding binding = configuration.getWom().getBinding(
-                    AxisBindingBuilder.AXIS_BINDING_QNAME);
-            if (binding != null &&
-                    binding.getBoundInterface() != null &&
-                    binding.getBoundInterface().getName() != null &&
-                    binding.getBoundInterface().getName().getNamespaceURI() != null) {
-                String temp = binding.getBoundInterface().getName()
-                        .getNamespaceURI();
-                packageName = URLProcessor.makePackageName(temp);
-            }
+            //use the target namespace from the axis service to form a package
+            //name
+            packageName = URLProcessor.makePackageName(
+                    configuration.getAxisService().getTargetNamespace()
+            );
         }
 
         if (null == packageName || "".equals(packageName))

@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.databinding.utils.reader.OMAttribKey;
 import org.apache.axis2.databinding.utils.reader.OMElementKey;
+import org.apache.axiom.om.OMConstants;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -28,7 +29,7 @@ public interface Constants {
     static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
     static Object OM_ELEMENT_KEY = new OMElementKey();
 
-    static final String IS_BINARY = "Axiom.IsBinary";
-    static final String DATA_HANDLER = "Axiom.DataHandler";
-    static final String OPTIMIZATION_ENABLED = "Axiom.opt.enabled";
+    static final String IS_BINARY = OMConstants.IS_BINARY;
+    static final String DATA_HANDLER = OMConstants.DATA_HANDLER;
+    static final String OPTIMIZATION_ENABLED = OMConstants.IS_DATA_HANDLERS_AWARE;
 }

@@ -60,7 +60,7 @@
             </output>
         </operation>
     </binding>
-    <service name="PingService">
+    <service name="PingPort">
         <port name="Ping1" binding="tns:PingBinding">
             <soap:address location="http://localhost:9080/pingservice/Ping1"/>
         </port>

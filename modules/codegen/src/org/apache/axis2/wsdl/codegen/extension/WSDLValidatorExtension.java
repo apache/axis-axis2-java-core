@@ -22,66 +22,43 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
-    private static String TARGETNAMESPACE_STRING = "targetNamespace";
-
 
     public void engage() throws CodeGenerationException {
         //WSDLDescription wom = this.configuration.getWom();
-        WSDLTypes typesList = configuration.getWom().getTypes();
-        if (typesList == null) {
+        List schemaList = configuration.getAxisService().getSchema();
+        if (schemaList == null || schemaList.isEmpty()) {
             //there are no types to be considered
             return;
         }
-        Iterator iterator = typesList.getExtensibilityElements().iterator();
-        while (iterator.hasNext()) {
-            WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator.next();
-            boolean targetnamespaceFound = false;
-            if (ExtensionConstants.SCHEMA.equals(element.getType())) {
-                Schema schema = (Schema) element;
-                Element schemaElement = schema.getElement();
-                //first check whether the schema include import statements.
-                //As per the nature of WSDL if the schema has imports ONLY, then the
-                //schema element need not contain a target namespace.
-                NodeList importNodeList = schemaElement.getElementsByTagNameNS(schemaElement.getNamespaceURI(), "import");
-                NodeList allNodes = schemaElement.getElementsByTagName("*");
 
-                //checking the number of child elements and the number of import elements should get us what we need
-                //if these match, that means we have only import statements
-
-                if (importNodeList.getLength()== allNodes.getLength()) {
-                    return;
-                }
-
-
-                NamedNodeMap attributes = schemaElement.getAttributes();
-                for (int i = 0; i < attributes.getLength(); i++) {
-
-                    if (TARGETNAMESPACE_STRING.equalsIgnoreCase(
-                            attributes.item(i).getNodeName())) {
-                        targetnamespaceFound = true;
-                        break;
-                    }
-                }
-                if (!targetnamespaceFound) {
-                    
-                    // if there's no targetNamespace there's probably no name, but try it anyway
-                    QName qname = schema.getName();
-                    String name = qname == null ? "unknown schema" : qname.toString();
+        for (int i = 0; i < schemaList.size(); i++) {
+            XmlSchema s =  (XmlSchema)schemaList.get(i);
+            if (s.getIncludes().getCount()!=0){
+                //there are some included - now see whether there are any
+                //elements or types declared!
+                if (s.getElements().getCount()==0 &&
+                    s.getSchemaTypes().getCount()==0 &&
+                    s.getGroups().getCount()==0 &&
+                    s.getTargetNamespace()==null){
+                  // if there's no targetNamespace there's probably no name, but try it anyway
                     throw new CodeGenerationException(
-                        CodegenMessages.getMessage("extension.invalidWSDL",name));
+                        CodegenMessages.getMessage("extension.invalidWSDL",s.toString()));
                 }
 
             }
-
         }
+
+
     }
 }

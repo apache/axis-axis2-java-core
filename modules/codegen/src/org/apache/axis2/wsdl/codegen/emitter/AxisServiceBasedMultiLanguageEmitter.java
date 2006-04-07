@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.Policy;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.extensions.SOAPHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -931,7 +932,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 addAttribute(doc, "name", localPart, methodElement);
                 addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
-                addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
+                String style = axisOperation.getStyle();
+
+                System.out.println("##############" + style);
+
+                addAttribute(doc, "style", style, methodElement);
                 addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                         methodElement);
 
@@ -1107,31 +1112,49 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
     }
 
+    /**
+     * populate the header parameters
+     * @param soapHeaderParameterQNameList
+     * @param axisOperation
+     * @param input
+     */
     private void addHeaderOperations(List soapHeaderParameterQNameList, AxisOperation axisOperation,
                                      boolean input) {
-//        Iterator extIterator;
-//
-//        if (input) {
-//            extIterator = (axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE) == null)
-//                    ? null
-//                    : axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getWsdlExtElements().iterator();
-//        } else {
-//            extIterator = (axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE) == null)
-//                    ? null
-//                    : axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getWsdlExtElements().iterator();
-//        }
-//
-//        while ((extIterator != null) && extIterator.hasNext()) {
-//            AxisExtensiblityElementWrapper axisExtensibilityElement = (AxisExtensiblityElementWrapper) extIterator.next();
-//
-//            WSDLExtensibilityElement element = axisExtensibilityElement.getExtensibilityElement();
-//
-//            if (ExtensionConstants.SOAP_11_HEADER.equals(element.getType())) {
-//                SOAPHeader header = (SOAPHeader) element;
-//
-//                soapHeaderParameterQNameList.add(header.getElement());
-//            }
-//        }
+        ArrayList headerparamList = new ArrayList();
+        String MEP = axisOperation.getMessageExchangePattern();
+        if (input){
+            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage inaxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (inaxisMessage != null) {
+                    headerparamList = inaxisMessage.getSoapHeaders();
+
+                }
+            }
+        }else{
+            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage outAxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (outAxisMessage != null) {
+                    headerparamList = outAxisMessage.getSoapHeaders();
+                }
+            }
+        }
+
+        for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
+            SOAPHeader header = (SOAPHeader) iterator.next();
+            soapHeaderParameterQNameList.add(header.getElement());
+        }
     }
 
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {

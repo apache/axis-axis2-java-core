@@ -20,20 +20,20 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 
-public class CSharpEmitter extends MultiLanguageClientEmitter {
+public class CSharpEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
     public CSharpEmitter() {
     }
 
     public CSharpEmitter(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
+        this.codeGenConfiguration = configuration;
         this.mapper = new DefaultTypeMapper();
 
     }
 
     public CSharpEmitter(CodeGenConfiguration configuration,
                          TypeMapper mapper) {
-        this.configuration = configuration;
+        this.codeGenConfiguration = configuration;
         this.mapper = mapper;
 
     }

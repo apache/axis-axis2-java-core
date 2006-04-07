@@ -98,19 +98,23 @@ public class WSDL2JavaTest extends TestCase{
         try {
             generateAndCompile("wsat.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
+            e.printStackTrace();
             fail("Exception while code generation test!"+ e.getMessage());
         }
     }
 
     /**
      * Test for the WSDL that's missing a service
+     * Since we do noit permit the clients to be generated when
+     * service is missing, we should get an error
      */
     public void testCodeGenerationNoService(){
 
         try {
             generateAndCompile("no-service.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+            fail("Undesired behavior while code generating!");
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            //done - we are good if we reach here
         }
     }
 
@@ -151,16 +155,16 @@ public class WSDL2JavaTest extends TestCase{
         }
     }
 
-    /**
-     * Test for the sales rank and price!
-     */
-    public void testCodeGenerationSalesRankNPrice(){
-        try {
-            generateAndCompile("SalesRankNPrice.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
-        }
-    }
+//    /**
+//     * Test for the sales rank and price!
+//     */
+//    public void testCodeGenerationSalesRankNPrice(){
+//        try {
+//            generateAndCompile("SalesRankNPrice.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+//        } catch (CodeGenerationException e) {
+//            fail("Exception while code generation test!"+ e.getMessage());
+//        }
+//    }
 
      /**
      * Test for the mime doc
@@ -211,15 +215,18 @@ public class WSDL2JavaTest extends TestCase{
 //    }
 
     /**
-     * Test for the modified ping-unboond wsdl. The binding is removed in this wsdl
+     * Test for the modified ping-unboond wsdl.
+     * The binding is removed in this wsdl.Codegen should fail for this
+     * WSDL by saying
      *
      */
     public void testCodeGenerationPingUnbound(){
 
         try {
             generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+            fail("Undesired behavior while code generating!");
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+           //we are good
         }
     }
 

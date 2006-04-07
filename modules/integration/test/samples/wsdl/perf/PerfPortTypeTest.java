@@ -31,7 +31,7 @@ public class PerfPortTypeTest extends TestCase {
 
     private String targetEpr = "http://127.0.0.1:" +
             UtilServer.TESTING_PORT +
-            "/axis2/services/PerfSoapService";
+            "/axis2/services/PerfPortType";
 
     public PerfPortTypeTest() {
         super();

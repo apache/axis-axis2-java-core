@@ -28,8 +28,8 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     public void engage() throws CodeGenerationException {
           if (!configuration.isParametersWrapped()){
-              //unwrap the schema since we are told to do so
-             SchemaUnwrapper.unwrap(configuration.getWom());
+//              //unwrap the schema since we are told to do so
+//             SchemaUnwrapper.unwrap(configuration.getWom());
           }
     }
 }

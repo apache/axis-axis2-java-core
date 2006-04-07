@@ -41,6 +41,11 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.tool.SchemaCompilerExtension;
+import org.apache.xmlbeans.impl.tool.SchemaCompiler;
+import org.apache.xmlbeans.impl.tool.Extension;
+import org.apache.xmlbeans.impl.schema.SchemaTypeSystemCompiler;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,6 +61,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,7 +85,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
     boolean debug = false;
-    
+
     public void engage() {
 
         //test the databinding type. If not just fall through
@@ -88,7 +94,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
         }
 
         //check the comptibilty
-        checkCompatibility();
+        //checkCompatibility();
 
         // Note  - typically we  need to check the presence of unwrapped or wrapped
         // parameter style  here. However XMLBeans nicely generates classes for all
@@ -99,10 +105,10 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
         try {
             //get the types from the types section
-            WSDLTypes typesList = configuration.getWom().getTypes();
+            ArrayList schemas = configuration.getAxisService().getSchema();
 
             //check for the imported types. Any imported types are supposed to be here also
-            if (typesList == null) {
+            if (schemas == null || schemas.isEmpty()) {
                 //there are no types to be code generated
                 //However if the type mapper is left empty it will be a problem for the other
                 //processes. Hence the default type mapper is set to the configuration
@@ -110,63 +116,28 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
                 return;
             }
 
-            List typesArray = typesList.getExtensibilityElements();
-            //this a list that keeps the already processed schemas
-            List processedSchemas = new ArrayList();
+            // todo - improve this code by using the schema compiler from
+            //xmlbeans directly
 
-            WSDLExtensibilityElement extensiblityElt;
             SchemaTypeSystem sts;
             Vector xmlObjectsVector = new Vector();
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
+            Map nameSpacesMap = configuration.getAxisService().getNameSpacesMap();
+            for (int i = 0; i < schemas.size(); i++) {
 
-            for (int i = 0; i < typesArray.size(); i++) {
-                extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
-                Schema schema;
+                XmlSchema schema = (XmlSchema) schemas.get(i);
+                XmlOptions options = new XmlOptions();
 
-                if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
-                    schema = (Schema) extensiblityElt;
-                    XmlOptions options = new XmlOptions();
+                options.setLoadAdditionalNamespaces(
+                        nameSpacesMap); //add the namespaces
+                xmlObjectsVector.add(
+                        XmlObject.Factory.parse(
+                                getSchemaAsString(schema)
+                                ,options));
 
-                    options.setLoadAdditionalNamespaces(
-                            configuration.getWom().getNamespaces()); //add the namespaces
-
-
-                    Stack importedSchemaStack = schema.getImportedSchemaStack();
-                    File schemaFolder = null;
-                    if(debug) {
-                        schemaFolder = new File(configuration.getOutputLocation(), SCHEMA_FOLDER);
-                        schemaFolder.mkdir();
-                    }
-                    //compile these schemas
-                    while (!importedSchemaStack.isEmpty()) {
-                        Element element = (Element) importedSchemaStack.pop();
-                        String tagetNamespace = element.getAttribute("targetNamespace");
-                        if (!processedSchemas.contains(tagetNamespace)) {
-
-                            if(debug) {
-                                // we are not using DOM toString method here, as it seems it depends on the
-                                // JDK version that is being used.
-                                String s = DOM2Writer.nodeToString(element);
-    
-                                //write the schema to a file
-                                File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
-                                FileWriter writer = new FileWriter(tempFile);
-                                writer.write(s);
-                                writer.flush();
-                                writer.close();
-                            }
-
-                            xmlObjectsVector.add(
-                                    XmlObject.Factory.parse(
-                                            element
-                                            , options));
-
-                            processedSchemas.add(tagetNamespace);
-                        }
-                    }
-                }
             }
+
 
             // add the third party schemas
             //todo perhaps checking the namespaces would be a good idea to
@@ -203,10 +174,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             //set the type mapper to the config
             configuration.setTypeMapper(mapper);
 
-            if(debug) {
-                // write the mapper to a file for later retriival
-                writeMappingsToFile(mapper.getAllMappedNames());
-            }
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -214,30 +182,6 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
     }
 
-    private void writeMappingsToFile(Map typeMappings) throws IOException {
-
-        File typeMappingFolder = new File(configuration.getOutputLocation(), MAPPING_FOLDER);
-        if (!typeMappingFolder.exists()) {
-            typeMappingFolder.mkdir();
-        }
-
-        File typeMappingFile = File.createTempFile(MAPPER_FILE_NAME, ".xml", typeMappingFolder);
-        BufferedWriter out = new BufferedWriter(new FileWriter(typeMappingFile));
-        out.write("<" + MAPPINGS + ">");
-
-        Iterator iterator = typeMappings.keySet().iterator();
-        while (iterator.hasNext()) {
-            QName qName = (QName) iterator.next();
-            String fullJavaName = (String) typeMappings.get(qName);
-            out.write("<" + MAPPING + ">");
-            out.write("<" + MESSAGE + ">" + qName.getLocalPart() + "</" + MESSAGE + ">");
-            out.write("<" + JAVA_NAME + ">" + fullJavaName + "</" + JAVA_NAME + ">");
-            out.write("</" + MAPPING + ">");
-        }
-        out.write("</" + MAPPINGS + ">");
-        out.close();
-
-    }
 
     /**
      * Populate the base64 types
@@ -251,7 +195,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
         List allSeenTypes = new ArrayList();
         List base64ElementQNamesList = new ArrayList();
         SchemaType outerType;
-        //add the document types and global types
+//add the document types and global types
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
         for (int i = 0; i < allSeenTypes.size(); i++) {
@@ -260,8 +204,8 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
                 if (Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
                     outerType = sType.getOuterType();
-                    //check the outer type further to see whether it has the contenttype attribute from
-                    //XMime namespace
+//check the outer type further to see whether it has the contenttype attribute from
+//XMime namespace
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
                         if (Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
@@ -277,43 +221,43 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
         configuration.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY, base64ElementQNamesList);
     }
-    
+
     private void findPlainBase64Types(SchemaTypeSystem sts) {
         ArrayList allSeenTypes = new ArrayList();
-        
+
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
-        
+
         ArrayList base64Types = new ArrayList();
-        
+
         for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext(); ) {
             SchemaType stype = (SchemaType) iterator.next();
             findPlainBase64Types(stype, base64Types);
         }
-        
+
         configuration.putProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY, base64Types);
     }
-    
+
     private void findPlainBase64Types(SchemaType stype, ArrayList base64Types) {
-        
+
         SchemaProperty[] elementProperties = stype.getElementProperties();
-        
+
         for (int i = 0; i < elementProperties.length; i++) {
             SchemaType schemaType = elementProperties[i].getType();
-            
+
             if (schemaType.isPrimitiveType()) {
                 SchemaType primitiveType = schemaType.getPrimitiveType();
-            
+
                 if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
                     base64Types.add(elementProperties[i].getName());
                 }
-                
+
             } else {
-                findPlainBase64Types(schemaType, base64Types);                      
-            }  
+                findPlainBase64Types(schemaType, base64Types);
+            }
         }
     }
-    
+
     /**
      * Loading the external schemas.
      *
@@ -356,43 +300,6 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     }
 
 
-    /**
-     * Checking the compatibilty has to do with generating RPC/encoded stubs.
-     * If the XMLBeans bindings are used encoded binding cannot be done.
-     */
-    private void checkCompatibility() {
-        Map bindingMap = this.configuration.getWom().getBindings();
-        Collection col = bindingMap.values();
-
-        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            WSDLBinding b = (WSDLBinding) iterator.next();
-            HashMap bindingOps = b.getBindingOperations();
-            Collection bindingOpsCollection = bindingOps.values();
-            for (Iterator iterator1 = bindingOpsCollection.iterator(); iterator1.hasNext();) {
-                checkInvalidUse((WSDLBindingOperation) iterator1.next());
-            }
-
-        }
-    }
-
-    protected void checkInvalidUse(WSDLBindingOperation bindingOp) {
-        WSDLBindingMessageReference input = bindingOp.getInput();
-        if (input != null) {
-            Iterator extIterator = input.getExtensibilityElements()
-                    .iterator();
-            while (extIterator.hasNext()) {
-                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-                if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
-                        ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
-                    if (WSDLConstants.WSDL_USE_ENCODED.equals(
-                            ((SOAPBody) element).getUse())) {
-                        throw new RuntimeException(
-                                CodegenMessages.getMessage("extension.encodedNotSupported"));
-                    }
-                }
-            }
-        }
-    }
 
     private XmlObject[] convertToXMLObjectArray(Vector vec) {
         return (XmlObject[]) vec.toArray(new XmlObject[vec.size()]);
@@ -432,6 +339,17 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     }
 
     /**
+     * Convert schema into a String
+     * @param schema
+     * @return
+     */
+    private String getSchemaAsString(XmlSchema schema){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        schema.write(baos);
+        return baos.toString();
+    }
+
+    /**
      * Custom binding configuration for the code generator. This controls
      * how the namespaces are suffixed/prefixed
      */
@@ -440,5 +358,24 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             return URLProcessor.makePackageName(uri);
         }
     }
+
+//    /**
+//     *
+//     */
+//    public static class Axis2SchemaCompilerExtension implements SchemaCompilerExtension{
+//        private SchemaTypeSystem sts;
+//
+//        public SchemaTypeSystem getSts() {
+//            return sts;
+//        }
+//
+//        public void schemaCompilerExtension(SchemaTypeSystem schemaTypeSystem, Map parms) {
+//            this.sts = schemaTypeSystem;
+//        }
+//
+//        public String getExtensionName() {
+//            return "Axis2.xmlbeans.extension";
+//        }
+//    }
 }
 

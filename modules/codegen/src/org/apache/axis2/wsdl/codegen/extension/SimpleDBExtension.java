@@ -22,21 +22,12 @@ import org.apache.axis2.schema.SchemaConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.XSLTConstants;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.Schema;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
-import java.util.Vector;
 
 /**
  * Extension for simple data binding.
@@ -53,8 +44,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
         }
         try {
 
-            WSDLTypes typesList = configuration.getWom().getTypes();
-            if (typesList == null) {
+            List schemaList = configuration.getAxisService().getSchema();
+            if (schemaList == null || schemaList.isEmpty()) {
                 //there are no types to be code generated
                 //However if the type mapper is left empty it will be a problem for the other
                 //processes. Hence the default type mapper is set to the configuration
@@ -62,43 +53,6 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                 return;
             }
 
-            List typesArray = typesList.getExtensibilityElements();
-            WSDLExtensibilityElement extensiblityElt;
-            Vector xmlSchemaTypeVector = new Vector();
-            XmlSchemaCollection schemaColl = new XmlSchemaCollection();
-            //add the base uri
-            if (configuration.getBaseURI()!=null){
-                schemaColl.setBaseUri(configuration.getBaseURI());
-            }
-
-
-
-            for (int i = 0; i < typesArray.size(); i++) {
-                extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
-
-                //add the namespace map here. it is absolutely needed
-                Map nsMap = configuration.getWom().getNamespaces();
-                Iterator keys = nsMap.keySet().iterator();
-                String key;
-                while (keys.hasNext()) {
-                    key = (String) keys.next();
-                    schemaColl.mapNamespace(key, (String) nsMap.get(key));
-                }
-                Schema schema;
-
-                if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
-                    schema = (Schema) extensiblityElt;
-                    Stack importedSchemaStack = schema.getImportedSchemaStack();
-                    //compile these schemas
-                    while (!importedSchemaStack.isEmpty()) {
-                        Element el = (Element) importedSchemaStack.pop();
-                        if (el != null) {
-                            XmlSchema thisSchema = schemaColl.read(el);
-                            xmlSchemaTypeVector.add(thisSchema);
-                        }
-                    }
-                }
-            }
             //call the schema compiler
             CompilerOptions options = new CompilerOptions();
 
@@ -112,7 +66,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
             SchemaCompiler schemaCompiler = new SchemaCompiler(options);
             // run the schema compiler
-            schemaCompiler.compile(xmlSchemaTypeVector);
+            schemaCompiler.compile(schemaList);
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
