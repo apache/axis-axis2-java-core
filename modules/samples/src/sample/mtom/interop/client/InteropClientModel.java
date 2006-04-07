@@ -55,7 +55,7 @@ public class InteropClientModel {
         File dataFile = new File(fileName);
         FileDataSource dataSource = new FileDataSource(dataFile);
         expectedDH = new DataHandler(dataSource);
-        OMText textData = fac.createText(expectedDH, true);
+        OMText textData = fac.createOMText(expectedDH, true);
         data.addChild(textData);
         return data;
     }

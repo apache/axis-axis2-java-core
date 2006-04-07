@@ -63,7 +63,7 @@ public class MTOMClientModel {
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
-        OMText textData = fac.createText(expectedDH, true);
+        OMText textData = fac.createOMText(expectedDH, true);
         image.addChild(textData);
 
         OMElement imageName = fac.createOMElement("fileName", omNs);

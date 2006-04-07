@@ -86,7 +86,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement payload = fac.createOMElement("echoOMElementRequest", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
+                fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
         Options options = new Options();
         options.setTo(
@@ -111,7 +111,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement payload = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
+                fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);

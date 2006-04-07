@@ -39,7 +39,7 @@ public class EchoBlockingWsaBasedClient {
         OMNamespace omNs = fac
                 .createOMNamespace("http://example1.org/example1", "example1");
         OMElement id = fac.createOMElement("id", omNs);
-        id.addChild(fac.createText(id, "Axis2"));
+        id.addChild(fac.createOMText(id, "Axis2"));
         return id;
     }
 

@@ -43,11 +43,11 @@ public class EchoExtendedStructFaultClientUtil implements SunClientUtil {
         OMElement intMsg = fac.createOMElement("intMessage", null);
         OMElement anotherMsg = fac.createOMElement("anotherIntMessage", null);
 
-        floatMsg.addChild(fac.createText(floatMsg, "2.023"));
-        shortMsg.addChild(fac.createText(shortMsg, "13"));
-        stringMsg.addChild(fac.createText(stringMsg, "String"));
-        intMsg.addChild(fac.createText(intMsg, "6"));
-        anotherMsg.addChild(fac.createText(anotherMsg, "10"));
+        floatMsg.addChild(fac.createOMText(floatMsg, "2.023"));
+        shortMsg.addChild(fac.createOMText(shortMsg, "13"));
+        stringMsg.addChild(fac.createOMText(stringMsg, "String"));
+        intMsg.addChild(fac.createOMText(intMsg, "6"));
+        anotherMsg.addChild(fac.createOMText(anotherMsg, "10"));
 
         param.addChild(floatMsg);
         param.addChild(shortMsg);

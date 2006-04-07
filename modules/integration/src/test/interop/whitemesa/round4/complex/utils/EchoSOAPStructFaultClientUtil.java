@@ -60,9 +60,9 @@ public class EchoSOAPStructFaultClientUtil implements SunClientUtil {
         vint.addAttribute("type", "xsd:int", typeNs);
         vfloat.addAttribute("type", "xsd:float", typeNs);
 
-        vstring.addChild(fac.createText(vstring, "String"));
-        vint.addChild(fac.createText(vint, "0"));
-        vfloat.addChild(fac.createText(vfloat, "3.14159E0"));
+        vstring.addChild(fac.createOMText(vstring, "String"));
+        vint.addChild(fac.createOMText(vint, "0"));
+        vfloat.addChild(fac.createOMText(vfloat, "3.14159E0"));
 
         sstruct.addChild(vstring);
         sstruct.addChild(vint);

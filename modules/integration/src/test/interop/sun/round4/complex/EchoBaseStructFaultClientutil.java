@@ -48,8 +48,8 @@ public class EchoBaseStructFaultClientutil implements SunGroupHClientUtil{
         value1.addChild(value3);
         method.addChild(value1);
 
-        value2.addChild(fac.createText(value2, "10.3"));
-        value3.addChild(fac.createText(value3, "1"));
+        value2.addChild(fac.createOMText(value2, "10.3"));
+        value3.addChild(fac.createOMText(value3, "1"));
 
         return method;
     }

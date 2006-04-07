@@ -45,8 +45,8 @@ public class EchoBaseStructFaultClientutil implements SunClientUtil {
         OMElement floatMsg = fac.createOMElement("floatMessage", null);
         OMElement shortMsg = fac.createOMElement("shortMessage ", null);
 
-        floatMsg.addChild(fac.createText(floatMsg, "10.3"));
-        shortMsg.addChild(fac.createText(shortMsg, "10"));
+        floatMsg.addChild(fac.createOMText(floatMsg, "10.3"));
+        shortMsg.addChild(fac.createOMText(shortMsg, "10"));
 
         para.addChild(floatMsg);
         para.addChild(shortMsg);

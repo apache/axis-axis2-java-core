@@ -119,7 +119,7 @@ public abstract class TestClient extends TestCase {
                 "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
-        value.addChild(fac.createText(value, AXIS2_ECHO_STRING));
+        value.addChild(fac.createOMText(value, AXIS2_ECHO_STRING));
         method.addChild(value);
 
         return method;

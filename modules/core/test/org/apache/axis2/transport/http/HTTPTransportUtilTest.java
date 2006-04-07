@@ -40,7 +40,7 @@ public class HTTPTransportUtilTest extends TestCase {
                 new QName("MyFirstBodyElement"), soapEnvelope.getBody());
         OMElement element11 = factory.createOMElement(
                 new QName("MyFirstBodyElement"), element);
-        OMText optimizedText = factory.createText("Hi", "text/plain", true);
+        OMText optimizedText = factory.createOMText("Hi", "text/plain", true);
         element11.addChild(optimizedText);
         assertTrue(
                 "optmization check has not performed correctly in SOAPEnvelope",
@@ -54,7 +54,7 @@ public class HTTPTransportUtilTest extends TestCase {
                 new QName("MyFirstBodyElement"), soapEnvelope.getBody());
         OMElement element11 = factory.createOMElement(
                 new QName("MyFirstBodyElement"), element);
-        OMText optimizedText = factory.createText("Hi", "text/plain", false);
+        OMText optimizedText = factory.createOMText("Hi", "text/plain", false);
         element11.addChild(optimizedText);
         assertFalse(
                 "optmization check has not performed correctly in SOAPEnvelope",

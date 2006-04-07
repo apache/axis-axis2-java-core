@@ -54,8 +54,8 @@ public class FormModel {
         value1.addAttribute("xsi:type", "xsd:string", null);
         value2.addAttribute("xsi:type", "xsd:string", null);
         value1.addChild(
-                omfactory.createText(value1, PropertyLoader.getGoogleKey()));
-        value2.addChild(omfactory.createText(value2, word));
+                omfactory.createOMText(value1, PropertyLoader.getGoogleKey()));
+        value2.addChild(omfactory.createOMText(value2, word));
 
         method.addChild(value1);
         method.addChild(value2);

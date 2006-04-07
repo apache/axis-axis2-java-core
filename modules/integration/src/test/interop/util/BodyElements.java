@@ -48,7 +48,7 @@ public class BodyElements {
             }
         }
 
-        OMText txt = fac.createText(handler, optimized);
+        OMText txt = fac.createOMText(handler, optimized);
         data.addChild(txt);
         return data;
     }
@@ -71,7 +71,7 @@ public class BodyElements {
         }
         for (int i = 0; i < repeat; i++) {
             OMElement ele = fac.createOMElement("Data", omNS);
-            OMText txt = fac.createText(handler, optimzed);
+            OMText txt = fac.createOMText(handler, optimzed);
             ele.addChild(txt);
             echoTest.addChild(ele);
         }

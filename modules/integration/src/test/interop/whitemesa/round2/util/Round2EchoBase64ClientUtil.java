@@ -42,7 +42,7 @@ public class Round2EchoBase64ClientUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("inputBase64", "", null);
         part.addAttribute("xsi:type", "xsd:base64Binary", null);
 //        DataHandler data = new DataHandler(new ByteArrayDataSource("WebServices".getBytes()));
-//        OMText base64EncodedText = omfactory.createText(data, true );
+//        OMText base64EncodedText = omfactory.createOMText(data, true );
 //        part.addChild(base64EncodedText);
         part.addChild(omfactory.createText("SGVsbG8gV29ybGQ="));
 

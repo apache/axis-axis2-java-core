@@ -58,9 +58,9 @@ public class EchoMultipleFaults1ClientUtil implements SunClientUtil {
         param2.addAttribute("arrayType", "xsd:float[1]", encNs1);
         item0.addAttribute("type", "xsd:float", typeNs);
 
-        wfault.addChild(omfactory.createText(wfault, "0"));
-        param1.addChild(omfactory.createText(param1, "String"));
-        item0.addChild(omfactory.createText(item0, "1.3456"));
+        wfault.addChild(omfactory.createOMText(wfault, "0"));
+        param1.addChild(omfactory.createOMText(param1, "String"));
+        item0.addChild(omfactory.createOMText(item0, "1.3456"));
         param2.addChild(item0);
 
         operation.addChild(wfault);

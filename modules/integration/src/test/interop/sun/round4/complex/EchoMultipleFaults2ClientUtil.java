@@ -79,24 +79,24 @@ public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
         method.addChild(value11);
 
 
-        value1.addChild(fac.createText(value1, "2"));
-        value3.addChild(fac.createText(value3, "0.21"));
-        value4.addChild(fac.createText(value4, "6"));
-        value6.addChild(fac.createText(value6, "0.555"));
-        value7.addChild(fac.createText(value7, "9"));
-        value8.addChild(fac.createText(value8, "hi"));
-        value9.addChild(fac.createText(value9, "10"));
+        value1.addChild(fac.createOMText(value1, "2"));
+        value3.addChild(fac.createOMText(value3, "0.21"));
+        value4.addChild(fac.createOMText(value4, "6"));
+        value6.addChild(fac.createOMText(value6, "0.555"));
+        value7.addChild(fac.createOMText(value7, "9"));
+        value8.addChild(fac.createOMText(value8, "hi"));
+        value9.addChild(fac.createOMText(value9, "10"));
 
-        value10.addChild(fac.createText(value10, "20"));
+        value10.addChild(fac.createOMText(value10, "20"));
 
-        value12.addChild(fac.createText(value12, "0.111"));
+        value12.addChild(fac.createOMText(value12, "0.111"));
 
-        value13.addChild(fac.createText(value13, "11"));
+        value13.addChild(fac.createOMText(value13, "11"));
 
-        value14.addChild(fac.createText(value14, "hi"));
-        value15.addChild(fac.createText(value15, "8"));
-        value16.addChild(fac.createText(value16, "9"));
-        value17.addChild(fac.createText(value17, "1"));
+        value14.addChild(fac.createOMText(value14, "hi"));
+        value15.addChild(fac.createOMText(value15, "8"));
+        value16.addChild(fac.createOMText(value16, "9"));
+        value17.addChild(fac.createOMText(value17, "1"));
 
         return method;
     }

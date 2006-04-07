@@ -96,7 +96,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value,
+        value.addChild(fac.createOMText(value,
                 "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
 

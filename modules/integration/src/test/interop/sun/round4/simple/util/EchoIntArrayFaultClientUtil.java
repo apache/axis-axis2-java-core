@@ -53,9 +53,9 @@ public class EchoIntArrayFaultClientUtil implements SunGroupHClientUtil {
 
 
 
-        value2.addChild(fac.createText(value2, "99"));
-        value3.addChild(fac.createText(value3, "10"));
-        value4.addChild(fac.createText(value4, "12"));
+        value2.addChild(fac.createOMText(value2, "99"));
+        value3.addChild(fac.createOMText(value3, "10"));
+        value4.addChild(fac.createOMText(value4, "12"));
 
 
 

@@ -60,20 +60,20 @@ public class EchoMultipleFaults2ClientUtil implements SunClientUtil {
         OMElement anotherMsg3 = fac.createOMElement("anotherIntMessage", null);
         OMElement booleanMsg3 = fac.createOMElement("booleanMessage", null);
 
-        wfault.addChild(fac.createText(wfault, "0"));
-        floatMsg1.addChild(fac.createText(floatMsg1, "7.22"));
-        shortMsg1.addChild(fac.createText(shortMsg1, "10"));
-        floatMsg2.addChild(fac.createText(floatMsg2, "1.414"));
-        shortMsg2.addChild(fac.createText(shortMsg2, "10"));
-        stringMsg2.addChild(fac.createText(stringMsg2, "String Value1"));
-        intMsg2.addChild(fac.createText(intMsg2, "1"));
-        anotherMsg2.addChild(fac.createText(anotherMsg2, "15"));
-        floatMsg3.addChild(fac.createText(floatMsg3, "0.569"));
-        shortMsg3.addChild(fac.createText(shortMsg3, "2"));
-        stringMsg3.addChild(fac.createText(stringMsg3, "String Value3"));
-        intMsg3.addChild(fac.createText(intMsg3, "14"));
-        anotherMsg3.addChild(fac.createText(anotherMsg3, "11"));
-        booleanMsg3.addChild(fac.createText(booleanMsg3, "true"));
+        wfault.addChild(fac.createOMText(wfault, "0"));
+        floatMsg1.addChild(fac.createOMText(floatMsg1, "7.22"));
+        shortMsg1.addChild(fac.createOMText(shortMsg1, "10"));
+        floatMsg2.addChild(fac.createOMText(floatMsg2, "1.414"));
+        shortMsg2.addChild(fac.createOMText(shortMsg2, "10"));
+        stringMsg2.addChild(fac.createOMText(stringMsg2, "String Value1"));
+        intMsg2.addChild(fac.createOMText(intMsg2, "1"));
+        anotherMsg2.addChild(fac.createOMText(anotherMsg2, "15"));
+        floatMsg3.addChild(fac.createOMText(floatMsg3, "0.569"));
+        shortMsg3.addChild(fac.createOMText(shortMsg3, "2"));
+        stringMsg3.addChild(fac.createOMText(stringMsg3, "String Value3"));
+        intMsg3.addChild(fac.createOMText(intMsg3, "14"));
+        anotherMsg3.addChild(fac.createOMText(anotherMsg3, "11"));
+        booleanMsg3.addChild(fac.createOMText(booleanMsg3, "true"));
 
         para1.addChild(floatMsg1);
         para1.addChild(shortMsg1);

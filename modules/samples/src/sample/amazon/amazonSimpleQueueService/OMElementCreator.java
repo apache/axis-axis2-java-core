@@ -63,7 +63,7 @@ public class OMElementCreator {
         //request.addChild(queueID);
         subID.addChild(factory.createText(key));
         queueName.addChild(factory.createText(deleteQueueName));
-        //queueID.addChild(factory.createText(queueIden));
+        //queueID.addChild(factory.createOMText(queueIden));
         enque.addChild(subID);
         enque.addChild(request);
         return enque;
@@ -90,7 +90,7 @@ public class OMElementCreator {
         request.addChild(queueID);
         request.addChild(queueEntryBodies);
         subID.addChild(factory.createText(key));
-        //queueName.addChild(factory.createText("Test Queue LSF "));
+        //queueName.addChild(factory.createOMText("Test Queue LSF "));
         queueID.addChild(factory.createText(queueIden));
         queueEntryBody1.addChild(factory.createText(queueEntyBody));
         enque.addChild(subID);
@@ -128,7 +128,7 @@ public class OMElementCreator {
         request.addChild(readCount);
         subID.addChild(factory.createText(key));
         queueName.addChild(factory.createText(requiredQueueName));
-        //queueID.addChild(factory.createText(queueIden));
+        //queueID.addChild(factory.createOMText(queueIden));
         readCount.addChild(factory.createText("25"));
         read.addChild(subID);
         read.addChild(request);

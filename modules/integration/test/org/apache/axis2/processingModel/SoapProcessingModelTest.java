@@ -135,7 +135,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
     // SOAPHeaderBlock h1 =
     // fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
     // h1.setMustUnderstand(true);
-    // h1.addChild(fac.createText("Dummy String"));
+    // h1.addChild(fac.createOMText("Dummy String"));
     // h1.setRole("http://myOwnRole");
     // OMElement payload = TestingUtils.createDummyOMElement();
     // envelope.getBody().addChild(payload);

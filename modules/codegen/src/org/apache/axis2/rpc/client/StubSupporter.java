@@ -32,20 +32,20 @@ public class StubSupporter {
 
         if (inputParamClass.equals(String.class)) {
             returnElement.addChild(
-                    fac.createText(returnElement, value.toString()));
+                    fac.createOMText(returnElement, value.toString()));
         } else if (inputParamClass.equals(Integer.class)) {
             returnElement.addChild(
-                    fac.createText(
+                    fac.createOMText(
                             returnElement,
                             String.valueOf(((Integer) value).intValue())));
         } else if (inputParamClass.equals(Float.class)) {
             returnElement.addChild(
-                    fac.createText(
+                    fac.createOMText(
                             returnElement,
                             String.valueOf(((Float) value).floatValue())));
         } else if (inputParamClass.equals(Double.class)) {
             returnElement.addChild(
-                    fac.createText(
+                    fac.createOMText(
                             returnElement,
                             String.valueOf(((Double) value).doubleValue())));
             //todo this seems to be a long list... need to complete this
@@ -53,7 +53,7 @@ public class StubSupporter {
             returnElement.addChild((OMElement) value);
         } else {
             returnElement.addChild(
-                    fac.createText(returnElement, value.toString()));
+                    fac.createOMText(returnElement, value.toString()));
         }
         return returnElement;
     }

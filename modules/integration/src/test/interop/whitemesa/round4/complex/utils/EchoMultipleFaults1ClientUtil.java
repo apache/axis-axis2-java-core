@@ -47,12 +47,12 @@ public class EchoMultipleFaults1ClientUtil implements SunClientUtil {
         OMElement floatMsg = fac.createOMElement("floatMessage", null);
         OMElement shortMsg = fac.createOMElement("shortMessage", null);
 
-        whichfault.addChild(fac.createText(whichfault, "10"));
-        vInt.addChild(fac.createText(vInt, "1"));
-        vFloat.addChild(fac.createText(vFloat, "1.0"));
-        vString.addChild(fac.createText(vString, "String"));
-        floatMsg.addChild(fac.createText(floatMsg, "0.23"));
-        shortMsg.addChild(fac.createText(shortMsg, "45"));
+        whichfault.addChild(fac.createOMText(whichfault, "10"));
+        vInt.addChild(fac.createOMText(vInt, "1"));
+        vFloat.addChild(fac.createOMText(vFloat, "1.0"));
+        vString.addChild(fac.createOMText(vString, "String"));
+        floatMsg.addChild(fac.createOMText(floatMsg, "0.23"));
+        shortMsg.addChild(fac.createOMText(shortMsg, "45"));
 
         param1.addChild(vString);
         param1.addChild(vInt);

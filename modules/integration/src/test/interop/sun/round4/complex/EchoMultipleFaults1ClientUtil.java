@@ -59,12 +59,12 @@ public class EchoMultipleFaults1ClientUtil implements SunGroupHClientUtil{
         method.addChild(value2);
         method.addChild(value6);
 
-        value1.addChild(fac.createText(value1, "1"));
-        value3.addChild(fac.createText(value3, "210"));
-        value4.addChild(fac.createText(value4, "0.256"));
-        value5.addChild(fac.createText(value5, "hi"));
-        value7.addChild(fac.createText(value7, "0.569"));
-        value8.addChild(fac.createText(value8, "56"));
+        value1.addChild(fac.createOMText(value1, "1"));
+        value3.addChild(fac.createOMText(value3, "210"));
+        value4.addChild(fac.createOMText(value4, "0.256"));
+        value5.addChild(fac.createOMText(value5, "hi"));
+        value7.addChild(fac.createOMText(value7, "0.569"));
+        value8.addChild(fac.createOMText(value8, "56"));
 
 
 

@@ -39,7 +39,7 @@ public class EchoStringFaultClientUtil implements SunGroupHClientUtil{
 
         OMElement value = fac.createOMElement("param", null);
 
-        value.addChild(fac.createText(value, "Axis2 Echo String "));
+        value.addChild(fac.createOMText(value, "Axis2 Echo String "));
 
         method.addChild(value);
 

@@ -227,7 +227,7 @@ public class MailCharSetEncodingTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createText(value, text));
+        value.addChild(fac.createOMText(value, text));
         method.addChild(value);
 
         return method;

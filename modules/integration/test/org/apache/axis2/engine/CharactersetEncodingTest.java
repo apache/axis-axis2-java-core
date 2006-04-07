@@ -72,7 +72,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
             OMElement payload = fac.createOMElement("echoOMElement", omNs);
             OMElement text = fac.createOMElement("Text", omNs);
-            text.addChild(fac.createText(text, value));
+            text.addChild(fac.createOMText(text, value));
             payload.addChild(text);
 
 //            Call call = new Call(

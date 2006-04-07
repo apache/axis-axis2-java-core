@@ -59,7 +59,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
             value.addChild(
-                    fac.createText(value,
+                    fac.createOMText(value,
                             "Isaac Asimov, The Foundation Trilogy"));
             method.addChild(value);
 

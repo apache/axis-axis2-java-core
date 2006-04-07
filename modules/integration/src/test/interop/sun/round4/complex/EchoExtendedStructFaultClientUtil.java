@@ -54,11 +54,11 @@ public class EchoExtendedStructFaultClientUtil implements SunGroupHClientUtil{
 
         method.addChild(value1);
 
-        value2.addChild(fac.createText(value2, "0.99"));
-        value3.addChild(fac.createText(value3, "10"));
-        value4.addChild(fac.createText(value4, "hi"));
-        value5.addChild(fac.createText(value5, "1"));
-        value6.addChild(fac.createText(value6, "56"));
+        value2.addChild(fac.createOMText(value2, "0.99"));
+        value3.addChild(fac.createOMText(value3, "10"));
+        value4.addChild(fac.createOMText(value4, "hi"));
+        value5.addChild(fac.createOMText(value5, "1"));
+        value6.addChild(fac.createOMText(value6, "56"));
 
 
 

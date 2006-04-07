@@ -29,7 +29,7 @@ public class TestingUtils {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
+                fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
         return method;
     }

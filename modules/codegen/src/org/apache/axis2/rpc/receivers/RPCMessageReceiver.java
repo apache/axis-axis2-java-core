@@ -153,7 +153,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
                 OMElement child = fac.createOMElement(RETURN_WRAPPER, null);
-                child.addChild(fac.createText(child, SimpleTypeMapper.getStringValue(resObject)));
+                child.addChild(fac.createOMText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
                 bodyContent = fac.createOMElement(

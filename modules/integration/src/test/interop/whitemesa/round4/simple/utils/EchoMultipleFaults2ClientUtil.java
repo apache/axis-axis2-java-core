@@ -68,12 +68,12 @@ public class EchoMultipleFaults2ClientUtil implements SunClientUtil {
         item1.addAttribute("type", "xsd:string", typeNs);
         item2.addAttribute("type", "xsd:string", typeNs);
 
-        wfault.addChild(fac.createText(wfault, "10"));
-        para1.addChild(fac.createText(para1, "String"));
-        para2.addChild(fac.createText(para2, "1.2365"));
-        item0.addChild(fac.createText(item0, "StringValue0"));
-        item1.addChild(fac.createText(item1, "StringValue1"));
-        item2.addChild(fac.createText(item2, "StringValue2"));
+        wfault.addChild(fac.createOMText(wfault, "10"));
+        para1.addChild(fac.createOMText(para1, "String"));
+        para2.addChild(fac.createOMText(para2, "1.2365"));
+        item0.addChild(fac.createOMText(item0, "StringValue0"));
+        item1.addChild(fac.createOMText(item1, "StringValue1"));
+        item2.addChild(fac.createOMText(item2, "StringValue2"));
 
         para3.addChild(item0);
         para3.addChild(item1);

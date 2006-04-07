@@ -78,7 +78,7 @@ public class Client {
                 "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
-        value.addChild(fac.createText(value, "Axis2 Echo String "));
+        value.addChild(fac.createOMText(value, "Axis2 Echo String "));
         method.addChild(value);
 
         return method;

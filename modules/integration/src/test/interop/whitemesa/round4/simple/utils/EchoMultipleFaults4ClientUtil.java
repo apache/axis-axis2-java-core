@@ -44,9 +44,9 @@ public class EchoMultipleFaults4ClientUtil implements SunClientUtil {
         OMElement value1 = fac.createOMElement("param1", null);
         OMElement value2 = fac.createOMElement("param2", null);
 
-        value.addChild(fac.createText(value, "10"));
-        value1.addChild(fac.createText(value1, "11"));
-        value2.addChild(fac.createText(value2, "1"));
+        value.addChild(fac.createOMText(value, "10"));
+        value1.addChild(fac.createOMText(value1, "11"));
+        value2.addChild(fac.createOMText(value2, "1"));
 
         operation.addChild(value);
         operation.addChild(value1);

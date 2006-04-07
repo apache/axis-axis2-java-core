@@ -279,7 +279,7 @@ public class AttachmentPartImpl extends AttachmentPart {
         if (datahandler != null) {
             this.dataHandler = datahandler;
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
-            omText = DOOMAbstractFactory.getOMFactory().createText(dataHandler, true);
+            omText = DOOMAbstractFactory.getOMFactory().createOMText(dataHandler, true);
         } else {
             throw new IllegalArgumentException("Cannot set null DataHandler");
         }

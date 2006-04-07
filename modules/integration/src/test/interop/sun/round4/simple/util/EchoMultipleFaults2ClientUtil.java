@@ -54,12 +54,12 @@ public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
         value3.addAttribute("xmlns:nsa","http://www.w3.org/2001/XMLSchema",null);
 
 
-        value.addChild(fac.createText(value, "2"));
-        value1.addChild(fac.createText(value1, "hi"));
-        value2.addChild(fac.createText(value2, "0.23"));
-        value4.addChild(fac.createText(value4, "String 1"));
-        value5.addChild(fac.createText(value5, "String 2"));
-        value6.addChild(fac.createText(value6, "String 3"));
+        value.addChild(fac.createOMText(value, "2"));
+        value1.addChild(fac.createOMText(value1, "hi"));
+        value2.addChild(fac.createOMText(value2, "0.23"));
+        value4.addChild(fac.createOMText(value4, "String 1"));
+        value5.addChild(fac.createOMText(value5, "String 2"));
+        value6.addChild(fac.createOMText(value6, "String 3"));
 
         value3.addChild(value4);
         value3.addChild(value5);

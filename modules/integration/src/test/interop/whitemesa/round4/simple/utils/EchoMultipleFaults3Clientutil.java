@@ -46,9 +46,9 @@ public class EchoMultipleFaults3Clientutil implements SunClientUtil {
         OMElement para1 = fac.createOMElement("param1", null);
         OMElement para2 = fac.createOMElement("param2", null);
 
-        wfault.addChild(fac.createText(wfault, "10"));
-        para1.addChild(fac.createText(para1, "String Value1"));
-        para2.addChild(fac.createText(para2, "String Value2"));
+        wfault.addChild(fac.createOMText(wfault, "10"));
+        para1.addChild(fac.createOMText(para1, "String Value1"));
+        para2.addChild(fac.createOMText(para2, "String Value2"));
 
         operation.addChild(wfault);
         operation.addChild(para1);

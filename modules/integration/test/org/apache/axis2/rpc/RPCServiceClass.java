@@ -67,7 +67,7 @@ public class RPCServiceClass {
         OMElement bodyContent = fac.createOMElement(
                 "echoOMResponse", ns);
         OMElement child = fac.createOMElement("return", null);
-        child.addChild(fac.createText(child, b.getText()));
+        child.addChild(fac.createOMText(child, b.getText()));
         bodyContent.addChild(child);
 //        bodyContent.addChild(b);
         return bodyContent;
@@ -87,11 +87,11 @@ public class RPCServiceClass {
         OMElement method = fac.createOMElement("multiretuenResponse", omNs);
         OMElement value1 = fac.createOMElement("return0", null);
         value1.addChild(
-                fac.createText(value1, "10"));
+                fac.createOMText(value1, "10"));
         method.addChild(value1);
         OMElement value2 = fac.createOMElement("return1", null);
         value2.addChild(
-                fac.createText(value2, "foo"));
+                fac.createOMText(value2, "foo"));
         method.addChild(value2);
         return method;
     }
