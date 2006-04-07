@@ -247,7 +247,7 @@ public class SCTIssuer implements TokenIssuer {
                         Constants.WST_PREFIX), rstrElem);
         
         reqAttRef.addChild((OMElement) this.createSecurityTokenReference(doc,
-                sctId, Constants.TOK_TYPE_SCT));
+                "#" + sctId, Constants.TOK_TYPE_SCT));
         
         reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(doc,
                 sct.getIdentifier(), Constants.TOK_TYPE_SCT));

@@ -16,6 +16,7 @@
 
 package org.apache.axis2.security.rahas;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -116,15 +117,18 @@ public class Sender implements Handler {
 
         SecurityContextToken sct = new SecurityContextToken((Element) doc
                 .importNode((Element) tempToken.getToken(), true));
-        if(sct == null) {
-            
-        }
-        String tokenId = sct.getID();
 
         // Derived key encryption
         WSSecDKEncrypt encrBuilder = new WSSecDKEncrypt();
         encrBuilder.setSymmetricEncAlgorithm(WSConstants.AES_128);
-        encrBuilder.setExternalKey(tempSecret, tokenId);
+        OMElement attachedReference = tempToken.getAttachedReference();
+        if(attachedReference != null) {
+            encrBuilder.setExternalKey(tempSecret, (Element) doc.importNode(
+                    (Element) attachedReference, true));
+        } else {
+            String tokenId = sct.getID();
+            encrBuilder.setExternalKey(tempSecret, tokenId);
+        }
         encrBuilder.build(doc, crypto, secHeader);
 
         WSSecurityUtil.prependChildElement(doc, secHeader.getSecurityHeader(),

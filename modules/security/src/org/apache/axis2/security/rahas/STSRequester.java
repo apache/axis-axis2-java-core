@@ -156,10 +156,15 @@ public class STSRequester {
         }
         
         //Check for attached ref
-        OMElement reqAttRef = rstr.getFirstChildWithName(new QName(
+        OMElement reqAttElem = rstr.getFirstChildWithName(new QName(
                 Constants.WST_NS, Constants.REQUESTED_ATTACHED_REFERENCE));
-        OMElement reqUnattRef = rstr.getFirstChildWithName(new QName(
+        OMElement reqAttRef = reqAttElem == null ? null : reqAttElem
+                .getFirstElement();
+        
+        OMElement reqUnattElem = rstr.getFirstChildWithName(new QName(
                 Constants.WST_NS, Constants.REQUESTED_UNATTACHED_REFERENCE));
+        OMElement reqUnattRef = reqUnattElem == null ? null : reqUnattElem
+                .getFirstElement();
         
         token.setAttachedReference(reqAttRef);
         token.setUnattachedReference(reqUnattRef);
