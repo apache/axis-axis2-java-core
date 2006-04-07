@@ -122,7 +122,7 @@ public class OperationContext extends AbstractContext {
      *
      * @return Returns parent ServiceContext's parent EngineContext.
      */
-    public ConfigurationContext getEngineContext() {
+    public ConfigurationContext getConfigurationContext() {
         return ((ServiceContext) parent).getConfigurationContext();
     }
 

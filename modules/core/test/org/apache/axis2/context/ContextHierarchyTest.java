@@ -78,7 +78,7 @@ public class ContextHierarchyTest extends TestCase {
 
         opContext.setProperty(key1, value3);
         assertEquals(value3, msgctx.getProperty(key1));
-        opContext.getEngineContext();
+        opContext.getConfigurationContext();
 
     }
 
