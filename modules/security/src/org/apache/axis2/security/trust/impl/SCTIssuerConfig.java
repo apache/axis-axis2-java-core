@@ -30,6 +30,8 @@ import java.io.FileInputStream;
 public class SCTIssuerConfig {
 
     public final static QName SCT_ISSUER_CONFIG = new QName("sct-issuer-config");
+    public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
+    public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     
     public final static String SCT_ISSUER_CONFIG_PARAM = 
                                             "sct-issuer-config-param";
@@ -37,26 +39,11 @@ public class SCTIssuerConfig {
     protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
 
     protected String cryptoPropertiesFile = null;
-
-    public static SCTIssuerConfig load(OMElement elem) throws TrustException {
-        return new SCTIssuerConfig(elem);
-    }
     
-    public static SCTIssuerConfig load(String configFilePath)
-            throws TrustException {
-        FileInputStream fis = null;
-        StAXOMBuilder builder = null;
-        try {
-            fis = new FileInputStream(configFilePath);
-             builder = new StAXOMBuilder(fis);
-        } catch (Exception e) {
-            throw new TrustException("errorLoadingConfigFile",
-                    new String[] { configFilePath });
-        }
-        
-        return load(builder.getDocumentElement());
-    }
-
+    protected boolean addRequestedAttachedRef;
+    
+    protected boolean addRequestedUnattachedRef;
+    
     public SCTIssuerConfig(OMElement elem) throws TrustException {
         OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
                 new QName("proofToken"));
@@ -72,6 +59,31 @@ public class SCTIssuerConfig {
             throw new TrustException("sctIssuerCryptoPropertiesMissing");
         }
 
+        this.addRequestedAttachedRef = elem
+                .getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
+        this.addRequestedAttachedRef = elem
+                .getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
+        
         this.cryptoPropertiesFile = cryptoPropertiesElem.getText();
     }
+    
+    public static SCTIssuerConfig load(OMElement elem) throws TrustException {
+        return new SCTIssuerConfig(elem);
+    }
+    
+    public static SCTIssuerConfig load(String configFilePath)
+            throws TrustException {
+        FileInputStream fis = null;
+        StAXOMBuilder builder = null;
+        try {
+            fis = new FileInputStream(configFilePath);
+            builder = new StAXOMBuilder(fis);
+        } catch (Exception e) {
+            throw new TrustException("errorLoadingConfigFile",
+                    new String[] { configFilePath });
+        }
+        
+        return builder != null ? load(builder.getDocumentElement()) : null;
+    }
+
 }

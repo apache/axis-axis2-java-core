@@ -167,7 +167,8 @@ public class SCTIssuer implements TokenIssuer {
         Document doc = ((Element)env).getOwnerDocument();
         
         SecurityContextToken sct = new SecurityContextToken(doc);
-        sct.setID("sctId-" + sct.getElement().hashCode());
+        String sctId = "sctId-" + sct.getElement().hashCode();
+        sct.setID(sctId);
         
         OMElement rstrElem = env.getOMFactory().createOMElement(
                 new QName(Constants.WST_NS,
@@ -180,6 +181,25 @@ public class SCTIssuer implements TokenIssuer {
                         Constants.WST_PREFIX), rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
+        
+        if (config.addRequestedAttachedRef) {
+            OMElement reqAttRef = env.getOMFactory().createOMElement(
+                    new QName(Constants.WST_NS,
+                            Constants.REQUESTED_ATTACHED_REFERENCE,
+                            Constants.WST_PREFIX), rstrElem);
+            reqAttRef.addChild((OMElement) this.createSecurityTokenReference(
+                    doc, "#" + sctId, Constants.TOK_TYPE_SCT));
+        }
+
+        if (config.addRequestedUnattachedRef) {
+            OMElement reqUnattRef = env.getOMFactory().createOMElement(
+                    new QName(Constants.WST_NS,
+                            Constants.REQUESTED_UNATTACHED_REFERENCE,
+                            Constants.WST_PREFIX), rstrElem);
+
+            reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(
+                    doc, sct.getIdentifier(), Constants.TOK_TYPE_SCT));
+        }
         
         OMElement reqProofTok = env.getOMFactory().createOMElement(
                 new QName(Constants.WST_NS, Constants.REQUESTED_PROOF_TOKEN_LN,
@@ -237,20 +257,24 @@ public class SCTIssuer implements TokenIssuer {
         
         rstElem.addChild((OMElement)sct.getElement());
         
-        OMElement reqAttRef = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUESTED_ATTACHED_REFERENCE,
-                        Constants.WST_PREFIX), rstrElem);
-        OMElement reqUnattRef = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUESTED_UNATTACHED_REFERENCE,
-                        Constants.WST_PREFIX), rstrElem);
-        
-        reqAttRef.addChild((OMElement) this.createSecurityTokenReference(doc,
-                "#" + sctId, Constants.TOK_TYPE_SCT));
-        
-        reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(doc,
-                sct.getIdentifier(), Constants.TOK_TYPE_SCT));
+        if (config.addRequestedAttachedRef) {
+            OMElement reqAttRef = env.getOMFactory().createOMElement(
+                    new QName(Constants.WST_NS,
+                            Constants.REQUESTED_ATTACHED_REFERENCE,
+                            Constants.WST_PREFIX), rstrElem);
+            reqAttRef.addChild((OMElement) this.createSecurityTokenReference(
+                    doc, "#" + sctId, Constants.TOK_TYPE_SCT));
+        }
+
+        if (config.addRequestedUnattachedRef) {
+            OMElement reqUnattRef = env.getOMFactory().createOMElement(
+                    new QName(Constants.WST_NS,
+                            Constants.REQUESTED_UNATTACHED_REFERENCE,
+                            Constants.WST_PREFIX), rstrElem);
+
+            reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(
+                    doc, sct.getIdentifier(), Constants.TOK_TYPE_SCT));
+        }
         
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();

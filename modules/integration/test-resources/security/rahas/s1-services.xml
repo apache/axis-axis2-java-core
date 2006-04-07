@@ -13,6 +13,7 @@
 		<sct-issuer-config>
 			<proofToken>EncryptedKey</proofToken>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
+			<addRequestedAttachedRef />
 		</sct-issuer-config>
     </parameter>
     

@@ -13,6 +13,8 @@
 		<sct-issuer-config>
 			<proofToken>BinarySecret</proofToken>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
+			<addRequestedAttachedRef />
+			<addRequestedUnattachedRef />
 		</sct-issuer-config>
     </parameter>
     
