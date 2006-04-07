@@ -101,7 +101,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             //Setting schema namespece if any
             OMElement scheamElement = service_element.getFirstChildWithName(new QName(SCHEMA));
             if (scheamElement != null) {
-                OMAttribute schemaNameSpace = service_element.
+                OMAttribute schemaNameSpace = scheamElement.
                         getAttribute(new QName(SCHEMA_NAME_SPACE));
                 if (schemaNameSpace != null) {
                     String nameSpeceVale = schemaNameSpace.getAttributeValue();

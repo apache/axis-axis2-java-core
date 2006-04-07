@@ -219,6 +219,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     new QName(Constants.TRANSPORT_HTTP));
             transportInDescription.setReceiver(this);
             listenerManager.addListener(transportInDescription, true);
+            ListenerManager.defaultConfigurationContext = configContext;
         } catch (Exception e) {
             throw new ServletException(e);
         }

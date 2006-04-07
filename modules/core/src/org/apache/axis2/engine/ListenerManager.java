@@ -35,6 +35,8 @@ public class ListenerManager {
 
     private Log log = LogFactory.getLog(getClass());
 
+    public static ConfigurationContext defaultConfigurationContext;
+    
     private ConfigurationContext configctx;
     private HashMap startedTranports = new HashMap();
     private boolean stopped = true;
