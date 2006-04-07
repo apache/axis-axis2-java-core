@@ -73,7 +73,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Assimov, the foundation Sega"));
+                fac.createOMText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
 
         return method;
