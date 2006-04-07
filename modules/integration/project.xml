@@ -68,7 +68,7 @@
 		<dependency>
             <groupId>ws-commons</groupId>
             <artifactId>axiom-dom</artifactId>
-            <version>${pom.currentVersion}</version>
+            <version>${axiom.version}</version>
         </dependency>
 
         <dependency>
