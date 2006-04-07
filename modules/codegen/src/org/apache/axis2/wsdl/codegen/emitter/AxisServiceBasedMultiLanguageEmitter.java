@@ -5,7 +5,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.PolicyAttachmentUtil;
+//import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -129,9 +129,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     private Map infoHolder;
 
     CodeGenConfiguration codeGenConfiguration;
+    
     protected TypeMapper mapper;
-    protected PolicyAttachmentUtil attachmentUtil;
-
+    
     private AxisService axisService;
 
     public AxisServiceBasedMultiLanguageEmitter() {

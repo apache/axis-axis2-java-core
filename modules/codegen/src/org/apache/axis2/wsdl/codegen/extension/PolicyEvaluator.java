@@ -16,6 +16,14 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
@@ -26,29 +34,14 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
-import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.ws.policy.AndCompositeAssertion;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
 import org.apache.ws.policy.XorCompositeAssertion;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  *
@@ -60,12 +53,8 @@ public class PolicyEvaluator implements CodeGenExtension {
 	CodeGenConfiguration configuration;
     
     AxisService axisService;
-
-//HashMap ns2modules = new HashMap();
 	
 	HashMap ns2Exts = new HashMap();
-
-//	PolicyAttachmentUtil util;
 
 	Element rootElement;
 
