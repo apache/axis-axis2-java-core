@@ -19,13 +19,13 @@ package org.apache.axis2;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPConstants;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
@@ -56,14 +56,14 @@ import java.util.Map;
  *      a SOAP1.1 fault is created, spurious information can be discarded.
  *      Mapping
  *      <pre>
- *                                                   SOAP1.2              SOAP1.1
- *                                                   node                 faultactor
- *                                                   reason(0).text       faultstring
- *                                                   faultcode.value      faultcode
- *                                                   faultcode.subcode    (discarded)
- *                                                   detail               detail
- *                                                   role                 (discarded)
- *                                                   </pre>
+ *                                                        SOAP1.2              SOAP1.1
+ *                                                        node                 faultactor
+ *                                                        reason(0).text       faultstring
+ *                                                        faultcode.value      faultcode
+ *                                                        faultcode.subcode    (discarded)
+ *                                                        detail               detail
+ *                                                        role                 (discarded)
+ *                                                        </pre>
  */
 public class AxisFault extends RemoteException {
 
@@ -158,6 +158,10 @@ public class AxisFault extends RemoteException {
             if (exceptionElement != null && exceptionElement.getText() != null) {
                 cause = new Exception(exceptionElement.getText());
             }
+
+            // setting the first child element of the fault detail as this.detail
+            this.detail = soapFaultDetail.getFirstElement();
+
         }
 
     }
