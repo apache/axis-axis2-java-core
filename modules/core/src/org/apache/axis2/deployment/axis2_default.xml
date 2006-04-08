@@ -5,7 +5,7 @@
     <parameter name="hotdeployment" locked="false">true</parameter>
     <parameter name="hotupdate" locked="false">false</parameter>
     <parameter name="enableMTOM" locked="false">true</parameter>
-    <parameter name="sendStacktraceDetailsWithFaults" locked="false">false</parameter>
+    <parameter name="sendStacktraceDetailsWithFaults" locked="false">true</parameter>
 
     <!-- Uncomment this to enable REST support -->
     <!--    <parameter name="enableREST" locked="false">true</parameter>-->
