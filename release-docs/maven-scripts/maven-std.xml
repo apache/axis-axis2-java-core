@@ -63,7 +63,7 @@
     </preGoal>
 
     <!--<preGoal name="build:start">
-        <property name="modules" value="core,common,xml,wsdl,adb,codegen,doom,webapp,addressing"/>
+        <property name="modules" value="core,common,xml,adb,codegen,doom,webapp,addressing"/>
     </preGoal>-->
 
     <!-- ======= -->
@@ -257,7 +257,6 @@
             <srcfiles dir="modules">
                 <include name="**/*.java"/>
                 <include name="**/*.xml"/>
-                <include name="**/*.wsdl"/>
                 <exclude name="**/target/**"/>
             </srcfiles>
         </uptodate>
@@ -329,8 +328,7 @@
             <!-- adding the tool classes. This is needed to get the ant task -->
             <!--<fileset dir="modules/tool/target/classes"/>-->
             <fileset dir="modules/common/target/classes"/>
-            <fileset dir="modules/wsdl/target/classes"/>
-            <fileset dir="modules/adb/target/classes"/>
+             <fileset dir="modules/adb/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/>
             <fileset dir="modules/doom/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
@@ -354,14 +352,13 @@
 
         <!-- Copy the 3rd party libs, relevant to minimal bin distro  -->
         <macros:copy-deps copyToDir="target/temp/war/lib"
-                          modules="core,common,wsdl,adb,webapp"/>
+                          modules="core,common,adb,webapp"/>
 
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-core-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
-            <fileset dir="modules/wsdl/target/classes/"/>
-        </jar>
+          </jar>
 
         <!-- Copy the adb jar -->
         <ant:copy toDir="target/temp/war/lib">
@@ -420,7 +417,6 @@
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/doom/src"/>
                 <ant:pathelement location="modules/tool/src"/>
-                <ant:pathelement location="modules/wsdl/src"/>
             </ant:sourcepath>
             <ant:classpath>
                 <ant:fileset dir="target/lib">
@@ -511,7 +507,6 @@
         <jar destfile="${std.bin.temp.dir}/lib/axis2-core-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes/"/>
             <fileset dir="modules/common/target/classes/"/>
-            <fileset dir="modules/wsdl/target/classes/"/>
         </jar>
 
         <ant:copy toDir="${std.bin.temp.dir}/lib">
@@ -543,7 +538,7 @@
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
-                              mods="core,common,wsdl,adb"/>
+                              mods="core,common,adb"/>
             <property name="minDeps.uptodate" value="yes"/>
         </j:if>
     </goal>

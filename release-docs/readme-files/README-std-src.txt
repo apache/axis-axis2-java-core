@@ -13,11 +13,10 @@ Axis2 modules:
 1. core
 2. common
 3. addressing
-4. wsdl
-5. adb
-6. codegen
-7. webapp
-8. doom
+4. adb
+5. codegen
+6. webapp
+7. doom
 
 The samples directory contains all the Axis2 module & service samples.
 
