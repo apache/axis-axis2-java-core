@@ -149,6 +149,7 @@ public class CalcClient {
 
                 ServiceClient serviceClient = new ServiceClient();
                 serviceClient.setOptions(options);
+                options.setAction("urn:" + opStr);
                 MessageContext requetMessageContext = new MessageContext();
                 requetMessageContext.setEnvelope(getPreviousRequestEnvelope(opStr, param,
                         serviceGroupContextId));
