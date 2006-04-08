@@ -16,7 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
@@ -24,53 +23,16 @@ import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.util.XSLTConstants;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.SOAPBody;
-import org.apache.wsdl.extensions.Schema;
-import org.apache.xmlbeans.BindingConfig;
-import org.apache.xmlbeans.Filer;
-import org.apache.xmlbeans.SchemaProperty;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.impl.tool.SchemaCompilerExtension;
-import org.apache.xmlbeans.impl.tool.SchemaCompiler;
-import org.apache.xmlbeans.impl.tool.Extension;
-import org.apache.xmlbeans.impl.schema.SchemaTypeSystemCompiler;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.xmlbeans.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
@@ -134,10 +96,9 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
                 xmlObjectsVector.add(
                         XmlObject.Factory.parse(
                                 getSchemaAsString(schema)
-                                ,options));
+                                , options));
 
             }
-
 
             // add the third party schemas
             //todo perhaps checking the namespaces would be a good idea to
@@ -173,7 +134,6 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             }
             //set the type mapper to the config
             configuration.setTypeMapper(mapper);
-
 
 
         } catch (Exception e) {
@@ -230,7 +190,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
         ArrayList base64Types = new ArrayList();
 
-        for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext();) {
             SchemaType stype = (SchemaType) iterator.next();
             findPlainBase64Types(stype, base64Types);
         }
@@ -300,7 +260,6 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     }
 
 
-
     private XmlObject[] convertToXMLObjectArray(Vector vec) {
         return (XmlObject[]) vec.toArray(new XmlObject[vec.size()]);
     }
@@ -313,7 +272,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
         public OutputStream createBinaryFile(String typename)
                 throws IOException {
             File resourcesDirectory = new File(configuration.getOutputLocation(), "resources");
-            if(!resourcesDirectory.exists()) {
+            if (!resourcesDirectory.exists()) {
                 resourcesDirectory.mkdirs();
             }
             File file = new File(resourcesDirectory, typename);
@@ -327,7 +286,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             typename =
                     typename.replace('.', File.separatorChar);
             File outputDir = new File(configuration.getOutputLocation(), "src");
-            if(!outputDir.exists()) {
+            if (!outputDir.exists()) {
                 outputDir.mkdirs();
             }
             File file = new File(outputDir,
@@ -340,10 +299,10 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
     /**
      * Convert schema into a String
+     *
      * @param schema
-     * @return
      */
-    private String getSchemaAsString(XmlSchema schema){
+    private String getSchemaAsString(XmlSchema schema) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         schema.write(baos);
         return baos.toString();

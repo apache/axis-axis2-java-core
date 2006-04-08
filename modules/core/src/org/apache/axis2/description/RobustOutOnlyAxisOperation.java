@@ -1,6 +1,6 @@
 package org.apache.axis2.description;
 
-import org.apache.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 

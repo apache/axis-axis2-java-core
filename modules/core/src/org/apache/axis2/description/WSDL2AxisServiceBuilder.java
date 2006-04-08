@@ -4,16 +4,14 @@ import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
-import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -179,19 +177,15 @@ public class WSDL2AxisServiceBuilder {
                     Element schemaElement = schemaElements[i];
                     if (schemaElement != null) {
                         System.out.println(schemaElement.getNamespaceURI());
-                        ExtensionFactoryImpl extensionFactory = new ExtensionFactoryImpl();
-                        org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory
-                                .getExtensionElement(ExtensionConstants.SCHEMA);
-                        schemaExtensibilityElement.setElement(schemaElement);
-                        axisService
-                                .setSchema(getXMLSchema(schemaExtensibilityElement
-                                        .getElement()));
+                        axisService.setSchema(getXMLSchema(schemaElement));
                     }
                 }
             }
             processBinding(binding, wsdl4jDefinition);
             return axisService;
         } catch (WSDLException e) {
+            throw new AxisFault(e);
+        } catch (Exception e) {
             throw new AxisFault(e);
         }
     }
@@ -240,7 +234,7 @@ public class WSDL2AxisServiceBuilder {
 
 
     private void processBinding(Binding binding, Definition dif)
-            throws AxisFault {
+            throws Exception {
         if (binding != null) {
             copyExtensibleElements(binding.getExtensibilityElements(), wsdl4jDefinition,
                     axisService, BINDING);
@@ -311,7 +305,7 @@ public class WSDL2AxisServiceBuilder {
     // FIXME Evaluate a way of injecting features and priperties with a general
     // formatted input
     private void processPortType(PortType wsdl4jPortType, Definition dif)
-            throws AxisFault {
+            throws Exception {
 
         //Copy the Attribute information items
         //Copied with the Same QName so it will require no Query in Binding
@@ -331,7 +325,7 @@ public class WSDL2AxisServiceBuilder {
     /////////////////////////////////////////////////////////////////////////////
     //////////////////////////// Internal Component Copying ///////////////////
     private AxisOperation populateOperations(Operation wsdl4jOperation,
-                                             Definition dif) throws AxisFault {
+                                             Definition dif) throws Exception {
         QName opName = new QName(wsdl4jOperation.getName());
         //Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
@@ -380,7 +374,6 @@ public class WSDL2AxisServiceBuilder {
                             outMessage, PORT_TYPE_OPERATION_OUTPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
-                    populatePolicyInclude(PolicyInclude.OUTPUT_POLICY, outMessage);
                 }
             }
         } else {
@@ -411,7 +404,6 @@ public class WSDL2AxisServiceBuilder {
                             outMessage, PORT_TYPE_OPERATION_INPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
-                    populatePolicyInclude(PolicyInclude.OUTPUT_POLICY, outMessage);
                 }
             }
         }
@@ -911,9 +903,7 @@ public class WSDL2AxisServiceBuilder {
     private void copyExtensibleElements(List wsdl4jExtensibleElements,
                                         Definition wsdl4jDefinition, AxisDescription description, String originOfExtensibilityElements) {
         Iterator iterator = wsdl4jExtensibleElements.iterator();
-        ExtensionFactoryImpl extensionFactory = new ExtensionFactoryImpl();
         while (iterator.hasNext()) {
-
             ExtensibilityElement wsdl4jElement = (ExtensibilityElement) iterator
                     .next();
 
@@ -922,7 +912,7 @@ public class WSDL2AxisServiceBuilder {
 
                 //look for the SOAP 1.2 stuff here. WSDL4j does not understand
                 // SOAP 1.2 things
-                if (ExtensionConstants.SOAP_12_OPERATION.equals(unknown
+                if (WSDLConstants.SOAP_12_OPERATION.equals(unknown
                         .getElementType())) {
                     Element element = unknown.getElement();
                     if (description instanceof AxisOperation) {
@@ -933,17 +923,17 @@ public class WSDL2AxisServiceBuilder {
                         }
                         axisOperation.setSoapAction(element.getAttribute("soapAction"));
                     }
-                } else if (ExtensionConstants.SOAP_12_HEADER.equals(unknown
+                } else if (WSDLConstants.SOAP_12_HEADER.equals(unknown
                         .getElementType())) {
                     //TODO : implement thid
-                } else if (ExtensionConstants.SOAP_12_BINDING.equals(unknown
+                } else if (WSDLConstants.SOAP_12_BINDING.equals(unknown
                         .getElementType())) {
                     style = unknown.getElement().getAttribute("style");
                     axisService.setSoapNsUri(wsdl4jElement.getElementType().getNamespaceURI());
-                } else if (ExtensionConstants.SOAP_12_ADDRESS.equals(unknown
+                } else if (WSDLConstants.SOAP_12_ADDRESS.equals(unknown
                         .getElementType())) {
                     axisService.setEndpoint(unknown.getElement().getAttribute("location"));
-                } else if (ExtensionConstants.POLICY.equals(unknown
+                } else if (WSDLConstants.POLICY.equals(unknown
                         .getElementType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
@@ -952,7 +942,7 @@ public class WSDL2AxisServiceBuilder {
 
                     addPolicy(description, originOfExtensibilityElements, policy);
 
-                } else if (ExtensionConstants.POLICY_REFERENCE.equals(unknown.getElementType())) {
+                } else if (WSDLConstants.POLICY_REFERENCE.equals(unknown.getElementType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
                             .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
@@ -976,23 +966,7 @@ public class WSDL2AxisServiceBuilder {
                 // push these into
                 //a stack and then pop from the other side
                 pushSchemaElement(schema, schemaStack);
-                org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory
-                        .getExtensionElement(schema.getElementType());
-                schemaExtensibilityElement.setElement(schema.getElement());
-                schemaExtensibilityElement.setImportedSchemaStack(schemaStack);
-                Boolean required = schema.getRequired();
-                if (null != required) {
-                    schemaExtensibilityElement.setRequired(required
-                            .booleanValue());
-                }
-                //set the name of this Schema element
-                //todo this needs to be fixed
-                if (schema.getDocumentBaseURI() != null) {
-                    schemaExtensibilityElement.setName(new QName("", schema
-                            .getDocumentBaseURI()));
-                }
-                axisService.setSchema(getXMLSchema(schemaExtensibilityElement
-                        .getElement()));
+                axisService.setSchema(getXMLSchema(schema.getElement()));
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
                     .getElementType())) {
                 SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
@@ -1006,14 +980,13 @@ public class WSDL2AxisServiceBuilder {
             } else if (SOAPConstants.Q_ELEM_SOAP_HEADER.equals(wsdl4jElement
                     .getElementType())) {
                 SOAPHeader soapHeader = (SOAPHeader) wsdl4jElement;
-                org.apache.wsdl.extensions.SOAPHeader soapHeaderExtensibilityElement = (org.apache.wsdl.extensions.SOAPHeader) extensionFactory
-                        .getExtensionElement(soapHeader.getElementType());
-                soapHeaderExtensibilityElement.setNamespaceURI(soapHeader
+                SOAPHeaderMessage headerMessage = new SOAPHeaderMessage();
+                headerMessage.setNamespaceURI(soapHeader
                         .getNamespaceURI());
-                soapHeaderExtensibilityElement.setUse(soapHeader.getUse());
+                headerMessage.setUse(soapHeader.getUse());
                 Boolean required = soapHeader.getRequired();
                 if (null != required) {
-                    soapHeaderExtensibilityElement.setRequired(required
+                    headerMessage.setRequired(required
                             .booleanValue());
                 }
                 if (null != wsdl4jDefinition) {
@@ -1021,15 +994,15 @@ public class WSDL2AxisServiceBuilder {
                     Message msg = wsdl4jDefinition.getMessage(soapHeader
                             .getMessage());
                     Part msgPart = msg.getPart(soapHeader.getPart());
-                    soapHeaderExtensibilityElement.setElement(msgPart
+                    headerMessage.setElement(msgPart
                             .getElementName());
                 }
-                soapHeaderExtensibilityElement.setMessage(soapHeader
+                headerMessage.setMessage(soapHeader
                         .getMessage());
 
-                soapHeaderExtensibilityElement.setPart(soapHeader.getPart());
+                headerMessage.setPart(soapHeader.getPart());
                 if (description instanceof AxisMessage) {
-                    ((AxisMessage) description).addSopaHeader(soapHeaderExtensibilityElement);
+                    ((AxisMessage) description).addSopaHeader(headerMessage);
                 }
             } else if (SOAPConstants.Q_ELEM_SOAP_BINDING.equals(wsdl4jElement
                     .getElementType())) {
@@ -1041,105 +1014,105 @@ public class WSDL2AxisServiceBuilder {
     }
 
     private void addPolicy(AxisDescription description, String originOfExtensibilityElements, Policy policy) {
-        
+
         if (description instanceof AxisService) {
-        	// wsdl:service
+            // wsdl:service
             if (SERVICE.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.SERVICE_POLICY, policy);
-            
-            // wsdl:service -> wsdl:port
+
+                // wsdl:service -> wsdl:port
             } else if (PORT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.PORT_POLICY, policy);
 
-            // wsdl:binding
+                // wsdl:binding
             } else if (BINDING.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.BINDING_POLICY, policy);
             }
-            
+
             //TODO wsdl:portType ?
 
         } else if (description instanceof AxisOperation) {
-            
+
             // wsdl:portType -> wsdl:operation
             if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.OPERATION_POLICY, policy);
 
-            // wsdl:binding -> wsdl:operation
+                // wsdl:binding -> wsdl:operation
             } else {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.BINDING_POLICY, policy);
             }
 
         } else {
-        	
+
             // wsdl:portType -> wsdl:operation -> wsdl:input
             if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.INPUT_POLICY, policy);
 
-            // wsdl:binding -> wsdl:operation -> wsdl:input
+                // wsdl:binding -> wsdl:operation -> wsdl:input
             } else if (BINDING_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.BINDING_INPUT_POLICY, policy);
 
-            // wsdl:portType -> wsdl:operation -> wsdl:put
+                // wsdl:portType -> wsdl:operation -> wsdl:put
             } else if (PORT_TYPE_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.OUTPUT_POLICY, policy);
 
-            // wsdl:binding -> wsdl:operation -> wsdl:output
+                // wsdl:binding -> wsdl:operation -> wsdl:output
             } else if (BINDING_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyElement(PolicyInclude.BINDING_OUTPUT_POLICY, policy);
             }
-            
+
             //TODO Faults ..
         }
     }
 
     private void addPolicyRef(AxisDescription description, String originOfExtensibilityElements, PolicyReference policyRefElement) {
-        
+
         if (description instanceof AxisService) {
             // wsdl:service
             if (SERVICE.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.SERVICE_POLICY, policyRefElement);
-            
-            // wsdl:service -> wsdl:port
+
+                // wsdl:service -> wsdl:port
             } else if (PORT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.PORT_POLICY, policyRefElement);
 
-            // wsdl:binding
+                // wsdl:binding
             } else if (BINDING.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.BINDING_POLICY, policyRefElement);
             }
-            
+
             //TODO wsdl:portType ?
 
         } else if (description instanceof AxisOperation) {
-            
+
             // wsdl:portType -> wsdl:operation
             if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.OPERATION_POLICY, policyRefElement);
 
-            // wsdl:binding -> wsdl:operation
+                // wsdl:binding -> wsdl:operation
             } else {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.BINDING_POLICY, policyRefElement);
             }
 
         } else {
-            
+
             // wsdl:portType -> wsdl:operation -> wsdl:input
             if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.INPUT_POLICY, policyRefElement);
 
-            // wsdl:binding -> wsdl:operation -> wsdl:input
+                // wsdl:binding -> wsdl:operation -> wsdl:input
             } else if (BINDING_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.BINDING_INPUT_POLICY, policyRefElement);
 
-            // wsdl:portType -> wsdl:operation -> wsdl:put
+                // wsdl:portType -> wsdl:operation -> wsdl:put
             } else if (PORT_TYPE_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.OUTPUT_POLICY, policyRefElement);
 
-            // wsdl:binding -> wsdl:operation -> wsdl:output
+                // wsdl:binding -> wsdl:operation -> wsdl:output
             } else if (BINDING_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
                 description.getPolicyInclude().addPolicyRefElement(PolicyInclude.BINDING_OUTPUT_POLICY, policyRefElement);
             }
-            
+
             //TODO Faults ..
         }
     }
@@ -1253,7 +1226,7 @@ public class WSDL2AxisServiceBuilder {
         return "ns" + nsCount++;
     }
 
-    private String getMEP(Operation operation) {
+    private String getMEP(Operation operation) throws Exception {
         OperationType operationType = operation.getStyle();
         if (isServerSide) {
             if (null != operationType) {
@@ -1268,7 +1241,7 @@ public class WSDL2AxisServiceBuilder {
 
                 if (operationType.equals(OperationType.SOLICIT_RESPONSE))
                     return WSDLConstants.MEP_URI_OUT_IN;
-                throw new WSDLProcessingException("Cannot Determine the MEP");
+                throw new Exception("Cannot Determine the MEP");
             }
         } else {
             if (null != operationType) {
@@ -1283,40 +1256,9 @@ public class WSDL2AxisServiceBuilder {
 
                 if (operationType.equals(OperationType.SOLICIT_RESPONSE))
                     return WSDLConstants.MEP_URI_IN_OUT;
-                throw new WSDLProcessingException("Cannot Determine the MEP");
+                throw new Exception("Cannot Determine the MEP");
             }
         }
-        throw new WSDLProcessingException("Cannot Determine the MEP");
-    }
-
-    private void populatePolicyInclude(int location, AxisDescription description) {
-        //TODO : Sanka pls fix this
-//        PolicyInclude policyInclude = description.getPolicyInclude();
-//        ArrayList wsdlExtElements = description.getWsdlExtElements();
-//
-//        if (wsdlExtElements != null) {
-//            Object wsdlExtElement;
-//            Object policyElement;
-//
-//            for (Iterator iterator = wsdlExtElements.iterator(); iterator
-//                    .hasNext();) {
-//                wsdlExtElement = iterator.next();
-//
-//                if (wsdlExtElement instanceof PolicyExtensibilityElement) {
-//                    policyElement = ((PolicyExtensibilityElement) wsdlExtElement)
-//                            .getPolicyElement();
-//
-//                    if (policyElement instanceof Policy) {
-//                        policyInclude.addPolicyElement(location,
-//                                (Policy) policyElement);
-//
-//                    } else {
-//                        policyInclude.addPolicyRefElement(location,
-//                                (PolicyReference) policyElement);
-//                    }
-//                }
-//            }
-
-//    }
+        throw new Exception("Cannot Determine the MEP");
     }
 }

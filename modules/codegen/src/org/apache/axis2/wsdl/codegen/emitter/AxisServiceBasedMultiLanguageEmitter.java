@@ -5,7 +5,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.JavaUtils;
-//import org.apache.axis2.util.PolicyAttachmentUtil;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -15,12 +14,11 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.Policy;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.extensions.SOAPHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -133,9 +131,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     private Map infoHolder;
 
     CodeGenConfiguration codeGenConfiguration;
-    
+
     protected TypeMapper mapper;
-    
+
     private AxisService axisService;
 
     //a map to keep the fault classNames
@@ -1200,7 +1198,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
-            SOAPHeader header = (SOAPHeader) iterator.next();
+            SOAPHeaderMessage header = (SOAPHeaderMessage) iterator.next();
             soapHeaderParameterQNameList.add(header.getElement());
         }
     }
@@ -1226,7 +1224,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Get the fault element - No header faults are supported
      * @param doc
      * @param operation
-     * @return
      */
     protected Element getFaultElement(Document doc, AxisOperation operation) {
         Element faultElt = doc.createElement("fault");
@@ -1303,11 +1300,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 Iterator iter = msg.getExtensibilityAttributes().iterator();
                 while (iter.hasNext()) {
-                    WSDLExtensibilityAttribute att =
-                            (WSDLExtensibilityAttribute) iter.next();
-                    addAttribute(doc, att.getKey().getLocalPart(),
-                            att.getValue().toString(),
-                            paramElement);
+                    //TODO : implement this
+//                    WSDLExtensibilityAttribute att =
+//                            (WSDLExtensibilityAttribute) iter.next();
+//                    addAttribute(doc, att.getKey().getLocalPart(),
+//                            att.getValue().toString(),
+//                            paramElement);
                 }
                 params.add(paramElement);
             }
@@ -1353,8 +1351,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Iterator iter = inputMessage.getExtensibilityAttributes().iterator();
 
             while (iter.hasNext()) {
-                WSDLExtensibilityAttribute att = (WSDLExtensibilityAttribute) iter.next();
-                addAttribute(doc, att.getKey().getLocalPart(), att.getValue().toString(), param);
+                //TODO : pls implement this
+//                WSDLExtensibilityAttribute att = (WSDLExtensibilityAttribute) iter.next();
+//                addAttribute(doc, att.getKey().getLocalPart(), att.getValue().toString(), param);
             }
         } else {
             param = null;
@@ -1402,7 +1401,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     /**
      *
      * @param paramType
-     * @return
      */
     private String getParamInitializer(String paramType) {
 
@@ -1421,7 +1419,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param doc
      * @param parameters
      * @param location
-     * @return
      */
     private List getParameterElementList(Document doc, List parameters, String location) {
         List parameterElementList = new ArrayList();

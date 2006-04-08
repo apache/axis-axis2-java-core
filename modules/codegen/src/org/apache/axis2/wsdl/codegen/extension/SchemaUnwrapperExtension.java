@@ -1,6 +1,5 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.wsdl.builder.SchemaUnwrapper;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

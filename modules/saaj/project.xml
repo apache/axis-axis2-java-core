@@ -83,12 +83,7 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
+               <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>

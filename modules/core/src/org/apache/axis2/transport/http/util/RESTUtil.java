@@ -17,6 +17,7 @@ package org.apache.axis2.transport.http.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.HTTPConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -31,7 +32,6 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.wsdl.WSDLConstants;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;

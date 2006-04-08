@@ -18,19 +18,9 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.Schema;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
 
-import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.namespace.QName;
 
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
 
@@ -43,17 +33,17 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
         }
 
         for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema s =  (XmlSchema)schemaList.get(i);
-            if (s.getIncludes().getCount()!=0){
+            XmlSchema s = (XmlSchema) schemaList.get(i);
+            if (s.getIncludes().getCount() != 0) {
                 //there are some included - now see whether there are any
                 //elements or types declared!
-                if (s.getElements().getCount()==0 &&
-                    s.getSchemaTypes().getCount()==0 &&
-                    s.getGroups().getCount()==0 &&
-                    s.getTargetNamespace()==null){
-                  // if there's no targetNamespace there's probably no name, but try it anyway
+                if (s.getElements().getCount() == 0 &&
+                        s.getSchemaTypes().getCount() == 0 &&
+                        s.getGroups().getCount() == 0 &&
+                        s.getTargetNamespace() == null) {
+                    // if there's no targetNamespace there's probably no name, but try it anyway
                     throw new CodeGenerationException(
-                        CodegenMessages.getMessage("extension.invalidWSDL",s.toString()));
+                            CodegenMessages.getMessage("extension.invalidWSDL", s.toString()));
                 }
 
             }

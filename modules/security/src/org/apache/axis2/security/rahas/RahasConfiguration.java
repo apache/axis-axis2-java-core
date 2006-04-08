@@ -25,10 +25,10 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.trust.SimpleTokenStore;
 import org.apache.axis2.security.trust.TokenStorage;
 import org.apache.axis2.security.util.Axis2Util;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.token.SecurityContextToken;
-import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

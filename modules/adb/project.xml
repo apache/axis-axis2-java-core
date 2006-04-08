@@ -51,12 +51,7 @@
             <artifactId>axis2-core</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
+              <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>

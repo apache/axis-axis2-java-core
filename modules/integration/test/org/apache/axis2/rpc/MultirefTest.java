@@ -26,6 +26,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -46,8 +47,6 @@ import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -99,7 +98,7 @@ public class MultirefTest extends TestCase {
                 className));
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new RPCMessageReceiver());
-        axisOp.setStyle(WSDLService.STYLE_RPC);
+        axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);
     }

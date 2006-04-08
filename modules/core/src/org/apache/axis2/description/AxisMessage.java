@@ -2,9 +2,7 @@ package org.apache.axis2.description;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.extensions.SOAPHeader;
-import org.apache.wsdl.impl.MessageReferenceImpl;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -40,7 +38,8 @@ public class AxisMessage extends AxisDescription {
 
     //to keep data in WSDL message refference and to keep the Java2WSDL data
     // such as SchemaElementName , direction etc.
-    private MessageReference messageReference;
+    private QName elementQname;
+    private String direction;
 
     // private PolicyInclude policyInclude;
 
@@ -48,7 +47,6 @@ public class AxisMessage extends AxisDescription {
     public AxisMessage() {
         soapHeaders = new ArrayList();
         handlerChain = new ArrayList();
-        messageReference = new MessageReferenceImpl();
     }
 
     public ArrayList getMessageFlow() {
@@ -78,19 +76,19 @@ public class AxisMessage extends AxisDescription {
     }
 
     public String getDirection() {
-        return messageReference.getDirection();
+        return direction;
     }
 
     public void setDirection(String direction) {
-        messageReference.setDirection(direction);
+        this.direction = direction;
     }
 
     public QName getElementQName() {
-        return messageReference.getElementQName();
+        return this.elementQname;
     }
 
     public void setElementQName(QName element) {
-        messageReference.setElementQName(element);
+       this.elementQname = element;
     }
 
     public Object getKey() {
@@ -124,7 +122,6 @@ public class AxisMessage extends AxisDescription {
     /**
      * This will return a list of WSDLExtensibilityAttribute
      *
-     * @return
      */
     public List getExtensibilityAttributes() {
         // TODO : Deepal implement this properly.
@@ -133,8 +130,8 @@ public class AxisMessage extends AxisDescription {
         return new ArrayList(0);
     }
 
-    public void addSopaHeader(SOAPHeader soapHeader) {
-        soapHeaders.add(soapHeader);
+    public void addSopaHeader(SOAPHeaderMessage soapHeaderMessage) {
+        soapHeaders.add(soapHeaderMessage);
     }
 
     public ArrayList getSoapHeaders() {

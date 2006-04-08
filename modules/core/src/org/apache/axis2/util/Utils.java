@@ -18,38 +18,21 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPFaultCode;
-import org.apache.axiom.soap.SOAPFaultSubCode;
-import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -57,7 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class Utils {
-
     public static void addHandler(Flow flow, Handler handler, String phaseName) {
         HandlerDescription handlerDesc = new HandlerDescription();
         PhaseRule rule = new PhaseRule(phaseName);
@@ -140,7 +122,7 @@ public class Utils {
         AxisOperation axisOp = new InOutAxisOperation(opName);
 
         axisOp.setMessageReceiver(messageReceiver);
-        axisOp.setStyle(WSDLService.STYLE_RPC);
+        axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
         service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(), axisOp);
 
@@ -160,7 +142,7 @@ public class Utils {
         AxisOperation axisOp = new OutInAxisOperation(opName);
 
         axisOp.setMessageReceiver(messageReceiver);
-        axisOp.setStyle(WSDLService.STYLE_RPC);
+        axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
 
         return service;
@@ -342,7 +324,7 @@ public class Utils {
 
     public static boolean isExplicitlyTrue(MessageContext messageContext, String propertyName) {
         Boolean flag = (Boolean) messageContext.getProperty(propertyName);
-        if(flag != null) {
+        if (flag != null) {
             return flag.booleanValue();
         }
         return false;

@@ -29,7 +29,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
-import org.apache.wsdl.WSDLService;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
@@ -64,9 +64,9 @@ public abstract class Stub {
         SOAPBody body = env.getBody();
         OMElement element = body.getFirstElement();
 
-        if (WSDLService.STYLE_RPC.equals(type)) {
+        if (WSDLConstants.STYLE_RPC.equals(type)) {
             return element.getFirstElement();    // todo this needs to be fixed
-        } else if (WSDLService.STYLE_DOC.equals(type)) {
+        } else if (WSDLConstants.STYLE_DOC.equals(type)) {
             return element;
         } else {
             throw new UnsupportedOperationException(Messages

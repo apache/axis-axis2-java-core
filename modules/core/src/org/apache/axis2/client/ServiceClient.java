@@ -7,28 +7,18 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.CallbackReceiver;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
 
+import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.URL;
@@ -113,21 +103,18 @@ public class ServiceClient {
      * We are going to make this policy aware
      *
      * @param configContext
-     * @param wsdldesc
      * @param wsdlServiceName
      * @param portName
      * @throws AxisFault
      */
 
-    public ServiceClient(ConfigurationContext configContext, WSDLDescription wsdldesc,
+    public ServiceClient(ConfigurationContext configContext, Definition wsdl4jDefinition,
                          QName wsdlServiceName, String portName) throws AxisFault {
         // create a config context if needed
         initializeTransports(configContext);
         try {
             this.axisConfig = this.configContext.getAxisConfiguration();
-            WSDLBasedServiceConfigurationBuilder scb =
-                    new WSDLBasedServiceConfigurationBuilder(wsdldesc, configContext);
-            axisService = scb.buildAxisService(wsdlServiceName, portName, options);
+            axisService = AxisService.createClientSideAxisService(wsdl4jDefinition, wsdlServiceName, portName, options);
             // add the service to the config context if it isn't in there
             // already
             if (this.axisConfig.getService(this.axisService.getName()) == null) {
@@ -365,7 +352,7 @@ public class ServiceClient {
          * sending this out InOnlyMEPClient mepClient = new
          * InOnlyMEPClient(serviceContext); mepClient.send("foo", mc);
          */
-       // sendReceive(operation,elem);
+        // sendReceive(operation,elem);
         throw new UnsupportedOperationException(
                 "ServiceClient.sendRobust is not yet implemented");
 
@@ -621,6 +608,7 @@ public class ServiceClient {
 
     /**
      * To get the service context
+     *
      * @return ServiceContext
      */
     public ServiceContext getServiceContext() {

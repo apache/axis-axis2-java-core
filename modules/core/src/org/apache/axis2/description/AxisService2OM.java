@@ -6,8 +6,8 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.extensions.SOAPHeader;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -164,7 +164,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     private void generateHeaderMessages(AxisMessage axismessage, OMFactory fac, OMElement defintions) {
         ArrayList extList = axismessage.getSoapHeaders();
         for (int i = 0; i < extList.size(); i++) {
-            SOAPHeader header = (SOAPHeader) extList.get(i);
+            SOAPHeaderMessage header = (SOAPHeaderMessage) extList.get(i);
             OMElement messageElement = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);
             messageElement.addAttribute(ATTRIBUTE_NAME, header.getMessage().getLocalPart()
                     , null);
@@ -478,8 +478,8 @@ public class AxisService2OM implements Java2WSDLConstants {
         if (extElementList != null) {
             Iterator elements = extElementList.iterator();
             while (elements.hasNext()) {
-                SOAPHeader soapheader =
-                        (SOAPHeader) elements.next();
+                SOAPHeaderMessage soapheader =
+                        (SOAPHeaderMessage) elements.next();
                 addSOAPHeader(fac, input, soapheader, soapNameSpace);
             }
         }
@@ -511,7 +511,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addSOAPHeader(OMFactory fac, OMElement element,
-                               SOAPHeader header,
+                               SOAPHeaderMessage header,
                                OMNamespace soapNameSpace) {
         OMElement extElement = fac.createOMElement("header", soapNameSpace);
         element.addChild(extElement);

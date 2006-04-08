@@ -41,11 +41,7 @@
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
+       
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-addressing</artifactId>

@@ -25,14 +25,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisMessage;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.SOAPBody;
 
 public class JiBXExtension extends AbstractDBProcessingExtension {
 
@@ -113,8 +108,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
 
     /**
      * Accumulate the QNames of all message elements used by an interface. Based on
-     * the code in {@link org.apache.axis2.wsdl.builder.SchemaUnwrapper}
-     * 
+     *
      * @param op
      * @param elements
      */
@@ -143,27 +137,6 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
                     .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             if (outAxisMessage != null) {
                 elements.add(outAxisMessage.getElementQName());
-            }
-        }
-    }
-
-
-
-    protected void checkInvalidUse(WSDLBindingOperation bindingOp) {
-        WSDLBindingMessageReference input = bindingOp.getInput();
-        if (input != null) {
-            Iterator extIterator = input.getExtensibilityElements()
-                    .iterator();
-            while (extIterator.hasNext()) {
-                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-                if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
-                        ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
-                    if (WSDLConstants.WSDL_USE_ENCODED.equals(
-                            ((SOAPBody) element).getUse())) {
-                        throw new RuntimeException(
-                                CodegenMessages.getMessage("extension.encodedNotSupported"));
-                    }
-                }
             }
         }
     }

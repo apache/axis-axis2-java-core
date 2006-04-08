@@ -16,11 +16,11 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.jaxme.generator.impl.GeneratorImpl;
 import org.apache.ws.jaxme.generator.sg.GroupSG;
 import org.apache.ws.jaxme.generator.sg.ObjectSG;
@@ -29,16 +29,6 @@ import org.apache.ws.jaxme.generator.sg.TypeSG;
 import org.apache.ws.jaxme.generator.sg.impl.JAXBSchemaReader;
 import org.apache.ws.jaxme.js.JavaQName;
 import org.apache.ws.jaxme.xs.xml.XsQName;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingMessageReference;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLTypes;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.SOAPBody;
-import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -47,20 +37,12 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 import java.util.Vector;
 
 public class JaxMeExtension extends AbstractDBProcessingExtension {
@@ -103,7 +85,7 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
             JavaTypeMapper mapper = new JavaTypeMapper();
 
             for (int i = 0; i < typesList.size(); i++) {
-                XmlSchema schema = (XmlSchema)typesList.get(i);
+                XmlSchema schema = (XmlSchema) typesList.get(i);
                 xmlObjectsVector.add(new InputSource(new StringReader(getSchemaAsString(schema))));
             }
 
@@ -128,21 +110,21 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
             for (int i = 0; i < xmlObjectsVector.size(); i++) {
                 SchemaSG sg = generator.generate((InputSource) xmlObjectsVector.elementAt(i));
                 ObjectSG[] elements = sg.getElements();
-                for(int j=0;j<elements.length;j++){
+                for (int j = 0; j < elements.length; j++) {
                     XsQName qName = elements[j].getName();
                     JavaQName name = elements[j].getClassContext().getXMLInterfaceName();
                     mapper.addTypeMappingName(new QName(qName.getNamespaceURI(), qName.getLocalName()),
                             name.getPackageName() + '.' + name.getClassName());
                 }
                 TypeSG[] types = sg.getTypes();
-                for(int j=0;j<types.length;j++){
+                for (int j = 0; j < types.length; j++) {
                     XsQName qName = types[j].getName();
                     JavaQName name = types[j].getRuntimeType();
                     mapper.addTypeMappingName(new QName(qName.getNamespaceURI(), qName.getLocalName()),
                             name.getPackageName() + '.' + name.getClassName());
                 }
                 GroupSG[] groups = sg.getGroups();
-                for(int j=0;j<groups.length;j++){
+                for (int j = 0; j < groups.length; j++) {
                     XsQName qName = groups[j].getName();
                     JavaQName name = groups[j].getClassContext().getXMLInterfaceName();
                     mapper.addTypeMappingName(new QName(qName.getNamespaceURI(), qName.getLocalName()),
@@ -150,11 +132,8 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
                 }
             }
 
-
-
             //set the type mapper to the config
             configuration.setTypeMapper(mapper);
-
 
 
         } catch (Exception e) {
@@ -162,7 +141,6 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
         }
 
     }
-
 
 
     /**
@@ -207,9 +185,7 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
     }
 
 
-
-
-    private String getSchemaAsString(XmlSchema schema){
+    private String getSchemaAsString(XmlSchema schema) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         schema.write(baos);
         return baos.toString();

@@ -28,9 +28,9 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
@@ -69,11 +69,11 @@ public class EchoRawSwATest extends TestCase {
         service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(
-                        AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
-                                .getName()));
+                AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
+                .getName()));
         AxisOperation axisOp = new OutInAxisOperation(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
-        axisOp.setStyle(WSDLService.STYLE_DOC);
+        axisOp.setStyle(WSDLConstants.STYLE_DOC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);
 

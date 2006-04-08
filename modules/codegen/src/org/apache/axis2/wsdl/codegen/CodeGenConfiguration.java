@@ -21,8 +21,6 @@ import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.wsdl.util.XSLTConstants;
-import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
 import java.util.HashMap;
@@ -266,7 +264,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     /**
      * Constructor for the configuration. It populates the values using the options map.
      *
-     * @param wom
      * @param optionMap
      */
     public CodeGenConfiguration(AxisService service, Map optionMap) {
@@ -277,7 +274,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     /**
      * Constructor for the configuration. It populates the values using the options map.
      *
-     * @param wom
      * @param optionMap
      */
     public CodeGenConfiguration(Map optionMap) {

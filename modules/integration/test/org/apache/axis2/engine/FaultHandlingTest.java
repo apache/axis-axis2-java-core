@@ -34,14 +34,13 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class FaultHandlingTest extends TestCase implements TestConstants {
 
@@ -180,7 +179,7 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             sender.setOptions(options);
 
-           sender.sendReceive(payload).toString();
+            sender.sendReceive(payload).toString();
         } catch (AxisFault axisFault) {
             assertTrue(axisFault.getFaultCodeElement().toString().indexOf(FaultHandler.M_FAULT_EXCEPTION) > -1);
             assertTrue(axisFault.getFaultDetailElement().toString().indexOf(FaultHandler.DETAIL_MORE_INFO) > -1);

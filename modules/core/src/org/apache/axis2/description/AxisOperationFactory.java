@@ -1,8 +1,8 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.i18n.Messages;
-import org.apache.wsdl.WSDLConstants;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
