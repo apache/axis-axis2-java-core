@@ -42,6 +42,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
@@ -387,6 +388,9 @@ public class AxisEngine {
             }
         }
 
+        Parameter param = context.getParameter("sendStacktraceDetailsWithFaults");
+        boolean sendStacktraceDetailsWithFaults = param != null && ((String) param.getValue()).equalsIgnoreCase("true");
+
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         if (faultDetail != null) {
             fault.setDetail((SOAPFaultDetail) faultDetail);
@@ -399,11 +403,11 @@ public class AxisEngine {
                 OMElement detail = axisFault.getDetail();
                 if (detail != null) {
                     fault.getDetail().addDetailEntry(detail);
-                }else {
+                }else if(sendStacktraceDetailsWithFaults){
                     fault.setException(axisFault);
                 }
             }
-        }else if (fault.getException() == null) {
+        }else if (fault.getException() == null && sendStacktraceDetailsWithFaults) {
             if (e instanceof Exception) {
                 fault.setException((Exception) e);
             } else {
