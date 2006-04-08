@@ -5,12 +5,13 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -182,7 +183,8 @@ public class Utils {
                 // no need to expose , private and protected methods
                 continue;
             }
-            if (jmethod.getSimpleName().equals("init"))
+            if (jmethod.getSimpleName().equals("init") ||
+                    DependencyManager.MESSAGE_CONTEXT_INJECTION_METHOD.equals(jmethod.getSimpleName()))
                 continue;
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));

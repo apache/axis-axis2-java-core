@@ -117,7 +117,8 @@ public class SchemaGenerator {
             for (int i = 0; i < methods.length; i++) {
                 JMethod jMethod = methods[i];
                 //no need to think abt this method , since that is system config method
-                if (jMethod.getSimpleName().equals("init"))
+                if (jMethod.getSimpleName().equals("init") ||
+                        "setOperationContext".equals(jMethod.getSimpleName()))
                     continue;
                 if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
                     throw new Exception(" Sorry we don't support methods overloading !!!! ");

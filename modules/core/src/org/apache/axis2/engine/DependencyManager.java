@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * the DependencyManager calls the init method with appropriate parameters.
  */
 public class DependencyManager {
-    private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
+    public final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
     private final static String SERVICE_INIT_METHOD = "init";
     private final static String SERVICE_DESTROY_METHOD = "destroy";
 
