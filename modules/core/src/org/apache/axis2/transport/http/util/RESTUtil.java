@@ -15,10 +15,13 @@
  */
 package org.apache.axis2.transport.http.util;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.HTTPConstants;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
@@ -26,12 +29,9 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.util.SchemaUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.axiom.soap.SOAPBody;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -63,11 +63,11 @@ public class RESTUtil {
             SOAPEnvelope soapEnvelope;
             if ("".equals(contentType) || contentType == null) {
                 throw new AxisFault("ContentType should be given to proceed," +
-                                    " according to WSDL 2.0 HTTP binding rules");
+                        " according to WSDL 2.0 HTTP binding rules");
             } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
-                       contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
                 soapEnvelope = handleNonURLEncodedContentTypes(msgContext, request,
-                                                               OMAbstractFactory.getSOAP11Factory());
+                        OMAbstractFactory.getSOAP11Factory());
             } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
                 // 2. Else, Dispatch and find out the operation and the service.
                 // Dispatching can only be done using the RequestURI, as others can not be run in the REST case
@@ -81,13 +81,13 @@ public class RESTUtil {
                                 getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getSchemaElement();
 
                 soapEnvelope = SchemaUtil.handleMediaTypeURLEncoded(msgContext,
-                                                                    request,
-                                                                    xmlSchemaElement,
-                                                                    OMAbstractFactory.getSOAP11Factory());
+                        request,
+                        xmlSchemaElement,
+                        OMAbstractFactory.getSOAP11Factory());
             } else {
                 throw new AxisFault("Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
-                                    "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
-                                    "/n " + HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
+                        "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                        "/n " + HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
             }
 
 
@@ -126,17 +126,20 @@ public class RESTUtil {
             }
 
             SOAPEnvelope soapEnvelope = SchemaUtil.handleMediaTypeURLEncoded(msgContext,
-                                                                             request,
-                                                                             xmlSchemaElement,
-                                                                             OMAbstractFactory.getSOAP11Factory());
+                    request,
+                    xmlSchemaElement,
+                    OMAbstractFactory.getSOAP11Factory());
             msgContext.setEnvelope(soapEnvelope);
             msgContext.setProperty(HTTPConstants.HTTP_METHOD, HTTPConstants.HTTP_METHOD_GET);
             msgContext.setDoingREST(true);
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
             invokeAxisEngine(msgContext);
 
         } catch (AxisFault axisFault) {
             throw new AxisFault(axisFault);
+        } catch (IOException e) {
+            throw  new AxisFault(e);
         }
         return true;
     }
@@ -144,6 +147,7 @@ public class RESTUtil {
     private void invokeAxisEngine(MessageContext messageContext) throws AxisFault {
         AxisEngine axisEngine = new AxisEngine(configurationContext);
         axisEngine.receive(messageContext);
+
     }
 
     private void dispatchAndVerify(MessageContext msgContext) throws AxisFault {
@@ -153,7 +157,7 @@ public class RESTUtil {
         // check for the dispatching result
         if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
             throw new AxisFault("I can not find a service for this request to be serviced." +
-                                " Check the WSDL and the request URI");
+                    " Check the WSDL and the request URI");
         }
     }
 
@@ -179,18 +183,18 @@ public class RESTUtil {
                     xmlreader = XMLInputFactory.
                             newInstance().
                             createXMLStreamReader(inputStream,
-                                                  MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                     // Set the encoding scheme in the message context
                     msgCtxt.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 } else {
 
                     // get the type of char encoding
                     String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
 
                     xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream,
-                                                                                    charSetEnc);
+                            charSetEnc);
 
                     // Setting the value in msgCtx
                     msgCtxt.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEnc);
@@ -201,8 +205,8 @@ public class RESTUtil {
                 // if the media type is multipart/related, get help from Axis2 :)
             } else if (checkContentType(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
                 body.addChild(TransportUtils.selectBuilderForMIME(msgCtxt,
-                                                                  inputStream,
-                                                                  contentType).getDocumentElement());
+                        inputStream,
+                        contentType).getDocumentElement());
             }
 
             return soapEnvelope;

@@ -3,7 +3,7 @@
 <body>
 <h1>Axis2 Release Notes</h1>
 
-<h2>This is the Apache Axis2 0.95 release</h2>
+<h2>This is the Apache Axis2 1.0 RC1 release</h2>
 
 <h3>Complete Features List</h3>
 
@@ -28,50 +28,33 @@
  <li>DOOM</li>
  <li>Pack/Unpack capability for the generated code</li>
  <li>Axis Data Binding - ADB (Framework and Schema Compiler)</li>
- <li>Numerous bug fixes since last release</li>
- <li>Transport framework improvements (ListenerManager) - <span style="color: #FF0000">New</span></li>
- <li>AxisServlet auto starts when the application server starts up - <span style="color: #FF0000">New</span></li>
- <li>Module disengagemnt support - <span style="color: #FF0000">New</span></li>
- <li>Loading modules (.mar files) from classpath - <span style="color: #FF0000">New</span></li>
- <li>Sessions scoping for Application, SOAP, Transport and Request levels - <span style="color: #FF0000">New</span></li>
+  <li>Transport framework improvements (ListenerManager)</li>
+ <li>AxisServlet auto starts when the application server starts up</li>
+ <li>Module disengagemnt support</li>
+ <li>Loading modules (.mar files) from classpath </li>
+ <li>Sessions scoping for Application, SOAP, Transport and Request levels</li>
+ <li>Server side and client side Web service Policy support</li>
+ <li>?wsdl and ?xsd support</li>
+ <li>Generating ServiceClient for a given WSDL and invoke the corresponding service using generated client</li>
+  <li>Numerous bug fixes since last release</li>
 </ol>
 
 <h4>Experimental
 Features List</h4>
 
 <ol type="1">
- <li>Server side and client side Web service Policy support</li>
- <li>?wsdl and ?xsd support</li>
- <li>Generating ServiceClient for a given WSDL and invoke the corresponding service using generated client</li>
+ <li>WSDL fault handling (fault code generation)</li>
+ <li>URL based deployment mechanism (starting Axis with remote repository)</li>
+ <li>SOAP 1.2 and HTTP binding generation (?wsdl)</li>
+ <li>Un expanded war support  (location of axis2.xml and repository can be specified in web.xml )</li>
 </ol>
 
 <h3>Major Changes Since
 Last Release</h3>
 
 <ol type="1">
-   <li>Transport framework improvements (ListenerManager)</li>
-   <li>The way to add an action mapping (wsamapping) has been moved from being a parameter to a child element. With this version onwards the way of adding an action mapping is as follows:</li>
-   <pre>
-   
-&lt;actionMapping&gt;MyMapping&lt;/actionMapping&gt;
-
-</pre>
-
-<li>Refactored following packages in Axiom:
-    <ul>
-     <li>org.apache.axiom.om.impl.llom.builder to org.apache.axiom.om.impl.builder</li>
-     <li>org.apache.axiom.om.impl.llom.mtom to org.apache.axiom.om.impl.mtom</li>
-     <li>org.apache.axiom.om.impl.llom.serialize to org.apache.axiom.om.impl.serialize</li>
-     <li>org.apache.axiom.om.impl.llom.traverse to org.apache.axiom.om.impl.traverse</li>
-    </ul> 
-   </li>
-</ol>
-
-<h3>Tools Included In This
-Release</h3>
-<ol type="1">
- <li>Axis2 Web Application (Web App)</li>
- <li>WSDL2WS - Command line version</li>
+   <li>Removed WOM and keep all the WSDL information in AxisService /AxisOperation /AxisMessage</li>
+   <li>Removed old client api classes (Call , MEPClient etc...)</li> 
 </ol>
 
 <h3>What's Still To
@@ -90,7 +73,7 @@ you're interested and able!</p>
 </ol>
 
 
-<p>Axis2 is taking shape, this 0.95 release is a glimpse of 1.0 that is coming soon. 
+<p>Axis2 is taking shape, this 1.0 RC1 Release is a glimpse of 1.0 that is coming soon. 
 If you happen to have a vision of how the next generation Web services platform should be, contribute to 
 Apache Axis2, and help us shape it. Any contribution in the form of coding, testing, submitting 
 improvements to the documentation, and reporting bugs are always welcome.</p>

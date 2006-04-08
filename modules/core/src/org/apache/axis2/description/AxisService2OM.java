@@ -6,23 +6,18 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
-
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
-
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.ws.policy.util.PolicyWriter;
 import org.apache.ws.policy.util.StAXPolicyWriter;
-import org.apache.wsdl.extensions.SOAPHeader;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
@@ -294,9 +289,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                     operation.addChild(fault);
                 }
             }
-            
-           
-            
+
+
         }
     }
 
@@ -310,9 +304,9 @@ public class AxisService2OM implements Java2WSDLConstants {
         service.addAttribute(ATTRIBUTE_NAME, axisService.getName(), null);
         generateSOAP11Port(fac, service);
         generateSOAP12Port(fac, service);
-        
+
         addPolicy(PolicyInclude.SERVICE_POLICY, axisService.getPolicyInclude(), service, fac);
-        
+
         if (generateHttp) {
             generateHTTPPort(fac, service);
         }
@@ -329,11 +323,11 @@ public class AxisService2OM implements Java2WSDLConstants {
                     axisService.getName() + BINDING_NAME_SUFFIX, null);
             addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION,
                     urlString, soap);
-            
+
             addPolicy(PolicyInclude.PORT_POLICY, axisService.getPolicyInclude(), service, fac);
         }
-        
-        
+
+
     }
 
     private void generateHTTPPort(OMFactory fac, OMElement service) throws Exception {
@@ -363,7 +357,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     axisService.getName() + SOAP12BINDING_NAME_SUFFIX, null);
             addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION,
                     urlString, soap12);
-            
+
             addPolicy(PolicyInclude.PORT_POLICY, axisService.getPolicyInclude(), service, fac);
         }
     }
@@ -378,7 +372,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         binding.addAttribute(ATTRIBUTE_NAME, axisService.getName() + BINDING_NAME_SUFFIX, null);
         binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
         addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(), binding, fac);
-        
+
         //Adding ext elements
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME,
                 TRANSPORT, TRANSPORT_URI,
@@ -401,7 +395,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     SOAP_ACTION, soapAction,
                     STYLE, style, soap);
             addPolicy(PolicyInclude.BINDING_OPERATION_POLICY, axisOperation.getPolicyInclude(), operation, fac);
-            
+
             String MEP = axisOperation.getMessageExchangePattern();
 
             if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
@@ -456,8 +450,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                 }
             }
         }
-        
-        
+
+
     }
 
     /**
@@ -470,7 +464,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         binding.addAttribute(ATTRIBUTE_NAME, axisService.getName() + SOAP12BINDING_NAME_SUFFIX, null);
         binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
         addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(), binding, fac);
-        
+
         //Adding ext elements
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME,
                 TRANSPORT, TRANSPORT_URI,
@@ -493,7 +487,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     SOAP_ACTION, soapAction,
                     STYLE, style, soap12);
             addPolicy(PolicyInclude.BINDING_OPERATION_POLICY, axisOperation.getPolicyInclude(), operation, fac);
-            
+
             String MEP = axisOperation.getMessageExchangePattern();
 
             if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
@@ -610,8 +604,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement outElement = fac.createOMElement("content", mime);
                     outElement.addChild(outElement);
                     outElement.addAttribute("type", "text/xml", null);
+                    output.addChild(outElement);
                     operation.addChild(output);
-                    writeSoapHeaders(outAxisMessage, fac, output, soap12);
                 }
             }
         }
@@ -688,33 +682,26 @@ public class AxisService2OM implements Java2WSDLConstants {
         }
         return null;
     }
-    
-    private void addPolicy(int type, PolicyInclude policyInclude, OMElement element, OMFactory factory) {
+
+    private void addPolicy(int type, PolicyInclude policyInclude, OMElement element, OMFactory factory) throws XMLStreamException {
         ArrayList elementList = policyInclude.getPolicyElements(type);
         StAXPolicyWriter pwrt = (StAXPolicyWriter) PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
-        
+
         for (Iterator iterator = elementList.iterator(); iterator.hasNext();) {
             Object policyElement = iterator.next();
-            
+
             if (policyElement instanceof Policy) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 pwrt.writePolicy((Policy) policyElement, baos);
-                
+
                 ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-                try {
-					element.addChild(OMXMLBuilderFactory.createStAXOMBuilder(factory, XMLInputFactory.newInstance().createXMLStreamReader(bais)).getDocumentElement());
-                    
-				} catch (Exception ex) {
-                    ex.printStackTrace();
-                    // TODO handle this exception
-				}
-                
-                                
+                element.addChild(OMXMLBuilderFactory.createStAXOMBuilder(factory, XMLInputFactory.newInstance().createXMLStreamReader(bais)).getDocumentElement());
+
             } else if (policyElement instanceof PolicyReference) {
-                // TODO need to implement this ..    
+                // TODO need to implement this ..
             }
-            
+
         }
-        
+
     }
 }
