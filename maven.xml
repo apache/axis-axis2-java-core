@@ -462,7 +462,7 @@
         <ant:copy toFile="target/dist/addressing-${addressing_version}.mar"
                   file="modules/addressing/target/addressing-${addressing_version}.mar"/>
 
-        <ant:copy toFile="target/dist/security-${pom.currentVersion}.mar"
+        <ant:copy toFile="target/dist/security-${security_version}.mar"
                   file="modules/security/target/security-${security_version}.mar"/>
 
 
