@@ -36,13 +36,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
@@ -123,7 +121,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                     httpServletRequest.getRequestURL().toString(), configContext,
                     map);
-
             if (!processed) {
                 lister.handle(httpServletRequest, httpServletResponse, out);
             }
@@ -246,21 +243,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         } catch (Exception e) {
             throw new ServletException(e);
         }
-    }
-
-    /**
-     * To find out the location where web reposurce need to be coiped, when
-     * deployment fine any service aar with web resources.
-     *
-     * @param context
-     */
-    private void setWebLocationProperty(ServletContext context) {
-        String webpath = context.getRealPath("");
-        if (webpath == null || "".equals(webpath)) {
-            return;
-        }
-        File weblocation = new File(webpath);
-        System.setProperty("web.location", weblocation.getAbsolutePath());
     }
 
     protected HashMap getHTTPParameters(HttpServletRequest httpServletRequest) {

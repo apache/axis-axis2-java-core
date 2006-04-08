@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.commons.logging.Log;
@@ -78,6 +79,8 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                     deploymentEngine.loadFromClassPath();
                 }
             }
+            Parameter unableHttp = new Parameter("enableREST", "true");
+            axisConfig.addParameter(unableHttp);
         } catch (FileNotFoundException e) {
             log.info(e.getMessage());
         } catch (DeploymentException e) {

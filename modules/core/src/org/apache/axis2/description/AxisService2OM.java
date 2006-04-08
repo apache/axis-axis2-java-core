@@ -320,6 +320,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                         axisService.getName() + HTTP_BINDING, null);
                 OMElement extElement = fac.createOMElement("address", http);
                 port.addChild(extElement);
+                urlString = urlString.replaceAll("services", "rest");
                 extElement.addAttribute("location", urlString, null);
             }
         }

@@ -7,19 +7,31 @@
     <servlet>
         <servlet-name>AxisServlet</servlet-name>
         <display-name>Apache-Axis Servlet</display-name>
-        <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
+        <servlet-class>
+            org.apache.axis2.transport.http.AxisServlet</servlet-class>
         <!--<init-param>-->
-            <!--<param-name>axis2.xml.path</param-name>-->
-            <!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
-            <!--<param-name>axis2.xml.url</param-name>-->
-            <!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
-            <!--<param-name>axis2.repository.path</param-name>-->
-            <!--<param-value>/WEB-INF</param-value>-->
-            <!--<param-name>axis2.repository.url</param-name>-->
-            <!--<param-value>http://localhot/myrepo</param-value>-->
+        <!--<param-name>axis2.xml.path</param-name>-->
+        <!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
+        <!--<param-name>axis2.xml.url</param-name>-->
+        <!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
+        <!--<param-name>axis2.repository.path</param-name>-->
+        <!--<param-value>/WEB-INF</param-value>-->
+        <!--<param-name>axis2.repository.url</param-name>-->
+        <!--<param-value>http://localhot/myrepo</param-value>-->
         <!--</init-param>-->
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>AxisRESTServlet</servlet-name>
+        <display-name>Apache-Axis Servlet (REST)</display-name>
+        <servlet-class>
+            org.apache.axis2.transport.http.AxisRESTServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AxisRESTServlet</servlet-name>
+        <url-pattern>/rest</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
@@ -110,24 +122,25 @@
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/selectServiceParaEdit</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/listServciceGroups</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/engageToServiceGroup</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/listContexts</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <error-page>
-        <exception-type>org.apache.axis2.transport.http.server.AdminAppException</exception-type>
+        <exception-type>
+            org.apache.axis2.transport.http.server.AdminAppException</exception-type>
         <location>/Error/AuthError.html</location>
     </error-page>
 
