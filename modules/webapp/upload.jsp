@@ -34,7 +34,7 @@
         ServletContext context = this.getServletConfig().getServletContext();
         ConfigurationContext configctx =
                 (ConfigurationContext) context.getAttribute(AxisServlet.CONFIGURATION_CONTEXT);
-        File repoDir = new File(configctx.getAxisConfiguration().getRepository());
+        File repoDir = new File(configctx.getAxisConfiguration().getRepository().getFile());
         File serviceDir = new File(repoDir, "services");
 
         if (!serviceDir.exists()) {
