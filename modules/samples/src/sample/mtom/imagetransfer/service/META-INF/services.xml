@@ -4,6 +4,7 @@
     </description>
     <parameter name="ServiceClass" locked="false">sample.mtom.imagetransfer.service.MTOMService</parameter>
     <operation name="mtomSample">
+        <actionMapping>urn:mtomSample</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
 </service>

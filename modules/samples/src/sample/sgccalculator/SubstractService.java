@@ -21,6 +21,9 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.util.Iterator;
 
@@ -28,9 +31,9 @@ public class SubstractService {
 
 	MessageContext msgContext = null;
 	
-	public void init (MessageContext msgContext) {
-		this.msgContext = msgContext;
-	}
+	public void setOperationContext(OperationContext opContext) throws AxisFault {
+        this.msgContext = opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+    }
 	
 	public OMElement substract (OMElement elem){
 		Iterator iter = elem.getChildElements();

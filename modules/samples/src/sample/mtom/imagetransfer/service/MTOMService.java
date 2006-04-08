@@ -28,6 +28,7 @@ import java.awt.*;
 import java.io.FileOutputStream;
 
 public class MTOMService {
+    
     public OMElement mtomSample(OMElement element) throws Exception {
     	
         OMElement imageEle = element.getFirstElement();

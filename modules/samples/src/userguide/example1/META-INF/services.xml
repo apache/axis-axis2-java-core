@@ -5,8 +5,10 @@
     <parameter name="ServiceClass" locked="false">userguide.example1.MyService</parameter>
     <operation name="echo">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+        <actionMapping>urn:echo</actionMapping>
     </operation>
     <operation name="ping">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+        <actionMapping>urn:ping</actionMapping>
     </operation>
 </service>
