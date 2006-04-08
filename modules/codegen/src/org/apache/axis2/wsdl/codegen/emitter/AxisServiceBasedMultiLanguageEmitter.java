@@ -455,14 +455,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         PolicyInclude policyInclude = axisService.getPolicyInclude();
         Policy servicePolicy = policyInclude.getPolicy();
-        
+
         if (servicePolicy != null) {
-        	String policyString = PolicyUtil.getPolicyAsString(servicePolicy);
-        	addAttribute(doc, "policy", policyString, rootElement);
+            String policyString = PolicyUtil.getPolicyAsString(servicePolicy);
+            addAttribute(doc, "policy", policyString, rootElement);
         }
 
         Element endpointElement = doc.createElement("endpoint");
-        
+
         String endpoint = axisService.getEndpoint();
         Text text = doc.createTextNode((endpoint != null)
                 ? endpoint
@@ -774,17 +774,30 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // this step is needed to remove repetitions
 
             // process the input parameters
-            Element inputParamElement = getInputParamElement(doc, axisOperation);
-            if (inputParamElement != null) {
-                parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
+            String MEP = axisOperation.getMessageExchangePattern();
+            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                Element inputParamElement = getInputParamElement(doc, axisOperation);
+                if (inputParamElement != null) {
+                    parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
+                }
             }
-
             // process output parameters
-            Element outputParamElement = getOutputParamElement(doc, axisOperation);
-            if (outputParamElement != null) {
-                parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
+            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                Element outputParamElement = getOutputParamElement(doc, axisOperation);
+                if (outputParamElement != null) {
+                    parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
+                }
             }
-
             //process faults
             Element[] faultParamElements = getFaultParamElements(doc, axisOperation);
             for (int i = 0; i < faultParamElements.length; i++) {
@@ -1258,18 +1271,25 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
-        Element param = getInputParamElement(doc, operation);
+        String MEP = operation.getMessageExchangePattern();
+        if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+            Element param = getInputParamElement(doc, operation);
 
-        if (param != null) {
-            inputElt.appendChild(param);
+            if (param != null) {
+                inputElt.appendChild(param);
+            }
+
+            List parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
+
+            for (int i = 0; i < parameterElementList.size(); i++) {
+                inputElt.appendChild((Element) parameterElementList.get(i));
+            }
         }
-
-        List parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
-
-        for (int i = 0; i < parameterElementList.size(); i++) {
-            inputElt.appendChild((Element) parameterElementList.get(i));
-        }
-
         return inputElt;
     }
 
@@ -1298,17 +1318,24 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected Element getOutputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element outputElt = doc.createElement("output");
-        Element param = getOutputParamElement(doc, operation);
+        String MEP = operation.getMessageExchangePattern();
+        if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+            Element param = getOutputParamElement(doc, operation);
 
-        if (param != null) {
-            outputElt.appendChild(param);
+            if (param != null) {
+                outputElt.appendChild(param);
+            }
+
+            List outputElementList = getParameterElementList(doc, headerParameterQNameList, "header");
+            for (int i = 0; i < outputElementList.size(); i++) {
+                outputElt.appendChild((Element) outputElementList.get(i));
+            }
         }
-
-        List outputElementList = getParameterElementList(doc, headerParameterQNameList, "header");
-        for (int i = 0; i < outputElementList.size(); i++) {
-            outputElt.appendChild((Element) outputElementList.get(i));
-        }
-
         return outputElt;
     }
 
