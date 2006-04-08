@@ -89,7 +89,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
             log.info(e.getMessage());
         } finally {
             try {
-                Parameter unableHttp = new Parameter("enableREST", "true");
+                Parameter unableHttp = new Parameter("enableHTTP", "true");
                 axisConfig.addParameter(unableHttp);
             } catch (AxisFault axisFault) {
                 log.info(axisFault.getMessage());

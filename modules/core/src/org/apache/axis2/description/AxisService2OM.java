@@ -125,7 +125,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         //generateHttp
         if (axisService.getParent() != null) {
             AxisDescription axisdesc = axisService.getParent().getParent();
-            Parameter parameter = axisdesc.getParameter("enableREST");
+            Parameter parameter = axisdesc.getParameter("enableHTTP");
             if (parameter != null) {
                 Object value = parameter.getValue();
                 if ("true".equals(value.toString())) {

@@ -241,8 +241,7 @@ public class HTTPTransportUtils {
                         Parameter enable =
                                 msgContext.getParameter(Constants.Configuration.ENABLE_REST);
 
-                        if (((soapActionHeader == null) || (soapActionHeader.length() == 0))
-                                && (enable != null)) {
+                       if ((soapActionHeader == null) && (enable != null)) {
                             if (Constants.VALUE_TRUE.equals(enable.getValue())) {
 
                                 // If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
