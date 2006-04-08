@@ -41,7 +41,7 @@
     <!-- write the classes for the exceptions if there are any present -->
    <xsl:for-each select="method">
        <xsl:for-each select="fault/param">
-         public static class <xsl:value-of select="@shortName"/> extends Exception{
+         public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
 
             private <xsl:value-of select="@type"/> faultMessage;
 

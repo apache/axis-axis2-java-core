@@ -111,20 +111,19 @@
         </xsl:for-each>
 
         newMsgContext.setEnvelope(envelope);
-        }
-
+       }
         <xsl:for-each select="method">
         <xsl:choose>
            <xsl:when test="fault/param">
                <xsl:for-each select="fault/param">
-                   <xsl:if test="position()>1">}</xsl:if> catch (<xsl:value-of select="@name"/> e) {
+                    <xsl:if test="position()=1">}</xsl:if>catch (<xsl:value-of select="@name"/> e) {
                         org.apache.axis2.AxisFault f =
                             new org.apache.axis2.AxisFault("<xsl:value-of select="@shortName"/>");
                         f.setDetail(toOM(e.getFaultMessage(),false));
                         throw f;
-                   }
+                    }
                </xsl:for-each>
-           </xsl:when>
+            </xsl:when>
             <xsl:otherwise>
                     <!-- put a single bracket for the catch-->
                     }

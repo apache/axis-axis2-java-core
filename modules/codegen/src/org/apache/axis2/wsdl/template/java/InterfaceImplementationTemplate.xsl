@@ -33,13 +33,20 @@
         *  <xsl:value-of select="@name"/> java implementation
         */
 
+        <xsl:variable name="fullyQualifiedClassName"><xsl:value-of select="$package"/>.<xsl:value-of select="@name"/></xsl:variable>
         public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.Stub
         <xsl:if test="not(@wrapped)">implements <xsl:value-of select="$interfaceName"/></xsl:if>{
         //default axis home being null forces the system to pick up the mars from the axis2 library
         public static final java.lang.String AXIS2_HOME = null;
         protected static org.apache.axis2.description.AxisOperation[] _operations;
+
+        //hashmaps to keep the fault mapping
+        private java.util.HashMap faultExeptionNameMap = new java.util.HashMap();
+        private java.util.HashMap faultExeptionClassNameMap = new java.util.HashMap();
+        private java.util.HashMap faultMessageMap = new java.util.HashMap();
+
 	
-	private void populateAxisService(){
+    private void populateAxisService(){
 
         //creating the Service
         _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");
@@ -91,13 +98,36 @@
         </xsl:for-each>
         }
 
+    //populates the faults
+    private void populateFaults(){
+         <xsl:for-each select="method">
+           <xsl:for-each select="fault/param">
+              faultExeptionNameMap.put( new javax.xml.namespace.QName(
+                 "<xsl:value-of select="@namespace"/>",
+                 "<xsl:value-of select="@localname"/>"),
+                 "<xsl:value-of select="@name"/>"
+               );
+              faultExeptionClassNameMap.put(new javax.xml.namespace.QName(
+                "<xsl:value-of select="@namespace"/>",
+                "<xsl:value-of select="@localname"/>"),
+                "<xsl:value-of select="@intantiatiableName"/>");
+               faultMessageMap.put( new javax.xml.namespace.QName(
+                 "<xsl:value-of select="@namespace"/>",
+                 "<xsl:value-of select="@localname"/>"),
+                 "<xsl:value-of select="@instantiatableType"/>"
+               );
+           </xsl:for-each>
+        </xsl:for-each>
 
+
+    }
 
      public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
         java.lang.String targetEndpoint)
         throws java.lang.Exception {
-       //To populate AxisService
-       populateAxisService();
+         //To populate AxisService
+         populateAxisService();
+         populateFaults();
 	<xsl:if test="//@policy">
 	
 	////////////////////////////////////////////////////////////////////////
@@ -200,7 +230,7 @@
                     <xsl:for-each select="fault/param[@type!='']">
                         ,<xsl:value-of select="@name"/>
                     </xsl:for-each>{
-
+              try{
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -282,9 +312,7 @@
                 <xsl:choose>
                     <xsl:when test="$style='document' or $style='rpc'">
                            java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
-                          
                            _messageContext.getTransportOut().getSender().cleanUp(_messageContext);
-
                            return (<xsl:value-of select="$outputtype"/>)object;
                     </xsl:when>
                     <xsl:otherwise>
@@ -294,7 +322,56 @@
                 </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
+         }catch(org.apache.axis2.AxisFault f){
+            org.apache.axiom.om.OMElement faultElt = f.getDetail();
+            if (faultElt!=null){
+                if (faultExeptionNameMap.containsKey(faultElt.getQName())){
+                    //make the fault by reflection
+                    try{
+                        java.lang.String exceptionClassName = (java.lang.String)faultExeptionClassNameMap.get(faultElt.getQName());
+                        java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+                        java.rmi.RemoteException ex=
+                                (java.rmi.RemoteException)exceptionClass.newInstance();
+                        //message class
+                        java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(faultElt.getQName());
+                        java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+                        java.lang.Object messageObject = fromOM(faultElt,messageClass);
+                        java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                   new java.lang.Class[]{messageClass});
+                        m.invoke(ex,new java.lang.Object[]{messageObject});
+                        <xsl:for-each select="fault/param">
+                        if (ex instanceof <xsl:value-of select="@name"/>){
+                          throw (<xsl:value-of select="@name"/>)ex;
+                        }
+                        </xsl:for-each>
 
+                        throw ex;
+                    }catch(java.lang.ClassCastException e){
+                       // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.ClassNotFoundException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    }catch (java.lang.NoSuchMethodException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.reflect.InvocationTargetException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    }  catch (java.lang.IllegalAccessException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    }   catch (java.lang.InstantiationException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    }
+                }else{
+                    throw f;
+                }
+            }else{
+                throw f;
+            }
+        }
         }
             </xsl:if>
             <!-- Async method generation -->
@@ -578,7 +655,7 @@
      <!-- write the classes for the exceptions if there are any present -->
    <xsl:for-each select="method">
        <xsl:for-each select="fault/param">
-         public static class <xsl:value-of select="@shortName"/> extends Exception{
+         public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
 
             private <xsl:value-of select="@type"/> faultMessage;
 
