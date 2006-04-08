@@ -5,9 +5,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -44,11 +44,14 @@ public class AxisService2OM implements Java2WSDLConstants {
     private String targetNamespace;
     private OMNamespace soap;
     private OMNamespace soap12;
+    private OMNamespace http;
+    private OMNamespace mime;
     private OMNamespace tns;
     private OMNamespace wsdl;
 
     private String style;
     private String use;
+    private boolean generateHttp = false;
 
     public AxisService2OM(AxisService service,
                           String [] serviceURL, String style, String use) {
@@ -84,6 +87,8 @@ public class AxisService2OM implements Java2WSDLConstants {
         }
         soap = ele.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
         soap12 = ele.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
+        http = ele.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
+        mime = ele.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
         String prefix = getPrefix(axisService.getTargetNamespace());
         if (prefix == null || "".equals(prefix)) {
             prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
@@ -110,7 +115,20 @@ public class AxisService2OM implements Java2WSDLConstants {
         generatePortType(fac, ele);
         generateSOAP11Binding(fac, ele);
         generateSOAP12Binding(fac, ele);
+        //generateHttp
+        if (axisService.getParent() != null) {
+            AxisDescription axisdesc = axisService.getParent().getParent();
+            Parameter parameter = axisdesc.getParameter("enableREST");
+            if (parameter != null) {
+                Object value = parameter.getValue();
+                if ("true".equals(value.toString())) {
+                    generateHttp = true;
+                    generatePostBinding(fac, ele);
+                }
+            }
+        }
         generateService(fac, ele);
+
         return ele;
     }
 
@@ -273,6 +291,9 @@ public class AxisService2OM implements Java2WSDLConstants {
         service.addAttribute(ATTRIBUTE_NAME, axisService.getName(), null);
         generateSOAP11Port(fac, service);
         generateSOAP12Port(fac, service);
+        if (generateHttp) {
+            generateHTTPPort(fac, service);
+        }
     }
 
     private void generateSOAP11Port(OMFactory fac, OMElement service) throws Exception {
@@ -285,6 +306,22 @@ public class AxisService2OM implements Java2WSDLConstants {
                     axisService.getName() + BINDING_NAME_SUFFIX, null);
             addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION,
                     urlString, soap);
+        }
+    }
+
+    private void generateHTTPPort(OMFactory fac, OMElement service) throws Exception {
+        for (int i = 0; i < url.length; i++) {
+            String urlString = url[i];
+            if (urlString.startsWith("http")) {
+                OMElement port = fac.createOMElement(PORT, wsdl);
+                service.addChild(port);
+                port.addAttribute(ATTRIBUTE_NAME, axisService.getName() + HTTP_PORT + i, null);
+                port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":" +
+                        axisService.getName() + HTTP_BINDING, null);
+                OMElement extElement = fac.createOMElement("address", http);
+                port.addChild(extElement);
+                extElement.addAttribute("location", urlString, null);
+            }
         }
     }
 
@@ -464,6 +501,73 @@ public class AxisService2OM implements Java2WSDLConstants {
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(), null);
                     operation.addChild(fault);
                     writeSoapHeaders(faultyMessge, fac, fault, soap12);
+                }
+            }
+        }
+    }
+
+    private void generatePostBinding(OMFactory fac,
+                                     OMElement defintions) throws Exception {
+        OMElement binding = fac.createOMElement(BINDING_LOCAL_NAME, wsdl);
+        defintions.addChild(binding);
+        binding.addAttribute(ATTRIBUTE_NAME, axisService.getName() + HTTP_BINDING, null);
+        binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
+
+        //Adding ext elements
+        OMElement httpBinding = fac.createOMElement("binding", http);
+        binding.addChild(httpBinding);
+        httpBinding.addAttribute("verb", "POST", null);
+
+        Iterator operations = axisService.getOperations();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
+            String opeartionName = axisOperation.getName().getLocalPart();
+            OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME, wsdl);
+            binding.addChild(operation);
+
+            OMElement httpOperation = fac.createOMElement("operation", http);
+            operation.addChild(httpOperation);
+            httpOperation.addAttribute("location", axisOperation.getName().getLocalPart(), null);
+
+
+            String MEP = axisOperation.getMessageExchangePattern();
+
+            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage inaxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (inaxisMessage != null) {
+                    operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
+                    OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
+                    OMElement inputelement = fac.createOMElement("content", mime);
+                    input.addChild(inputelement);
+                    inputelement.addAttribute("type", "text/xml", null);
+                    operation.addChild(input);
+                }
+            }
+
+            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                AxisMessage outAxisMessage = axisOperation
+                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (outAxisMessage != null) {
+                    OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
+                    OMElement outElement = fac.createOMElement("content", mime);
+                    outElement.addChild(outElement);
+                    outElement.addAttribute("type", "text/xml", null);
+                    operation.addChild(output);
+                    writeSoapHeaders(outAxisMessage, fac, output, soap12);
                 }
             }
         }

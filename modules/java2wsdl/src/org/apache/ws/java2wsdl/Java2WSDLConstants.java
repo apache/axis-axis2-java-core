@@ -36,8 +36,14 @@ public interface Java2WSDLConstants {
     String TRANSPORT_URI = "http://schemas.xmlsoap.org/soap/http";
     String DEFAULT_LOCATION_URL = "http://localhost:8080/axis2/services/";
 
+    String HTTP_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/http/";
+    String MIME_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/mime/";
+    String HTTP_PREFIX = "http";
+    String MIME_PREFIX = "mime";
+
     String BINDING_NAME_SUFFIX = "SOAP11Binding";
     String SOAP12BINDING_NAME_SUFFIX = "SOAP12Binding";
+    String HTTP_BINDING = "HttpBinding";
     String PORT_TYPE_SUFFIX = "PortType";
     String PORT_NAME_SUFFIX = "Port";
     String MESSAGE_LOCAL_NAME = "message";
@@ -56,6 +62,7 @@ public interface Java2WSDLConstants {
     String PORT = "port";
     String SOAP12PORT = "SOAP12port";
     String SOAP11PORT = "SOAP11port";
+    String HTTP_PORT = "Httpport";
     String PART_ATTRIBUTE_NAME = "part";
     String ELEMENT_ATTRIBUTE_NAME = "element";
     String FAULT_LOCAL_NAME = "fault";
