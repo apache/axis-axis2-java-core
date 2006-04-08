@@ -775,24 +775,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             // process the input parameters
             String MEP = axisOperation.getMessageExchangePattern();
-            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+            if (isInputPresentForMEP(MEP)) {
                 Element inputParamElement = getInputParamElement(doc, axisOperation);
                 if (inputParamElement != null) {
                     parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
                 }
             }
             // process output parameters
-            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+            if (isOutputPresentForMEP(MEP)) {
                 Element outputParamElement = getOutputParamElement(doc, axisOperation);
                 if (outputParamElement != null) {
                     parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
@@ -846,6 +836,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         return rootElement;
+    }
+
+    private boolean isInputPresentForMEP(String MEP) {
+        return WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                WSDLConstants.MEP_URI_IN_OUT.equals(MEP);
     }
 
     /**
@@ -997,6 +996,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
         doc.appendChild(rootElement);
+
+        /////////////////////////////////////////////////////
+        System.out.println(DOM2Writer.nodeToString(rootElement));
+        /////////////////////////////////////////////////////
 
         return doc;
 
@@ -1235,12 +1238,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         ArrayList headerparamList = new ArrayList();
         String MEP = axisOperation.getMessageExchangePattern();
         if (input){
-            if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+            if (isInputPresentForMEP(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (inaxisMessage != null) {
@@ -1249,12 +1247,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
             }
         }else{
-            if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+            if (isOutputPresentForMEP(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 if (outAxisMessage != null) {
@@ -1269,15 +1262,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-    protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
-        Element inputElt = doc.createElement("input");
-        String MEP = operation.getMessageExchangePattern();
-        if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
+    private boolean isOutputPresentForMEP(String MEP) {
+        return WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
                 WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
                 WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
                 WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
                 WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                WSDLConstants.MEP_URI_IN_OUT.equals(MEP);
+    }
+
+    protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
+        Element inputElt = doc.createElement("input");
+        String MEP = operation.getMessageExchangePattern();
+        if (isInputPresentForMEP(MEP)) {
             Element param = getInputParamElement(doc, operation);
 
             if (param != null) {
@@ -1319,12 +1316,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element getOutputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element outputElt = doc.createElement("output");
         String MEP = operation.getMessageExchangePattern();
-        if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+        if (isOutputPresentForMEP(MEP)) {
             Element param = getOutputParamElement(doc, operation);
 
             if (param != null) {
