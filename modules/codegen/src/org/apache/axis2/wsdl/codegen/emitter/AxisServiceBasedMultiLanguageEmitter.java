@@ -3,6 +3,7 @@ package org.apache.axis2.wsdl.codegen.emitter;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
@@ -433,18 +434,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected void addEndpoint(Document doc, Element rootElement) throws Exception {
 
-        //todo
-//        Policy endpointPolicy = attachmentUtil.getPolicyForEndPoint(
-//                codeGenConfiguration.getPortName()
-//        );
-//
-//        if (endpointPolicy != null) {
-//        	String policyString = PolicyUtil.getPolicyAsString(endpointPolicy);
-//        	addAttribute(doc, "policy", policyString, rootElement);
-//        }
+        PolicyInclude policyInclude = axisService.getPolicyInclude();
+        Policy servicePolicy = policyInclude.getPolicy();
+        
+        if (servicePolicy != null) {
+        	String policyString = PolicyUtil.getPolicyAsString(servicePolicy);
+        	addAttribute(doc, "policy", policyString, rootElement);
+        }
 
         Element endpointElement = doc.createElement("endpoint");
-
+        
         String endpoint = axisService.getEndpoint();
         Text text = doc.createTextNode((endpoint != null)
                 ? endpoint
@@ -978,7 +977,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                 addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
-                Policy policy = axisOperation.getPolicyInclude().getPolicy();
+                PolicyInclude policyInclude = axisOperation.getPolicyInclude();
+                Policy policy = policyInclude.getPolicy();
                 if (policy != null) {
                     addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
                 }
