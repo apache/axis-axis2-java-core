@@ -160,7 +160,7 @@
     }
 
     /**
-     * Constructor taking the traget endpoint
+     * Constructor taking the target endpoint
      */
     public <xsl:value-of select="@name"/>(java.lang.String targetEndpoint) throws java.lang.Exception {
         this(org.apache.axis2.context.ConfigurationContextFactory.createConfigurationContextFromFileSystem(AXIS2_HOME,null),
@@ -173,7 +173,6 @@
             <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
             <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
             <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
-
             <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
 	    
 	    <!-- MTOM -->
@@ -195,7 +194,12 @@
                     <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
                     <xsl:for-each select="input/param[@type!='']">
                         <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                    </xsl:for-each>) throws java.rmi.RemoteException{
+                    </xsl:for-each>)
+                    throws java.rmi.RemoteException
+                    <!--add the faults-->
+                    <xsl:for-each select="fault/param[@type!='']">
+                        ,<xsl:value-of select="@name"/>
+                    </xsl:for-each>{
 
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
@@ -211,19 +215,17 @@
                         If the number of parameter is more then just run the normal test-->
                         <xsl:when test="$count>0">
                             <xsl:choose>
-                                <xsl:when test="$style='rpc'">
-                                    // Style is RPC
-                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-                                    new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-                                    new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
-                                </xsl:when>
-                                <xsl:when test="$style='document'">
+                                <!-- style being doclit or rpc does not matter -->
+                                <xsl:when test="$style='rpc' or $style='document'">
                                     //Style is Doc.
                                     <!-- Let's assume there is only one parameters here -->
                                     <xsl:for-each select="input/param[@location='body']">
                                         <xsl:choose>
                                             <xsl:when test="@type!=''">
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
+                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                <xsl:value-of select="@name"/>,
+                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                "<xsl:value-of select="$method-name"/>")));
                                             </xsl:when>
                                             <xsl:otherwise>
                                                  env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
@@ -247,13 +249,8 @@
                         <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$style='rpc'">
-                                    //Style is RPC. No input parameters
-                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
-                                </xsl:when>
-                                <xsl:when test="$style='document'">
+                                <xsl:when test="$style='rpc' or $style='document'">
                                     //Style is Doc. No input parameters
-                                    <!-- setValueDoc(env,null); -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -283,7 +280,7 @@
                 org.apache.axiom.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
                 <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
                 <xsl:choose>
-                    <xsl:when test="$style='document'">
+                    <xsl:when test="$style='document' or $style='rpc'">
                            java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
                           
                            _messageContext.getTransportOut().getSender().cleanUp(_messageContext);
@@ -298,7 +295,7 @@
             </xsl:otherwise>
         </xsl:choose>
 
-                    }
+        }
             </xsl:if>
             <!-- Async method generation -->
             <xsl:if test="$isAsync='1'">
@@ -313,11 +310,13 @@
                 <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                 <xsl:for-each select="input/param[@type!='']">
                     <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
-                <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
+                <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback)
 
-                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
-          _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
-          _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+                throws java.rmi.RemoteException{
+
+              org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
+             _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
+             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
           <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
@@ -329,13 +328,7 @@
                         If the number of parameter is more then just run the normal test-->
                         <xsl:when test="$count>0">
                             <xsl:choose>
-                                <xsl:when test="$style='rpc'">
-                                    // Style is RPC
-                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-                                    new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-                                    new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
-                                </xsl:when>
-                                <xsl:when test="$style='document'">
+                                <xsl:when test="$style='document' or $style='rpc'">
                                     //Style is Doc.
                                     <xsl:for-each select="input/param[@location='body']">
                                         <xsl:choose>
@@ -363,13 +356,8 @@
                         <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$style='rpc'">
-                                    //Style is RPC. No input parameters
-                                    org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
-                                </xsl:when>
-                                <xsl:when test="$style='document'">
+                                <xsl:when test="$style='document' or $style='rpc'">
                                     //Style is Doc. No input parameters
-                                    <!-- setValueDoc(env,null); -->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -442,14 +430,7 @@
                        If the number of parameter is more then just run the normal generation-->
                     <xsl:when test="count(input/param[@type!=''])>0">
                         <xsl:choose>
-                            <xsl:when test="$style='rpc'">
-                                // Style is RPC
-                                env = createEnvelope();
-                                org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-                                new java.lang.String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-                                new java.lang.Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
-                            </xsl:when>
-                            <xsl:when test="$style='document'">
+                            <xsl:when test="$style='document' or $style='rpc'">
                                 <!-- for the doc lit case there can be only one element. So take the first element -->
                                 //Style is Doc.
                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
@@ -463,13 +444,8 @@
                     <!-- No input parameters present. So generate assuming no input parameters-->
                     <xsl:otherwise>
                         <xsl:choose>
-                            <xsl:when test="$style='rpc'">
-                                //Style is RPC. No input parameters
-                                org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_operationClient.getOptions().getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
-                            </xsl:when>
-                            <xsl:when test="$style='document'">
+                            <xsl:when test="$style='document' or $style='rpc'">
                                 //Style is Doc. No input parameters
-                                <!-- setValueDoc(env,null); -->
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
@@ -597,12 +573,27 @@
 		}
 		return false;
 	}
+
+
+     <!-- write the classes for the exceptions if there are any present -->
+   <xsl:for-each select="method">
+       <xsl:for-each select="fault/param">
+         public static class <xsl:value-of select="@shortName"/> extends Exception{
+
+            private <xsl:value-of select="@type"/> faultMessage;
+
+            public void setFaultMessage(<xsl:value-of select="@type"/> msg){
+               faultMessage = msg;
+            }
+
+            public <xsl:value-of select="@type"/> getFaultMessage(){
+               return faultMessage;
+            }
+         }
+       </xsl:for-each>
+   </xsl:for-each>
+
     //<xsl:apply-templates/>
    }
-
-
-
-    </xsl:template>
-
-
+   </xsl:template>
 </xsl:stylesheet>

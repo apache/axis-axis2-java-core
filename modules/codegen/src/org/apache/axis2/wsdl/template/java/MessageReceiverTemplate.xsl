@@ -75,21 +75,18 @@
 
 
             <xsl:choose>
-                <xsl:when test="$style='rpc'">
-
-                    //rpc style  -- this needs to be filled
-
-                </xsl:when>
-                <xsl:when test="$style='document'">
+                <!-- We really don't need to make a difference between these-->
+                <xsl:when test="$style='document' or $style='rpc'">
                     //doc style
                     <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
-                    <xsl:variable name="paramCount"> <xsl:value-of select="count(input/param[@location='body'])"/></xsl:variable>
+                    <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@location='body'])"/></xsl:variable>
                     <xsl:choose>
-                        <xsl:when test="$paramCount &gt; 0"> skel.<xsl:value-of select="@name"/>(
+                        <xsl:when test="$paramCount &gt; 0">skel.<xsl:value-of select="@name"/>(
                             <xsl:for-each select="input/param[@location='body']">
                                 <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(msgContext.getEnvelope().getBody().getFirstElement(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
                             </xsl:for-each>);
                         </xsl:when>
+                        <!--No input parameters-->
                         <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
                     </xsl:choose>
 
@@ -116,12 +113,27 @@
         newMsgContext.setEnvelope(envelope);
         }
 
-
-
-        } catch (Exception e) {
-        throw org.apache.axis2.AxisFault.makeFault(e);
-        }
-        <xsl:for-each select="method"/>
+        <xsl:for-each select="method">
+        <xsl:choose>
+           <xsl:when test="fault/param">
+               <xsl:for-each select="fault/param">
+                   <xsl:if test="position()>1">}</xsl:if> catch (<xsl:value-of select="@name"/> e) {
+                        org.apache.axis2.AxisFault f =
+                            new org.apache.axis2.AxisFault("<xsl:value-of select="@shortName"/>");
+                        f.setDetail(toOM(e.getFaultMessage(),false));
+                        throw f;
+                   }
+               </xsl:for-each>
+           </xsl:when>
+            <xsl:otherwise>
+                    <!-- put a single bracket for the catch-->
+                    }
+            </xsl:otherwise>
+        </xsl:choose>
+        </xsl:for-each>
+            catch (Exception e) {
+              throw org.apache.axis2.AxisFault.makeFault(e);
+            }
         }
          <!-- Call templates recursively-->
         //<xsl:apply-templates/>
@@ -212,13 +224,12 @@
         } catch (Exception e) {
         throw org.apache.axis2.AxisFault.makeFault(e);
         }
-        <xsl:for-each select="method"/>
         }
          <!-- Call templates recursively-->
         //<xsl:apply-templates/>
 
         }
+
     </xsl:template>
-      <!-- start of in-only -->
 
 </xsl:stylesheet>

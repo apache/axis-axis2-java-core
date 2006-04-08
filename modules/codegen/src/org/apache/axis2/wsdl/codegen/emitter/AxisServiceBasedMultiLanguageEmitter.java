@@ -40,6 +40,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
+
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -66,15 +69,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
-    private static final String SERVICE_CLASS_SUFFIX = "Skeleton";
+    private static final String SKELETON_CLASS_SUFFIX = "Skeleton";
     private static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
+    private static final String FAULT_SUFFIX = "Exception";
     private static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
-    private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
+//    private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
 
     private static Map MEPtoClassMap;
     private static Map MEPtoSuffixMap;
 
-
+    private int uniqueFaultNameCounter = 0;
     /**
      * Field constructorMap
      */
@@ -134,6 +138,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     
     private AxisService axisService;
 
+    //a map to keep the fault classNames
+    private Map fullyQualifiedFaultClassNameMap = new HashMap();
+    private Map faultClassNameMap = new HashMap();
+
+
     public AxisServiceBasedMultiLanguageEmitter() {
         infoHolder = new HashMap();
     }
@@ -165,11 +174,49 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Update mapper for the stub
      */
     private void updateMapperForStub() {
+        updateMapperClassnames(getFullyQualifiedStubName() + ".");
+    }
+
+    private String getFullyQualifiedStubName(){
         String packageName = codeGenConfiguration.getPackageName();
         String localPart = makeJavaClassName(axisService.getName());
-        String stubName = localPart + STUB_SUFFIX;
+        return packageName + "." + localPart + STUB_SUFFIX;
+    }
+    /**
+     * Populate a map of fault class names
+     */
+    private void generateAndPopulateFaultNames(){
+        //loop through and find the faults
+        Iterator operations = axisService.getOperations();
+        AxisOperation operation;
+        AxisMessage faultMessage;
+        while (operations.hasNext()) {
+            operation =  (AxisOperation)operations.next();
+            ArrayList faultMessages = operation.getFaultMessages();
+            for (int i = 0; i < faultMessages.size(); i++) {
+                faultMessage  = (AxisMessage)faultMessages.get(i);
+                //make a unique name and put that in the hashmap
+                if (!fullyQualifiedFaultClassNameMap.
+                        containsKey(faultMessage.getElementQName())){
+                    //make a name
+                    String className = makeJavaClassName(faultMessage.getName()
+                            + FAULT_SUFFIX);
+                    while(fullyQualifiedFaultClassNameMap.containsValue(className)){
+                        className = makeJavaClassName(className + (uniqueFaultNameCounter++));
+                    }
 
-        updateMapperClassnames(packageName + "." + stubName + ".");
+                    fullyQualifiedFaultClassNameMap.put(
+                            faultMessage.getElementQName(),
+                            className);
+
+                    //we've to keep track of the fault base names seperately
+                    faultClassNameMap.put(faultMessage.getElementQName(),
+                            className);
+
+                }
+            }
+
+        }
     }
 
     /**
@@ -184,6 +231,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (mapper.isObjectMappingPresent()) {
             updateMapperForStub();
         }
+
+        //generate and populate the fault names before hand. We need that for
+        //the smooth opration of the thing
+        generateAndPopulateFaultNames();
 
         // write the inteface
         // feed the binding information also
@@ -201,12 +252,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // write the test classes
         writeTestClasses();
 
-        // write a dummy implementation call for the tests to run.
-        // writeTestSkeletonImpl(axisBinding);
-        // write a testservice.xml that will load the dummy skeleton impl for testing
-        // writeTestServiceXML(axisBinding);
+
         // write an ant build file
-        writeAntBuild();
+        //Note that ant build is generated only once
+        //and that has to happen here only if the
+        //client side code is required
+        if (!codeGenConfiguration.isGenerateAll()){
+            writeAntBuild();
+        }
+
     }
 
     /**
@@ -364,6 +418,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             rootElement.appendChild(doc.importNode((Element) stubMethods, true));
         }
 
+        /////////////////////////////////////////////////////
+        //System.out.println(DOM2Writer.nodeToString(rootElement));
+        /////////////////////////////////////////////////////
+
+
         doc.appendChild(rootElement);
         return doc;
     }
@@ -501,70 +560,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return doc;
     }
 
-    /**
-     * Emits the stubcode with bindings.
-     *
-     * @throws Exception
-     */
-//    private void emitStubBinding() throws Exception {
-//        WSDLInterface axisInterface = infoHolder.getWSDLinterface();
-//
-//        // see the comment at updateMapperClassnames for details and reasons for
-//        // calling this method
-//        if (mapper.isObjectMappingPresent()) {
-//            updateMapperForStub(axisInterface);
-//        }
-//
-//        // write the inteface
-//        // feed the binding information also
-//        // note that we do not create this interface if the user switched on the wrap classes mode
-//        if (!configuration.isPackClasses()) {
-//            writeInterface(false);
-//        }
-//
-//        // write the call back handlers
-//        writeCallBackHandlers();
-//
-//        // write interface implementations
-//        writeInterfaceImplementation();
-//
-//        // write the test classes
-//        writeTestClasses();
-//
-//        // write a dummy implementation call for the tests to run.
-//        // writeTestSkeletonImpl(axisBinding);
-//        // write a testservice.xml that will load the dummy skeleton impl for testing
-//        // writeTestServiceXML(axisBinding);
-//        // write an ant build file
-//        writeAntBuild();
-//    }
-
-//    /**
-//     * Emits the stub code with interfaces only.
-//     *
-//     * @throws Exception
-//     */
-//    private void emitStubInterface() throws Exception {
-//        WSDLInterface axisInterface = infoHolder.getWSDLinterface();
-//
-//        if (mapper.isObjectMappingPresent()) {
-//            updateMapperForInterface(axisInterface);
-//        }
-//
-//        // Write the interfaces
-//        // note that this case we do not care about the wrapping flag
-//        writeInterface(true);
-//
-//        // write the call back handlers
-//        writeCallBackHandlers();
-//
-//        // log the message stating that the binding dependent parts are not generated
-//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
-//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface3"));
-//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface4"));
-//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface5"));
-//        log.info(CodegenMessages.getMessage("emitter.logEntryInterface6"));
-//    }
 
     /**
      * Emit the skeltons
@@ -573,9 +568,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     public void emitSkeleton() throws CodeGenerationException {
         try {
-
-            emitSkeletonInterface();
-
+            emitSkeletonService();
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
@@ -585,19 +578,43 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Update mapper for message receiver
      */
     private void updateMapperForMessageReceiver() {
-        String packageName = codeGenConfiguration.getPackageName();
-        String localPart = makeJavaClassName(axisService.getName());
-        String messageReceiver = localPart + MESSAGE_RECEIVER_SUFFIX;
-        updateMapperClassnames(packageName + "." + messageReceiver + ".");
+        updateMapperClassnames(getFullyQualifiedMessageReceiverName() + ".");
     }
 
+    /**
+     *
+     * @return fully qualified MR name
+     */
+    private String getFullyQualifiedMessageReceiverName(){
+        String packageName = codeGenConfiguration.getPackageName();
+        String localPart = makeJavaClassName(axisService.getName());
+        return  packageName + "."+localPart + MESSAGE_RECEIVER_SUFFIX;
+    }
 
-    private void emitSkeletonInterface() throws Exception {
+    /**
+     *
+     * @return fully qualified MR name
+     */
+    private String getFullyQualifiedSkeletonName(){
+        String packageName = codeGenConfiguration.getPackageName();
+        String localPart = makeJavaClassName(axisService.getName());
+        return  packageName + "."+localPart + SKELETON_CLASS_SUFFIX;
+    }
+
+    /**
+     *
+     * @throws Exception
+     */
+    private void emitSkeletonService() throws Exception {
         // see the comment at updateMapperClassnames for details and reasons for
         // calling this method
         if (mapper.isObjectMappingPresent()) {
             updateMapperForMessageReceiver();
         }
+
+        //handle faults
+        generateAndPopulateFaultNames();
+        updateFaultPackageForSkeleton();
 
         // write skeleton
         writeSkeleton();
@@ -608,8 +625,26 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // write interface implementations
         writeServiceXml();
 
+        //write the ant build
+        writeAntBuild();
+
         log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
         log.info(CodegenMessages.getMessage("emitter.logEntryInterface2"));
+    }
+
+    /**
+     *
+     */
+    private void updateFaultPackageForSkeleton() {
+        Iterator faultClassNameKeys = fullyQualifiedFaultClassNameMap.keySet().iterator();
+        while (faultClassNameKeys.hasNext()) {
+            Object key =  faultClassNameKeys.next();
+            String className = (String)fullyQualifiedFaultClassNameMap.get(key);
+            //append the skelton name
+            className = getFullyQualifiedSkeletonName() + "."
+                           + className;
+            fullyQualifiedFaultClassNameMap.put(key,className);
+        }
     }
 
     /**
@@ -646,7 +681,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
 
         addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
-        addAttribute(doc, "skeletonname", localPart + SERVICE_CLASS_SUFFIX, rootElement);
+        addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX, rootElement);
         addAttribute(doc, "basereceiver", (String) MEPtoClassMap.get(mep), rootElement);
         fillSyncAttributes(doc, rootElement);
 
@@ -656,26 +691,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // ###########################################################################################
         // check for the special models in the mapper and if they are present process them
         if (mapper.isObjectMappingPresent()) {
-
             // add an attribute to the root element showing that the writing has been skipped
             addAttribute(doc, "skip-write", "yes", rootElement);
-
             // process the mapper objects
             processModelObjects(mapper.getAllMappedObjects(), rootElement, doc);
         }
-
         // #############################################################################################
 
         boolean isOpsFound = loadOperations(doc, rootElement, mep);
-
         //put the result in the property map
         infoHolder.put(mep, isOpsFound ? Boolean.TRUE : Boolean.FALSE);
-        // ///////////////////////
         rootElement.appendChild(createDOMElementforDatabinders(doc));
-
-        // ///////////////////////
         doc.appendChild(rootElement);
 
+        //////////////////////////////////
+        System.out.println(DOM2Writer.nodeToString(rootElement));
+        ////////////////////////////////
         return doc;
     }
 
@@ -695,20 +726,26 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // Add the parameters to a map with their type as the key
             // this step is needed to remove repetitions
 
-            // process the input and output parameters
+            // process the input parameters
             Element inputParamElement = getInputParamElement(doc, axisOperation);
-
             if (inputParamElement != null) {
                 parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
             }
 
+            // process output parameters
             Element outputParamElement = getOutputParamElement(doc, axisOperation);
-
             if (outputParamElement != null) {
                 parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
             }
 
-            // todo process the exceptions
+            //process faults
+            Element[] faultParamElements = getFaultParamElements(doc, axisOperation);
+            for (int i = 0; i < faultParamElements.length; i++) {
+                parameterMap.put(
+                        faultParamElements[i].getAttribute("type"),
+                        faultParamElements[i]);
+            }
+
             // process the header parameters
             Element newChild;
             List headerParameterQNameList = new ArrayList();
@@ -853,7 +890,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "package", "", rootElement);
         addAttribute(doc, "classpackage", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name", className + SERVICE_CLASS_SUFFIX, rootElement);
+        addAttribute(doc, "name", className + SKELETON_CLASS_SUFFIX, rootElement);
         if (!codeGenConfiguration.isWriteTestCase()) {
             addAttribute(doc, "testOmit", "true", rootElement);
         }
@@ -890,7 +927,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         String serviceName = makeJavaClassName(axisService.getName());
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name", serviceName + SERVICE_CLASS_SUFFIX, rootElement);
+        addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX, rootElement);
         addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
 
@@ -933,7 +970,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addAttribute(doc, "name", localPart, methodElement);
                 addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
                 String style = axisOperation.getStyle();
-
                 addAttribute(doc, "style", style, methodElement);
                 addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                         methodElement);
@@ -951,6 +987,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
                 methodElement.appendChild(getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
+                methodElement.appendChild(getFaultElement(doc, axisOperation));
+
                 rootElement.appendChild(methodElement);
             } else {
                 //mep is present - we move ahead only if the given mep matches the mep of this operation
@@ -982,12 +1020,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                     Policy policy = axisOperation.getPolicyInclude().getPolicy();
                     if (policy != null) {
-                        addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
+                        addAttribute(doc, "policy",
+                                PolicyUtil.getPolicyAsString(policy),
+                                methodElement);
                     }
 
 
-                    methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
-                    methodElement.appendChild(getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
+                    methodElement.appendChild(getInputElement(doc,
+                            axisOperation, soapHeaderInputParameterList));
+                    methodElement.appendChild(getOutputElement(doc,
+                            axisOperation, soapHeaderOutputParameterList));
+                    methodElement.appendChild(getFaultElement(doc,
+                            axisOperation));
+
                     rootElement.appendChild(methodElement);
                     //////////////////////
                 }
@@ -1035,6 +1080,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         XSLTUtils.addAttribute(document, AttribName, attribValue, element);
     }
 
+    /**
+     *
+     * @param doc
+     * @param rootElement
+     */
     private void fillSyncAttributes(Document doc, Element rootElement) {
         addAttribute(doc, "isAsync", this.codeGenConfiguration.isAsyncOn()
                 ? "1"
@@ -1173,6 +1223,23 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     /**
+     * Get the fault element - No header faults are supported
+     * @param doc
+     * @param operation
+     * @return
+     */
+    protected Element getFaultElement(Document doc, AxisOperation operation) {
+        Element faultElt = doc.createElement("fault");
+        Element[] param = getFaultParamElements(doc, operation);
+
+        for (int i = 0; i < param.length; i++) {
+            faultElt.appendChild(param[i]);
+        }
+
+        return faultElt;
+    }
+
+    /**
      * Finds the output element.
      *
      * @param doc
@@ -1188,13 +1255,71 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         List outputElementList = getParameterElementList(doc, headerParameterQNameList, "header");
-
         for (int i = 0; i < outputElementList.size(); i++) {
             outputElt.appendChild((Element) outputElementList.get(i));
         }
 
         return outputElt;
     }
+
+    /**
+     * @param doc
+     * @param operation
+     * @return Returns the parameter element.
+     */
+    private Element[] getFaultParamElements(Document doc, AxisOperation operation) {
+        ArrayList params = new ArrayList();
+        ArrayList faultMessages = operation.getFaultMessages();
+
+        if (faultMessages != null && !faultMessages.isEmpty()) {
+            Element paramElement;
+            AxisMessage msg;
+            for (int i = 0; i < faultMessages.size(); i++) {
+                paramElement = doc.createElement("param");
+                msg = (AxisMessage)faultMessages.get(i);
+
+                //as for the name of a fault, we generate an exception
+                addAttribute(doc, "name",
+                        (String)fullyQualifiedFaultClassNameMap.get(msg.getElementQName()),
+                        paramElement);
+                 addAttribute(doc, "shortName",
+                        (String)faultClassNameMap.get(msg.getElementQName()),
+                        paramElement);
+                //the type represents the type that will be wrapped by this
+                //name
+                String typeMapping =
+                        this.mapper.getTypeMappingName(msg.getElementQName());
+                addAttribute(doc, "type", (typeMapping == null)
+                        ? ""
+                        : typeMapping, paramElement);
+
+                // add an extra attribute to say whether the type mapping is
+                // the default
+                if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)) {
+                    addAttribute(doc, "default", "yes", paramElement);
+                }
+                addAttribute(doc, "value", getParamInitializer(typeMapping),
+                        paramElement);
+
+                Iterator iter = msg.getExtensibilityAttributes().iterator();
+                while (iter.hasNext()) {
+                    WSDLExtensibilityAttribute att =
+                            (WSDLExtensibilityAttribute) iter.next();
+                    addAttribute(doc, att.getKey().getLocalPart(),
+                            att.getValue().toString(),
+                            paramElement);
+                }
+                params.add(paramElement);
+            }
+
+            return (Element[])params.toArray(new Element[params.size()]);
+        } else {
+            return new Element[]{};//return empty array
+        }
+
+
+    }
+
 
     /**
      * @param doc
@@ -1274,8 +1399,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return param;
     }
 
-
-    String getParamInitializer(String paramType) {
+    /**
+     *
+     * @param paramType
+     * @return
+     */
+    private String getParamInitializer(String paramType) {
 
         // Look up paramType in the table
         String out = (String) constructorMap.get(paramType);
@@ -1287,6 +1416,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return out;
     }
 
+    /**
+     *
+     * @param doc
+     * @param parameters
+     * @param location
+     * @return
+     */
     private List getParameterElementList(Document doc, List parameters, String location) {
         List parameterElementList = new ArrayList();
 

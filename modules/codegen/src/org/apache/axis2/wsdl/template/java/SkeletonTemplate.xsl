@@ -26,11 +26,35 @@
         public  <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                   (<xsl:for-each select="input/param[@location='body']">
             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/></xsl:if>
-                   </xsl:for-each> ) throws Exception {
+                   </xsl:for-each> )
+         <!--add the faults-->
+           <xsl:for-each select="fault/param[@type!='']">
+               <xsl:if test="position()=1">throws </xsl:if>
+               <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>
+           </xsl:for-each>{
                 //Todo fill this with the necessary business logic
                 <xsl:if test="$outputtype!=''">throw new  java.lang.UnsupportedOperationException();</xsl:if>
         }
      </xsl:for-each>
+
+
+    <!-- write the classes for the exceptions if there are any present -->
+   <xsl:for-each select="method">
+       <xsl:for-each select="fault/param">
+         public static class <xsl:value-of select="@shortName"/> extends Exception{
+
+            private <xsl:value-of select="@type"/> faultMessage;
+
+            public void setFaultMessage(<xsl:value-of select="@type"/> msg){
+               faultMessage = msg;
+            }
+
+            public <xsl:value-of select="@type"/> getFaultMessage(){
+               return faultMessage;
+            }
+         }
+       </xsl:for-each>
+   </xsl:for-each>
     }
     </xsl:template>
  </xsl:stylesheet>
