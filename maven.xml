@@ -396,6 +396,11 @@
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the xmlbeans jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- Copy the jibx jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
@@ -618,6 +623,7 @@
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
@@ -629,6 +635,11 @@
         <!-- Copy the codegen jar -->
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the xmlbeans jar -->
+        <ant:copy toDir="${std.bin.temp.dir}/lib">
+            <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy the samples -->
@@ -670,6 +681,7 @@
                 <ant:include name="**/modules/adb/**"/>
                 <ant:include name="**/modules/codegen/**"/>
                 <ant:include name="**/modules/webapp/**"/>
+                <ant:include name="**/modules/xmlbeans/**"/>
                 <ant:include name="**/modules/jibx/**"/>
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
@@ -793,6 +805,7 @@
                 <ant:pathelement location="modules/adb/src"/>
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/codegen/src"/>
+                <ant:pathelement location="modules/xmlbeans/src"/>
                 <ant:pathelement location="modules/java2wsdl/src"/>
                 <ant:pathelement location="modules/common/src"/>
                 <ant:pathelement location="modules/core/src"/>
@@ -884,6 +897,7 @@
             <ant:fileset file="modules/common/target/axis2-common-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>

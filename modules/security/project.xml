@@ -62,6 +62,16 @@
             <artifactId>axis2-adb</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>         
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-jibx</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>         
+       <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-xmlbeans</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>         
         <!-- external JARs -->
         <dependency>
             <groupId>axis</groupId>

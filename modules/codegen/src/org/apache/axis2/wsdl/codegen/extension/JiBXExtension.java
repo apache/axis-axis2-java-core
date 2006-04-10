@@ -45,7 +45,6 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             return;
         }
 
-
         // check the JiBX binding definition file specified
         String path = (String)configuration.getProperties().get(BINDING_PATH_OPTION);
         if (path == null) {
@@ -54,18 +53,22 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
         }
         try {
 
-            // load and call JiBX utilities to handle binding
-            Class clazz = null;
+            // try dummy load of framework class first to check missing jars
             try {
-                JiBXExtension.class.getClassLoader().loadClass(JIBX_MODEL_CLASS);
+                getClass().getClassLoader().loadClass(JIBX_MODEL_CLASS);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JiBX framework jars not in classpath");
             }
+            
+            // load the actual utility class
+            Class clazz = null;
             try {
                 clazz = JiBXExtension.class.getClassLoader().loadClass(JIBX_UTILITY_CLASS);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JiBX binding extension not in classpath");
             }
+            
+            // invoke utility class method for actual processing
             Method method = clazz.getMethod(BINDING_MAP_METHOD,
                     new Class[] { String.class });
             HashMap jibxmap = (HashMap)method.invoke(null, new Object[] { path });

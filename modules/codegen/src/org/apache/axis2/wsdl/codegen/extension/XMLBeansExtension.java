@@ -16,23 +16,21 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.util.URLProcessor;
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.wsdl.util.XSLTConstants;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.xmlbeans.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.*;
+
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
@@ -45,6 +43,12 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String MAPPING_FOLDER = "Mapping";
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
+    
+    public static final String XMLBEANS_CONFIG_CLASS =
+        "org.apache.xmlbeans.BindingConfig";
+    public static final String XMLBEANS_UTILITY_CLASS =
+        "org.apache.axis2.xmlbeans.CodeGenerationUtility";
+    public static final String XMLBEANS_PROCESS_METHOD = "processSchemas";
 
     boolean debug = false;
 
@@ -57,163 +61,39 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
         //check the comptibilty
         //checkCompatibility();
-
-        // Note  - typically we  need to check the presence of unwrapped or wrapped
-        // parameter style  here. However XMLBeans nicely generates classes for all
-        // elements,even internal ones and hence in this extension we do not have to
-        // special case anything
-
-        Element[] additionalSchemas = loadAdditionalSchemas();
-
         try {
-            //get the types from the types section
+
+            // try dummy load of framework class first to check missing jars
+            try {
+                getClass().getClassLoader().loadClass(XMLBEANS_CONFIG_CLASS);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("XMLBeans framework jars not in classpath");
+            }
+            
+            // load the actual utility class
+            Class clazz = null;
+            try {
+                clazz = getClass().getClassLoader().loadClass(XMLBEANS_UTILITY_CLASS);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("XMLBeans binding extension not in classpath");
+            }
+            
+            // invoke utility class method for actual processing
+            Method method = clazz.getMethod(XMLBEANS_PROCESS_METHOD,
+                    new Class[] { List.class, Element[].class, CodeGenConfiguration.class });
             ArrayList schemas = configuration.getAxisService().getSchema();
+            Element[] additionalSchemas = loadAdditionalSchemas();
+            TypeMapper mapper = (TypeMapper)method.invoke(null,
+                new Object[] { schemas, additionalSchemas, configuration });
 
-            //check for the imported types. Any imported types are supposed to be here also
-            if (schemas == null || schemas.isEmpty()) {
-                //there are no types to be code generated
-                //However if the type mapper is left empty it will be a problem for the other
-                //processes. Hence the default type mapper is set to the configuration
-                this.configuration.setTypeMapper(new DefaultTypeMapper());
-                return;
-            }
-
-            // todo - improve this code by using the schema compiler from
-            //xmlbeans directly
-
-            SchemaTypeSystem sts;
-            Vector xmlObjectsVector = new Vector();
-            //create the type mapper
-            JavaTypeMapper mapper = new JavaTypeMapper();
-            Map nameSpacesMap = configuration.getAxisService().getNameSpacesMap();
-            for (int i = 0; i < schemas.size(); i++) {
-
-                XmlSchema schema = (XmlSchema) schemas.get(i);
-                XmlOptions options = new XmlOptions();
-
-                options.setLoadAdditionalNamespaces(
-                        nameSpacesMap); //add the namespaces
-                xmlObjectsVector.add(
-                        XmlObject.Factory.parse(
-                                getSchemaAsString(schema)
-                                , options));
-
-            }
-
-            // add the third party schemas
-            //todo perhaps checking the namespaces would be a good idea to
-            //make the generated code work efficiently
-            for (int i = 0; i < additionalSchemas.length; i++) {
-                xmlObjectsVector.add(XmlObject.Factory.parse(
-                        additionalSchemas[i]
-                        , null));
-            }
-
-            //compile the type system
-            XmlObject[] objeArray = convertToXMLObjectArray(xmlObjectsVector);
-            BindingConfig config = new Axis2BindingConfig();
-
-            //set the STS name to null. it makes the generated class include a unique (but random) STS name
-            sts = XmlBeans.compileXmlBeans(null, null,
-                    objeArray,
-                    config, XmlBeans.getContextTypeLoader(),
-                    new Axis2Filer(),
-                    null);
-
-            // prune the generated schema type system and add the list of base64 types
-            FindBase64Types(sts);
-            findPlainBase64Types(sts);
-
-            //get the schematypes and add the document types to the type mapper
-            SchemaType[] schemaType = sts.documentTypes();
-            SchemaType type;
-            for (int j = 0; j < schemaType.length; j++) {
-                type = schemaType[j];
-                mapper.addTypeMappingName(type.getDocumentElementName(),
-                        type.getFullJavaName());
-            }
-            //set the type mapper to the config
+            // set the type mapper to the config
             configuration.setTypeMapper(mapper);
 
-
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
-    /**
-     * Populate the base64 types
-     * The algo is to look for simpletypes that have base64 content, and then step out of that
-     * onestep and get the element. For now there's an extended check to see whether the simple type
-     * is related to the Xmime:contentType!
-     *
-     * @param sts
-     */
-    private void FindBase64Types(SchemaTypeSystem sts) {
-        List allSeenTypes = new ArrayList();
-        List base64ElementQNamesList = new ArrayList();
-        SchemaType outerType;
-//add the document types and global types
-        allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
-        allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
-        for (int i = 0; i < allSeenTypes.size(); i++) {
-            SchemaType sType = (SchemaType) allSeenTypes.get(i);
-
-            if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
-                if (Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
-                    outerType = sType.getOuterType();
-//check the outer type further to see whether it has the contenttype attribute from
-//XMime namespace
-                    SchemaProperty[] properties = sType.getProperties();
-                    for (int j = 0; j < properties.length; j++) {
-                        if (Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
-                            base64ElementQNamesList.add(outerType.getDocumentElementName());
-                            break;
-                        }
-                    }
-                }
-            }
-            //add any of the child types if there are any
-            allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
-        }
-
-        configuration.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY, base64ElementQNamesList);
-    }
-
-    private void findPlainBase64Types(SchemaTypeSystem sts) {
-        ArrayList allSeenTypes = new ArrayList();
-
-        allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
-        allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
-
-        ArrayList base64Types = new ArrayList();
-
-        for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext();) {
-            SchemaType stype = (SchemaType) iterator.next();
-            findPlainBase64Types(stype, base64Types);
-        }
-
-        configuration.putProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY, base64Types);
-    }
-
-    private void findPlainBase64Types(SchemaType stype, ArrayList base64Types) {
-
-        SchemaProperty[] elementProperties = stype.getElementProperties();
-
-        for (int i = 0; i < elementProperties.length; i++) {
-            SchemaType schemaType = elementProperties[i].getType();
-
-            if (schemaType.isPrimitiveType()) {
-                SchemaType primitiveType = schemaType.getPrimitiveType();
-
-                if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
-                    base64Types.add(elementProperties[i].getName());
-                }
-
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
             } else {
-                findPlainBase64Types(schemaType, base64Types);
+                throw new RuntimeException(e);
             }
         }
     }
@@ -258,83 +138,4 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
         documentBuilderFactory.setNamespaceAware(true);
         return documentBuilderFactory.newDocumentBuilder();
     }
-
-
-    private XmlObject[] convertToXMLObjectArray(Vector vec) {
-        return (XmlObject[]) vec.toArray(new XmlObject[vec.size()]);
-    }
-
-    /**
-     * Private class to generate the filer
-     */
-    private class Axis2Filer implements Filer {
-
-        public OutputStream createBinaryFile(String typename)
-                throws IOException {
-            File resourcesDirectory = new File(configuration.getOutputLocation(), "resources");
-            if (!resourcesDirectory.exists()) {
-                resourcesDirectory.mkdirs();
-            }
-            File file = new File(resourcesDirectory, typename);
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            return new FileOutputStream(file);
-        }
-
-        public Writer createSourceFile(String typename)
-                throws IOException {
-            typename =
-                    typename.replace('.', File.separatorChar);
-            File outputDir = new File(configuration.getOutputLocation(), "src");
-            if (!outputDir.exists()) {
-                outputDir.mkdirs();
-            }
-            File file = new File(outputDir,
-                    typename + ".java");
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            return new FileWriter(file);
-        }
-    }
-
-    /**
-     * Convert schema into a String
-     *
-     * @param schema
-     */
-    private String getSchemaAsString(XmlSchema schema) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        schema.write(baos);
-        return baos.toString();
-    }
-
-    /**
-     * Custom binding configuration for the code generator. This controls
-     * how the namespaces are suffixed/prefixed
-     */
-    private class Axis2BindingConfig extends BindingConfig {
-        public String lookupPackageForNamespace(String uri) {
-            return URLProcessor.makePackageName(uri);
-        }
-    }
-
-//    /**
-//     *
-//     */
-//    public static class Axis2SchemaCompilerExtension implements SchemaCompilerExtension{
-//        private SchemaTypeSystem sts;
-//
-//        public SchemaTypeSystem getSts() {
-//            return sts;
-//        }
-//
-//        public void schemaCompilerExtension(SchemaTypeSystem schemaTypeSystem, Map parms) {
-//            this.sts = schemaTypeSystem;
-//        }
-//
-//        public String getExtensionName() {
-//            return "Axis2.xmlbeans.extension";
-//        }
-//    }
 }
-
