@@ -203,6 +203,13 @@ public class HandlerParameterDecoder {
                     inflowConfiguration.setSignaturePropFile(element.getText());
                 } else if(localName.equals(WSHandlerConstants.DEC_PROP_FILE)) {
                     inflowConfiguration.setDecryptionPropFile(element.getText());
+                } else if (WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION
+                        .equals(localName)) {
+                    if ("false".equals(element.getText())
+                            || "0".equals(element.getText())) {
+                        inflowConfiguration
+                                .setEnableSignatureConfirmation(false);
+                    }
                 }
             }
             return inflowConfiguration;
