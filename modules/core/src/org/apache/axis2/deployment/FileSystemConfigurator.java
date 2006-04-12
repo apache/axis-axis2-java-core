@@ -49,46 +49,53 @@ public class FileSystemConfigurator implements AxisConfigurator {
     public FileSystemConfigurator(String repoLocation, String axis2xml) {
         if (repoLocation == null) {
             //checking wether user has set the system property
-            String propertyRepo = System.getProperty(Constants.AXIS2_REPO);
-            if (propertyRepo != null) {
-                try {
-                    File repo = new File(propertyRepo);
-                    if (repo.exists()) {
-                        this.repoLocation = repo.getAbsolutePath();
-                    } else {
-                        this.repoLocation = null;
-                    }
-                } catch (Exception e) {
-                    this.repoLocation = null;
-                    log.info("Error in file creation inside FileSystemConfigurator");
-                }
-            } else {
-                this.repoLocation = null;
+            repoLocation = System.getProperty(Constants.AXIS2_REPO);
+            if (repoLocation == null) {
+                // Should we default to anything here?  Current
+                // directory?  ~/.axis?
             }
-        } else {
-            this.repoLocation = repoLocation;
         }
-        if (axis2xml == null) {
-            String propertyAxis2xml = System.getProperty(Constants.AXIS2_CONF);
-            if (propertyAxis2xml != null) {
-                try {
-                    File axis2discriptor = new File(propertyAxis2xml);
-                    if (axis2discriptor.exists()) {
-                        this.axis2xml = axis2discriptor.getAbsolutePath();
-                    } else {
-                        this.axis2xml = null;
-                    }
-                } catch (Exception e) {
-                    this.axis2xml = null;
-                    log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
-                }
 
-            } else {
-                this.axis2xml = null;
+        // OK, we've got a repository location in mind.  Let's make
+        // sure it exists.
+        try {
+            File repo = new File(repoLocation);
+            if (repo.exists()) {
+                // ok, save it if so
+                this.repoLocation = repo.getAbsolutePath();
             }
-        } else {
-            this.axis2xml = axis2xml;
+        } catch (Exception e) {
+            log.info("Couldn't find repository location '" +
+                    repoLocation + "'");
+            this.repoLocation = null;
         }
+
+        // Deal with the config file.  If a filename was specified as an
+        // arg to this constructor, just respect it.
+        if (axis2xml == null) {
+            // If not, check for a system property setting
+            axis2xml = System.getProperty(Constants.AXIS2_CONF);
+
+            // If system property not set, use default filename
+            if (axis2xml == null) {
+                axis2xml = Constants.AXIS2_CONF;
+            }
+
+            // In either case, check that the file exists... if not
+            // we'll use the default axis2.xml on the classpath.
+            try {
+                axis2xml = this.repoLocation + File.separator + axis2xml;
+                File configFile = new File(axis2xml);
+                if (!configFile.exists()) {
+                    axis2xml = null;
+                }
+            } catch (Exception e) {
+                axis2xml = null;
+                log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+            }
+        }
+
+        this.axis2xml = axis2xml;
     }
 
     /**

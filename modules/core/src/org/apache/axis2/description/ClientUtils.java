@@ -28,11 +28,11 @@ public class ClientUtils {
             if (transport != null) {
                 return ac.getTransportOut(new QName(transport));
             } else {
-                throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+                throw new AxisFault(Messages.getMessage("cannotInferTransport", transportURI));
             }
         } else {
             if (epr == null || (epr.getAddress() == null)) {
-                throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+                throw new AxisFault(Messages.getMessage("cannotInferTransportNoAddr"));
             }
             String uri = epr.getAddress();
             int index = uri.indexOf(':');
@@ -40,7 +40,7 @@ public class ClientUtils {
             if (transport != null) {
                 return ac.getTransportOut(new QName(transport));
             } else {
-                throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+                throw new AxisFault(Messages.getMessage("cannotInferTransport", uri));
             }
         }
     }

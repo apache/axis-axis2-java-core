@@ -45,10 +45,10 @@ public class TransportDeploymentTest extends AbstractTestCase {
         File xml = new File(xmlFile);
         FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
         AxisConfiguration er = fsc.getAxisConfiguration();
-        TransportInDescription transport = er.getTransportIn(new QName("http"));
+        TransportInDescription transport = er.getTransportIn(new QName("custom"));
         assertNotNull(transport);
         TransportOutDescription transport1 = er.getTransportOut(
-                new QName("http"));
+                new QName("custom"));
         assertNotNull(transport1);
     }
 }
