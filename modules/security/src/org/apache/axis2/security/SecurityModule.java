@@ -147,6 +147,12 @@ public class SecurityModule implements Module {
 		secondryConf.setDecryptionPropFile(primaryConfig
 				.getDecryptionPropFile());
 		secondryConf.setSignaturePropFile(primaryConfig.getSignaturePropFile());
+		String enableSignatureConfirmation = primaryConfig.getEnableSignatureConfirmation();
+	        if (enableSignatureConfirmation != null) {
+        	    secondryConf.setEnableSignatureConfirmation("1"
+                    .equals(enableSignatureConfirmation)
+        	            || "true".equals(enableSignatureConfirmation));
+        	}
 		return secondryConf;
 	}
 }
