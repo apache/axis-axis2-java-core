@@ -306,16 +306,17 @@ public class WSSPolicyProcessor {
         
         try {
 
-            if(spt.getTokenType() == SecurityPolicyToken.COMPLEX_TOKEN && secProcessorContext.getAction() == SecurityProcessorContext.START) {
-                secProcessorContext.pushPolicyEngineData(PolicyEngineData.copy(pa.getName()));
-            }
-            
             if (spt == null) {
                 log.debug("Security token: '" + tokenName
                                 + "' unknown in context of '"
                                 + currentToken.getTokenName());
                 return false;
             }
+
+            if(spt.getTokenType() == SecurityPolicyToken.COMPLEX_TOKEN && secProcessorContext.getAction() == SecurityProcessorContext.START) {
+                secProcessorContext.pushPolicyEngineData(PolicyEngineData.copy(pa.getName()));
+            }
+            
 
             ret = spt.invokeProcessTokenMethod(secProcessorContext);
             
