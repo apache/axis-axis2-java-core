@@ -358,7 +358,18 @@ public class WSDL2AxisServiceBuilder {
 			String MEP = getMEP(wsdl4jOperation);
 			axisOperation = AxisOperationFactory.getOperationDescription(MEP);
 			axisOperation.setName(opName);
+
+			//All policy includes must share same registry
+			PolicyInclude pi = axisOperation.getPolicyInclude();
+		        if(pi == null){
+		            pi = new PolicyInclude();
+		            axisOperation.setPolicyInclude(pi);
+		        }
+		        pi.setPolicyRegistry(registry);
 		}
+
+
+
 		if (style != null) {
 			axisOperation.setStyle(style);
 		}
