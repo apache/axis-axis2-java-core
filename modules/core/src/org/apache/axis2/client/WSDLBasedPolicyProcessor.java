@@ -79,40 +79,58 @@ public class WSDLBasedPolicyProcessor {
 	}
 	
 	
-	public void configureOperationPolices(AxisOperation op)throws AxisFault{
-		PolicyInclude policyInclude = op.getPolicyInclude();
-		
-		if(policyInclude != null ){
-			Policy policy = policyInclude.getEffectivePolicy();
-			if(policy != null){
-				if (!policy.isNormalized()) {
-					policy = (Policy) policy.normalize();
-				}
+	public void configureOperationPolices(AxisOperation op) throws AxisFault {
+        PolicyInclude policyInclude = op.getPolicyInclude();
 
-				XorCompositeAssertion XOR = (XorCompositeAssertion) policy.getTerms()
-						.get(0);
-				AndCompositeAssertion AND = (AndCompositeAssertion) XOR.getTerms().get(
-						0);
-				
-				Iterator pAsserations = AND.getTerms().iterator();
-				while(pAsserations.hasNext()){
-					PrimitiveAssertion pa = (PrimitiveAssertion) pAsserations.next();
-					String namespace = pa.getName().getNamespaceURI();
-					ArrayList moduleList = (ArrayList)ns2modules.get(namespace);
-					
-					if (moduleList == null) {
-						System.err.println("cannot find a module to process "
-								+ namespace + "type assertions");
-						continue;
-					}else{
-						for(int i = 0;i<moduleList.size();i++){
-							AxisModule axisModule = (AxisModule) moduleList.get(i);
-							op.engageModule(axisModule,configctx.getAxisConfiguration());
-							axisModule.getModule().engageNotify(op);
-						}
-					}
-				}
-			}
-		}
-	} 
+        if (policyInclude != null) {
+            Policy policy = policyInclude.getEffectivePolicy();
+            if (policy != null) {
+                if (!policy.isNormalized()) {
+                    policy = (Policy) policy.normalize();
+                }
+
+                XorCompositeAssertion XOR = (XorCompositeAssertion) policy
+                        .getTerms().get(0);
+                AndCompositeAssertion AND = (AndCompositeAssertion) XOR
+                        .getTerms().get(0);
+
+                Iterator pAsserations = AND.getTerms().iterator();
+                while (pAsserations.hasNext()) {
+                    PrimitiveAssertion pa = (PrimitiveAssertion) pAsserations
+                            .next();
+                    String namespace = pa.getName().getNamespaceURI();
+                    ArrayList moduleList = (ArrayList) ns2modules
+                            .get(namespace);
+
+                    if (moduleList == null) {
+                        System.err.println("cannot find a module to process "
+                                + namespace + "type assertions");
+                        continue;
+                    } else {
+                        for (int i = 0; i < moduleList.size(); i++) {
+                            AxisModule axisModule = (AxisModule) moduleList
+                                    .get(i);
+                            Iterator engagedModules = op.getEngagedModules()
+                                    .iterator();
+                            boolean found = false;
+                            while (engagedModules.hasNext()) {
+                                AxisModule module = (AxisModule) engagedModules
+                                        .next();
+                                if (module.getName().equals(
+                                        axisModule.getName())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                op.engageModule(axisModule, configctx
+                                        .getAxisConfiguration());
+                                axisModule.getModule().engageNotify(op);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
