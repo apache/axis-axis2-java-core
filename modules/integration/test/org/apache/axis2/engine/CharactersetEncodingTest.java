@@ -17,6 +17,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -31,6 +33,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Testing character encoding support
  */
-public class CharactersetEncodingTest extends TestCase implements TestConstants {
+public class CharactersetEncodingTest extends UtilServerBasedTestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -48,9 +51,12 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
         super(arg0);
     }
 
-    protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "chunking-enabledRepository");
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(CharactersetEncodingTest.class),
+                Constants.TESTING_PATH + "chunking-enabledRepository");
+    }
 
+    protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -60,7 +66,6 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 
@@ -75,15 +80,11 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             text.addChild(fac.createOMText(text, value));
             payload.addChild(text);
 
-//            Call call = new Call(
-//                    Constants.TESTING_PATH + "chunking-enabledRepository");
             Options options = new Options();
-//            call.setClientOptions(options);
             options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "utf-16");
 
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-//            OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
 
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository", null);

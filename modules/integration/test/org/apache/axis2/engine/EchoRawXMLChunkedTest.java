@@ -59,45 +59,6 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
         UtilServer.stop();
     }
 
-//    public void testEchoXMLASync() throws Exception {
-//                OMElement payload = createEnvelope();
-//
-//        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_PATH + "chunking-enabledRepository");
-//
-//        call.setTo(targetEPR);
-//        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-//
-//        Callback callback = new Callback() {
-//            public void onComplete(AsyncResult result) {
-//                try {
-//                    result.getResponseEnvelope().serializeAndConsume(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-//                } catch (XMLStreamException e) {
-//                    reportError(e);
-//                } finally {
-//                    finish = true;
-//                }
-//            }
-//
-//            public void reportError(Exception e) {
-//                finish = true;
-//            }
-//        };
-//
-//        call.invokeNonBlocking(operationName.getLocalPart(), payload, callback);
-//        int index = 0;
-//        while (!finish) {
-//            Thread.sleep(1000);
-//            index++;
-//            if(index > 10 ){
-//                throw new AxisFault("Server was shutdown as the async response take too long to complete");
-//            }
-//        }
-//        call.close();
-//
-//
-//        log.info("send the reqest");
-//    }
-
     public void testEchoXMLSync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 

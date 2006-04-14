@@ -70,7 +70,7 @@ public class UtilsTCPServer {
                     .getAbsolutePath(), file
                     .getAbsolutePath() + "/conf/axis2.xml");
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }

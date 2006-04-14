@@ -35,10 +35,6 @@ public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
     public void invokeBusinessLogic(MessageContext msgContext,
                                     MessageContext newmsgContext) throws AxisFault {
         try {
-            //TODO : I know this is wrong , but I have to spend time here
-            System.out.println(" ****************** Request received *****************");
-            Thread.sleep(40000);
-            System.out.println(" **********Started to process the requset**************");
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
 

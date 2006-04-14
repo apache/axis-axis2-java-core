@@ -1,6 +1,8 @@
 package org.apache.axis2.async;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -21,6 +23,7 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +47,7 @@ import javax.xml.namespace.QName;
 *
 */
 
-public class AsyncServiceTest extends TestCase implements TestConstants {
+public class AsyncServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected Log log = LogFactory.getLog(getClass());
     protected QName transportName = new QName("http://localhost/my",
@@ -60,8 +63,11 @@ public class AsyncServiceTest extends TestCase implements TestConstants {
     protected AxisService service;
     private boolean finish = false;
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(AsyncServiceTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         service = Utils.createSimpleService(serviceName,
                 new AsyncMessageReceiver(),
                 Echo.class.getName(),
@@ -71,7 +77,6 @@ public class AsyncServiceTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

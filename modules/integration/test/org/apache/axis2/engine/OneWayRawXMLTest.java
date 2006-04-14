@@ -85,7 +85,7 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
         sender.fireAndForget(payload);
         int index = 0;
         while (envelope == null) {
-            Thread.sleep(4000);
+            Thread.sleep(1000);
             index++;
             if (index == 5) {
                 throw new AxisFault("error Occured");

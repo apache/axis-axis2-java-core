@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -31,8 +33,9 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 
-public class CallUnregisteredServiceTest extends TestCase {
+public class CallUnregisteredServiceTest extends UtilServerBasedTestCase {
 
     public CallUnregisteredServiceTest() {
         super(CallUnregisteredServiceTest.class.getName());
@@ -42,12 +45,8 @@ public class CallUnregisteredServiceTest extends TestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        UtilServer.start();
-    }
-
-    protected void tearDown() throws Exception {
-        UtilServer.stop();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(CallUnregisteredServiceTest.class));
     }
 
     public void testEchoXMLSync() throws Exception {

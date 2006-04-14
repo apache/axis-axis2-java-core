@@ -17,6 +17,8 @@
 package org.apache.axis2.rpc;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -42,6 +44,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
@@ -56,7 +59,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
-public class MultirefTest extends TestCase {
+public class MultirefTest extends UtilServerBasedTestCase {
 
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
@@ -75,13 +78,15 @@ public class MultirefTest extends TestCase {
 
     protected boolean finish = false;
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(MultirefTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

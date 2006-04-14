@@ -122,25 +122,7 @@ public class MailOneWayRawXMLTest extends TestCase {
 
         servicClient.sendRobust(operationName, payload);
         while (envelope == null) {
-//          if(index < 10){
             Thread.sleep(4000);
-//                index++;
-//            }else{
-//                fail("The messsge was not delivered even after 40 seconds");
-//            }
         }
     }
-
-//    public ConfigurationContext createNewConfigurationContext() throws Exception {
-//        File file = new File(MAIL_TRANSPORT_ENABLED_REPO_PATH);
-//        assertTrue(
-//                "Mail repository directory " + file.getAbsolutePath() +
-//                " does not exsist",
-//                file.exists());
-//        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-//        ConfigurationContext configContext =
-//                builder.createConfigurationContext(file.getAbsolutePath());
-//        return configContext;
-//    }
-//
 }
