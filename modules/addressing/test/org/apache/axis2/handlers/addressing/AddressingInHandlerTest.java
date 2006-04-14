@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -37,10 +38,12 @@ public class AddressingInHandlerTest extends TestCase {
     TestUtil testUtil = new TestUtil();
     private static final String testFileName = "soapmessage.xml";
     private static final String wsaFinalTestFile = "soapWithWSAFinalInfo.xml";
+    private static final String invalidCardinalityTestFile = "invalidCardinalityReplyToMessage.xml";
 
     private String action = "http://ws.apache.org/tests/action";
     private String messageID = "uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5";
     private String fromAddress = "http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous";
+    private String faultAddress = "http://example.com/fabrikam/fault";
 
     /**
      * @param testName
@@ -87,11 +90,49 @@ public class AddressingInHandlerTest extends TestCase {
             fail(" An Exception has occured " + e.getMessage());
         }
     }
+    
+    public void testExtractAddressingInformationFromHeadersInvalidCardinality() {
+        try {
+            StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(invalidCardinalityTestFile);
+
+            SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
+            MessageContext mc = new MessageContext();
+            try{
+            	inHandler.extractAddressingInformation(header,
+                    		mc,
+                            header.getHeaderBlocksWithNSURI(
+                                    AddressingConstants.Final.WSA_NAMESPACE),
+                            AddressingConstants.Final.WSA_NAMESPACE);
+
+            
+            	fail("An AxisFault should have been thrown due to 2 wsa:ReplyTo headers.");
+            }catch(AxisFault af){
+            	assertNull("No ReplyTo should be set on the MessageContext", mc.getReplyTo());
+            	assertFaultEPR(mc.getFaultTo());
+            	assertEquals("WSAAction property is not correct",
+            			mc.getWSAAction(),
+                        action);
+                assertEquals("MessageID property is not correct",
+                		mc.getMessageID().trim(),
+                        messageID.trim());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());
+        }
+    }
 
     private void assertFromEPR(EndpointReference fromEPR) {
-        assertEquals("Address in EPR is not valid",
+        assertEquals("Address in From EPR is not valid",
                 fromEPR.getAddress().trim(),
                 fromAddress.trim());
+    }
+    
+    private void assertFaultEPR(EndpointReference faultEPR) {
+        assertEquals("Address in FaultTo EPR is not valid",
+        		faultEPR.getAddress().trim(),
+                faultAddress.trim());
     }
 
     public void testWSAFinalInformation() {
