@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
@@ -29,9 +31,10 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
+public class EchoRawXMLLoadTest extends UtilServerBasedTestCase implements TestConstants {
 
     public EchoRawXMLLoadTest() {
         super(EchoRawXMLLoadTest.class.getName());
@@ -41,8 +44,11 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(EchoRawXMLLoadTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -52,7 +58,6 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     public void testEchoXMLSync() throws Exception {

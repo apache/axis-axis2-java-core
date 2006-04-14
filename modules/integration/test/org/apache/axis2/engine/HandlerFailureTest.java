@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -35,6 +37,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -44,7 +47,7 @@ import javax.xml.stream.XMLOutputFactory;
 import java.util.ArrayList;
 
 
-public class HandlerFailureTest extends TestCase implements TestConstants {
+public class HandlerFailureTest extends UtilServerBasedTestCase implements TestConstants {
     private Log log = LogFactory.getLog(getClass());
 
     public HandlerFailureTest() {
@@ -55,37 +58,17 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
+    public static Test suite() {
+        return getTestSetup(new TestSuite(HandlerFailureTest.class));
     }
 
 
     public void testFailureAtServerRequestFlow() throws Exception {
-//        Flow flow = new FlowImpl();
-//        Utils.addHandler(flow,
-//                new SpeakingHandler(),
-//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow,
-//                new SpeakingHandler(),
-//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow,
-//                new SpeakingHandler(),
-//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow,
-//                new SpeakingHandler(),
-//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow,
-//                culprit,
-//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow,
-//                new SpeakingHandler(),
-//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
 
         AxisService service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(),
                 operationName);
-//        service.setInFlow(flow); // we do not support this
 
-        UtilServer.start();
         UtilServer.deployService(service);
         AxisOperation operation = service.getOperation(operationName);
         ArrayList phasec = new ArrayList();
@@ -102,50 +85,8 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             callTheService();
         } finally {
             UtilServer.unDeployService(serviceName);
-            UtilServer.stop();
         }
     }
-
-//    public void testFailureAtServerResponseFlow() throws Exception {
-//        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis2.engine.Echo.class.getName(),operationName);
-// 
-//
-//        Flow flow = new FlowImpl();
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        service.setInFlow(flow);
-//
-//
-//        flow = new FlowImpl();
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, culprit,PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
-//        service.setInFlow(flow);
-//
-//        AxisOperation operation = new AxisOperation(operationName);
-//        service.addOperation(operation);
-//
-//        UtilServer.start();
-//        UtilServer.deployService(service);
-//        try {
-//            callTheService();
-//        } finally {
-//            UtilServer.unDeployService(serviceName);
-//            UtilServer.stop();
-//        }
-//    }
-
-
-    protected void tearDown() throws Exception {
-
-    }
-
 
     private void callTheService() throws Exception {
         try {

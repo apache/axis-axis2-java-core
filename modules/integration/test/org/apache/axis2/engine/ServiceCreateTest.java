@@ -1,6 +1,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -13,6 +15,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 
 import javax.xml.namespace.QName;
@@ -34,14 +37,16 @@ import java.util.ArrayList;
 *
 */
 
-public class ServiceCreateTest extends TestCase {
+public class ServiceCreateTest extends UtilServerBasedTestCase {
 
     ConfigurationContext configContext;
     ConfigurationContext clinetConfigurationctx;
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ServiceCreateTest.class));
+    }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
         configContext = UtilServer.getConfigurationContext();
         clinetConfigurationctx = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(null, null);

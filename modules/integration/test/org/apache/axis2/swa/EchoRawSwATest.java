@@ -17,6 +17,8 @@
 package org.apache.axis2.swa;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.Constants;
@@ -26,6 +28,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -40,7 +43,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class EchoRawSwATest extends TestCase {
+public class EchoRawSwATest extends UtilServerBasedTestCase {
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -49,8 +52,6 @@ public class EchoRawSwATest extends TestCase {
     private QName operationName = new QName("echoAttachment");
 
     private ServiceContext serviceContext;
-
-    private AxisService service;
 
     private boolean finish = false;
 
@@ -64,9 +65,12 @@ public class EchoRawSwATest extends TestCase {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(EchoRawSwATest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = new AxisService(serviceName.getLocalPart());
+        AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(
                 AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
@@ -81,7 +85,6 @@ public class EchoRawSwATest extends TestCase {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     public void testEchoXMLSync() throws Exception {

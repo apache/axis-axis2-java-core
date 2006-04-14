@@ -17,10 +17,13 @@
 package org.apache.axis2.rest;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
 import java.io.BufferedReader;
@@ -28,7 +31,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpGetRESTBasedTest extends TestCase implements TestConstants {
+public class HttpGetRESTBasedTest extends UtilServerBasedTestCase implements TestConstants {
 
 
     public HttpGetRESTBasedTest() {
@@ -39,9 +42,11 @@ public class HttpGetRESTBasedTest extends TestCase implements TestConstants {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        UtilServer.start();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(HttpGetRESTBasedTest.class));
+    }
 
+    protected void setUp() throws Exception {
         AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -52,7 +57,6 @@ public class HttpGetRESTBasedTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     public void testEchoXMLSync() throws Exception {

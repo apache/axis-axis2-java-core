@@ -1,6 +1,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
@@ -8,6 +10,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -31,12 +34,15 @@ import java.net.URL;
 *
 */
 
-public class WSDLClientTest extends TestCase implements TestConstants {
+public class WSDLClientTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected AxisService service;
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(WSDLClientTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         service = AxisService.createService(Echo.class.getName(),
                 UtilServer.getConfigurationContext().getAxisConfiguration());
         service.setName(serviceName.getLocalPart());
@@ -45,7 +51,6 @@ public class WSDLClientTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

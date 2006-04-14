@@ -17,6 +17,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -31,13 +33,10 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-public class ServiceDispatchingTest extends TestCase implements TestConstants {
-
-
-    private int testCount = 3;
-
+public class ServiceDispatchingTest extends UtilServerBasedTestCase implements TestConstants {
     public ServiceDispatchingTest() {
         super(ServiceDispatchingTest.class.getName());
     }
@@ -46,8 +45,11 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ServiceDispatchingTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         AxisService service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(),
                 operationName);
@@ -57,9 +59,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        if (testCount == 0) {
-            UtilServer.stop();
-        }
         UtilServer.unDeployClientService();
     }
 
@@ -77,7 +76,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        testCount --;
     }
 
     public void testDispatchWithURLAndSOAPAction() throws Exception {
@@ -100,7 +98,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
         OMElement result = sender.sendReceive(payload);
         TestingUtils.campareWithCreatedOMElement(result);
-        testCount --;
     }
 
     public void testDispatchWithSOAPBody() throws Exception {
@@ -124,6 +121,5 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        testCount --;
     }
 }

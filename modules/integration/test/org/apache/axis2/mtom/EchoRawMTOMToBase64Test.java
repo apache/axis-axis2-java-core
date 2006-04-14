@@ -17,6 +17,8 @@
 package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -38,6 +40,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
-public class EchoRawMTOMToBase64Test extends TestCase {
+public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
     private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis2/services/EchoXMLService/echoMTOMtoBase64");
@@ -55,8 +58,6 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     private QName serviceName = new QName("EchoXMLService");
 
     private QName operationName = new QName("echoMTOMtoBase64");
-
-    private AxisService service;
 
     OMText expectedTextData;
 
@@ -70,16 +71,18 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(EchoRawMTOMToBase64Test.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
-        service = Utils.createSimpleService(serviceName, Echo.class.getName(),
+        AxisService service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

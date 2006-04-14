@@ -17,6 +17,8 @@
 package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -34,13 +36,14 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 
-public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
+public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -61,8 +64,11 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(EchoRawMTOMLoadTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
@@ -70,7 +76,6 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

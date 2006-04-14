@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
@@ -29,11 +31,10 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
-
-    private AxisService service;
+public class EchoRawXMLChunkedTest extends UtilServerBasedTestCase implements TestConstants {
 
     private static final String CLIENT_HOME = Constants.TESTING_PATH + "chunking-enabledRepository";
 
@@ -45,18 +46,19 @@ public class EchoRawXMLChunkedTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(EchoRawXMLChunkedTest.class),CLIENT_HOME);
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start(CLIENT_HOME);
-        service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+        AxisService service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName);
         UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     public void testEchoXMLSync() throws Exception {

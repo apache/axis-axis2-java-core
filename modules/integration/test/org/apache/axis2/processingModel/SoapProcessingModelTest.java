@@ -19,6 +19,8 @@ package org.apache.axis2.processingModel;
 // todo
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -41,11 +43,11 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-public class SoapProcessingModelTest extends TestCase implements TestConstants {
+public class SoapProcessingModelTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private AxisService service;
     private AxisService clientService;
 
     private boolean finish = false;
@@ -58,9 +60,12 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SoapProcessingModelTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
-        service = Utils.createSimpleService(serviceName, Echo.class.getName(),
+        AxisService service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         clientService = Utils.createSimpleServiceforClient(serviceName, Echo.class.getName(),
                 operationName);
@@ -70,7 +75,6 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault {
@@ -125,25 +129,4 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
         sendMessageWithHeader(envelope);
 
     }
-
-    // public void testSendingMustUnderstandWithArbitaryRole() throws Exception
-    // {
-    // try {
-    // SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
-    // SOAPEnvelope envelope = fac.getDefaultEnvelope();
-    // OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
-    // SOAPHeaderBlock h1 =
-    // fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
-    // h1.setMustUnderstand(true);
-    // h1.addChild(fac.createOMText("Dummy String"));
-    // h1.setRole("http://myOwnRole");
-    // OMElement payload = TestingUtils.createDummyOMElement();
-    // envelope.getBody().addChild(payload);
-    // sendMessageWithHeader(envelope);
-    //
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // assertTrue(e.getMessage().indexOf("Must Understand check failed") > -1);
-    // }
-    // }
 }

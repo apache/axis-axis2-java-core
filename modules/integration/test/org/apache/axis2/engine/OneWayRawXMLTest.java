@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -33,8 +35,9 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 
-public class OneWayRawXMLTest extends TestCase implements TestConstants {
+public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
 
     private SOAPEnvelope envelope;
 
@@ -47,9 +50,11 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        UtilServer.start();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(OneWayRawXMLTest.class));
+    }
 
+    protected void setUp() throws Exception {
         AxisService service = new AxisService(serviceName.getLocalPart());
         AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
@@ -67,7 +72,6 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
 

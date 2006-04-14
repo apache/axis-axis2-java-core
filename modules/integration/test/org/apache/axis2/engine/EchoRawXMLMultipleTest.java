@@ -16,6 +16,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -31,6 +33,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 
-public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
+public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected Log log = LogFactory.getLog(getClass());
     protected QName transportName = new QName("http://localhost/my",
@@ -59,8 +62,11 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(EchoRawXMLMultipleTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -70,7 +76,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

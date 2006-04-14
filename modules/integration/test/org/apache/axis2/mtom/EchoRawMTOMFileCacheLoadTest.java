@@ -24,6 +24,9 @@ import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.TestSuite;
+import junit.framework.Test;
+
 public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
 
     private QName serviceName = new QName("EchoXMLService");
@@ -40,8 +43,11 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(EchoRawMTOMFileCacheLoadTest.class),Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
@@ -49,7 +55,6 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

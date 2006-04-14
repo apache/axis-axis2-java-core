@@ -18,6 +18,8 @@ package org.apache.axis2.rest;
 
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -28,6 +30,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -37,9 +40,7 @@ import org.apache.axiom.om.OMNamespace;
 import javax.xml.stream.XMLOutputFactory;
 
 
-public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
-
-    private AxisService service;
+public class RESTBasedEchoRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
 
     public RESTBasedEchoRawXMLTest() {
         super(RESTBasedEchoRawXMLTest.class.getName());
@@ -49,22 +50,23 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(RESTBasedEchoRawXMLTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         Parameter parameter = new Parameter(
                 Constants.Configuration.ENABLE_REST, "true");
         UtilServer.getConfigurationContext()
                 .getAxisConfiguration().addParameter(parameter);
-        service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+        AxisService service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName);
         UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     private OMElement createEnvelope() {

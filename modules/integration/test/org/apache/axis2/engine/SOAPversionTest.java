@@ -17,6 +17,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -37,11 +39,12 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
-public class SOAPversionTest extends TestCase implements TestConstants {
+public class SOAPversionTest extends UtilServerBasedTestCase implements TestConstants {
 
     QName assumedServiceName = new QName("AnonymousService");
 
@@ -49,8 +52,11 @@ public class SOAPversionTest extends TestCase implements TestConstants {
     private AxisService service;
 
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAPversionTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -60,7 +66,6 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

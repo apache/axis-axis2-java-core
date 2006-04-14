@@ -17,6 +17,8 @@
 package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axiom.attachments.utils.ImageDataSource;
 import org.apache.axiom.attachments.utils.ImageIO;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -35,14 +37,14 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
 import java.awt.*;
 import java.io.InputStream;
 
-public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestConstants {
-    private AxisService service;
+public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase implements TestConstants {
 
     private OMElement data;
 
@@ -54,16 +56,18 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(EchoRawMTOMCommonsChunkingTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = Utils.createSimpleService(serviceName, Echo.class.getName(),
+        AxisService service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     private OMElement createEnvelope() throws Exception {

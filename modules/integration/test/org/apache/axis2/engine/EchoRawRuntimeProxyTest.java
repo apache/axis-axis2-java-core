@@ -1,6 +1,8 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -11,6 +13,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
@@ -33,7 +36,7 @@ import javax.xml.namespace.QName;
 *
 */
 
-public class EchoRawRuntimeProxyTest extends TestCase {
+public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
     public static final EndpointReference targetEPR = new EndpointReference(
             "http://apache.axis2.host"
                     + "/axis2/services/EchoXMLService/echoOMElement");
@@ -51,8 +54,11 @@ public class EchoRawRuntimeProxyTest extends TestCase {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(EchoRawRuntimeProxyTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -64,7 +70,6 @@ public class EchoRawRuntimeProxyTest extends TestCase {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
 

@@ -17,12 +17,15 @@
 package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.swa.EchoRawSwATest;
@@ -38,7 +41,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class EchoRawMTOMFaultReportTest extends TestCase {
+public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -54,8 +57,12 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
         super(testName);
     }
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(EchoRawMTOMFaultReportTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+    }
+
+
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS,
@@ -66,12 +73,10 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
         axisOp.setStyle(WSDLConstants.STYLE_DOC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);
-
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
     }
 
     public void testEchoFaultSync() throws Exception {

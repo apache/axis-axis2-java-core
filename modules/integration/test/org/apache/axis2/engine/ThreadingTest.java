@@ -1,12 +1,15 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.InvokerThread;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +35,7 @@ import java.util.GregorianCalendar;
  *
  */
 
-public class ThreadingTest extends TestCase implements TestConstants {
+public class ThreadingTest extends UtilServerBasedTestCase implements TestConstants {
 
 
     protected Log log = LogFactory.getLog(getClass());
@@ -47,8 +50,11 @@ public class ThreadingTest extends TestCase implements TestConstants {
 
     protected boolean finish = false;
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ThreadingTest.class));
+    }
+
     protected void setUp() throws Exception {
-        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -58,7 +64,6 @@ public class ThreadingTest extends TestCase implements TestConstants {
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
         UtilServer.unDeployClientService();
     }
 

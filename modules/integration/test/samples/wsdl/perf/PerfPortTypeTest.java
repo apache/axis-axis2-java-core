@@ -17,13 +17,16 @@
 package samples.wsdl.perf;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
 
-public class PerfPortTypeTest extends TestCase {
+public class PerfPortTypeTest extends UtilServerBasedTestCase {
 
     static Log log = LogFactory.getLog(PerfPortTypeTest.class.getName());
 
@@ -41,21 +44,8 @@ public class PerfPortTypeTest extends TestCase {
         super(arg0);
     }   
 
-    /**
-     * Each time an interop test is run the relevant service
-     * will be started with the given service repository
-     * <p/>
-     * set up the service
-     */
-    protected void setUp() throws Exception {
-        UtilServer.start(SERVICE_REPOSITORY);
-    }
-
-    /**
-     * Cleanup
-     */
-    protected void tearDown() throws Exception {
-        UtilServer.stop();
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(PerfPortTypeTest.class),SERVICE_REPOSITORY);
     }
 
     /**
