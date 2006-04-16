@@ -23,7 +23,7 @@
 			<passwordCallbackClass xmlns="">org.apache.axis2.security.rahas.PWCallback</passwordCallbackClass>
 			<cryptoProperties xmlns="">sctIssuer.properties</cryptoProperties>
 		</rahas-configuration>
-	</parameter>
+    </parameter>
 
     <parameter name="InflowSecurity">
       <action>

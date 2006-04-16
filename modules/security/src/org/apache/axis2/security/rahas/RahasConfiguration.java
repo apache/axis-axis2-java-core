@@ -135,6 +135,8 @@ public class RahasConfiguration {
     
     private byte[] issuerEntropy;
     
+    private String encryptionUser;
+    
     public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
             throws Exception {
         Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
@@ -604,6 +606,20 @@ public class RahasConfiguration {
      */
     protected void setRequesterEntropy(byte[] requesterEntropy) {
         this.requesterEntropy = requesterEntropy;
+    }
+
+    /**
+     * @return Returns the encryptionUser.
+     */
+    protected String getEncryptionUser() {
+        return encryptionUser;
+    }
+
+    /**
+     * @param encryptionUser The encryptionUser to set.
+     */
+    protected void setEncryptionUser(String encryptionUser) {
+        this.encryptionUser = encryptionUser;
     }
     
 }

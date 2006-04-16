@@ -19,6 +19,8 @@ package org.apache.axis2.security.rahas;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -27,9 +29,13 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.security.WSDoAllSender;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.Token;
+import org.apache.axis2.security.trust.TrustException;
+import org.apache.axis2.security.trust.TrustUtil;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.message.WSSecDKEncrypt;
+import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.ws.security.util.WSSecurityUtil;
@@ -37,6 +43,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+
+import java.security.cert.X509Certificate;
 
 /**
  * Rahas outflow handler
@@ -58,36 +66,28 @@ public class Sender implements Handler {
                 return;
             }
             
-            //Parse the configuration
+            //Parse the rahas configuration
             RahasConfiguration config = RahasConfiguration.load(msgContext, true);
-
-            if(config.getMsgCtx().isServerSide()) {
-                this.constructMessage(config);
-                msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
-                        .getDocumentElement());
-            } else {
-                
-                if(config.getContextIdentifier() == null && config.getStsEPRAddress() != null && !config.getMsgCtx().isServerSide()) {
+            msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
+                    .getDocumentElement());
+            
+            if(!config.getMsgCtx().isServerSide()) {
+                if(config.getContextIdentifier() == null && !config.getMsgCtx().isServerSide()) {
     
                     String sts = config.getStsEPRAddress();
                     if(sts != null) {
                       //Use a security token service
                       STSRequester.issueRequest(config);
-                      this.constructMessage(config);
-                      msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
-                                .getDocumentElement());
                     } else {
-                        //Create a token
+                        //Create an an SCT, include it in an RSTR 
+                        // and add the RSTR to the header
+                        this.createRSTR(config);
                     }
                     
-                } else {
-                    this.constructMessage(config);
-                    msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
-                              .getDocumentElement());
                 }
             }
-            
-            
+            this.constructMessage(config);
+
         } catch (Exception e) {
             e.printStackTrace();
             if(e instanceof RahasException) {
@@ -99,6 +99,72 @@ public class Sender implements Handler {
         } finally {
             DocumentBuilderFactoryImpl.setDOOMRequired(false);
         }
+        
+    }
+    
+    /**
+     * Create the self created <code>wsc:SecurityContextToken</code> and 
+     * add it to a <code>wst:RequestSecurityTokenResponse</code>.
+     * 
+     * This is called in the case where the security context establishment 
+     * is done by one of the parties with out the use of an STS
+     * and the creted SCT is sent across to the other party in an unsolicited 
+     * <code>wst:RequestSecurityTokenResponse</code>
+     * 
+     * @param config
+     * @throws Exception
+     */
+    private void createRSTR(RahasConfiguration config) throws Exception {
+        
+        WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
+        Crypto crypto = Util.getCryptoInstace(config);
+        X509Certificate cert = crypto.getCertificates(config.getEncryptionUser())[0];
+        
+        encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+        try {
+            encrKeyBuilder.setUseThisCert(cert);
+            encrKeyBuilder.prepare(config.getDocument(), crypto);
+        } catch (WSSecurityException e) {
+            throw new TrustException(
+                    "errorInBuildingTheEncryptedKeyForPrincipal",
+                    new String[] { cert.getSubjectDN().getName()});
+        }
+        
+        SecurityContextToken sct = new SecurityContextToken(config.getDocument());
+        config.resgisterContext(sct.getIdentifier());
+        Token token = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        
+        config.getTokenStore().add(token);
+        
+        SOAPEnvelope env = config.getMsgCtx().getEnvelope();
+
+        SOAPHeader header = env.getHeader();
+        if(header == null) {
+            header = ((SOAPFactory)env.getOMFactory()).createSOAPHeader(env);
+        }
+        
+        OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(header);
+
+        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(rstrElem);
+        
+        rstElem.addChild((OMElement)sct.getElement());
+        
+        TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
+                Constants.TOK_TYPE_SCT);
+
+        TrustUtil.createRequestedUnattachedRef(rstrElem, sct.getIdentifier(),
+                Constants.TOK_TYPE_SCT);
+        
+        Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
+        Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
+        
+        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(rstrElem);
+
+        if(bstElem != null) {
+            reqProofTok.addChild((OMElement)bstElem);
+        }
+        
+        reqProofTok.addChild((OMElement)encryptedKeyElem);
         
     }
     

@@ -28,6 +28,7 @@ import org.apache.axis2.security.trust.Token;
 import org.apache.axis2.security.trust.TokenIssuer;
 import org.apache.axis2.security.trust.TokenStorage;
 import org.apache.axis2.security.trust.TrustException;
+import org.apache.axis2.security.trust.TrustUtil;
 import org.apache.axis2.util.Base64;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
@@ -37,13 +38,9 @@ import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
-import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.message.token.SecurityContextToken;
-import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.xml.namespace.QName;
 
 import java.security.Principal;
 import java.security.SecureRandom;
@@ -167,47 +164,26 @@ public class SCTIssuer implements TokenIssuer {
         Document doc = ((Element)env).getOwnerDocument();
         
         SecurityContextToken sct = new SecurityContextToken(doc);
-        String sctId = "sctId-" + sct.getElement().hashCode();
-        sct.setID(sctId);
         
-        OMElement rstrElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
-                        Constants.WST_PREFIX), env.getBody());
+        OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(env.getBody());
 
-        OMElement rstElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUESTED_SECURITY_TOKEN_LN,
-                        Constants.WST_PREFIX), rstrElem);
+        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
         
         if (config.addRequestedAttachedRef) {
-            OMElement reqAttRef = env.getOMFactory().createOMElement(
-                    new QName(Constants.WST_NS,
-                            Constants.REQUESTED_ATTACHED_REFERENCE,
-                            Constants.WST_PREFIX), rstrElem);
-            reqAttRef.addChild((OMElement) this.createSecurityTokenReference(
-                    doc, "#" + sctId, Constants.TOK_TYPE_SCT));
+            TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
+                    Constants.TOK_TYPE_SCT);
         }
 
         if (config.addRequestedUnattachedRef) {
-            OMElement reqUnattRef = env.getOMFactory().createOMElement(
-                    new QName(Constants.WST_NS,
-                            Constants.REQUESTED_UNATTACHED_REFERENCE,
-                            Constants.WST_PREFIX), rstrElem);
-
-            reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(
-                    doc, sct.getIdentifier(), Constants.TOK_TYPE_SCT));
+            TrustUtil.createRequestedUnattachedRef(
+                    rstrElem, sct.getIdentifier(), Constants.TOK_TYPE_SCT);
         }
         
-        OMElement reqProofTok = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS, Constants.REQUESTED_PROOF_TOKEN_LN,
-                        Constants.WST_PREFIX), rstrElem);
+        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(rstrElem);
         
-        OMElement binSecElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS, Constants.BINARY_SECRET,
-                        Constants.WST_PREFIX), reqProofTok);
+        OMElement binSecElem = TrustUtil.createBinarySecretElement(reqProofTok);
 
         byte[] secret = this.generateEphemeralKey();
         binSecElem.setText(Base64.encode(secret));
@@ -242,46 +218,30 @@ public class SCTIssuer implements TokenIssuer {
         }
         
         SecurityContextToken sct = new SecurityContextToken(doc);
-        String sctId = "sctId-" + sct.getElement().hashCode();
-        sct.setID(sctId);
         
-        OMElement rstrElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
-                        Constants.WST_PREFIX), env.getBody());
+        OMElement rstrElem = TrustUtil
+                .createRequestSecurityTokenResponseElement(env.getBody());
 
-        OMElement rstElem = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS,
-                        Constants.REQUESTED_SECURITY_TOKEN_LN,
-                        Constants.WST_PREFIX), rstrElem);
+        OMElement rstElem = TrustUtil
+                .createRequestedSecurityTokenElement(rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
         
         if (config.addRequestedAttachedRef) {
-            OMElement reqAttRef = env.getOMFactory().createOMElement(
-                    new QName(Constants.WST_NS,
-                            Constants.REQUESTED_ATTACHED_REFERENCE,
-                            Constants.WST_PREFIX), rstrElem);
-            reqAttRef.addChild((OMElement) this.createSecurityTokenReference(
-                    doc, "#" + sctId, Constants.TOK_TYPE_SCT));
+            TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
+                    Constants.TOK_TYPE_SCT);
         }
 
         if (config.addRequestedUnattachedRef) {
-            OMElement reqUnattRef = env.getOMFactory().createOMElement(
-                    new QName(Constants.WST_NS,
-                            Constants.REQUESTED_UNATTACHED_REFERENCE,
-                            Constants.WST_PREFIX), rstrElem);
-
-            reqUnattRef.addChild((OMElement) this.createSecurityTokenReference(
-                    doc, sct.getIdentifier(), Constants.TOK_TYPE_SCT));
+            TrustUtil.createRequestedUnattachedRef(
+                    rstrElem, sct.getIdentifier(), Constants.TOK_TYPE_SCT);
         }
         
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
         
-        OMElement reqProofTok = env.getOMFactory().createOMElement(
-                new QName(Constants.WST_NS, Constants.REQUESTED_PROOF_TOKEN_LN,
-                        Constants.WST_PREFIX), rstrElem);
+        OMElement reqProofTok = TrustUtil
+                .createRequestedProofTokenElement(rstrElem);
 
         if(bstElem != null) {
             reqProofTok.addChild((OMElement)bstElem);
@@ -290,7 +250,8 @@ public class SCTIssuer implements TokenIssuer {
         reqProofTok.addChild((OMElement)encryptedKeyElem);
     
         //Store the tokens
-        Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
+                .getElement());
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
         this.getTokenStore(msgCtx).add(sctToken);
         
@@ -369,15 +330,6 @@ public class SCTIssuer implements TokenIssuer {
         this.configParamName = configParamName;
     }
     
-    private Element createSecurityTokenReference(Document doc, String refUri, String refValueType) {
-        
-        Reference ref = new Reference(doc);
-        ref.setURI(refUri);
-        ref.setValueType(refValueType);
-        SecurityTokenReference str = new SecurityTokenReference(doc);
-        str.setReference(ref);
-        
-        return str.getElement();
-    }
+
     
 }
