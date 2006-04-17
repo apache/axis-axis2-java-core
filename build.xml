@@ -227,6 +227,7 @@
       <include name="wsdl/src/**/*.java"/>
       <include name="xml/src/**/*.java"/>
       <include name="doom/src/**/*.java"/>
+      <include name="soapmonitor/src/**/*.java"/>
     </javac>
     <copy todir="${basedir}/target/classes/">
       <fileset dir="${basedir}/modules/common/src">
@@ -251,6 +252,9 @@
         <include name="**/*.mar"/>
       </fileset>
       <fileset dir="${basedir}/modules/security/target">
+        <include name="**/*.mar"/>
+      </fileset>
+      <fileset dir="${basedir}/modules/soapmonitor/target">
         <include name="**/*.mar"/>
       </fileset>
     </copy>
