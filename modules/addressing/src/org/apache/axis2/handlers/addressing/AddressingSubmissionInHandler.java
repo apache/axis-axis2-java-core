@@ -36,7 +36,7 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
     }
 
 
-    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header) {
+    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace) {
         // there is no exact way to identify ref parameters for Submission version. So let's have a handler
         // at the end of the flow, which puts all the handlers (which are of course mustUnderstand=false)
         // as reference parameters

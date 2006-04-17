@@ -44,6 +44,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     private OMNamespace addressingNSObject;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
+        String namespace = addressingNamespace;
         SOAPHeader header = msgContext.getEnvelope().getHeader();
 
         // if there is some one who has already found addressing, do not do anything here.
@@ -60,13 +61,13 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         logger.debug("Starting " + addressingVersion + " IN handler ...");
 
         ArrayList addressingHeaders;
-        addressingHeaders = header.getHeaderBlocksWithNSURI(addressingNamespace);
+        addressingHeaders = header.getHeaderBlocksWithNSURI(namespace);
         if (addressingHeaders != null && addressingHeaders.size() > 0) {
-            msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace);
+            msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
             msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
-            addressingNSObject = ((OMElement) addressingHeaders.get(0)).findNamespace(addressingNamespace, "");
+            addressingNSObject = ((OMElement) addressingHeaders.get(0)).findNamespace(namespace, "");
             logger.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
-            extractAddressingInformation(header, msgContext, addressingHeaders, addressingNamespace);
+            extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
         } else {
             msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             logger.debug("No Headers present corresponding to " + addressingVersion);
@@ -76,7 +77,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     }
 
     protected Options extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
-                                                   ArrayList addressingHeaders, String addressingNamespace) throws AxisFault {
+                                                   ArrayList addressingHeaders, String namespace) throws AxisFault {
 
         Options messageContextOptions = messageContext.getOptions();
         
@@ -119,13 +120,13 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 continue;
             
             if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
-                extractToEPRInformation(soapHeaderBlock, messageContextOptions, header);
+                extractToEPRInformation(soapHeaderBlock, messageContextOptions, header, namespace);
             } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
-                extractFromEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                extractFromEPRInformation(messageContextOptions, soapHeaderBlock, namespace);
             } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
-                extractReplyToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                extractReplyToEPRInformation(messageContextOptions, soapHeaderBlock, namespace);
             } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
-                extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, addressingNamespace);
+                extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, namespace);
             } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
                 messageContextOptions.setMessageId(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
@@ -133,7 +134,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 messageContextOptions.setAction(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
             } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreRelatesTo) {
-                extractRelatesToInformation(soapHeaderBlock, addressingNamespace, messageContextOptions);
+                extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
             }
         }
 
@@ -188,7 +189,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", WSA_DEFAULT_PREFIX + ":" + faultCode);
     }
 
-    protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header);
+    protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace);
 
 
     private void extractRelatesToInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, Options messageContextOptions) {
@@ -244,7 +245,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         soapHeaderBlock.setProcessed();
     }
 
-    private void extractToEPRInformation(SOAPHeaderBlock soapHeaderBlock, Options messageContextOptions, SOAPHeader header) {
+    private void extractToEPRInformation(SOAPHeaderBlock soapHeaderBlock, Options messageContextOptions, SOAPHeader header, String namespace) {
 
         EndpointReference epr;
         //here the addressing epr overidde what ever already there in the message context
@@ -252,7 +253,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         messageContextOptions.setTo(epr);
 
         // check for reference parameters
-        extractToEprReferenceParameters(epr, header);
+        extractToEprReferenceParameters(epr, header, namespace);
         soapHeaderBlock.setProcessed();
 
     }

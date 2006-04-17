@@ -37,11 +37,11 @@ public class AddressingFinalInHandler extends AddressingInHandler {
     }
 
 
-    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header) {
+    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace) {
         Iterator headerBlocks = header.getChildElements();
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
-            OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(addressingNamespace, "IsReferenceParameter"));
+            OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(namespace, "IsReferenceParameter"));
             if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
                 toEPR.addReferenceParameter(soapHeaderBlock.getQName(), soapHeaderBlock.getText());
             }
