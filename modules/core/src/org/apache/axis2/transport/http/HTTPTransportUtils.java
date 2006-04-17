@@ -251,7 +251,7 @@ public class HTTPTransportUtils {
                                 SOAPFactory soapFactory = new SOAP11Factory();
 
                                 builder = new StAXOMBuilder(xmlreader);
-             builder.setOMBuilderFactory(soapFactory);
+                                builder.setOMBuilderFactory(soapFactory);
                                 envelope = soapFactory.getDefaultEnvelope();
                                 envelope.getBody().addChild(builder.getDocumentElement());
                             }
@@ -260,12 +260,20 @@ public class HTTPTransportUtils {
                                     xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             envelope = (SOAPEnvelope) builder.getDocumentElement();
                         }
-                    } else {
-                        builder = new StAXSOAPModelBuilder(
-                                xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                        envelope = (SOAPEnvelope) builder.getDocumentElement();
                     }
                 }
+            }
+
+            if(builder == null){
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
+                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+
+                // Set the encoding scheme in the message context
+                msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                builder = new StAXSOAPModelBuilder(
+                        xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                envelope = (SOAPEnvelope) builder.getDocumentElement();
             }
 
             String charsetEncoding = builder.getDocument().getCharsetEncoding();
