@@ -274,7 +274,7 @@ public class ArchiveReader implements DeploymentConstants {
                 zin = new ZipInputStream(new FileInputStream(filename));
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
-                    if (entry.getName().equals(MODULE_XML)) {
+                    if (entry.getName().equalsIgnoreCase(MODULE_XML)) {
                         foundmoduleXML = true;
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
                         // setting module name
@@ -297,7 +297,8 @@ public class ArchiveReader implements DeploymentConstants {
             }
         } else {
             File file = new File(filename, MODULE_XML);
-            if (file.exists()) {
+            
+            if (file.exists() || (file = new File(filename, MODULE_XML.toLowerCase())).exists()) {
                 InputStream in;
                 try {
                     in = new FileInputStream(file);
