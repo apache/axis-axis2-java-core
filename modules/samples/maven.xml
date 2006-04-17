@@ -110,7 +110,7 @@
             </fileset>
         </jar>
 
-        <jar destfile="${samples.dir}/userguide/LoggingModule.mar">
+        <jar destfile="${samples.dir}/userguide/logging.mar">
             <fileset dir="src/userguide/loggingmodule/">
                 <include name="META-INF/**"/>
             </fileset>

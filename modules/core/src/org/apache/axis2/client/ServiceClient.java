@@ -115,7 +115,8 @@ public class ServiceClient {
         initializeTransports(configContext);
         try {
             this.axisConfig = this.configContext.getAxisConfiguration();
-            this.axisService = AxisService.createClientSideAxisService(wsdl4jDefinition, wsdlServiceName, portName, options);
+            this.axisService = AxisService.createClientSideAxisService(
+                    wsdl4jDefinition, wsdlServiceName, portName, options);
             // add the service to the config context if it isn't in there
             // already
             if (this.axisConfig.getService(this.axisService.getName()) == null) {
