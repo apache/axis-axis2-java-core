@@ -911,7 +911,9 @@
                                </xsl:when>
                                <!-- End of Array handling of ADB classes -->
                                <xsl:otherwise>
+                                   <xsl:variable name="arrayVarName">textArray<xsl:value-of select="position()"/></xsl:variable>
                                    <xsl:if test="position()>1">
+
                                    // Move to a start element
                                    event = reader.getEventType();
                                    while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
@@ -928,12 +930,12 @@
                                       <xsl:value-of select="$stateMachineName"/>.setNillable();
                                    </xsl:if>
                                    <xsl:value-of select="$stateMachineName"/>.read(reader);
-                                   java.lang.String[] textArray = <xsl:value-of select="$stateMachineName"/>.getTextArray();
+                                   java.lang.String[] <xsl:value-of select="$arrayVarName"/> =
+                                                <xsl:value-of select="$stateMachineName"/>.getTextArray();
                                    object.set<xsl:value-of select="$javaName"/>(
                                     (<xsl:value-of select="$propertyType"/>)
                                       org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$stateMachineName"/>.getTextArray()));
-
+                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$arrayVarName"/>));
                                   <!-- end of Array handling of simple types -->
                                </xsl:otherwise>
                            </xsl:choose>
