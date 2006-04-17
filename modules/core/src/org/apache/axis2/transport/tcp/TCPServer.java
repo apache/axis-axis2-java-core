@@ -189,7 +189,7 @@ public class TCPServer implements Runnable, TransportListener {
                 // todo this has to fix
                 return new EndpointReference(hostAddress + "/axis2/services/" + serviceName);
             } else {
-                log.info("Unable to generate EPR for the transport tcp");
+                log.debug("Unable to generate EPR for the transport tcp");
                 return null;
             }
         }
@@ -205,7 +205,7 @@ public class TCPServer implements Runnable, TransportListener {
             return new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
                     + "/axis2/services/" + serviceName);
         } else {
-            log.info("Unable to generate EPR for the transport tcp");
+            log.debug("Unable to generate EPR for the transport tcp");
             return null;
         }
     }
