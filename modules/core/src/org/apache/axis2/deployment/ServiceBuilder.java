@@ -21,13 +21,13 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -111,6 +111,18 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
+            //processing Default Message receivers
+            OMElement messageReceiver = service_element.getFirstChildWithName(
+                    new QName(TAG_MESSAGE_RECEIVERS));
+            if (messageReceiver != null) {
+                HashMap mrs = processMessageReceivers(service.getClassLoader(), messageReceiver);
+                Iterator keys = mrs.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    service.addMessageReceiver(key, (MessageReceiver) mrs.get(key));
+                }
+            }
+
             // Generating schema for the service if the imple class is JAVA
             if (!service.isWsdlfound()) {
                 //trying to generate WSDL for the service using JAM  and Java refelection
@@ -160,18 +172,6 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator moduleRefs = service_element.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs);
-
-            //processing Default Message receivers
-            OMElement messageReceiver = service_element.getFirstChildWithName(
-                    new QName(TAG_MESSAGE_RECEIVERS));
-            if (messageReceiver != null) {
-                HashMap mrs = processMessageReceivers(service.getClassLoader(), messageReceiver);
-                Iterator keys = mrs.keySet().iterator();
-                while (keys.hasNext()) {
-                    String key = (String) keys.next();
-                    service.addMessageReceiver(key, (MessageReceiver) mrs.get(key));
-                }
-            }
 
             //processing transports
             OMElement transports = service_element.getFirstChildWithName(new QName(TAG_TRANSPORTS));

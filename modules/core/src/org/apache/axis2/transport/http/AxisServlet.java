@@ -159,7 +159,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext, res, req);
 
             // adding ServletContext into msgContext;
-            msgContext.setProperty(Constants.SERVLET_CONTEXT, sessionContext);
+            msgContext.setProperty(Constants.SERVLET_CONTEXT, servletConfig.getServletContext());
             out = res.getOutputStream();
             HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
                     req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
