@@ -156,6 +156,10 @@ public class ServiceClient {
             // already
             if (this.axisConfig.getService(this.axisService.getName()) == null) {
                 this.axisConfig.addService(this.axisService);
+            } else {
+                throw new AxisFault(Messages.getMessage(
+                        "twoservicecannothavesamename",
+                        this.axisService.getName()));
             }
             ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
                     (AxisServiceGroup) this.axisService.getParent());
