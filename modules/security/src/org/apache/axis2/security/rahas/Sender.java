@@ -101,7 +101,7 @@ public class Sender implements Handler {
         }
         
     }
-    
+
     /**
      * Create the self created <code>wsc:SecurityContextToken</code> and 
      * add it to a <code>wst:RequestSecurityTokenResponse</code>.
@@ -118,7 +118,11 @@ public class Sender implements Handler {
         
         WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
         Crypto crypto = Util.getCryptoInstace(config);
-        X509Certificate cert = crypto.getCertificates(config.getEncryptionUser())[0];
+        String encryptionUser = config.getEncryptionUser();
+        if(encryptionUser == null) {
+            throw new RahasException("missingEncryptionUser");
+        }
+        X509Certificate cert = crypto.getCertificates(encryptionUser)[0];
         
         encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
         try {
@@ -133,6 +137,7 @@ public class Sender implements Handler {
         SecurityContextToken sct = new SecurityContextToken(config.getDocument());
         config.resgisterContext(sct.getIdentifier());
         Token token = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        token.setSecret(encrKeyBuilder.getEphemeralKey());
         
         config.getTokenStore().add(token);
         
@@ -200,8 +205,8 @@ public class Sender implements Handler {
         WSSecurityUtil.prependChildElement(doc, secHeader.getSecurityHeader(),
                 sct.getElement(), false);
     }
-    
-    
+
+
     public void cleanup() throws AxisFault {
     }
 

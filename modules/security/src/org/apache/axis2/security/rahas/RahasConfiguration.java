@@ -63,6 +63,8 @@ public class RahasConfiguration {
     public final static QName CRYPTO_PROPERTIES_FILE = new QName(
             "cryptoProperties");
     
+    public final static QName ENCRYPTION_USER = new QName("encryptionUser");
+    
     public final static QName PW_CALLBACK_CLASS = new QName(
             WSHandlerConstants.PW_CALLBACK_CLASS);
     
@@ -150,29 +152,32 @@ public class RahasConfiguration {
                     && elem.getFirstElement().getLocalName().equals(
                             RAHAS_CONFIG)) {
                 
-                OMElement conFileElem = elem.getFirstElement();
+                OMElement confElem = elem.getFirstElement();
                 
                 RahasConfiguration config = new RahasConfiguration();
                 
                 config.msgCtx = msgCtx;
                 msgCtx.setProperty(RAHAS_CONFIG, config);
                 
-                config.scope = getStringValue(conFileElem.getFirstChildWithName(SCOPE));
+                config.scope = getStringValue(confElem.getFirstChildWithName(SCOPE));
                 
-                config.stsEPRAddress = getStringValue(conFileElem
+                config.stsEPRAddress = getStringValue(confElem
                         .getFirstChildWithName(STS_EPR_ADDRESS));
 
-                config.keyDerivationAlgorithmClass = getStringValue(conFileElem
+                config.keyDerivationAlgorithmClass = getStringValue(confElem
                         .getFirstChildWithName(KEY_DERIVATION_ALGORITHM_CLASS));
                 
-                config.tokenStoreClass = getStringValue(conFileElem
+                config.tokenStoreClass = getStringValue(confElem
                         .getFirstChildWithName(TOKEN_STORE_CLASS));
                 
-                config.cryptoPropertiesFile = getStringValue(conFileElem
+                config.cryptoPropertiesFile = getStringValue(confElem
                         .getFirstChildWithName(CRYPTO_PROPERTIES_FILE));
 
-                config.passwordCallbackClass = getStringValue(conFileElem
+                config.passwordCallbackClass = getStringValue(confElem
                         .getFirstChildWithName(PW_CALLBACK_CLASS));
+                
+                config.encryptionUser = getStringValue(confElem
+                        .getFirstChildWithName(ENCRYPTION_USER));
                 
                 //Get the action<->ctx-identifier map
                 config.contextMap = (Hashtable) msgCtx
@@ -305,7 +310,11 @@ public class RahasConfiguration {
             tempElem.setText(this.cryptoPropertiesFile);
             elem.addChild(tempElem);
         }
-        
+        if(this.encryptionUser != null) {
+            OMElement tempElem = factory.createOMElement(ENCRYPTION_USER, elem);
+            tempElem.setText(this.encryptionUser);
+            elem.addChild(tempElem);
+        }
         return elem;
     }
     
@@ -611,14 +620,14 @@ public class RahasConfiguration {
     /**
      * @return Returns the encryptionUser.
      */
-    protected String getEncryptionUser() {
+    public String getEncryptionUser() {
         return encryptionUser;
     }
 
     /**
      * @param encryptionUser The encryptionUser to set.
      */
-    protected void setEncryptionUser(String encryptionUser) {
+    public void setEncryptionUser(String encryptionUser) {
         this.encryptionUser = encryptionUser;
     }
     

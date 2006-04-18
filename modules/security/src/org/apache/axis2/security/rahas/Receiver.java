@@ -16,7 +16,10 @@
 
 package org.apache.axis2.security.rahas;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -51,10 +54,23 @@ public class Receiver implements Handler {
                 secReceiver.invoke(msgContext);
                 return;
             }
-
+            
             // Parse the configuration
             RahasConfiguration config = RahasConfiguration.load(msgContext,
                     false);
+            
+            
+            //check if there's an RSTR in the msg and process it if exists  
+            SOAPEnvelope env = (SOAPEnvelope) config.getDocument().getDocumentElement();
+            SOAPHeader header = env.getHeader();
+            if (header != null
+                    && header.getFirstChildWithName(new QName(Constants.WST_NS,
+                            Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN)) != null) {
+                OMElement elem = header.getFirstChildWithName(new QName(Constants.WST_NS,
+                        Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN));
+                Util.processRSTR(elem, config);
+            }
+            
             WSSecurityEngine secEngine = new WSSecurityEngine();
             secEngine.processSecurityHeader(config.getDocument(), null,
                     new RahasCallbackHandler(config), config

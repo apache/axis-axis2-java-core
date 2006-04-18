@@ -160,6 +160,10 @@ public class PWCallback implements CallbackHandler {
 
                     pc.setPassword("noR");
 
+                } else if(pc.getIdentifer().equals("sts")) {
+                    
+                    pc.setPassword("password");
+                    
                 } else {
 
                     pc.setPassword("sirhC");

@@ -80,8 +80,15 @@ public abstract class TestClient extends TestCase {
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/Service"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, getClientOutflowConfiguration().getProperty());
-            options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, getClientInflowConfiguration().getProperty());
+            
+            OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
+            if(clientOutflowConfiguration != null) {
+                options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, clientOutflowConfiguration.getProperty());
+            }
+            InflowConfiguration clientInflowConfiguration = getClientInflowConfiguration();
+            if(clientInflowConfiguration != null) {
+                options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
+            }
             options.setProperty(RahasConfiguration.RAHAS_CONFIG, getClientRahasConfiguration());
             
             options.setAction("urn:echo");
