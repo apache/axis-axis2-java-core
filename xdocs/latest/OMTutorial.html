@@ -125,22 +125,22 @@ memory intensive programming. Following is a short feature overview of OM.</p>
 <!--  End of Image -->
 
 <p>OM Builder wraps the raw xml character stream through the StAX reader API.
-Hence the complexities of the pull event stream is covered</p>
+Hence the complexities of the pull event stream is transparent to the user.</p>
 
 <h3>A Bit About Caching</h3>
 
-<p>Since OM is a differed built Object model, It incorporates the concept of
+<p>Since OM is a differed built object model, It incorporates the concept of
 caching. Caching refers to the creation of the objects while parsing the pull
 stream. The reason why this is so important is because caching can be turned
 off in certain situations. if so the  parser proceeds without building the
 object structure. User can extract the raw pull stream from OM and use that
-instead of the OM and in this case it is sometimes beneficial to switch off
+instead of the OM. In this case it is sometimes beneficial to switch off
 caching. The advanced operations section explains more on accessing the raw
 pull stream and switching the caching on and off.</p>
 
 <h3>Where Does SOAP Come into Play?</h3>
 
-<p>In a nutshell SOAP is a information exchange protocol based on XML. SOAP
+<p>In a nutshell SOAP is an information exchange protocol based on XML. SOAP
 has a defined set of XML elements that should be used in messages. Since Axis
 is a "SOAP Engine" and OM is built for Axis, A set of SOAP specific objects
 were also defined along with OM. These SOAP Objects are extensions of the
@@ -159,9 +159,7 @@ about SOAP.</p>
 
 <h3>Obtaining the OM binary</h3>
 
-<p>OM is not a separate product but part of Axis2. But Axis2 provides a
-minimal jar which contains the run time of Axis2. This axis2-core-1.0.jar
-contains the compiled version of OM module.</p>
+<p></p>
 
 <p>The easiest way to obtain the OM binary is to download the Axis2 minimal
 binary distribution.  <font color="red" style="color: #000000">The lib
@@ -217,9 +215,10 @@ used in this example.</p>
 <source><pre>//create the parser<br/>
 XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
 <br/>//create the builder<br/>
-OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), parser); 
+StAXOMBuilder builder = new StAXOMBuilder(parser);
 //get the root element (in this case the envelope)<br/>
-        SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();</pre>
+OMElement documentElement =  builder.getDocumentElement();
+</pre>
 </source>
 <p>As the example shows, creating an OM from an input stream is pretty
 straightforward. However elements and nodes can be created programmatically
