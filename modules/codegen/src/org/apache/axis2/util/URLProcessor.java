@@ -52,7 +52,7 @@ public class URLProcessor {
         }
 
         // if we didn't file a hostname, bail
-        if (hostname == null) {
+        if (hostname == null || hostname.length() == 0) {
             return null;
         }
 
