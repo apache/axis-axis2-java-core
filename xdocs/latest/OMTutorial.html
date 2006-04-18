@@ -22,11 +22,11 @@ end of header section -->
 <h3>What is OM?</h3>
 
 <p>OM stands for Object Model (also known as AXIOM - AXis Object Model) and
-refers to the XML infoset model that is developed for Axis 2. XML infoset
+refers to the XML infoset model that is initialy developed for Apache Axis2. XML infoset
 refers to the information included inside the XML and for programmatical
 manipulation it is convenient to have a representation of this XML infoset in
 a language specific manner. For an object oriented language the obvious
-choice is a model made up of objects. DOM and JDOM are two such XML models.
+choice is a model made up of objects. DOM and <a href="http://www.jdom.org/">JDOM</a> are two such XML models.
 OM is conceptually similar to such an XML model by its external behavior but
 deep down it is very much different. The objective of this tutorial is to
 introduce the basics of OM and explain the best practices to follow while
@@ -37,8 +37,8 @@ surface and see what it is all about!</p>
 
 <p>This tutorial can be used by anybody who is interested in OM and need to
 go deeper in it. However it is assumed that the reader has a basic
-understanding of the concepts of XML (such as Namespaces) and a working
-knowledge of tools such as Ant. Knowledge in similar object models such as
+understanding of the concepts of XML (such as <a href="http://www.w3.org/TR/REC-xml-names/">Namespaces</a>) and a working
+knowledge of tools such as <a href="http://ant.apache.org/">Ant</a>. Knowledge in similar object models such as
 DOM will be quite helpful in understanding OM but such knowledge is not
 assumed. Several Links are listed in the appendix/ links section that will
 help understand the basics of XML.</p>
@@ -79,7 +79,7 @@ take place independently and swapped without affecting the program later.</p>
 
 <p>OM is a lightweight, differed built XML info set representation based on
 StAX (<a
-href="http://www.jcp.org/aboutJava/communityprocess/first/jsr173/">JSR
+href="http://www.jcp.org/en/jsr/detail?id=173">JSR
 173</a>), which is the standard streaming pull parser API. The object model
 can be manipulated as flexibly as any other object model (Such as <a
 href="http://www.jdom.org/">JDOM</a>), but underneath the objects will be
