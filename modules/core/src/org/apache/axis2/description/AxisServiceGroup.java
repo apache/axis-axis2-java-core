@@ -136,11 +136,7 @@ public class AxisServiceGroup extends AxisDescription {
         while (srevice.hasNext()) {
             // engaging each service
             AxisService axisService = (AxisService) srevice.next();
-            try {
-                axisService.engageModule(module, (AxisConfiguration) getParent());
-            } catch (AxisFault axisFault) {
-                log.info(axisFault.getMessage());
-            }
+            axisService.engageModule(module, (AxisConfiguration) getParent());
         }
         addToengagedModules(moduleName);
     }

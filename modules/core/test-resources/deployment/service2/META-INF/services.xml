@@ -7,6 +7,5 @@
     </description>
 
     <operation name="opname">
-        <module ref="module1"></module>
     </operation>
 </service>
