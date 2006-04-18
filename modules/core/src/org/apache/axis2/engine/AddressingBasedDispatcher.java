@@ -112,9 +112,9 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         // first check we can dispatch using the relates to
         if (msgctx.getRelatesTo() != null) {
             log.debug(Messages.getMessage("checkingrelatesto",
-                    msgctx.getRelatesTo().getValue()));
+                    msgctx.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue()));
 
-            String relatesTo = msgctx.getRelatesTo().getValue();
+            String relatesTo = msgctx.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue();
 
             if ((relatesTo != null) || "".equals(relatesTo)) {
                 OperationContext operationContext =

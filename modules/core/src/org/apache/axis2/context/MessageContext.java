@@ -477,10 +477,17 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
+     * @return Returns RelatesTo array.
+     */
+    public RelatesTo[] getRelatesTo() {
+        return options.getRelatesTo();
+    }
+
+    /**
      * @return Returns RelatesTo.
      */
-    public RelatesTo getRelatesTo() {
-        return options.getRelatesTo();
+    public RelatesTo getRelatesTo(String type) {
+        return options.getRelatesTo(type);
     }
 
     /**
@@ -759,8 +766,8 @@ public class MessageContext extends AbstractContext {
     /**
      * @param reference
      */
-    public void setRelatesTo(RelatesTo reference) {
-        options.setRelatesTo(reference);
+    public void addRelatesTo(RelatesTo reference) {
+        options.addRelatesTo(reference);
     }
 
     /**
@@ -893,5 +900,9 @@ public class MessageContext extends AbstractContext {
 
     public void setIncomingTransportName(String incomingTransportName) {
         this.incomingTransportName = incomingTransportName;
+    }
+
+    public void setRelatesTo(RelatesTo[] list) {
+        options.setRelatesTo(list);
     }
 }

@@ -64,6 +64,8 @@ public interface AddressingConstants {
 
         public static final String WSA_INTERFACE_NAME = "InterfaceName";
 
+        public static final String WSA_DEFAULT_RELATIONSHIP_TYPE = "http://www.w3.org/2005/08/addressing/reply";
+
         // fault information
         public static final String FAULT_HEADER_PROB_HEADER_QNAME = "ProblemHeaderQName";
         public static final String FAULT_HEADER_PROB_HEADER = "ProblemHeader";

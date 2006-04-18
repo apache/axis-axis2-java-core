@@ -2,6 +2,7 @@ package org.apache.axis2.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
@@ -27,7 +28,7 @@ public class CallbackReceiver implements MessageReceiver {
     }
 
     public void receive(MessageContext messageCtx) throws AxisFault {
-        RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
+        RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE);
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
         AsyncResult result = new AsyncResult(messageCtx);

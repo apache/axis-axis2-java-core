@@ -187,26 +187,28 @@ public class AddressingOutHandler extends AddressingHandler {
     private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject) {
         if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject))
         {
-            RelatesTo relatesTo = messageContextOptions.getRelatesTo();
-            OMElement relatesToHeader = null;
+            RelatesTo[] relatesTo = messageContextOptions.getRelatesTo();
 
             if (relatesTo != null) {
-                relatesToHeader =
-                        processStringInfo(relatesTo.getValue(),
-                                WSA_RELATES_TO,
-                                envelope, addressingNamespaceObject);
-            }
+                for (int i = 0; i < relatesTo.length; i++) {
+                    OMElement relatesToHeader =
+                            processStringInfo(relatesTo[i].getValue(),
+                                    WSA_RELATES_TO,
+                                    envelope, addressingNamespaceObject);
 
-            if (relatesToHeader != null)
-                if ("".equals(relatesTo.getRelationshipType())) {
-                    relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                            Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
-                            addressingNamespaceObject);
-                } else {
-                    relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                            relatesTo.getRelationshipType(),
-                            addressingNamespaceObject);
+                    if (relatesToHeader != null) {
+                        if ("".equals(relatesTo[i].getRelationshipType())) {
+                            relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
+                                    Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
+                                    addressingNamespaceObject);
+                        } else {
+                            relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
+                                    relatesTo[i].getRelationshipType(),
+                                    addressingNamespaceObject);
+                        }
+                    }
                 }
+            }
         }
     }
 

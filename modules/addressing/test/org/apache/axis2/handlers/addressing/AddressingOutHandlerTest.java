@@ -106,7 +106,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         org.apache.axis2.addressing.RelatesTo relatesTo = new org.apache.axis2.addressing.RelatesTo(
                 "http://www.relatesTo.org/service/", "TestRelation");
-        msgCtxt.setRelatesTo(relatesTo);
+        msgCtxt.addRelatesTo(relatesTo);
 
         msgCtxt.setEnvelope(
                 OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());

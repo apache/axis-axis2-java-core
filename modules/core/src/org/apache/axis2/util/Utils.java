@@ -76,7 +76,7 @@ public class Utils {
 
         newmsgCtx.setFaultTo(oldOptions.getTo());
         newmsgCtx.setFrom(oldOptions.getTo());
-        newmsgCtx.setRelatesTo(
+        newmsgCtx.addRelatesTo(
                 new RelatesTo(
                         oldOptions.getMessageId(),
                         AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));

@@ -6,6 +6,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -16,6 +17,9 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -77,7 +81,8 @@ public class Options {
 
     private String messageId;
 
-    private RelatesTo relatesTo;
+    // Array of RelatesTo objects
+    private List relationships;
 
     private EndpointReference replyTo;
 
@@ -188,11 +193,35 @@ public class Options {
         return myPropValue;
     }
 
-    public RelatesTo getRelatesTo() {
-        if (relatesTo == null && parent != null) {
+    public RelatesTo getRelatesTo(String type) {
+        if (relationships == null && parent != null) {
+            return parent.getRelatesTo(type);
+        }
+        for(int i=0;relationships != null && i<relationships.size();i++) {
+            RelatesTo relatesTo = (RelatesTo) relationships.get(i);
+            String relationshipType = relatesTo.getRelationshipType();
+            if(type.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE) && relationshipType == null) {
+                return relatesTo;
+            }
+            if(relationshipType != null && relationshipType.equals(type)) {
+                return relatesTo;
+            }
+        }
+        return null;
+    }
+
+    public RelatesTo[] getRelatesTo() {
+        if (relationships == null && parent != null) {
             return parent.getRelatesTo();
         }
-        return relatesTo;
+        if(relationships == null) {
+            return null;
+        }
+        return (RelatesTo[]) relationships.toArray(new RelatesTo[relationships.size()]);
+    }
+
+    public void setRelatesTo(RelatesTo[] list) {
+        relationships = list == null ? null : Arrays.asList(list);
     }
 
     public EndpointReference getReplyTo() {
@@ -355,8 +384,11 @@ public class Options {
         properties.put(propertyKey, property);
     }
 
-    public void setRelatesTo(RelatesTo relatesTo) {
-        this.relatesTo = relatesTo;
+    public void addRelatesTo(RelatesTo relatesTo) {
+        if(relationships == null) {
+            relationships = new ArrayList(5);
+        }
+        relationships.add(relatesTo);
     }
 
     public void setReplyTo(EndpointReference replyTo) {

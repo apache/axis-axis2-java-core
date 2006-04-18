@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -270,11 +271,11 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
+                    configContext.getOperationContext(msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
-                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
+                        this.getName().toString(), msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue()));
             }
         }
 
@@ -307,7 +308,7 @@ public abstract class AxisOperation extends AxisDescription
             throws AxisFault {
         OperationContext operationContext;
 
-        if (null == msgContext.getRelatesTo()) {
+        if (null == msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)) {
 
             // Its a new incoming message so get the factory to create a new
             // one
@@ -318,11 +319,11 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
+                    configContext.getOperationContext(msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
-                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
+                        this.getName().toString(), msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue()));
             }
         }
 

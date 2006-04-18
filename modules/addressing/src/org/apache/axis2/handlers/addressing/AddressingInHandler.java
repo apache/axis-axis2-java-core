@@ -207,7 +207,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                         relationshipType == null
                                 ? relationshipTypeDefaultValue
                                 : relationshipType.getAttributeValue());
-        messageContextOptions.setRelatesTo(relatesTo);
+        messageContextOptions.addRelatesTo(relatesTo);
         soapHeaderBlock.setProcessed();
     }
 

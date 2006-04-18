@@ -153,7 +153,7 @@ public class AxisEngine {
         faultContext.setTransportOut(processingContext.getTransportOut());
 
         faultContext.setMessageID(UUIDGenerator.getUUID());
-        faultContext.setRelatesTo(
+        faultContext.addRelatesTo(
                 new RelatesTo(
                         processingContext.getOptions().getMessageId(),
                         AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
