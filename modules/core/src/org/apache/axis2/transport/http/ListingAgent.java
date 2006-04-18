@@ -106,8 +106,21 @@ public class ListingAgent {
         }
     }
 
+
+    private void validateUser(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        String logged = (String) req.getSession().getAttribute(Constants.LOGGED);
+        if (!(logged != null && "Yes".equals(logged))) {
+            res.setContentType("text/html");
+            PrintWriter writer = new PrintWriter(out);
+            writer.write("<font color=\"red\">Invalid user , " +
+                    "you have to loging to system before performing this operation</font>");
+            writer.flush();
+        }
+    }
+
     private void changeParameters(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         if (req.getParameter("editServicepara") != null) {
             String serviceName = req.getParameter("axisService");
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
@@ -160,6 +173,7 @@ public class ListingAgent {
 
     private void engageModulesGlobally(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -184,6 +198,7 @@ public class ListingAgent {
 
     private void engageModulesToOperation(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -230,6 +245,7 @@ public class ListingAgent {
 
     private void engageModulesToService(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -266,6 +282,7 @@ public class ListingAgent {
 
     private void engageModulesToServiceGroup(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -402,6 +419,7 @@ public class ListingAgent {
      */
     private void listAdminServices(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap services = configContext.getAxisConfiguration().getServices();
 
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
@@ -411,12 +429,14 @@ public class ListingAgent {
     }
 
     private void listContexts(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        validateUser(req, res);
         req.getSession().setAttribute(Constants.CONFIG_CONTEXT, configContext);
         res.sendRedirect("ViewContexts.jsp");
     }
 
     private void listGloballyModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         Collection modules = configContext.getAxisConfiguration().getEngagedModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -424,6 +444,7 @@ public class ListingAgent {
     }
 
     private void listModules(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        validateUser(req, res);
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -433,7 +454,9 @@ public class ListingAgent {
     }
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        validateUser(req, res);
         ArrayList phaselist = new ArrayList();
+
         PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
 
         phaselist.add(info.getINPhases());
@@ -503,6 +526,7 @@ public class ListingAgent {
 
     private void listServiceGroups(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         Iterator serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
         HashMap services = configContext.getAxisConfiguration().getServices();
 
@@ -534,6 +558,7 @@ public class ListingAgent {
 
     private void lsitServiceforParameterChanged(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap services = configContext.getAxisConfiguration().getServices();
 
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
@@ -543,6 +568,7 @@ public class ListingAgent {
 
     private void lsitServiceformodules(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         HashMap services = configContext.getAxisConfiguration().getServices();
 
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
@@ -551,6 +577,7 @@ public class ListingAgent {
     }
 
     private void activateService(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        validateUser(req, res);
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("axisService");
             String turnon = req.getParameter("turnon");
@@ -569,6 +596,7 @@ public class ListingAgent {
     }
 
     private void inActivateService(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        validateUser(req, res);
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("axisService");
             String turnoff = req.getParameter("turnoff");
@@ -596,6 +624,7 @@ public class ListingAgent {
 
     private void viewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         req.getSession().setAttribute(Constants.GLOBAL_HANDLERS,
                 configContext.getAxisConfiguration());
         res.sendRedirect(VIEW_GLOBAL_HANDLERS_JSP_NAME);
@@ -603,6 +632,7 @@ public class ListingAgent {
 
     private void viewServiceHandlers(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
+        validateUser(req, res);
         String service = req.getParameter("axisService");
 
         if (service != null) {
