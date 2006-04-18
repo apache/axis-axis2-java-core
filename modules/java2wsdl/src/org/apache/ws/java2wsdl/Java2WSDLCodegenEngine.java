@@ -59,7 +59,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         String outputFileName = option == null ? null : option.getOptionValue();
         //derive a file name from the class name if the filename is not specified
         if (outputFileName == null) {
-            outputFileName = getSimpleClassName(className) + WSDL_FILENAME_SUFFIX;
+            outputFileName = Java2WSDLUtils.getSimpleClassName(className) + WSDL_FILENAME_SUFFIX;
         }
 
         //first create a file in the given location
@@ -90,7 +90,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
                 for (int i = 0; i < classPathEntries.length; i++) {
                     String classPathEntry = classPathEntries[i];
                     //this should be a file(or a URL)
-                    if (isURL(classPathEntry)) {
+                    if (Java2WSDLUtils.isURL(classPathEntry)) {
                         urls[i] = new URL(classPathEntry);
                     } else {
                         urls[i] = new File(classPathEntry).toURL();
@@ -130,7 +130,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
 
         option = loadOption(Java2WSDLConstants.SERVICE_NAME_OPTION,
                 Java2WSDLConstants.SERVICE_NAME_OPTION_LONG, optionsMap);
-        java2WsdlBuilder.setServiceName(option == null ? getSimpleClassName(className) : option.getOptionValue());
+        java2WsdlBuilder.setServiceName(option == null ? Java2WSDLUtils.getSimpleClassName(className) : option.getOptionValue());
 
         option = loadOption(Java2WSDLConstants.STYLE_OPTION,
                 Java2WSDLConstants.STYLE_OPTION, optionsMap);
@@ -161,17 +161,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         }
     }
 
-    /**
-     * check the entry for a URL. This is a simple check and need to be improved
-     *
-     * @param entry
-     */
-
-    private boolean isURL(String entry) {
-        return entry.startsWith("http://");
-    }
-
-    /**
+     /**
      * @param shortOption
      * @param longOption
      * @param options
@@ -190,18 +180,5 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         }
 
         return option;
-    }
-
-    /**
-     * A method to strip the fully qualified className to a simple classname
-     *
-     * @param qualifiedName
-     */
-    private String getSimpleClassName(String qualifiedName) {
-        int index = qualifiedName.lastIndexOf(".");
-        if (index > 0) {
-            return qualifiedName.substring(index + 1, qualifiedName.length());
-        }
-        return qualifiedName;
     }
 }

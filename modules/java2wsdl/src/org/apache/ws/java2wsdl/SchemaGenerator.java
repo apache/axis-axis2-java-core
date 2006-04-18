@@ -54,7 +54,7 @@ public class SchemaGenerator {
         if (schematargetNamespace != null && !schematargetNamespace.trim().equals("")) {
             this.schemaTargetNameSpace = schematargetNamespace;
         } else {
-            this.schemaTargetNameSpace = Java2WSDLConstants.AXIS2_XSD;
+            this.schemaTargetNameSpace = Java2WSDLUtils.schemaNamespaceFromPackageName(className).toString();//Java2WSDLConstants.AXIS2_XSD;
         }
         if (schematargetNamespacePrefix != null && !schematargetNamespacePrefix.trim().equals("")) {
             this.schema_namespace_prefix = schematargetNamespacePrefix;

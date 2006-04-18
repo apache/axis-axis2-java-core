@@ -27,7 +27,6 @@ import java.io.StringWriter;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @author : Deepal Jayasinghe (deepal@apache.org)
 *
 */
 
@@ -37,6 +36,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     private XmlSchema schema;
     private String serviceName;
     private String targetNamespace;
+    private String targetNamespacePrefix;
     private OMNamespace ns1;
     private OMNamespace soap;
     private OMNamespace tns;
@@ -50,6 +50,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                           XmlSchema schema,
                           String serviceName,
                           String targetNamespace,
+                          String targetNamespacePrefix,
                           String style,
                           String use,
                           String locationURL) {
@@ -78,6 +79,12 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         } else {
             this.targetNamespace = DEFAULT_TARGET_NAMESPACE;
         }
+        
+        if (targetNamespacePrefix != null && !targetNamespacePrefix.trim().equals("")) {
+            this.targetNamespacePrefix = targetNamespacePrefix;
+        } else {
+            this.targetNamespacePrefix = TARGETNAMESPACE_PREFIX;
+        }
     }
 
     public OMElement generateOM() throws Exception {
@@ -85,11 +92,17 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         wsdl = fac.createOMNamespace(WSDL_NAMESPACE,
                 DEFAULT_WSDL_NAMESPACE_PREFIX);
         OMElement ele = fac.createOMElement("definitions", wsdl);
-        ns1 = ele.declareNamespace(AXIS2_XSD, "ns1");
+        
+        //ns1 = ele.declareNamespace(AXIS2_XSD, "ns1");
+        ns1 = ele.declareNamespace(this.schema.getTargetNamespace(), "ns1");
+        
         ele.declareNamespace(URI_2001_SCHEMA_XSD, DEFAULT_SCHEMA_NAMESPACE_PREFIX);
         soap = ele.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
-        tns = ele.declareNamespace(DEFAULT_TARGET_NAMESPACE, TARGETNAMESPACE_PREFIX);
-        ele.addAttribute("targetNamespace", DEFAULT_TARGET_NAMESPACE, null);
+        
+        //tns = ele.declareNamespace(DEFAULT_TARGET_NAMESPACE, TARGETNAMESPACE_PREFIX);
+        tns = ele.declareNamespace(targetNamespace, targetNamespacePrefix);
+        
+        ele.addAttribute("targetNamespace", targetNamespace, null);
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
         StringWriter writer = new StringWriter();
         schema.write(writer);

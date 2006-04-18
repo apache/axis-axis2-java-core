@@ -137,8 +137,9 @@ public class Java2WSDLBuilder {
         XmlSchema schema = sg.generateSchema();
         Java2OMBuilder java2OMBuilder = new Java2OMBuilder(sg.getMethods(),
                 schema,
-                serviceName == null ? simpleClassName(className) : serviceName,
-                targetNamespace,
+                serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
+                targetNamespace == null ? Java2WSDLUtils.namespaceFromPackageName(className).toString():targetNamespace,
+                targetNamespacePrefix,
                 style,
                 use,
                 locationUri);
@@ -146,19 +147,6 @@ public class Java2WSDLBuilder {
         wsdlElemnet.serialize(out);
         out.flush();
         out.close();
-    }
-
-    /**
-     * A method to strip the fully qualified className to a simple classname
-     *
-     * @param qualifiedName
-     */
-    private String simpleClassName(String qualifiedName) {
-        int index = qualifiedName.lastIndexOf(".");
-        if (index > 0) {
-            return qualifiedName.substring(index + 1, qualifiedName.length());
-        }
-        return qualifiedName;
     }
 }
 
