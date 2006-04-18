@@ -544,6 +544,7 @@
                                                     <xsl:value-of select="$basePropertyType"/>.class,
                                                     <xsl:value-of select="$listName"/>));
                                         </xsl:when>
+                                        <!-- End of Array handling of ADB classes -->
                                         <xsl:when test="@default">
                                              boolean <xsl:value-of select="$loopBoolName"/>=false;
                                              javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
@@ -588,7 +589,7 @@
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
 
                                         </xsl:when>
-                                        <!-- End of Array handling of ADB classes -->
+                                        <!-- End of Array handling of default class - that is the OMElement -->
                                         <xsl:otherwise>
                                             <xsl:value-of select="$listName"/>.add(getElementTextProperly(reader));
                                             //loop until we find a start element that is not part of this array
@@ -849,7 +850,9 @@
                                       <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
 
                                    //move to the next event, probably past the last end_element event
-                                   reader.next();
+                                   if (reader.getEventType()== javax.xml.stream.XMLStreamConstants.END_ELEMENT){
+                                      reader.next();
+                                   }
                                </xsl:when>
                                <xsl:when test="@default">
                                     <!-- Somebody put the magic number 5000 here. I wonder who did that! -->
