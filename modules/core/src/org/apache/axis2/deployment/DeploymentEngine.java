@@ -932,12 +932,10 @@ public class DeploymentEngine implements DeploymentConstants {
         File repository = new File(repositoryName);
         File services = new File(repository, DIRECTORY_SERVICES);
         if (!services.exists()) {
-            services.mkdirs();
             log.info(Messages.getMessage("noservicedirfound"));
         }
         File modules = new File(repository, DIRECTORY_MODULES);
         if (!modules.exists()) {
-            modules.mkdirs();
             log.info(Messages.getMessage("nomoduledirfound"));
         }
     }

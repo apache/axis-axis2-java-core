@@ -7,7 +7,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
@@ -17,6 +16,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
@@ -419,14 +419,24 @@ public class ServiceClient {
             // this method call two channel non blocking method to do the work
             // and wait on the callbck
             sendReceiveNonBlocking(operation, elem, callback);
+
             long timeout = options.getTimeOutInMilliSeconds();
+            long waitTime = timeout;
+            long startTime = System.currentTimeMillis();
+
             synchronized (callback) {
-                try {
-                    callback.wait(timeout);
-                } catch (InterruptedException e) {
-                    throw new AxisFault(Messages
-                            .getMessage("responseTimeOut"));
+                while (! callback.isComplete() && waitTime >= 0) {
+                    try {
+                        callback.wait(timeout);
+                    } catch (InterruptedException e) {
+                        // We were interrupted for some reason, keep waiting
+                        // or throw new AxisFault( "Callback was interrupted by someone?" );
+                    }
+                    // The wait finished, compute remaining time
+                    // - wait can end prematurly, see Object.wait( int timeout )
+                    waitTime = timeout - (System.currentTimeMillis() - startTime);
                 }
+
             }
             // process the resule of the invocation
             if (callback.envelope != null) {
@@ -437,9 +447,12 @@ public class ServiceClient {
             } else {
                 if (callback.error instanceof AxisFault) {
                     throw (AxisFault) callback.error;
-                } else {
+                } else if (callback.error != null) {
                     throw new AxisFault(callback.error);
-                }
+                } else if (! callback.isComplete()) {
+                    throw new AxisFault(Messages.getMessage("responseTimeOut"));
+                } else
+                    throw new AxisFault("Callback completed but there was no envelope or error");
             }
         } else {
             MessageContext mc = new MessageContext();
@@ -598,6 +611,10 @@ public class ServiceClient {
         public void onComplete(AsyncResult result) {
             this.envelope = result.getResponseEnvelope();
             this.msgctx = result.getResponseMessageContext();
+        }
+
+        public void setComplete(boolean complete) {
+            super.setComplete(complete);
             synchronized (this) {
                 notify();
             }
