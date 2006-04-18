@@ -1,3 +1,18 @@
+package org.apache.axis2.rpc.receivers;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.DependencyManager;
+import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
+
+import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -12,31 +27,11 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
+*
+*
 */
 
-/*
-* Reflection based RPCMessageReceiver , request will be processed by looking at the method signature
-* of the invocation method
-*/
-
-package org.apache.axis2.rpc.receivers;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-
-import javax.xml.namespace.QName;
-import java.lang.reflect.Method;
-
-public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
-
+public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
     private Method method;
 
