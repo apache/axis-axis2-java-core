@@ -172,11 +172,6 @@ public class AxisConfiguration extends AxisDescription {
             }
         }
         services = axisServiceGroup.getServices();
-        Iterator enModule = engagedModules.iterator();
-        while (enModule.hasNext()) {
-            QName moduleName = (QName) enModule.next();
-            axisServiceGroup.engageModule(getModule(moduleName));
-        }
         while (services.hasNext()) {
             description = (AxisService) services.next();
             if (description.isUseDefaultChains()) {
@@ -186,6 +181,15 @@ public class AxisConfiguration extends AxisDescription {
                     phasesinfo.setOperationPhases(operation);
                 }
             }
+        }
+        Iterator enModule = engagedModules.iterator();
+        while (enModule.hasNext()) {
+            QName moduleName = (QName) enModule.next();
+            axisServiceGroup.engageModule(getModule(moduleName));
+        }
+        services = axisServiceGroup.getServices();
+        while (services.hasNext()) {
+            description = (AxisService) services.next();
             allservices.put(description.getName(), description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
         }
