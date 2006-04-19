@@ -24,7 +24,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.databinding.utils.PrintEvents;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
-import org.apache.axis2.util.StreamWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -107,8 +106,6 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(s2));
         PrintEvents.print(r);
 
-        System.out.println("s2 = " + s2);
-        System.out.println("xml = " + xml);
         assertXMLEqual(s2,xml);
     }
 

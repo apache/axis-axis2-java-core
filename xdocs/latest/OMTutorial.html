@@ -191,15 +191,11 @@ document or just programmatically. OM provides a notion of a factory and a
 builder to create objects. The factory helps to keep the code at the
 interface level and the implementations separately (Figure 2). Since OM is
 tightly bound to StAX, a StAX compliant reader should be created first with
-the desired input stream. Then the reader should be fed into the
-OMXMLBuilderFactory to instantiate a suitable builder. The interface provided
-by the builder is identical, though the internal implementations vary.
-However, the types of the returned objects depend on the implementation of
-the builder. For example the SOAPModelBuilder returns SOAP specific objects
+the desired input stream. Then one can select one of the different builders available. 
+StAXOMBuilder will build pure XML infoset compliant object model whilst the SOAPModelBuilder returns SOAP specific objects
 (such as the SOAPEnvelope, which are sub classes of the OMElement) through
-its builder methods. The following piece of code shows the correct method of
-creating an OM document from an input stream. Note that the SOAP builder is
-used in this example.</p>
+its builder methods and . The following piece of code shows the correct method of
+creating an OM document from an input stream. </p>
 
 <div align="left">
 <p><b>Code Listing 1</b></p>
@@ -217,8 +213,8 @@ straightforward. However elements and nodes can be created programmatically
 to modify the structure as well. The recommended way to create OM objects
 programmatically is to use the factory. OMAbstractFactory.getOMFactory() will
 return the proper factory and the creator methods for each type should be
-called. Currently OM has two builders, namely the OM builder and the SOAP
-model builder. These builders provide the necessary information to the XML
+called. Currently OM has two builders, namely the OM builder (StAXOMBuilder) and the SOAP
+model builder (StAXSOAPModelBuilder). These builders provide the necessary information to the XML
 info set model to build itself.</p>
 <!-- Image -->
 
@@ -252,7 +248,7 @@ important difference is that the former will have no builder object enclosed,
 where as the latter always carries a reference to its builder. As stated
 earlier in this tutorial, since the object model is built as and when
 required, each and every OMNode should have a reference to its builder. If
-this information is not available, it is due to the Object being created
+this information is not available, it is due to the object being created
 without a builder. This difference becomes evident when the user tries to get
 a non caching pull parser from the OMElement. This will be discussed in more
 detail in the advanced operations section.</p>
@@ -269,10 +265,10 @@ restriction there are no other constraints that keep the programmer away from
 mixing up programmatically made OMNode objects with OMNode objects built from
 builders.</p>
 
-<p>The SOAP Object hierarchy is made in the most natural way for a
+<p>The SOAP object hierarchy is made in the most natural way for a
 programmer. An inspection of the API will show that it is quite close to the
 SAAJ API but with no bindings to DOM or any other model. The SOAP classes
-extend basic OM classes (such as the element) hence one can access a SOAP
+extend basic OM classes (such as the OMElement) hence one can access a SOAP
 document either with the abstraction of SOAP or drill down to the underlying
 XML Object model with a simple casting.</p>
 <!--  The following illustration of the actual class diagram will be helpful in understanding this.
@@ -301,7 +297,7 @@ elt12.addChild(elt22);
 root.addChild(elt11);
 root.addChild(elt12);</pre>
 <ul>
-  <li>AddChild method will always add the child as the first child of the
+  <li>AddChild method will always add the child as the last child of the
     parent.</li>
   <li><p>A given node can be removed from the tree by calling the detach()
     method. A node can also be removed from the tree by calling the remove
@@ -329,7 +325,7 @@ public OMNamespace findNamespace(String uri, String prefix) throws OMException;<
 <p>The declareNamespaceXX methods are fairly straightforward. They add a
 namespace to namespace declarations section. Note that a namespace
 declaration that has already being added will not be added twice.
-FindNamespace is a very handy method to locate a namespace object higher up
+findNamespace is a very handy method to locate a namespace object higher up
 the object tree. It searches for a matching namespace in its own declarations
 section and jumps to the parent if it's not found. The search progresses up
 the tree until a matching namespace is found or the root has been reached.</p>
@@ -351,7 +347,7 @@ OMElement root = factory.createOMElement("root",ns1);
 OMNamespace ns2 = root.declareNamespace("bar1","y");
 OMElement elt1 = factory.createOMElement("foo",ns1);
 OMElement elt2 = factory.createOMElement("yuck",ns2);
-OMText txt1 = factory.createText(elt2,"blah");
+OMText txt1 = factory.createOMText(elt2,"blah");
 elt2.addChild(txt1);
 elt1.addChild(elt2);
 root.addChild(elt1);</pre>

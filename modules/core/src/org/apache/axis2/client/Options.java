@@ -4,9 +4,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -15,10 +15,10 @@ import org.apache.axis2.transport.TransportListener;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -222,7 +222,7 @@ public class Options {
             return parent.getRelationships();
         }
         if(relationships == null) {
-            return null;
+            return null;                                 
         }
         return (RelatesTo[]) relationships.toArray(new RelatesTo[relationships.size()]);
     }
