@@ -86,7 +86,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         
         // Per the SOAP Binding spec "headers with an incorrect cardinality MUST NOT be used" So these variables
         // are used to keep track of invalid cardinality headers so they are not deserialised.
-        boolean ignoreTo = false, ignoreFrom = false, ignoreReplyTo = false, ignoreFaultTo = false, ignoreMessageID = false, ignoreAction = false, ignoreRelatesTo = false; 
+        boolean ignoreTo = false, ignoreFrom = false, ignoreReplyTo = false, ignoreFaultTo = false, ignoreMessageID = false, ignoreAction = false; 
         
         // First pass just check for duplicates
         Iterator addressingHeadersIt = addressingHeaders.iterator();
@@ -107,8 +107,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 	            ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
 	        } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
 	            ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
-	        } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreRelatesTo = checkDuplicateHeaders(WSA_RELATES_TO, checkedHeaderNames, duplicateHeaderNames);
 	        }
         }
         
@@ -133,7 +131,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
                 messageContextOptions.setAction(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
-            } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreRelatesTo) {
+            } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
             }
         }
