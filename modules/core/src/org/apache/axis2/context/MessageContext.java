@@ -22,7 +22,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -910,7 +909,7 @@ public class MessageContext extends AbstractContext {
         this.incomingTransportName = incomingTransportName;
     }
 
-    public void setRelatesTo(RelatesTo[] list) {
-        options.setRelatesTo(list);
+    public void setRelationships(RelatesTo[] list) {
+        options.setRelationships(list);
     }
 }

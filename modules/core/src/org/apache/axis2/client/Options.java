@@ -227,7 +227,7 @@ public class Options {
         return (RelatesTo[]) relationships.toArray(new RelatesTo[relationships.size()]);
     }
 
-    public void setRelatesTo(RelatesTo[] list) {
+    public void setRelationships(RelatesTo[] list) {
         relationships = list == null ? null : Arrays.asList(list);
     }
 
