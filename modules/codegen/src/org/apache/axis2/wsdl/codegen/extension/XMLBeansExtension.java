@@ -59,10 +59,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             return;
         }
 
-        //check the comptibilty
-        //checkCompatibility();
         try {
-
             // try dummy load of framework class first to check missing jars
             try {
                 getClass().getClassLoader().loadClass(XMLBEANS_CONFIG_CLASS);

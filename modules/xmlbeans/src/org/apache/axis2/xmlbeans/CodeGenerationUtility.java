@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.HashMap;
 
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.URLProcessor;
@@ -120,12 +121,15 @@ public class CodeGenerationUtility {
 
             //compile the type system
             XmlObject[] objeArray = convertToXMLObjectArray(xmlObjectsVector);
-            BindingConfig config = new Axis2BindingConfig();
 
-            //set the STS name to null. it makes the generated class include a unique (but random) STS name
-            sts = XmlBeans.compileXmlBeans(null, null,
+            sts = XmlBeans.compileXmlBeans(
+                    //set the STS name to null. it makes the generated class
+                    // include a unique (but random) STS name
+                    null,
+                    null,
                     objeArray,
-                    config, XmlBeans.getContextTypeLoader(),
+                    new Axis2BindingConfig(cgconfig.getUri2PackageNameMap()),
+                    XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(cgconfig.getOutputLocation()),
                     null);
 
@@ -165,7 +169,7 @@ public class CodeGenerationUtility {
         List allSeenTypes = new ArrayList();
         List base64ElementQNamesList = new ArrayList();
         SchemaType outerType;
-//add the document types and global types
+        //add the document types and global types
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
         for (int i = 0; i < allSeenTypes.size(); i++) {
@@ -174,8 +178,8 @@ public class CodeGenerationUtility {
             if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
                 if (Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
                     outerType = sType.getOuterType();
-//check the outer type further to see whether it has the contenttype attribute from
-//XMime namespace
+                    //check the outer type further to see whether it has the contenttype attribute from
+                    //XMime namespace
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
                         if (Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
@@ -214,14 +218,12 @@ public class CodeGenerationUtility {
 
         for (int i = 0; i < elementProperties.length; i++) {
             SchemaType schemaType = elementProperties[i].getType();
-
             if (schemaType.isPrimitiveType()) {
                 SchemaType primitiveType = schemaType.getPrimitiveType();
-
                 if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
+                    //todo fix the recursive problem here
                     base64Types.add(elementProperties[i].getName());
                 }
-
             } else {
                 findPlainBase64Types(schemaType, base64Types);
             }
@@ -287,27 +289,25 @@ public class CodeGenerationUtility {
      * how the namespaces are suffixed/prefixed
      */
     private static class Axis2BindingConfig extends BindingConfig {
+
+        private Map uri2packageMappings = null;
+
+        public Axis2BindingConfig(Map uri2packageMappings) {
+            this.uri2packageMappings = uri2packageMappings;
+            if (this.uri2packageMappings==null){
+                //make an empty one to avoid nasty surprises
+                this.uri2packageMappings = new HashMap();
+            }
+        }
+
         public String lookupPackageForNamespace(String uri) {
-            return URLProcessor.makePackageName(uri);
+            if (uri2packageMappings.containsKey(uri)){
+                return (String)uri2packageMappings.get(uri);
+            }else{
+                 return URLProcessor.makePackageName(uri);
+            }
+
         }
     }
 
-//    /**
-//     *
-//     */
-//    public static class Axis2SchemaCompilerExtension implements SchemaCompilerExtension{
-//        private SchemaTypeSystem sts;
-//
-//        public SchemaTypeSystem getSts() {
-//            return sts;
-//        }
-//
-//        public void schemaCompilerExtension(SchemaTypeSystem schemaTypeSystem, Map parms) {
-//            this.sts = schemaTypeSystem;
-//        }
-//
-//        public String getExtensionName() {
-//            return "Axis2.xmlbeans.extension";
-//        }
-//    }
 }

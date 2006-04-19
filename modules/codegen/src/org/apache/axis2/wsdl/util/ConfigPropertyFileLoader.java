@@ -67,6 +67,29 @@ public class ConfigPropertyFileLoader {
     }
 
     static {
+        loadAllProperties();
+    }
+
+    public static void reload(){
+        reset();
+        loadAllProperties();
+    }
+
+    private static void reset(){
+        dbSupporterTemplateName = null;
+        testObjectTemplateName = null;
+        extensionClassNames = null;
+        thirdPartySchemaNames = null;
+        languageTypes = null;
+        databindingFrameworkNames = null;
+        languageEmitterMap = null;
+        languageSpecificPropertiesMap = null;
+        databindingFrameworkNameToExtensionMap = null;
+        defaultLanguage = null;
+        defaultDBFrameworkName = null;
+
+    }
+    private static void loadAllProperties() {
         try {
             //look for the system property "org.apache.axis2.codegen.config" to for a property
             //entry refering to the config properties
@@ -193,7 +216,6 @@ public class ConfigPropertyFileLoader {
         } catch (Exception e) {
             throw new RuntimeException(CodegenMessages.getMessage("propfileload.generalException"), e);
         }
-
     }
 
     /**

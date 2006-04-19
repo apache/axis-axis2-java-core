@@ -5,6 +5,8 @@ import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.HashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -26,6 +28,10 @@ import java.util.regex.Pattern;
  * Right now the compiler options consist of the following
  * 1. output file location - A folder with necessary rights for the
  * schema compiler to write the files
+ * 2.package name
+ * 3.namespace to package map
+ * 4.boolean flag marking whether to wrap or unwrap
+ * 4.boolean flag marking whether to write classes or not
  */
 public class CompilerOptions {
 
@@ -34,6 +40,19 @@ public class CompilerOptions {
      */
     private File outputLocation;
     private String packageName = null;
+
+    /**
+     * Keep track of the namespace and packages mapping
+     */
+    private Map ns2PackageMap = new HashMap();
+
+    public Map getNs2PackageMap() {
+        return ns2PackageMap;
+    }
+
+    public void setNs2PackageMap(Map ns2PackageMap) {
+        this.ns2PackageMap = ns2PackageMap;
+    }
 
     /**
      * This flag tells the databinder to either write the output or

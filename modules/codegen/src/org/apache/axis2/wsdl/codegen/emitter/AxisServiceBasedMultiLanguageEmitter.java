@@ -436,6 +436,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             rootElement.appendChild(doc.importNode((Element) stubMethods, true));
         }
 
+        //add another element to have the unique list of faults
+        rootElement.appendChild(getUniqueListofFaults(doc));
+
         /////////////////////////////////////////////////////
         //System.out.println(DOM2Writer.nodeToString(rootElement));
         /////////////////////////////////////////////////////
@@ -443,6 +446,55 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         doc.appendChild(rootElement);
         return doc;
+    }
+
+    private Element getUniqueListofFaults(Document doc) {
+        Element  rootElement = doc.createElement("fault-list");
+        Element faultElement;
+        QName key;
+        Iterator iterator = fullyQualifiedFaultClassNameMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            faultElement = doc.createElement("fault");
+            key = (QName) iterator.next();
+
+            //as for the name of a fault, we generate an exception
+            addAttribute(doc, "name",
+                    (String)fullyQualifiedFaultClassNameMap.get(key),
+                    faultElement);
+            addAttribute(doc, "intantiatiableName",
+                    (String)InstantiatableFaultClassNameMap.get(key),
+                    faultElement);
+            addAttribute(doc, "shortName",
+                    (String)faultClassNameMap.get(key),
+                    faultElement);
+
+
+            //the type represents the type that will be wrapped by this
+            //name
+            String typeMapping =
+                    this.mapper.getTypeMappingName(key);
+            addAttribute(doc, "type", (typeMapping == null)
+                    ? ""
+                    : typeMapping, faultElement);
+            String attribValue = (String) instantiatableMessageClassNames.
+                    get(key);
+
+            addAttribute(doc, "instantiatableType",
+                    attribValue==null?"":attribValue,
+                    faultElement);
+
+            // add an extra attribute to say whether the type mapping is
+            // the default
+            if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)) {
+                addAttribute(doc, "default", "yes", faultElement);
+            }
+            addAttribute(doc, "value", getParamInitializer(typeMapping),
+                    faultElement);
+
+
+            rootElement.appendChild(faultElement);
+        }
+        return rootElement;
     }
 
     /**
@@ -749,6 +801,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //put the result in the property map
         infoHolder.put(mep, isOpsFound ? Boolean.TRUE : Boolean.FALSE);
         rootElement.appendChild(createDOMElementforDatabinders(doc));
+
+        //attach a list of faults
+        rootElement.appendChild(getUniqueListofFaults(doc));
+        
         doc.appendChild(rootElement);
 
         //////////////////////////////////
@@ -995,10 +1051,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
+
+        //attach a list of faults
+        rootElement.appendChild(getUniqueListofFaults(doc));
+
         doc.appendChild(rootElement);
 
         /////////////////////////////////////////////////////
-        System.out.println(DOM2Writer.nodeToString(rootElement));
+        //System.out.println(DOM2Writer.nodeToString(rootElement));
         /////////////////////////////////////////////////////
 
         return doc;
@@ -1043,7 +1103,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addAttribute(doc, "mep", axisOperation.getMessageExchangePattern(), methodElement);
 
                 addSOAPAction(doc, methodElement, axisOperation);
+                //add header ops for input
                 addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+                //add header ops for output
                 addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
                 PolicyInclude policyInclude = axisOperation.getPolicyInclude();

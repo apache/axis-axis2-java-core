@@ -236,11 +236,11 @@ public class JavaBeanWriter implements BeanWriter {
      */
     public String makeFullyQualifiedClassName(QName qName) {
 
-        String nameSpaceFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
+        String packageNameFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
 
         String packageName = this.packageName == null ?
-                nameSpaceFromURL :
-                this.packageName + nameSpaceFromURL;
+                packageNameFromURL :
+                this.packageName + packageNameFromURL;
 
         String originalName = qName.getLocalPart();
         String className = makeUniqueJavaClassName(this.namesList, originalName);
@@ -473,7 +473,7 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "nillable", "yes", property);
             }
 
-            String shortTypeName = "";
+            String shortTypeName;
             if (metainf.getSchemaQNameForQName(name) != null) {
                 //see whether the QName is a basetype
                 if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))){
@@ -668,9 +668,8 @@ public class JavaBeanWriter implements BeanWriter {
         if (typeClassName.endsWith("[]")){
             typeClassName = typeClassName.substring(0,typeClassName.lastIndexOf("["));
         }
-        String s = typeClassName.substring(typeClassName.lastIndexOf(".")+1, typeClassName.length());
 
-        return s;
+        return typeClassName.substring(typeClassName.lastIndexOf(".")+1, typeClassName.length());
 
     }
 }

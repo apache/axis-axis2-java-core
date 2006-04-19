@@ -35,6 +35,20 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private String repositoryPath;
 
     /**
+     * A map to keep the custom namespace and package name mappings
+     */
+    private Map uri2PackageNameMap;
+
+
+    public Map getUri2PackageNameMap() {
+        return uri2PackageNameMap;
+    }
+
+    public void setUri2PackageNameMap(Map uri2PackageNameMap) {
+        this.uri2PackageNameMap = uri2PackageNameMap;
+    }
+
+    /**
      * Determines whether the parameters are wrappedor unwrapped
      * false by default
      */

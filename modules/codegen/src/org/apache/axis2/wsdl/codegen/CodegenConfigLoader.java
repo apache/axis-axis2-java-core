@@ -7,6 +7,7 @@ import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -89,16 +90,36 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
 
         CommandLineOption serviceNameOption = loadOption(WSDL2JavaConstants.SERVICE_NAME_OPTION, WSDL2JavaConstants.SERVICE_NAME_OPTION_LONG,optionMap);
         config.setServiceName(serviceNameOption!=null?serviceNameOption.getOptionValue():null);
-        
+
         CommandLineOption repositoryPathOption = loadOption(WSDL2JavaConstants.REPOSITORY_PATH_OPTION, WSDL2JavaConstants.REPOSITORY_PATH_OPTION_LONG, optionMap);
         config.setRepositoryPath(repositoryPathOption != null ? repositoryPathOption.getOptionValue(): null);
-        
+
         CommandLineOption generateAllOption = loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION, WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG,optionMap);
         if (generateAllOption != null) {
             config.setGenerateAll(true);
         }
 
-        
+        CommandLineOption ns2packageOption = loadOption(
+                WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
+                WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION_LONG,
+                optionMap);
+        if (ns2packageOption!=null){
+            //the syntax for the value of the namespaces and packages is
+            //to be a comma seperated list with uri,packagename,uri,packagename...
+            String value = ns2packageOption.getOptionValue();
+            String valuepairs[]  = value.split(",");
+            if (valuepairs.length >0 && valuepairs.length%2==0){
+                //put them in the hash map
+                HashMap map = new HashMap(valuepairs.length);
+                for (int i = 0; i < valuepairs.length; i=i+2) {
+                    map.put(valuepairs[i],valuepairs[i+1]);
+                }
+                config.setUri2PackageNameMap(map);
+            }else{
+               //todo throw an exception here
+            }
+        }
+
         //loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();
@@ -119,10 +140,10 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         //short option gets precedence
         CommandLineOption option = null;
         if (longOption!=null){
-           option =(CommandLineOption)options.get(longOption);
-           if (option!=null) {
-               return option;
-           }
+            option =(CommandLineOption)options.get(longOption);
+            if (option!=null) {
+                return option;
+            }
         }
         if (shortOption!= null){
             option = (CommandLineOption)options.get(shortOption);
