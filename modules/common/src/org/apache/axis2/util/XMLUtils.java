@@ -66,68 +66,6 @@ public class XMLUtils {
     }
 
     /** 
-     * Encodes a string appropriately for XML.
-     * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
-     *
-     * @param orig the String to encode
-     * @return Returns a String in which XML special chars are repalced by entities.
-     */
-    public static String xmlEncodeString(String orig)
-    {
-        if (orig == null)
-        {
-            return "";
-        }
-
-        char[] chars = orig.toCharArray();
-
-        // if the string doesn't have any of the magic characters, leave
-        // it alone.
-        boolean needsEncoding = false;
-
-        search:
-        for(int i = 0; i < chars.length; i++) {
-            switch(chars[i]) {
-            case '&': case '"': case '\'': case '<': case '>':
-                needsEncoding = true;
-                break search;
-            }
-        }
-
-        if (!needsEncoding) return orig;
-
-        StringBuffer strBuf = new StringBuffer();
-        for (int i = 0; i < chars.length; i++)
-        {
-            switch (chars[i])
-            {
-            case '&'  : strBuf.append("&amp;");
-                        break;
-            case '\"' : strBuf.append("&quot;");
-                        break;
-            case '\'' : strBuf.append("&apos;");
-                        break;
-            case '<'  : strBuf.append("&lt;");
-                        break;
-            case '\r' : strBuf.append("&#xd;");
-                        break;
-            case '>'  : strBuf.append("&gt;");
-                        break;
-            default   : 
-                if (((int)chars[i]) > 127) {
-                        strBuf.append("&#");
-                        strBuf.append((int)chars[i]);
-                        strBuf.append(";");
-                } else {
-                        strBuf.append(chars[i]);
-                }
-            }
-        }
-
-        return strBuf.toString();
-    }
-
-    /** 
      * Initializes the SAX parser factory.
      *
      * @param factoryClassName The (optional) class name of the desired
