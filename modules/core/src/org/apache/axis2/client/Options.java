@@ -17,7 +17,6 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
 import java.util.Arrays;
 import java.util.List;
 
@@ -210,9 +209,17 @@ public class Options {
         return null;
     }
 
-    public RelatesTo[] getRelatesTo() {
+    /**
+     *
+     * @return the relates to which has the type http://www.w3.org/2005/08/addressing/reply
+     */
+    public RelatesTo getRelatesTo() {
+       return this.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE);
+    }
+
+    public RelatesTo[] getRelationships() {
         if (relationships == null && parent != null) {
-            return parent.getRelatesTo();
+            return parent.getRelationships();
         }
         if(relationships == null) {
             return null;

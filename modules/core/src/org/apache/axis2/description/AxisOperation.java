@@ -271,11 +271,11 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue());
+                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
-                        this.getName().toString(), msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue()));
+                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
             }
         }
 
@@ -308,7 +308,7 @@ public abstract class AxisOperation extends AxisDescription
             throws AxisFault {
         OperationContext operationContext;
 
-        if (null == msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)) {
+        if (null == msgContext.getRelatesTo()) {
 
             // Its a new incoming message so get the factory to create a new
             // one
@@ -319,11 +319,11 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue());
+                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
-                        this.getName().toString(), msgContext.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE).getValue()));
+                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
             }
         }
 

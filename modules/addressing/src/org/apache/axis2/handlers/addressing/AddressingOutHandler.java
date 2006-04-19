@@ -187,7 +187,7 @@ public class AddressingOutHandler extends AddressingHandler {
     private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject) {
         if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject))
         {
-            RelatesTo[] relatesTo = messageContextOptions.getRelatesTo();
+            RelatesTo[] relatesTo = messageContextOptions.getRelationships();
 
             if (relatesTo != null) {
                 for (int i = 0; i < relatesTo.length; i++) {

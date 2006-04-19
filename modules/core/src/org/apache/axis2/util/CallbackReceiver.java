@@ -28,7 +28,7 @@ public class CallbackReceiver implements MessageReceiver {
     }
 
     public void receive(MessageContext messageCtx) throws AxisFault {
-        RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE);
+        RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
         AsyncResult result = new AsyncResult(messageCtx);

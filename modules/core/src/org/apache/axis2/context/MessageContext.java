@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -479,8 +480,8 @@ public class MessageContext extends AbstractContext {
     /**
      * @return Returns RelatesTo array.
      */
-    public RelatesTo[] getRelatesTo() {
-        return options.getRelatesTo();
+    public RelatesTo[] getRelationships() {
+        return options.getRelationships();
     }
 
     /**
@@ -488,6 +489,13 @@ public class MessageContext extends AbstractContext {
      */
     public RelatesTo getRelatesTo(String type) {
         return options.getRelatesTo(type);
+    }
+
+    /**
+     * @return Returns RelatesTo.
+     */
+    public RelatesTo getRelatesTo() {
+        return options.getRelatesTo();
     }
 
     /**

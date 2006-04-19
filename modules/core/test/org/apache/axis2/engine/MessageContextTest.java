@@ -55,7 +55,7 @@ public class MessageContextTest extends AbstractTestCase {
         assertNull(msgctx.getFrom());
 
         msgctx.setRelatesTo(null);
-        assertNull(msgctx.getRelatesTo(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE));
+        assertNull(msgctx.getRelatesTo());
 
         msgctx.setReplyTo(null);
         assertNull(msgctx.getReplyTo());
