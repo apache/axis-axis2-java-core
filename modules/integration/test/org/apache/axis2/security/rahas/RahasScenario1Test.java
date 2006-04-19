@@ -57,8 +57,10 @@ public class RahasScenario1Test extends TestClient {
     public InflowConfiguration getClientInflowConfiguration() {
         InflowConfiguration ifc = new InflowConfiguration();
 
-        ifc.setActionItems("Timestamp");
-
+        ifc.setActionItems("Timestamp Signature Encrypt");
+        ifc.setPasswordCallbackClass(PWCallback.class.getName());
+        ifc.setSignaturePropFile("sec.properties");
+        
         return ifc;
     }
 

@@ -19,6 +19,7 @@ package org.apache.axis2.security.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
@@ -102,7 +103,7 @@ public class Axis2Util {
     			
     			StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(),factory, nsURI);
     			SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
-    			envelope.build();
+    			((OMNode)envelope.getParent()).build();
     			
     			Element envElem = (Element)envelope;
     			return envElem.getOwnerDocument();

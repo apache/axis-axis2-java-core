@@ -34,7 +34,11 @@
 
     <parameter name="OutflowSecurity">
       <action>
-        <items>Timestamp</items>
+        <items>Timestamp Signature Encrypt</items>
+        <encryptionUser>useReqSigCert</encryptionUser>
+        <user>sts</user>
+        <signaturePropFile xmlns="">sctIssuer.properties</signaturePropFile>
+	<passwordCallbackClass xmlns="">org.apache.axis2.security.rahas.PWCallback</passwordCallbackClass>
       </action>
     </parameter>
     
