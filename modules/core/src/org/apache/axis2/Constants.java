@@ -196,8 +196,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
 
-        // we need to some times send the message as multipart/related, even if there is no MTOM stuff in the envelope.
-        public static final String FORCE_MIME = "ForceMimeBoundary";
         public static final String CONTENT_TYPE = "ContentType";
         public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";
 

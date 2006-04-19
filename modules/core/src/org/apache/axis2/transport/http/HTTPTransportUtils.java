@@ -56,9 +56,6 @@ import java.util.zip.GZIPInputStream;
 
 public class HTTPTransportUtils {
 
-    public static boolean checkEnvelopeForOptimise(SOAPEnvelope envelope) {
-        return isOptimised(envelope);
-    }
 
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map ,
                                                             ConfigurationContext configurationContext) throws AxisFault {
@@ -115,20 +112,7 @@ public class HTTPTransportUtils {
             enableMTOM = Constants.VALUE_TRUE.equals(
                     msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
         }
-
-        boolean forceMIME =
-                Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.FORCE_MIME));
-
-        if (forceMIME) {
-            return true;
-        }
-
-        // If MTOM is explicitly disabled, no need to check the envelope
-        if (!enableMTOM) {
-            return false;
-        }
-
-        return HTTPTransportUtils.checkEnvelopeForOptimise(msgContext.getEnvelope());
+        return enableMTOM;
     }
 
     public static boolean processHTTPGetRequest(MessageContext msgContext, InputStream in,
@@ -343,22 +327,5 @@ public class HTTPTransportUtils {
         msgContext.setDoingREST(enableREST);
 
         return enableREST;
-    }
-
-    private static boolean isOptimised(OMElement element) {
-        Iterator childrenIter = element.getChildren();
-        boolean isOptimized = false;
-
-        while (childrenIter.hasNext() && !isOptimized) {
-            OMNode node = (OMNode) childrenIter.next();
-
-            if ((OMNode.TEXT_NODE == node.getType()) && ((OMText) node).isOptimized()) {
-                isOptimized = true;
-            } else if (OMNode.ELEMENT_NODE == node.getType()) {
-                isOptimized = isOptimised((OMElement) node);
-            }
-        }
-
-        return isOptimized;
     }
 }

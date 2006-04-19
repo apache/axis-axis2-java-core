@@ -70,7 +70,7 @@ public class UtilServer {
         if (count == 0) {
             ConfigurationContext er = getNewConfigurationContext(repository);
 
-            receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
+            receiver = new SimpleHTTPServer(er, 5555);
 
             try {
                 receiver.start();

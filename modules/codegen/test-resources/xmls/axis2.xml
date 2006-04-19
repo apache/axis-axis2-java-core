@@ -2,7 +2,7 @@
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
-    <parameter name="enableMTOM" locked="false">true</parameter>
+    <parameter name="enableMTOM" locked="false">false</parameter>
 
     <parameter name="userName" locked="false">admin</parameter>
     <parameter name="password" locked="false">axis2</parameter>
