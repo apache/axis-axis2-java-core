@@ -523,6 +523,16 @@ public class Phase implements Handler {
      */
     public void removeHandler(HandlerDescription handler) {
         if (handlers.remove(handler.getHandler())) {
+            PhaseRule rule = handler.getRules();
+            if(rule.isPhaseFirst()){
+                phasefirstset = false;
+            }
+            if(rule.isPhaseLast()){
+                phaselastset = false;
+            }
+            if(rule.isPhaseFirst()&& rule.isPhaseLast()){
+                isOneHanlder = false;
+            }
             log.info("removed handler " + handler.getName().getLocalPart()
                     + " from the phase " + phaseName);
         } else {
