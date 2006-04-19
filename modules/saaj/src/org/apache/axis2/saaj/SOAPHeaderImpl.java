@@ -72,7 +72,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
-        OMNamespace ns = new NamespaceImpl(uri, prefix, this.element.getOMFactory());
+        OMNamespace ns = new NamespaceImpl(uri, prefix);
         SOAPHeaderBlock headerBlock =
                 new SOAP11HeaderBlockImpl(localName, ns, omSOAPHeader, (SOAPFactory)this.element.getOMFactory());
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
@@ -94,8 +94,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     */
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
         OMNamespace ns = new NamespaceImpl(soapElement.getNamespaceURI(), 
-                soapElement.getPrefix(),
-                (SOAPFactory)this.element.getOMFactory());
+                soapElement.getPrefix());
         SOAPHeaderBlock headerBlock =
                 new SOAP11HeaderBlockImpl(soapElement.getLocalName(), ns, 
                         omSOAPHeader,
@@ -121,8 +120,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
-        OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix(), 
-                (SOAPFactory)this.element.getOMFactory());
+        OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
         SOAPHeaderBlock headerBlock =
                 new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
                         (SOAPFactory)this.element.getOMFactory());

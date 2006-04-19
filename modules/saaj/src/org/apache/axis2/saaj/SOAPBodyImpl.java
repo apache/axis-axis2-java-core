@@ -289,12 +289,10 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             localname = domEle.getTagName().substring(indexOfColon + 1);
 
             ns = new NamespaceImpl(domEle.getNamespaceURI(),
-                                   domEle.getTagName().substring(0, indexOfColon),
-                                   this.element.getOMFactory());
+                                   domEle.getTagName().substring(0, indexOfColon));
         } else {
             localname = domEle.getLocalName();
-            ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix(),
-                    this.element.getOMFactory());
+            ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix());
         }
         ElementImpl eleImpl =
                 new ElementImpl((DocumentImpl) this.getOwnerDocument(), 

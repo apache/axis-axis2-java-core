@@ -133,10 +133,6 @@ public class RahasConfiguration {
     
     private SecurityContextToken sct;
     
-    private byte[] requesterEntropy;
-    
-    private byte[] issuerEntropy;
-    
     private String encryptionUser;
     
     public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
@@ -587,34 +583,6 @@ public class RahasConfiguration {
      */
     public void setPasswordCallbackClass(String passwordCallbackClass) {
         this.passwordCallbackClass = passwordCallbackClass;
-    }
-
-    /**
-     * @return Returns the issuerEntropy.
-     */
-    protected byte[] getIssuerEntropy() {
-        return issuerEntropy;
-    }
-
-    /**
-     * @param issuerEntropy The issuerEntropy to set.
-     */
-    protected void setIssuerEntropy(byte[] issuerEntropy) {
-        this.issuerEntropy = issuerEntropy;
-    }
-
-    /**
-     * @return Returns the requesterEntropy.
-     */
-    protected byte[] getRequesterEntropy() {
-        return requesterEntropy;
-    }
-
-    /**
-     * @param requesterEntropy The requesterEntropy to set.
-     */
-    protected void setRequesterEntropy(byte[] requesterEntropy) {
-        this.requesterEntropy = requesterEntropy;
     }
 
     /**
