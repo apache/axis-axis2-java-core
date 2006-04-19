@@ -70,12 +70,12 @@ public class UtilServer {
         if (count == 0) {
             ConfigurationContext er = getNewConfigurationContext(repository);
 
-            receiver = new SimpleHTTPServer(er, 5555);
+            receiver = new SimpleHTTPServer(er, TESTING_PORT);
 
             try {
                 receiver.start();
                 System.out.print("Server started on port "
-                        + Constants.TESTING_PORT + ".....");
+                        + TESTING_PORT + ".....");
             } finally {
 
             }
@@ -94,12 +94,12 @@ public class UtilServer {
         if (count == 0) {
             ConfigurationContext er = getNewConfigurationContext(repository,axis2xml);
 
-            receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
+            receiver = new SimpleHTTPServer(er, TESTING_PORT);
 
             try {
                 receiver.start();
                 System.out.print("Server started on port "
-                        + Constants.TESTING_PORT + ".....");
+                        + TESTING_PORT + ".....");
             } finally {
 
             }
