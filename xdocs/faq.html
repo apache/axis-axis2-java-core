@@ -25,34 +25,81 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Content of Questions &amp; Answers</h2>
 <ul>
-  <li><a href="#gen">General</a></li>
-  <li><a href="#classloading">Class Loading Issues</a></li>
-  <li><a href="#clientapi">Client API</a></li>
-  <li><a href="#maven">Maven</a></li>
-  <li><a href="#services">Services</a></li>
-  <li><a href="#web_archive_server_side">Web Archive/ Server Side</a></li>
-  <li><a href="#wsdl_codegen">WSDL and Code Generation</a></li>
+  <li>General
+    <ul>
+      <li><a href="#a1">Where is data binding?</a></li>
+      <li><a href="#a2">What is OMElement, What does it represents?</a></li>
+      <li><a href="#a3">Integration security tests fail with JDK 1.5<br>
+        </a></li>
+    </ul>
+  </li>
+  <li>Class Loading Issues
+    <ul>
+      <li><a href="#b1">How do I access resources in my service /module
+        archive file?</a></li>
+    </ul>
+  </li>
+  <li>Client API
+    <ul>
+      <li><a href="#c1">I want to do request response Messaging, Where should
+        I look?<br>
+        </a></li>
+      <li><a href="#c2">I want to do One Way Messaging, Where should I
+        look?</a></li>
+      <li><a href="#c3">Error: 'to do two Transport Channels the Addressing
+        Modules must be engaged'</a></li>
+      <li><a href="#c4">I have engaged addressing and when I trying to invoke
+        a service I am getting an exception</a></li>
+      <li><a href="#c5">What is Axis Repository?</a></li>
+    </ul>
+  </li>
+  <li>Maven
+    <ul>
+      <li><a href="#d1">Error when trying to run maven on Axis2</a></li>
+      <li><a href="#d2">I have problems building with maven 1.1</a></li>
+      <li><a href="#d3">What are the frequently used maven commands?</a></li>
+    </ul>
+  </li>
+  <li>Services
+    <ul>
+      <li><a href="#e1">How do I have multiple services in one service
+        archive?</a></li>
+    </ul>
+  </li>
+  <li>Web Archive/ Server Side
+    <ul>
+      <li><a href="#f1">I see an internal server error page when I try to
+        view the WSDL file.<br>
+        </a></li>
+    </ul>
+  </li>
+  <li>WSDL and Code Generation
+    <ul>
+      <li><a href="#g1">Given a WSDL 2.0 document with HTTP Binding to
+        WSDL2Java, should it not be able to generate a client stub</a></li>
+    </ul>
+  </li>
 </ul>
-<a name="gen"></a>
 
 <h2>General</h2>
 <ol>
-  <li><strong>I see OMElements in all the signatures, in the stubs, Client
-    API and in skeletons. Where is data binding?</strong><br>
+  <li><a name="a1"></a><strong>I see OMElements in all the signatures, in the
+    stubs, Client API and in skeletons. Where is data binding?</strong><br>
 
     <p>Axis2 supports databinding using XML-Beans from 0.9 release. For more
     information please read the <a href="1_0/userguide.html">User
     Guide</a></p>
   </li>
-  <li><a name="a2"><strong>What is OMElement, What does it
-    represents?</strong></a><br>
+  <li><a name="a2"></a><strong>What is OMElement, What does it
+    represents?</strong><br>
 
     <p>OMElement is Axis2 representation of XML, it provide a tree model like
     DOM. If you are familiar with DOM or JDOM you can soon get familiarize
     with OM quickly. For more information read<a href="1_0/OMTutorial.html">
     Axiom Tutorial</a></p>
   </li>
-  <li><strong>Integration security tests fail with JDK 1.5</strong><br>
+  <li><a name="a3"></a><strong>Integration security tests fail with JDK
+    1.5</strong><br>
 
     <p>You have to add Bouncy Castle as a JCE provider. Add the following
     entry to java.security file of the appropriate JRE on your machine. This
@@ -67,10 +114,10 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   </li>
 </ol>
 
-<h2><a name="classloading">Class Loading Issues</a></h2>
+<h2>Class Loading Issues</h2>
 <ol>
-  <li><strong>How do I access resources that I put into my service /module
-    archive file?</strong></li>
+  <li><a name="b1"></a><strong>How do I access resources that I put into my
+    service /module archive file?</strong></li>
 
   <p>Axis2 has the notion of service isolation where each service or module
   gets its own class loader. Using this class loader you can access any
@@ -104,43 +151,42 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   class then the scenario is as follows</p>
   <pre>   getClass().getClassLoader().getResourceAsStream("myResource");</pre>
 </ol>
-<a name="clientapi"></a>
 
 <h2>Client API</h2>
 <ol>
-  <li><strong>I want to do request response Messaging, Where should I
-    look?</strong><br>
+  <li><a name="c1"></a><strong>I want to do request response Messaging, Where
+    should I look?</strong><br>
 
     <p>Look at the <a
     href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java">ServiceClient</a>
     class, for more information please read the <a
     href="0_94/userguide.html">user guide</a></p>
   </li>
-  <li><strong>I want to do One Way Messaging, Where should I
+  <li><a name="c2"></a><strong>I want to do One Way Messaging, Where should I
     look?</strong><br>
 
     <p>From Axis2 0.94 onwards, both request-response and one way messaging
     will be handled by <a
     href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java">ServiceClient</a>.</p>
   </li>
-  <li><strong>When I try to do a non blocking call with use Separate Listener
-    true I get the error <i>to do two Transport Channels the Addressing
-    Modules must be engaged</i>, Why is this?</strong><br>
+  <li><a name="c3"></a><strong>When I try to do a non blocking call with use
+    Separate Listener true I get the error <i>to do two Transport Channels
+    the Addressing Modules must be engaged</i>, Why is this?</strong><br>
 
     <p>To do the two transport Channel invocation you need to engage the
     addressing module. You can enable it by un-commenting the entry in the
     axis2.xml file or Call.engageModule(QName). But addressing is enabled by
     default.</p>
   </li>
-  <li><strong>I have engaged addressing and when I trying to invoke a service
-    I am getting an exception </strong><br>
+  <li><a name="c4"></a><strong>I have engaged addressing and when I trying to
+    invoke a service I am getting an exception </strong><br>
 
     <p>If you have engaged addressing , then you have to have wsa:action , so
     you have to called  <br>
     option.setAction(“urn:myaction”); <br>
     It should be not that the action should be a URI.</p>
   </li>
-  <li><a name="b5"><strong>What is Axis Repository?</strong></a><br>
+  <li><a name="c5"><strong>What is Axis Repository?</strong></a><br>
 
     <p>Repository stores the configuration of Axis2, the users should specify
     the repository folder starting the Axis Server (HTTP or TCP). In the case
@@ -152,12 +198,11 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     folders.</p>
   </li>
 </ol>
-<a name="maven"></a>
 
 <h2>Maven</h2>
 <ol>
-  <li><strong>I just installed maven and it gives an error when I was trying
-    to run maven on Axis2 ......</strong>
+  <li><a name="d1"></a><strong>I just installed maven and it gives an error
+    when I was trying to run maven on Axis2 ......</strong>
     <p>Axis2 requires itest plugin to run some of the tests. Better get it
     using following command.</p>
     <ul>
@@ -166,7 +211,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
         -Dmaven.repo.remote=http://www.openejb.org/maven,http://www.ibiblio.org/maven</li>
     </ul>
   </li>
-  <li><p><strong>I have problems building with maven 1.1</strong> ....<br>
+  <li><p><a name="d2"></a><strong>I have problems building with maven
+    1.1</strong> ....<br>
     </p>
     <p>It seems that maven 1.1 doesn't come bundled with the required
     artifact plugin. Run following to get it updated<br>
@@ -178,7 +224,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
       in #1.</p>
     </ul>
   </li>
-  <li><strong>What are the frequently used maven commands ?</strong></li>
+  <li><a name="d3"></a><strong>What are the frequently used maven
+    commands?</strong></li>
 
   <p></p>
 
@@ -325,12 +372,11 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   </table>
   <br>
 </ol>
-<a name="services"></a>
 
 <h2>Services</h2>
 <ol>
-  <li><strong>How do I have multiple services in one service
-  archive?</strong></li>
+  <li><a name="e1"></a><strong>How do I have multiple services in one service
+    archive?</strong></li>
 
   <p>It's just a matter of writing a services.xml file to configure the
   service or services in an archive file. The corresponding services.xml
@@ -355,27 +401,26 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
    ...............
    &lt;service&gt;</pre>
 </ol>
-<a name="web_archive_server_side"></a>
 
 <h2>Web Archive / Server side</h2>
 <ol>
-  <li><strong>I see an internal server error page when I try to view the WSDL
-    file.</strong><br>
+  <li><a name="f1"></a><strong>I see an internal server error page when I try
+    to view the WSDL file.</strong><br>
 
     <p>This happens specifically with tomcat 4.x and 5.0 in a JDK 1.5
     environment. The reason is that the system picks up a wrong transformer
     factory class. This can be solved simply by putting the xalan-2.7.0.jar
-    (found <a href="http://www.apache.org/dist/java-repository/xalan/jars/">here</a>)
+    (found <a
+    href="http://www.apache.org/dist/java-repository/xalan/jars/">here</a>)
     into the axis2/WEB-INF/lib directory</p>
   </li>
 </ol>
-<a name="wsdl_codegen"></a>
 
 <h2>WSDL and Code Generation</h2>
 <ol>
-  <li><strong>Given a WSDL 2.0 document with HTTP Binding to WSDL2Java,
-    should it not be able to generate a client stub similar to what happens
-    given a WSDL 1.1 document with SOAP Binding.</strong></li>
+  <li><a name="g1"></a><strong>Given a WSDL 2.0 document with HTTP Binding to
+    WSDL2Java, should it not be able to generate a client stub similar to
+    what happens given a WSDL 1.1 document with SOAP Binding?</strong></li>
 
   <p>WSDL 2.0 is not supported yet. We do not have a working WSDL 2.0
   reader.</p>
