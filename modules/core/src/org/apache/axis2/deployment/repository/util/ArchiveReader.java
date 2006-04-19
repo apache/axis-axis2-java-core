@@ -43,7 +43,7 @@ public class ArchiveReader implements DeploymentConstants {
     private ArrayList buildServiceGroup(InputStream zin, DeploymentEngine engine,
                                         AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
                                         AxisConfiguration axisConfig)
-            throws XMLStreamException, DeploymentException {
+            throws XMLStreamException, AxisFault {
 
         DescriptionBuilder builder = new DescriptionBuilder(zin, axisConfig);
         OMElement rootElement = builder.buildOM();
@@ -81,7 +81,7 @@ public class ArchiveReader implements DeploymentConstants {
                     axisConfig);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
-        return null;
+       throw new AxisFault("In valid services.xml found");
     }
 
     /**
@@ -101,7 +101,7 @@ public class ArchiveReader implements DeploymentConstants {
                                          boolean extractService,
                                          HashMap wsdls,
                                          AxisConfiguration axisConfig)
-            throws DeploymentException {
+            throws AxisFault {
         // get attribute values
         if (!extractService) {
             ZipInputStream zin = null;

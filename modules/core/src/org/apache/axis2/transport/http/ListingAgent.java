@@ -75,7 +75,6 @@ public class ListingAgent {
     /**
      * Field allowListSingleService
      */
-    private OutputStream out = null;
     private ConfigurationContext configContext;
     public static final String RUNNING_PORT = "RUNNING_PORT";
 
@@ -111,7 +110,7 @@ public class ListingAgent {
         String logged = (String) req.getSession().getAttribute(Constants.LOGGED);
         if (!(logged != null && "Yes".equals(logged))) {
             res.setContentType("text/html");
-            PrintWriter writer = new PrintWriter(out);
+            PrintWriter writer = new PrintWriter(res.getOutputStream());
             writer.write("<font color=\"red\">Invalid user , " +
                     "you have to loging to system before performing this operation</font>");
             writer.flush();
@@ -151,7 +150,7 @@ public class ListingAgent {
 
             res.setContentType("text/css");
 
-            PrintWriter out_writer = new PrintWriter(out);
+            PrintWriter out_writer = new PrintWriter(res.getOutputStream());
 
             out_writer.println("Parameters  changed Successfully");
             out_writer.flush();
@@ -313,9 +312,8 @@ public class ListingAgent {
     }
 
     public void handle(HttpServletRequest httpServletRequest,
-                       HttpServletResponse httpServletResponse, OutputStream out)
+                       HttpServletResponse httpServletResponse)
             throws IOException, Exception {
-        this.out = out;
 
         String filePart = httpServletRequest.getRequestURL().toString();
 
@@ -481,6 +479,7 @@ public class ListingAgent {
      */
     private void listService(HttpServletRequest req, HttpServletResponse res, String filePart)
             throws IOException {
+       OutputStream out = res.getOutputStream();
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
         String wsdl = req.getParameter("wsdl");

@@ -50,10 +50,6 @@ public class FileSystemConfigurator implements AxisConfigurator {
         if (repoLocation == null) {
             //checking wether user has set the system property
             repoLocation = System.getProperty(Constants.AXIS2_REPO);
-            if (repoLocation == null) {
-                // Should we default to anything here?  Current
-                // directory?  ~/.axis?
-            }
         }
 
         // OK, we've got a repository location in mind.  Let's make

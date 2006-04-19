@@ -58,7 +58,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     public static final String SESSION_ID = "SessionId";
     protected transient ConfigurationContext configContext;
     protected transient AxisConfiguration axisConfiguration;
-    protected transient ListingAgent lister;
 
     protected transient ServletConfig servletConfig;
 
@@ -89,56 +88,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         super.destroy();
     }
 
-    /**
-     * Method doGet
-     *
-     * @param httpServletRequest
-     * @param httpServletResponse
-     * @throws ServletException
-     * @throws IOException
-     */
-    protected void doGet(HttpServletRequest httpServletRequest,
-                         HttpServletResponse httpServletResponse)
-            throws ServletException, IOException {
-
-        //TODO: Remove impl after reviewing
-        MessageContext msgContext = null;
-        OutputStream out = null;
-
-        try {
-            Object sessionContext = getSessionContext(httpServletRequest);
-            HashMap map = getHTTPParameters(httpServletRequest);
-
-            msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext,
-                    httpServletResponse, httpServletRequest);
-            msgContext.setDoingREST(true);
-            msgContext.setServerSide(true);
-            out = httpServletResponse.getOutputStream();
-
-            boolean processed = HTTPTransportUtils.processHTTPGetRequest(msgContext,
-                    httpServletRequest.getInputStream(), out,
-                    httpServletRequest.getContentType(),
-                    httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                    httpServletRequest.getRequestURL().toString(), configContext,
-                    map);
-            if (!processed) {
-                lister.handle(httpServletRequest, httpServletResponse, out);
-            }
-        } catch (AxisFault e) {
-            if (msgContext != null) {
-                handleFault(msgContext, out, e);
-            } else {
-                throw new ServletException(e);
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
-
     /*
-     * (non-Javadoc)
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
+    * (non-Javadoc)
+    * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+    */
 
     /**
      * Method doPost
@@ -207,7 +160,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         try {
             this.servletConfig = config;
             configContext = initConfigContext(config);
-            lister = new ListingAgent(configContext);
+
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
             ListenerManager listenerManager = new ListenerManager();
