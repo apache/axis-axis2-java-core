@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Extension for simple data binding.
@@ -180,7 +181,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
         if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.PACKAGE)){
             String packageName = (String)propertyMap.get(SchemaConstants.SchemaCompilerArguments.PACKAGE);
             if (packageName!=null || !"".equals(packageName)){
-               options.setPackageName(packageName);
+                options.setPackageName(packageName);
             }
 
         }
@@ -200,6 +201,9 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
         /// these options need to be taken from the command line
         options.setOutputLocation(outputDir);
+        options.setNs2PackageMap(configuration.getUri2PackageNameMap()==null?
+                new HashMap():
+                configuration.getUri2PackageNameMap());
 
         //default setting is to set the wrap status depending on whether it's
         //the server side or the client side

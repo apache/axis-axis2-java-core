@@ -77,6 +77,8 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Map baseTypeMap = new JavaTypeMap().getTypeMap();
 
+    private Map ns2packageNameMap = new HashMap();
+
     /**
      * Default constructor
      */
@@ -124,6 +126,10 @@ public class JavaBeanWriter implements BeanWriter {
 
                 XSLTUtils.addAttribute(globalWrappedDocument, "package", tempPackageName, rootElement);
             }
+
+            //add the ns mappings
+            this.ns2packageNameMap = options.getNs2PackageMap();
+
         } catch (IOException e) {
             throw new SchemaCompilationException(e);
         } catch (ParserConfigurationException e) {
@@ -161,7 +167,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf, String fullyQualifiedClassName)
-    throws SchemaCompilationException {
+            throws SchemaCompilationException {
 
         try {
             //determine the package for this type.
@@ -236,11 +242,18 @@ public class JavaBeanWriter implements BeanWriter {
      */
     public String makeFullyQualifiedClassName(QName qName) {
 
-        String packageNameFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
+        String namespaceURI = qName.getNamespaceURI();
+        String basePackageName;
+
+        if (ns2packageNameMap.containsKey(namespaceURI)){
+            basePackageName = (String)ns2packageNameMap.get(namespaceURI);
+        }else{
+            basePackageName = URLProcessor.makePackageName(namespaceURI);
+        }
 
         String packageName = this.packageName == null ?
-                packageNameFromURL :
-                this.packageName + packageNameFromURL;
+                basePackageName :
+                this.packageName + basePackageName;
 
         String originalName = qName.getLocalPart();
         String className = makeUniqueJavaClassName(this.namesList, originalName);
@@ -248,6 +261,7 @@ public class JavaBeanWriter implements BeanWriter {
         String packagePrefix = null;
 
         String fullyqualifiedClassName;
+
         if (wrapClasses)
             packagePrefix =  (this.packageName == null ? DEFAULT_PACKAGE+"." : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME;
         else if (writeClasses)
@@ -259,7 +273,7 @@ public class JavaBeanWriter implements BeanWriter {
         //return the fully qualified class name
         return fullyqualifiedClassName;
     }
-    
+
     /**
      * A util method that holds common code
      * for the complete schema that the generated XML complies to
@@ -274,19 +288,18 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws Exception
      */
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement, String fullyQualifiedClassName) throws Exception {
-        
+
         if (fullyQualifiedClassName == null)
             fullyQualifiedClassName = makeFullyQualifiedClassName(qName);
         String className = fullyQualifiedClassName.substring(1+fullyQualifiedClassName.lastIndexOf('.'));
-
-        String nameSpaceFromURL = URLProcessor.makePackageName(qName.getNamespaceURI());
-
-        String packageName = this.packageName == null ?
-                nameSpaceFromURL :
-                this.packageName + nameSpaceFromURL;
+        String basePackageName;
+        if (fullyQualifiedClassName.lastIndexOf('.')==-1){// no 'dots' so the package is not there
+             basePackageName = "";
+        }else{
+            basePackageName = fullyQualifiedClassName.substring(0,fullyQualifiedClassName.lastIndexOf('.'));
+        }
 
         String originalName = qName.getLocalPart();
-
         ArrayList propertyNames = new ArrayList();
 
         if (!templateLoaded) {
@@ -297,18 +310,18 @@ public class JavaBeanWriter implements BeanWriter {
         //global class that is generated, one needs to call the writeBatch() method
         if (wrapClasses) {
             globalWrappedDocument.getDocumentElement().appendChild(
-                    getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
+                    getBeanElement(globalWrappedDocument, className, originalName, basePackageName, qName, isElement, metainf, propertyNames, typeMap)
             );
 
         } else {
             //create the model
             Document model = XSLTUtils.getDocument();
             //make the XML
-            model.appendChild(getBeanElement(model, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap));
+            model.appendChild(getBeanElement(model, className, originalName, basePackageName, qName, isElement, metainf, propertyNames, typeMap));
 
             if (writeClasses){
                 //create the file
-                File out = createOutFile(packageName, className);
+                File out = createOutFile(basePackageName, className);
                 //parse with the template and create the files
                 parse(model, out);
             }
@@ -494,7 +507,7 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "any", "yes", property);
             }
 
-             if (metainf.getBinaryStatusForQName(name)) {
+            if (metainf.getBinaryStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "binary", "yes", property);
             }
             //put the min occurs count irrespective of whether it's an array or not

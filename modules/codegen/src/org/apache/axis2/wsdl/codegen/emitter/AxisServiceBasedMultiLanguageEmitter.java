@@ -697,9 +697,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //write the ant build
         writeAntBuild();
-
-        log.info(CodegenMessages.getMessage("emitter.logEntryInterface1"));
-        log.info(CodegenMessages.getMessage("emitter.logEntryInterface2"));
     }
 
     private void copyToFaultMap() {
@@ -804,7 +801,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //attach a list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
-        
+
         doc.appendChild(rootElement);
 
         //////////////////////////////////
