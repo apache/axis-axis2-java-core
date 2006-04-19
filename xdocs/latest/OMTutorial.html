@@ -372,7 +372,7 @@ that can either be OMText or OMElement.</p>
 <p><b>Code Listing 7</b></p>
 </div>
 <pre class="code">Iterator children = root.getChildren();
-While(children.hasNext()){
+while(children.hasNext()){
         OMNode node = (OMNode)children.next();
 }</pre>
 
@@ -441,7 +441,10 @@ envelope.</p>
 //dump the output to console with caching
 envelope.serialize(writer); 
 writer.flush();</pre>
-<pre class="code"></pre>
+
+or simply
+
+<pre class="code"> System.out.println(root.toStringWithConsume()); </pre>
 
 <p>The above mentioned features of the serializer forces a correct
 serialization even if only a part of the OM tree is serialized. The following
