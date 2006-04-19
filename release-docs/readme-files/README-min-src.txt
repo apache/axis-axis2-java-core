@@ -14,6 +14,7 @@ Axis2 modules:
 1. core
 2. common
 3. adb
+4. java2wsdl
 
 One can use maven 1.x to create the minimal binary distribution out of this, by typing "$maven dist-bin".
 

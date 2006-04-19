@@ -16,7 +16,7 @@ Axis2 modules:
 4. adb
 5. codegen
 6. webapp
-7. doom
+7. java2wsdl
 
 The samples directory contains all the Axis2 module & service samples.
 
