@@ -132,7 +132,7 @@ Hence the complexities of the pull event stream is transparent to the user.</p>
 <p>Since OM is a differed built object model, It incorporates the concept of
 caching. Caching refers to the creation of the objects while parsing the pull
 stream. The reason why this is so important is because caching can be turned
-off in certain situations. if so the  parser proceeds without building the
+off in certain situations. If so the  parser proceeds without building the
 object structure. User can extract the raw pull stream from OM and use that
 instead of the OM. In this case it is sometimes beneficial to switch off
 caching. The advanced operations section explains more on accessing the raw
@@ -161,16 +161,9 @@ about SOAP.</p>
 
 <p></p>
 
-<p>The easiest way to obtain the OM binary is to download the Axis2 minimal
-binary distribution.  <font color="red" style="color: #000000">The lib
-directory will contain the <span
-style="color: #000000">axis2-</span></font><font style="color: #000000"><span
-style="color: #000000">core</span></font><font color="red"
-style="color: #000000"><span
-style="color: #000000">-1.0.jar</span></font><span style="color: #000000">.
+<p>The easiest way to obtain the OM binary is to download the latest release from <a href="http://ws.apache.org/commons/axiom/download.cgi">here</a>
 However more adventurous users can build the OM from source, which is
-described in the next section. In this way one get only the "OM
-jar".</span></p>
+described in the next section. </p>
 
 <p>Detailed information on getting source from Axis2 SVN repository can be
 found <a href="../svn.html" target="_blank">here</a>.</p>
@@ -179,16 +172,15 @@ found <a href="../svn.html" target="_blank">here</a>.</p>
 Linux move it to the project directory and execute the command "maven jar".
 All other necessary jars will be automatically downloaded. <em> </em><font
 color="red"><span style="color: #000000">When the build finishes
-successfully, the <span style="color: #000000">axis2-xml-1.0.jar</span> can
-be found in the newly created "targets" directory in the XML
-module.</span></font></p>
+successfully, the <span style="color: #000000">axiom-api-<version>.jar</span> and <span style="color: #000000">axiom-impl-<version>.jar</span> can
+be found in the newly created "targets" directory.</span></font></p>
 
 <p>Once the OM-binary is obtained by any of the above ways , it should be
 included in the classpath for any of the OM based programs to work.
 Subsequent sections of this tutorial assume that this build step is complete
-and the <font color="red"><span style="color: #000000">axis2-core-1.0.jar
-or</span> <span style="color: #000000">axis2-xml-1.0.jar </span></font>is
-correct in the classpath along with the StAX API jar file and a StAX
+and <font color="red"><span style="color: #000000">axiom-api-<version>.jar
+</span> and <span style="color: #000000">axiom-impl-<version>.jar</span></font> are
+present in the classpath along with the StAX API jar file and a StAX
 implementation.</p>
 
 <h3>Creation</h3>
