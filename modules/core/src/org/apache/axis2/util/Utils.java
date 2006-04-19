@@ -281,7 +281,8 @@ public class Utils {
             String moduleVersionString = getModuleVersion(moduleName.getLocalPart());
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
             if (currentDefaultVerison != null) {
-                if (isLatest(moduleVersionString, currentDefaultVerison)) {
+                // if the module version is null then , that will be ignore in this case
+                if (moduleVersionString!=null&&isLatest(moduleVersionString, currentDefaultVerison)) {
                     defaultModules.put(moduleNameString, moduleVersionString);
                 }
             } else {

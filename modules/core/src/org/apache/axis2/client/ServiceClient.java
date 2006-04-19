@@ -347,21 +347,11 @@ public class ServiceClient {
      *                   received in response (per the Robust In-Only MEP).
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
-        // look up the appropriate axisop and create the client
-        // OperationClient mepClient = createClient(operation);
-
-        // create a message context with elem as the payload
-        /*
-         * MessageContext mc = new MessageContext(); SOAPEnvelope se =
-         * createEmptySOAPEnvelope(); se.getBody().addChild(se);
-         * mc.setEnvelope(se); // create a client and have it do the work of
-         * sending this out InOnlyMEPClient mepClient = new
-         * InOnlyMEPClient(serviceContext); mepClient.send("foo", mc);
-         */
-        // sendReceive(operation,elem);
-        throw new UnsupportedOperationException(
-                "ServiceClient.sendRobust is not yet implemented");
-
+        MessageContext mc = new MessageContext();
+        fillSoapEnvelope(mc, elem);
+        OperationClient mepClient = createClient(operation);
+        mepClient.addMessageContext(mc);
+        mepClient.execute(true);
     }
 
     /**
