@@ -76,7 +76,7 @@ public class JMSEchoRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilsJMSServer.deployService(service);
-        clientService = Utils.createSimpleService(serviceName,
+        clientService = Utils.createSimpleServiceforClient(serviceName,
                 Echo.class.getName(),
                 operationName);
         configContext = UtilServer.createClientConfigurationContext();
@@ -124,7 +124,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         };
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
-        sender.engageModule(new QName("addressing"));
         sender.setOptions(options);
         sender.sendReceiveNonBlocking(operationName, payload, callback);
 
