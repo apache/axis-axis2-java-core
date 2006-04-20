@@ -478,14 +478,13 @@ listing can be found in the appendix.</p>
 <pre class="code">//create the parser
 XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
 //create the builder
-OMXMLParserWrapper builder =   OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getOMFactory(),parser);
+StAXOMBuilder builder = new StAXOMBuilder(parser);
+
 //get the root element (in this case the envelope)
-SOAPEnvelope envelope = (SOAPEnvelope)builder.getDocumentElement();
-//get the writer
-XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+OMElement documentElement = builder.getDocumentElement();
+
 //dump the out put to console with caching
-envelope.serialize(writer);
-writer.flush();</pre>
+System.out.println(documentElement.toStringWithConsume()); </pre>
 
 <h2>Advanced Operations with OM</h2>
 
@@ -637,15 +636,11 @@ public class TestOMBuilder {
         try {
             //create the parser
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(args[0]));
-            //create the builder
-            OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getOMFactory(), parser);
             //get the root element (in this case the envelope)
-            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
-            //get the writer
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+            OMElement documentElement = builder.getDocumentElement();
+
             //dump the out put to console with caching
-            envelope.serialize(writer);
-writer.flush();
+            System.out.println(documentElement.toStringWithConsume()); 
 
         } catch (XMLStreamException e) {
             e.printStackTrace();
