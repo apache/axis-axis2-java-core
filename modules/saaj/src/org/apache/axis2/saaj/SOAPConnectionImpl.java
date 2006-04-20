@@ -150,8 +150,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
             MessageContext msgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             //TODO: get attachments
-//            MIMEHelper mimeHelper = (MIMEHelper) msgCtx.getProperty(MTOMConstants.ATTACHMENTS);
-//            mimeHelper.getAllContentIDs();
 
             return getSOAPMessage(msgCtx.getEnvelope());
         } catch (AxisFault e) {

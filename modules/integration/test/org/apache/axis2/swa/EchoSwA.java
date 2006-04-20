@@ -16,7 +16,7 @@
 
 package org.apache.axis2.swa;
 
-import org.apache.axiom.attachments.MIMEHelper;
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
@@ -48,7 +48,7 @@ public class EchoSwA {
         OMElement child = (OMElement) omEle.getFirstOMChild();
         OMAttribute attr = child.getAttribute(new QName("href"));
         String contentID = attr.getAttributeValue();
-        MIMEHelper attachment = (MIMEHelper) msgcts.getProperty(MTOMConstants.ATTACHMENTS);
+        Attachments attachment = (Attachments) msgcts.getProperty(MTOMConstants.ATTACHMENTS);
         contentID = contentID.trim();
 
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {

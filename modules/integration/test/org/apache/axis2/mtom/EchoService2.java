@@ -1,20 +1,13 @@
 package org.apache.axis2.mtom;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Iterator;
-
-import javax.activation.DataHandler;
-
 import org.apache.axiom.attachments.IncomingAttachmentInputStream;
 import org.apache.axiom.attachments.IncomingAttachmentStreams;
-import org.apache.axiom.attachments.MIMEHelper;
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axis2.AxisFault;
@@ -31,16 +24,16 @@ public class EchoService2 {
 
     public OMElement mtomSample(OMElement element) throws Exception {
 
-        MIMEHelper mimeHelper = null;
+        Attachments attachments = null;
 
         if (this.oprCtx != null) {
-            mimeHelper = (MIMEHelper) this.oprCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getProperty(MTOMConstants.ATTACHMENTS);
+            attachments = (Attachments) this.oprCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getProperty(MTOMConstants.ATTACHMENTS);
         } else {
-            throw new AxisFault("Message context not set/MIMEHelper not set");
+            throw new AxisFault("Message context not set/Attachments not set");
         }
 
         // Get image data
-        IncomingAttachmentStreams streams = mimeHelper.getIncomingAttachmentStreams();
+        IncomingAttachmentStreams streams = attachments.getIncomingAttachmentStreams();
         IncomingAttachmentInputStream stream = streams.getNextStream();
 
         byte[] data = IOUtils.getStreamAsByteArray(stream);

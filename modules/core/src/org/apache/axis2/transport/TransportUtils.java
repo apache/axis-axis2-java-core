@@ -17,7 +17,7 @@
 
 package org.apache.axis2.transport;
 
-import org.apache.axiom.attachments.MIMEHelper;
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -197,11 +197,11 @@ public class TransportUtils {
                     : parameter.getValue().toString();
         }
 
-        MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
+        Attachments attachments = new Attachments(inStream, contentTypeString,
                 fileCacheForAttachments, attachmentRepoDir,
                 attachmentSizeThreshold);
         String charSetEncoding =
-                getCharSetEncoding(mimeHelper.getSOAPPartContentType());
+                getCharSetEncoding(attachments.getSOAPPartContentType());
         XMLStreamReader streamReader;
 
         if ((charSetEncoding == null) || "null".equalsIgnoreCase(charSetEncoding)) {
@@ -210,7 +210,7 @@ public class TransportUtils {
 
         try {
             streamReader = XMLInputFactory.newInstance().createXMLStreamReader(
-                    getReader(mimeHelper.getSOAPPartInputStream(), charSetEncoding));
+                    getReader(attachments.getSOAPPartInputStream(), charSetEncoding));
         } catch (IOException e) {
             throw new XMLStreamException(e);
         }
@@ -220,15 +220,15 @@ public class TransportUtils {
         /*
         * put a reference to Attachments in to the message context
         */
-        msgContext.setProperty(MTOMConstants.ATTACHMENTS, mimeHelper);
+        msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
 
-        if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
+        if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
 
             /*
             * Creates the MTOM specific MTOMStAXSOAPModelBuilder
             */
-            builder = new MTOMStAXSOAPModelBuilder(streamReader, mimeHelper, null);
-        } else if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
+            builder = new MTOMStAXSOAPModelBuilder(streamReader, attachments, null);
+        } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
             builder = new StAXSOAPModelBuilder(streamReader,
                     SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         }
