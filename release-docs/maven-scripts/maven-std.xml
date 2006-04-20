@@ -63,7 +63,7 @@
     </preGoal>
 
     <!--<preGoal name="build:start">
-        <property name="modules" value="core,common,xml,adb,codegen,doom,webapp,addressing"/>
+        <property name="modules" value="core,common,xml,adb,codegen,java2wsdl,sample,xmlbeans,webapp,addressing"/>
     </preGoal>-->
 
     <!-- ======= -->
@@ -330,7 +330,9 @@
             <fileset dir="modules/common/target/classes"/>
              <fileset dir="modules/adb/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/>
-            <fileset dir="modules/doom/target/classes"/>
+            <fileset dir="modules/java2wsdl/target/classes"/>
+            <fileset dir="modules/samples/target/classes"/>
+            <fileset dir="modules/xmlbeans/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing-${addressing_version}.mar"/>
@@ -415,7 +417,7 @@
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/codegen/src"/>
                 <ant:pathelement location="modules/core/src"/>
-                <ant:pathelement location="modules/doom/src"/>
+                <ant:pathelement location="modules/java2wsdl/src"/>
                 <ant:pathelement location="modules/tool/src"/>
             </ant:sourcepath>
             <ant:classpath>
@@ -512,7 +514,7 @@
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/doom/target/axis2-doom-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy addressing mar -->
@@ -547,7 +549,7 @@
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="codegen,doom"/>
+                              mods="codegen"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
     </goal>

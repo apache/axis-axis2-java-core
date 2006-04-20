@@ -17,6 +17,9 @@ Axis2 modules:
 5. codegen
 6. webapp
 7. java2wsdl
+8. jibx
+9. samples
+10. xmlbeans
 
 The samples directory contains all the Axis2 module & service samples.
 
