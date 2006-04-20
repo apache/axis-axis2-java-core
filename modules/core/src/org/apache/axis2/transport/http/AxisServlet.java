@@ -52,6 +52,7 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
 
+    protected transient ListingAgent lister;
     private Log log = LogFactory.getLog(getClass());
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
@@ -169,6 +170,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     new QName(Constants.TRANSPORT_HTTP));
             transportInDescription.setReceiver(this);
             listenerManager.addListener(transportInDescription, true);
+            lister = new ListingAgent(configContext);
             ListenerManager.defaultConfigurationContext = configContext;
         } catch (Exception e) {
             throw new ServletException(e);
@@ -309,5 +311,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             headerMap.put(field, request.getAttribute(field));
         }
         return headerMap;
+    }
+
+    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+         try {
+            lister.handle(httpServletRequest, httpServletResponse);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 }
