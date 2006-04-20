@@ -7,11 +7,16 @@
 </head>
 
 <body lang="en">
-<h1 align="center">Axis2 Installation Guide</h1>
+<h1 align="center">Apache Axis2 Installation Guide</h1>
 
-<p><i>Version 1.0</i></p>
-<i>Feedback: <a
-href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
+<p><i>-Axis2 Version 1.0</i></p>
+
+<p>This document will give you information on Axis2 distribution packages,
+system prerequisites &amp; setting up environment variables and tools
+followed by detailed instructions on installation methods.</p>
+
+<p><i>Send your feedback to: <a
+href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix subject with [Axis2]. To subscribe to mailing list see <a href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h3>Contents</h3>
 <ul>
@@ -33,6 +38,7 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
   </li>
 </ul>
 <a name="Download_Axis2"></a>
+
 <h3>Download Axis2</h3>
 
 <p>Axis2 is distributed in several convenient distribution packages and can
@@ -139,6 +145,7 @@ Axis2 is version 1.0.</p>
   </tbody>
 </table>
 <a name="requirements"></a>
+
 <h3>System Requirements</h3>
 
 <table border="2">
@@ -185,14 +192,15 @@ Axis2 is version 1.0.</p>
   </tbody>
 </table>
 
-
 <p>All the required jars are shipped with the binary distribution.</p>
 
 <p>Running the Maven build will automatically download the required jars when
 using source distribution.</p>
 <a name="_Toc96698083"></a>
+
 <h3>Setting up the Environment and Tools</h3>
 <a name="maven"></a>
+
 <h4>Maven</h4>
 
 <p>The Axis2 build is based on</p>
@@ -238,7 +246,9 @@ included with the source distribution. Once the source archive is expanded
 into a directory of choice, moving to the particular directory and running
 maven command will build the Axis2 jar file.</p>
 
-<p align="center"><img alt="clip_image004 (43K)" src="images/maven.jpg"/><br clear="all"/></p>
+<p align="center"><img alt="clip_image004 (43K)" src="images/maven.jpg"><br
+clear="all">
+</p>
 
 <p>Once the command completes, the binaries (jar files in this case) can be
 found at a newly created "target" directory.</p>
@@ -259,7 +269,8 @@ deployed.</p>
 
 <h3>Installing Axis2 in a Servlet container</h3>
 <ol>
-  <li><a href="http://ws.apache.org/axis2/download.cgi">Download</a> Axis2 war file</li>
+  <li><a href="http://ws.apache.org/axis2/download.cgi">Download</a> Axis2
+    war file</li>
   <li>Drop the war in the webapps folder. Most servlet containers will
     automatically install war. (some servlet containers may require a restart
     in order to capture the new web application. Refer your servlet container
@@ -286,6 +297,7 @@ deployed.</p>
   alt=""></strong></p>
 </ol>
 <a name="upload"></a>
+
 <h4>Uploading services</h4>
 <ol>
   <p>The Axis2 web application also provides an interface to upload services.
