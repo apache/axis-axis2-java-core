@@ -125,9 +125,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (omSOAPBody.hasFault()) {
             throw new SOAPException("A SOAPFault has been already added to this SOAPBody");
         }
-        SOAPBodyElementImpl childEle =
-                new SOAPBodyElementImpl((ElementImpl) getOwnerDocument().createElementNS(uri,
-                                                                                         localName));
+        SOAPBodyElementImpl childEle = new SOAPBodyElementImpl(
+                (ElementImpl) getOwnerDocument().createElementNS(uri,
+                        prefix + ":" + localName));
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(uri, prefix));
         element.appendChild(childEle.element);
