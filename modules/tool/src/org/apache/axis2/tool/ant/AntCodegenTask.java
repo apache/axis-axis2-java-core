@@ -48,6 +48,8 @@ public class AntCodegenTask extends Task {
     private boolean generateAllClasses = false;
     private boolean unpackClasses = false;
 
+    private String namespaceToPackages = null;
+
     private Path classpath;
 
 
@@ -191,6 +193,13 @@ public class AntCodegenTask extends Task {
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
                         new String[]{portName}));
+        // set the namespaces
+         optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
+                        new String[]{namespaceToPackages}));
+
         return optionMap;
     }
 
@@ -314,5 +323,13 @@ public class AntCodegenTask extends Task {
 
     public void setDatabindingName(String databindingName) {
         this.databindingName = databindingName;
+    }
+
+    public String getNamespaceToPackages() {
+        return namespaceToPackages;
+    }
+
+    public void setNamespaceToPackages(String namespaceToPackages) {
+        this.namespaceToPackages = namespaceToPackages;
     }
 }
