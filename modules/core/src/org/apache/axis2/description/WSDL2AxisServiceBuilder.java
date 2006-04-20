@@ -908,7 +908,9 @@ public class WSDL2AxisServiceBuilder {
 			key = (String) keys.next();
 			schemaCollection.mapNamespace(key, (String) nsMap.get(key));
 		}
-		return schemaCollection.read(element);
+
+        schemaCollection.setBaseUri(wsdl4jDefinition.getDocumentBaseURI());
+        return schemaCollection.read(element);
 	}
 
 	private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
@@ -929,7 +931,7 @@ public class WSDL2AxisServiceBuilder {
 			throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
 		}
 
-		return reader.readWSDL(null, doc);
+        return reader.readWSDL(null, doc);
 	}
 
 	/**
