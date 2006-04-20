@@ -204,7 +204,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             }
         }
 
-        String endpointAddress = msgContext.getTo().getAddress();
+        String endpointAddress = msgContext.getTo() != null ? msgContext.getTo().getAddress() : null;
         boolean waitForResponse = false;
 
         if (dest == null) {
@@ -215,6 +215,8 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                     .equals(Boolean.TRUE)) {
                 waitForResponse = !((Boolean) msgContext.getProperty(
                         Constants.Configuration.IS_USING_SEPARATE_LISTENER)).booleanValue();
+            } else {
+                waitForResponse = !msgContext.getOptions().isUseSeparateListener();
             }
         } else {
             if (properties != null) {
