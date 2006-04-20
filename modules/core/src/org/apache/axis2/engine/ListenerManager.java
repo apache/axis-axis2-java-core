@@ -57,8 +57,8 @@ public class ListenerManager {
      * @param tranportName : name of the trasport can be null , if it is null then
      * @return String
      */
-    public synchronized EndpointReference getERPforService(String serviceName, String opName,
-                                              String tranportName) throws AxisFault {
+    public synchronized EndpointReference getEPRforService(String serviceName, String opName,
+                                                           String tranportName) throws AxisFault {
         if (tranportName == null || "".equals(tranportName)) {
             AxisService service = configctx.getAxisConfiguration().getService(serviceName);
             if (service == null) {

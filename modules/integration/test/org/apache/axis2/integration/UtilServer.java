@@ -209,6 +209,13 @@ public class UtilServer {
         return configContext;
     }
 
+    public static ConfigurationContext createClientConfigurationContext(String repo) throws AxisFault {
+        ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
+                repo,
+                repo + "/conf/axis2.xml");
+        return configContext;
+    }
+
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service, String clientHome) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();

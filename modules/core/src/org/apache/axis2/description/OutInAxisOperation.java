@@ -247,7 +247,7 @@ class OutInAxisOperationClient implements OperationClient {
                     .getMessageReceiver();
             callbackReceiver.addCallback(mc.getMessageID(), callback);
             EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().
-                    getERPforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
+                    getEPRforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
                             .getTransportIn().getName()
                             .getLocalPart());
 

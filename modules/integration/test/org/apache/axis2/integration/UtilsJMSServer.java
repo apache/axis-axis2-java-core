@@ -40,6 +40,8 @@ public class UtilsJMSServer {
 
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 
+    public static final String REPOSITORY_JMS = "target/test-resources/jms-enabled-server-repository";
+
     private static Log log = LogFactory.getLog(UtilsJMSServer.class);
 
     public static synchronized void deployService(AxisService service)
@@ -72,22 +74,21 @@ public class UtilsJMSServer {
             cfMap.put(JNDIVendorAdapter.PROVIDER_URL, "tcp://localhost:61616");
 
             // start JMS server
-            File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
+            File file = new File(REPOSITORY_JMS);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("Repository directory does not exist");
             }
 
             ConfigurationContext er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
-                    .getAbsolutePath(),null);
+                    .getAbsolutePath(),REPOSITORY_JMS + "/conf/axis2.xml");
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            er.getAxisConfiguration().engageModule(new QName("addressing"));
             receiver = new SimpleJMSListener(
-                    org.apache.axis2.Constants.TESTING_REPOSITORY,
+                    REPOSITORY_JMS,
                     connectorMap, cfMap, destination, username, password,
                     doThreads);
             receiver.start();

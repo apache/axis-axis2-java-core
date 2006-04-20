@@ -216,7 +216,9 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 waitForResponse = !((Boolean) msgContext.getProperty(
                         Constants.Configuration.IS_USING_SEPARATE_LISTENER)).booleanValue();
             } else {
-                waitForResponse = !msgContext.getOptions().isUseSeparateListener();
+                if(!msgContext.isServerSide()) {
+                    waitForResponse = !msgContext.getOptions().isUseSeparateListener();
+                }
             }
         } else {
             if (properties != null) {

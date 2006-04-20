@@ -76,7 +76,7 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
         File repo = new File(repositoryDirectory);
         if (repo.exists()) {
             this.configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                    repositoryDirectory, null);
+                    repositoryDirectory, repositoryDirectory + "/conf/axis2.xml");
         } else {
             throw new Exception("repository not found");
         }

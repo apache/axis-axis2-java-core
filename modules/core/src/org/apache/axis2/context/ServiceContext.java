@@ -91,7 +91,7 @@ public class ServiceContext extends AbstractContext {
                 }
             }
             if (!lm.isStopped()) {
-                return lm.getERPforService(axisService.getName(), null, transport);
+                return lm.getEPRforService(axisService.getName(), null, transport);
             }
         }
         return null;

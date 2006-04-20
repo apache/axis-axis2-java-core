@@ -39,6 +39,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -162,6 +164,7 @@ public class JMSEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
+        ConfigurationContext configContext = UtilServer.createClientConfigurationContext("target/test-resources/jms-enabled-client-repository");
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -173,13 +176,13 @@ public class JMSEchoRawXMLTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setAction(operationName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(60*60*1000);
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-
         OMElement result = sender.sendReceive(operationName, payloadElement);
 
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
