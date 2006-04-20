@@ -22,15 +22,20 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -183,7 +188,8 @@ public class JMSEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLSyncMC() throws Exception {
-        ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY,null);
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         Options options = new Options();
@@ -198,32 +204,34 @@ public class JMSEchoRawXMLTest extends TestCase {
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
-//        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-//        SOAPEnvelope envelope = factory.getDefaultEnvelope();
-//        envelope.getBody().addChild(method);
-//
-//        MessageContext requestContext = new MessageContext(configContext);
-        AxisService srevice = new AxisService(serviceName.getLocalPart());
-        srevice.addOperation(opdesc);
-//        configContext.getAxisConfiguration().addService(srevice);
-//        requestContext.setAxisService(service);
-//        requestContext.setAxisOperation(opdesc);
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
 
-//        requestContext.setEnvelope(envelope);
-        //  call.invokeBlocking(opdesc, requestContext);
-
-//        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
-
-        AxisConfiguration axisConfig = configContext.getAxisConfiguration();
-        axisConfig.addService(srevice);
+        MessageContext requestContext = new MessageContext();
+        requestContext.setConfigurationContext(configContext);
+        requestContext.setAxisService(clientService);
+        requestContext.setAxisOperation(opdesc);
+        requestContext.setEnvelope(envelope);
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
+        OperationClient opClient = sender.createClient(new QName("echoOMElement"));
+        opClient.addMessageContext(requestContext);
+        opClient.setOptions(options);
+        opClient.execute(true);
 
-        OMElement result = sender.sendReceive(operationName, method);
-
-
-        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+        MessageContext response = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        SOAPEnvelope env = response.getEnvelope();
+        assertNotNull(env);
+        env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
+        sender.finalizeInvoke();
     }
 }
+
+
+
+
+
+
