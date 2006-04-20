@@ -7,7 +7,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Edit Service Parameters</h1>
-  <form method="get" name="editServicepara" action="editServicepara">
+  <form method="get" name="editServicepara" action="admin/editServicepara">
    <%
             AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE);

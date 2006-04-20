@@ -35,7 +35,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="upload.jsp">Upload Service</a>
+         <a href="admin/upload">Upload Service</a>
        </td>
     </tr>
 <tr>
@@ -43,11 +43,12 @@
       <b><nobr>System Components&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</nobr></b>
      </td>
   </tr>
+  <tr>
     <td>
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listService">Available Services</a>
+      <a href="services/listServices">Available Services</a>
     </td>
  </tr>
  <tr>
@@ -55,7 +56,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listServciceGroups">Available Service Groups</a>
+      <a href="admin/listServiceGroups">Available Service Groups</a>
     </td>
  </tr>
  <tr>
@@ -63,7 +64,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listModules">Available Modules</a>
+      <a href="admin/listModules">Available Modules</a>
     </td>
  </tr>
  <tr>
@@ -71,7 +72,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td>
-      <a href="globalModules">Globally Engaged Modules</a>
+      <a href="admin/globalModules">Globally Engaged Modules</a>
     </td>
  </tr>
  <tr>
@@ -79,7 +80,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listPhases">Available Phases</a>
+      <a href="admin/listPhases">Available Phases</a>
     </td>
  </tr>
   <tr>
@@ -92,7 +93,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="viewGlobalHandlers">Global Chains</a>
+         <a href="admin/viewGlobalHandlers">Global Chains</a>
        </td>
     </tr>
     <tr>
@@ -100,7 +101,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="selectService">Operation Specific Chains</a>
+         <a href="admin/selectService">Operation Specific Chains</a>
        </td>
     </tr>
     <tr>
@@ -113,7 +114,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="engagingglobally">For all Services</a>
+         <a href="admin/engagingglobally">For all Services</a>
        </td>
     </tr>
      <tr>
@@ -121,7 +122,7 @@
          &nbsp;&nbsp;&nbsp;&nbsp;
         </td>
         <td>
-          <a href="engageToServiceGroup">For a Service Group</a>
+          <a href="admin/engageToServiceGroup">For a Service Group</a>
         </td>
      </tr>
 
@@ -131,7 +132,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="engageToService">For a Service</a>
+         <a href="admin/engageToService">For a Service</a>
        </td>
     </tr>
 
@@ -140,7 +141,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="listoperation">For an Operation</a>
+         <a href="admin/listOperation">For an Operation</a>
        </td>
     </tr>
 
@@ -154,7 +155,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="inActivateService">Inactivate Service</a>
+         <a href="admin/deactivateService">Inactivate Service</a>
        </td>
     </tr>
     <tr>
@@ -162,7 +163,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="activateService">Activate Service</a>
+         <a href="admin/activateService">Activate Service</a>
        </td>
     </tr>
     <tr>
@@ -170,7 +171,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="selectServiceParaEdit">Edit Parameters</a>
+         <a href="admin/selectServiceParaEdit">Edit Parameters</a>
        </td>
     </tr>
     <tr>
@@ -183,7 +184,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="listContexts">View Hierarchy</a>
+         <a href="admin/listContexts">View Hierarchy</a>
        </td>
     </tr>
 </table>

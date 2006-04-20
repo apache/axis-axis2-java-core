@@ -26,8 +26,9 @@
  */
 %>
 <head>
-<title>Axis 2 - Home</title>
-<link href="css/axis-style.css" rel="stylesheet" type="text/css">
+  <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
+  <title>Axis 2 - Home</title>
+  <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
         <jsp:include page="include/header.inc"></jsp:include>
@@ -38,11 +39,11 @@
         is properly working, we encourage you to click on the validate link.
         <br/>
         <ul>
-        <li><a href="listServices">Services</a>
+        <li><a href="services/listServices">Services</a>
         <br/>
         View lists of all the available services deployed in this server.
         </li>
-        <li><a href="HappyAxis.jsp">Validate</a>
+        <li><a href="axis2-web/HappyAxis.jsp">Validate</a>
         <br/>
         Check the system to see whether all the required libraries are in place 
 		and view view the system information.
@@ -51,7 +52,7 @@
         <br/>
         You can run Interoperability tests here
         </li>--%>
-        <li><a href="Login.jsp">Administration</a>
+        <li><a href="admin/">Administration</a>
         <br/>
 		Console for administering this Axis2 installation.
         </li>

@@ -121,6 +121,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String EDIR_SERVICE_PARA = "editServicepara";
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
     public static final String USER_NAME = "userName";
+    public static final String ADMIN_SECURITY_DISABLED = "disableAdminSecurity";
 
     /**
      * Field SINGLE_SERVICE
@@ -139,7 +140,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String OPERATION_MAP = "operationmap";
     public static final String MODULE_MAP = "modulemap";
     public static final String MODULE_ADDRESSING = "addressing";
-    public static final String LIST_SERVICE_GROUPS = "listServciceGroups";
+    public static final String LIST_SERVICE_GROUPS = "listServiceGroups";
     public static final String LIST_OPERATIONS_FOR_THE_SERVICE = "listOperations";
     public static final String IS_FAULTY = "Fault";
     public static final String GLOBAL_HANDLERS = "axisconfig";

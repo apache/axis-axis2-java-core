@@ -430,16 +430,23 @@
         <ant:copy toDir="target/temp/war/toWEB-INF/conf">
             <ant:fileset file="modules/core/conf/axis2.xml"/>
         </ant:copy>
-
-
-        <ant:war destfile="target/dist/axis2.war"
-                 webxml="modules/webapp/conf/web.xml">
+        <ant:copy toDir="target/temp/war/axis2-web">
             <ant:fileset dir="modules/webapp">
                 <ant:exclude name="project.xml"/>
                 <ant:exclude name="**/*.iml"/>
                 <ant:exclude name="**/.*"/>
                 <ant:exclude name="**/conf/**"/>
             </ant:fileset>
+        </ant:copy>
+
+        <ant:war destfile="target/dist/axis2.war"
+                 webxml="modules/webapp/conf/web.xml">
+            <!--<ant:fileset dir="modules/webapp">-->
+                <!--<ant:exclude name="project.xml"/>-->
+                <!--<ant:exclude name="**/*.iml"/>-->
+                <!--<ant:exclude name="**/.*"/>-->
+                <!--<ant:exclude name="**/conf/**"/>-->
+            <!--</ant:fileset>-->
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
@@ -457,6 +464,9 @@
                 <ant:include name="*.xml"/>
             </ant:webinf> -->
             <ant:webinf dir="target/temp/war/toWEB-INF"/>
+            <ant:fileset dir="target/temp/war">
+              <ant:include name="**/axis2-web/**" />
+            </ant:fileset>
         </ant:war>
     </goal>
 

@@ -52,7 +52,6 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
 
-    protected transient ListingAgent lister;
     private Log log = LogFactory.getLog(getClass());
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
@@ -61,6 +60,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient AxisConfiguration axisConfiguration;
 
     protected transient ServletConfig servletConfig;
+
+    private ListingAgent agent;
+
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
                                                                 MessageContext msgContext, HttpServletResponse httpServletResponse,
@@ -93,6 +95,16 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     * (non-Javadoc)
     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
     */
+
+
+    protected void doGet(HttpServletRequest req,
+                         HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            agent.handle(req, resp);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
 
     /**
      * Method doPost
@@ -170,8 +182,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     new QName(Constants.TRANSPORT_HTTP));
             transportInDescription.setReceiver(this);
             listenerManager.addListener(transportInDescription, true);
-            lister = new ListingAgent(configContext);
             ListenerManager.defaultConfigurationContext = configContext;
+            agent = new ListingAgent(configContext);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -313,11 +325,4 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         return headerMap;
     }
 
-    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-         try {
-            lister.handle(httpServletRequest, httpServletResponse);
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
 }

@@ -5,8 +5,10 @@
 <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-  <head><title>List Single service</title>
-  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+  <head>
+    <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
+    <title>List Single service</title>
+    <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
@@ -36,8 +38,8 @@
             //operationsList = operations.values();
           String  serviceName = axisService.getName();
             %><h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
-           <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName()%></font><br>
-               <font color="blue">Service REST epr : <font color="black"><%=restprefix + axisService.getName()%></font>
+           <font color="blue">Service EPR : </font><font color="black"><%=prifix + axisService.getName()%></font><br>
+               <font color="blue">Service REST epr :</font><font color="black"><%=restprefix + axisService.getName()%></font>
            <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <i><font color="blue">Service Status : <%=axisService.isActive()?"Active":"InActive"%></font></i><br>
            <%
@@ -58,9 +60,7 @@
            <%
                     } else{
                            %>
-                <h3><font color="red" >No service found in this location</h3>
-                <jsp:include page="include/footer.inc"></jsp:include>
-                </body>
+                <h3><font color="red" >No service found in this location</font></h3>
  <%
                     }
 

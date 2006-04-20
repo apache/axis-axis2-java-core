@@ -39,8 +39,9 @@
     */
 %>
 <head>
+    <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
     <title>Axis2 Happiness Page</title>
-    <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+    <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -50,7 +51,9 @@
 <%IP = request.getRequestURL().toString();
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0, lastindex);
-    targetEPR = new EndpointReference(IP + "/services/version");
+    ///axis2/axis2-web/services/version
+    IP=  IP.replaceAll("axis2-web","");
+    targetEPR = new EndpointReference(IP + "services/version");
 %>
 <%!
     /*

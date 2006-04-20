@@ -50,104 +50,24 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listServices</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listService</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listModules</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/globalModules</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listPhases</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/engagingglobally</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/engageToService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/adminlogin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/viewGlobalHandlers</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/selectService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/viewServiceHandlers</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listoperation</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listOperations</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/servicedit</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/inActivateService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/activateService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/editServicepara</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/selectServiceParaEdit</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listServciceGroups</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/engageToServiceGroup</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/listContexts</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/logout</url-pattern>
-    </servlet-mapping>
+
+
+   <welcome-file-list>
+      <welcome-file>/axis2-web/index.jsp</welcome-file>
+    </welcome-file-list>
+
     <error-page>
         <exception-type>
             org.apache.axis2.transport.http.server.AdminAppException</exception-type>
-        <location>/Error/AuthError.html</location>
+        <location>/axis2-web/Error/AuthError.html</location>
     </error-page>
 
     <!--error-page>

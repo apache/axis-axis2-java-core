@@ -3,8 +3,8 @@
 <tr><td>
 <table width="950px">
   <tr>
-    <td align="left"><img src="images/asf-logo.gif"/></td>
-    <td align="right"><img src="images/axis_l.jpg"/></td>
+    <td align="left"><img src="axis2-web/images/asf-logo.gif"/></td>
+    <td align="right"><img src="axis2-web/images/axis_l.jpg"/></td>
     </tr>
 </table>
 </td>

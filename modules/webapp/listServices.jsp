@@ -25,18 +25,17 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
+  <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
   <head><title>List Services</title>
-  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+  <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
     <jsp:include page="include/link-footer.jsp"></jsp:include>
   <h1>Available services</h1>
-  <%String IP=request.getRequestURL().toString();
-        int lastindex = IP.lastIndexOf('/');
-        IP = IP.substring(0,lastindex);
-        String prifix = IP + "/services/";
-        String restprefix = IP + "/rest/";
+  <%    String host = request.getScheme() + "://" + request.getServerName() + ":" +  request.getServerPort() +  request.getContextPath();
+        String prifix = host + "/services/";
+        String restprefix = host + "/rest/";
     %>
      <%
         HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
@@ -54,8 +53,8 @@
             //operationsList = operations.values();
             serviceName = axisService.getName();
             %><h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
-           <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName()%></font><br>
-               <font color="blue">Service REST epr : <font color="black"><%=restprefix + axisService.getName()%></font>
+           <font color="blue">Service EPR : </font><font color="black"><%=prifix + axisService.getName()%></font><br>
+               <font color="blue">Service REST epr : </font><font color="black"><%=restprefix + axisService.getName()%></font>
            <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
             <i><font color="blue">Service Status : <%=axisService.isActive()?"Active":"InActive"%></font></i><br>
                <%

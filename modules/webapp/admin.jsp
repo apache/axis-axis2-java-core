@@ -1,5 +1,5 @@
-<%@ page import="org.apache.axis2.Constants"%>        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-        <%
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -23,14 +23,8 @@
  * Date: May 26, 2005
  * Time: 7:14:26 PM
  */
-        %>
-  <%
-      String status = (String)request.getSession().getAttribute(Constants.LOGGED);
-      if(status == null || (! status.equals("Yes"))) {
-          throw new Exception("Invalid logging");
-      }
-  %>
+%>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Welcome to Axis2 web admin module !!</h1>
-<p>The Axis2 administration system can be used to check on the health of your Axis2 deployment. And you may use it to change any parameters at run time. Other than changing of parameters the web interface also has the ability to upload new services into Axis2[Service hot deployment.].</p>
+<p>The Axis2 administration system can be used to check on the health of your Axis2 deployment. And you may use it to change any parameters at run time. Other than changing of parameters the web interface also has the ability to upload new services into Axis2 [Service hot deployment.].</p>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>

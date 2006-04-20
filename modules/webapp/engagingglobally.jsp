@@ -34,7 +34,7 @@
     and click on the "Engage" button. Any module that needs to place handlers into the pre-dispatch
     phase needs to be engaged globally.</p>
 
-<form method="get" name="selectModuleForm" action="engagingglobally">
+<form method="get" name="selectModuleForm" action="admin/engagingglobally">
     <table border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td width="15%">Select a Module :</td>

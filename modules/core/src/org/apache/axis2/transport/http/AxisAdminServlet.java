@@ -25,16 +25,37 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 
+ *
  */
 public class AxisAdminServlet extends AxisServlet {
 
-    protected void doGet(HttpServletRequest req,
+  protected transient AdminAgent agent;
+
+  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    doGet(req, res);
+  }
+
+  protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
-            lister.handle(req, resp);
+            agent.handle(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
+        }
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        ServletContext servletContext = config.getServletContext();
+        this.configContext =
+                (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
+        servletContext.setAttribute(this.getClass().getName(), this);
+        agent = new AdminAgent(configContext);
+        this.servletConfig = config;
+    }
+
+    public void init() throws ServletException {
+        if (this.servletConfig != null) {
+            init(this.servletConfig);
         }
     }
 }

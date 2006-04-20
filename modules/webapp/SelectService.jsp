@@ -56,7 +56,7 @@
   %>
 <h1><%=heading%></h1>
 <p><%=disc%></p>
-<form method="get" name="selectServiceForm" action="<%=action%>">
+<form method="get" name="selectServiceForm" action="admin/<%=action%>">
 <table border="0" width="50%" cellspacing="1" cellpadding="1">
          <tr>
         <td width="35%">Select a Service :</td><td width="65%">

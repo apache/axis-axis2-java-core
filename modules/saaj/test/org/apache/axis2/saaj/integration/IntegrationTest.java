@@ -3,6 +3,7 @@ package org.apache.axis2.saaj.integration;
 import junit.framework.TestCase;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
@@ -49,6 +50,8 @@ public class IntegrationTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start(SAAJ_REPO);
+        Parameter eneblemtom = new Parameter("enableMTOM","true");
+        UtilServer.getConfigurationContext().getAxisConfiguration().addParameter(eneblemtom);
         final AxisService service = Utils.createSimpleService(SERVICE_NAME,
                                                               EchoService.class.getName(),
                                                               OPERATION_NAME);

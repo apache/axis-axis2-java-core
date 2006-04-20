@@ -29,78 +29,8 @@
     */
 %>
 
-<%!
-    public void jspInit() {
-        ServletContext context = this.getServletConfig().getServletContext();
-        ConfigurationContext configctx =
-                (ConfigurationContext) context.getAttribute(AxisServlet.CONFIGURATION_CONTEXT);
-        File repoDir = new File(configctx.getAxisConfiguration().getRepository().getFile());
-        File serviceDir = new File(repoDir, "services");
-
-        if (!serviceDir.exists()) {
-            serviceDir.mkdir();
-        }
-        deploymentDirectory = serviceDir;
-    }
-
-    protected static final String SUBMIT_NAME = "upload";
-    protected File deploymentDirectory = null;
-
-    protected void writeSuccessMessage(String fileName, JspWriter out) throws IOException {
-        out.print("File saved as " + fileName + "<br/>");
-    }
-
-    protected void writeUnsuccessMessage(String message, JspWriter out) throws IOException {
-        out.print("<font color=\"red\">The following error occurred <br/>" + message +
-                "</font><br/>"
-        );
-
-    }
-%>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h2>Upload a axisService jar file</h2>
-<%
-    boolean isMultipart = FileUpload.isMultipartContent(request);
-    if (isMultipart) {
-        try {
-            // Create a new file upload handler
-            DiskFileUpload upload = new DiskFileUpload();
-
-            List items = upload.parseRequest(request);
-
-            // Process the uploaded items
-            Iterator iter = items.iterator();
-            while (iter.hasNext()) {
-                FileItem item = (FileItem) iter.next();
-
-                if (!item.isFormField()) {
-
-                    String fileName = item.getName();
-                    String fileExtesion = fileName;
-                    fileExtesion = fileExtesion.toLowerCase();
-                    if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
-                        throw new Exception(" Wrong file type! ");
-                    }
-
-                    String fileNameOnly = "";
-                    if (fileName.indexOf("\\") < 0) {
-                        fileNameOnly = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
-                    } else {
-                        fileNameOnly = fileName.substring(fileName.lastIndexOf("\\") + 1, fileName.length());
-                    }
-
-
-                    File uploadedFile = new File(deploymentDirectory, fileNameOnly);
-                    item.write(uploadedFile);
-                    out.write("<font color=\"green\">File " + fileName + " successfully uploaded </font><br/><br/>");
-
-                }
-            }
-        } catch (Exception e) {
-            out.write(" <font color=\"red\">File upload failed! <br/>" + e.getMessage() + "</font><br/><br/>");
-        }
-    }
-%>
 
 <p>You can upload a packaged Axis 2 axisService using this page with two small
     steps.</p>
@@ -110,11 +40,19 @@
 
 <p>Simple as that!</p>
 
-<form method="post" name="Axis2upload" action="upload.jsp"
+<% if ("success".equals(request.getAttribute("status")) ) { %>
+ <font color="green">File <%= request.getAttribute("filename") %> successfully uploaded </font><br/><br/>
+<%
+  } else if ("failure".equals(request.getAttribute("status")) ){
+ %>
+ <font color="red">The following error occurred <br/> <%= request.getAttribute("cause") %> </font><br/>
+
+<% } %>
+<form method="post" name="Axis2upload" action="admin/upload"
       enctype="multipart/form-data">
     <table><tr><td>Service archive : </td><td>
         <input type="file" name="filename" size="50"/></td></tr>
-        <tr><td>&nbsp;</td><td><input name="<%=SUBMIT_NAME%>" type="submit"
+        <tr><td>&nbsp;</td><td><input name="upload" type="submit"
                                       value=" Upload "/></td></tr>
     </table>
 </form>
