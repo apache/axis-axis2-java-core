@@ -5,19 +5,49 @@
 </head>
 
 <body>
-<h1>Code Generator - Command Line Tool</h1>
+<h1>Code Generator Tool- Command Line &amp; Ant Task</h1>
+
+<p>The Code Generator tool consists of a command line version and an Ant
+Task. This document will list the command line references and Ant task
+references. Also in detail, this document shows how to build file using
+custom Ant task and invoking the Code Generator from Ant.</p>
+
+<h2>Content</h2>
+<ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#cmdline">Command Line Version</a>
+    <ul>
+      <li><a href="#cmdref">Option Reference</a></li>
+    </ul>
+  </li>
+  <li><a href="#ant">Ant Task</a>
+    <ul>
+      <li><a href="#antref">Ant Task Reference</a></li>
+      <li><a href="#example">Example build file using the custom Ant
+      task</a></li>
+      <li><a href="#invoking">Invoking the Code Generator from Ant</a></li>
+    </ul>
+  </li>
+  <li><a href="#appendix">Appendix</a></li>
+</ul>
+<a name="intro"></a>
 
 <h2>Introduction</h2>
 
-<p>Just as old times there will be users who wish to use the command line
-version of the tool. This basic tool is implemented by the WSDL2Code class
-and just for the convenience in the java case (which would be the majority)
-there is another WSDL2Java class. One can choose to run the main classes
-directly or use one of the scripts to run the WSDL2Code and WSDL2Java
-appropriately. (the scripts are found in the bin directory of the binary
-distribution)</p>
+<p>This basic tool is implemented by the WSDL2Code class and just for the
+convenience in the java case (which would be the majority) there is another
+WSDL2Java class. One can choose to run the main classes directly or use one
+of the scripts to run the WSDL2Code and WSDL2Java appropriately. (the scripts
+are found in the bin directory of the binary distribution)</p>
+<a name="cmdline"></a>
 
-<h2>Option Reference</h2>
+<h2>Command Line Version</h2>
+
+<p>For those users who wish to use the command line version of the tool, this
+section will be of value.</p>
+<a name="cmdref"></a>
+
+<h3>Option Reference</h3>
 
 <table border="1" cellpadding="0" cellspacing="0"
 style="border-collapse: collapse" width="100%" id="AutoNumber1">
@@ -150,14 +180,16 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
 them with -E (uppercase). These extra options will be processed by the
 extensions. The extra options that can be passed are documented separately
 with the extensions documentation (For example with ADB)</p>
+<a name="ant"></a>
 
-<h1>Code Generator - Ant Task</h1>
+<h2>Ant Task</h2>
 
 <p>The code generator also comes bundled with an Ant task. The ant task is
 implemented by the org.apache.axis2.tool.ant.AntCodegenTask class. Following
 are the ant task attributes.</p>
+<a name="antref"></a>
 
-<h2>Ant Task Reference</h2>
+<h3>Ant Task Reference</h3>
 
 <table border="1" cellpadding="0" cellspacing="0"
 style="border-collapse: collapse" width="100%" id="AutoNumber2">
@@ -243,12 +275,11 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
     </tr>
   </tbody>
 </table>
+<a name="example"></a>
 
-<h2>Example build file using the custom Ant task</h2>
+<h3>Example build file using the custom Ant task</h3>
 
 <p>Following is an example ant build file that uses the custom Ant task.</p>
-
-<p></p>
 <pre>&lt;?xml version="1.0"?&gt;
 &lt;project name="CodegenExample" default="main" basedir="."&gt;
 &lt;target name="declare" &gt;
@@ -286,12 +317,11 @@ path.</p>
     javax.xml.namespace.QName class. This jar may be replaced by any other
     jar that contains the javax.xml.namespace.QName implementation. However
     Axis2 uses this class from the stax-api-1.0.jar which comes bundled with
-    the Axis2 distribution)
-    <p></p>
-  </li>
+    the Axis2 distribution)</li>
 </ul>
+<a name="invoking"></a>
 
-<h1>Invoking the Code Generator from Ant</h1>
+<h3>Invoking the Code Generator from Ant</h3>
 
 <p>Since the users may find altering their ant class path a bit daunting they
 can also follow an easier technique. The code generator main class can be
@@ -368,8 +398,7 @@ ready for deployment:</p>
      srcdir="output"
      destdir="${build.classes}"
      deprecation="true"
-     failonerror="true" debug="true"
-    &gt;
+     failonerror="true" debug="true"&gt;
 
      &lt;classpath refid="axis.classpath"/&gt; 
     &lt;/javac&gt;
@@ -438,8 +467,7 @@ ready for deployment:</p>
      srcdir="src"
      destdir="${build.classes}"
      deprecation="true"
-     failonerror="true" debug="true"
-    &gt;
+     failonerror="true" debug="true"&gt;
 
      &lt;classpath refid="axis.classpath"/&gt; 
     &lt;/javac&gt;
@@ -715,15 +743,13 @@ appear:</p>
      [java] WebUserName: joe sixpack
      [java] SOAPSessionId: some_random_string
      [java] webLogin, completed!!!</pre>
+<a name="appendix"></a>
 
-<p></p>
-
-<h1>Appendix</h1>
+<h2>Appendix</h2>
 <ul>
   <li>Eclipse reference - <a href="http://www.eclipse.org/">
     http://www.eclipse.org/</a></li>
-  <li>Custom Ant Tasks - <a
-    href="http://ant.apache.org/manual/develop.html">
+  <li>Custom Ant Tasks - <a href="http://ant.apache.org/manual/develop.html">
     http://ant.apache.org/manual/develop.html</a></li>
 </ul>
 
