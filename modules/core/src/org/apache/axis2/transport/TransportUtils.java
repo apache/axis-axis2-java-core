@@ -24,6 +24,7 @@ import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
@@ -222,15 +223,24 @@ public class TransportUtils {
         */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
 
-        if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
+        String soapEnvelopeNamespaceURI=null;
+        if (contentTypeString.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+        	soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+        }
+        else if (contentTypeString.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+        	soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+        }
+        
+        if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)& null!=soapEnvelopeNamespaceURI) {
 
             /*
             * Creates the MTOM specific MTOMStAXSOAPModelBuilder
-            */
-            builder = new MTOMStAXSOAPModelBuilder(streamReader, attachments, null);
-        } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
+            */             
+            builder = new MTOMStAXSOAPModelBuilder(streamReader, attachments, soapEnvelopeNamespaceURI);
+        	 
+        } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)& null!=soapEnvelopeNamespaceURI) {
             builder = new StAXSOAPModelBuilder(streamReader,
-                    SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                    soapEnvelopeNamespaceURI);
         }
 
         return builder;
