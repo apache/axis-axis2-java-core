@@ -62,6 +62,15 @@
             <version>${XmlSchema.version}</version>
         </dependency>
         <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>${xbean.version}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>${geronimo.spec.groupid}</groupId>
             <artifactId>${geronimo.spec.activation.artifactid}</artifactId>
             <version>${geronimo.spec.activation.version}</version>

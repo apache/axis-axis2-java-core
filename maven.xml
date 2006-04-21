@@ -343,6 +343,7 @@
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/>
             <fileset dir="modules/adb/target/classes"/>
+            <fileset dir="modules/xmlbeans/target/classes"/>
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing-${addressing_version}.mar"/>
             </fileset>

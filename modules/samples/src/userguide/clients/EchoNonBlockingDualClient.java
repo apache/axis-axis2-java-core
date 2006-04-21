@@ -20,6 +20,8 @@ package userguide.clients;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -37,7 +39,7 @@ import java.io.StringWriter;
  * Ulitmate asynchronous service invocation sample.
  */
 public class EchoNonBlockingDualClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8081/axis2/services/MyService");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
         ServiceClient sender = null;
