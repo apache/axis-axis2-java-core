@@ -135,6 +135,7 @@ public class AxisService extends AxisDescription {
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
         schemaList = new ArrayList();
+        serviceClassLoader = Thread.currentThread().getContextClassLoader();
     }
 
     /**

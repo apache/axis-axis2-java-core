@@ -23,15 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -911,5 +903,39 @@ public class MessageContext extends AbstractContext {
 
     public void setRelationships(RelatesTo[] list) {
         options.setRelationships(list);
+    }
+
+    public boolean isEngaged(QName moduleName) {
+        boolean enegage;
+        if (configurationContext != null) {
+            AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+            AxisModule module = axisConfig.getModule(moduleName);
+            if (module == null) {
+                return false;
+            }
+            enegage = axisConfig.isEngaged(moduleName);
+            if (enegage) {
+                return true;
+            }
+            if (axisServiceGroup != null) {
+                enegage = axisServiceGroup.isEngaged(moduleName);
+                if (enegage) {
+                    return true;
+                }
+            }
+            if (axisService != null) {
+                enegage = axisService.isEngaged(moduleName);
+                if (enegage) {
+                    return true;
+                }
+            }
+            if (axisOperation != null) {
+                enegage = axisOperation.isEngaged(module);
+                if (enegage) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

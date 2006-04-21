@@ -201,4 +201,19 @@ public class AxisServiceGroup extends AxisDescription {
     public Object getKey() {
         return getServiceGroupName();
     }
+
+    public boolean isEngaged(QName moduleName) {
+        AxisModule module = getAxisDescription().getModule(moduleName);
+        if (module == null) {
+            return false;
+        }
+        Iterator engagedModuleItr = engagedModules.iterator();
+        while (engagedModuleItr.hasNext()) {
+            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
+            if (axisModule.getName().getLocalPart().equals(module.getName().getLocalPart())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -515,4 +515,15 @@ public abstract class AxisOperation extends AxisDescription
     public void setSoapAction(String soapAction) {
         this.soapAction = soapAction;
     }
+
+    public boolean isEngaged(AxisModule module) {
+        Iterator engagedModuleItr = engagedModules.iterator();
+        while (engagedModuleItr.hasNext()) {
+            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
+            if (axisModule.getName().getLocalPart().equals(module.getName().getLocalPart())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
