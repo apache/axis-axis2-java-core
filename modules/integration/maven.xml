@@ -185,8 +185,50 @@
 
             <!-- Rahas Test - 2 :END -->
 
+			<!-- Rahas Test - 3  -->
+
+            <mkdir dir="target/test-resources/rahas_service_repo_3"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_3/conf"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_3/services"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_3/modules"/>
+
+			<copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_3/modules/addressing-${addressing_version}.mar"/>
+			<copy file="../security/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_3/modules/rahas-${rahas_version}.mar"/>
+
+			<!-- copy the services.xml and create the aar -->
+			<copy overwrite="yes" file="test-resources/security/rahas/s3-services.xml"
+                  tofile="target/temp-rahas/META-INF/services.xml"/>
+
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_3/services/Service.aar"
+                 basedir="target/temp-rahas"/>
+
+            <!-- Rahas Test - 3 :END -->
+
+			<!-- Rahas Test - 4  -->
+
+            <mkdir dir="target/test-resources/rahas_service_repo_4"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_4/conf"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_4/services"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_4/modules"/>
+
+			<copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_4/modules/addressing-${addressing_version}.mar"/>
+			<copy file="../security/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_4/modules/rahas-${rahas_version}.mar"/>
+
+			<!-- copy the services.xml and create the aar -->
+			<copy overwrite="yes" file="test-resources/security/rahas/s4-services.xml"
+                  tofile="target/temp-rahas/META-INF/services.xml"/>
+
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_4/services/Service.aar"
+                 basedir="target/temp-rahas"/>
+
+            <!-- Rahas Test - 4 :END -->
+			
 			<!-- clean up temp rahas stuff -->
-			<!--<delete dir="target/temp-rahas"/> -->
+			<delete dir="target/temp-rahas"/>
 
 		
 			<mkdir dir="target/test-resources/samples/modules"/>

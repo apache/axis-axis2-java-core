@@ -70,6 +70,19 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
         handlerDesc = EMPTY_HANDLER_METADATA;
     }
 
+    public abstract void processMessage(MessageContext msgContext) throws AxisFault;
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        //If the security module is not engaged for this service
+        //do not do any processing
+        if(msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
+            this.processMessage(msgContext);
+        }
+    }
+    
     /**
      * Method getName.
      *

@@ -30,6 +30,8 @@ public interface Constants {
     public final static String BINARY_SECRET = "BinarySecret";
     public final static String REQUESTED_ATTACHED_REFERENCE = "RequestedAttachedReference";
     public final static String REQUESTED_UNATTACHED_REFERENCE = "RequestedUnattachedReference";
+    public final static String KEY_SIZE = "KeySize";
+    public final static String ENTROPY = "Entropy";
     
     //RequestTypes
     public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";
@@ -53,4 +55,10 @@ public interface Constants {
     public final static String RSTR_ACTON_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Cancel";
     public final static String RSTR_ACTON_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Validate";
     public final static String RSTR_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/SCT";
+    
+    //Attrs
+    public final static String ATTR_TYPE = "Type";
+    
+    //Attr values
+    public final static String BIN_SEC_TYPE_NONCE = WST_NS + "/Nonce";
 }

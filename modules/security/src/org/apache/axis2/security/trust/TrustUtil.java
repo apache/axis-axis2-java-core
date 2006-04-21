@@ -65,9 +65,20 @@ public class TrustUtil {
                 Constants.REQUESTED_PROOF_TOKEN_LN, Constants.WST_PREFIX);
     }
     
-    public static OMElement createBinarySecretElement(OMElement parent) {
+    public static OMElement createEntropyElement(OMElement parent) {
         return createOMElement(parent, Constants.WST_NS,
+                Constants.ENTROPY, Constants.WST_PREFIX);
+    }
+    
+    public static OMElement createBinarySecretElement(OMElement parent,
+            String type) {
+        OMElement elem = createOMElement(parent, Constants.WST_NS,
                 Constants.BINARY_SECRET, Constants.WST_PREFIX);
+        if(type != null) {
+            elem.addAttribute(elem.getOMFactory().createOMAttribute(
+                    Constants.ATTR_TYPE, null, type));
+        }
+        return elem;
     }
     
     public static OMElement createRequestedUnattachedRef(OMElement parent,
@@ -88,6 +99,12 @@ public class TrustUtil {
         elem.addChild((OMElement) createSecurityTokenReference(
                 ((Element) parent).getOwnerDocument(), refUri, refValueType));
         return elem;
+    }
+    
+    public static OMElement createKeySizeElement(OMElement parent) {
+        return createOMElement(parent, Constants.WST_NS,
+                Constants.KEY_SIZE,
+                Constants.WST_PREFIX);
     }
     
     private static OMElement createOMElement(OMElement parent, String ns,

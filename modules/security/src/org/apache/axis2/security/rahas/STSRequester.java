@@ -84,7 +84,34 @@ public class STSRequester {
                     .getPullParser(new QName(Constants.WST_NS,
                             Constants.REQUEST_SECURITY_TOKEN_LN))));
 
-            OMElement tempResult = client.sendReceive(rstQn, builder.getDocumentElement());
+            OMElement rstElem = builder.getDocumentElement();
+            
+            rstElem.build();
+            rstElem = (OMElement)rstElem.detach();
+            
+
+//            if(config.isProvideEntropy()) {
+//                //TODO Option to get the nonce lenght and  
+//                //keysize from the the configuration
+//                
+//                // Length of nonce in bytes
+//                int nonceLength = 16;
+//
+//                OMElement entropyElem = TrustUtil.createEntropyElement(rstElem);
+//                
+//                byte[] nonce = WSSecurityUtil.generateNonce(nonceLength);
+//                OMElement elem = TrustUtil.createBinarySecretElement(entropyElem,
+//                        Constants.BIN_SEC_TYPE_NONCE);
+//                elem.setText(Base64.encode(nonce));
+//
+//                TrustUtil.createKeySizeElement(rstElem).setText(
+//                        Integer.toString(nonceLength * 8));
+//            }
+
+            String str = rstElem.toString();
+            System.out.println(str);
+            
+            OMElement tempResult = client.sendReceive(rstQn, rstElem);
             Axis2Util.useDOOM(true);
             OMElement tempelem = Axis2Util.toDOOM(DOOMAbstractFactory.getOMFactory(), tempResult);
             OMElement elem = (OMElement)config.getDocument().importNode((Element)tempelem, true);

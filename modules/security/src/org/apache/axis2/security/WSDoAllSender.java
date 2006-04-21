@@ -20,7 +20,6 @@ import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.security.handler.WSDoAllHandler;
@@ -28,6 +27,7 @@ import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.security.util.HandlerParameterDecoder;
 import org.apache.axis2.security.util.MessageOptimizer;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.WSConstants;
@@ -56,7 +56,8 @@ public class WSDoAllSender extends WSDoAllHandler {
         inHandler = false;
     }
     
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    
+    public void processMessage(MessageContext msgContext) throws AxisFault {
         
         String disableDoomValue = (String)msgContext.getProperty(WSSHandlerConstants.DISABLE_DOOM);
         boolean disableDoom = disableDoomValue != null && Constants.VALUE_TRUE.equalsIgnoreCase(disableDoomValue);

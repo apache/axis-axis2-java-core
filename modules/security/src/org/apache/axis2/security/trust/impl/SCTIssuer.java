@@ -183,7 +183,7 @@ public class SCTIssuer implements TokenIssuer {
         
         OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(rstrElem);
         
-        OMElement binSecElem = TrustUtil.createBinarySecretElement(reqProofTok);
+        OMElement binSecElem = TrustUtil.createBinarySecretElement(reqProofTok, null);
 
         byte[] secret = this.generateEphemeralKey();
         binSecElem.setText(Base64.encode(secret));

@@ -51,7 +51,7 @@ public class Receiver implements Handler {
                             .getWSAAction())) {
                 WSDoAllReceiver secReceiver = new WSDoAllReceiver();
                 secReceiver.init(this.handlerDescription);
-                secReceiver.invoke(msgContext);
+                secReceiver.processMessage(msgContext);
                 return;
             }
             

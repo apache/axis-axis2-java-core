@@ -62,7 +62,7 @@ public class Sender implements Handler {
                     Constants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) {
                 WSDoAllSender secSender = new WSDoAllSender();
                 secSender.init(this.handlerDescription);
-                secSender.invoke(msgContext);
+                secSender.processMessage(msgContext);
                 return;
             }
             

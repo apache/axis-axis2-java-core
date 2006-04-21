@@ -67,6 +67,8 @@ public class RahasConfiguration {
     
     public final static QName PW_CALLBACK_CLASS = new QName(
             WSHandlerConstants.PW_CALLBACK_CLASS);
+
+    private static final QName PROVIDE_ENTROPY = new QName("provideEntropy");
     
     private String scope = SCOPE_SERVICE;
     
@@ -135,6 +137,8 @@ public class RahasConfiguration {
     
     private String encryptionUser;
     
+    private boolean provideEntropy;
+    
     public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
             throws Exception {
         Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
@@ -175,12 +179,16 @@ public class RahasConfiguration {
                 config.encryptionUser = getStringValue(confElem
                         .getFirstChildWithName(ENCRYPTION_USER));
                 
+                config.provideEntropy = confElem
+                        .getFirstChildWithName(PROVIDE_ENTROPY) != null;
+                
                 //Get the action<->ctx-identifier map
                 config.contextMap = (Hashtable) msgCtx
                         .getProperty(RahasHandlerConstants.CONTEXT_MAP_KEY);
 
                 //Convert the Envelop to DOOM
-                config.doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
+                config.doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx
+                        .getEnvelope(), false);
                 
                 //Token store
                 config.tokenStore = (TokenStorage) msgCtx
@@ -310,6 +318,9 @@ public class RahasConfiguration {
             OMElement tempElem = factory.createOMElement(ENCRYPTION_USER, elem);
             tempElem.setText(this.encryptionUser);
             elem.addChild(tempElem);
+        }
+        if(this.provideEntropy) {
+            factory.createOMElement(PROVIDE_ENTROPY, elem);
         }
         return elem;
     }
@@ -452,12 +463,6 @@ public class RahasConfiguration {
         return tokenStoreClass;
     }
 
-    /**
-     * @return Returns the contextIdentifier.
-     */
-    protected String getContextIdentifier() {
-        return contextIdentifier;
-    }
 
     /**
      * @return Returns the cryptoProperties.
@@ -471,13 +476,6 @@ public class RahasConfiguration {
      */
     public void setCryptoProperties(Properties cryptoProperties) {
         this.cryptoProperties = cryptoProperties;
-    }
-
-    /**
-     * @return Returns the msgCtx.
-     */
-    protected MessageContext getMsgCtx() {
-        return msgCtx;
     }
 
     /**
@@ -551,6 +549,41 @@ public class RahasConfiguration {
     }
 
     /**
+     * @param passwordCallbackClass The passwordCallbackClass to set.
+     */
+    public void setPasswordCallbackClass(String passwordCallbackClass) {
+        this.passwordCallbackClass = passwordCallbackClass;
+    }
+
+    /**
+     * @return Returns the encryptionUser.
+     */
+    public String getEncryptionUser() {
+        return encryptionUser;
+    }
+
+    /**
+     * @param encryptionUser The encryptionUser to set.
+     */
+    public void setEncryptionUser(String encryptionUser) {
+        this.encryptionUser = encryptionUser;
+    }
+
+    /**
+     * @return Returns the provideEntropy.
+     */
+    public boolean isProvideEntropy() {
+        return provideEntropy;
+    }
+
+    /**
+     * @param provideEntropy The provideEntropy to set.
+     */
+    public void setProvideEntropy(boolean provideEntropy) {
+        this.provideEntropy = provideEntropy;
+    }
+
+    /**
      * @return Returns the crypto.
      */
     protected Crypto getCrypto() {
@@ -579,24 +612,16 @@ public class RahasConfiguration {
     }
 
     /**
-     * @param passwordCallbackClass The passwordCallbackClass to set.
+     * @return Returns the msgCtx.
      */
-    public void setPasswordCallbackClass(String passwordCallbackClass) {
-        this.passwordCallbackClass = passwordCallbackClass;
-    }
-
-    /**
-     * @return Returns the encryptionUser.
-     */
-    public String getEncryptionUser() {
-        return encryptionUser;
-    }
-
-    /**
-     * @param encryptionUser The encryptionUser to set.
-     */
-    public void setEncryptionUser(String encryptionUser) {
-        this.encryptionUser = encryptionUser;
+    protected MessageContext getMsgCtx() {
+        return msgCtx;
     }
     
+    /**
+     * @return Returns the contextIdentifier.
+     */
+    protected String getContextIdentifier() {
+        return contextIdentifier;
+    }
 }

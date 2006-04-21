@@ -22,13 +22,13 @@ import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.security.util.HandlerParameterDecoder;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.SOAPConstants;
@@ -43,6 +43,7 @@ import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
 import javax.security.auth.callback.CallbackHandler;
+
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.Vector;
@@ -53,13 +54,12 @@ public class WSDoAllReceiver extends WSDoAllHandler {
     
     protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
     
-    
     public WSDoAllReceiver() {
         super();
         inHandler = true;
     }
     
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public void processMessage(MessageContext msgContext) throws AxisFault {
         
         boolean doDebug = log.isDebugEnabled();
         
@@ -76,6 +76,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         }
         
         try {
+                        
             //populate the properties
             try {
                 HandlerParameterDecoder.processParameters(msgContext,true);
@@ -175,7 +176,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 wsResult = secEngine.processSecurityHeader(doc, actor,
                         cbHandler, reqData.getSigCrypto(), reqData.getDecCrypto());
             } catch (WSSecurityException ex) {
-                ex.printStackTrace();
                 throw new AxisFault(
                         "WSDoAllReceiver: security processing failed", ex);
             }

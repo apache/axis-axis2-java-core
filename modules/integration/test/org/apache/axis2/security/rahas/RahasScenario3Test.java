@@ -20,6 +20,15 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
 
+/**
+ * This tests security context establishment when there's no STS involved.
+ * Note that we are not setting the STS endpoint address in the rahas config.
+ * 
+ * The client side rahas outflow handler will create the RSTR with the SCT
+ * and RPT with a secret in a EncryptedKey and will send it over to the service.
+ *
+ * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ */
 public class RahasScenario3Test extends TestClient {
 
     public RahasScenario3Test(String name) {
@@ -46,7 +55,7 @@ public class RahasScenario3Test extends TestClient {
     }
 
     public String getServiceRepo() {
-        return "rahas_service_repo_1";
+        return "rahas_service_repo_3";
     }
 
 }

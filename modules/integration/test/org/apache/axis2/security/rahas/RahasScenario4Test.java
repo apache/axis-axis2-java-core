@@ -21,18 +21,15 @@ import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
 
 /**
- * The RequestedProofToken is an EncryptedKey
- * which holds the secret of security context.
- * 
+ * This tests the use computed keys when the requester provides entropy
+ *
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class RahasScenario1Test extends TestClient {
+public class RahasScenario4Test extends TestClient {
 
-    /**
-     * @param name
-     */
-    public RahasScenario1Test(String name) {
+    public RahasScenario4Test(String name) {
         super(name);
+        // TODO Auto-generated constructor stub
     }
 
     public Parameter getClientRahasConfiguration() {
@@ -41,6 +38,7 @@ public class RahasScenario1Test extends TestClient {
         config.setCryptoPropertiesFile("sec.properties");
         config.setScope(RahasConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
+        config.setProvideEntropy(true);
         config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/Service");
 
         return config.getParameter();
@@ -67,7 +65,8 @@ public class RahasScenario1Test extends TestClient {
     }
 
     public String getServiceRepo() {
-        return "rahas_service_repo_1";
+        return "rahas_service_repo_4";
     }
+
 
 }

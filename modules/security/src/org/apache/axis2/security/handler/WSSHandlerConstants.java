@@ -22,6 +22,11 @@ package org.apache.axis2.security.handler;
 public interface WSSHandlerConstants {
 
     /**
+     * Name of the .mar file
+     */
+    public final static String SECURITY_MODULE_NAME = "security";
+    
+    /**
      * Inflow security parameter
      */
     public static final String INFLOW_SECURITY = "InflowSecurity";
