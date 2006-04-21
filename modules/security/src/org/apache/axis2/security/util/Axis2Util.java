@@ -39,7 +39,6 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import java.io.ByteArrayInputStream;
@@ -122,33 +121,23 @@ public class Axis2Util {
 		}
 	}
 
-	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(Document doc, boolean disableDoom) {
-        
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XMLUtils.outputDOM(doc, os, true);
-        
-        ByteArrayInputStream bais = new ByteArrayInputStream(os.toByteArray());
-        
-//        OMElement docElem = (OMElement)doc.getDocumentElement();
-        XMLStreamReader reader;
+	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(Document doc)
+            throws WSSecurityException {
+
         try {
-            reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-            StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(reader, null);
+            XMLStreamReader reader = ((OMElement) doc.getDocumentElement())
+                    .getXMLStreamReader();
+            StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(
+                    reader, null);
             SOAPEnvelope envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
             envelope.build();
             return envelope;
-        } catch (XMLStreamException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new UnsupportedOperationException("WIP");
+            
         } catch (FactoryConfigurationError e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new UnsupportedOperationException("WIP");
+            throw new WSSecurityException(e.getMessage());
         }
-        
 
-	}
+    }
 	
 	
 	/**
