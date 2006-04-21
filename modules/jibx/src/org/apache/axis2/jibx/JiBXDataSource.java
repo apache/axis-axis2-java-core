@@ -15,17 +15,6 @@
  */
 package org.apache.axis2.jibx;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallable;
@@ -34,10 +23,19 @@ import org.jibx.runtime.IXMLWriter;
 import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.StAXWriter;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+
 /**
  * Data source for OM element backed by JiBX data bound object.
  */
-public class JiBXDataSource implements OMDataSource
+public class JiBXDataSource 
 {
     /** Bound object for output. */
     private final IMarshallable outObject;
