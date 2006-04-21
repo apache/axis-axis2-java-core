@@ -266,13 +266,18 @@
                     };
                 </xsl:if>
                 
-                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimzieContent) {
+                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimzieContent) {
                     if (param instanceof org.jibx.runtime.IMarshallable){
                         if (bindingFactory == null) {
                             throw new RuntimeException("Could not find JiBX binding information for <xsl:value-of select='$firstType'/>, JiBX binding unusable");
                         }
-                        return new org.apache.axis2.jibx.OMJiBXElementImpl
-                            ((org.jibx.runtime.IMarshallable)param, bindingFactory);
+                        org.jibx.runtime.IMarshallable marshallable =
+                            (org.jibx.runtime.IMarshallable)param;
+                        int index = marshallable.JiBX_getIndex();
+                        org.apache.axis2.jibx.JiBXDataSource source =
+                            new org.apache.axis2.jibx.JiBXDataSource(marshallable, bindingFactory);
+                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], null);
+                        return factory.createOMElement(source, bindingFactory.getElementNames()[index], namespace);
                     } else {
                         throw new RuntimeException("No JiBX &lt;mapping> defined for class <xsl:value-of select='@type'/>");
                     }
@@ -281,7 +286,7 @@
                 private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent) {
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     if (param != null){
-                        envelope.getBody().addChild(toOM(param, optimizeContent));
+                        envelope.getBody().addChild(toOM(param, factory, optimizeContent));
                     }
                     return envelope;
                 }
