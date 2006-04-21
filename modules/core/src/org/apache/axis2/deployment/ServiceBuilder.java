@@ -247,7 +247,7 @@ public class ServiceBuilder extends DescriptionBuilder {
         Iterator excludeOp_itr = exculeOperations.getChildrenWithName(new QName(TAG_OPERATION));
         while (excludeOp_itr.hasNext()) {
             OMElement opName = (OMElement) excludeOp_itr.next();
-            service.removeOeration(new QName(opName.getText()));
+            service.removeOperation(new QName(opName.getText()));
             log.info("removed the operation:" + opName.getText());
         }
     }

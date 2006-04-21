@@ -833,7 +833,7 @@ public class AxisService extends AxisDescription {
             Iterator moduleOperations_itr = moduleOerations.values().iterator();
             while (moduleOperations_itr.hasNext()) {
                 AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
-                removeOeration(operation.getName());
+                removeOperation(operation.getName());
             }
         }
     }
@@ -997,7 +997,7 @@ public class AxisService extends AxisDescription {
 
     }
 
-    public void removeOeration(QName opName) {
+    public void removeOperation(QName opName) {
         AxisOperation operation = getOperation(opName);
         if (operation != null) {
             removeChild(opName);
@@ -1010,6 +1010,10 @@ public class AxisService extends AxisDescription {
             }
             operationsAliasesMap.remove(operation.getName().getLocalPart());
         }
+    }
+
+    public void removeParameter(String paramName){
+        getParameters().remove(new Parameter(paramName, null));
     }
 
     public Map getNameSpacesMap() {

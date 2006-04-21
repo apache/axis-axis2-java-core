@@ -1,7 +1,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -157,7 +156,7 @@ public abstract class AxisOperation extends AxisDescription
                         Iterator moduleOperations_itr = moduleOperations.values().iterator();
                         while (moduleOperations_itr.hasNext()) {
                             AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
-                            service.removeOeration(operation.getName());
+                            service.removeOperation(operation.getName());
                         }
                     }
                 }

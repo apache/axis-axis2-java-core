@@ -13,8 +13,6 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
-
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
@@ -151,5 +149,23 @@ public class Parameter {
      */
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public String toString() {
+        return "Parameter : " + name + "=" + value;
+    }
+
+    public boolean equals(Object obj) {
+        if(this == obj){
+            return true;
+        }
+        if(obj instanceof Parameter){
+            return ((Parameter) obj).getName().equals(name);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return name.hashCode();
     }
 }
