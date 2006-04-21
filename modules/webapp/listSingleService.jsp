@@ -6,18 +6,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head>
-    <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
+    <jsp:include page="include/httpbase.jsp"/>
     <title>List Single service</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
     <jsp:include page="include/link-footer.jsp"></jsp:include>
-  <%String IP=request.getRequestURL().toString();
-        int lastindex = IP.lastIndexOf('/');
-        IP = IP.substring(0,lastindex);
-        String prifix = IP + "/services/";
-        String restprefix = IP + "/rest/";
+  <%
+        String prifix = request.getAttribute("frontendHostUrl") + "services/";
+        String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
         <%
             String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);

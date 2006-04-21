@@ -25,7 +25,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-  <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
+  <jsp:include page="include/httpbase.jsp"/>
   <head><title>List Services</title>
   <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css" />
   </head>
@@ -33,9 +33,8 @@
   <jsp:include page="include/header.inc"></jsp:include>
     <jsp:include page="include/link-footer.jsp"></jsp:include>
   <h1>Available services</h1>
-  <%    String host = request.getScheme() + "://" + request.getServerName() + ":" +  request.getServerPort() +  request.getContextPath();
-        String prifix = host + "/services/";
-        String restprefix = host + "/rest/";
+  <%    String prifix = request.getAttribute("frontendHostUrl") + "services/";
+        String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
      <%
         HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);

@@ -1,5 +1,24 @@
+/*
+* Copyright 2004,2006 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+*/
+
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,17 +28,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
+ * The AbstractAgent acts as a simple dispatcher for http requests.
+ * It delegates incoming requests to processXyz methods while Xyz
+ * is the part of the request uri past last /.
+ *
  * @author Jens Schumann - OpenKnowledge GmbH
  * @version $Id$
  */
 public class AbstractAgent {
+  protected static final String DEFAULT_INDEX_JSP = "index.jsp";
+
+  private static final String METHOD_PREFIX = "process";
   private static final Log log = LogFactory.getLog(AbstractAgent.class);
 
   protected Map operationCache = new HashMap();
@@ -30,10 +54,9 @@ public class AbstractAgent {
     preloadMethods();
   }
 
-
   public void handle(HttpServletRequest httpServletRequest,
                      HttpServletResponse httpServletResponse)
-    throws IOException, Exception {
+    throws IOException, ServletException {
 
 
     String requestURI = httpServletRequest.getRequestURI();
@@ -43,7 +66,7 @@ public class AbstractAgent {
     if (i < 0) {
       processUnknown(httpServletRequest, httpServletResponse);
       return;
-    } else if (i == requestURI.length()-1) {
+    } else if (i == requestURI.length() - 1) {
       processIndex(httpServletRequest, httpServletResponse);
       return;
     } else {
@@ -53,16 +76,36 @@ public class AbstractAgent {
 
     Method method = (Method) operationCache.get(operation.toLowerCase());
     if (method != null) {
-      method.invoke(this, new Object[]{httpServletRequest, httpServletResponse});
+      try {
+        method.invoke(this, new Object[]{httpServletRequest, httpServletResponse});
+      } catch (Exception e) {
+        log.warn("Error dispatching request " + requestURI, e);
+        httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      }
     } else {
       processUnknown(httpServletRequest, httpServletResponse);
     }
   }
 
+  /**
+   *
+   * Callback method for index page. Forwards to {@link DEFAULT_INDEX_JSP} by default.
+   *
+   * @param httpServletRequest The incoming request.
+   * @param httpServletResponse The outgoing response.
+   */
   protected void processIndex(HttpServletRequest httpServletRequest,
                               HttpServletResponse httpServletResponse) throws IOException, ServletException {
-    renderView("index.jsp", httpServletRequest, httpServletResponse);
+    renderView(DEFAULT_INDEX_JSP, httpServletRequest, httpServletResponse);
   }
+
+  /**
+   *
+   * Callback method for unknown/unsupported requests. Returns HTTP Status 404 by default.
+   *
+   * @param httpServletRequest The incoming request.
+   * @param httpServletResponse The outgoing response.
+   */
 
   protected void processUnknown(HttpServletRequest httpServletRequest,
                                 HttpServletResponse httpServletResponse) throws IOException, ServletException {
@@ -73,29 +116,33 @@ public class AbstractAgent {
   protected void renderView(String jspName,
                             HttpServletRequest httpServletRequest,
                             HttpServletResponse httpServletResponse) throws IOException, ServletException {
-    httpServletRequest.getRequestDispatcher("/axis2-web/" + jspName).include(httpServletRequest, httpServletResponse);
+    httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName).include(httpServletRequest, httpServletResponse);
 
   }
 
   private void preloadMethods() {
-    List allMethods = new ArrayList();
-    allMethods.addAll(Arrays.asList(getClass().getDeclaredMethods()));
-    Class clazz = getClass().getSuperclass();
+    Class clazz = getClass();
     while (clazz != null && !clazz.equals(Object.class)) {
-      allMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+      examineMethods(clazz.getDeclaredMethods());
       clazz = clazz.getSuperclass();
     }
+  }
 
-    for (int i = 0; i < allMethods.size(); i++) {
-      Method method = (Method) allMethods.get(i);
+  private void examineMethods(Method[] aDeclaredMethods) {
+    for (int i = 0; i < aDeclaredMethods.length; i++) {
+      Method method = aDeclaredMethods[i];
 
       Class[] parameterTypes = method.getParameterTypes();
-      if (method.getName().startsWith("process") &&
+      if (
+        (Modifier.isProtected(method.getModifiers()) || Modifier.isPublic(method.getModifiers())) &&
+        method.getName().startsWith(METHOD_PREFIX) &&
         parameterTypes.length == 2 &&
         parameterTypes[0].equals(HttpServletRequest.class) &&
         parameterTypes[1].equals(HttpServletResponse.class)) {
-        String key = method.getName().substring(7).toLowerCase();
 
+        String key = method.getName().substring(METHOD_PREFIX.length()).toLowerCase();
+
+        // ensure we don't overwrite existing method with superclass method
         if (!operationCache.containsKey(key)) {
           operationCache.put(key, method);
         }

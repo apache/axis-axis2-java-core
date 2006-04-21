@@ -1,5 +1,5 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
+* Copyright 2004,2006 The Apache Software Foundation.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -30,15 +30,7 @@ import java.util.HashMap;
 
 public class ListingAgent extends AbstractAgent {
 
-  /**
-   * Field LIST_MULTIPLE_SERVICE_JSP_NAME
-   */
   private static final String LIST_MULTIPLE_SERVICE_JSP_NAME = "listServices.jsp";
-  private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
-
-  /**
-   * Field LIST_SINGLE_SERVICE_JSP_NAME
-   */
   private static final String LIST_SINGLE_SERVICE_JSP_NAME = "listSingleService.jsp";
 
   public static final String RUNNING_PORT = "RUNNING_PORT";
@@ -48,7 +40,7 @@ public class ListingAgent extends AbstractAgent {
   }
 
   public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-    throws IOException, Exception {
+    throws IOException, ServletException {
      if (httpServletRequest.getParameter("wsdl") != null || httpServletRequest.getParameter("xsd") != null) {
        processListService(httpServletRequest, httpServletResponse);
      } else {
@@ -64,7 +56,7 @@ public class ListingAgent extends AbstractAgent {
   protected void processListService(HttpServletRequest req, HttpServletResponse res)
     throws IOException, ServletException {
 
-    String filePart = req.getRequestURI();
+    String filePart = req.getRequestURL().toString();
     String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
     HashMap services = configContext.getAxisConfiguration().getServices();
     String wsdl = req.getParameter("wsdl");

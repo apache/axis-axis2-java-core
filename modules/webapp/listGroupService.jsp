@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-  <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/"/>
+  <jsp:include page="include/httpbase.jsp"/>
   <title>List Services</title>
   <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css" />
 </head>
@@ -18,10 +18,7 @@
 </jsp:include>
 <h1>Available services</h1>
 <%
-  String IP = request.getRequestURL().toString();
-  int lastindex = IP.lastIndexOf('/');
-  IP = IP.substring(0, lastindex);
-  String prifix = IP + "/services/";
+  String prifix = request.getAttribute("frontendHostUrl") + "services/";
 %>
 <%
   HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);

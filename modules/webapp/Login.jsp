@@ -25,59 +25,61 @@
 */
 --%>
 <html>
-<head>
-  <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
-  <title>Login to Axis2:: Administration page</title>
-  <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-<jsp:include page="include/header.inc" />
-<jsp:include page="include/link-footer.jsp" />
-<table class="FULL_BLANK">
-  <tr><td valign="top">
-  </td>
-    <td valign="middle" align="left">
-      <form method="post" name="LoginForm" action="admin/login">
-        <table class="LOG_IN_FORM">
-          <tr>
-            <td align="center" colspan="2" bgcolor="#b0b0b0" color="#FFFFFF"><font color="#FFFFFF">Login</font></td>
-          </tr>
-          <tr>
-            <td align="right">User :</td>
-            <td><INPUT align="left" TYPE=TEXT NAME="userName" tabindex="1">
-            </td>
-          </tr>
-          <tr>
-            <td align="right">Password : </td>
-            <td><INPUT align="left" TYPE=PASSWORD NAME="password" tabindex="2">
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <br>
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <input name="submit" type="submit" value=" Login  ">
-            </td>
-            <td align="left">
-              <input name="cancel" type="reset" value=" Clear ">
-            </td>
-          </tr>
-        </table>
-      </form>
-      <br/><br/><br/><br/><br/><br/>
-    </td>
-  </tr>
-</table>
-<jsp:include page="include/footer.inc"/>
-<script language="JavaScript">
-  <!--
-  document.LoginForm.userName.focus();
-  //-->
-</script>
-</body>
+  <head>
+    <jsp:include page="include/httpbase.jsp"/>
+    <title>Login to Axis2:: Administration page</title>
+    <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body onload="javascript:document.LoginForm.userName.focus();">
+    <jsp:include page="include/header.inc"/>
+    <jsp:include page="include/link-footer.jsp"/>
+    <table class="FULL_BLANK">
+      <tr>
+        <td valign="top"></td>
+        <td valign="middle" align="left">
+          <form method="post" name="LoginForm" action="axis2-admin/login">
+            <table class="LOG_IN_FORM">
+              <tr>
+                <td align="center" colspan="2" bgcolor="#b0b0b0" color="#FFFFFF"><font color="#FFFFFF">Login</font></td>
+              </tr>
+              <tr>
+                 <td align="center" colspan="2">&nbsp;</td>
+               </tr>
+              <tr>
+                <td align="right">User :</td>
+                <td><input align="left" type="text" name="userName" tabindex="1">
+                </td>
+              </tr>
+              <tr>
+                <td align="right">Password : </td>
+                <td><input align="left" type="password" name="password" tabindex="2">
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <br>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" colspan="2">
+                  <input name="cancel" type="reset" value=" Clear "> &nbsp; &nbsp;
+                  <input name="submit" type="submit" value=" Login ">
+                </td>
+              </tr>
+              <tr>
+                <td align="center" colspan="2">
+                  <font color="red">&nbsp;<% if (request.getAttribute("errorMessage") != null) {%><%= request.getAttribute("errorMessage")%><% } %>&nbsp;</font>
+                </td>
+              </tr>
+            </table>
+          </form>
+          <br/><br/><br/><br/><br/><br/>
+        </td>
+      </tr>
+    </table>
+    <jsp:include page="include/footer.inc"/>
+  </body>
 </html>
 
 

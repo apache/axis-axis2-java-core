@@ -33,14 +33,11 @@
  */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp" />
 
   <h1>Available services</h1>
-    <%String IP=request.getRequestURL().toString();
-        int lastindex = IP.lastIndexOf('/');
-        IP = IP.substring(0,lastindex);
-        String prifix = IP + "/services/";
-        String restprefix = IP + "/rest/";
+    <%  String prifix = request.getAttribute("frontendHostUrl") + "services/";
+        String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
      <%
          HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);

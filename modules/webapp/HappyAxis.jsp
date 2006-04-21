@@ -39,7 +39,7 @@
     */
 %>
 <head>
-    <base href="<%= request.getScheme() %>://<%= request.getServerName() %>:<%= request.getServerPort()%><%= request.getContextPath() %>/" />
+    <jsp:include page="include/httpbase.jsp"/>
     <title>Axis2 Happiness Page</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
 </head>
@@ -48,7 +48,10 @@
 <jsp:include page="include/header.inc"/>
 <jsp:include page="include/link-footer.jsp"/>
 <%port = request.getServerPort();%>
-<%IP = request.getRequestURL().toString();
+<%
+    // since this one is an internal request we do not use public frontendHostUrl
+    // for it
+    IP = request.getRequestURL().toString();
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0, lastindex);
     ///axis2/axis2-web/services/version

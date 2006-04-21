@@ -6,7 +6,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Turn off Axis Service</h1>
-<form method="get" name="serviceInActivate" action="admin/deactivateService">
+<form method="get" name="serviceInActivate" action="axis2-admin/deactivateService">
   <table width="100%"  border="0">
 <tr>
   <td colspan="2" >

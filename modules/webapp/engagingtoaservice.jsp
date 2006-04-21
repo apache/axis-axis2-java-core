@@ -10,7 +10,7 @@
 %>
 <h1>Engage Module for a Service</h1>
 <p>To engage a module for a axisService, first select the module you want to engage and then select the axisService you like the module to be engaged on and click "Engage".</p>
-<form method="get" name="selectModuleForm" action="admin/engageToService">
+<form method="get" name="selectModuleForm" action="axis2-admin/engageToService">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
         <td>

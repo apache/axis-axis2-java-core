@@ -35,7 +35,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/upload">Upload Service</a>
+         <a href="axis2-admin/upload">Upload Service</a>
        </td>
     </tr>
 <tr>
@@ -56,7 +56,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="admin/listServiceGroups">Available Service Groups</a>
+      <a href="axis2-admin/listServiceGroups">Available Service Groups</a>
     </td>
  </tr>
  <tr>
@@ -64,7 +64,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="admin/listModules">Available Modules</a>
+      <a href="axis2-admin/listModules">Available Modules</a>
     </td>
  </tr>
  <tr>
@@ -72,7 +72,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td>
-      <a href="admin/globalModules">Globally Engaged Modules</a>
+      <a href="axis2-admin/globalModules">Globally Engaged Modules</a>
     </td>
  </tr>
  <tr>
@@ -80,7 +80,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="admin/listPhases">Available Phases</a>
+      <a href="axis2-admin/listPhases">Available Phases</a>
     </td>
  </tr>
   <tr>
@@ -93,7 +93,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/viewGlobalHandlers">Global Chains</a>
+         <a href="axis2-admin/viewGlobalHandlers">Global Chains</a>
        </td>
     </tr>
     <tr>
@@ -101,7 +101,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/selectService">Operation Specific Chains</a>
+         <a href="axis2-admin/selectService">Operation Specific Chains</a>
        </td>
     </tr>
     <tr>
@@ -114,7 +114,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/engagingglobally">For all Services</a>
+         <a href="axis2-admin/engagingglobally">For all Services</a>
        </td>
     </tr>
      <tr>
@@ -122,7 +122,7 @@
          &nbsp;&nbsp;&nbsp;&nbsp;
         </td>
         <td>
-          <a href="admin/engageToServiceGroup">For a Service Group</a>
+          <a href="axis2-admin/engageToServiceGroup">For a Service Group</a>
         </td>
      </tr>
 
@@ -132,7 +132,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/engageToService">For a Service</a>
+         <a href="axis2-admin/engageToService">For a Service</a>
        </td>
     </tr>
 
@@ -141,7 +141,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/listOperation">For an Operation</a>
+         <a href="axis2-admin/listOperation">For an Operation</a>
        </td>
     </tr>
 
@@ -155,7 +155,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/deactivateService">Inactivate Service</a>
+         <a href="axis2-admin/deactivateService">Inactivate Service</a>
        </td>
     </tr>
     <tr>
@@ -163,7 +163,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/activateService">Activate Service</a>
+         <a href="axis2-admin/activateService">Activate Service</a>
        </td>
     </tr>
     <tr>
@@ -171,7 +171,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/selectServiceParaEdit">Edit Parameters</a>
+         <a href="axis2-admin/selectServiceParaEdit">Edit Parameters</a>
        </td>
     </tr>
     <tr>
@@ -184,7 +184,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="admin/listContexts">View Hierarchy</a>
+         <a href="axis2-admin/listContexts">View Hierarchy</a>
        </td>
     </tr>
 </table>

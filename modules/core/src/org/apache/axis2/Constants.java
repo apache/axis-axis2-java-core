@@ -110,6 +110,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String ENGAGE_MODULE_TO_SERVICE = "engageToService";
     public static final String ENGAGE_GLOBAL_MODULE = "engagingglobally";
     public static final String ADMIN_LOGIN = "adminlogin";
+    public static final String AXIS_WEB_CONTENT_ROOT = "/axis2-web/";
 
     /**
      * List service for admin pages
@@ -183,6 +184,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * Addressing Constants
      */
     public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
+    public static final String HTTP_FRONTEND_HOST_URL = "httpFrontendHostUrl";
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";

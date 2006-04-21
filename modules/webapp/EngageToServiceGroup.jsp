@@ -21,7 +21,7 @@
 		<p>No axisService groups are present to be engaged.</p>
 		<%} else {
 %>
-<form method="get" name="selectModuleForm" action="admin/engageToServiceGroup">
+<form method="get" name="selectModuleForm" action="axis2-admin/engageToServiceGroup">
     <table border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
             <td>Select a Module :</td>

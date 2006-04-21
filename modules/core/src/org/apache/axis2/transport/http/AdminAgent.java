@@ -1,3 +1,21 @@
+/*
+* Copyright 2004,2006 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+*/
+
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
@@ -25,7 +43,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Jens Schumann - OpenKnowledge GmbH
+ * Provides methods to process axis2 admin requests.
+ *
+ * @author Jens Schumann - OpenKnowledge GmbH (moved sources from ListingAgent)
  * @version $Id$
  */
 public class AdminAgent extends AbstractAgent {
@@ -53,38 +73,43 @@ public class AdminAgent extends AbstractAgent {
   private static final String VIEW_SERVICE_HANDLERS_JSP_NAME = "ViewServiceHandlers.jsp";
   private static final String SERVICE_PARA_EDIT_JSP_NAME = "ServiceParaEdit.jsp";
   private static final String ENGAGE_TO_OPERATION_JSP_NAME = "engagingtoanoperation.jsp";
+  private static final String LOGIN_JSP_NAME = "Login.jsp";
 
+  private File serviceDir;
 
   public AdminAgent(ConfigurationContext aConfigContext) {
     super(aConfigContext);
+    File repoDir = new File(configContext.getAxisConfiguration().getRepository().getFile());
+    serviceDir = new File(repoDir, "services");
+
+    if (!serviceDir.exists()) {
+      serviceDir.mkdirs();
+    }
   }
 
+  public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    throws IOException, ServletException {
+
+    // We forward to login page if axis2 security is enabled
+    // and the user is not authorized
+    // TODO Fix workaround for login test
+    if (axisSecurityEnabled() && authorizationRequired(httpServletRequest)) {
+      renderView(LOGIN_JSP_NAME, httpServletRequest, httpServletResponse);
+    } else {
+      super.handle(httpServletRequest, httpServletResponse);
+    }
+  }
 
   protected void processIndex(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
     renderView(ADMIN_JSP_NAME, req, res);
   }
 
-
-  public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, Exception {
-    // TODO Fix workaround for login test
-    if (axisSecurityEnabled() && authorizationRequired(httpServletRequest)) {
-      renderView("Login.jsp", httpServletRequest, httpServletResponse);
-    } else {
-      super.handle(httpServletRequest, httpServletResponse);
-    }
-
-  }
+  // supported web operations
 
   protected void processUpload(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
     boolean isMultipart = FileUpload.isMultipartContent(req);
     if (isMultipart) {
-      File repoDir = new File(configContext.getAxisConfiguration().getRepository().getFile());
-      File serviceDir = new File(repoDir, "services");
-
-      if (!serviceDir.exists()) {
-        serviceDir.mkdirs();
-      }
 
       try {
         // Create a new file upload handler
@@ -140,8 +165,9 @@ public class AdminAgent extends AbstractAgent {
 
     if ((username == null) || (password == null) || username.trim().equals("")
       || password.trim().equals("")) {
-      // todo SET ERROR MESSAGE
-      renderView("Login.jsp", req, res);
+      req.setAttribute("errorMessage", "Invalid auth credentials!");
+      renderView(LOGIN_JSP_NAME, req, res);
+      return;
     }
 
     String adminUserName = (String) configContext.getAxisConfiguration().getParameter(
@@ -153,9 +179,8 @@ public class AdminAgent extends AbstractAgent {
       req.getSession().setAttribute(Constants.LOGGED, "Yes");
       renderView(ADMIN_JSP_NAME, req, res);
     } else {
-      // todo SET ERROR MESSAGE
-      renderView("Login.jsp", req, res);
-      //throw new AdminAppException(Messages.getMessage("invaliduser"));
+      req.setAttribute("errorMessage", "Invalid auth credentials!");
+      renderView(LOGIN_JSP_NAME, req, res);
     }
   }
 
@@ -495,7 +520,6 @@ public class AdminAgent extends AbstractAgent {
     renderView(LIST_AVAILABLE_MODULES_JSP_NAME, req, res);
   }
 
-
   protected void processSelectService(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
     HashMap services = configContext.getAxisConfiguration().getServices();
 
@@ -508,7 +532,7 @@ public class AdminAgent extends AbstractAgent {
 
   private boolean authorizationRequired(HttpServletRequest httpServletRequest) {
     return httpServletRequest.getSession().getAttribute(Constants.LOGGED) == null &&
-    !httpServletRequest.getRequestURI().endsWith("login");
+      !httpServletRequest.getRequestURI().endsWith("login");
   }
 
   private boolean axisSecurityEnabled() {
@@ -517,5 +541,3 @@ public class AdminAgent extends AbstractAgent {
   }
 
 }
-
-

@@ -56,22 +56,22 @@
 
     <servlet-mapping>
         <servlet-name>AxisAdminServlet</servlet-name>
-        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/axis2-admin/*</url-pattern>
     </servlet-mapping>
-
 
    <welcome-file-list>
       <welcome-file>/axis2-web/index.jsp</welcome-file>
     </welcome-file-list>
 
     <error-page>
-        <exception-type>
-            org.apache.axis2.transport.http.server.AdminAppException</exception-type>
-        <location>/axis2-web/Error/AuthError.html</location>
+      <error-code>404</error-code>
+      <location>/axis2-web/Error/error404.jsp</location>
     </error-page>
 
-    <!--error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/Error/GenError.html</location>
-    </error-page-->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/axis2-web/Error/error500.jsp</location>
+    </error-page>
+
+
 </web-app>
