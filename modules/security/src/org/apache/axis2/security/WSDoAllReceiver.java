@@ -197,7 +197,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
              */
 
             
-            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc, disableDoom));
+            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc));
             
             /*
              * After setting the new current message, probably modified because
