@@ -135,60 +135,57 @@ sure to prefix the subject of the mail with [Axis2].</p>
 <h3><a name="Axis2_Complete_Features_List">Axis2 Complete Features
 List</a></h3>
 <ol type="1"> 
- <li>AXIOM, an XML object model working on StAX (Streaming API for XML) parsing optimized for SOAP 1.1/1.2 Messages. This has complete XML infoset support.</li>
- <li>Support for One-Way Messaging (In-Only) and Request Response Messaging (In-Out)</li>
- <li>Module Architecture, mechanism to extend the SOAP Processing Model</li>
- <li>Module version support , can have multiple versions of the same module and use them depending on the requirement.</li>
- <li>Content hierarchy</li>
- <li>Archive based deployment Model and Directory based deployment model</li>
- <li>JWS like deployment (making Java class into Web service)</li>
- <li>WSDL Code Generation Tool for Stub and skeletons</li>
- <li>WS-Addressing, both the submission (2004/08) and final (2005/08) versions</li>
- <li>WSS4J module for security</li>
- <li>Improved and user friendly Client API</li>
- <li>WSDL2Java and Java2WSDL</li>
- <li>REST (REpresentational State Transfer) Support</li>
- <li>Transports supports: HTTP, SMTP, TCP, JMS</li>
- <li>Raw XML providers</li>
- <li>Support for MTOM/ MIME/ SwA</li>
- <li>SAAJ implementation</li>
- <li>DOOM</li>
- <li>Pack/Unpack capability for the generated code</li>
- <li>Axis Data Binding - ADB (Framework and Schema Compiler)</li>
- <li>Numerous bug fixes since last release</li>
- <li>Transport framework improvements (ListenerManager)- <span style="color: #FF0000">New</span></li>
- <li>AxisServlet auto start when application server get start up- <span style="color: #FF0000">New</span></li>
- <li>Module dis-engagemnt support- <span style="color: #FF0000">New</span></li>
- <li>Loading module (.mar) from classpath- <span style="color: #FF0000">New</span></li>
- <li>Sessions scoping for Application, SOAP, Transport and Request levels-<span style="color: #FF0000">New</span></li>
-</ol>
+  <li>AXIOM, an XML object model working on StAX (Streaming API for XML)
+    parsing optimized for SOAP 1.1/1.2 Messages. This has complete XML
+    infoset support.</li>
+  <li>Support for One-Way Messaging (In-Only) and Request Response Messaging
+    (In-Out).</li>
+  <li>Module Architecture, mechanism to extend the SOAP Processing model.</li>
+  <li>Module version support, can have multiple versions of the same module
+    and use them depending on the requirement.</li>
+  <li>Content hierarchy</li>
+  <li>Archive based deployment model and Directory based deployment model</li>
+  <li>JWS like deployment (making Java class into Web service)</li>
+  <li>WSDL Code Generation tool for stubs and skeletons</li>
+  <li>WS-Addressing, both the submission (2004/08) and final (2005/08)
+    versions</li>
+  <li>WSS4J module for security</li>
+  <li>Improved and user friendly Client API</li>
+  <li>WSDL2Java and Java2WSDL</li>
+  <li>REST (REpresentational State Transfer) Support</li>
+  <li>Transports supports: HTTP, SMTP, TCP, JMS</li>
+  <li>Raw XML providers</li>
+  <li>Support for MTOM/ MIME/ SwA</li>
+  <li>SAAJ implementation</li>
+  <li>DOOM (OM DOM implementation)</li>
+  <li>Pack/Unpack capability for the generated code</li>
+  <li>Axis Data Binding - ADB (Framework and Schema Compiler)</li>
+  <li>Transport framework improvements (ListenerManager)</li>
+  <li>Module disengagemnt support</li>
+  <li>Loading modules (.mar files) from classpath</li>
+  <li>Sessions scoping for Application, SOAP, Transport and Request
+  levels</li>
+  <li>Server side and client side Web service Policy support</li>
+  <li>?wsdl and ?xsd support</li>
+  <li>Dynamic ServiceClient generation for a given WSDL and invoking the
+    corresponding service using generated client</li>
+  <li>WSDL fault handling (fault code generation)</li>
+  <li>SOAP 1.2 and HTTP binding generation (?wsdl)</li>
+  <li>Streaming Attachments support for MTOM (SOAP Message Transamission
+    Optimization Mechanism)</li></ol>
 
 <h4><a name="Experimental_Features_List">Experimental Features List</a></h4>
 <ol type="1">
- <li><a href="WS_policy.html" target="_blank">Server side & client side Web Service Policy support</a></li>
- <li>?wsdl and ?xsd support</li>
- <li>Generating ServiceClient for a given WSDL and invoke the corresponding service using generated client.</li>
+  <li>URL based deployment mechanism (starting Axis with remote
+  repository)</li>
+  <li>Unexpanded war support (location of axis2.xml and repository can be
+    specified in web.xml )</li>
 </ol>
 
-<h4><a name="Major_Changes_Since_Last_Release">Major Changes Since Last
+<!--<h4><a name="Major_Changes_Since_Last_Release">Major Changes Since Last
 Release</a></h4>
 <ol type="1">
-   <li>Transport framework improvements (ListenerManager)</li>
-   <li>Changed the way of adding action to mapping (wsamapping) from parameter to child element so with this version onward the way of adding mapping is as follows:</li>
-   <pre>
-   
-&lt;actionMapping&gt;MyMapping&lt;/actionMapping&gt;
-
-</pre>
-<li>Refactored following packages in Axiom.
-    <ul>
-     <li>org.apache.axiom.om.impl.llom.builder to org.apache.axiom.om.impl.builder</li>
-     <li>org.apache.axiom.om.impl.llom.mtom to org.apache.axiom.om.impl.mtom</li>
-     <li>org.apache.axiom.om.impl.llom.serialize to org.apache.axiom.om.impl.serialize</li>
-     <li>org.apache.axiom.om.impl.llom.traverse to org.apache.axiom.om.impl.traverse</li>
-   </ul>
- </li>
-</ol>
+</ol>-->
 
 <h3><a name="Tools_included_in this_Release">Tools Included In This
 Release</a></h3>
@@ -205,6 +202,19 @@ Release</a></h3>
     IDEA plugin</a>--></li>
 </ol>
 <p><a href="http://ws.apache.org/axis2/download.cgi" target="_blank">Download</a> above plugins</p>
+
+<h3>What Still To Do?</h3>
+<p>See list of what we think needs to be done, and consider helping out if
+you're interested and able!</p>
+<ol type="1">
+  <li>JAX-RPC 1.1 and/or JAX-WS compliance</li>
+  <li>SOAP Encoding</li>
+  <li>Binary serialization and de-serialization support</li>
+  <li>Resource framework implementation (WS-RF) and Enterprise web services
+    such as JSR 109 support</li>
+  <li>HTTP transport based on URL.openConnection (to be usable in Java Web
+    Start clients, because of authenticating proxies)</li>
+</ol>
 
 <p align="right"><a href="userguide.html"><img
 src="images/arrow_left.gif"> Previous</a> | <a href="userguide2.html">Next <img src="images/arrow_right.gif"></a></p>
