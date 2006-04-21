@@ -48,12 +48,14 @@ import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed
  * via reflection from the XMLBeans code generation extension when XMLBeans data
  * binding is selected.
- * 
+ *
  * @author dsosnoski
  */
 public class CodeGenerationUtility {
@@ -71,15 +73,15 @@ public class CodeGenerationUtility {
     boolean debug = false;
 
     /**
-     * 
+     *
      * @param additionalSchemas
      * @throws RuntimeException
      */
     public static TypeMapper processSchemas(List schemas,
-        Element[] additionalSchemas, CodeGenConfiguration cgconfig) throws RuntimeException {
+                                            Element[] additionalSchemas, CodeGenConfiguration cgconfig) throws RuntimeException {
         try {
-            
-            
+
+
             //check for the imported types. Any imported types are supposed to be here also
             if (schemas == null || schemas.isEmpty()) {
                 //there are no types to be code generated
@@ -97,17 +99,22 @@ public class CodeGenerationUtility {
             JavaTypeMapper mapper = new JavaTypeMapper();
             Map nameSpacesMap = cgconfig.getAxisService().getNameSpacesMap();
             for (int i = 0; i < schemas.size(); i++) {
-
                 XmlSchema schema = (XmlSchema) schemas.get(i);
                 XmlOptions options = new XmlOptions();
-
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
-                xmlObjectsVector.add(
-                        XmlObject.Factory.parse(
-                                getSchemaAsString(schema)
-                                , options));
+                Document[] allSchemas = schema.getAllSchemas();
 
+                for (int j = 0; j < allSchemas.length; j++) {
+                    Document allSchema = allSchemas[j];
+                    ///////////////////////////
+                    //System.out.println(DOM2Writer.nodeToString(allSchema));
+                    ////////////////////////////
+                    xmlObjectsVector.add(
+                            XmlObject.Factory.parse(
+                                    allSchema
+                                    , options));
+                }
             }
 
             // add the third party schemas
@@ -135,9 +142,9 @@ public class CodeGenerationUtility {
 
             // prune the generated schema type system and add the list of base64 types
             cgconfig.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY,
-                findBase64Types(sts));
+                    findBase64Types(sts));
             cgconfig.putProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY,
-                findPlainBase64Types(sts));
+                    findPlainBase64Types(sts));
 
             //get the schematypes and add the document types to the type mapper
             SchemaType[] schemaType = sts.documentTypes();
@@ -147,7 +154,7 @@ public class CodeGenerationUtility {
                 mapper.addTypeMappingName(type.getDocumentElementName(),
                         type.getFullJavaName());
             }
-            
+
             //return mapper to be set in the config
             return mapper;
 
@@ -156,6 +163,7 @@ public class CodeGenerationUtility {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Populate the base64 types
@@ -238,9 +246,9 @@ public class CodeGenerationUtility {
      * Private class to generate the filer
      */
     private static class Axis2Filer implements Filer {
-        
+
         private File location;
-        
+
         private Axis2Filer(File loc) {
             location = loc;
         }
@@ -304,7 +312,7 @@ public class CodeGenerationUtility {
             if (uri2packageMappings.containsKey(uri)){
                 return (String)uri2packageMappings.get(uri);
             }else{
-                 return URLProcessor.makePackageName(uri);
+                return URLProcessor.makePackageName(uri);
             }
 
         }

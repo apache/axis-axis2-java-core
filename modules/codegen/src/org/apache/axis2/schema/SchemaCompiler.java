@@ -32,6 +32,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 
@@ -203,6 +204,10 @@ public class SchemaCompiler {
                 Object o = tempIterator.next();
                 if (o instanceof XmlSchemaImport) {
                     XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
+                    if (schema1 != null) compile(schema1);
+                }
+                if (o instanceof XmlSchemaInclude) {
+                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
                     if (schema1 != null) compile(schema1);
                 }
             }
