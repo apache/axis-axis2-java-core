@@ -78,7 +78,7 @@ public class Receiver implements Handler {
 
             //Convert back to llom since the inflow cannot use llom
             msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(
-                    config.getDocument(), false));
+                    config.getDocument()));
             
         } catch (Exception e) {
             if (e instanceof RahasException) {
