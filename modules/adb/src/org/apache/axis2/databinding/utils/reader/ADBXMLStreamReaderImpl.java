@@ -6,12 +6,12 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.utils.BeanUtil;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.activation.DataHandler;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -696,7 +696,8 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         } else if (state==TEXT_STATE) {
             return null;
         }else{
-            return elementQName.getPrefix();
+            String prefix = elementQName.getPrefix();
+            return "".equals(prefix) ? null : prefix ;
         }
     }
 

@@ -91,7 +91,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
     }
 
     public void testConvertToDOOM() throws Exception {
-        String xml = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><ns1:createAccountRequest xmlns:ns1=\"http://www.wso2.com/types\"><ns1:clientinfo xmlns=\"http://www.wso2.com/types\"><name xmlns=\"\">bob</name><ssn xmlns=\"\">123456789</ssn></ns1:clientinfo><password xmlns=\"\">passwd</password></ns1:createAccountRequest></soapenv:Body></soapenv:Envelope>";
+        String xml = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><ns1:createAccountRequest xmlns:ns1=\"http://www.wso2.com/types\"><clientinfo xmlns=\"http://www.wso2.com/types\"><name>bob</name><ssn>123456789</ssn></clientinfo><password xmlns=\"\">passwd</password></ns1:createAccountRequest></soapenv:Body></soapenv:Envelope>";
 
         StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(getTestEnvelope().getXMLStreamReader(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         SOAPEnvelope envelope = builder2.getSOAPEnvelope();
