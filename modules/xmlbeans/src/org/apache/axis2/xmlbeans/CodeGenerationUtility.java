@@ -51,6 +51,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import com.ibm.wsdl.util.xml.DOM2Writer;
 
+import javax.xml.namespace.QName;
+
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed
  * via reflection from the XMLBeans code generation extension when XMLBeans data
@@ -204,6 +206,11 @@ public class CodeGenerationUtility {
         return base64ElementQNamesList;
     }
 
+    /**
+     *
+     * @param sts
+     * @return
+     */
     private static List findPlainBase64Types(SchemaTypeSystem sts) {
         ArrayList allSeenTypes = new ArrayList();
 
@@ -214,28 +221,42 @@ public class CodeGenerationUtility {
 
         for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext();) {
             SchemaType stype = (SchemaType) iterator.next();
-            findPlainBase64Types(stype, base64Types);
+            findPlainBase64Types(stype, base64Types,new ArrayList());
         }
 
         return base64Types;
     }
 
-    private static void findPlainBase64Types(SchemaType stype, ArrayList base64Types) {
+    /**
+     *
+     * @param stype
+     * @param base64Types
+     */
+    private static void findPlainBase64Types(SchemaType stype,
+                                             ArrayList base64Types,
+                                             ArrayList processedTypes) {
 
         SchemaProperty[] elementProperties = stype.getElementProperties();
-
+        QName name;
+        SchemaType schemaType;
         for (int i = 0; i < elementProperties.length; i++) {
-            SchemaType schemaType = elementProperties[i].getType();
-            if (schemaType.isPrimitiveType()) {
-                SchemaType primitiveType = schemaType.getPrimitiveType();
-                if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
-                    //todo fix the recursive problem here
-                    base64Types.add(elementProperties[i].getName());
+            schemaType = elementProperties[i].getType();
+            name = elementProperties[i].getName();
+            if (!base64Types.contains(name) && !processedTypes.contains(schemaType.getName())){
+                 processedTypes.add(stype.getName());
+                if (schemaType.isPrimitiveType()) {
+                    SchemaType primitiveType = schemaType.getPrimitiveType();
+                    if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
+                            base64Types.add(name);
+                    }
+
+                } else {
+                    findPlainBase64Types(schemaType, base64Types,processedTypes);
                 }
-            } else {
-                findPlainBase64Types(schemaType, base64Types);
             }
         }
+
+
     }
 
     private static XmlObject[] convertToXMLObjectArray(Vector vec) {
