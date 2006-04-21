@@ -52,7 +52,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private Module module;
     private ClassLoader moduleClassLoader;
     // To keep the File that moduel came from
-    private URL fileName ;
+    private URL fileName;
 
     /**
      * Field name
@@ -103,6 +103,14 @@ public class AxisModule implements FlowInclude, ParameterInclude {
             throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
         } else {
             parameters.addParameter(param);
+        }
+    }
+
+    public void removeParameter(Parameter param) throws AxisFault {
+        if (isParameterLocked(param.getName())) {
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
+        } else {
+            parameters.removeParameter(param);
         }
     }
 

@@ -39,6 +39,10 @@ public abstract class AxisDescription implements ParameterInclude,
         parameterInclude.addParameter(param);
     }
 
+    public void removeParameter(Parameter param) throws AxisFault {
+        parameterInclude.removeParameter(param);
+    }
+
     public void deserializeParameters(OMElement parameterElement)
             throws AxisFault {
 

@@ -19,6 +19,7 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportListener;
@@ -39,7 +40,7 @@ public class TransportInDescription implements ParameterInclude {
     // Stores handler Fault in inFlow
     private Phase faultPhase;
 
-     /**
+    /**
      * Field flowInclude
      */
     private Flow inFlow;
@@ -77,6 +78,10 @@ public class TransportInDescription implements ParameterInclude {
      */
     public void addParameter(Parameter param) throws AxisFault {
         paramInclude.addParameter(param);
+    }
+
+    public void removeParameter(Parameter param) throws AxisFault {
+        paramInclude.removeParameter(param);
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {

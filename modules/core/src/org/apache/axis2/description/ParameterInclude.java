@@ -34,6 +34,8 @@ public interface ParameterInclude {
      */
     public void addParameter(Parameter param) throws AxisFault;
 
+    public void removeParameter(Parameter param) throws AxisFault;
+
     public void deserializeParameters(OMElement parameterElement) throws AxisFault;
 
     /**

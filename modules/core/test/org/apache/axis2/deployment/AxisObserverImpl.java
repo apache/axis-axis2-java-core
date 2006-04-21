@@ -47,6 +47,9 @@ public class AxisObserverImpl implements AxisObserver {
     public void addParameter(Parameter param) throws AxisFault {
     }
 
+    public void removeParameter(Parameter param) throws AxisFault {
+    }
+
     public Parameter getParameter(String name) {
         return null;
     }

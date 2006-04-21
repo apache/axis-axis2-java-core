@@ -75,6 +75,10 @@ public class TransportOutDescription implements ParameterInclude {
         paramInclude.addParameter(param);
     }
 
+    public void removeParameter(Parameter param) throws AxisFault {
+        paramInclude.removeParameter(param);
+    }
+
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
         this.paramInclude.deserializeParameters(parameterElement);
     }

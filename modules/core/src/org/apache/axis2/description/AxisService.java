@@ -1013,10 +1013,6 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public void removeParameter(String paramName){
-        getParameters().remove(new Parameter(paramName, null));
-    }
-
     public Map getNameSpacesMap() {
         return nameSpacesMap;
     }

@@ -56,6 +56,10 @@ public class ParameterIncludeImpl implements ParameterInclude {
         }
     }
 
+    public void removeParameter(Parameter param) throws AxisFault {
+        parameters.remove(param.getName());
+    }
+
     /**
      * Since at runtime it parameters may be modified
      * to get the original state this method can be used

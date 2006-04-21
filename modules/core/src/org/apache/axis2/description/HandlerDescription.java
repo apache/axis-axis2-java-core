@@ -79,9 +79,17 @@ public class HandlerDescription implements ParameterInclude {
      */
     public void addParameter(Parameter param) throws AxisFault {
         if (isParameterLocked(param.getName())) {
-            throw new AxisFault(Messages.getMessage("paramterlockedbyparent",param.getName()));
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
         } else {
             parameterInclude.addParameter(param);
+        }
+    }
+
+    public void removeParameter(Parameter param) throws AxisFault {
+        if (isParameterLocked(param.getName())) {
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
+        } else {
+            parameterInclude.removeParameter(param);
         }
     }
 

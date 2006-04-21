@@ -30,11 +30,11 @@ import java.util.ArrayList;
  * <parameter> ....</parameter>
  * </moduleConfig>
  * <p/>
- * Right now this just keeps stores the set of parameters 
+ * Right now this just keeps stores the set of parameters
  */
 public class ModuleConfiguration implements ParameterInclude {
     private QName moduleName;
-    private ParameterInclude parameterinclude;
+    private ParameterInclude parameterInclude;
 
     // to keep the pointer to its parent , only to access parameters
     private ParameterInclude parent;
@@ -42,19 +42,27 @@ public class ModuleConfiguration implements ParameterInclude {
     public ModuleConfiguration(QName moduleName, ParameterInclude parent) {
         this.moduleName = moduleName;
         this.parent = parent;
-        parameterinclude = new ParameterIncludeImpl();
+        parameterInclude = new ParameterIncludeImpl();
     }
 
     public void addParameter(Parameter param) throws AxisFault {
         if (isParameterLocked(param.getName())) {
-           throw new AxisFault(Messages.getMessage("paramterlockedbyparent",param.getName()));
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
         } else {
-            parameterinclude.addParameter(param);
+            parameterInclude.addParameter(param);
+        }
+    }
+
+    public void removeParameter(Parameter param) throws AxisFault {
+        if (isParameterLocked(param.getName())) {
+            throw new AxisFault(Messages.getMessage("paramterlockedbyparent", param.getName()));
+        } else {
+            parameterInclude.removeParameter(param);
         }
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.parameterinclude.deserializeParameters(parameterElement);
+        this.parameterInclude.deserializeParameters(parameterElement);
     }
 
     public QName getModuleName() {
@@ -62,11 +70,11 @@ public class ModuleConfiguration implements ParameterInclude {
     }
 
     public Parameter getParameter(String name) {
-        return parameterinclude.getParameter(name);
+        return parameterInclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
-        return parameterinclude.getParameters();
+        return parameterInclude.getParameters();
     }
 
     public boolean isParameterLocked(String parameterName) {
