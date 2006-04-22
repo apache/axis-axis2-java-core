@@ -71,8 +71,9 @@ public class MTOMClientModel {
             imageName.setText(fileName);
         }
         //OMElement wrap = fac.createOMElement("wrap",omNs);
-        data.addChild(image);
+//        data.addChild(image);
         data.addChild(imageName);
+        data.addChild(image);
         //data.addChild(wrap);
         return data;
 

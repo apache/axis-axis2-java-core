@@ -22,22 +22,42 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
+import org.apache.axis2.AxisFault;
 
 import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 import java.awt.*;
 import java.io.FileOutputStream;
+import java.util.Iterator;
 
 public class MTOMService {
-    
+
     public OMElement mtomSample(OMElement element) throws Exception {
-    	
-        OMElement imageEle = element.getFirstElement();
-        OMElement imageName = (OMElement) imageEle.getNextOMSibling();
-        OMText binaryNode = (OMText) imageEle.getFirstOMChild();
-        String fileName = imageName.getText();
+
+        OMElement _fileNameEle = null;
+        OMElement _imageElement = null;
+
+        for (Iterator _iterator = element.getChildElements(); _iterator.hasNext();) {
+             OMElement _ele = (OMElement) _iterator.next();
+            if (_ele.getLocalName().equalsIgnoreCase("fileName")) {
+                  _fileNameEle = _ele;
+            }
+            if (_ele.getLocalName().equalsIgnoreCase("image")) {
+                  _imageElement = _ele;
+            }
+        }
+
+        if (_fileNameEle == null || _imageElement == null ) {
+            throw new AxisFault("Either Image or FileName is null");
+        }
+
+        OMText binaryNode = (OMText) _imageElement.getFirstOMChild();
+
+        String fileName = _fileNameEle.getText();
+
         //Extracting the data and saving
         DataHandler actualDH;
-        actualDH = (DataHandler)binaryNode.getDataHandler();
+        actualDH = (DataHandler) binaryNode.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(fileName);
