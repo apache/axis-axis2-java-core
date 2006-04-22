@@ -209,6 +209,14 @@ public class OutflowConfiguration {
 	 * Sets the signatue key identifier of the current action.
 	 * 
 	 * @param signatureKeyIdentifier
+     * Valid values:
+     * <ul>
+     * <li>X509KeyIdentifier - {@link WSSHandlerConstants#X509_KEY_IDENTIFIER}</li>
+     * <li>SKIKeyIdentifier - {@link WSSHandlerConstants#SKI_KEY_IDENTIFIER}</li>
+     * <li>IssuerSerial - {@link WSSHandlerConstants#ISSUER_SERIAL}</li>
+     * <li>DirectReference - {@link WSSHandlerConstants#BST_DIRECT_REFERENCE}</li>
+     * <li>Thumbprint - {@link WSSHandlerConstants#THUMBPRINT_IDENTIFIER}</li>
+     * </ul> 
 	 */
 	public void setSignatureKeyIdentifier(String signatureKeyIdentifier) {
 		this.actionList[this.currentAction].put(WSHandlerConstants.SIG_KEY_ID,
@@ -236,8 +244,17 @@ public class OutflowConfiguration {
 	
 	/**
 	 * Sets the encrypted key identifier of the current action.
-	 * 
+     * <br/>
 	 * @param encryptionKeyIdentifier
+     * Valid values:
+     * <ul>
+     * <li>X509KeyIdentifier - {@link WSSHandlerConstants#X509_KEY_IDENTIFIER}</li>
+     * <li>SKIKeyIdentifier - {@link WSSHandlerConstants#SKI_KEY_IDENTIFIER}</li>
+     * <li>IssuerSerial - {@link WSSHandlerConstants#ISSUER_SERIAL}</li>
+     * <li>DirectReference - {@link WSSHandlerConstants#BST_DIRECT_REFERENCE}</li>
+     * <li>EmbeddedKeyName - {@link WSSHandlerConstants#EMBEDDED_KEYNAME}</li>
+     * <li>Thumbprint - {@link WSSHandlerConstants#THUMBPRINT_IDENTIFIER}</li>
+     * </ul> 
 	 */
 	public void setEncryptionKeyIdentifier(String encryptionKeyIdentifier) {
 		this.actionList[this.currentAction].put(WSHandlerConstants.ENC_KEY_ID,
