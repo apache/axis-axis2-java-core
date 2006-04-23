@@ -26,6 +26,8 @@ public interface WSDLConstants {
     String STYLE_RPC = "rpc";
     String STYLE_DOC = "document";
     String STYLE_MSG = "msg";
+
+    String WSDL_4_J_DEFINITION  = "wsdl4jDefinition";
     /**
      * Field WSDL2_0_NAMESPACE
      */

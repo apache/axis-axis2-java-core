@@ -20,15 +20,9 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPProcessingException;
+import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
@@ -57,7 +51,7 @@ import java.util.zip.GZIPInputStream;
 public class HTTPTransportUtils {
 
 
-    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map ,
+    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map,
                                                             ConfigurationContext configurationContext) throws AxisFault {
         String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl);
 
@@ -68,8 +62,8 @@ public class HTTPTransportUtils {
         if ((values[1] != null) && (values[0] != null)) {
             String srvice = values[0];
             AxisService service = configurationContext.getAxisConfiguration().getService(srvice);
-            if(service==null){
-                throw  new AxisFault("service not found: " + srvice);
+            if (service == null) {
+                throw new AxisFault("service not found: " + srvice);
             }
             String operation = values[1];
             SOAPFactory soapFactory = new SOAP11Factory();
@@ -78,7 +72,7 @@ public class HTTPTransportUtils {
             OMNamespace omNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
                     service.getSchematargetNamespacePrefix());
             //OMNamespace defualtNs = new OMNamespaceImpl("", null, soapFactory);
-            OMNamespace defualtNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
+            soapFactory.createOMNamespace(service.getSchematargetNamespace(),
                     service.getSchematargetNamespacePrefix());
             OMElement opElement = soapFactory.createOMElement(operation, omNs);
             Iterator it = map.keySet().iterator();
@@ -115,8 +109,8 @@ public class HTTPTransportUtils {
         return enableMTOM;
     }
 
-    public static boolean processHTTPGetRequest(MessageContext msgContext, InputStream in,
-                                                OutputStream out, String contentType, String soapAction, String requestURI,
+    public static boolean processHTTPGetRequest(MessageContext msgContext,
+                                                OutputStream out, String soapAction, String requestURI,
                                                 ConfigurationContext configurationContext, Map requestParameters)
             throws AxisFault {
         if ((soapAction != null) && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
@@ -154,9 +148,9 @@ public class HTTPTransportUtils {
         try {
 
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-            if(headers != null) {
-                if(HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING))||
-                   HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase()))){
+            if (headers != null) {
+                if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
+                        HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase()))) {
                     in = new GZIPInputStream(in);
                 }
             }
@@ -225,7 +219,7 @@ public class HTTPTransportUtils {
                         Parameter enable =
                                 msgContext.getParameter(Constants.Configuration.ENABLE_REST);
 
-                       if ((soapActionHeader == null) && (enable != null)) {
+                        if ((soapActionHeader == null) && (enable != null)) {
                             if (Constants.VALUE_TRUE.equals(enable.getValue())) {
 
                                 // If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
@@ -248,7 +242,7 @@ public class HTTPTransportUtils {
                 }
             }
 
-            if(builder == null){
+            if (builder == null) {
                 XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
                         MessageContext.DEFAULT_CHAR_SET_ENCODING);
 

@@ -22,7 +22,6 @@ import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPHeader;
@@ -172,6 +171,12 @@ public class WSDL2AxisServiceBuilder {
             if (wsdl4jDefinition == null) {
                 wsdl4jDefinition = readInTheWSDLFile(in);
             }
+            //Setting wsdl4jdefintion to axisService , so if some one want
+            // to play with it he can do that by getting the parameter
+            Parameter wsdldefintionParamter = new Parameter();
+            wsdldefintionParamter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
+            wsdldefintionParamter.setValue(wsdl4jDefinition);
+            axisService.addParameter(wsdldefintionParamter);
 
             if (wsdl4jDefinition == null) {
                 return null;
@@ -200,7 +205,7 @@ public class WSDL2AxisServiceBuilder {
                     Element schemaElement = schemaElements[i];
                     if (schemaElement != null) {
                         System.out.println(schemaElement.getNamespaceURI());
-                        axisService.setSchema(getXMLSchema(schemaElement,null));
+                        axisService.setSchema(getXMLSchema(schemaElement, null));
                     }
                 }
             }
@@ -361,13 +366,12 @@ public class WSDL2AxisServiceBuilder {
 
             //All policy includes must share same registry
             PolicyInclude pi = axisOperation.getPolicyInclude();
-            if(pi == null){
+            if (pi == null) {
                 pi = new PolicyInclude();
                 axisOperation.setPolicyInclude(pi);
             }
             pi.setPolicyRegistry(registry);
         }
-
 
 
         if (style != null) {
@@ -899,7 +903,7 @@ public class WSDL2AxisServiceBuilder {
         }
     }
 
-    private XmlSchema getXMLSchema(Element element,String baseUri) {
+    private XmlSchema getXMLSchema(Element element, String baseUri) {
         XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
         Map nsMap = axisService.getNameSpacesMap();
         Iterator keys = nsMap.keySet().iterator();
@@ -909,7 +913,7 @@ public class WSDL2AxisServiceBuilder {
             schemaCollection.mapNamespace(key, (String) nsMap.get(key));
         }
 
-        if (baseUri!=null) schemaCollection.setBaseUri(baseUri);
+        if (baseUri != null) schemaCollection.setBaseUri(baseUri);
         return schemaCollection.read(element);
     }
 
@@ -939,12 +943,11 @@ public class WSDL2AxisServiceBuilder {
      * <code>Vector</code> if any and copy them to <code>Component</code>
      *
      * @param wsdl4jExtensibleElements
-     * @param description
-     *            where is the ext element (port , portype , biding)
+     * @param description                   where is the ext element (port , portype , biding)
      * @param wsdl4jDefinition
      * @param originOfExtensibilityElements -
-     *            this will indicate the place this extensibility element came
-     *            from.
+     *                                      this will indicate the place this extensibility element came
+     *                                      from.
      */
     private void copyExtensibleElements(List wsdl4jExtensibleElements,
                                         Definition wsdl4jDefinition, AxisDescription description,
@@ -1015,7 +1018,7 @@ public class WSDL2AxisServiceBuilder {
                 Schema schema = (Schema) wsdl4jElement;
                 //just add this schema - no need to worry about the imported ones
                 axisService.setSchema(getXMLSchema(schema.getElement(),
-                        wsdl4jDefinition.getDocumentBaseURI() ));
+                        wsdl4jDefinition.getDocumentBaseURI()));
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
                     .getElementType())) {
                 SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
@@ -1342,7 +1345,7 @@ public class WSDL2AxisServiceBuilder {
         QName key;
         QName value;
 
-        for (Iterator iterator = extAttributes.keySet().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = extAttributes.keySet().iterator(); iterator.hasNext();) {
             key = (QName) iterator.next();
             if (PolicyConstants.WS_POLICY_NAMESPACE_URI.equals(key.getNamespaceURI()) &&
                     "PolicyURIs".equals(key.getLocalPart())) {

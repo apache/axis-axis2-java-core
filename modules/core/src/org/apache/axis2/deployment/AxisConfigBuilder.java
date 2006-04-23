@@ -318,29 +318,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 try {
                     Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
                     processParameters(itr, transportIN, axisConfig);
-                    OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
-                    if (inFlow != null) {
-                        throw new DeploymentException(
-                                Messages.getMessage(
-                                        DeploymentErrorMsgs.INFLOW_NOT_ALLOWED_IN_TRS_OUT, name));
-                    }
-                    OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
-                    if (outFlow != null) {
-                        transportIN.setInFlow(processFlow(outFlow, axisConfig));
-                    }
-                    OMElement inFaultFlow =
-                            transport.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
-                    if (inFaultFlow != null) {
-                        transportIN.setFaultFlow(processFlow(inFaultFlow, axisConfig));
-                    }
-                    OMElement outFaultFlow =
-                            transport.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
-
-                    if (outFaultFlow != null) {
-                        throw new DeploymentException(
-                                Messages.getMessage(
-                                        DeploymentErrorMsgs.OUTFLOW_NOT_ALLOWED_IN_TRS_IN, name));
-                    }
                     // adding to axis2 config
                     axisConfig.addTransportIn(transportIN);
                 } catch (AxisFault axisFault) {
@@ -388,38 +365,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
 
                     processParameters(itr, transportout, axisConfig);
-
-                    // process INFLOW
-                    OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
-
-                    if (inFlow != null) {
-                        throw new DeploymentException(
-                                Messages.getMessage(
-                                        DeploymentErrorMsgs.INFLOW_NOT_ALLOWED_IN_TRS_OUT, name));
-                    }
-
-                    OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
-
-                    if (outFlow != null) {
-                        transportout.setOutFlow(processFlow(outFlow, axisConfig));
-                    }
-
-                    OMElement inFaultFlow =
-                            transport.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
-
-                    if (inFaultFlow != null) {
-                        throw new DeploymentException(
-                                Messages.getMessage(
-                                        DeploymentErrorMsgs.INFLOW_NOT_ALLOWED_IN_TRS_OUT, name));
-                    }
-
-                    OMElement outFaultFlow =
-                            transport.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
-
-                    if (outFaultFlow != null) {
-                        transportout.setFaultFlow(processFlow(outFaultFlow, axisConfig));
-                    }
-
                     // adding to axis2 config
                     axisConfig.addTransportOut(transportout);
                 } catch (ClassNotFoundException e) {

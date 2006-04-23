@@ -191,7 +191,7 @@ public class HTTPWorker implements HttpRequestHandler {
 
                 // It is GET handle the Get request
                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(
-                        msgContext, inStream, baos, request.getContentType(),
+                        msgContext, baos,
                         soapAction, request.getRequestLine().getUri(),
                         configurationContext,
                         HTTPTransportReceiver.getGetRequestParameters(
