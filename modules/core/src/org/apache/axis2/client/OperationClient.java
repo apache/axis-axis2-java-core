@@ -94,7 +94,7 @@ public interface OperationClient {
     public void reset() throws AxisFault;
 
     /**
-     * To close the tranport if necessary , can call this method. The most usage of thie method
+     * To close the transport if necessary , can call this method. The most usage of thie method
      * when clinet use two tarnport for sending and receiving , there we need to remove entry from
      * waitings calls in the transport listener queue
      * Note : DO NOT call this method if you are not using two transport send and receive

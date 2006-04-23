@@ -229,7 +229,7 @@ class OutInAxisOperationClient implements OperationClient {
         mc.setOptions(options);
         // if the transport to use for sending is not specified, try to find it
         // from the URL
-        TransportOutDescription transportOut = options.getTranportOut();
+        TransportOutDescription transportOut = options.getTransportOut();
         if (transportOut == null) {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();

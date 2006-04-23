@@ -138,7 +138,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         Options options = new Options();
         sender.setOptions(options);
         options.setTo(targetEPR);
-        options.setTranportOut(tOut);
+        options.setTransportOut(tOut);
         options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         sender.fireAndForget(payload);
 

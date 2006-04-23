@@ -36,7 +36,6 @@ public class CallbackReceiver implements MessageReceiver {
         if (callback != null) {
             callback.onComplete(result);
             callback.setComplete(true);
-            //closing the tranport
         } else {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }

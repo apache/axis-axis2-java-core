@@ -500,7 +500,7 @@ public class AxisEngine {
 
     /**
      * To resume the invocation at the send path , this is neened since it is require to call
-     * TranportSender at the end
+     * TransportSender at the end
      *
      * @param msgContext
      */
@@ -588,11 +588,11 @@ public class AxisEngine {
             // This boolean property only used in client side fireAndForget invocation
             //It will set a property into message context and if some one has set the
             //property then transport sender will invoke in a diffrent thread
-            Object isTranportBlocking = msgContext.getProperty(
+            Object isTransportBlocking = msgContext.getProperty(
                     MessageContext.TRANSPORT_NON_BLOCKING);
-            if (isTranportBlocking != null && ((Boolean) isTranportBlocking).booleanValue()) {
+            if (isTransportBlocking != null && ((Boolean) isTransportBlocking).booleanValue()) {
                 msgContext.getConfigurationContext().getThreadPool().execute(
-                        new TranportNonBlockingInvocationWorker(msgContext, sender));
+                        new TransportNonBlockingInvocationWorker(msgContext, sender));
             } else {
                 sender.invoke(msgContext);
             }
@@ -646,12 +646,12 @@ public class AxisEngine {
      * This class is the workhorse for a non-blocking invocation that uses a two
      * way transport.
      */
-    private class TranportNonBlockingInvocationWorker implements Runnable {
+    private class TransportNonBlockingInvocationWorker implements Runnable {
         private Log log = LogFactory.getLog(getClass());
         private MessageContext msgctx;
         private TransportSender sender;
 
-        public TranportNonBlockingInvocationWorker(MessageContext msgctx,
+        public TransportNonBlockingInvocationWorker(MessageContext msgctx,
                                                    TransportSender sender) {
             this.msgctx = msgctx;
             this.sender = sender;

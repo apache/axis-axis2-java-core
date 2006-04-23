@@ -432,7 +432,7 @@ public class ServiceClient {
             if (callback.envelope != null) {
                 // building soap enevlop
                 callback.envelope.build();
-                // closing tranport
+                // closing transport
                 return callback.envelope.getBody().getFirstElement();
             } else {
                 if (callback.error instanceof AxisFault) {

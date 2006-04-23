@@ -38,7 +38,7 @@ public class ListenerManager {
     public static ConfigurationContext defaultConfigurationContext;
     
     private ConfigurationContext configctx;
-    private HashMap startedTranports = new HashMap();
+    private HashMap startedTransports = new HashMap();
     private boolean stopped = true;
 
     public void init(ConfigurationContext configCtx) {
@@ -54,19 +54,19 @@ public class ListenerManager {
      * To get an EPR for a given service
      *
      * @param serviceName  : Name of the service
-     * @param tranportName : name of the trasport can be null , if it is null then
+     * @param transportName : name of the trasport can be null , if it is null then
      * @return String
      */
     public synchronized EndpointReference getEPRforService(String serviceName, String opName,
-                                                           String tranportName) throws AxisFault {
-        if (tranportName == null || "".equals(tranportName)) {
+                                                           String transportName) throws AxisFault {
+        if (transportName == null || "".equals(transportName)) {
             AxisService service = configctx.getAxisConfiguration().getService(serviceName);
             if (service == null) {
                 throw new AxisFault(Messages.getMessage(
                         "servicenotfoundinthesystem", serviceName));
             }
             if (service.isEnableAllTransport()) {
-                Iterator itr_st = startedTranports.values().iterator();
+                Iterator itr_st = startedTransports.values().iterator();
                 if (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener) itr_st.next();
                     return transportListener.getEPRForService(serviceName, null);
@@ -76,7 +76,7 @@ public class ListenerManager {
             } else {
                 String exposeTransport [] = service.getExposeTransports();
                 TransportListener listener = (TransportListener)
-                        startedTranports.get(exposeTransport[0]);
+                        startedTransports.get(exposeTransport[0]);
                 if (opName == null) {
                     return listener.getEPRForService(serviceName, null);
                 } else return listener.getEPRForService(serviceName + "/" + opName, null);
@@ -84,7 +84,7 @@ public class ListenerManager {
 
         } else {
             TransportInDescription trsIN = configctx.getAxisConfiguration()
-                    .getTransportIn(new QName(tranportName));
+                    .getTransportIn(new QName(transportName));
             TransportListener listener = trsIN.getReceiver();
             if (opName == null) {
                 return listener.getEPRForService(serviceName, null);
@@ -93,20 +93,20 @@ public class ListenerManager {
     }
 
     /**
-     * To start all the tranports
+     * To start all the transports
      */
     public synchronized void start() {
-        Iterator tranportNames = configctx.getAxisConfiguration().
+        Iterator transportNames = configctx.getAxisConfiguration().
                 getTransportsIn().values().iterator();
-        while (tranportNames.hasNext()) {
+        while (transportNames.hasNext()) {
             try {
-                TransportInDescription tranportIn = (TransportInDescription) tranportNames.next();
-                TransportListener listener = tranportIn.getReceiver();
-                if (listener != null && startedTranports.get(tranportIn.getName().getLocalPart()) == null) {
-                    listener.init(configctx, tranportIn);
+                TransportInDescription transportIn = (TransportInDescription) transportNames.next();
+                TransportListener listener = transportIn.getReceiver();
+                if (listener != null && startedTransports.get(transportIn.getName().getLocalPart()) == null) {
+                    listener.init(configctx, transportIn);
                     listener.start();
-                    if (startedTranports.get(tranportIn.getName().getLocalPart()) == null) {
-                        startedTranports.put(tranportIn.getName().getLocalPart(), listener);
+                    if (startedTransports.get(transportIn.getName().getLocalPart()) == null) {
+                        startedTransports.put(transportIn.getName().getLocalPart(), listener);
                     }
                 }
             } catch (Exception e) {
@@ -122,10 +122,10 @@ public class ListenerManager {
     }
 
     /**
-     * To stop all the tranport
+     * To stop all the transports
      */
     public synchronized void stop() throws AxisFault {
-        Iterator itr_st = startedTranports.values().iterator();
+        Iterator itr_st = startedTransports.values().iterator();
         while (itr_st.hasNext()) {
             TransportListener transportListener = (TransportListener) itr_st.next();
             transportListener.stop();
@@ -147,12 +147,12 @@ public class ListenerManager {
                 transportListener.start();
             }
             stopped = false;
-            startedTranports.put(trsIn.getName().getLocalPart(), transportListener);
+            startedTransports.put(trsIn.getName().getLocalPart(), transportListener);
         }
     }
 
     public synchronized boolean isListenerRunning(String transportName) {
-        return startedTranports.get(transportName) != null;
+        return startedTransports.get(transportName) != null;
     }
 
     public boolean isStopped() {

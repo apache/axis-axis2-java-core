@@ -253,9 +253,9 @@ public class Options {
         return replyTo;
     }
 
-    public TransportOutDescription getTranportOut() {
+    public TransportOutDescription getTransportOut() {
         if (transportOut == null && parent != null) {
-            return parent.getTranportOut();
+            return parent.getTransportOut();
         }
 
         return transportOut;
@@ -417,7 +417,7 @@ public class Options {
         this.replyTo = replyTo;
     }
 
-    public void setTranportOut(TransportOutDescription transportOut) {
+    public void setTransportOut(TransportOutDescription transportOut) {
         this.transportOut = transportOut;
     }
 
@@ -480,7 +480,7 @@ public class Options {
      *             useSeparateListener(boolean) instead. You do not need to
      *             setSenderTransportProtocol(String) as sender transport can be
      *             inferred from the to EPR. But still you can
-     *             setTranportOut(TransportOutDescription).
+     *             setTransportOut(TransportOutDescription).
      */
     public void setTransportInfo(String senderTransport,
                                  String listenerTransport, boolean useSeparateListener)
