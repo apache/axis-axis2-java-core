@@ -42,6 +42,7 @@ import java.util.Map;
  * 3. OMElementkey - OMElement value
  * 4. QName name/String name  - ADBBean value
  * 5. QName name/String name  - Java bean
+ * 5. QName name/String name  - Datahandler
  *
  * As for the attributes, these are the possible combinations in the
  * array
@@ -58,7 +59,7 @@ import java.util.Map;
  * in effect this is one huge state machine that has only a few states and delegates
  * things down to the child parsers whenever possible
  * <p/>
- * the possible inputs for this class
+ *
  */
 public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
@@ -70,7 +71,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     private Map declaredNamespaceMap = new HashMap();
 
-    //states for this pullparser - it can only have three states
+    //states for this pullparser - it can only have four states
     private static final int START_ELEMENT_STATE = 0;
     private static final int END_ELEMENT_STATE = 1;
     private static final int DELEGATED_STATE = 2;

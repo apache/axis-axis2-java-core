@@ -23,6 +23,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -30,9 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.HashMap;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
@@ -47,9 +53,12 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
@@ -92,55 +101,74 @@ public class CodeGenerationUtility {
                 return new DefaultTypeMapper();
             }
 
-            // todo - improve this code by using the schema compiler from
-            //xmlbeans directly
 
             SchemaTypeSystem sts;
-            Vector xmlObjectsVector = new Vector();
+            List completeSchemaList = new ArrayList();
+            List topLevelSchemaList = new ArrayList();
+
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
             Map nameSpacesMap = cgconfig.getAxisService().getNameSpacesMap();
+
+            //process all the schemas and make a list of all of them for
+            // resolving entities
             for (int i = 0; i < schemas.size(); i++) {
                 XmlSchema schema = (XmlSchema) schemas.get(i);
                 XmlOptions options = new XmlOptions();
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
                 Document[] allSchemas = schema.getAllSchemas();
-
                 for (int j = 0; j < allSchemas.length; j++) {
                     Document allSchema = allSchemas[j];
-                    ///////////////////////////
-                    //System.out.println(DOM2Writer.nodeToString(allSchema));
-                    ////////////////////////////
-                    xmlObjectsVector.add(
+                    completeSchemaList.add(
                             XmlObject.Factory.parse(
                                     allSchema
                                     , options));
+
                 }
             }
+
+            //make another list of top level schemas for passing into XMLbeans
+            for (int i = 0; i < schemas.size(); i++) {
+                XmlSchema schema = (XmlSchema) schemas.get(i);
+                XmlOptions options = new XmlOptions();
+                options.setLoadAdditionalNamespaces(
+                        nameSpacesMap); //add the namespaces
+                    topLevelSchemaList.add(
+                            XmlObject.Factory.parse(
+                                    getSchemaAsString(schema)
+                                    , options));
+
+                }
 
             // add the third party schemas
             //todo perhaps checking the namespaces would be a good idea to
             //make the generated code work efficiently
             for (int i = 0; i < additionalSchemas.length; i++) {
-                xmlObjectsVector.add(XmlObject.Factory.parse(
+                completeSchemaList.add(XmlObject.Factory.parse(
+                        additionalSchemas[i]
+                        , null));
+                 topLevelSchemaList.add(XmlObject.Factory.parse(
                         additionalSchemas[i]
                         , null));
             }
 
             //compile the type system
-            XmlObject[] objeArray = convertToXMLObjectArray(xmlObjectsVector);
+            Axis2EntityResolver er  = new Axis2EntityResolver();
+            er.setSchemas(convertToSchemaDocumentArray(completeSchemaList));
+            er.setBaseUri(cgconfig.getBaseURI());
+
 
             sts = XmlBeans.compileXmlBeans(
                     //set the STS name to null. it makes the generated class
                     // include a unique (but random) STS name
                     null,
                     null,
-                    objeArray,
+                    convertToSchemaArray(topLevelSchemaList),
                     new Axis2BindingConfig(cgconfig.getUri2PackageNameMap()),
                     XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(cgconfig.getOutputLocation()),
-                    null);
+                    new XmlOptions().setEntityResolver(er));
 
             // prune the generated schema type system and add the list of base64 types
             cgconfig.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY,
@@ -243,11 +271,11 @@ public class CodeGenerationUtility {
             schemaType = elementProperties[i].getType();
             name = elementProperties[i].getName();
             if (!base64Types.contains(name) && !processedTypes.contains(schemaType.getName())){
-                 processedTypes.add(stype.getName());
+                processedTypes.add(stype.getName());
                 if (schemaType.isPrimitiveType()) {
                     SchemaType primitiveType = schemaType.getPrimitiveType();
                     if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
-                            base64Types.add(name);
+                        base64Types.add(name);
                     }
 
                 } else {
@@ -259,9 +287,6 @@ public class CodeGenerationUtility {
 
     }
 
-    private static XmlObject[] convertToXMLObjectArray(Vector vec) {
-        return (XmlObject[]) vec.toArray(new XmlObject[vec.size()]);
-    }
 
     /**
      * Private class to generate the filer
@@ -339,4 +364,146 @@ public class CodeGenerationUtility {
         }
     }
 
+    /**
+    *
+     * @param vec
+     * @return
+     */
+    private static SchemaDocument[] convertToSchemaDocumentArray(List vec) {
+        SchemaDocument[] schemaDocuments =
+                (SchemaDocument[]) vec.toArray(new SchemaDocument[vec.size()]);
+        //remove duplicates
+        Vector uniqueSchemas = new Vector(schemaDocuments.length);
+        Vector uniqueSchemaTns = new Vector(schemaDocuments.length);
+        SchemaDocument.Schema s;
+        for (int i = 0; i < schemaDocuments.length; i++) {
+            s = schemaDocuments[i].getSchema();
+            if (!uniqueSchemaTns.contains(s.getTargetNamespace())) {
+                uniqueSchemas.add(schemaDocuments[i]);
+                uniqueSchemaTns.add(s.getTargetNamespace());
+            }else if (s.getTargetNamespace()==null){
+                //add anyway
+                uniqueSchemas.add(schemaDocuments[i]);
+            }
+        }
+        return (SchemaDocument[])
+                uniqueSchemas.toArray(
+                        new SchemaDocument[uniqueSchemas.size()]);
+    }
+
+    /**
+     * Converts a given vector of schemaDocuments to XmlBeans processable
+     * schema objects. One drawback we have here is the non-inclusion of
+     * untargeted namespaces
+     * @param vec
+     * @return
+     */
+    private static SchemaDocument.Schema[] convertToSchemaArray(List vec) {
+        SchemaDocument[] schemaDocuments =
+                (SchemaDocument[]) vec.toArray(new SchemaDocument[vec.size()]);
+        //remove duplicates
+        Vector uniqueSchemas = new Vector(schemaDocuments.length);
+        Vector uniqueSchemaTns = new Vector(schemaDocuments.length);
+        SchemaDocument.Schema s;
+        for (int i = 0; i < schemaDocuments.length; i++) {
+            s = schemaDocuments[i].getSchema();
+            if (!uniqueSchemaTns.contains(s.getTargetNamespace())) {
+                uniqueSchemas.add(s);
+                uniqueSchemaTns.add(s.getTargetNamespace());
+            }else if(s.getTargetNamespace()==null){
+                uniqueSchemas.add(s);
+            }
+        }
+        return (SchemaDocument.Schema[])
+                uniqueSchemas.toArray(
+                        new SchemaDocument.Schema[uniqueSchemas.size()]);
+    }
+
+    /**
+     * Implementation of the entity resolver
+     */
+    private static class Axis2EntityResolver implements EntityResolver {
+        private SchemaDocument[] schemas;
+        private String baseUri;
+
+        public Axis2EntityResolver() {
+        }
+
+        /**
+         * @see EntityResolver#resolveEntity(String, String)
+         * @param publicId  - this is the target namespace
+         * @param systemId  - this is the location (value of schemaLocation)
+         * @return
+         */
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException,IOException{
+            //System.out.println("Lookup:" + "[ " + publicId + "]" + "[" + systemId + "]");
+            try {
+                for (int i = 0; i < schemas.length; i++) {
+                    SchemaDocument.Schema schema = schemas[i].getSchema();
+                    if (schema.getTargetNamespace() != null &&
+                            publicId != null &&
+                            schema.getTargetNamespace().equals(publicId)) {
+                        try {
+                            return new InputSource(getSchemaAsStream(schemas[i]));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                if(systemId.indexOf(':') == -1) {
+                    File f;
+                    if (baseUri!=null){
+                        f=new File(new URI(baseUri+systemId));
+                    }else{
+                        f = new File(systemId);
+                    }
+                    if(f.exists()) {
+                        try {
+                            return new InputSource(new FileInputStream(f));
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                }
+                return XMLUtils.getEmptyInputSource();
+            } catch (URISyntaxException e) {
+               throw new SAXException(e);
+            }catch (Exception e){
+                throw new SAXException(e);
+            }
+        }
+
+        public SchemaDocument[]  getSchemas() {
+            return schemas;
+        }
+
+        public void setSchemas(SchemaDocument[] schemas) {
+            this.schemas = schemas;
+        }
+
+        public String getBaseUri() {
+            return baseUri;
+        }
+
+        public void setBaseUri(String baseUri) {
+            this.baseUri = baseUri;
+        }
+
+        /**
+         * Convert schema into a InputStream
+         *
+         * @param doc
+         */
+        private ByteArrayInputStream getSchemaAsStream(SchemaDocument schema) throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            schema.save(baos);
+            baos.flush();
+            return new ByteArrayInputStream(baos.toByteArray());
+
+        }
+    }
 }
+
+
+

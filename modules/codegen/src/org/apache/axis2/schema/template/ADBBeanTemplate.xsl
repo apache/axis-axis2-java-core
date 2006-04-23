@@ -176,6 +176,15 @@
                    if (<xsl:value-of select="$varName"/> == null){
                        <xsl:value-of select="$varName"/> = new <xsl:value-of select="$propertyType"/>{};
                    }
+
+                    <xsl:if test="$choice">
+                           clearAllSettingTrackers();
+                    </xsl:if>
+                    <xsl:if test="$min=0 or $choice">
+                         //update the setting tracker
+                         <xsl:value-of select="$settingTracker"/> = true;
+                    </xsl:if>
+
                    java.util.List list =
                         org.apache.axis2.databinding.utils.ConverterUtil.toList(<xsl:value-of select="$varName"/>);
                    list.add(param);

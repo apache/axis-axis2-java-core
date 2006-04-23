@@ -207,7 +207,15 @@ public class CodeGenerationEngine {
         if (uri.startsWith("http://")){
             baseURI = uri;
         } else{
-            baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
+            if(file.getParentFile() == null){
+               try {
+                    baseURI = new File(".").getCanonicalFile().toURI().toString();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                baseURI = file.getParentFile().toURI().toString();
+            }
         }
 
 
