@@ -15,6 +15,17 @@
  */
 package org.apache.axis2.jibx;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallable;
@@ -23,19 +34,10 @@ import org.jibx.runtime.IXMLWriter;
 import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.StAXWriter;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-
 /**
  * Data source for OM element backed by JiBX data bound object.
  */
-public class JiBXDataSource 
+public class JiBXDataSource implements OMDataSource
 {
     /** Bound object for output. */
     private final IMarshallable outObject;
@@ -60,7 +62,7 @@ public class JiBXDataSource
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         try {
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(output, "UTF-8");
+            ctx.setOutput(output, "UTF-8"); // shouldn't the content type be taken from OMOutputFormat itself ? -- Chinthaka
             outObject.marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
