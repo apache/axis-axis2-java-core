@@ -48,7 +48,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="services/listServices">Available Services</a>
+      <a href="axis2-admin/listService">Available Services</a>
     </td>
  </tr>
  <tr>
