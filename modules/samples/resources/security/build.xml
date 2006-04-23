@@ -11,7 +11,8 @@
 
     <target name="securitySample">
         <java classname="sample.security.Client" classpathref="axis.classpath" fork="true">
-		<arg value="client_repo"/>
+         <jvmarg value="-Daxis2.xml=client_repo/conf/axis2.xml"/>
+        <arg value="client_repo"/>
 		<arg value="8080"/>
 	</java>
     </target>
