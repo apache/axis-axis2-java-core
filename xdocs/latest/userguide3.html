@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2 User's Guide</title>
-  <meta name="generator" content="amaya 9.2.1, see http://www.w3.org/Amaya/">
+  <meta name="generator" content="Bluefish 1.0.4">
 </head>
 
 <body lang="en-US" dir="ltr">
@@ -163,26 +163,18 @@ client code you need to write is as follows.</p>
             OMElement payload = ClientUtil.getEchoOMElement();
             <span style="color: #24C113">            
             Options options = new Options();
-            options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
-
+            options.setTo(targetEPR); // this sets the location of MyService service
+            
             ServiceClient serviceClient = new ServiceClient();
             serviceClient.setOptions(options);
 
             OMElement result = sender.sendReceive(payload);
             </span>
-            StringWriter writer = new StringWriter();
-            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
-            writer.flush();
-
-            System.out.println(writer.toString());
+            System.out.println(result);
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
+        } 
 }</pre>
 </source>
 <p>The green lines shows the set of operations that you need to perform
@@ -195,7 +187,7 @@ have successfully tested the client. </p>
 
 <h4><a name="PingClient">PingClient</a></h4>
 
-<p>In the Web Service "MyService" we had a IN-ONLY operation with the name
+<p>In the Web Service "MyService" we had an IN-ONLY operation with the name
 "ping" (see <a href="userguide2.html#Web_Services_Using_Axis2">Web Services
 Using Axis2</a>). Let's write a client to invoke this operation. The client
 code is as follows:</p>
@@ -217,7 +209,7 @@ catch (AxisFault axisFault) {
             axisFault.printStackTrace();
      }</pre>
 
-<p>Since we are accessing a IN-ONLY operation we can directly use the
+<p>Since we are accessing an IN-ONLY operation we can directly use the
 "fireAndForget()" in ServiceClient to invoke this operation , and that will
 not block the invocation, hence it will return the control immediately back
 to the client. You can test this client by running the target
@@ -231,9 +223,9 @@ operations...</p>
 
 <p>In the EchoBlockingClient once the "serviceCleint.sendReceive(payload);"
 is called, the client is blocked till the operation is completed. This
-behavior is not desirable when there are many Web Service invocations to be
-done in a single client application. A solution would be to use a
-Non-Blocking API to invoke web services. Axis2 provides a callback based
+behavior is not desirable when there are many Web service invocations to be
+done in a single client application or within a GUI. A solution would be to use a
+Non-Blocking API to invoke Web services. Axis2 provides a callback based
 non-blocking API for users.</p>
 
 <p>A sample client for this can be found under
@@ -275,7 +267,7 @@ blocking invocation. </p>
 <p>The trivial solution is to use separate transport connections (either
 One-Way or Two-Way) for the request and response. The next problem that needs
 to be solved is the correlation (correlating the request and the response).
-<a href="http://www.w3.org/Submission/ws-addressing/"
+<a href="http://www.w3.org/2002/ws/addr/"
 target="_blank">WS-Addressing</a> provides a neat solution to this using
 &lt;wsa:MessageID&gt; and &lt;wsa:RelatesTo&gt; headers. Axis2 provides
 support for addressing  based correlation mechanism and a complying Client
@@ -299,25 +291,15 @@ asynchrony!!</strong></p>
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
 <br>            options.setUseSeparateListener(true);
-               options.setAction("urn:echo"); 
+               options.setAction("urn:echo"); // this is the action mapping we put within the service.xml
             
-            ServiceClient serviceClinet = new ServiceClinet();
-<br>            serviceClinet.setOptions(options);</pre>
+            ServiceClient serviceClient = new ServiceClient();
+<br>        serviceClient.setOptions(options);</pre>
 <pre>                  
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    try {
-                        StringWriter writer = new StringWriter();
-                        result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance()
-                                                                .createXMLStreamWriter(writer)));
-                        writer.flush();
-
-                        System.out.println(writer.toString());
-
-                    } catch (XMLStreamException e) {
-                        onError(e);
-                    }
+                    System.out.println(result.getResponseEnvelope());
                 }
 
                 public void onError(Exception e) {
@@ -326,13 +308,13 @@ asynchrony!!</strong></p>
             };
 
             //Non-Blocking Invocation
-            serviceClinet.sendReceiveNonBlocking(payload, callback);
+            serviceClient.sendReceiveNonBlocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
-            serviceClinet.finalizeInvoke();
+            serviceClient.finalizeInvoke();
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

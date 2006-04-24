@@ -105,9 +105,11 @@ configurations. "services.xml" for MyService will be as follows.</p>
     &lt;parameter name="ServiceClass" locked="false"&gt;userguide.example1.MyService&lt;/parameter&gt;
     &lt;operation name="echo"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+        &lt;actionMapping&gt;urn:echo&lt;/actionMapping&gt;
     &lt;/operation&gt;
      &lt;operation name="ping"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/&gt;
+        &lt;actionMapping&gt;urn:ping&lt;/actionMapping&gt;
     &lt;/operation&gt;
  &lt;/service&gt;</pre>
 
@@ -124,15 +126,18 @@ service with respective message receivers. </p>
 
 <pre>   &lt;operation name="echo"&gt;
             &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+            &lt;actionMapping&gt;urn:echo&lt;/actionMapping&gt;
    &lt;/operation&gt;
    &lt;operation name="ping"&gt;
        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/&gt;
+       &lt;actionMapping&gt;urn:ping&lt;/actionMapping&gt;
    &lt;/operation&gt;</pre>
     
 <p> Every operation must have a corresponding MessageReceiver class. When Axis2 engine receives a message, after the message is being processed by the handlers, it will be handed over to a MessageReceiver.
 <br /> For the "echo" operation we have used a <strong>RawXMLINOutMessageReceiver</strong> since it is an IN-OUT
 operation. For IN-ONLY operation "ping", we have used
 <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver.</p>
+<p>The actionMapping is required only if you want to enable WS-Addressing. This will be used later in this user guide.</p>
 
 <p>You can write a services.xml file to include a group of services instead
 of a single service. This makes management and deployment of a set of related
