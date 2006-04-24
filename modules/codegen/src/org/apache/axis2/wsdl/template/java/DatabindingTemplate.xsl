@@ -22,7 +22,7 @@
                  org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
 
 		<xsl:if test="$base64">
-		if (optimzieContent) {
+		if (optimizeContent) {
                          optimizeContent(documentElement,qNameArray);
 		}
                 </xsl:if>
