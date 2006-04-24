@@ -221,13 +221,13 @@
       <include name="common/src/**/*.java"/>
       <include name="core/src/**/*.java"/>
       <include name="integration/src/**/*.java"/>
+      <include name="java2wsdl/src/**/*.java"/>
+      <include name="jibx/src/**/*.java"/>
       <include name="saaj/src/**/*.java"/>
       <include name="samples/src/**/*.java"/>
       <include name="security/src/**/*.java"/>
-      <include name="wsdl/src/**/*.java"/>
-      <include name="xml/src/**/*.java"/>
-      <include name="doom/src/**/*.java"/>
       <include name="soapmonitor/src/**/*.java"/>
+      <include name="xmlbeans/src/**/*.java"/>
     </javac>
     <copy todir="${basedir}/target/classes/">
       <fileset dir="${basedir}/modules/common/src">
