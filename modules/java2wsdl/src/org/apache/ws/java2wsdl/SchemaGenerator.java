@@ -225,7 +225,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private void generateWrapperElements(JMethod methods[]) throws Exception {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
-            if (method.getSimpleName().equals("init"))
+            if (method.getSimpleName().equals("init") ||
+                    method.getSimpleName().equals("setOperationContext"))
                 continue;
             if (!method.isPublic())
                 continue;
