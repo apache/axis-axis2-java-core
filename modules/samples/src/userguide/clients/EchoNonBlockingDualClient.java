@@ -20,8 +20,6 @@ package userguide.clients;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -29,9 +27,6 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
 
 /**
  * Sample for asynchronous dual channel non-blocking service invocation.
@@ -50,22 +45,12 @@ public class EchoNonBlockingDualClient {
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
-            options.setAction("urn:echo");
+            options.setAction("urn:echo");  // this is the action mapping we put within the service.xml
 
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    try {
-                        StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
-                                .createXMLStreamWriter(writer));
-                        writer.flush();
-                        System.out.println(writer.toString());
-
-
-                    } catch (XMLStreamException e) {
-                        onError(e);
-                    }
+                    System.out.println(result.getResponseEnvelope());
                 }
 
                 public void onError(Exception e) {
@@ -89,7 +74,7 @@ public class EchoNonBlockingDualClient {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally{
+        } finally {
             try {
                 sender.finalizeInvoke();
             } catch (AxisFault axisFault) {

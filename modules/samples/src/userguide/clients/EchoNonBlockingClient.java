@@ -19,16 +19,11 @@ package userguide.clients;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
 
 /**
  * Sample for asynchronous single channel non-blocking service invocation.
@@ -43,23 +38,11 @@ public class EchoNonBlockingClient {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
-            options.setAction("urn:echo");
-            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    try {
-                        StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
-                                .createXMLStreamWriter(writer));
-                        writer.flush();
-                        System.out.println(writer.toString());
-
-
-                    } catch (XMLStreamException e) {
-                        onError(e);
-                    }
+                    System.out.println(result.getResponseEnvelope());
                 }
 
                 public void onError(Exception e) {
@@ -81,7 +64,7 @@ public class EchoNonBlockingClient {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally{
+        } finally {
             try {
                 sender.finalizeInvoke();
             } catch (AxisFault axisFault) {

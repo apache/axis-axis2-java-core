@@ -19,14 +19,9 @@ package userguide.clients;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
 
 /**
  * Sample for synchronous single channel blocking service invocation.
@@ -40,24 +35,16 @@ public class EchoBlockingClient {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
-            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             //Blocking invocation
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);
 
-            StringWriter writer = new StringWriter();
-            result.serialize(XMLOutputFactory.newInstance()
-                    .createXMLStreamWriter(writer));
-            writer.flush();
-
-            System.out.println(writer.toString());
+            System.out.println(result);
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
         }
     }
 }
