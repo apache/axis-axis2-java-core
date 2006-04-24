@@ -32,7 +32,7 @@
     <xsl:template match="bean">
 
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-        <xsl:variable name="choice"><xsl:value-of select="@choice"/></xsl:variable>
+        <xsl:variable name="choice" select="@choice"/>
         <xsl:variable name="isType" select="@type"/>
         <xsl:variable name="anon" select="@anon"/>
     <!-- write the class header. this should be done only when unwrapped -->
