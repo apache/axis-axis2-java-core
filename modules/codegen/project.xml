@@ -190,6 +190,14 @@
         </dependency>
         <dependency>
             <groupId>jaxme</groupId>
+            <artifactId>jaxmeapi</artifactId>
+            <version>${jaxme.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>jaxme</groupId>
             <artifactId>jaxmexs</artifactId>
             <version>${jaxme.version}</version>
             <properties>
