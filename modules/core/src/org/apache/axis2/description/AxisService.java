@@ -53,7 +53,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.net.URL;
 import java.util.*;
 
@@ -383,11 +382,8 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public void printSchema(Writer writer) throws AxisFault {
-        for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema schema = addNameSpaces(i);
-            schema.write(writer);
-        }
+    public XmlSchema getSchema(int index) {
+        return addNameSpaces(index);
     }
 
     private XmlSchema addNameSpaces(int i) {
@@ -690,8 +686,8 @@ public class AxisService extends AxisDescription {
 
     public void addSchema(Collection schemas) {
         Iterator iterator = schemas.iterator();
-        while(iterator.hasNext()){
-            XmlSchema schema = (XmlSchema)iterator.next();
+        while (iterator.hasNext()) {
+            XmlSchema schema = (XmlSchema) iterator.next();
             schemaList.add(schema);
             addSchemaNameSpace(schema.getTargetNamespace());
         }

@@ -113,6 +113,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         for (int i = 0; i < schemas.size(); i++) {
             StringWriter writer = new StringWriter();
             XmlSchema schema = (XmlSchema) schemas.get(i);
+            
             schema.write(writer);
             if (!"".equals(writer.toString())) {
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
