@@ -8,6 +8,8 @@ import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.resolver.URIResolver;
+import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
@@ -17,6 +19,7 @@ import org.apache.ws.policy.util.PolicyRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
@@ -38,20 +41,20 @@ import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- * 
- *  
+ *
+ *
  */
 
 public class WSDL2AxisServiceBuilder {
@@ -130,6 +133,8 @@ public class WSDL2AxisServiceBuilder {
 
     private String style = null;
 
+    private URIResolver customResolver;
+
     public WSDL2AxisServiceBuilder(InputStream in, QName serviceName,
                                    String portName) {
         this.in = in;
@@ -138,6 +143,7 @@ public class WSDL2AxisServiceBuilder {
         this.axisService = new AxisService();
         setPolicyRegistryFromService(axisService);
     }
+
 
     public WSDL2AxisServiceBuilder(Definition def, QName serviceName,
                                    String portName) {
@@ -156,6 +162,11 @@ public class WSDL2AxisServiceBuilder {
 
     public WSDL2AxisServiceBuilder(InputStream in) {
         this(in, null, null);
+    }
+
+
+    public void setCustomResolver(URIResolver customResolver) {
+        this.customResolver = customResolver;
     }
 
     public boolean isServerSide() {
@@ -914,6 +925,11 @@ public class WSDL2AxisServiceBuilder {
         }
 
         if (baseUri != null) schemaCollection.setBaseUri(baseUri);
+
+        if (customResolver!=null){
+          schemaCollection.setSchemaResolver(customResolver);  
+        }
+
         return schemaCollection.read(element);
     }
 
@@ -1392,5 +1408,6 @@ public class WSDL2AxisServiceBuilder {
             }
         }
     }
+
 
 }

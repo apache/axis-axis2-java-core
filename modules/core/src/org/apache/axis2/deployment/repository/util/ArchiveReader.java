@@ -20,6 +20,7 @@ package org.apache.axis2.deployment.repository.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.*;
+import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -163,6 +164,9 @@ public class ArchiveReader implements DeploymentConstants {
         }
     }
 
+    private AxisService processWSDLFile(InputStream in) throws DeploymentException {
+       return processWSDLFile(in,null);
+    }
     /**
      * Creats AxisService.
      *
@@ -170,10 +174,15 @@ public class ArchiveReader implements DeploymentConstants {
      * @return Returns AxisService.
      * @throws DeploymentException
      */
-    private AxisService processWSDLFile(InputStream in) throws DeploymentException {
+    private AxisService processWSDLFile(InputStream in,File serviceArchiveFile) throws DeploymentException {
         try {
             WSDL2AxisServiceBuilder wsdl2AxisServiceBuilder =
                     new WSDL2AxisServiceBuilder(in, null, null);
+            if (serviceArchiveFile!=null){
+                wsdl2AxisServiceBuilder.setCustomResolver(
+                    new AARFileBasedURIResolver(serviceArchiveFile));
+            }
+
             return wsdl2AxisServiceBuilder.populateService();
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
@@ -243,7 +252,7 @@ public class ArchiveReader implements DeploymentConstants {
                         }
 
                         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-                        AxisService service = processWSDLFile(in);
+                        AxisService service = processWSDLFile(in,serviceFile);
                         servicesMap.put(service.getName(), service);
                     }
                 }
