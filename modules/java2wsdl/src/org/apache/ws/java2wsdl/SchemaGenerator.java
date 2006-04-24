@@ -472,7 +472,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
     }
 
     private XmlSchema getXmlSchema(String packageName, String targetNamespace, String targetNamespacePrefix) {
-        XmlSchema xmlSchema = null;
+        XmlSchema xmlSchema ;
         // schema element that will hold this type i.e. schema element whose
         // targetnamespace
         // corresponds to this type's package
