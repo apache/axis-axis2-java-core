@@ -685,7 +685,16 @@ public class AxisService extends AxisDescription {
 
     public void setSchema(XmlSchema schema) {
         schemaList.add(schema);
-        addScheamNameSpace(schema.getTargetNamespace());
+        addSchemaNameSpace(schema.getTargetNamespace());
+    }
+
+    public void setSchema(Collection schemas) {
+        Iterator iterator = schemas.iterator();
+        while(iterator.hasNext()){
+            XmlSchema schema = (XmlSchema)iterator.next();
+            schemaList.add(schema);
+            addSchemaNameSpace(schema.getTargetNamespace());
+        }
     }
 
     public boolean isWsdlfound() {
@@ -1021,7 +1030,7 @@ public class AxisService extends AxisDescription {
         this.nameSpacesMap = nameSpacesMap;
     }
 
-    private void addScheamNameSpace(String tragetNameSpace) {
+    private void addSchemaNameSpace(String tragetNameSpace) {
         boolean found = false;
         if (nameSpacesMap != null && nameSpacesMap.size() > 0) {
             Iterator itr = nameSpacesMap.values().iterator();
