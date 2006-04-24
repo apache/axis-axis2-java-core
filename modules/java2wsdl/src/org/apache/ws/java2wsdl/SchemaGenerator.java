@@ -104,8 +104,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
         XmlSchema xmlSchema = getXmlSchema(clazz.getPackage().getName(), schemaTargetNameSpace, schema_namespace_prefix);
         xmlSchema.getPrefixToNamespaceMap().put(DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 URI_2001_SCHEMA_XSD);
-
-        XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
     }
 
     /**
@@ -418,8 +416,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
             xmlSchema.getItems().add(eltOuter);
             xmlSchema.getElements().add(elemntName, eltOuter);
+            eltOuter.setSchemaTypeName(complexType.getQName());
 
-            //xmlSchema.getItems().add(complexType);
+           xmlSchema.getItems().add(complexType);
             xmlSchema.getSchemaTypes().add(elemntName, complexType);
 
             // adding this type to the table
