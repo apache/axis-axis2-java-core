@@ -16,7 +16,7 @@
 
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
-                private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimzieContent){
+                private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
                 org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
                 (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
                  org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
@@ -121,7 +121,7 @@
             org.apache.axiom.soap.SOAPFactory factory, Object param, boolean optimizeContent) {
             org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
             if (param != null){
-                envelope.getBody().addChild(toOM(param, optimizeContent));
+                envelope.getBody().addChild(toOM(param));
             }
 
             return envelope;
@@ -266,7 +266,7 @@
                     };
                 </xsl:if>
                 
-                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimzieContent) {
+                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimizeContent) {
                     if (param instanceof org.jibx.runtime.IMarshallable){
                         if (bindingFactory == null) {
                             throw new RuntimeException("Could not find JiBX binding information for <xsl:value-of select='$firstType'/>, JiBX binding unusable");
