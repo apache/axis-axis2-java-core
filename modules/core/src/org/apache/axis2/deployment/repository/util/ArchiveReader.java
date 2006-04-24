@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
+import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -181,6 +182,9 @@ public class ArchiveReader implements DeploymentConstants {
             if (serviceArchiveFile!=null){
                 wsdl2AxisServiceBuilder.setCustomResolver(
                     new AARFileBasedURIResolver(serviceArchiveFile));
+                wsdl2AxisServiceBuilder.setCustomWSLD4JResolver(
+                        new AARBasedWSDLLocator(serviceArchiveFile,in)
+                );
             }
 
             return wsdl2AxisServiceBuilder.populateService();

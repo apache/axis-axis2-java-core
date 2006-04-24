@@ -31,6 +31,7 @@ import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.wsdl.xml.WSDLLocator;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -135,6 +136,9 @@ public class WSDL2AxisServiceBuilder {
 
     private URIResolver customResolver;
 
+    private WSDLLocator customWSLD4JResolver;
+
+
     public WSDL2AxisServiceBuilder(InputStream in, QName serviceName,
                                    String portName) {
         this.in = in;
@@ -164,9 +168,20 @@ public class WSDL2AxisServiceBuilder {
         this(in, null, null);
     }
 
-
+    /**
+     * Sets a custom xmlschema resolver
+     * @param customResolver
+     */
     public void setCustomResolver(URIResolver customResolver) {
         this.customResolver = customResolver;
+    }
+
+    /**
+     * sets a custem WSDL4J locator
+     * @param customWSLD4JResolver
+     */
+    public void setCustomWSLD4JResolver(WSDLLocator customWSLD4JResolver) {
+        this.customWSLD4JResolver = customWSLD4JResolver;
     }
 
     public boolean isServerSide() {
@@ -927,7 +942,7 @@ public class WSDL2AxisServiceBuilder {
         if (baseUri != null) schemaCollection.setBaseUri(baseUri);
 
         if (customResolver!=null){
-          schemaCollection.setSchemaResolver(customResolver);  
+            schemaCollection.setSchemaResolver(customResolver);
         }
 
         return schemaCollection.read(element);
@@ -936,22 +951,27 @@ public class WSDL2AxisServiceBuilder {
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        reader.setFeature("javax.wsdl.importDocuments", true);
-        Document doc;
-        try {
-            doc = XMLUtils.newDocument(in);
-        } catch (ParserConfigurationException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR,
-                    "Parser Configuration Error", e);
-        } catch (SAXException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR,
-                    "Parser SAX Error", e);
+        if (customWSLD4JResolver!=null){
+            return  reader.readWSDL(customWSLD4JResolver);
+        }else{
 
-        } catch (IOException e) {
-            throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
+            reader.setFeature("javax.wsdl.importDocuments", false);
+            Document doc;
+            try {
+                doc = XMLUtils.newDocument(in);
+            } catch (ParserConfigurationException e) {
+                throw new WSDLException(WSDLException.PARSER_ERROR,
+                        "Parser Configuration Error", e);
+            } catch (SAXException e) {
+                throw new WSDLException(WSDLException.PARSER_ERROR,
+                        "Parser SAX Error", e);
+
+            } catch (IOException e) {
+                throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
+            }
+
+            return reader.readWSDL(null, doc);
         }
-
-        return reader.readWSDL(null, doc);
     }
 
     /**
