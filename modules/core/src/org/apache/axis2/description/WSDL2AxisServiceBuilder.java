@@ -216,7 +216,7 @@ public class WSDL2AxisServiceBuilder {
                     Element schemaElement = schemaElements[i];
                     if (schemaElement != null) {
                         System.out.println(schemaElement.getNamespaceURI());
-                        axisService.setSchema(getXMLSchema(schemaElement, null));
+                        axisService.addSchema(getXMLSchema(schemaElement, null));
                     }
                 }
             }
@@ -1033,7 +1033,7 @@ public class WSDL2AxisServiceBuilder {
             } else if (wsdl4jElement instanceof Schema) {
                 Schema schema = (Schema) wsdl4jElement;
                 //just add this schema - no need to worry about the imported ones
-                axisService.setSchema(getXMLSchema(schema.getElement(),
+                axisService.addSchema(getXMLSchema(schema.getElement(),
                         wsdl4jDefinition.getDocumentBaseURI()));
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
                     .getElementType())) {
@@ -1209,27 +1209,6 @@ public class WSDL2AxisServiceBuilder {
             //TODO Faults ..
         }
     }
-
-//	private void pushSchemaElement(Schema baseSchema,String baseUri) {
-//		if (baseSchema == null) {
-//			return;
-//		}
-//		Map map = baseSchema.getImports();
-//        Collection values;
-//		if (map != null && map.size() > 0) {
-//			values = map.values();
-//			for (Iterator iterator = values.iterator(); iterator.hasNext();) {
-//				//recursively add the schema's
-//				Vector v = (Vector) iterator.next();
-//				for (int i = 0; i < v.size(); i++) {
-//                    pushSchemaElement(((SchemaImport) v.get(i))
-//							.getReferencedSchema(),baseSchema.getDocumentBaseURI());
-//				}
-//			}
-//		}
-//         axisService.setSchema(getXMLSchema(baseSchema.getElement(),
-//                 baseUri));
-//    }
 
     private boolean findWrapForceable(Binding binding) {
         List extElements = binding.getExtensibilityElements();

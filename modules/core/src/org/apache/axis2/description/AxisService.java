@@ -683,12 +683,12 @@ public class AxisService extends AxisDescription {
         return schemaList;
     }
 
-    public void setSchema(XmlSchema schema) {
+    public void addSchema(XmlSchema schema) {
         schemaList.add(schema);
         addSchemaNameSpace(schema.getTargetNamespace());
     }
 
-    public void setSchema(Collection schemas) {
+    public void addSchema(Collection schemas) {
         Iterator iterator = schemas.iterator();
         while(iterator.hasNext()){
             XmlSchema schema = (XmlSchema)iterator.next();
@@ -955,7 +955,7 @@ public class AxisService extends AxisDescription {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
                     implClass, axisService.getSchematargetNamespace(),
                     axisService.getSchematargetNamespacePrefix());
-            axisService.setSchema(schemaGenerator.generateSchema());
+            axisService.addSchema(schemaGenerator.generateSchema());
         } catch (Exception e) {
             throw new AxisFault(e);
         }

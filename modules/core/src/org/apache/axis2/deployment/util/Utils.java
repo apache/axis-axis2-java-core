@@ -170,7 +170,7 @@ public class Utils {
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
                 serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());
-        axisService.setSchema(schemaGenerator.generateSchema());
+        axisService.addSchema(schemaGenerator.generateSchema());
 
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
