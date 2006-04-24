@@ -9,11 +9,17 @@
 </head>
 
 <body lang="en-US" dir="ltr">
-<h1 align="center">Axis2 Architecture Guide</h1>
+<h1 align="center">Apache Axis2 Architecture Guide</h1>
 
-<p><i>Version 1.0</i></p>
-<i>Feedback: <a
-href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
+<p><i>-Axis2 Version 1.0</i></p>
+
+<p>This document will give an introduction to Axis2's modular architecture
+with explanations on every module.</p>
+
+<p><i>Send your feedback to: <a
+href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
+subject with [Axis2]. To subscribe to mailing list see <a
+href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Contents</h2>
 <ul>
@@ -239,13 +245,13 @@ flexibility would serve better in this instant.</p>
 
 <table width="955" border="1" cellpadding="2" cellspacing="3">
   <col width="112"><col width="371"><col width="103"><col width="336"><tbody>
-   <tr>
+    <tr>
       <td><strong>Context</strong></td>
       <td><strong>Description</strong></td>
       <td><strong>Configuration</strong></td>
       <td><strong>Description</strong></td>
-   </tr> 
-   <tr>
+    </tr>
+    <tr>
       <td width="112"><p>Configuration Context</p>
       </td>
       <td width="371"><p>Holds the run time status. A deep copy of this would
@@ -400,12 +406,12 @@ are parsed and a</p>
 SOAP Message. Then the <i>In Pipe</i> is executed with the Message Context.
 
 <p>Let us see what happens at each phase of the execution. This process may
-happen either in the server or in the Client. </p>
+happen either in the server or in the Client.</p>
 <ol>
   <li>Transport Phase - The handlers are in the phase ment to be process
     transport specific information such as validate incoming message by
-    looking at various transport headers, add data into message context etc..
-  </li>
+    looking at various transport headers, add data into message context
+  etc..</li>
   <li>Pre-Dispatch Phase- The main functionality of the handlers are in this
     phase is to populate message context in order to do the dispatching. As
     an example processing of addressing headers happen in this phase , so by
@@ -508,6 +514,7 @@ be available once the system is restarted.</p>
 <p>The Deployment Model provides a concrete mechanism to configure Axis2.
 This model has three entities that provide the configuration.</p>
 <a name="xmlfile"></a>
+
 <h3>The axis2.xml file</h3>
 
 <p>This file holds the global configuration for the client and server, and
