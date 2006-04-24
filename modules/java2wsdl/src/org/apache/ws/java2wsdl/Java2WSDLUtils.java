@@ -46,22 +46,35 @@ public class Java2WSDLUtils
         return qualifiedName;
     }
     
+    public static StringBuffer namespaceFromClassName( String className ) throws Exception
+    {
+    	return namespaceFromPackageName(Class.forName(className).getPackage().getName());
+    }
+    
     public static StringBuffer namespaceFromPackageName(String packageName)
 	{
+    	
 		StringBuffer strBuf = new StringBuffer(HTTP);
 		int prevIndex = packageName.length();
 		int currentIndex = packageName.lastIndexOf(PACKAGE_CLASS_DELIMITER);
 		while( currentIndex != -1 )
 		{
+			strBuf.append(packageName.substring(currentIndex + 1, prevIndex));
 			prevIndex = currentIndex;
 			currentIndex = packageName.lastIndexOf(PACKAGE_CLASS_DELIMITER, prevIndex - 1);
-			strBuf.append(packageName.substring(currentIndex + 1, prevIndex));
-			if ( currentIndex != -1 )
-			{
 				strBuf.append(PACKAGE_CLASS_DELIMITER);
+			
+			if ( currentIndex == -1 )
+			{
+				strBuf.append(packageName.substring(0, prevIndex));
 			}
 		}
 		return strBuf;
+	}
+    
+    public static StringBuffer schemaNamespaceFromClassName(String packageName) throws Exception
+	{
+		return namespaceFromClassName(packageName).append(SCHEMA_NAMESPACE_EXTN);
 	}
     
     public static StringBuffer schemaNamespaceFromPackageName(String packageName)

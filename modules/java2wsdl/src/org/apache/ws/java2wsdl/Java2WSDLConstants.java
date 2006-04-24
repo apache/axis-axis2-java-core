@@ -40,6 +40,8 @@ public interface Java2WSDLConstants {
     String MIME_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/mime/";
     String HTTP_PREFIX = "http";
     String MIME_PREFIX = "mime";
+    String URN_PREFIX = "urn";
+    String COLON_SEPARATOR = ":";
 
     String BINDING_NAME_SUFFIX = "SOAP11Binding";
     String SOAP12BINDING_NAME_SUFFIX = "SOAP12Binding";
@@ -49,7 +51,7 @@ public interface Java2WSDLConstants {
     String MESSAGE_LOCAL_NAME = "message";
     String ATTRIBUTE_NAME = "name";
     String REQUEST_MESSAGE = "RequestMessage";
-    String RESPONSE_MESSAGE = "ReponseMessage";
+    String RESPONSE_MESSAGE = "ResponseMessage";
     String MESSAGE_SUFFIX = "Message";
     String REQUEST = "Request";
     String RESPONSE = "Response";

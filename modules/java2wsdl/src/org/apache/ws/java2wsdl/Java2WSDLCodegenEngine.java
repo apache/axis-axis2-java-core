@@ -1,7 +1,5 @@
 package org.apache.ws.java2wsdl;
 
-import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +8,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Map;
+
+import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -42,7 +42,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
 
         outputFolder = new File(outputFolderName);
         if (!outputFolder.exists()) {
-            outputFolder.mkdir();
+            outputFolder.mkdirs();
         } else if (!outputFolder.isDirectory()) {
             throw new Exception("The specivied location " + outputFolderName + "is not a folder");
         }
