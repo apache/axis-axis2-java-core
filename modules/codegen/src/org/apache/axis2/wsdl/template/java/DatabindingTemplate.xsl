@@ -106,7 +106,7 @@
 
         private org.apache.axiom.om.OMElement toOM(Object param) {
             try {
-                javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(param.getClass().getPackage()
+                javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(param.getClass().getInterfaces()[0].getPackage()
                                                                                             .getName());
                 org.apache.axiom.om.impl.builder.SAXOMBuilder builder = new org.apache.axiom.om.impl.builder.SAXOMBuilder();
                 javax.xml.bind.Marshaller marshaller = ctx.createMarshaller();
@@ -131,7 +131,7 @@
         java.lang.Class type){
             try{
                 javax.xml.transform.Source source =
-                        new javanet.staxutils.StAXSource(param.getXMLStreamReaderWithoutCaching());
+                        new javanet.staxutils.StAXSource(param.getXMLStreamReader());
                 javax.xml.bind.JAXBContext ctx = javax.xml.bind.JAXBContext.newInstance(
                         type.getPackage().getName());
                 javax.xml.bind.Unmarshaller u = ctx.createUnmarshaller();
