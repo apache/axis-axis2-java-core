@@ -7,8 +7,26 @@
 <body lang="en">
 <h1>RESTful Web services Support</h1>
 
-<p>REST provides access to resources through the two methods GET and POST.
-REST Web services are a reduced subset of the usual Web service stack.</p>
+<p>This document presents introduction on REST and REST with HTTP POST &amp;
+GET. </p>
+
+<h2>Content</h2>
+<ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#rest_with_post">Doing REST Web Services with HTTP POST</a>
+    <ul>
+      <li><a href="#sample">Sample REST - HTTP POST Client</a></li>
+    </ul>
+  </li>
+  <li><a href="#rest_with_get">Access a REST Web Service via HTTP GET</a></li>
+</ul>
+<a name="intro"></a>
+
+<h2>Introduction</h2>
+
+<p>REST (Representational State Transfer) provides access to resources
+through the two methods GET and POST. REST Web services are a reduced subset
+of the usual Web service stack.</p>
 
 <p>The Axis2 REST implementation assumes the following properties:</p>
 <ol>
@@ -17,7 +35,7 @@ REST Web services are a reduced subset of the usual Web service stack.</p>
     operations are identified based on the URL. The parameters are assumed as
     parameters of the Web service. In this case the GET based REST Web
     services supports only simple types as arguments.</li>
-  <li>POST based web services do not need a SOAP Envelope or a SOAP Body.
+  <li>POST based Web services do not need a SOAP Envelope or a SOAP Body.
     REST Web Services do not have Headers and the payload is sent
   directly.</li>
 </ol>
@@ -25,13 +43,14 @@ REST Web services are a reduced subset of the usual Web service stack.</p>
 <p>Axis2 can be configured as a REST Container and can be used to send and
 receive RESTful Web services requests and responses. REST Web services can be
 accessed in two ways, i.e. using HTTP GET and POST.</p>
+<a name="rest_with_post"></a>
 
-<h2>Doing REST web services with HTTP POST</h2>
+<h2>Doing REST Web Services with HTTP POST</h2>
 
 <p>The REST default HTTP interface is POST. It can be enabled in the
 Server/Client side by adding the following line to the axis2.xml file.</p>
-<font color="blue">&lt; parameter name="enableREST" locked="false" &gt; true
-&lt;/parameter&gt; </font>
+<pre>&lt; parameter name="enableREST" locked="false" &gt; true
+&lt;/parameter&gt; </pre>
 
 <p>It however acts as both a REST endpoint and SOAP endpoint. When a Message
 is received, if the content type is text/xml and if the SOAP Action Headers
@@ -49,18 +68,16 @@ options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 ...</pre>
     </source></li>
 </ol>
+<a name="sample"></a>
 
 <h3>Sample REST - HTTP POST Client</h3>
 
 <p>There is an example named, userguide.clients.RESTClient.java which
-demonstrates the usage of the above, using the "echo"operation of the
-    </p>
+demonstrates the usage of the above, using the "echo"operation of the</p>
 <pre>userguide.example1.MyService </pre>
 
 <p>of the samples.The class source will be as follows:</p>
-
-<source>
-<pre>public class RESTClient {
+<source><pre>public class RESTClient {
 
     private static String toEpr = "http://localhost:8080/axis2/services/MyService";
     
@@ -100,8 +117,9 @@ demonstrates the usage of the above, using the "echo"operation of the
         return method;
     }
 }</pre>
-</source>
-<h2>Access a REST Web Service Via HTTP GET</h2>
+</source><a name="rest_with_get"></a>
+
+<h2>Access a REST Web Service via HTTP GET</h2>
 
 <p>Axis2 allow users to access Web services that have simple type parameters
 via HTTP GET. For example the following URL requests the Version Service via
@@ -110,10 +128,10 @@ are converted in to XML and put in to the SOAP Body.</p>
 <source><pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
 </source>
 <p>Result can be shown in the browser as follows:</p>
-<img src="images/userguide/http-get-ws.jpg" alt="" />
+<img src="images/userguide/http-get-ws.jpg" alt="">
 
-<p>For example, the following request, </p><source>
-<pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
+<p>For example, the following request,</p>
+<source><pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
 </source>will be converted to the following SOAP Message for processing by
 Axis2.<source>
 <pre> 
@@ -123,7 +141,5 @@ Axis2.<source>
       &lt;/soapenv:Body&gt;
    &lt;/soapenv:Envelope&gt;
     </pre>
-</source>
-
-</body>
+</source></body>
 </html>
