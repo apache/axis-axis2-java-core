@@ -9,7 +9,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.resolver.URIResolver;
-import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
@@ -19,7 +18,6 @@ import org.apache.ws.policy.util.PolicyRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
@@ -30,8 +28,8 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLLocator;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -170,6 +168,7 @@ public class WSDL2AxisServiceBuilder {
 
     /**
      * Sets a custom xmlschema resolver
+     *
      * @param customResolver
      */
     public void setCustomResolver(URIResolver customResolver) {
@@ -178,6 +177,7 @@ public class WSDL2AxisServiceBuilder {
 
     /**
      * sets a custem WSDL4J locator
+     *
      * @param customWSLD4JResolver
      */
     public void setCustomWSLD4JResolver(WSDLLocator customWSLD4JResolver) {
@@ -941,7 +941,7 @@ public class WSDL2AxisServiceBuilder {
 
         if (baseUri != null) schemaCollection.setBaseUri(baseUri);
 
-        if (customResolver!=null){
+        if (customResolver != null) {
             schemaCollection.setSchemaResolver(customResolver);
         }
 
@@ -951,9 +951,9 @@ public class WSDL2AxisServiceBuilder {
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        if (customWSLD4JResolver!=null){
-            return  reader.readWSDL(customWSLD4JResolver);
-        }else{
+        if (customWSLD4JResolver != null) {
+            return reader.readWSDL(customWSLD4JResolver);
+        } else {
 
             reader.setFeature("javax.wsdl.importDocuments", false);
             Document doc;

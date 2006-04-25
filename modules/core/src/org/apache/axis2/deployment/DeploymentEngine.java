@@ -19,7 +19,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.WSInfo;
@@ -32,6 +31,7 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -598,6 +598,17 @@ public class DeploymentEngine implements DeploymentConstants {
                             try {
                                 HashMap wsdlservice = archiveReader.processWSDLs(currentArchiveFile,
                                         this);
+                                if (wsdlservice != null && wsdlservice.size() > 0) {
+                                    Iterator services = wsdlservice.values().iterator();
+                                    while (services.hasNext()) {
+                                        AxisService service = (AxisService) services.next();
+                                        Iterator operations = service.getOperations();
+                                        while (operations.hasNext()) {
+                                            AxisOperation axisOperation = (AxisOperation) operations.next();
+                                            phasesinfo.setOperationPhases(axisOperation);
+                                        }
+                                    }
+                                }
                                 AxisServiceGroup sericeGroup = new AxisServiceGroup(axisConfig);
                                 sericeGroup.setServiceGroupClassLoader(
                                         currentArchiveFile.getClassLoader());
@@ -637,8 +648,8 @@ public class DeploymentEngine implements DeploymentConstants {
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
-                            } catch(Throwable t) {
-                                 if (log.isInfoEnabled()) {
+                            } catch (Throwable t) {
+                                if (log.isInfoEnabled()) {
                                     StringWriter sw = new StringWriter();
                                     PrintWriter pw = new PrintWriter(sw);
                                     t.printStackTrace(pw);
