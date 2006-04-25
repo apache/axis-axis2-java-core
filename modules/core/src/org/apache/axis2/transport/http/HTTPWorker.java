@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
@@ -189,6 +190,38 @@ public class HTTPWorker implements HttpRequestHandler {
                     }
                 }
 
+                //cater for named xsds - check for the xsd name
+                if (uri.indexOf("?xsd=")>0) {
+                    String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?xsd="));
+                    String schemaName = uri.substring(uri.lastIndexOf("=") + 1);
+
+                    HashMap services = configurationContext.getAxisConfiguration().getServices();
+                    AxisService service = (AxisService) services.get(serviceName);
+                    if (service != null) {
+                        //run the population logic just to be sure
+                        service.populateSchemaMappings();
+                        //write out the correct schema
+                        Hashtable schemaTable = service.getSchemaMappingTable();
+                        XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
+                        //schema found - write it to the stream
+                        if (schema!=null){
+                            response.addHeader(new Header("Content-Type", "text/xml"));
+                            schema.write(baos);
+                            byte[] buf = baos.toByteArray();
+                            response.setBody(new ByteArrayInputStream(buf));
+                            conn.writeResponse(response);
+
+                        }else{
+                          // no schema available by that name  - send 404
+                          response.setStatusLine(
+                                  request.getRequestLine().getHttpVersion(),
+                                  404, "Schema Not Found!");
+                        }
+
+                         return true;
+
+                    }
+                }
                 // It is GET handle the Get request
                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(
                         msgContext, baos,

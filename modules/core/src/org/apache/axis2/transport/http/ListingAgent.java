@@ -26,15 +26,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 public class ListingAgent extends AbstractAgent {
 
-    private static final String LIST_MULTIPLE_SERVICE_JSP_NAME = "listServices.jsp";
-    private static final String LIST_SINGLE_SERVICE_JSP_NAME = "listSingleService.jsp";
+    private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
+            "listServices.jsp";
+    private static final String LIST_SINGLE_SERVICE_JSP_NAME =
+            "listSingleService.jsp";
 
     public static final String RUNNING_PORT = "RUNNING_PORT";
 
@@ -42,9 +44,11 @@ public class ListingAgent extends AbstractAgent {
         super(aConfigContext);
     }
 
-    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    public void handle(HttpServletRequest httpServletRequest,
+                       HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
-        if (httpServletRequest.getParameter("wsdl") != null || httpServletRequest.getParameter("xsd") != null) {
+        if (httpServletRequest.getParameter("wsdl") != null ||
+                httpServletRequest.getParameter("xsd") != null) {
             processListService(httpServletRequest, httpServletResponse);
         } else {
             super.handle(httpServletRequest, httpServletResponse);
@@ -52,15 +56,19 @@ public class ListingAgent extends AbstractAgent {
     }
 
 
-    protected void processIndex(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+    protected void processIndex(HttpServletRequest httpServletRequest,
+                                HttpServletResponse httpServletResponse)
+            throws IOException, ServletException {
         processListServices(httpServletRequest, httpServletResponse);
     }
 
-    protected void processListService(HttpServletRequest req, HttpServletResponse res)
+    protected void processListService(HttpServletRequest req,
+                                      HttpServletResponse res)
             throws IOException, ServletException {
 
         String filePart = req.getRequestURL().toString();
-        String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1, filePart.length());
+        String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
+                filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
         String wsdl = req.getParameter("wsdl");
         String xsd = req.getParameter("xsd");
@@ -76,7 +84,8 @@ public class ListingAgent extends AbstractAgent {
                         ip = filePart.substring(ipindex + 2, filePart.length());
                         int seperatorIndex = ip.indexOf(":");
                         int slashIndex = ip.indexOf("/");
-                        String port = ip.substring(seperatorIndex + 1, slashIndex);
+                        String port = ip.substring(seperatorIndex + 1,
+                                slashIndex);
                         configContext.setProperty(RUNNING_PORT, port);
                         if (seperatorIndex > 0) {
                             ip = ip.substring(0, seperatorIndex);
@@ -89,41 +98,35 @@ public class ListingAgent extends AbstractAgent {
                 } else if (xsd != null) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
-
                     AxisService axisService = (AxisService) serviceObj;
+                    //call the populator
+                    axisService.populateSchemaMappings();
+                    Hashtable schemaMappingtable =
+                            axisService.getSchemaMappingTable();
                     ArrayList scheams = axisService.getSchema();
-                    if (!"".equals(xsd)) {
-//                        if (xsd.endsWith(".xsd")) {
-//                            ClassLoader loader = axisService.getClassLoader();
-//                            InputStream in = loader.getResourceAsStream("META-INF/" + xsd);
-//                            if (in != null) {
-//                                byte[] buf = new byte[1024];
-//                                int read;
-//                                while ((read = in.read(buf)) > 0) {
-//                                    out.write(buf, 0, read);
-//                                }
-//                                out.flush();
-//                                out.close();
-//                            }
-//                            return;
-//                        }
-                        xsd = xsd.replaceAll("xsd", "").trim();
-                        try {
-                            int index = Integer.parseInt(xsd);
-                            XmlSchema scheam = axisService.getSchema(index);
-                            if (scheam != null) {
-                                scheam.write(out);
-                                out.flush();
-                                out.close();
-                            }
-                        } catch (Exception e) {
 
+                    //a name is present - try to pump the requested schema
+                    if (!"".equals(xsd)) {
+                        XmlSchema scheam =
+                                (XmlSchema)schemaMappingtable.get(xsd);
+                        if (scheam!=null){
+                            //schema is there - pump it outs
+                            scheam.write(out);
+                            out.flush();
+                            out.close();
+                        }else{
+                            //the schema is not found - pump a 404
+                            res.sendError(HttpServletResponse.SC_NOT_FOUND);
                         }
-                        return;
-                    }
-                    if (scheams.size() > 1) {
+
+                    //multiple schemas are present and the user specified
+                    //no name - in this case we cannot possibly pump a schema
+                    //so redirect to the service root    
+                    }else  if (scheams.size() > 1) {
                         res.sendRedirect("");
-                    } else if ("".equals(xsd)) {
+                    //user specified no name and there is only one schema
+                    //so pump that out
+                    }else{
                         XmlSchema scheam = axisService.getSchema(0);
                         if (scheam != null) {
                             scheam.write(out);
@@ -133,7 +136,8 @@ public class ListingAgent extends AbstractAgent {
                     }
                     return;
                 } else {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
+                    req.getSession().setAttribute(Constants.SINGLE_SERVICE,
+                            serviceObj);
                 }
             } else {
                 req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
@@ -143,7 +147,9 @@ public class ListingAgent extends AbstractAgent {
         renderView(LIST_SINGLE_SERVICE_JSP_NAME, req, res);
     }
 
-    protected void processListServices(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processListServices(HttpServletRequest req,
+                                       HttpServletResponse res)
+            throws IOException, ServletException {
         HashMap services = configContext.getAxisConfiguration().getServices();
 
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);

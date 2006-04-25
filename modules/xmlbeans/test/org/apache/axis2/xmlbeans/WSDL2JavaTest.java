@@ -138,6 +138,7 @@ public class WSDL2JavaTest extends TestCase{
         try {
             generateAndCompile("ping.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
+            e.printStackTrace();
             fail("Exception while code generation test!"+ e.getMessage());
         }
     }

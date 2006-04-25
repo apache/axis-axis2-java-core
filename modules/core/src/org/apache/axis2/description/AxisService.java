@@ -37,6 +37,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -102,17 +104,49 @@ public class AxisService extends AxisDescription {
     private boolean active = true;
 
     //to keep the service target name space
-    private String targetNamespace = Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE;
-    private String targetNamespacePrefix = Java2WSDLConstants.TARGETNAMESPACE_PREFIX;
+    private String targetNamespace =
+            Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE;
+    private String targetNamespacePrefix =
+            Java2WSDLConstants.TARGETNAMESPACE_PREFIX;
 
     // to store the target namespace for the schema
-    private String schematargetNamespace = Java2WSDLConstants.AXIS2_XSD;
-    private String schematargetNamespacePrefix = Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
+    private String schematargetNamespace =
+            Java2WSDLConstants.AXIS2_XSD;
+    private String schematargetNamespacePrefix =
+            Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
 
     private boolean enableAllTransport = true;
     private String [] exposeTransports;
 
+    /**
+     * Keeps track whether the schema locations are adjusted
+     */
+    private boolean schemaLocationsAdjusted = false;
 
+    /**
+     * A table that keeps a mapping of unique xsd names (Strings)
+     * against the schema objects. This is populated in the first
+     * instance the schemas are asked for and then used to serve
+     * the subsequent requests
+     */
+    private Hashtable schemaMappingTable = null;
+
+    /**
+     * counter variable for naming the schemas
+     */
+    private int count = 0;
+    /**
+     * A custom schema Name prefix. if set this will be used to
+     * modify the schema names
+     */
+    private String customSchemaNamePrefix = null;
+
+    /**
+     * A custom schema name suffix. will be attached to the
+     * schema file name when the files are uniquely named.
+     * A good place to add a file extension if needed
+     */
+    private String customSchemaNameSuffix = null;
     /////////////////////////////////////////
     // WSDL related stuff ////////////////////
     ////////////////////////////////////////
@@ -120,6 +154,39 @@ public class AxisService extends AxisDescription {
 
     private String soapNsUri;
     private String endpoint;
+
+
+    public boolean isSchemaLocationsAdjusted() {
+        return schemaLocationsAdjusted;
+    }
+
+    public void setSchemaLocationsAdjusted(boolean schemaLocationsAdjusted) {
+        this.schemaLocationsAdjusted = schemaLocationsAdjusted;
+    }
+
+    public Hashtable getSchemaMappingTable() {
+        return schemaMappingTable;
+    }
+
+    public void setSchemaMappingTable(Hashtable schemaMappingTable) {
+        this.schemaMappingTable = schemaMappingTable;
+    }
+
+    public String getCustomSchemaNamePrefix() {
+        return customSchemaNamePrefix;
+    }
+
+    public void setCustomSchemaNamePrefix(String customSchemaNamePrefix) {
+        this.customSchemaNamePrefix = customSchemaNamePrefix;
+    }
+
+    public String getCustomSchemaNameSuffix() {
+        return customSchemaNameSuffix;
+    }
+
+    public void setCustomSchemaNameSuffix(String customSchemaNameSuffix) {
+        this.customSchemaNameSuffix = customSchemaNameSuffix;
+    }
 
     /**
      * Constructor AxisService.
@@ -442,13 +509,16 @@ public class AxisService extends AxisDescription {
             String trs [] = getExposeTransports();
             for (int i = 0; i < trs.length; i++) {
                 String trsName = trs[i];
-                TransportInDescription transportIn = axisConfig.getTransportIn(new QName(trsName));
+                TransportInDescription transportIn = axisConfig.getTransportIn(
+                        new QName(trsName));
                 if (transportIn != null) {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
                         try {
-                            if (listener.getEPRForService(getName(), requestIP) != null) {
-                                String address = listener.getEPRForService(getName(), requestIP).getAddress();
+                            if (listener.getEPRForService(getName(), requestIP)
+                                    != null) {
+                                String address = listener.getEPRForService(
+                                        getName(), requestIP).getAddress();
                                 if (address != null) {
                                     eprList.add(address);
                                 }
@@ -464,8 +534,19 @@ public class AxisService extends AxisDescription {
         getWSDL(out, eprArray);
     }
 
+    /**
+     * Print the WSDL with a default URL
+     * @param out
+     * @throws AxisFault
+     */
+    public void printWSDL(OutputStream out) throws AxisFault {
+        //pick the endpoint and take it as the epr for the WSDL
+        getWSDL(out,new String[]{getEndpoint()});
+    }
+
     private void getWSDL(OutputStream out, String [] serviceURL) throws AxisFault {
-        AxisService2OM axisService2WOM = new AxisService2OM(this, serviceURL, "document", "literal");
+        AxisService2OM axisService2WOM = new AxisService2OM(this,
+                serviceURL, "document", "literal");
         try {
             OMElement wsdlElement = axisService2WOM.generateOM();
             wsdlElement.serialize(out);
@@ -558,7 +639,8 @@ public class AxisService extends AxisDescription {
         AxisOperation axisOperation = (AxisOperation) getChild(operationName);
 
         if (axisOperation == null) {
-            axisOperation = (AxisOperation) operationsAliasesMap.get(operationName.getLocalPart());
+            axisOperation = (AxisOperation) operationsAliasesMap.get(
+                    operationName.getLocalPart());
         }
 
         return axisOperation;
@@ -1026,13 +1108,13 @@ public class AxisService extends AxisDescription {
         this.nameSpacesMap = nameSpacesMap;
     }
 
-    private void addSchemaNameSpace(String tragetNameSpace) {
+    private void addSchemaNameSpace(String targetNameSpace) {
         boolean found = false;
         if (nameSpacesMap != null && nameSpacesMap.size() > 0) {
             Iterator itr = nameSpacesMap.values().iterator();
             while (itr.hasNext()) {
                 String value = (String) itr.next();
-                if (value.equals(tragetNameSpace)) {
+                if (value.equals(targetNameSpace)) {
                     found = true;
                 }
             }
@@ -1041,8 +1123,119 @@ public class AxisService extends AxisDescription {
             nameSpacesMap = new HashMap();
         }
         if (!found) {
-            nameSpacesMap.put("ns" + nsCount, tragetNameSpace);
+            nameSpacesMap.put("ns" + nsCount, targetNameSpace);
             nsCount ++;
         }
     }
+
+    /**
+     * runs the schema mappings if it has not been run previously
+     * it is best that this logic be in the axis service since one can
+     * call the axis service to populate the schema mappings
+     */
+    public void populateSchemaMappings() {
+
+        //populate the axis service with the necessary schema references
+        ArrayList schema = getSchema();
+        if (!isSchemaLocationsAdjusted()) {
+            Hashtable nameTable = new Hashtable();
+            //calculate unique names for the schemas
+            calcualteSchemaNames(schema, nameTable);
+            //adjust the schema locations as per the calculated names
+            adjustSchemaNames(schema, nameTable);
+            //reverse the nametable so that there is a mapping from the
+            //name to the schemaObject
+            setSchemaMappingTable(swapMappingTable(nameTable));
+            setSchemaLocationsAdjusted(true);
+        }
+    }
+
+    /**
+     * run 1 -calcualte unique names
+     *
+     * @param schemas
+     */
+    private void calcualteSchemaNames(List schemas, Hashtable nameTable) {
+        //first traversal - fill the hashtable
+        for (int i = 0; i < schemas.size(); i++) {
+            XmlSchema schema = (XmlSchema) schemas.get(i);
+
+            XmlSchemaObjectCollection includes = schema.getIncludes();
+            for (int j = 0; j < includes.getCount(); j++) {
+                Object item = includes.getItem(j);
+                XmlSchema s = null;
+                if (item instanceof XmlSchemaExternal) {
+                    //recursively call the calculating
+                    XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
+                    s = externalSchema.getSchema();
+                    if (s != null){
+                        calcualteSchemaNames(Arrays.asList(
+                                new XmlSchema[]{s}),
+                                nameTable);
+                        nameTable.put(s,
+                                ("xsd" + count++)
+                                        +(customSchemaNameSuffix!=null?
+                                        customSchemaNameSuffix:
+                                        ""));
+                    }
+
+                }
+            }
+        }
+    }
+
+    /**
+     * Run 2  - adjust the names
+     *
+     * @param schemas
+     */
+    private void adjustSchemaNames(List schemas, Hashtable nameTable) {
+        //first traversal - fill the hashtable
+        for (int i = 0; i < schemas.size(); i++) {
+            XmlSchema schema = (XmlSchema) schemas.get(i);
+
+            XmlSchemaObjectCollection includes = schema.getIncludes();
+            for (int j = 0; j < includes.getCount(); j++) {
+                Object item = includes.getItem(j);
+                if (item instanceof XmlSchemaExternal) {
+                    //recursively call the name adjusting
+                    XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
+                    XmlSchema s = xmlSchemaExternal.getSchema();
+                    if (s!=null){
+                        adjustSchemaNames(Arrays.asList(
+                                new XmlSchema[]{s}), nameTable);
+                        xmlSchemaExternal.setSchemaLocation(
+                                customSchemaNamePrefix == null ?
+                                        //use the default mode
+                                        (getName() +
+                                                "?xsd=" +
+                                                nameTable.get(s)) :
+                                        //custom prefix is present - add the custom prefix
+                                        (customSchemaNamePrefix +
+                                                nameTable.get(s)));
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Swap the key,value pairs
+     *
+     * @param originalTable
+     * @return
+     */
+    private Hashtable swapMappingTable(Hashtable originalTable) {
+        Hashtable swappedTable = new Hashtable(originalTable.size());
+        Iterator keys = originalTable.keySet().iterator();
+        Object key;
+        while (keys.hasNext()) {
+            key = keys.next();
+            swappedTable.put(originalTable.get(key), key);
+        }
+
+        return swappedTable;
+    }
+
 }

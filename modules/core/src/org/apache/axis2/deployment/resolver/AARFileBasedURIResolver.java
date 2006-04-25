@@ -32,8 +32,6 @@ import java.io.File;
  */
 public class AARFileBasedURIResolver extends DefaultURIResolver{
 
-
-
     private String aarFileName;
     private File aarFile;
 

@@ -20,6 +20,9 @@ import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.policy.Policy;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -697,6 +700,47 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //write the ant build
         writeAntBuild();
+
+        //for the server side codegen
+        //we need to seriali
+        writeWSDLFiles();
+    }
+
+    /**
+     * Write out the WSDL files (and the schemas)
+     * writing the WSDL (and schemas) is somewhat special so we cannot follow
+     * the usual pattern of using the class writer
+     */
+    private void writeWSDLFiles() {
+        //first modify the schema names (and locations) so that
+        //they have unique (flattened) names and the schema locations
+        //are adjusted to suit it
+        axisService.setCustomSchemaNamePrefix("");//prefix with nothing
+        axisService.setCustomSchemaNameSuffix(".xsd");//suffix with .xsd - the file name extension
+        //force the mappings to be reconstructed
+        axisService.setSchemaLocationsAdjusted(false);
+        axisService.populateSchemaMappings();
+
+        //now get the schema list and write it out
+        SchemaWriter schemaWriter = new SchemaWriter(
+                codeGenConfiguration.getOutputLocation());
+        Hashtable schemaMappings = axisService.getSchemaMappingTable();
+        Iterator keys = schemaMappings.keySet().iterator();
+        while (keys.hasNext()) {
+            Object key =  keys.next();
+            schemaWriter.writeSchema(
+                    (XmlSchema)schemaMappings.get(key),
+                    (String)key
+            );
+        }
+
+
+        WSDLWriter wsdlWriter = new WSDLWriter(
+                codeGenConfiguration.getOutputLocation());
+        wsdlWriter.writeWSDL(axisService);
+
+
+
     }
 
     private void copyToFaultMap() {
@@ -1220,6 +1264,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 : "0", rootElement);
     }
 
+    /**
+     * debugging method - write the output to the debugger
+     * @param description
+     * @param doc
+     */
     private void debugLogDocument(String description, Document doc) {
         if (log.isDebugEnabled()) {
             try {
@@ -1603,6 +1652,79 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         elt.appendChild(document.createTextNode(eltValue));
         return elt;
     }
+
+//    ///////////////////////////////////////////////////////////////////////////
+//    /////////////  Utility methods to travel the schemas and
+//    /**
+//     * run 1 -calcualte unique names
+//     * @param schemas
+//     */
+//    private void calcualteSchemaNames(List schemas, Hashtable nameTable) {
+//        //first traversal - fill the hashtable
+//        for (int i = 0; i < schemas.size(); i++) {
+//            XmlSchema schema = (XmlSchema) schemas.get(i);
+//            XmlSchemaObjectCollection includes = schema.getIncludes();
+//            for (int j = 0; j < includes.getCount(); j++) {
+//                Object item = includes.getItem(i);
+//                XmlSchema s = null;
+//                if (item instanceof XmlSchemaExternal) {
+//                    //recursively call the calculating
+//                    XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
+//                    s = externalSchema.getSchema();
+//                    calcualteSchemaNames(Arrays.asList(
+//                            new XmlSchema[]{s}),
+//                            nameTable);
+//                    nameTable.put(s,
+//                            ("xsd" + count++));
+//
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Run 2  - adjust the names
+//     * @param schemas
+//     */
+//    private void adjustSchemaNames(List schemas, Hashtable nameTable) {
+//        //first traversal - fill the hashtable
+//        for (int i = 0; i < schemas.size(); i++) {
+//            XmlSchema schema = (XmlSchema) schemas.get(i);
+//            XmlSchemaObjectCollection includes = schema.getIncludes();
+//            for (int j = 0; j < includes.getCount(); j++) {
+//                Object item = includes.getItem(i);
+//                if (item instanceof XmlSchemaExternal) {
+//                    //recursively call the name adjusting
+//                    XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
+//                    adjustSchemaNames(Arrays.asList(
+//                            new XmlSchema[]{xmlSchemaExternal.getSchema()}), nameTable);
+//                    xmlSchemaExternal.setSchemaLocation(
+//                            //this should return the correct end point!
+//                            getName() +
+//                                    "?xsd=" +
+//                                    nameTable.get(xmlSchemaExternal.getSchema()));
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Swap the key,value pairs
+//     *
+//     * @param originalTable
+//     * @return
+//     */
+//    private Hashtable swapMappingTable(Hashtable originalTable) {
+//        Hashtable swappedTable = new Hashtable(originalTable.size());
+//        Iterator keys = originalTable.keySet().iterator();
+//        Object key;
+//        while (keys.hasNext()) {
+//            key = keys.next();
+//            swappedTable.put(originalTable.get(key), key);
+//        }
+//
+//        return swappedTable;
+//    }
 
 
 }

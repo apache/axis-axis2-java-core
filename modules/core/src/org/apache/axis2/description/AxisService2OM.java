@@ -9,6 +9,10 @@ import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
+import org.apache.ws.commons.schema.XmlSchemaRedefine;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
@@ -25,6 +29,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Hashtable;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -109,11 +116,14 @@ public class AxisService2OM implements Java2WSDLConstants {
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
         ele.addChild(wsdlTypes);
 
+        // populate the schema mappings
+        axisService.populateSchemaMappings();
+
         ArrayList schemas = axisService.getSchema();
         for (int i = 0; i < schemas.size(); i++) {
             StringWriter writer = new StringWriter();
             XmlSchema schema = (XmlSchema) schemas.get(i);
-            
+
             schema.write(writer);
             if (!"".equals(writer.toString())) {
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -146,6 +156,10 @@ public class AxisService2OM implements Java2WSDLConstants {
 
         return ele;
     }
+
+    private int count =0;
+
+
 
     private void generateMessages(OMFactory fac,
                                   OMElement defintions) {
@@ -381,7 +395,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
         addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(), binding, fac);
 
-        //Adding ext elements
+//Adding ext elements
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME,
                 TRANSPORT, TRANSPORT_URI,
                 STYLE, style, soap);
@@ -452,7 +466,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     addExtensionElemnet(fac, fault, SOAP_BODY, SOAP_USE, use, "namespace",
                             targetNamespace, soap);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(), null);
-                    // TODO adding policies for fault messages
+// TODO adding policies for fault messages
                     operation.addChild(fault);
                     writeSoapHeaders(faultyMessge, fac, fault, soap);
                 }
@@ -473,7 +487,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
         addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(), binding, fac);
 
-        //Adding ext elements
+//Adding ext elements
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME,
                 TRANSPORT, TRANSPORT_URI,
                 STYLE, style, soap12);
@@ -544,7 +558,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     addExtensionElemnet(fac, fault, SOAP_BODY, SOAP_USE, use, "namespace",
                             targetNamespace, soap12);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(), null);
-                    // add policies for fault messages
+// add policies for fault messages
                     operation.addChild(fault);
                     writeSoapHeaders(faultyMessge, fac, fault, soap12);
                 }
@@ -559,7 +573,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         binding.addAttribute(ATTRIBUTE_NAME, axisService.getName() + HTTP_BINDING, null);
         binding.addAttribute("type", tns.getPrefix() + ":" + axisService.getName() + PORT_TYPE_SUFFIX, null);
 
-        //Adding ext elements
+//Adding ext elements
         OMElement httpBinding = fac.createOMElement("binding", http);
         binding.addChild(httpBinding);
         httpBinding.addAttribute("verb", "POST", null);
