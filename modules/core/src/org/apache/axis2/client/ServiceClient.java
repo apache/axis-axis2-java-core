@@ -83,16 +83,19 @@ public class ServiceClient {
         initializeTransports(configContext);
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
-        this.axisService = (axisService != null) ? axisService
-                : createAnonymousService();
-        // add the service to the config context if it isn't in there already
+        if (axisService != null) {
+            this.axisService = axisService;
+        } else {
+            if (this.axisConfig.getService(ANON_SERVICE) != null) {
+                this.axisService = this.axisConfig.getService(ANON_SERVICE);
+            } else {
+                this.axisService = createAnonymousService();
+            }
+        }
+
         if (this.axisConfig.getService(this.axisService.getName()) == null) {
             this.axisConfig.addService(this.axisService);
         }
-        //TODO fix me
-        // create a service context for myself: create a new service group
-        // context and then get the service context for myself as I'll need that
-        // later for stuff that I gotta do
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
                 (AxisServiceGroup) this.axisService.getParent());
         this.serviceContext = sgc.getServiceContext(this.axisService);

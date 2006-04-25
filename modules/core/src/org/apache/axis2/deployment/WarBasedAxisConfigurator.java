@@ -54,7 +54,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                         repository = config.getServletContext().getRealPath("/WEB-INF");
                         axis2Steram = new FileInputStream(repository + "/conf/axis2.xml");
                         axisConfig = deploymentEngine.populateAxisConfiguration(axis2Steram);
-                        setWebLocationProperty(config.getServletContext());
+                        setWebLocationProperty(config.getServletContext(),deploymentEngine);
                     } catch (Exception e) {
                         ClassLoader cl = Thread.currentThread().getContextClassLoader();
                         axis2Steram = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
@@ -103,13 +103,13 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
      *
      * @param context
      */
-    private void setWebLocationProperty(ServletContext context) {
+    private void setWebLocationProperty(ServletContext context, DeploymentEngine depeng) {
         String webpath = context.getRealPath("");
         if (webpath == null || "".equals(webpath)) {
             return;
         }
         File weblocation = new File(webpath);
-        System.setProperty("web.location", weblocation.getAbsolutePath());
+        depeng.setWebLocationString(weblocation.getAbsolutePath());
     }
 
     public AxisConfiguration getAxisConfiguration() throws AxisFault {

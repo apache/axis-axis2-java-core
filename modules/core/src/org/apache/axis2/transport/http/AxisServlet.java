@@ -275,7 +275,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         //RUNNING_PORT
-        String port = System.getProperty(ListingAgent.RUNNING_PORT);
+        String port = (String) configContext.getProperty(ListingAgent.RUNNING_PORT);
         if (port == null) {
             port = "8080";
         }

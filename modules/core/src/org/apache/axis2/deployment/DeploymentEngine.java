@@ -68,6 +68,9 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private ArrayList modulelist = new ArrayList();
 
+    //to keep the web resource location if any
+    private String webLocationString = null;
+
     /**
      * to keep a ref to engine register
      * this ref will pass to engine when it call start()
@@ -436,14 +439,13 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addAsWebResources(File in, String serviceFileName) {
         try {
-            String webLocationStr = System.getProperty("web.location");
-            if (webLocationStr == null) {
+            if (webLocationString == null) {
                 return;
             }
             if (in.isDirectory()) {
                 return;
             }
-            File webLocation = new File(webLocationStr);
+            File webLocation = new File(webLocationString);
             File out = new File(webLocation, serviceFileName);
             int BUFFER = 1024;
             byte data[] = new byte[BUFFER];
@@ -968,5 +970,13 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
         return fileList;
+    }
+
+    public String getWebLocationString() {
+        return webLocationString;
+    }
+
+    public void setWebLocationString(String webLocationString) {
+        this.webLocationString = webLocationString;
     }
 }

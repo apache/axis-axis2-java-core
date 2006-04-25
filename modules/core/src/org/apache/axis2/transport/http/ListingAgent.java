@@ -77,7 +77,7 @@ public class ListingAgent extends AbstractAgent {
                         int seperatorIndex = ip.indexOf(":");
                         int slashIndex = ip.indexOf("/");
                         String port = ip.substring(seperatorIndex + 1, slashIndex);
-                        System.setProperty(RUNNING_PORT, port);
+                        configContext.setProperty(RUNNING_PORT, port);
                         if (seperatorIndex > 0) {
                             ip = ip.substring(0, seperatorIndex);
                         }
