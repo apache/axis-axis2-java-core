@@ -286,16 +286,13 @@ Non-Blocking API with two transport connections<strong>. The ultimate
 asynchrony!!</strong></p>
 <pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-            Options options = new Options();<br>            options.setTo(targetEPR);  
 
-            //The boolean flag informs the axis2 engine to use two separate transport connection
-            //to retrieve the response.
-<br>            options.setUseSeparateListener(true);
-               options.setAction("urn:echo"); // this is the action mapping we put within the service.xml
-            
-            ServiceClient serviceClient = new ServiceClient();
-<br>        serviceClient.setOptions(options);</pre>
-<pre>                  
+            Options options = new Options();
+            options.setTo(targetEPR);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(true);
+            options.setAction("urn:echo");  // this is the action mapping we put within the service.xml
+
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -308,18 +305,27 @@ asynchrony!!</strong></p>
             };
 
             //Non-Blocking Invocation
-            serviceClient.sendReceiveNonBlocking(payload, callback);
+            sender = new ServiceClient();
+            sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
+            sender.setOptions(options);
+            sender.sendReceiveNonBlocking(payload, callback);
 
             //Wait till the callback receives the response.
             while (!callback.isComplete()) {
                 Thread.sleep(1000);
             }
-            serviceClient.finalizeInvoke();
+            //Need to close the Client Side Listener.
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            try {
+                sender.finalizeInvoke();
+            } catch (AxisFault axisFault) {
+                //have to ignore this
+            }
         }</pre>
 
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
@@ -331,8 +337,10 @@ response.</font></font></p>
 
 <p>Before we run the sample client we have one more step to perform. As
 mentioned earlier Axis2 uses addressing based correlation mechanism, hence we
-need to "engage" addressing module in the server side as well. According to
-the Axis2 architecture, addressing module put its handlers in the
+need to "engage" addressing module in both client and server sides. 
+
+<h5>Engaging Addressing in Server Side</h5>
+According to the Axis2 architecture, addressing module put its handlers in the
 "<strong>pre-dispatch</strong>" phase (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about phases)  and hence "engaging" means simply adding module
@@ -344,7 +352,17 @@ directory in the servlet container. </p>
 <p>Note: <font color="#000000">Once you change the "axis2.xml" you need to
 restart the servlet container.</font></p>
 
-<p>This will enable the addressing in the server side. Now you can test the
+<h5>Engaging Addressing in Client Side</h5>
+There are two ways of doing that. <br>One is to get the addressing-&lt;version&gt;.mar from modules folder of the std-bin distribution. And then making that available in your classpath.
+<br>The second method is to create a ConfigurationContext giving a repository location. Axis2 has the concept of a repository to keep the services and modules. You can use the extracted standard binary distribution itself as the repository as it contains the proper structure of an Axis2 repository (having services and modules folders inside it). ConfigurationContext has the runtime context information of Axis2 system. <br>
+If you have extracted the standard binary distribution to, say, $user_home/axis2/dist, then put the following line just before sender = new ServiceClient(); 
+
+<pre>
+ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(&lt; Axis2RepositoryLocation &gt;, null);
+</pre>
+Then replace "sender = new ServiceClient();" line with "sender = new ServiceClient(configContext, null);"
+
+<p>This will enable addressing in both client and server sides. Now you can test the
 "TestEchoNonBlockingDualClient" using the "testEchoNonBlockingDualClient"
 target of the ant file found at "Axis2Home/samples" directory. If you see the
 response OMElement printed in the client side, then you have successfully
