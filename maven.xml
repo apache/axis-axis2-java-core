@@ -665,6 +665,11 @@
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the tools jar -->
+        <ant:copy toDir="${std.bin.temp.dir}/lib">
+            <ant:fileset file="modules/tool/target/axis2-tools-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- Copy the samples -->
         <ant:copy todir="${std.bin.temp.dir}/samples">
             <ant:fileset dir="modules/samples/target/samples"/>

@@ -75,7 +75,7 @@ public class SOAPMonitorHandler extends AbstractHandler {
         ref = messageContext.getFrom();
     } else if (messageContext.getFLOW() == MessageContext.IN_FAULT_FLOW) { 
         id = getMessageId(messageContext);
-        // show soap message inside the 'soap response' pane in the applet
+        // show soap message inside the 'soap request' pane in the applet
         type = new Integer(SOAPMonitorConstants.SOAP_MONITOR_REQUEST);
         ref = messageContext.getFaultTo();
     } else if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) { 
