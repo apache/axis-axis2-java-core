@@ -44,12 +44,13 @@ public interface Module {
 
     /**
      * When engaging this module to some service or operation , module will be notify by calling this
-     * method there module autor can validate , add policy and do any thing that he want , and he can
+     * method there module author can validate , add policy and do any thing that he want , and he can
      * refuce the engage as well
      * @param axisDescription
      * @throws AxisFault
      */
     void engageNotify(AxisDescription axisDescription) throws AxisFault;
+    
     // shutdown the module
     public void shutdown(AxisConfiguration axisSystem) throws AxisFault;
 }
