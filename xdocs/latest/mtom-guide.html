@@ -1,19 +1,29 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>Sending Binary data with SOAP</title>
+  <title>MTOM Guide-Sending Binary data with SOAP</title>
 </head>
 
 <body>
-<h1>Sending Binary Data with SOAP</h1>
+<h1>MTOM Guide -Sending Binary Data with SOAP</h1>
+
+<p>This document will describe the problems occuring in sending binary data
+with SOAP and how Axis2 has overcome those problems using MTOM or SOAP
+Message Transmission Optimization Mechanism.</p>
+
+<h2>Content</h2>
 <ul>
-  <li><a href="#1">Introduction</a></li>
+  <li><a href="#1">Introduction</a>
+    <ul>
+      <li><a href="#11">Where Does MTOM Come In?</a></li>
+    </ul>
+  </li>
   <li><a href="#2">MTOM with Axis2 </a>
     <ul>
       <li><a href="#21">Programming Model</a></li>
-      <li><a href="#22">Enabling MTOM optimization at client side</a></li>
-      <li><a href="#23">Enabling MTOM optimization at server side</a></li>
-      <li><a href="#24">Accessing received Binary Data (Sample Code) </a>
+      <li><a href="#22">Enabling MTOM Optimization at Client Side</a></li>
+      <li><a href="#23">Enabling MTOM Optimization at Server Side</a></li>
+      <li><a href="#24">Accessing Received Binary Data (Sample Code) </a>
         <ul>
           <li><a href="#241">Service</a></li>
           <li><a href="#242">Client</a></li>
@@ -28,6 +38,7 @@
     </ul>
   </li>
 </ul>
+<a name="1"></a>
 
 <h2>Introduction</h2>
 
@@ -35,9 +46,11 @@
 there are times when serializing data into XML does not make sense. Web
 services users may need to transmit binary attachments of various sorts like
 images, drawings, xml docs, etc together with SOAP message. Such data are
-often in a particular binary format.<br/>
-Traditionally, two techniques have been used in dealing with opaque data in
-XML;</p>
+often in a particular binary format.<br>
+</p>
+
+<p>Traditionally, two techniques have been used in dealing with opaque data
+in XML;</p>
 <ol>
   <li><strong>"By value"</strong></li>
 
@@ -82,6 +95,9 @@ XML;</p>
     </blockquote>
   </li>
 </ol>
+<a name="11"></a>
+
+<h3>Where Does MTOM Come In?</h3>
 
 <p><a href="http://www.w3.org/TR/2004/PR-soap12-mtom-20041116/">MTOM (SOAP
 Message Transmission Optimization Mechanism)</a> is another specification
@@ -119,10 +135,12 @@ form.</em></p>
 <p>Apache Axis2 supports <strong>Base64 encoding</strong>, <strong>SOAP with
 Attachments</strong> &amp; <strong>MTOM (SOAP Message Transmission
 Optimization Mechanism).</strong></p>
+<a name="2"></a>
 
-<h1>MTOM with Axis2</h1>
+<h2>MTOM with Axis2</h2>
+<a name="21"></a>
 
-<h2>Programming Model</h2>
+<h3>Programming Model</h3>
 
 <p>AXIOM is (and may be the first) Object Model which has the ability to hold
 binary data. It has been given this ability by allowing OMText to hold raw
@@ -175,8 +193,9 @@ optimized at any case. They will be serialized and send as Base64 Strings.</p>
         javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataHandler("someLocation"));
         OMText textData = fac.createText(dataHandler, false); 
         image.addChild(textData);</pre>
-</source>
-<h2>Enabling MTOM optimization at client side</h2>
+</source><a name="22"></a>
+
+<h3>Enabling MTOM Optimization at Client Side</h3>
 
 <p>Set the "enableMTOM" property in the Options to true, when sending
 messages.</p>
@@ -200,8 +219,6 @@ any optimized contents. To support this phenomenon there is an entry called
         options.setProperty(Constants.Configuration.FORCE_MIME, Constants.VALUE_TRUE);
         serviceClient.setOptions(options);</pre>
 </source>
-<p></p>
-
 <p>Axis2 serializes all binary content nodes as Base64 encoded strings
 regardless of they are qualified to be optimize or not, if,</p>
 <ul>
@@ -216,11 +233,9 @@ regardless of they are qualified to be optimize or not, if,</p>
 Axis2 will automatically identify and de-serialize any MTOM message it
 receives.</p>
 
-<p></p>
-
 <p><a name="23"></a></p>
 
-<h2>Enabling MTOM optimization in the Server side</h2>
+<h3>Enabling MTOM Optimization at Server Side</h3>
 
 <p>Axis 2 server automatically identifies incoming MTOM optimized messages
 based on the content-type and de-serializes accordingly. User can enableMTOM
@@ -238,19 +253,16 @@ in the server side for outgoing messages,</p>
   </li>
 </ul>
 
-<p><source>
+<p><source></p>
 <pre>&lt;parameter name="enableMTOM" locked="false"&gt;true&lt;/parameter&gt;</pre>
-</source>
-</p>
-<ul>
+</source><ul>
   <ul>
     <p>User must restart the server after setting this parameter.</p>
   </ul>
 </ul>
+<a name="24"></a>
 
-<p><a name="24"></a></p>
-
-<h2>Accessing received Binary Data</h2>
+<h3>Accessing Received Binary Data (Sample Code)</h3>
 <ul>
   <li><strong><a name="241"></a>Service</strong></li>
 </ul>
@@ -278,8 +290,9 @@ in the server side for outgoing messages,</p>
     }
 }</pre>
 </source><ul>
-    <a name="242"/>
-  <li><strong>Client</strong></li>
+  <ul>
+    <li><a name="242"><strong>Client</strong></a></li>
+  </ul>
 </ul>
 <source><pre>        Options options = new Options();
         options.setTo(targetEPR); 
@@ -299,10 +312,9 @@ in the server side for outgoing messages,</p>
         actualDH = binaryNode.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());</pre>
-</source>
-<p><a name="3"></a></p>
+</source><a name="3"></a>
 
-<h1>SOAP with Attachments (SwA) with Axis2</h1>
+<h2>SOAP with Attachments (SwA) with Axis2</h2>
 
 <p>Axis2 Handles SwA messages at the inflow only. When Axis2 receives a SwA
 message it extracts the binary attachment parts and puts a reference to those
@@ -413,10 +425,12 @@ content-id: <1.A91D6D2E3D7AC4D580@apache.org>
 
 <em>Binary Data.....</em>
 --MIMEBoundary4A7AE55984E7438034--</pre>
-</source>
-<h1>Advanced Topics</h1>
+</source><a name="4"></a>
 
-<h2>File Caching For Attachments</h2>
+<h2>Advanced Topics</h2>
+<a name="41"></a>
+
+<h3>File Caching for Attachments</h3>
 
 <p>Axis2 comes handy with a file caching mechanism for incoming attachments,
 which gives Axis2 the ability to handle very large attachments without

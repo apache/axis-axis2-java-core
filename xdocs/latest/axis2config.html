@@ -5,10 +5,16 @@
   <title>Axis2 Configuration Documents</title>
 </head>
 
-<body>
+<body lang="en">
+<h1>Axis2 Configuration Guide</h1>
+
 <p>In Axis2 there are three kinds of configuration files to configure the
-system. First one configuration file is to configure whole system, second one
-is to configure a service and the third one is to configure a module.</p>
+system. First one is to configure whole system (global configuration), second
+one is to configure a service (service configuration) and the third one is to
+configure a module (module configuration). This document will explain in
+detail the above configurations.</p>
+
+<h2>Content</h2>
 <ul>
   <li><a href="#Global_Configuration">Global Configuration
   (axis2.xml)</a></li>
@@ -127,7 +133,7 @@ element. The complete configuration will look like as follows; <source>
                 &lt;order phase="Dispatch"/"&gt;
             &lt;/handler"&gt;
         &lt;/phase"&gt;
-        &lt;!--  Sysem pre defined phases       --"&gt;
+        &lt;!--  System pre defined phases       --"&gt;
         &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --"&gt;
         &lt;phase name="OperationInPhase"/"&gt;
     &lt;/phaseOrder"&gt;
@@ -249,7 +255,7 @@ of the service will be the name given by the name attribute</font>
 deployed and scope can be one of
 "Application","SOAPSession","TransportSession","Request";</p>
 
-<p><em><strong>targetNamespace</strong></em> : Targtet name space of the
+<p><em><strong>targetNamespace</strong></em> : Target name space of the
 service , and this value will be used when generation wsdl</p>
 
 <p></p>
@@ -273,8 +279,8 @@ and the class will be loaded by MessageReceiver.</p>
 
 <p><b>Operations</b><br>
 If the service impl class is java then all the public methods in that service
-will be exposed and if user wnats to override then he has to add operation
-tag and override that . In the case of Non-Java case or if you does no thave
+will be exposed and if user wants to override then he has to add operation
+tag and override that . In the case of Non-Java case or if you does not have
 service class then all the operations user wants to expose by the service has
 to be indicated in the services.xml and the correct way of specifying that
 should be as follows:</p>
@@ -326,13 +332,12 @@ A very simple module.xml is shown below:</p>
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
         &lt;parameter name="para1" locked="xsd:true"&gt;10&lt;/parameter&gt;
     &lt;/operation&gt;
-&lt;/module&gt;
-</pre>
+&lt;/module&gt;</pre>
 </source>class: This is an optional attribute which indicate module
 implementation class, a module may or may not contain module implementation
 class since the module can also be a collection of handlers. If a module
 contains an implementation class which implements the
-org.apache.axis2.modules.Module inteface where at the deployment time its
+org.apache.axis2.modules.Module interface where at the deployment time its
 init(); method will be called.
 
 <p><b>parameter:</b> Module can contains any number of parameters and all the
@@ -344,7 +349,7 @@ AxisModule of the module.</p>
 <p>Defining of handlers in a module has to done inside Flows , and there are
 four types of flows as listed below.</p>
 
-<p> It is possible to add any number of handlers into a flow and those
+<p>It is possible to add any number of handlers into a flow and those
 handlers will be available in corresponding chains at the runtime when they
 engaged .</p>
 <ul>
@@ -369,7 +374,7 @@ defining a handler will be look like follows;</p>
 </source>
 <p><b><i>Compulsory attributes</i></b> <br>
 name: name of the handler<br>
-nlass: handler implementation class<br>
+class: handler implementation class<br>
 phase: name of the phase that the handler should stay in the execution chain
 <br>
 <br>
