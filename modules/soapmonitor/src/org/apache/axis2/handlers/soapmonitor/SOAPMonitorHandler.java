@@ -68,14 +68,29 @@ public class SOAPMonitorHandler extends AbstractHandler {
         id = assignMessageId(messageContext);
         type = new Integer(SOAPMonitorConstants.SOAP_MONITOR_REQUEST);
         ref = messageContext.getTo();
-    } else { 
+    } else if (messageContext.getFLOW() == MessageContext.OUT_FLOW) { 
         id = getMessageId(messageContext);
         // show soap message inside the 'soap response' pane in the applet
         type = new Integer(SOAPMonitorConstants.SOAP_MONITOR_RESPONSE);
         ref = messageContext.getFrom();
+    } else if (messageContext.getFLOW() == MessageContext.IN_FAULT_FLOW) { 
+        id = getMessageId(messageContext);
+        // show soap message inside the 'soap response' pane in the applet
+        type = new Integer(SOAPMonitorConstants.SOAP_MONITOR_REQUEST);
+        ref = messageContext.getFaultTo();
+    } else if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) { 
+        id = getMessageId(messageContext);
+        // show soap message inside the 'soap response' pane in the applet
+        type = new Integer(SOAPMonitorConstants.SOAP_MONITOR_RESPONSE);
+        // TODO - How do I get an EPR on MessageContext.OUT_FAULT_FLOW ? 
+    } else {
+        throw new IllegalStateException("unknown FLOW detected in messageContext: " + messageContext.getFLOW());
     }
 
-    String target = ref.getAddress();
+    String target = null;
+    if (ref != null) {
+        target = ref.getAddress();
+    }
     // Check for null target
     if (target == null) {
         target = "";

@@ -28,6 +28,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Vector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This is a SOAP Monitor Service class. 
@@ -63,6 +65,8 @@ public class SOAPMonitorService extends HttpServlet {
    */
   private static ServerSocket server_socket = null;
   private static Vector       connections = null;
+
+  private Log log = LogFactory.getLog(getClass());
 
   /**
    * Constructor
@@ -106,9 +110,10 @@ public class SOAPMonitorService extends HttpServlet {
       try {
         // Try to open the server socket
         server_socket = new ServerSocket(Integer.parseInt(port));
-      } catch (Exception e) {
+      } catch (Exception ex) {
         // Let someone know we could not open the socket
-        // System. out.println("Unable to open server socket using port "+port+".");
+        log.error("Unable to open server socket using port: " + port);
+        log.error(ex.getMessage(), ex);
         server_socket = null;
       }
       if (server_socket != null) {
@@ -147,6 +152,7 @@ public class SOAPMonitorService extends HttpServlet {
    int port = 0;
    if (server_socket != null) {
      port = server_socket.getLocalPort();
+     log.debug("Sending param to SOAP monitor applet as port: " + port);
    }
    response.setContentType("text/html");
    response.getWriter().println("<html>");
