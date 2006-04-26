@@ -9,4 +9,4 @@ done
 export AXIS2_CLASSPATH
 
 echo the classpath $AXIS2_CLASSPATH
-java -classpath $AXIS2_CLASSPATH org.apache.axis2.wsdl.WSDL2Java $1 $2 $3 $4 $5 $6 $7 $8 $9
+java -classpath $AXIS2_CLASSPATH org.apache.axis2.wsdl.WSDL2Java $*
