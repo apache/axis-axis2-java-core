@@ -1,40 +1,41 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><title>The SOAP Monitor Module</title>
+<html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title>The SOAP Monitor Module</title>
+</head>
 
 <body>
 <h1>Using the SOAP Monitor</h1>
 
-<p>Web service developers often have the need to see the SOAP messages being used to invoke web 
-services along with the results of those messages. The goal of the SOAP Monitor utility is to 
-provide a way for these developers to monitor the SOAP messages being used without requiring 
-any special configuration or restarting of the server.
+<p>Web service developers often have the need to see the SOAP messages being
+used to invoke Web services along with the results of those messages. The
+goal of the SOAP Monitor utility is to provide a way for these developers to
+monitor the SOAP messages being used without requiring any special
+configuration or restarting of the server. In this utility, a handler has
+been written and added to the global handler chain. As SOAP requests and
+responses are received, the SOAP message information is forwarded to a SOAP
+monitor service where it can be displayed using a Web browser interface. The
+SOAP message information is accessed with a Web browser by going to
+http://localhost:<port>/axis2/SOAPMonitor (where <port>is the port number
+where the application server is running). The SOAP message information is
+displayed through a Web browser by using an applet that opens a socket
+connection to the SOAP monitor service. This applet requires a Java plug-in
+1.3 or higher to be installed in your browser. If you do not have a correct
+plug-in, the browser should prompt you to install one. The port used by the
+SOAP monitor service to comminicate with applets is configurable. Edit the
+web.xml file for the Axis Web application to change the port to be used.</p>
 
-In this utility, a handler has been written and added to the global handler chain. As SOAP 
-requests and responses are received, the SOAP message information is forwarded to a SOAP monitor 
-service where it can be displayed using a web browser interface.
+<p>The soap monitor module (soapmonitor.mar) is available in the axis2.war
+but it is not engaged by default. The SOAP Monitor is NOT enabled by default
+for security reasons.</p>
 
-The SOAP message information is accessed with a web browser by going to 
-http://localhost:<port>/axis2/SOAPMonitor (where <port> is the port number where the application 
-server is running).
-
-The SOAP message information is displayed through a web browser by using an applet that opens a 
-socket connection to the SOAP monitor service. This applet requires a Java plug-in 1.3 or 
-higher to be installed in your browser. If you do not have a correct plug-in, the browser should 
-prompt you to install one.
-
-The port used by the SOAP monitor service to comminicate with applets is configurable. Edit the 
-web.xml file for the Axis web application to change the port to be used. </p>
-
-<p>The soap monitor module (soapmonitor.mar) is available in the axis2.war but it is not engaged by
-   default. The SOAP Monitor is NOT enabled by default for security reasons.</p>
-
-<p>The SOAP Monitor can be engaged by inserting the following in the axis2.xml file.</p>
-<source><pre>
-    &lt;module ref="soapmonitor"/&gt;
-</pre></source>
-
-<p>Then in the axis2.xml file define your phase orders for 'soapmonitorPhase' referenced in the
-module.xml of soapmonitor.mar: </p>
+<p>The SOAP Monitor can be engaged by inserting the following in the
+axis2.xml file.</p>
+<source><pre>    &lt;module ref="soapmonitor"/&gt;</pre>
+</source>
+<p>Then in the axis2.xml file define your phase orders for 'soapmonitorPhase'
+referenced in the module.xml of soapmonitor.mar:</p>
 <pre>    &lt;phaseOrder type="inflow"&gt;
         &lt;!--  System pre defined phases       --&gt;
         &lt;phase name="TransportIn"/&gt;
@@ -91,8 +92,8 @@ module.xml of soapmonitor.mar: </p>
         &lt;phase name="MessageOut"/&gt;
     &lt;/phaseOrder&gt;</pre>
 
-<p>To configure the servlet to communicate with the applet, add the following to web.xml 
-(the SOAPMonitorPort is configurable) : </p>
+<p>To configure the servlet to communicate with the applet, add the following
+to web.xml (the SOAPMonitorPort is configurable) :</p>
 <pre>&lt;servlet&gt;
        &lt;servlet-name&gt;SOAPMonitorService&lt;/servlet-name&gt;
        &lt;display-name&gt;SOAPMonitorService&lt;/display-name&gt;
@@ -110,15 +111,15 @@ module.xml of soapmonitor.mar: </p>
         &lt;servlet-name&gt;SOAPMonitorService&lt;/servlet-name&gt;
         &lt;url-pattern&gt;/SOAPMonitor&lt;/url-pattern&gt;
     &lt;/servlet-mapping&gt;</pre>
-<p>Finally, compile the applet classes and place them at the root of the war - for example
-axis2/SOAPMonitorApplet*.class/WEB-INF : 
-</p>
-<pre>
-javac -classpath axis2-soapmonitor.jar SOAPMonitorApplet.java
-</pre>
-<p>With a web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor (e.g. 
-http://localhost:8080/axis2/SOAPMonitor) substituting the correct values for your web application. This 
-will show the SOAP Monitor applet for viewing service requests and responses. Any requests to services 
-that have been configured and deployed correctly should show up in the applet.
-</p>
-</body></html>
+
+<p>Finally, compile the applet classes and place them at the root of the war
+- for example axis2/SOAPMonitorApplet*.class/WEB-INF :</p>
+<pre>javac -classpath axis2-soapmonitor.jar SOAPMonitorApplet.java</pre>
+
+<p>With a Web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor (e.g.
+http://localhost:8080/axis2/SOAPMonitor) substituting the correct values for
+your Web application. This will show the SOAP Monitor applet for viewing
+service requests and responses. Any requests to services that have been
+configured and deployed correctly should show up in the applet.</p>
+</body>
+</html>

@@ -4,18 +4,17 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2 User's Guide</title>
-  <meta name="generator" content="Bluefish 1.0.4">
 </head>
 
 <body lang="en-US" dir="ltr">
 <h4><a name="Axis2_User's_Guide">Axis2 User's Guide</a></h4>
 
-<p><i>Version 1.0</i></p>
+<p><i>-Axis2 version 1.0</i></p>
 
 <p><i>User Feedback: <a
 href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></i>. Prefix
-subject with [Axis2]. To subscribe to mailing list see
-<a href="http://ws.apache.org/axis2/mail-lists.html">here.</p>
+subject with [Axis2]. To subscribe to mailing list see <a
+href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <p align="right">Pages: <a href="userguide.html">Content</a>, <a
 href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <b>3</b>, <a
@@ -48,7 +47,7 @@ Similarly there are various other consequences such as One-Way transports
 that come in to play when we need them. Let's try to analyze some common
 service invocation paradigms.</p>
 
-<p>Many web service engines provide the users with a Blocking and
+<p>Many Web service engines provide the users with a Blocking and
 Non-Blocking client APIs.</p>
 <ul>
   <li><p style="margin-bottom: 0in"><b>Blocking API</b> -Once the service
@@ -81,7 +80,7 @@ asynchronous behavior that we gain using this solution can be called
 <b>Transport Level Asynchrony</b>.</p>
 
 <p>By combining API Level Asynchrony &amp; Transport Level Asynchrony we can
-obtain four different invocation patterns for web services as shown in the
+obtain four different invocation patterns for Web services as shown in the
 following table.</p>
 <a name="table1"></a>
 
@@ -177,13 +176,13 @@ client code you need to write is as follows.</p>
         } 
 }</pre>
 </source>
-<p>The green lines shows the set of operations that you need to perform
-inorder to invoke a web service. The rest is used to create the OMElement
-that needs to be sent and display the response OMElement. To test this
-client, use the provided ant build file that can be found in the
-"Axis2Home/samples" directory. Run the "testEchoBlockingClient" target . If
-you can see the response OMElement printed in your command line,  then you
-have successfully tested the client. </p>
+<p>The green lines shows the set of operations that you need to perform in
+order to invoke a Web service. The rest is used to create the OMElement that
+needs to be sent and display the response OMElement. To test this client, use
+the provided ant build file that can be found in the "Axis2Home/samples"
+directory. Run the "testEchoBlockingClient" target . If you can see the
+response OMElement printed in your command line,  then you have successfully
+tested the client. </p>
 
 <h4><a name="PingClient">PingClient</a></h4>
 
@@ -224,9 +223,9 @@ operations...</p>
 <p>In the EchoBlockingClient once the "serviceCleint.sendReceive(payload);"
 is called, the client is blocked till the operation is completed. This
 behavior is not desirable when there are many Web service invocations to be
-done in a single client application or within a GUI. A solution would be to use a
-Non-Blocking API to invoke Web services. Axis2 provides a callback based
-non-blocking API for users.</p>
+done in a single client application or within a GUI. A solution would be to
+use a Non-Blocking API to invoke Web services. Axis2 provides a callback
+based non-blocking API for users.</p>
 
 <p>A sample client for this can be found under
 "Axis2Home/samples/userguide/src/userguide/clients" with the name
@@ -267,19 +266,19 @@ blocking invocation. </p>
 <p>The trivial solution is to use separate transport connections (either
 One-Way or Two-Way) for the request and response. The next problem that needs
 to be solved is the correlation (correlating the request and the response).
-<a href="http://www.w3.org/2002/ws/addr/"
-target="_blank">WS-Addressing</a> provides a neat solution to this using
-&lt;wsa:MessageID&gt; and &lt;wsa:RelatesTo&gt; headers. Axis2 provides
-support for addressing  based correlation mechanism and a complying Client
-API to invoke Web Services with two transport connections. (Core of Axis2
-does not depend on WS-Addressing, but contains a set of parameters like in
-addressing that can be populated in any means. WS-Addressing is one of the
-users that may populate them. Even the transports can populate these. Hence
-Axis2 has the flexibility to use different versions of addressing)</p>
+<a href="http://www.w3.org/2002/ws/addr/" target="_blank">WS-Addressing</a>
+provides a neat solution to this using &lt;wsa:MessageID&gt; and
+&lt;wsa:RelatesTo&gt; headers. Axis2 provides support for addressing  based
+correlation mechanism and a complying Client API to invoke Web Services with
+two transport connections. (Core of Axis2 does not depend on WS-Addressing,
+but contains a set of parameters like in addressing that can be populated in
+any means. WS-Addressing is one of the users that may populate them. Even the
+transports can populate these. Hence Axis2 has the flexibility to use
+different versions of addressing)</p>
 
 <p>Users can select between Blocking or Non-Blocking APIs for the Web Service
 clients with two transport connections. By simply using a boolean flag, the
-same API can be used to invoke web services (IN-OUT operations) using two
+same API can be used to invoke Web services (IN-OUT operations) using two
 separate transport connections. Let's see how it's done using an example.
 Following code fragment shows how to invoke the same "echo" operation using
 Non-Blocking API with two transport connections<strong>. The ultimate
@@ -437,7 +436,7 @@ the form of comments.</p>
      //Create the request document to be sent.
      EchoStringParamDocument  reqDoc= EchoStringParamDocument.Factory.newInstance();
      reqDoc.setEchoStringParam("Axis2 Echo");
-     //invokes the web service.
+     //invokes the Web service.
      EchoStringReturnDocument resDoc=stub.echoString(reqDoc);
      System.out.println(resDoc.getEchoStringReturn());
 

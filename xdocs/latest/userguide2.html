@@ -4,13 +4,13 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2 User's Guide</title>
-  <meta name="generator" content="Bluefish 1.0.4">
 </head>
 
 <body lang="en-US" dir="ltr">
 <h4><a name="Axis2_User's_Guide">Axis2 User's Guide</a></h4>
 
-<p><i>Version 1.0</i></p>
+<p><i>-Axis2 version 1.0</i></p>
+
 <p><i>User Feedback: <a
 href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></i>. Prefix
 subject with [Axis2]. To subscribe to mailing list see <a
@@ -30,7 +30,7 @@ directory of the binary distribution.</p>
 <p>Before starting, please check whether you have deployed the "axis2.war" in
 your servlet container and it is working properly. (See <a
 href="installationguide.html" target="_blank">Installation Guide</a>). User
-can select any of the  following two ways of writing web services using
+can select any of the  following two ways of writing Web services using
 Axis2. </p>
 <ol>
   <li><a href="#Writing_Web_Services_Using Axis2's_Primary_APIs">Use Axis2's
@@ -116,14 +116,13 @@ configurations. "services.xml" for MyService will be as follows.</p>
 <p><em>The above XML tags can be explained as follows:</em></p>
 
 <p>First comes the description and the service class.</p>
-
 <pre>&lt;parameter name="ServiceClass" locked="false"&gt;userguide.example1.MyService&lt;/parameter&gt;</pre>
 
-<p>We provide the name of the service implementation class a parameter in the services.xml file.</p>
+<p>We provide the name of the service implementation class a parameter in the
+services.xml file.</p>
 
 <p>The next two xml tags describe the operations that are available in this
-service with respective message receivers. </p>
-
+service with respective message receivers.</p>
 <pre>   &lt;operation name="echo"&gt;
             &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
             &lt;actionMapping&gt;urn:echo&lt;/actionMapping&gt;
@@ -132,12 +131,17 @@ service with respective message receivers. </p>
        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/&gt;
        &lt;actionMapping&gt;urn:ping&lt;/actionMapping&gt;
    &lt;/operation&gt;</pre>
-    
-<p> Every operation must have a corresponding MessageReceiver class. When Axis2 engine receives a message, after the message is being processed by the handlers, it will be handed over to a MessageReceiver.
-<br /> For the "echo" operation we have used a <strong>RawXMLINOutMessageReceiver</strong> since it is an IN-OUT
-operation. For IN-ONLY operation "ping", we have used
+
+<p>Every operation must have a corresponding MessageReceiver class. When
+Axis2 engine receives a message, after the message is being processed by the
+handlers, it will be handed over to a MessageReceiver. <br>
+For the "echo" operation we have used a
+<strong>RawXMLINOutMessageReceiver</strong> since it is an IN-OUT operation.
+For IN-ONLY operation "ping", we have used
 <strong>RawXMLINOnlyMessageReceiver</strong> as the message receiver.</p>
-<p>The actionMapping is required only if you want to enable WS-Addressing. This will be used later in this user guide.</p>
+
+<p>The actionMapping is required only if you want to enable WS-Addressing.
+This will be used later in this user guide.</p>
 
 <p>You can write a services.xml file to include a group of services instead
 of a single service. This makes management and deployment of a set of related
@@ -163,7 +167,8 @@ Service Archive</a></h4>
 
 <p>Axis2 uses ".aar" (Axis Archive) file as the deployment package for Web
 Services. Therefore, for MyService we will use "MyService.aar" with the
-"services.xml" packaged in the META-INF as shown in the following picture. (Name of the service will be the name of the archive file , if and only if
+"services.xml" packaged in the META-INF as shown in the following picture.
+(Name of the service will be the name of the archive file , if and only if
 the services.xml contains only one service element).</p>
 
 <p><img src="images/userguide/ServiceItems.jpg" name="Graphic1"
@@ -247,7 +252,7 @@ Logic</a></h4>
 
 <p>Locate the skeleton class that can be found under src/userguide directory
 with the name "Axis2SampleDocLitPortTypeSkeleton.java". This is the skeleton
-for our web service and we can now easily implement the business logic. The
+for our Web service and we can now easily implement the business logic. The
 WSDL we have used has three operations:<!--<li><p style="margin-bottom: 0in">echoVoid   - Operation that does not
 accept any input parameters  and also provide no out put parameters. Just
 perform some task </p>
@@ -296,7 +301,7 @@ simple and the explanations are given as comments.</p>
  }</pre>
 
 <p>Similarly following code fragments shows how you can fill the business
-logic for our first web service.</p>
+logic for our first Web service.</p>
 
 <h4><a name="echoStringArray">echoStringArray</a></h4>
 <pre>public org.apache.axis2.userguide.xsd.EchoStringArrayReturnDocument echoStringArray
@@ -339,9 +344,9 @@ logic for our first web service.</p>
 
 <h4><a name="services_xml">services.xml</a></h4>
 
-<p> Axis2 uses "services.xml" to hold the configurations for a particular web
+<p> Axis2 uses "services.xml" to hold the configurations for a particular Web
 service deployed in the Axis2 engine. When we generate the skeleton using the
-WSDL2Java tool, it will also generate the required services.xml for this web
+WSDL2Java tool, it will also generate the required services.xml for this Web
 service as well. This can be found in the same directory as the skeleton. The
 generated services.xml is as follows.</p>
 <pre>&lt;!-- This services.xml file was auto-generated from WSDL --&gt;

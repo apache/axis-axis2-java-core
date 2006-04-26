@@ -9,8 +9,20 @@
 <h1>Securing SOAP Messages with WSS4J</h1>
 
 <p>Axis2 comes with a module based on WSS4J [1] to provide WS-Security
-features. This section explains how to engage and configure the security
-module. Since the security module inserts handlers in the system specific
+features. This document explains how to engage and configure the security
+module.</p>
+
+<h2>Content</h2>
+<ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#outflowsecurity">OutflowSecurity Parameter</a></li>
+  <li><a href="#inflowsecurity">InflowSecurity Parameter</a></li>
+  <li><a href="#references">References</a></li>
+  <li><a href="#examples">Examples</a></li>
+</ul>
+<a name="intro"></a>
+<h2>Introduction</h2>
+<p>Since the security module inserts handlers in the system specific
 pre-dispatch phase, it must be engaged globally. But it is possible to
 activate the security module for the inflow or the outflow when required by
 the service or the clients.</p>
@@ -35,8 +47,8 @@ the client's Axis2 repository.</p>
   <li>InflowSecurity</li>
 </ul>
 The configuration that can go in each of these parameters are described below:
-
-<h3>OutflowSecurity parameter</h3>
+<a name="outflowsecurity"></a>
+<h2>OutflowSecurity Parameter</h2>
 This parameter is used to configure the outflow security handler. The outflow
 handler can be invoked more than once in the outflow one can provide
 configuration for each of these invocations. The 'action' element describes
@@ -139,10 +151,8 @@ element of the OutflowSecurity parameter</p>
     </tr>
   </tbody>
 </table>
-<br>
-
-
-<h3>InflowSecurity parameter</h3>
+<a name="inflowsecurity"></a>
+<h2>InflowSecurity Parameter</h2>
 
 <p>This parameter is used to configure the inflow security handler. The
 'action' element is used to encapsulate the configuration elements here as
@@ -206,15 +216,13 @@ project. Following shows the properties defined in a sample property file</p>
 the org.apache.ws.security.components.crypto.Crypto interface to provide the
 crypto information required by WSS4J. The other properties defined are the
 configuration properties used by the implementation class
-(org.apache.ws.security.components.crypto.Merlin).
+(org.apache.ws.security.components.crypto.Merlin). <a name="ref"></a>
+<a name="references"></a>
+<h2>References</h2>
 
-<p><b>References</b></p>
-
-<p>1. <a href="http://ws.apache.org/wss4j">Apache WSS4J</a></p>
-<br>
-
-
-<p><b>Examples</b></p>
+<p>1. <a href="http://ws.apache.org/wss4j">Apache WSS4J -Home</a></p>
+<a name="examples"></a>
+<h2>Examples</h2>
 
 <p id="ex1">Example 1: An outflow configuration to add a timestamp, sing and
 encrypt the message once</p>
