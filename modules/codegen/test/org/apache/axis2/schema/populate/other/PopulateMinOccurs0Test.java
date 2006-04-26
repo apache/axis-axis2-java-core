@@ -31,44 +31,68 @@ import java.beans.IntrospectionException;
 
 public class PopulateMinOccurs0Test extends TestCase {
 
+    /*
+     <xs:element name="A" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+	 <xs:element name="B" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+	 <xs:element name="C" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+	 <xs:element name="D" type="xs:string" minOccurs="0" maxOccurs="1"/>
+   */
+
+    // element D is missing
     private String xmlString1 = "<root xmlns=\"http://test.org\">" +
             "<A>I am A</A>" +
             "<B>I am B1</B>" +
             "<B>I am B2</B>" +
-            "<C>I am B2</C>" +
-            "<C>I am B2</C>" +
+            "<C>I am C1</C>" +
+            "<C>I am C2</C>" +
             "</root>";
 
+    //B elements are missing
     private String xmlString2 = "<root xmlns=\"http://test.org\">" +
             "<A>I am A</A>" +
             "<C>I am B2</C>" +
             "<C>I am B2</C>" +
+            "<D>I am D1</D>" +
             "</root>";
 
-    public void testPopulate1() throws Exception{
-        populateAndAssert(xmlString1,2);
+    //Only A is present
+    private String xmlString3 = "<root xmlns=\"http://test.org\">" +
+            "<A>I am A</A>" +
+            "</root>";
+
+
+    public void testPopulate1() throws Exception {
+        populateAndAssert(xmlString1, 2, "b");
+        populateAndAssert(xmlString1, 2, "c");
     }
 
-     public void testPopulate2() throws Exception{
-         populateAndAssert(xmlString2,0);
+    public void testPopulate2() throws Exception {
+        populateAndAssert(xmlString2, 0, "b");
+        populateAndAssert(xmlString2, 2, "c");
     }
 
-    private void populateAndAssert(String s,int expectedCount) throws XMLStreamException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void testPopulate3() throws Exception {
+        populateAndAssert(xmlString3, 0, "b");
+        populateAndAssert(xmlString3, 1, "a");
+    }
+
+    private void populateAndAssert(String s, int expectedCount, String itemtoTest) throws XMLStreamException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, IntrospectionException {
         XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
         Class clazz = Class.forName("org.test.Root");
         Class innerClazz = clazz.getDeclaredClasses()[0];
-        Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});
-        Object obj = parseMethod.invoke(null,new Object[]{reader});
+        Method parseMethod = innerClazz.getMethod("parse", new Class[]{XMLStreamReader.class});
+        Object obj = parseMethod.invoke(null, new Object[]{reader});
 
         assertNotNull(obj);
 
         Object stringArray = null;
-        BeanInfo beanInfo =  Introspector.getBeanInfo(obj.getClass());
+        BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         Method readMethod;
+
         for (int i = 0; i < propertyDescriptors.length; i++) {
             PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
-            if ("b".equals(propertyDescriptor.getDisplayName())){
+            if (itemtoTest.equals(propertyDescriptor.getDisplayName())) {
                 readMethod = propertyDescriptor.getReadMethod();
                 stringArray = readMethod.invoke(obj, null);
                 break;
@@ -76,10 +100,9 @@ public class PopulateMinOccurs0Test extends TestCase {
         }
 
         assertNotNull(stringArray);
-        String[] array = (String[])stringArray;
-        assertEquals(array.length,expectedCount);
+        String[] array = (String[]) stringArray;
+        assertEquals(array.length, expectedCount);
     }
-
 
 
 }

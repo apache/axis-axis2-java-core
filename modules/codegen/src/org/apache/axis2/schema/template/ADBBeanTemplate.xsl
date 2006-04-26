@@ -925,12 +925,13 @@
                                <xsl:otherwise>
                                    <xsl:variable name="arrayVarName">textArray<xsl:value-of select="position()"/></xsl:variable>
                                    <xsl:if test="position()>1">
-
-                                   // Move to a start element
-                                   event = reader.getEventType();
-                                   while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
-                                       event = reader.next();
-                                   }
+                                     <xsl:if test="$min!=0">
+                                       // Move to a start element
+                                       event = reader.getEventType();
+                                       while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
+                                           event = reader.next();
+                                       }
+                                      </xsl:if>
                                    </xsl:if>
                                   <!-- Start of Array handling of simple types -->
                                    org.apache.axis2.databinding.utils.SimpleArrayReaderStateMachine <xsl:value-of select="$stateMachineName"/> = new
@@ -940,6 +941,9 @@
                                    "<xsl:value-of select="$propertyName"/>"));
                                    <xsl:if test="@nillable">
                                       <xsl:value-of select="$stateMachineName"/>.setNillable();
+                                   </xsl:if>
+                                     <xsl:if test="$min=0">
+                                      <xsl:value-of select="$stateMachineName"/>.setCanbeAbsent(true);
                                    </xsl:if>
                                    <xsl:value-of select="$stateMachineName"/>.read(reader);
                                    java.lang.String[] <xsl:value-of select="$arrayVarName"/> =
@@ -1021,11 +1025,13 @@
                      <!-- start of the simple types handling -->
                      <xsl:otherwise>
                          <xsl:if test="position()>1">
-                             // Move to a start element
-                             event = reader.getEventType();
-                             while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
-                               event = reader.next();
-                             }
+                             <xsl:if test="$min!=0">
+                                       // Move to a start element
+                                       event = reader.getEventType();
+                                       while (event!= javax.xml.stream.XMLStreamReader.START_ELEMENT) {
+                                           event = reader.next();
+                                       }
+                              </xsl:if>
                          </xsl:if>
                        org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine <xsl:value-of select="$stateMachineName"/>
                          = new org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine();
@@ -1037,18 +1043,39 @@
                                <xsl:value-of select="$stateMachineName"/>.setNillable();
                        </xsl:if>
                        <xsl:value-of select="$stateMachineName"/>.read(reader);
-                       object.set<xsl:value-of select="$javaName"/>(
-                         <xsl:choose>
-                             <xsl:when test="@nillable and not(@primitive)">
-                                  <xsl:value-of select="$stateMachineName"/>.getText()==null?null:
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
-                                  <xsl:value-of select="$stateMachineName"/>.getText()));
-                             </xsl:when>
-                             <xsl:otherwise>
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
-                                  <xsl:value-of select="$stateMachineName"/>.getText()));
-                             </xsl:otherwise>
-                         </xsl:choose>
+                       <xsl:choose>
+                           <xsl:when test="$min=0">
+                               if (!<xsl:value-of select="$stateMachineName"/>.isElementSkipped()){
+                                 object.set<xsl:value-of select="$javaName"/>(
+                                   <xsl:choose>
+                                   <xsl:when test="@nillable and not(@primitive)">
+                                       <xsl:value-of select="$stateMachineName"/>.getText()==null?null:
+                                       org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                                       <xsl:value-of select="$stateMachineName"/>.getText()));
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                                       <xsl:value-of select="$stateMachineName"/>.getText()));
+                                   </xsl:otherwise>
+                                 </xsl:choose>
+                             }
+                           </xsl:when>
+                           <xsl:otherwise>
+                             object.set<xsl:value-of select="$javaName"/>(
+                               <xsl:choose>
+                                   <xsl:when test="@nillable and not(@primitive)">
+                                       <xsl:value-of select="$stateMachineName"/>.getText()==null?null:
+                                       org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                                       <xsl:value-of select="$stateMachineName"/>.getText()));
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
+                                       <xsl:value-of select="$stateMachineName"/>.getText()));
+                                   </xsl:otherwise>
+                               </xsl:choose>
+                           </xsl:otherwise>
+                       </xsl:choose>
+
 
                      </xsl:otherwise>
                       <!-- end of simple type handling -->

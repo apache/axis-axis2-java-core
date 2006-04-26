@@ -30,6 +30,9 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
     private QName elementNameToTest = null;
     private int currentState = INIT_STATE;
     private boolean nillable = false;
+
+    private boolean canbeAbsent = false;
+
     private List list = new ArrayList();
 
     /**
@@ -42,6 +45,14 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
 
     public void setNillable(){
         nillable = true;
+    }
+
+    public boolean isCanbeAbsent() {
+        return canbeAbsent;
+    }
+
+    public void setCanbeAbsent(boolean canbeAbsent) {
+        this.canbeAbsent = canbeAbsent;
     }
 
     /**
@@ -114,7 +125,18 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
                     if (elementNameToTest.equals(reader.getName())){
                         currentState = START_ELEMENT_FOUND_STATE;
                     }else{
-                        currentState = STARTED_STATE;
+                        //we found a start element that does not have
+                        //the name of the element
+
+                        currentState = canbeAbsent?
+                                     FINISHED_STATE:
+                                     STARTED_STATE;
+                    }
+                }else if (event==XMLStreamConstants.END_ELEMENT){
+                    // an end element is found at the init state
+                    // we should break the process here ?
+                    if (!elementNameToTest.equals(reader.getName())){
+                        currentState = FINISHED_STATE ;
                     }
                 }
                 break;
