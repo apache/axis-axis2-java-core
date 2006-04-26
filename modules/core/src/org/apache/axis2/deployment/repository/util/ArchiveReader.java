@@ -20,8 +20,8 @@ package org.apache.axis2.deployment.repository.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.*;
-import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
+import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -83,7 +83,7 @@ public class ArchiveReader implements DeploymentConstants {
                     axisConfig);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
-       throw new AxisFault("In valid services.xml found");
+        throw new AxisFault("In valid services.xml found");
     }
 
     /**
@@ -165,9 +165,6 @@ public class ArchiveReader implements DeploymentConstants {
         }
     }
 
-    private AxisService processWSDLFile(InputStream in) throws DeploymentException {
-       return processWSDLFile(in,null);
-    }
     /**
      * Creats AxisService.
      *
@@ -175,18 +172,23 @@ public class ArchiveReader implements DeploymentConstants {
      * @return Returns AxisService.
      * @throws DeploymentException
      */
-    private AxisService processWSDLFile(InputStream in,File serviceArchiveFile) throws DeploymentException {
+    private AxisService processWSDLFile(InputStream in, File serviceArchiveFile,
+                                        boolean isArchive) throws DeploymentException {
         try {
             WSDL2AxisServiceBuilder wsdl2AxisServiceBuilder =
                     new WSDL2AxisServiceBuilder(in, null, null);
-            if (serviceArchiveFile!=null){
+            if (serviceArchiveFile != null && isArchive) {
                 wsdl2AxisServiceBuilder.setCustomResolver(
-                    new AARFileBasedURIResolver(serviceArchiveFile));
+                        new AARFileBasedURIResolver(serviceArchiveFile));
                 wsdl2AxisServiceBuilder.setCustomWSLD4JResolver(
-                        new AARBasedWSDLLocator(serviceArchiveFile,in)
+                        new AARBasedWSDLLocator(serviceArchiveFile, in)
                 );
+            } else {
+                if (serviceArchiveFile != null) {
+                    wsdl2AxisServiceBuilder.setBaseUri(
+                            serviceArchiveFile.getParentFile().getAbsolutePath());
+                }
             }
-
             return wsdl2AxisServiceBuilder.populateService();
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
@@ -220,7 +222,7 @@ public class ArchiveReader implements DeploymentConstants {
                     File file1 = files[i];
                     if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
                         InputStream in = new FileInputStream(file1);
-                        AxisService service = processWSDLFile(in);
+                        AxisService service = processWSDLFile(in, file1, false);
 
                         servicesMap.put(service.getName(), service);
                         try {
@@ -256,7 +258,7 @@ public class ArchiveReader implements DeploymentConstants {
                         }
 
                         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-                        AxisService service = processWSDLFile(in,serviceFile);
+                        AxisService service = processWSDLFile(in, serviceFile, true);
                         servicesMap.put(service.getName(), service);
                     }
                 }
@@ -310,7 +312,7 @@ public class ArchiveReader implements DeploymentConstants {
             }
         } else {
             File file = new File(filename, MODULE_XML);
-            
+
             if (file.exists() || (file = new File(filename, MODULE_XML.toLowerCase())).exists()) {
                 InputStream in;
                 try {

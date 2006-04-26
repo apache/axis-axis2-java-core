@@ -1,17 +1,12 @@
 package org.apache.axis2.deployment.resolver;
 
-import org.xml.sax.InputSource;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.xml.sax.InputSource;
 
 import javax.wsdl.xml.WSDLLocator;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipInputStream;
+import java.io.*;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -32,7 +27,7 @@ import java.util.zip.ZipEntry;
  * Custom WSDL locator to load schemas from zip archives
  * Need to provide the aarFile and the baseInputStream for
  * the base WSDL file
- *
+ * <p/>
  * The logic here is that we only care about the import location
  * all imports must be relative to the META-INF folder
  */
@@ -41,13 +36,12 @@ public class AARBasedWSDLLocator implements WSDLLocator {
     private File aarFile;
     private InputStream baseInputStream;
 
-    public AARBasedWSDLLocator(File zipFile,InputStream baseInputStream) {
+    public AARBasedWSDLLocator(File zipFile, InputStream baseInputStream) {
         this.baseInputStream = baseInputStream;
         this.aarFile = zipFile;
     }
 
     /**
-     *
      * @return
      */
     public InputSource getBaseInputSource() {
@@ -55,7 +49,6 @@ public class AARBasedWSDLLocator implements WSDLLocator {
     }
 
     /**
-     *
      * @param parentLocation
      * @param importLocation
      * @return
@@ -71,8 +64,9 @@ public class AARBasedWSDLLocator implements WSDLLocator {
             int read;
             ByteArrayOutputStream out;
             while ((entry = zin.getNextEntry()) != null) {
-                String entryName = entry.getName().toLowerCase();
-                if (entryName.startsWith(DeploymentConstants.META_INF.toLowerCase())
+                String entryName = entry.getName();
+                if ((entryName.startsWith(DeploymentConstants.META_INF.toLowerCase())
+                        || entryName.startsWith(DeploymentConstants.META_INF))
                         && entryName.endsWith(importLocation)) {
                     //read the item into a byte array to allow the
                     //stream to be closed
@@ -86,12 +80,11 @@ public class AARBasedWSDLLocator implements WSDLLocator {
             }
 
 
-
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally{
+        } finally {
             try {
-                if (zin!=null) zin.close();
+                if (zin != null) zin.close();
             } catch (IOException e) {
                 //log this error
             }
@@ -103,6 +96,7 @@ public class AARBasedWSDLLocator implements WSDLLocator {
     /**
      * As for the zip there is no point in returning
      * a base URI
+     *
      * @return
      */
     public String getBaseURI() {
@@ -112,6 +106,7 @@ public class AARBasedWSDLLocator implements WSDLLocator {
 
     /**
      * returns the latest import
+     *
      * @return
      */
     public String getLatestImportURI() {

@@ -135,6 +135,7 @@ public class WSDL2AxisServiceBuilder {
     private URIResolver customResolver;
 
     private WSDLLocator customWSLD4JResolver;
+    private String baseUri = null;
 
 
     public WSDL2AxisServiceBuilder(InputStream in, QName serviceName,
@@ -969,8 +970,7 @@ public class WSDL2AxisServiceBuilder {
             } catch (IOException e) {
                 throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
             }
-
-            return reader.readWSDL(null, doc);
+            return reader.readWSDL(getBaseUri(), doc);
         }
     }
 
@@ -1408,5 +1408,12 @@ public class WSDL2AxisServiceBuilder {
         }
     }
 
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+    }
 
 }
