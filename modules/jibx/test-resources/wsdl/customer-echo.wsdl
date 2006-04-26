@@ -28,7 +28,7 @@
   </portType>
 
   <binding name="EchoCustomerBinding" type="tns:EchoCustomer">
-    <soap:binding style="doc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="echo">
       <soap:operation soapAction="echo"/>
       <input>
@@ -42,7 +42,7 @@
 
   <service name="EchoCustomerService">
     <port name="EchoCustomerPort" binding="tns:EchoCustomerBinding">
-      <soap:address location="http://localhost:8800/EchoCustomerService"/>
+      <soap:address location="http://127.0.0.1:5555/axis2/services/EchoCustomerService"/>
     </port>
   </service>
   

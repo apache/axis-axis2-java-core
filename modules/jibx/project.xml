@@ -64,11 +64,6 @@
             <artifactId>axis2-core</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-	  <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-java2wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
@@ -97,6 +92,14 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>${bcel.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
@@ -104,6 +107,30 @@
                 <module>true</module>
             </properties>
             <url>http://dist.codehaus.org/stax/jars/</url>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons.httpclient.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons.codec.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+            <version>${backport_util_concurrent.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
         </dependency>
         <dependency>
             <groupId>${stax.impl.groupid}</groupId>
