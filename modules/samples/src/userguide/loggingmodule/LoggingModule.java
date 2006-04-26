@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 
 public class LoggingModule implements Module {
@@ -35,7 +34,7 @@ public class LoggingModule implements Module {
     }
 
     // shutdown the module
-    public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
+    public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
     }
     
     public String[] getPolicyNamespaces() {

@@ -52,5 +52,5 @@ public interface Module {
     void engageNotify(AxisDescription axisDescription) throws AxisFault;
     
     // shutdown the module
-    public void shutdown(AxisConfiguration axisSystem) throws AxisFault;
+    public void shutdown(ConfigurationContext configurationContext) throws AxisFault;
 }

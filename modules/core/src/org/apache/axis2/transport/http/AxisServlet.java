@@ -325,4 +325,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         return headerMap;
     }
 
+    protected void finalize() throws Throwable {
+        super.finalize();
+        //stoping listern manager
+        configContext.getListenerManager().stop();
+
+    }
 }

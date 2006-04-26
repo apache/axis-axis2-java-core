@@ -35,7 +35,7 @@ public class SOAPMonitorModule implements Module {
     }
 
     // shutdown the module
-    public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
+    public void shutdown(ConfigurationContext configContext) throws AxisFault {
     }
 
     public String[] getPolicyNamespaces() {

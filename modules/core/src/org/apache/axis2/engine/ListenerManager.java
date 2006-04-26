@@ -3,9 +3,11 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +38,7 @@ public class ListenerManager {
     private Log log = LogFactory.getLog(getClass());
 
     public static ConfigurationContext defaultConfigurationContext;
-    
+
     private ConfigurationContext configctx;
     private HashMap startedTransports = new HashMap();
     private boolean stopped = true;
@@ -53,7 +55,7 @@ public class ListenerManager {
     /**
      * To get an EPR for a given service
      *
-     * @param serviceName  : Name of the service
+     * @param serviceName   : Name of the service
      * @param transportName : name of the trasport can be null , if it is null then
      * @return String
      */
@@ -129,6 +131,18 @@ public class ListenerManager {
         while (itr_st.hasNext()) {
             TransportListener transportListener = (TransportListener) itr_st.next();
             transportListener.stop();
+        }
+        //calling module shoutdown method
+        HashMap modules = configctx.getAxisConfiguration().getModules();
+        if (modules != null) {
+            Iterator moduleitr = modules.values().iterator();
+            while (moduleitr.hasNext()) {
+                AxisModule axisModule = (AxisModule) moduleitr.next();
+                Module module = axisModule.getModule();
+                if (module != null) {
+                    module.shutdown(configctx);
+                }
+            }
         }
         stopped = true;
     }
