@@ -22,6 +22,7 @@ import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
@@ -65,7 +66,7 @@ public class SecurityModule implements Module {
 		}
 	}
 
-	public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
+	public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
 		// Do nothing
 	}
 
@@ -74,8 +75,8 @@ public class SecurityModule implements Module {
 			OutflowConfiguration policyOutflowConfig,
 			AxisDescription axisDescription) throws AxisFault {
 		// merge inflow configuration
-		Parameter inflowModuleParam = module
-				.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+		Parameter inflowModuleParam = (module != null) ? module
+				.getParameter(WSSHandlerConstants.INFLOW_SECURITY): null;
 		InflowConfiguration moduleInflowConfig = HandlerParameterDecoder
 				.getInflowConfiguration(inflowModuleParam);
 
@@ -91,8 +92,8 @@ public class SecurityModule implements Module {
 		axisDescription.addParameter(finalInConf.getProperty());
 
 		// merge outflow configuration
-		Parameter outfloModuleParam = module
-				.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+		Parameter outfloModuleParam = (module != null) ? module
+				.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY) : null;
 		OutflowConfiguration moduleOutflowConfig = HandlerParameterDecoder
 				.getOutflowConfiguration(outfloModuleParam);
 		Parameter outflowSecParam = axisDescription
@@ -154,4 +155,10 @@ public class SecurityModule implements Module {
         	}
 		return secondryConf;
 	}
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.modules.Module#shutdown(org.apache.axis2.context.ConfigurationContext)
+     */
+    public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
+    }
 }

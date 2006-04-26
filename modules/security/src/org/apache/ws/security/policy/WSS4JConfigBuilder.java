@@ -60,10 +60,17 @@ public class WSS4JConfigBuilder {
     }
 
     private static void finalizeConfig(WSS4JConfig config) throws WSSPolicyException{
+        
+        config.getInflowConfiguration().setEnableSignatureConfirmation(false);
+        config.getOutflowConfiguration().setEnableSignatureConfirmation(false);
+        
         if(config.binding != null) {
             if(config.binding instanceof TransportBinding) {
-                //TODO TransportBinding
-                throw new UnsupportedOperationException("TODO TransportBinding");
+                TransportBinding binding = (TransportBinding)config.binding;
+                if(binding.isIncludeTimestamp()) {
+                    config.getInflowConfiguration().setActionItems("Timestamp");
+                    config.getOutflowConfiguration().setActionItems("Timestamp");
+                }
             } else {
                 //Handle common properties from SymmetricAsymmetricBindingBase
                 SymmetricAsymmetricBindingBase base = (SymmetricAsymmetricBindingBase) config.binding;
@@ -148,7 +155,8 @@ public class WSS4JConfigBuilder {
         }
         
         if(config.supportingToken != null) {
-            if(config.supportingToken.getType() == Constants.SUPPORTING_TOKEN_SUPPORTING) {
+            if(config.supportingToken.getType() == Constants.SUPPORTING_TOKEN_SUPPORTING || 
+                    config.supportingToken.getType() == Constants.SUPPORTING_TOKEN_SIGNED) {
                 ArrayList tokens = config.supportingToken.getTokens();
                 Iterator tokensIter = tokens.iterator();
                 while (tokensIter.hasNext()) {
@@ -158,7 +166,7 @@ public class WSS4JConfigBuilder {
                         if(items == null || items.length() == 0) {
                             config.getInflowConfiguration().setActionItems("UsernameToken");
                         } else {
-                            items += "UsernameToken";
+                            items = "UsernameToken " + items;
                             config.getInflowConfiguration().setActionItems(items);
                         }
                     }

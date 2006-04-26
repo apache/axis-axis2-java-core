@@ -37,6 +37,7 @@ import org.apache.ws.security.policy.parser.processors.SignedPartsElementsProces
 import org.apache.ws.security.policy.parser.processors.SignedSupportingTokensProcessor;
 import org.apache.ws.security.policy.parser.processors.SupportingTokensProcessor;
 import org.apache.ws.security.policy.parser.processors.SymmetricBindingProcessor;
+import org.apache.ws.security.policy.parser.processors.TransportBindingProcessor;
 import org.apache.ws.security.policy.parser.processors.Wss10Processor;
 import org.apache.ws.security.policy.parser.processors.Wss11Processor;
 
@@ -97,6 +98,10 @@ public class WSSPolicyProcessor {
         spt.setProcessTokenMethod(new SymmetricBindingProcessor());
         topLevel.setChildToken(spt);
 
+        spt = SecurityPolicy.transportBinding.copy();
+        spt.setProcessTokenMethod(new TransportBindingProcessor());
+        topLevel.setChildToken(spt);
+        
         spt = SecurityPolicy.wss10.copy();
         spt.setProcessTokenMethod(new Wss10Processor());
         topLevel.setChildToken(spt);

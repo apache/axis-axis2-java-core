@@ -30,9 +30,12 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.trust.Constants;
+import org.apache.axis2.security.trust.TrustUtil;
 import org.apache.axis2.security.trust.types.RequestSecurityTokenType;
 import org.apache.axis2.security.util.Axis2Util;
+import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.StreamWrapper;
+import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -89,24 +92,23 @@ public class STSRequester {
             rstElem.build();
             rstElem = (OMElement)rstElem.detach();
             
+            if(config.isProvideEntropy()) {
+                //TODO Option to get the nonce lenght and  
+                //keysize from the the configuration
+                
+                // Length of nonce in bytes
+                int nonceLength = 16;
 
-//            if(config.isProvideEntropy()) {
-//                //TODO Option to get the nonce lenght and  
-//                //keysize from the the configuration
-//                
-//                // Length of nonce in bytes
-//                int nonceLength = 16;
-//
-//                OMElement entropyElem = TrustUtil.createEntropyElement(rstElem);
-//                
-//                byte[] nonce = WSSecurityUtil.generateNonce(nonceLength);
-//                OMElement elem = TrustUtil.createBinarySecretElement(entropyElem,
-//                        Constants.BIN_SEC_TYPE_NONCE);
-//                elem.setText(Base64.encode(nonce));
-//
-//                TrustUtil.createKeySizeElement(rstElem).setText(
-//                        Integer.toString(nonceLength * 8));
-//            }
+                OMElement entropyElem = TrustUtil.createEntropyElement(rstElem);
+                
+                byte[] nonce = WSSecurityUtil.generateNonce(nonceLength);
+                OMElement elem = TrustUtil.createBinarySecretElement(entropyElem,
+                        Constants.BIN_SEC_TYPE_NONCE);
+                elem.setText(Base64.encode(nonce));
+
+                TrustUtil.createKeySizeElement(rstElem).setText(
+                        Integer.toString(nonceLength * 8));
+            }
 
             String str = rstElem.toString();
             System.out.println(str);
