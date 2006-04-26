@@ -31,8 +31,8 @@ public abstract class AbstractContext {
 
     protected long lastTouchedTime;
 
-    protected AbstractContext parent;
-    protected Map properties;
+    protected transient AbstractContext parent;
+    protected transient Map properties;
 
     protected AbstractContext(AbstractContext parent) {
         this.properties = new HashMap();

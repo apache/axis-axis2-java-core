@@ -135,6 +135,14 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                 String axis2repourl = config.getInitParameter("axis2.repository.url");
                 if (axis2repourl != null) {
                     deploymentEngine.loadServicesFromUrl(new URL(axis2repourl));
+                } else {
+                    try {
+                        //is it unpack
+                        config.getServletContext().getRealPath("/WEB-INF");
+                        deploymentEngine.loadServices();
+                    } catch (Exception e) {
+                        log.info(e.getMessage());
+                    }
                 }
             }
         } catch (MalformedURLException e) {

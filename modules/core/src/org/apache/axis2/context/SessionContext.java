@@ -36,11 +36,11 @@ public class SessionContext extends AbstractContext {
 
     private transient HashMap serviceContextMap = new HashMap();
     private transient HashMap serviceGroupContextMap = new HashMap();
-    private String cookieID;
-    protected Log log = LogFactory.getLog(getClass());
+    private transient String cookieID;
+    protected transient Log log = LogFactory.getLog(getClass());
 
     // current time out interval is 30 secs. Need to make this configurable
-    public long sessionContextTimeoutInterval = 30 * 1000;
+    public transient long sessionContextTimeoutInterval = 30 * 1000;
 
     /**
      * @param parent
@@ -127,4 +127,6 @@ public class SessionContext extends AbstractContext {
             }
         }
     }
+
+
 }

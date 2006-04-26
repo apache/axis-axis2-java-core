@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
 
-    private Log log = LogFactory.getLog(getClass());
+    private transient Log log = LogFactory.getLog(getClass());
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
@@ -61,7 +61,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     protected transient ServletConfig servletConfig;
 
-    private ListingAgent agent;
+    private transient ListingAgent agent;
 
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
@@ -89,6 +89,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     public void destroy() {
         super.destroy();
+        //stoping listern manager
+        try {
+            configContext.getListenerManager().stop();
+        } catch (AxisFault axisFault) {
+            log.info(axisFault.getMessage());
+        }
+
     }
 
     /*
@@ -229,13 +236,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected Object getSessionContext(HttpServletRequest httpServletRequest) {
         Object sessionContext =
                 httpServletRequest.getSession(true).getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
-
         if (sessionContext == null) {
             sessionContext = new SessionContext(null);
             httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
                     sessionContext);
         }
-
         return sessionContext;
     }
 
@@ -323,12 +328,5 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             headerMap.put(field, request.getAttribute(field));
         }
         return headerMap;
-    }
-
-    protected void finalize() throws Throwable {
-        super.finalize();
-        //stoping listern manager
-        configContext.getListenerManager().stop();
-
     }
 }

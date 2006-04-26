@@ -43,8 +43,8 @@ public class AbstractAgent {
   private static final String METHOD_PREFIX = "process";
   private static final Log log = LogFactory.getLog(AbstractAgent.class);
 
-  protected Map operationCache = new HashMap();
-  protected ConfigurationContext configContext;
+  protected transient Map operationCache = new HashMap();
+  protected transient ConfigurationContext configContext;
 
   public AbstractAgent(ConfigurationContext aConfigContext) {
     configContext = aConfigContext;
