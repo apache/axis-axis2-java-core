@@ -143,6 +143,7 @@
                         <xsl:attribute name="dir">${resources}</xsl:attribute>
                         <include><xsl:attribute name="name">*.xml</xsl:attribute></include>
                         <include><xsl:attribute name="name">*.wsdl</xsl:attribute></include>
+                        <include><xsl:attribute name="name">*.xsd</xsl:attribute></include>
                     </fileset>
                 </copy>
                 <jar>

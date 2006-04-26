@@ -154,6 +154,9 @@
                         <include>
                             <xsl:attribute name="name">*.wsdl</xsl:attribute>
                         </include>
+                        <include>
+                            <xsl:attribute name="name">*.xsd</xsl:attribute>
+                        </include>
                     </fileset>
                 </copy>
                 <jar>

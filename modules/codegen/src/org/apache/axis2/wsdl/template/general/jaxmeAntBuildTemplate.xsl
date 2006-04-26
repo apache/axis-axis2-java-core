@@ -151,6 +151,7 @@
                         <xsl:attribute name="dir">${resources}</xsl:attribute>
                         <include><xsl:attribute name="name">*.xml</xsl:attribute></include>
                         <include><xsl:attribute name="name">*.wsdl</xsl:attribute></include>
+                        <include><xsl:attribute name="name">*.xsd</xsl:attribute></include>
                         <exclude><xsl:attribute name="name">**/schemaorg_apache_xmlbean/**</xsl:attribute></exclude>
                     </fileset>
                 </copy>
@@ -179,6 +180,7 @@
                     <fileset>
                         <xsl:attribute name="dir">${resources}</xsl:attribute>
                         <exclude><xsl:attribute name="name">**/*.wsdl</xsl:attribute></exclude>
+                        <exclude><xsl:attribute name="name">**/*.xsd</xsl:attribute></exclude>
                         <exclude><xsl:attribute name="name">**/*.xml</xsl:attribute></exclude>
                     </fileset>
                 </jar>
