@@ -57,11 +57,13 @@ public class FileSystemConfigurator implements AxisConfigurator {
         // OK, we've got a repository location in mind.  Let's make
         // sure it exists.
         try {
-            File repo = new File(repoLocation);
-            if (repo.exists()) {
-                // ok, save it if so
-                this.repoLocation = repo.getAbsolutePath();
-            }
+		    if(repoLocation != null) {
+				File repo = new File(repoLocation);
+				if (repo.exists()) {
+					// ok, save it if so
+					this.repoLocation = repo.getAbsolutePath();
+				}
+			}
         } catch (Exception e) {
             log.info("Couldn't find repository location '" +
                     repoLocation + "'");
