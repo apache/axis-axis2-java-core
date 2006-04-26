@@ -70,7 +70,7 @@
                 <jar>
                     <xsl:attribute name="basedir">${resources}</xsl:attribute>
                     <xsl:attribute name="destfile">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    <xsl:attribute name="excludes">**/services.xml</xsl:attribute>
+                    <xsl:attribute name="excludes">**/services.xml, **/*.xsd</xsl:attribute>
                 </jar>
             </target>
 
