@@ -1,10 +1,5 @@
 package org.apache.axis2.tool.codegen.eclipse.util;
 
-/**
- * 
- * @author Ajith
- *
- */
 public class NamespaceFinder {
 	
 	private static String NS_PREFIX = "http://";

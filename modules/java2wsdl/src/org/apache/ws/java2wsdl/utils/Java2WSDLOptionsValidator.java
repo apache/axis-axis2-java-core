@@ -17,8 +17,6 @@ import org.apache.ws.java2wsdl.Java2WSDLConstants;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @author : Deepal Jayasinghe (deepal@apache.org)
-*
 */
 
 public class Java2WSDLOptionsValidator implements Java2WSDLConstants {

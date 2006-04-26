@@ -41,10 +41,6 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class TestClient extends TestCase {
     
     private static final String AXIS2_ECHO_STRING = "Axis2 Echo String";

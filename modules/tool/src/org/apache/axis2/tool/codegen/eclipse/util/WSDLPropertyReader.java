@@ -24,8 +24,6 @@ import java.util.Map;
  * only. We may not need the whole conversion the WSDLpump 
  * goes through)
  * One would need to change this to suit a proper WSDL 
- * @author Ajith
- *
  */
 public class WSDLPropertyReader {
     private Definition wsdlDefinition = null;

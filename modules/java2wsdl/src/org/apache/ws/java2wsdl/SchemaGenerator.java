@@ -42,8 +42,6 @@ import org.codehaus.jam.JamServiceParams;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @author : Deepal Jayasinghe (deepal@apache.org)
-*
 */
 
 public class SchemaGenerator implements Java2WSDLConstants {

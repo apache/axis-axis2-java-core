@@ -22,10 +22,6 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
-/**
- *
- * @author Sanka Samaranayake (sanka@apache.org)
- */
 public interface PolicyExtension {
 	public void addMethodsToStub(Document document, Element element, QName methodName,Policy policy);
 

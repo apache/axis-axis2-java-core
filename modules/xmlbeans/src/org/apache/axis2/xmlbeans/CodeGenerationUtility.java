@@ -66,8 +66,6 @@ import javax.xml.namespace.QName;
  * Framework-linked code used by XMLBeans data binding support. This is accessed
  * via reflection from the XMLBeans code generation extension when XMLBeans data
  * binding is selected.
- *
- * @author dsosnoski
  */
 public class CodeGenerationUtility {
     public static final String SCHEMA_FOLDER = "schemas";

@@ -26,8 +26,6 @@ import org.apache.axis2.security.handler.config.OutflowConfiguration;
  * 
  * The client side rahas outflow handler will create the RSTR with the SCT
  * and RPT with a secret in a EncryptedKey and will send it over to the service.
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class RahasScenario3Test extends TestClient {
 

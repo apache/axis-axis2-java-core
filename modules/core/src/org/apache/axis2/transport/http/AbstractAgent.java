@@ -36,9 +36,6 @@ import java.util.Map;
  * The AbstractAgent acts as a simple dispatcher for http requests.
  * It delegates incoming requests to processXyz methods while Xyz
  * is the part of the request uri past last /.
- *
- * @author Jens Schumann - OpenKnowledge GmbH
- * @version $Id$
  */
 public class AbstractAgent {
   protected static final String DEFAULT_INDEX_JSP = "index.jsp";

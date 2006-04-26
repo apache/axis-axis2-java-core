@@ -18,11 +18,6 @@ package org.apache.axis2.modules;
 
 
 
-/**
- * 
- * @author Sanka Samaranayake (sanka@apache.org)
- *
- */
 public interface ModulePolicyExtension {
 
     public PolicyExtension getPolicyExtension();

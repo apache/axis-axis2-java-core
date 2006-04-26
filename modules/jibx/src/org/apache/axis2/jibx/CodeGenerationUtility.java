@@ -35,8 +35,6 @@ import org.jibx.runtime.JiBXException;
  * Framework-linked code used by JiBX data binding support. This is accessed via
  * reflection from the JiBX code generation extension when JiBX data binding is
  * selected.
- * 
- * @author dsosnoski
  */
 public class CodeGenerationUtility {
 

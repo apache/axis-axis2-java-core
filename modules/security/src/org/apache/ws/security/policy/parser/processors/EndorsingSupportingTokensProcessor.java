@@ -22,10 +22,6 @@ import org.apache.ws.security.policy.parser.SecurityPolicy;
 import org.apache.ws.security.policy.parser.SecurityPolicyToken;
 import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
-/**
- * @author Werner Dittmann (werner@apache.org)
- * 
- */
 public class EndorsingSupportingTokensProcessor {
     
     private Log log = LogFactory.getLog(getClass());

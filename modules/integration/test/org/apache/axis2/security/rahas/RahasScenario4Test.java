@@ -22,8 +22,6 @@ import org.apache.axis2.security.handler.config.OutflowConfiguration;
 
 /**
  * This tests the use computed keys when the requester provides entropy
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class RahasScenario4Test extends TestClient {
 

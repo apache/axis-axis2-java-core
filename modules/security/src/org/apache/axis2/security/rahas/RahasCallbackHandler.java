@@ -25,10 +25,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import java.io.IOException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class RahasCallbackHandler implements CallbackHandler {
 
     private RahasConfiguration config;

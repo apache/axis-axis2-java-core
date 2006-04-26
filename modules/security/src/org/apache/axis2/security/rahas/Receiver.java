@@ -32,10 +32,6 @@ import org.apache.ws.security.WSSecurityEngine;
 
 import javax.xml.namespace.QName;
 
-/**
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class Receiver implements Handler {
 
     private static final long serialVersionUID = 8450183308062119444L;

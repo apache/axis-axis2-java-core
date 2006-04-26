@@ -43,11 +43,6 @@ import org.apache.ws.policy.XorCompositeAssertion;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-/**
- *
- * @author Sanka Samaranayake (sanka@apache.org)
- *
- */
 public class PolicyEvaluator implements CodeGenExtension {
 
 	CodeGenConfiguration configuration;

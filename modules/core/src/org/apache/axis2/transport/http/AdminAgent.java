@@ -44,9 +44,6 @@ import java.util.List;
 
 /**
  * Provides methods to process axis2 admin requests.
- *
- * @author Jens Schumann - OpenKnowledge GmbH (moved sources from ListingAgent)
- * @version $Id$
  */
 public class AdminAgent extends AbstractAgent {
 

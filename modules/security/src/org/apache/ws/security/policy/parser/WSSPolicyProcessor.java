@@ -48,10 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 
 
-/**
- * @author Werner Dittmann (werner@apache.org)
- */
-
 public class WSSPolicyProcessor {
     
     private static Log log = LogFactory.getLog(WSSPolicyProcessor.class);

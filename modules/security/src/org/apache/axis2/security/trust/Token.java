@@ -37,8 +37,6 @@ import java.util.HashMap;
  * These tokens are stired using the storage mechanism provided via the 
  * <code>TokenStorage</code> interface.
  * @see org.apache.axis2.security.trust.TokenStorage
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class Token {
     

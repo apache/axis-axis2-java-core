@@ -18,8 +18,6 @@ package org.apache.axis2.soapmonitor.servlet;
 
 /**
  * SOAP Monitor Service constants
- *
- * @author Brian Price (pricebe@us.ibm.com)
  */
 
 public class SOAPMonitorConstants {

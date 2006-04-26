@@ -29,9 +29,6 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 import javax.xml.namespace.QName;
 
 
-/**
- * @author Werner Dittmann (werner@apache.org)
- */
 public class X509TokenProcessor {
     
     private Log log = LogFactory.getLog(getClass());

@@ -54,8 +54,6 @@ import org.apache.commons.logging.LogFactory;
  * detected.  The information about the SOAP message is 
  * then forwared to all current socket connections for 
  * display by the applet.
- *
- * @author Brian Price (pricebe@us.ibm.com)
  */
 
 public class SOAPMonitorService extends HttpServlet {

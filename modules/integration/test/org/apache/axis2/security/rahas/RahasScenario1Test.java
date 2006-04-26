@@ -23,8 +23,6 @@ import org.apache.axis2.security.handler.config.OutflowConfiguration;
 /**
  * The RequestedProofToken is an EncryptedKey
  * which holds the secret of security context.
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class RahasScenario1Test extends TestClient {
 

@@ -37,8 +37,6 @@ import org.codehaus.jam.JMethod;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
- * @author : Deepal Jayasinghe (deepal@apache.org)
-*
 */
 
 public class Java2OMBuilder implements Java2WSDLConstants {
