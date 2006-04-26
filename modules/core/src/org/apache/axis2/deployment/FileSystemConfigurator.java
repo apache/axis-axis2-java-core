@@ -39,6 +39,8 @@ public class FileSystemConfigurator implements AxisConfigurator {
      */
     private String axis2xml = null;
     private String repoLocation = null;
+    private DeploymentEngine deploymentEngine;
+    private AxisConfiguration axisConfiguration;
 
     /**
      * Load an AxisConfiguration from the repository directory specified
@@ -89,6 +91,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
         } else {
             this.axis2xml = axis2xml;
         }
+        deploymentEngine = new DeploymentEngine();
     }
 
     /**
@@ -98,9 +101,7 @@ public class FileSystemConfigurator implements AxisConfigurator {
      * @throws AxisFault
      */
     public synchronized AxisConfiguration getAxisConfiguration() throws AxisFault {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
         InputStream axis2xmlSream;
-        AxisConfiguration axisConfiguration;
         try {
             if (axis2xml != null && !"".equals(axis2xml)) {
                 axis2xmlSream = new FileInputStream(axis2xml);
@@ -120,5 +121,16 @@ public class FileSystemConfigurator implements AxisConfigurator {
             deploymentEngine.loadFromClassPath();
         }
         return axisConfiguration;
+    }
+
+    public void engageGlobalModules() throws AxisFault {
+        deploymentEngine.engageModules();
+    }
+
+    public void loadServices() {
+        if (!(repoLocation == null || "".equals(repoLocation))) {
+            deploymentEngine.loadServices();
+        }
+
     }
 }

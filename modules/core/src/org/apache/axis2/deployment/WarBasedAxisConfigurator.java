@@ -34,10 +34,13 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
 
     private AxisConfiguration axisConfig;
     private Log log = LogFactory.getLog(getClass());
+    private ServletConfig config;
+    private DeploymentEngine deploymentEngine;
 
-    public WarBasedAxisConfigurator(ServletConfig config) {
+    public WarBasedAxisConfigurator(ServletConfig svconfig) {
         try {
-            DeploymentEngine deploymentEngine = new DeploymentEngine();
+            this.config = svconfig;
+            deploymentEngine = new DeploymentEngine();
             String axis2xmlpath = config.getInitParameter("axis2.xml.path");
             String repository;
             InputStream axis2Steram;
@@ -54,7 +57,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                         repository = config.getServletContext().getRealPath("/WEB-INF");
                         axis2Steram = new FileInputStream(repository + "/conf/axis2.xml");
                         axisConfig = deploymentEngine.populateAxisConfiguration(axis2Steram);
-                        setWebLocationProperty(config.getServletContext(),deploymentEngine);
+                        setWebLocationProperty(config.getServletContext(), deploymentEngine);
                     } catch (Exception e) {
                         ClassLoader cl = Thread.currentThread().getContextClassLoader();
                         axis2Steram = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
@@ -62,22 +65,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                     }
                 }
             }
-            String axis2repopath = config.getInitParameter("axis2.repository.path");
-            if (axis2repopath != null) {
-                deploymentEngine.loadRepository(axis2repopath);
-            } else {
-                String axis2repourl = config.getInitParameter("axis2.repository.url");
-                if (axis2repourl != null) {
-                    deploymentEngine.loadRepositoryFromURL(new URL(axis2repourl));
-                } else {
-                    try {
-                        repository = config.getServletContext().getRealPath("/WEB-INF");
-                        deploymentEngine.loadRepository(repository);
-                    } catch (Exception e) {
-                        deploymentEngine.loadFromClassPath();
-                    }
-                }
-            }
+
 
         } catch (FileNotFoundException e) {
             log.info(e.getMessage());
@@ -113,6 +101,49 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
     }
 
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
+        try {
+            String repository;
+            String axis2repopath = config.getInitParameter("axis2.repository.path");
+            if (axis2repopath != null) {
+                deploymentEngine.loadRepository(axis2repopath);
+            } else {
+                String axis2repourl = config.getInitParameter("axis2.repository.url");
+                if (axis2repourl != null) {
+                    deploymentEngine.loadRepositoryFromURL(new URL(axis2repourl));
+                } else {
+                    try {
+                        repository = config.getServletContext().getRealPath("/WEB-INF");
+                        deploymentEngine.loadRepository(repository);
+                    } catch (Exception e) {
+                        deploymentEngine.loadFromClassPath();
+                    }
+                }
+            }
+        } catch (MalformedURLException e) {
+            log.info(e.getMessage());
+        }
         return axisConfig;
+    }
+
+    //to load services
+    public void loadServices() {
+        try {
+            String axis2repopath = config.getInitParameter("axis2.repository.path");
+            if (axis2repopath != null) {
+                deploymentEngine.loadServices();
+            } else {
+                String axis2repourl = config.getInitParameter("axis2.repository.url");
+                if (axis2repourl != null) {
+                    deploymentEngine.loadServicesFromUrl(new URL(axis2repourl));
+                }
+            }
+        } catch (MalformedURLException e) {
+            log.info(e.getMessage());
+        }
+    }
+
+    //To engage globally listed modules
+    public void engageGlobalModules() throws AxisFault {
+        deploymentEngine.engageModules();
     }
 }

@@ -28,4 +28,10 @@ public interface AxisConfigurator {
      * @return AxisConfigurator
      */
     AxisConfiguration getAxisConfiguration() throws AxisFault;
+
+    //to load services
+    void loadServices();
+
+    //To engage globally listed modules
+    void engageGlobalModules() throws AxisFault;
 }

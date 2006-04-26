@@ -35,6 +35,8 @@ public class ConfigurationContextFactory {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
         init(configContext);
+        axisConfigurator.engageGlobalModules();
+        axisConfigurator.loadServices();
         return configContext;
     }
 

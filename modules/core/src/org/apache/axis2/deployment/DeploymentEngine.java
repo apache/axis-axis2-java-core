@@ -78,12 +78,20 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private AxisConfiguration axisConfig;
     private ArchiveFileData currentArchiveFile;
+    private RepositoryListener repoListener;
 
 
     /**
      * Default constructor is needed to deploy module and service programatically.
      */
     public DeploymentEngine() {
+    }
+
+    public void loadServices() {
+        repoListener.checkServices();
+        if (hotDeployment) {
+            startSearch(repoListener);
+        }
     }
 
     public void loadRepository(String repoDir) throws DeploymentException {
@@ -96,7 +104,7 @@ public class DeploymentEngine implements DeploymentConstants {
         // setting the CLs
         setClassLoaders(repoDir);
         setDeploymentFeatures();
-        RepositoryListener repoListener = new RepositoryListener(repoDir, this);
+        repoListener = new RepositoryListener(repoDir, this);
         org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
         try {
             try {
@@ -107,17 +115,6 @@ public class DeploymentEngine implements DeploymentConstants {
             validateSystemPredefinedPhases();
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
-        }
-        try {
-            engageModules();
-        } catch (AxisFault axisFault) {
-            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
-                    axisFault.getMessage()));
-            throw new DeploymentException(axisFault);
-        }
-        repoListener.checkServices();
-        if (hotDeployment) {
-            startSearch(repoListener);
         }
     }
 
@@ -136,6 +133,34 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
+    public void loadServicesFromUrl(URL repoURL) {
+        try {
+            URL servicesDir = new URL(repoURL, DeploymentConstants.SERVICE_PATH);
+            InputStream serviceStream = servicesDir.openStream();
+            if (serviceStream == null) {
+                log.info("No services dir found");
+            } else {
+                URL filelisturl = new URL(servicesDir, "services/services.list");
+                ArrayList files = getFileList(filelisturl);
+                Iterator fileIterator = files.iterator();
+                while (fileIterator.hasNext()) {
+                    String fileUrl = (String) fileIterator.next();
+                    if (fileUrl.endsWith(".aar")) {
+                        AxisServiceGroup serviceGroup = new AxisServiceGroup();
+                        URL servicesURL = new URL(servicesDir, "services/" + fileUrl);
+                        ArrayList servicelist = populateService(serviceGroup,
+                                servicesURL,
+                                fileUrl.substring(0, fileUrl.indexOf(".aar")));
+                        addServiceGroup(serviceGroup, servicelist, servicesURL);
+                    }
+                }
+            }
+        } catch (MalformedURLException e) {
+            log.info(e.getMessage());
+        } catch (IOException e) {
+            log.info(e.getMessage());
+        }
+    }
 
     public void loadRepositoryFromURL(URL repoURL) throws DeploymentException {
         try {
@@ -165,28 +190,8 @@ public class DeploymentEngine implements DeploymentConstants {
                         addNewModule(module);
                     }
                 }
-                engageModules();
             }
-            URL servicesDir = new URL(repoURL, DeploymentConstants.SERVICE_PATH);
-            InputStream serviceStream = servicesDir.openStream();
-            if (serviceStream == null) {
-                log.info("No services dir found");
-            } else {
-                URL filelisturl = new URL(servicesDir, "services/services.list");
-                ArrayList files = getFileList(filelisturl);
-                Iterator fileIterator = files.iterator();
-                while (fileIterator.hasNext()) {
-                    String fileUrl = (String) fileIterator.next();
-                    if (fileUrl.endsWith(".aar")) {
-                        AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                        URL servicesURL = new URL(servicesDir, "services/" + fileUrl);
-                        ArrayList servicelist = populateService(serviceGroup,
-                                servicesURL,
-                                fileUrl.substring(0, fileUrl.indexOf(".aar")));
-                        addServiceGroup(serviceGroup, servicelist, servicesURL);
-                    }
-                }
-            }
+
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         } catch (IOException e) {
@@ -732,7 +737,7 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * Checks if the modules, referred by server.xml, exist or that they are deployed.
      */
-    private void engageModules() throws AxisFault {
+    public void engageModules() throws AxisFault {
         for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
             axisConfig.engageModule(name);

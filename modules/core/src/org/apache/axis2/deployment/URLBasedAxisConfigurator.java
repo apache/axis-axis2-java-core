@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -33,6 +34,9 @@ public class URLBasedAxisConfigurator implements AxisConfigurator {
     private Log log = LogFactory.getLog(getClass());
     private URL axis2xml;
     private URL repositoy;
+    private DeploymentEngine deploymentEngine;
+    private AxisConfiguration axisConfiguration;
+    ;
 
     public URLBasedAxisConfigurator(URL axis2xml, URL repositoy) throws AxisFault {
         this.axis2xml = axis2xml;
@@ -40,9 +44,8 @@ public class URLBasedAxisConfigurator implements AxisConfigurator {
     }
 
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
+        deploymentEngine = new DeploymentEngine();
         InputStream axis2xmlStream;
-        AxisConfiguration axisConfiguration;
         try {
             if (axis2xml == null) {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -76,5 +79,35 @@ public class URLBasedAxisConfigurator implements AxisConfigurator {
             throw new AxisFault(e.getMessage());
         }
         return axisConfiguration;
+    }
+
+    //to load services
+    public void loadServices() {
+        try {
+            if (repositoy == null) {
+                Parameter axis2repoPara = axisConfiguration.getParameter(DeploymentConstants.AXIS2_REPO);
+                if (axis2repoPara != null) {
+                    String repoValue = (String) axis2repoPara.getValue();
+                    if (repoValue != null && !"".equals(repoValue.trim())) {
+                        if (repoValue.startsWith("file://")) {
+                            // we treat this case specialy , by assuming file is
+                            // locate in the local machine
+                            deploymentEngine.loadServices();
+                        } else {
+                            deploymentEngine.loadServicesFromUrl(new URL(repoValue));
+                        }
+                    }
+                }
+            } else {
+                deploymentEngine.loadServices();
+            }
+        } catch (MalformedURLException e) {
+            log.info(e);
+        }
+    }
+
+    //To engage globally listed modules
+    public void engageGlobalModules() throws AxisFault {
+        deploymentEngine.engageModules();
     }
 }
