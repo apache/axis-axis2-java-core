@@ -73,26 +73,30 @@ public class FileSystemConfigurator implements AxisConfigurator {
         // Deal with the config file.  If a filename was specified as an
         // arg to this constructor, just respect it.
         if (axis2xml == null) {
-            String propertyAxis2xml = System.getProperty(Constants.AXIS2_CONF);
-            if (propertyAxis2xml != null) {
-                try {
-                    File axis2discriptor = new File(propertyAxis2xml);
-                    if (axis2discriptor.exists()) {
-                        this.axis2xml = axis2discriptor.getAbsolutePath();
-                    } else {
-                        this.axis2xml = null;
-                    }
-                } catch (Exception e) {
-                    this.axis2xml = null;
-                    log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
-                }
+            // If not, check for a system property setting
+            axis2xml = System.getProperty(Constants.AXIS2_CONF);
 
-            } else {
-                this.axis2xml = null;
+            // If system property not set, use default filename
+            if (axis2xml == null) {
+                axis2xml = Constants.AXIS2_CONF;
             }
-        } else {
-            this.axis2xml = axis2xml;
+
+            // In either case, check that the file exists... if not
+            // we'll use the default axis2.xml on the classpath.
+            try {
+                axis2xml = this.repoLocation + File.separator + axis2xml;
+                File configFile = new File(axis2xml);
+                if (!configFile.exists()) {
+                    axis2xml = null;
+                }
+            } catch (Exception e) {
+                axis2xml = null;
+                log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+            }
         }
+
+        this.axis2xml = axis2xml;
+
         deploymentEngine = new DeploymentEngine();
     }
 

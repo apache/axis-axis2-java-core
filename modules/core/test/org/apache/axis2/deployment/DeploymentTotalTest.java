@@ -18,6 +18,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseException;
@@ -34,6 +35,12 @@ public class DeploymentTotalTest extends TestCase {
         String filename = "./target/test-resources/deployment";
         er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
                         .getAxisConfiguration();
+
+        // OK, no exceptions.  Now make sure we read the correct file...
+        Parameter param = er.getParameter("FavoriteColor");
+        assertNotNull("No FavoriteColor parameter in axis2.xml!", param);
+
+        assertEquals("purple", param.getValue());
     }
 
 }
