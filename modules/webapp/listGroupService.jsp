@@ -22,6 +22,7 @@
 %>
 <%
   HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);
+  request.getSession().setAttribute(Constants.SERVICE_MAP,null);
   String servicName = request.getParameter("serviceName");
   AxisService axisService = (AxisService) serviceMap.get(servicName);
   if (axisService != null) {

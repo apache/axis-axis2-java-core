@@ -26,6 +26,7 @@
             <select name="modules">
             <%
                 HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
+                request.getSession().setAttribute(Constants.MODULE_MAP,null);
                 Collection moduleCol =  moduels.values();
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
                     AxisModule axisOperation = (AxisModule) iterator.next();
@@ -56,6 +57,7 @@
             %> <option  align="left" value="<%=opname%>"><%=opname%></option>
              <%
                 }
+                request.getSession().setAttribute(Constants.OPERATION_MAP,null);
              %>
            </td>
         </tr>

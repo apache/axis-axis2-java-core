@@ -37,6 +37,7 @@
          boolean foundModules = false;
 	boolean wroteUL = false;
          HashMap moduleMap = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
+         request.getSession().setAttribute(Constants.MODULE_MAP,null);
          Hashtable errornesModules =(Hashtable)request.getSession().getAttribute(Constants.ERROR_MODULE_MAP);
          if (moduleMap!=null && !moduleMap.isEmpty()){
              String modulename = "";

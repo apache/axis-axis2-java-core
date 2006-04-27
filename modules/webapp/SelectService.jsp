@@ -70,6 +70,7 @@
             %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
              <%
                 }
+                request.getSession().setAttribute(Constants.SERVICE_MAP,null);
              %>
            </td>
         </tr>

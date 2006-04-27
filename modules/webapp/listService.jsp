@@ -41,6 +41,7 @@
     %>
      <%
          HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+         request.getSession().setAttribute(Constants.SERVICE_MAP,null);
          Hashtable errornessservice =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
          boolean status = false;
          if (serviceMap!=null && !serviceMap.isEmpty()){

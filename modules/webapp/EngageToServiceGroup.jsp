@@ -8,8 +8,10 @@
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
     HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
+    request.getSession().setAttribute(Constants.MODULE_MAP,null);
     Collection moduleCol =  moduels.values();
     Iterator servicesGroups = (Iterator)request.getSession().getAttribute(Constants.SERVICE_GROUP_MAP);
+    request.getSession().setAttribute(Constants.SERVICE_GROUP_MAP,null);
 %>
 <h1>Engage Module for a Service Group</h1>
 <p>To engage a module for a set of services grouped as a axisService group, first select the module you want to engage and then select the axisService group you like the module to be engaged on and click "Engage".</p>

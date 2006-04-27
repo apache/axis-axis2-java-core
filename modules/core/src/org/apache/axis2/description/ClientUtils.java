@@ -31,6 +31,9 @@ public class ClientUtils {
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", transportURI));
             }
         } else {
+            if (msgctx.getOptions().getTransportOut() != null) {
+                return msgctx.getOptions().getTransportOut();
+            }
             if (epr == null || (epr.getAddress() == null)) {
                 throw new AxisFault(Messages.getMessage("cannotInferTransportNoAddr"));
             }

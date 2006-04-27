@@ -31,6 +31,7 @@
 <h1>Available Phases</h1>
      <%
          ArrayList phases = (ArrayList)request.getSession().getAttribute(Constants.PHASE_LIST);
+         request.getSession().setAttribute(Constants.PHASE_LIST,null);
          ArrayList tempList;
      %><h2><font color="blue">System pre-defined phases</font></h2>
      <b>InFlow Up to Dispatcher</b>

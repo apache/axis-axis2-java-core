@@ -10,6 +10,7 @@
 <%
     Iterator axisServiceGroupIter = (Iterator) request.getSession().getAttribute(
             Constants.SERVICE_GROUP_MAP);
+    request.getSession().setAttribute(Constants.SERVICE_GROUP_MAP,null);
     while (axisServiceGroupIter.hasNext()) {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisServiceGroupIter.next();
         String groupName = axisServiceGroup.getServiceGroupName();

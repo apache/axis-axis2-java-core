@@ -30,6 +30,7 @@
                            <%=axisServices.getName()%></option> <%
                            }
                        }
+                       request.getSession().setAttribute(Constants.SERVICE_MAP,null);
                            %>
                   </td>
   </tr>
