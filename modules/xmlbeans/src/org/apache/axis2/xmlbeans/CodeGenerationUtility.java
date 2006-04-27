@@ -35,6 +35,7 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.URLProcessor;
@@ -84,14 +85,12 @@ public class CodeGenerationUtility {
     boolean debug = false;
 
     /**
-     *
      * @param additionalSchemas
      * @throws RuntimeException
      */
     public static TypeMapper processSchemas(List schemas,
                                             Element[] additionalSchemas, CodeGenConfiguration cgconfig) throws RuntimeException {
         try {
-
 
             //check for the imported types. Any imported types are supposed to be here also
             if (schemas == null || schemas.isEmpty()) {
@@ -134,12 +133,12 @@ public class CodeGenerationUtility {
                 XmlOptions options = new XmlOptions();
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
-                    topLevelSchemaList.add(
-                            XmlObject.Factory.parse(
-                                    getSchemaAsString(schema)
-                                    , options));
+                topLevelSchemaList.add(
+                        XmlObject.Factory.parse(
+                                getSchemaAsString(schema)
+                                , options));
 
-                }
+            }
 
             // add the third party schemas
             //todo perhaps checking the namespaces would be a good idea to
@@ -148,13 +147,13 @@ public class CodeGenerationUtility {
                 completeSchemaList.add(XmlObject.Factory.parse(
                         additionalSchemas[i]
                         , null));
-                 topLevelSchemaList.add(XmlObject.Factory.parse(
+                topLevelSchemaList.add(XmlObject.Factory.parse(
                         additionalSchemas[i]
                         , null));
             }
 
             //compile the type system
-            Axis2EntityResolver er  = new Axis2EntityResolver();
+            Axis2EntityResolver er = new Axis2EntityResolver();
             er.setSchemas(convertToSchemaDocumentArray(completeSchemaList));
             er.setBaseUri(cgconfig.getBaseURI());
 
@@ -235,7 +234,6 @@ public class CodeGenerationUtility {
     }
 
     /**
-     *
      * @param sts
      * @return
      */
@@ -249,14 +247,13 @@ public class CodeGenerationUtility {
 
         for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext();) {
             SchemaType stype = (SchemaType) iterator.next();
-            findPlainBase64Types(stype, base64Types,new ArrayList());
+            findPlainBase64Types(stype, base64Types, new ArrayList());
         }
 
         return base64Types;
     }
 
     /**
-     *
      * @param stype
      * @param base64Types
      */
@@ -270,7 +267,7 @@ public class CodeGenerationUtility {
         for (int i = 0; i < elementProperties.length; i++) {
             schemaType = elementProperties[i].getType();
             name = elementProperties[i].getName();
-            if (!base64Types.contains(name) && !processedTypes.contains(schemaType.getName())){
+            if (!base64Types.contains(name) && !processedTypes.contains(schemaType.getName())) {
                 processedTypes.add(stype.getName());
                 if (schemaType.isPrimitiveType()) {
                     SchemaType primitiveType = schemaType.getPrimitiveType();
@@ -279,7 +276,7 @@ public class CodeGenerationUtility {
                     }
 
                 } else {
-                    findPlainBase64Types(schemaType, base64Types,processedTypes);
+                    findPlainBase64Types(schemaType, base64Types, processedTypes);
                 }
             }
         }
@@ -348,16 +345,16 @@ public class CodeGenerationUtility {
 
         public Axis2BindingConfig(Map uri2packageMappings) {
             this.uri2packageMappings = uri2packageMappings;
-            if (this.uri2packageMappings==null){
+            if (this.uri2packageMappings == null) {
                 //make an empty one to avoid nasty surprises
                 this.uri2packageMappings = new HashMap();
             }
         }
 
         public String lookupPackageForNamespace(String uri) {
-            if (uri2packageMappings.containsKey(uri)){
-                return (String)uri2packageMappings.get(uri);
-            }else{
+            if (uri2packageMappings.containsKey(uri)) {
+                return (String) uri2packageMappings.get(uri);
+            } else {
                 return URLProcessor.makePackageName(uri);
             }
 
@@ -365,7 +362,6 @@ public class CodeGenerationUtility {
     }
 
     /**
-    *
      * @param vec
      * @return
      */
@@ -381,7 +377,7 @@ public class CodeGenerationUtility {
             if (!uniqueSchemaTns.contains(s.getTargetNamespace())) {
                 uniqueSchemas.add(schemaDocuments[i]);
                 uniqueSchemaTns.add(s.getTargetNamespace());
-            }else if (s.getTargetNamespace()==null){
+            } else if (s.getTargetNamespace() == null) {
                 //add anyway
                 uniqueSchemas.add(schemaDocuments[i]);
             }
@@ -395,6 +391,7 @@ public class CodeGenerationUtility {
      * Converts a given vector of schemaDocuments to XmlBeans processable
      * schema objects. One drawback we have here is the non-inclusion of
      * untargeted namespaces
+     *
      * @param vec
      * @return
      */
@@ -410,7 +407,7 @@ public class CodeGenerationUtility {
             if (!uniqueSchemaTns.contains(s.getTargetNamespace())) {
                 uniqueSchemas.add(s);
                 uniqueSchemaTns.add(s.getTargetNamespace());
-            }else if(s.getTargetNamespace()==null){
+            } else if (s.getTargetNamespace() == null) {
                 uniqueSchemas.add(s);
             }
         }
@@ -430,15 +427,15 @@ public class CodeGenerationUtility {
         }
 
         /**
-         * @see EntityResolver#resolveEntity(String, String)
-         * @param publicId  - this is the target namespace
-         * @param systemId  - this is the location (value of schemaLocation)
+         * @param publicId - this is the target namespace
+         * @param systemId - this is the location (value of schemaLocation)
          * @return
+         * @see EntityResolver#resolveEntity(String, String)
          */
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException,IOException{
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
             //System.out.println("Lookup:" + "[ " + publicId + "]" + "[" + systemId + "]");
             try {
-                for (int i = 0; i < schemas.length; i++) {
+               for (int i = 0; i < schemas.length; i++){
                     SchemaDocument.Schema schema = schemas[i].getSchema();
                     if (schema.getTargetNamespace() != null &&
                             publicId != null &&
@@ -450,41 +447,16 @@ public class CodeGenerationUtility {
                         }
                     }
                 }
-                if(systemId.indexOf(':') == -1) {
-                    File f;
-                    if (baseUri!=null){
-                        URI uri = new URI(baseUri + systemId);
-                        if (baseUri.startsWith("file:")){
-                            //it's file
-                             f=new File(uri);
-                        }else{
-                            return new InputSource(
-                                    uri.toURL().openStream()
-                            );
-                        }
-                    }else{
-                        if (systemId.startsWith("http://") ||
-                                systemId.startsWith("https://")){
-                            return new InputSource(systemId);
-                        }else{
-                           //treat it as a file
-                           f = new File(systemId);
-                        }
-
-                    }
-                    if(f.exists()) {
-                        try {
-                            return new InputSource(new FileInputStream(f));
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-
+                if (systemId.indexOf(':') == -1) {
+                    //if the base URI is missing then attache the file:/// to it
+                    //if the systemId actually had a scheme then as per the URL
+                    //constructor, the context URL scheme should be ignored
+                    baseUri = (baseUri == null) ? "file:///" : baseUri;
+                    URL url = new URL(new URL(baseUri),systemId);
+                    return new InputSource(url.openStream() );
                 }
                 return XMLUtils.getEmptyInputSource();
-            } catch (URISyntaxException e) {
-               throw new SAXException(e);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new SAXException(e);
             }
         }
