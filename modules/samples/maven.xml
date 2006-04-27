@@ -250,10 +250,10 @@
         <ant:copy file="target/classes/sample/groovy/GroovyReceiver.class" tofile="target/classes/sample/groovy/sample/groovy/GroovyReceiver.class"/>
         <ant:delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
 		<j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
-			<ant:copy file="${dependencies.dir}/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+			<ant:copy file="${dependencies.dir}/groovy-all-${groovy.all.version}.jar" tofile="target/classes/sample/groovy/lib/groovy-all-${groovy.all.version}.jar"/>
 		</j:if>
 		<j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
-			<ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+			<ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-${groovy.all.version}.jar" tofile="target/classes/sample/groovy/lib/groovy-all-${groovy.all.version}.jar"/>
 		</j:if>
         <jar destfile="${samples.dir}/groovyService.aar">
             <fileset dir="target/classes/sample/groovy">

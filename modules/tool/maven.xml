@@ -20,10 +20,10 @@
             </fileset>
         </copy>
         <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
-			<copy file="${dependencies.dir}/ant-1.6.2.jar" todir="target/jar-tool"/>
+			<copy file="${dependencies.dir}/ant-${ant.version}.jar" todir="target/jar-tool"/>
         </j:if>
         <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
-			<copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
+			<copy file="${maven.repo.local}/ant/jars/ant-${ant.version}.jar" todir="target/jar-tool"/>
         </j:if>
         <copy file="src/script/jar-tool-UI.bat" todir="target/jar-tool"></copy>
     </goal>
