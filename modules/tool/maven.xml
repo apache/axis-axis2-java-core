@@ -19,7 +19,12 @@
                 <include name="axis2*.jar"/>
             </fileset>
         </copy>
-        <copy file="${dependencies.dir}/ant-1.6.2.jar" todir="target/jar-tool"/>
+        <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+			<copy file="${dependencies.dir}/ant-1.6.2.jar" todir="target/jar-tool"/>
+        </j:if>
+        <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+			<copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
+        </j:if>
         <copy file="src/script/jar-tool-UI.bat" todir="target/jar-tool"></copy>
     </goal>
     

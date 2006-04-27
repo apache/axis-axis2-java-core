@@ -249,7 +249,12 @@
         <mkdir dir="target/classes/sample/groovy/sample/groovy"/>
         <ant:copy file="target/classes/sample/groovy/GroovyReceiver.class" tofile="target/classes/sample/groovy/sample/groovy/GroovyReceiver.class"/>
         <ant:delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
-        <ant:copy file="${dependencies.dir}/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+		<j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+			<ant:copy file="${dependencies.dir}/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+		</j:if>
+		<j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+			<ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+		</j:if>
         <jar destfile="${samples.dir}/groovyService.aar">
             <fileset dir="target/classes/sample/groovy">
             </fileset>
@@ -301,11 +306,18 @@
     <!-- copy the local libs -->
     <mkdir dir="target/samples/security/lib"/>
     <ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/lib/secUtil.jar"/>
-    <ant:copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/samples/security/lib/"/>
-    <ant:copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/samples/security/lib/"/>
-    <ant:copy file="${dependencies.dir}/wss4j-${wss4j.version}.jar" todir="target/samples/security/lib/"/>
-    <ant:copy file="${dependencies.dir}/commons-discovery-${commons.discovery.version}.jar" todir="target/samples/security/lib/"/>
-    
+    <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+		<ant:copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/samples/security/lib/"/>
+		<ant:copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/samples/security/lib/"/>
+		<ant:copy file="${dependencies.dir}/wss4j-${wss4j.version}.jar" todir="target/samples/security/lib/"/>
+		<ant:copy file="${dependencies.dir}/commons-discovery-${commons.discovery.version}.jar" todir="target/samples/security/lib/"/>
+    </j:if>
+    <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+		<ant:copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/samples/security/lib/"/>
+		<ant:copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/samples/security/lib/"/>
+		<ant:copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/samples/security/lib/"/>
+		<ant:copy file="${maven.repo.local}/commons-discovery/jars/commons-discovery-${commons.discovery.version}.jar" todir="target/samples/security/lib/"/>
+    </j:if>
     <ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
     <ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>
 
