@@ -64,7 +64,7 @@ public class HttpTransportProperties {
         }
 
         public String getDomain() {
-            if (domain.equals("") || (domain == null)) {
+            if (domain == null || domain.length() == 0) {
                 return "anonymous";
             } else {
                 return domain;
@@ -72,7 +72,7 @@ public class HttpTransportProperties {
         }
 
         public String getPassWord() {
-            if (passWord.equals("") || (passWord == null)) {
+            if (passWord == null || passWord.length() == 0) {
                 return "anonymous";
             } else {
                 return passWord;
@@ -88,7 +88,7 @@ public class HttpTransportProperties {
         }
 
         public String getUserName() {
-            if (userName.equals("") || (userName == null)) {
+            if (userName == null || userName.length() == 0) {
                 return "anonymous";
             } else {
                 return userName;

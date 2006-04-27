@@ -142,10 +142,9 @@ public abstract class AbstractHTTPSender {
                 proxyPort = proxyProperties.getProxyPort();
             }
 
-            if (!proxyProperties.getProxyHostName().equals("")
-                    || (proxyProperties.getProxyHostName() != null)) {
-                proxyHostName = proxyProperties.getProxyHostName();
-            } else {
+            proxyHostName = proxyProperties.getProxyHostName();
+            if (proxyHostName == null
+                    || proxyHostName.length() == 0) {
                 throw new AxisFault("Proxy Name is not valid");
             }
 
