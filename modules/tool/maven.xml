@@ -19,7 +19,7 @@
                 <include name="axis2*.jar"/>
             </fileset>
         </copy>
-        <copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
+        <copy file="${dependencies.dir}/ant-1.6.2.jar" todir="target/jar-tool"/>
         <copy file="src/script/jar-tool-UI.bat" todir="target/jar-tool"></copy>
     </goal>
     

@@ -32,14 +32,14 @@
             </fileset>
         </copy>
 
-        <copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/jaxen/jars/jaxen-${jaxen.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
-        <copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/opensaml-${opensaml.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/wss4j-${wss4j.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/jaxen-${jaxen.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
+        <copy file="${dependencies.dir}/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
         
 
 		<copy file="src/META-INF/rahas-module.xml"
@@ -86,10 +86,10 @@
             </fileset>
         </copy>
         <!-- copy jars -->
-        <copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
-        <copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
-        <copy file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>
-        <copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
+        <copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
+        <copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
+        <copy file="${dependencies.dir}/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>
+        <copy file="${dependencies.dir}/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
         
         <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
 		<copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/META-INF/sct-issuer-config.xml"/>
