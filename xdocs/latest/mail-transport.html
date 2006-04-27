@@ -6,7 +6,16 @@
 </head>
 
 <body>
-<h1>Invoking a Service Using a Mail</h1>
+<h1>Invoking a Service Using a Mail Transport</h1>
+
+<p>This is document will basically explain how to call a service through Mail
+transport in Axis2. The information provided is categorized under the
+following topics listed in the content.</p>
+
+<p><i>Send your feedback or questions to: <a
+href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
+subject with [Axis2]. To subscribe to mailing list see <a
+href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Content</h2>
 <ul>
@@ -17,6 +26,7 @@
   <li><a href="#mailet">Calling Axis Through a James Mailet</a></li>
 </ul>
 <a name="prologue"></a>
+
 <h2>Prologue</h2>
 
 <p>Most of Web services that we interact with are synchronous and
@@ -31,12 +41,13 @@ and updates. It is a lot like the way the old business worked but with a
 modern touch. Similarly Axis2 mail transport can be used to implement
 SETI@HOME through mail.</p>
 <a name="intro"></a>
+
 <h2>Introduction</h2>
 
 <p>To start you will first need to go through the Mail Transport <a
-href="mail-configuration.html" target="_blank">configuration document</a>. It will give you
-all the information you need on how to configure Axis2 to get mail transport
-working.</p>
+href="mail-configuration.html" target="_blank">configuration document</a>. It
+will give you all the information you need on how to configure Axis2 to get
+mail transport working.</p>
 
 <p>Broadly speaking there are 3 ways of calling a service through mail.</p>
 
@@ -58,6 +69,7 @@ get the hang of the Axis2 related issues then you can move on to tackle the
 mail beast. Please do keep in mind that the mail server we have implemented
 is ONLY FOR DEMONSTRATION/TESTING PURPOSES.</p>
 <a name="axis2"></a>
+
 <h2>1. Using Simple Mail Server Included in Axis2</h2>
 
 <p>The SMTP/POP server that we have included has the ability to function as a
@@ -153,6 +165,7 @@ call the axisService that was setup on the previous code listing.</p>
 mail server till the response is received.Thats all there is to it. Please do
 note that serviceName and operationName need to be QNames.</p>
 <a name="generic"></a>
+
 <h2>2. Using a Generic Mail Server</h2>
 
 <p>First you need two email accounts that works with POP/SMTP. One will act
@@ -160,8 +173,8 @@ as a server and the other will act as the client. For the time being we will
 use server@somewhere.org and client@somewhere.org as the server and the
 client email addresses. Now that we have the email addresses you will have to
 set up the client and the server with Mail Transport <a
-href="http://ws.apache.org/axis2/mail-transport.html" target="_blank">introduction
-document</a>.</p>
+href="http://ws.apache.org/axis2/mail-transport.html"
+target="_blank">introduction document</a>.</p>
 
 <p>When calling the generic mail server the client side code will remain the
 same and there will be some modification to the server-side code.</p>
@@ -190,15 +203,16 @@ same and there will be some modification to the server-side code.</p>
 </source>
 <p>Note that a separate ConfigurationContext needs to be created and used.</p>
 <a name="mailet"></a>
+
 <h3>3. Calling Axis Through a James Mailet</h3>
 
 <p>This process will be a bit more challenging than the other two methods but
 will provide a really elegant way to use the mail transport. Before we get
 started you will have to go though the James documents <a
-href="http://james.apache.org/custom_matcher_2_1.html" target="_blank">Writing a Custom
-Matcher</a> and <a
-href="http://james.apache.org/custom_mailet_2_1.html" target="_blank">Writing a Custom
-Mailet</a>.</p>
+href="http://james.apache.org/custom_matcher_2_1.html"
+target="_blank">Writing a Custom Matcher</a> and <a
+href="http://james.apache.org/custom_mailet_2_1.html" target="_blank">Writing
+a Custom Mailet</a>.</p>
 
 <p>Now that we know the James part of it lets dive into to the Axis2 part of
 the code. Once you have set up the James side of business we need to use the
