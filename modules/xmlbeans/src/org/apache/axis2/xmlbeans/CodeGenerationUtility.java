@@ -453,9 +453,24 @@ public class CodeGenerationUtility {
                 if(systemId.indexOf(':') == -1) {
                     File f;
                     if (baseUri!=null){
-                        f=new File(new URI(baseUri+systemId));
+                        URI uri = new URI(baseUri + systemId);
+                        if (baseUri.startsWith("file:")){
+                            //it's file
+                             f=new File(uri);
+                        }else{
+                            return new InputSource(
+                                    uri.toURL().openStream()
+                            );
+                        }
                     }else{
-                        f = new File(systemId);
+                        if (systemId.startsWith("http://") ||
+                                systemId.startsWith("https://")){
+                            return new InputSource(systemId);
+                        }else{
+                           //treat it as a file
+                           f = new File(systemId);
+                        }
+
                     }
                     if(f.exists()) {
                         try {
