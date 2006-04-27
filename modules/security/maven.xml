@@ -32,7 +32,7 @@
             </fileset>
         </copy>
 
-		<j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+		<j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
 			<copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/opensaml-${opensaml.version}.jar" todir="target/temp-mar/lib"/>
@@ -42,7 +42,7 @@
 			<copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
         </j:if>
-		<j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+		<j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
 			<copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar" todir="target/temp-mar/lib"/>
@@ -98,13 +98,13 @@
             </fileset>
         </copy>
         <!-- copy jars -->
-        <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+        <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
 			<copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
 			<copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
 			<copy file="${dependencies.dir}/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>
 			<copy file="${dependencies.dir}/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
         </j:if>
-        <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+        <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
 			<copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
 			<copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
 			<copy file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>

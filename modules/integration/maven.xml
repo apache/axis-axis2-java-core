@@ -607,13 +607,13 @@
 
             <!-- Copying the DOM3 stuff to the endorsed dir -->
             <mkdir dir="target/test-resources/endorsed"/>
-            <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+            <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
 				<copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar"
 					  todir="target/test-resources/endorsed"/>
 				<copy file="${dependencies.dir}/xml-apis-${xml_apis.version}.jar"
 					  todir="target/test-resources/endorsed"/>
             </j:if>
-            <j:if test="${!context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+            <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
 				<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar"
 					  todir="target/test-resources/endorsed"/>
 				<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar"
