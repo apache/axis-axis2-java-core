@@ -62,6 +62,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed
  * via reflection from the XMLBeans code generation extension when XMLBeans data
@@ -108,7 +110,7 @@ public class CodeGenerationUtility {
             JavaTypeMapper mapper = new JavaTypeMapper();
             Map nameSpacesMap = cgconfig.getAxisService().getNameSpacesMap();
 
-            //process all the schemas and make a list of all of them for
+            // process all the schemas and make a list of all of them for
             // resolving entities
             for (int i = 0; i < schemas.size(); i++) {
                 XmlSchema schema = (XmlSchema) schemas.get(i);
