@@ -224,6 +224,7 @@ public class Test extends TestCase
 
         //output the classes into the output dir as well
         javaCompiler.setDestdir(outputLocationFile);
+        javaCompiler.setDebug(true);
         javaCompiler.setVerbose(true);
         javaCompiler.execute();
 //        codeGenProject.executeTarget(COMPILE_TARGET_NAME);
