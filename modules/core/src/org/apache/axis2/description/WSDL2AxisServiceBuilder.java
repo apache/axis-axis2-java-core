@@ -212,10 +212,10 @@ public class WSDL2AxisServiceBuilder {
             axisService.setTargetNamespace(wsdl4jDefinition
                     .getTargetNamespace());
             //adding ns in the original WSDL
-            axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
             processPoliciesInDefintion(wsdl4jDefinition);
             //scheam generation
             processImports(wsdl4jDefinition);
+            axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
             Types wsdl4jTypes = wsdl4jDefinition.getTypes();
             if (null != wsdl4jTypes) {
                 this.copyExtensibleElements(wsdl4jTypes
@@ -894,7 +894,8 @@ public class WSDL2AxisServiceBuilder {
                         Definition importedDef = wsdlImport.getDefinition();
                         if (importedDef != null) {
                             processImports(importedDef);
-
+                             //copy ns
+                            wsdl4jDefinition.getNamespaces().putAll(importedDef.getNamespaces());
                             //copy types
                             Types t = importedDef.getTypes();
                             List typesList = t.getExtensibilityElements();

@@ -32,6 +32,9 @@ public class ClientUtils {
             }
         } else {
             if (msgctx.getOptions().getTransportOut() != null) {
+                if (msgctx.getOptions().getTransportOut().getSender() == null) {
+                    throw new AxisFault("Incomplete transport sender: missing sender!");
+                }
                 return msgctx.getOptions().getTransportOut();
             }
             if (epr == null || (epr.getAddress() == null)) {
