@@ -26,15 +26,21 @@ public interface WSSHandlerConstants {
      */
     public final static String SECURITY_MODULE_NAME = "security";
     
-    /**
+   /**
      * Inflow security parameter
      */
     public static final String INFLOW_SECURITY = "InflowSecurity";
+    
+    public static final String INFLOW_SECURITY_SERVER = "InflowSecurity-server";
+    public static final String INFLOW_SECURITY_CLIENT = "InflowSecurity-client";
 
     /**
      * Outflow security parameter 
      */
     public static final String OUTFLOW_SECURITY = "OutflowSecurity";
+    
+    public static final String OUTFLOW_SECURITY_SERVER = "OutflowSecurity-server";
+    public static final String OUTFLOW_SECURITY_CLIENT = "OutflowSecurity-client";
     
     public static final String ACTION = "action";
     

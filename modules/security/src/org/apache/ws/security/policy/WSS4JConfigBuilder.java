@@ -35,8 +35,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class WSS4JConfigBuilder {
-    
-    public static WSS4JConfig build(ArrayList topLevelPeds) throws WSSPolicyException {
+    public static WSS4JConfig build(ArrayList topLevelPeds) throws WSSPolicyException {    
+	return build(topLevelPeds,true);
+   }
+
+    public static WSS4JConfig build(ArrayList topLevelPeds,boolean serverSide) throws WSSPolicyException {
         Iterator topLevelPEDIterator = topLevelPeds.iterator();
         WSS4JConfig config = new WSS4JConfig();
         while (topLevelPEDIterator.hasNext()) {
@@ -55,11 +58,11 @@ public class WSS4JConfigBuilder {
               //Unrecognized token  
             }
         }
-        finalizeConfig(config);
+        finalizeConfig(config,serverSide);
         return config;
     }
 
-    private static void finalizeConfig(WSS4JConfig config) throws WSSPolicyException{
+    private static void finalizeConfig(WSS4JConfig config,boolean serverSide) throws WSSPolicyException{
         
         config.getInflowConfiguration().setEnableSignatureConfirmation(false);
         config.getOutflowConfiguration().setEnableSignatureConfirmation(false);
@@ -133,26 +136,45 @@ public class WSS4JConfigBuilder {
             }
     
     
-            if(config.binding instanceof AsymmetricBinding) {
-                AsymmetricBinding asymmetricBinding = (AsymmetricBinding) config.binding;
-                Token recipientToken = asymmetricBinding.getRecipientToken()
-                        .getReceipientToken();
-                String initiatorInclusion = recipientToken.getInclusion();
-                if (initiatorInclusion
-                        .equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT)
-                        || initiatorInclusion.equals(Constants.INCLUDE_ALWAYS)) {
-                    config.getOutflowConfiguration().setSignatureKeyIdentifier(
-                            WSSHandlerConstants.BST_DIRECT_REFERENCE);
-                } else {
-                    if(recipientToken instanceof X509Token) {
+	   if(config.binding instanceof AsymmetricBinding) {
+                if(serverSide){
+                    AsymmetricBinding asymmetricBinding = (AsymmetricBinding) config.binding;
+                    Token recipientToken = asymmetricBinding.getRecipientToken()
+                            .getReceipientToken();
+                    String initiatorInclusion = recipientToken.getInclusion();
+                    if (initiatorInclusion
+                            .equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT)
+                            || initiatorInclusion.equals(Constants.INCLUDE_ALWAYS)) {
                         config.getOutflowConfiguration().setSignatureKeyIdentifier(
-                                WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+                                WSSHandlerConstants.BST_DIRECT_REFERENCE);
+                    } else {
+                        if(recipientToken instanceof X509Token) {
+                            config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                                    WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+                        }
+                    }
+                }else{
+                    AsymmetricBinding asymmetricBinding = (AsymmetricBinding) config.binding;
+                    Token initiatorToken = asymmetricBinding.getInitiatorToken().getInitiatorToken();
+                    String initiatorInclusion = initiatorToken.getInclusion();
+                    if (initiatorInclusion
+                            .equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT)
+                            || initiatorInclusion.equals(Constants.INCLUDE_ALWAYS)) {
+                        config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                                WSSHandlerConstants.BST_DIRECT_REFERENCE);
+                    } else {
+                        if(initiatorToken instanceof X509Token) {
+                            config.getOutflowConfiguration().setSignatureKeyIdentifier(
+                                    WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+                        }
                     }
                 }
             } else {
                 //TODO Handle symmetric binding
             }
         }
+            
+        
         
         if(config.supportingToken != null) {
             if(config.supportingToken.getType() == Constants.SUPPORTING_TOKEN_SUPPORTING || 

@@ -47,12 +47,25 @@ public class HandlerParameterDecoder {
 	 */
 	public static void processParameters(MessageContext msgCtx, boolean inflow)
 			throws Exception {
-
-        //TODO: check whether policy is available 
+ 		Parameter inFlowSecParam;
+        	Parameter outFlowSecParam;
         
-		Parameter inFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.INFLOW_SECURITY);
-		
-		Parameter outFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.OUTFLOW_SECURITY);
+	        if(msgCtx.isServerSide()){
+            		inFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
+            		outFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
+       		 }else{
+            		inFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
+            		outFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
+        	}
+        
+        	//TODO: check whether policy is available 
+        	if(inFlowSecParam == null){
+            		inFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.INFLOW_SECURITY);            
+       		}
+
+       	 	if(outFlowSecParam == null){
+            		outFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.OUTFLOW_SECURITY);            
+       		 }
 		
 		//If the configs are not availabale in the file
 		if(inFlowSecParam == null) {
