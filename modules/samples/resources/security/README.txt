@@ -11,19 +11,19 @@ Setup the service
 ------------------------------------------------------------------------------
 Please follow each of the following steps:
 
-1.) Download the security-SNAPSHOT.mar and addressing-0.95.mar from 
+1.) Download the aegis-SNAPSHOT.mar and addressing-0.95.mar from 
 	http://ws.apache.org/axis2/modules/
-2.) To engage the security (WSS4J) module add the following line to axis2.xml in axis
-	<module ref="security"/>
+2.) To engage the aegis (WSS4J) module add the following line to axis2.xml in axis
+	<module ref="aegis"/>
 3.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
 4.) Copy all jars other than the secUtil.jar in the samples/security/lib directory to axis2/WEB-INF/lib/
-5.) Copy the downloaded security-SNAPSHOT.mar to Axis2/WEB-INF/modules/ directory
+5.) Copy the downloaded aegis-SNAPSHOT.mar to Axis2/WEB-INF/modules/ directory
 6.) Start Tomcat
 
 Run the sample
 ------------------------------------------------------------------------------
 
-Copy the downloaded security-SNAPSHOT.mar and addressing-SNAPSHOT.mar to samples/security/client_repo/modules/ directory
+Copy the downloaded aegis-SNAPSHOT.mar and addressing-SNAPSHOT.mar to samples/security/client_repo/modules/ directory
 
 To run the sample client run the securitySample ant task in the ant build file available in the samples directory.
 	$ ant securitySample

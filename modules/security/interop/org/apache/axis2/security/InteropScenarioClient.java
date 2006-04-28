@@ -59,7 +59,7 @@ public class InteropScenarioClient {
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         stub._getServiceClient().getOptions().setSoapVersionURI(soapNsURI);
-        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("security"));
+        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("aegis"));
 
 
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
@@ -89,7 +89,7 @@ public class InteropScenarioClient {
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         //Engage the security module
-        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("security"));
+        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("aegis"));
 
 
         if (outflowConfig != null) {

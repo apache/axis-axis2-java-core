@@ -4,9 +4,6 @@
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
-    <!-- Engage the security module -->
-    <!--<module ref="security"/>-->
-
     <!-- Scenario 7: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">

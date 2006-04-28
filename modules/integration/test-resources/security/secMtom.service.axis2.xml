@@ -6,7 +6,7 @@
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
     <!-- Engage the security module -->
-    <module ref="security"/>
+    <module ref="aegis"/>
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

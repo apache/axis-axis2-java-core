@@ -74,12 +74,12 @@
 			<fileset dir="target/temp-mar/org/apache/axis2/security/trust"/>
         </delete>
 
-        <jar jarfile="target/security-${security_version}.mar" basedir="target/temp-mar/">
+        <jar jarfile="target/aegis-${aegis_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
 
-        <copy file="target/security-${security_version}.mar" tofile="target/modules/security-${security_version}.mar"/>
-        <copy file="target/security-${security_version}.mar" tofile="${maven.repo.local}/axis2/mars/security-${security_version}.mar"/>
+        <copy file="target/aegis-${aegis_version}.mar" tofile="target/modules/aegis-${aegis_version}.mar"/>
+        <copy file="target/aegis-${aegis_version}.mar" tofile="${maven.repo.local}/axis2/mars/aegis-${aegis_version}.mar"/>
 		
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>

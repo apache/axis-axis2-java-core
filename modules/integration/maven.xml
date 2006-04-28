@@ -23,8 +23,8 @@
         <!-- copy the mars so that they are available on the test classpath -->
         <copy file="../addressing/target/addressing-${addressing_version}.mar"
               tofile="target/test-classes/modules/addressing-${addressing_version}.mar"/>
-        <copy file="../security/target/security-${security_version}.mar"
-              tofile="target/test-classes/modules/security-${security_version}.mar"/>
+        <copy file="../security/target/aegis-${aegis_version}.mar"
+              tofile="target/test-classes/modules/aegis-${aegis_version}.mar"/>
 
         <j:set var="axis2.home" value="${basedir}/target"/>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
@@ -338,8 +338,8 @@
             <mkdir dir="target/test-resources/default_security_client_repo"/>
             <mkdir dir="target/test-resources/default_security_client_repo/conf"/>
             <mkdir dir="target/test-resources/default_security_client_repo/modules"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/default_security_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/default_security_client_repo/modules/aegis-${aegis_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/default_security_client_repo/modules/addressing-${addressing_version}.mar"/>
             <copy file="../core/conf/axis2.xml"
@@ -359,8 +359,8 @@
             <!-- setup scenario 1 client repository-->
             <copy file="test-resources/security/s1.client.axis2.xml"
                   tofile="target/test-resources/scenario1_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario1_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario1_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- This is to add the PWCallback in to the classpath for the client to pick
                  the password callback class.
@@ -371,8 +371,8 @@
             <!-- setup scenario 1 service repository-->
             <copy file="test-resources/security/s1.service.axis2.xml"
                   tofile="target/test-resources/scenario1_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario1_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario1_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s1.service.xml"
@@ -396,14 +396,14 @@
             <!-- setup scenario 2 client repository-->
             <copy file="test-resources/security/s2.client.axis2.xml"
                   tofile="target/test-resources/scenario2_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario2_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario2_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 2 service repository-->
             <copy file="test-resources/security/s2.service.axis2.xml"
                   tofile="target/test-resources/scenario2_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario2_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario2_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s2.service.xml"
@@ -427,14 +427,14 @@
             <!-- setup scenario 2a client repository-->
             <copy file="test-resources/security/s2a.client.axis2.xml"
                   tofile="target/test-resources/scenario2a_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario2a_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario2a_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 2a service repository-->
             <copy file="test-resources/security/s2a.service.axis2.xml"
                   tofile="target/test-resources/scenario2a_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario2a_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario2a_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s2a.service.xml"
@@ -458,14 +458,14 @@
             <!-- setup scenario 3 client repository-->
             <copy file="test-resources/security/s3.client.axis2.xml"
                   tofile="target/test-resources/scenario3_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario3_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario3_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 3 service repository-->
             <copy file="test-resources/security/s3.service.axis2.xml"
                   tofile="target/test-resources/scenario3_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario3_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario3_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s3.service.xml"
@@ -490,14 +490,14 @@
             <!-- setup scenario 4 client repository-->
             <copy file="test-resources/security/s4.client.axis2.xml"
                   tofile="target/test-resources/scenario4_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario4_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario4_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 4 service repository-->
             <copy file="test-resources/security/s4.service.axis2.xml"
                   tofile="target/test-resources/scenario4_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario4_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario4_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s4.service.xml"
@@ -522,14 +522,14 @@
             <!-- setup scenario 5 client repository-->
             <copy file="test-resources/security/s5.client.axis2.xml"
                   tofile="target/test-resources/scenario5_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario5_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario5_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 5 service repository-->
             <copy file="test-resources/security/s5.service.axis2.xml"
                   tofile="target/test-resources/scenario5_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario5_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario5_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s5.service.xml"
@@ -554,14 +554,14 @@
             <!-- setup scenario 6 client repository-->
             <copy file="test-resources/security/s6.client.axis2.xml"
                   tofile="target/test-resources/scenario6_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario6_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario6_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 6 service repository-->
             <copy file="test-resources/security/s6.service.axis2.xml"
                   tofile="target/test-resources/scenario6_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario6_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario6_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s6.service.xml"
@@ -586,14 +586,14 @@
             <!-- setup scenario 7 client repository-->
             <copy file="test-resources/security/s7.client.axis2.xml"
                   tofile="target/test-resources/scenario7_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario7_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario7_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario 7 service repository-->
             <copy file="test-resources/security/s7.service.axis2.xml"
                   tofile="target/test-resources/scenario7_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenario7_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenario7_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/s7.service.xml"
@@ -634,14 +634,14 @@
             <!-- setup scenario ST1 client repository-->
             <copy file="test-resources/security/sST1.client.axis2.xml"
                   tofile="target/test-resources/scenarioST1_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenarioST1_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenarioST1_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- setup scenario ST1 service repository-->
             <copy file="test-resources/security/sST1.service.axis2.xml"
                   tofile="target/test-resources/scenarioST1_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/scenarioST1_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/scenarioST1_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/sST1.service.xml"
@@ -666,14 +666,14 @@
             <!-- MTOM Optimized Security Test client repository-->
             <copy file="test-resources/security/secMtom.client.axis2.xml"
                   tofile="target/test-resources/mtom_sec_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/mtom_sec_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/mtom_sec_client_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- MTOM Optimized Security Test service repository-->
             <copy file="test-resources/security/secMtom.service.axis2.xml"
                   tofile="target/test-resources/mtom_sec_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/mtom_sec_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/mtom_sec_service_repo/modules/aegis-${aegis_version}.mar"/>
 
             <!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
             <copy file="test-resources/security/secMtom.service.xml"
@@ -698,16 +698,16 @@
             <!-- Test with addressing and MTOM client repository-->
             <copy file="test-resources/security/complete.client.axis2.xml"
                   tofile="target/test-resources/complete_client_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/complete_client_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/complete_client_repo/modules/aegis-${aegis_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/complete_client_repo/modules/addressing-${addressing_version}.mar"/>
 
             <!-- Test with addressing and MTOMservice repository-->
             <copy file="test-resources/security/complete.service.axis2.xml"
                   tofile="target/test-resources/complete_service_repo/conf/axis2.xml"/>
-            <copy file="../security/target/security-${security_version}.mar"
-                  tofile="target/test-resources/complete_service_repo/modules/security-${security_version}.mar"/>
+            <copy file="../security/target/aegis-${aegis_version}.mar"
+                  tofile="target/test-resources/complete_service_repo/modules/aegis-${aegis_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/complete_service_repo/modules/addressing-${addressing_version}.mar"/>
 

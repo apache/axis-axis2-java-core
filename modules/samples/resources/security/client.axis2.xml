@@ -4,7 +4,7 @@
     <module ref="addressing"/>
 
     <!-- Engage the security module -->
-    <module ref="security"/>
+    <module ref="aegis"/>
 
     <!-- Test with addressing and MTOM: Client's Configuration:START-->
 
