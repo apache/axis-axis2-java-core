@@ -33,55 +33,60 @@ public class PolicyEngineData {
     }
     
     public static  PolicyEngineData copy(QName name) throws WSSPolicyException {
-        if(name.getLocalPart().equals(SecurityPolicy.symmetricBinding.getTokenName())) {
+        String localPart = name.getLocalPart();
+        if(localPart.equals(SecurityPolicy.symmetricBinding.getTokenName())) {
             return new SymmetricBinding();
-        } else if (name.getLocalPart().equals(SecurityPolicy.asymmetricBinding.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.asymmetricBinding.getTokenName())) {
             return new AsymmetricBinding();
-        } else if (name.getLocalPart().equals(SecurityPolicy.transportBinding.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.transportBinding.getTokenName())) {
             return new TransportBinding();
-        } else if (name.getLocalPart().equals(SecurityPolicy.algorithmSuite.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.algorithmSuite.getTokenName())) {
             return new AlgorithmSuite();
-        } else if (name.getLocalPart().equals(SecurityPolicy.signedElements.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.signedElements.getTokenName())) {
             return new SignedEncryptedElements(true);
-        } else if (name.getLocalPart().equals(SecurityPolicy.encryptedElements.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.encryptedElements.getTokenName())) {
             return new SignedEncryptedElements(false);
-        } else if (name.getLocalPart().equals(SecurityPolicy.signedParts.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.signedParts.getTokenName())) {
             return new SignedEncryptedParts(true);
-        } else if (name.getLocalPart().equals(SecurityPolicy.encryptedParts.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.encryptedParts.getTokenName())) {
             return new SignedEncryptedParts(false);
-        } else if (name.getLocalPart().equals(SecurityPolicy.header.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.header.getTokenName())) {
             return new Header();
-        } else if (name.getLocalPart().equals(SecurityPolicy.protectionToken.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.protectionToken.getTokenName())) {
             return new ProtectionToken();
-        } else if (name.getLocalPart().equals(SecurityPolicy.signatureToken.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.signatureToken.getTokenName())) {
             return new SignatureToken();
-        } else if (name.getLocalPart().equals(SecurityPolicy.encryptionToken.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.encryptionToken.getTokenName())) {
             return new EncryptionToken();
-        } else if (name.getLocalPart().equals(SecurityPolicy.x509Token.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.x509Token.getTokenName())) {
             return new X509Token();
-        } else if (name.getLocalPart().equals(SecurityPolicy.layout.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.layout.getTokenName())) {
             return new Layout();
-        } else if (name.getLocalPart().equals(SecurityPolicy.signedSupportingTokens.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.signedSupportingTokens.getTokenName())) {
             return new SupportingToken(Constants.SUPPORTING_TOKEN_SIGNED);
-        } else if (name.getLocalPart().equals(SecurityPolicy.signedEndorsingSupportingTokens.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.signedEndorsingSupportingTokens.getTokenName())) {
             return new SupportingToken(Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING);
-        } else if (name.getLocalPart().equals(SecurityPolicy.supportingTokens.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.supportingTokens.getTokenName())) {
             return new SupportingToken(Constants.SUPPORTING_TOKEN_SUPPORTING);
-        } else if (name.getLocalPart().equals(SecurityPolicy.endorsingSupportingTokens.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.endorsingSupportingTokens.getTokenName())) {
             return new SupportingToken(Constants.SUPPORTING_TOKEN_ENDORSING);
-        } else if (name.getLocalPart().equals(SecurityPolicy.usernameToken.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.usernameToken.getTokenName())) {
             return new UsernameToken();
-        } else if (name.getLocalPart().equals(SecurityPolicy.wss10.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.wss10.getTokenName())) {
             return new Wss10();
-        } else if (name.getLocalPart().equals(SecurityPolicy.wss11.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.wss11.getTokenName())) {
             return new Wss11();
-        } else if (name.getLocalPart().equals(SecurityPolicy.initiatorToken.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.initiatorToken.getTokenName())) {
             return new InitiatorToken();
-        } else if (name.getLocalPart().equals(SecurityPolicy.recipientToken.getTokenName())) {
+        } else if (localPart.equals(SecurityPolicy.recipientToken.getTokenName())) {
             return new RecipientToken();
+        } else if (localPart.equals(SecurityPolicy.transportToken.getTokenName())) {
+            return new TransportToken();
+        } else if (localPart.equals(SecurityPolicy.httpsToken.getTokenName())) {
+            return new HttpsToken();
         } else {
-            log.error("Unsuppotred: " + name.getLocalPart());
-            throw new WSSPolicyException("Unsuppotred complex assertion :" + name.getLocalPart());
+            log.error("Unsuppotred: " + localPart);
+            throw new WSSPolicyException("Unsuppotred complex assertion :" + localPart);
         }
     }
 }
