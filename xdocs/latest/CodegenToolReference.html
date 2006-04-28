@@ -4,7 +4,7 @@
   <title>Code Generator-Command Line Tool</title>
 </head>
 
-<body>
+<body lang="en">
 <h1>Code Generator Tool- Command Line &amp; Ant Task</h1>
 
 <p>The Code Generator tool consists of a command line version and an Ant
@@ -23,9 +23,9 @@ custom Ant task and invoking the Code Generator from Ant.</p>
   <li><a href="#ant">Ant Task</a>
     <ul>
       <li><a href="#antref">Ant Task Reference</a></li>
-      <li><a href="#example">Example build file using the custom Ant
-      task</a></li>
-      <li><a href="#invoking">Invoking the Code Generator from Ant</a></li>
+      <li><a href="#example">Example Build File Using the Custom Ant
+      Task</a></li>
+      <li><a href="#invoking">Invoking the Code Generator From Ant</a></li>
     </ul>
   </li>
   <li><a href="#appendix">Appendix</a></li>
@@ -144,7 +144,7 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="20%">-g</td>
       <td width="20%">--generate-all</td>
-      <td width="60%">Genrates all the classes. This option is valid only
+      <td width="60%">Generates all the classes. This option is valid only
         with the -ss (server side code generation) option. When on, the
         client code (stubs) will also be generated along with the
       skeleton.</td>
@@ -195,22 +195,22 @@ are the ant task attributes.</p>
 style="border-collapse: collapse" width="100%" id="AutoNumber2">
   <tbody>
     <tr>
-      <td width="50%" height="19">wsdlfilename</td>
-      <td width="50%" height="19">WSDL file location. Maps to the uri option
-        of the command line tool</td>
+      <td>wsdlfilename</td>
+      <td>WSDL file location. Maps to the uri option of the command line
+      tool</td>
     </tr>
     <tr>
-      <td width="50%" height="76">output</td>
-      <td width="50%" height="76">output file location. This is where the
-        files would be copied once the code generation is done. If this
-        option is omitted the generated files would be copied to the working
-        directory. . Maps to the -o option of the command line tool</td>
+      <td>output</td>
+      <td>output file location. This is where the files would be copied once
+        the code generation is done. If this option is omitted the generated
+        files would be copied to the working directory. . Maps to the -o
+        option of the command line tool</td>
     </tr>
     <tr>
-      <td width="50%" height="171">language</td>
-      <td width="50%" height="171">Output language. Currently the code
-        generator can generate code in Java and CSharp. (CSharp support is
-        limited) When omitted defaults to Java.
+      <td>language</td>
+      <td>Output language. Currently the code generator can generate code in
+        Java and CSharp. (CSharp support is limited) When omitted defaults to
+        Java.
 
         <p>Allowed options are</p>
         <ul>
@@ -222,62 +222,60 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
       </td>
     </tr>
     <tr>
-      <td width="50%" height="57">packagename</td>
-      <td width="50%" height="57">The target package name. If omitted, a
-        default package (formed using the target namespace of the WSDL) will
-        be used. Maps to the -p option of the command line tool.</td>
+      <td>packagename</td>
+      <td>The target package name. If omitted, a default package (formed
+        using the target namespace of the WSDL) will be used. Maps to the -p
+        option of the command line tool.</td>
     </tr>
     <tr>
-      <td width="50%" height="75">asynconly</td>
-      <td width="50%" height="75">Generate code only for async style . when
-        this option is used the generated stubs will have only the
-        asynchronous invocation methods. Defaults to false if omitted Only
-        true and false are applicable as values. Maps to the -a option of the
-        command line tool.</td>
+      <td>asynconly</td>
+      <td>Generate code only for async style . when this option is used the
+        generated stubs will have only the asynchronous invocation methods.
+        Defaults to false if omitted Only true and false are applicable as
+        values. Maps to the -a option of the command line tool.</td>
     </tr>
     <tr>
-      <td width="50%" height="16">testcase</td>
-      <td width="50%" height="16">Generates a test case</td>
+      <td>testcase</td>
+      <td>Generates a test case</td>
     </tr>
     <tr>
-      <td width="50%" height="19">synconly</td>
-      <td width="50%" height="19">Generate code only for sync style . when
-        this option is used the generated stubs will have only the
-        synchronous invocation methods. Defaults to false if omitted. Only
-        true and false are applicable as values. Maps to the -s option of the
-        command line tool.</td>
+      <td>synconly</td>
+      <td>Generate code only for sync style . when this option is used the
+        generated stubs will have only the synchronous invocation methods.
+        Defaults to false if omitted. Only true and false are applicable as
+        values. Maps to the -s option of the command line tool.</td>
     </tr>
     <tr>
-      <td width="50%" height="19">serverside</td>
-      <td width="50%" height="19">Generates server side code (i.e.
-        skeletons). Only true and false are applicable as values. Default is
-        false. Maps to the -ss option of the command line tool</td>
+      <td>serverside</td>
+      <td>Generates server side code (i.e. skeletons). Only true and false
+        are applicable as values. Default is false. Maps to the -ss option of
+        the command line tool</td>
     </tr>
     <tr>
-      <td width="50%" height="18">generateserverxml</td>
-      <td width="50%" height="18">Generates server side code (i.e.
-        skeletons). Only true and false are applicable as values. Default is
-        false. Maps to the -sd option of the command line tool.</td>
+      <td>generateserverxml</td>
+      <td>Generates server side code (i.e. skeletons). Only true and false
+        are applicable as values. Default is false. Maps to the -sd option of
+        the command line tool.</td>
     </tr>
     <tr>
-      <td width="50%" height="18">unpackClasses</td>
-      <td width="50%" height="18">unpackes the generated classes. This forces
-        the databinding classes to be generated separately, which otherwise
-        would have been generated as inner classes.</td>
+      <td>unpackClasses</td>
+      <td>Unpacks the generated classes. This forces the databinding classes
+        to be generated separately, which otherwise would have been generated
+        as inner classes.</td>
     </tr>
     <tr>
-      <td width="50%" height="18">serviceName</td>
-      <td width="50%" height="18">The name of the service</td>
+      <td>serviceName</td>
+      <td>The name of the service</td>
     </tr>
     <tr>
-      <td width="50%" height="18">PortName</td>
-      <td width="50%" height="18">The name of the port</td>
+      <td>PortName</td>
+      <td>The name of the port</td>
     </tr>
   </tbody>
 </table>
 <a name="example"></a>
 
-<h3>Example build file using the custom Ant task</h3>
+<h3>Example Build File Using the Custom Ant Task</h3>
 
 <p>Following is an example ant build file that uses the custom Ant task.</p>
 <pre>&lt;?xml version="1.0"?&gt;
@@ -321,7 +319,7 @@ path.</p>
 </ul>
 <a name="invoking"></a>
 
-<h3>Invoking the Code Generator from Ant</h3>
+<h3>Invoking the Code Generator From Ant</h3>
 
 <p>Since the users may find altering their ant class path a bit daunting they
 can also follow an easier technique. The code generator main class can be
@@ -439,14 +437,14 @@ ready for deployment:</p>
   &lt;/jar&gt;
   &lt;/target&gt;
   
-  &lt;!-- build an .aar file for axis2 web services --&gt;
+  &lt;!-- build an .aar file for axis2 Web services --&gt;
   &lt;target name="aar" depends="compile"&gt;
 
      &lt;delete dir="${build.classes}/META-INF" /&gt;
      &lt;mkdir dir="${build.classes}/META-INF" /&gt;
      &lt;copy todir="${build.classes}/META-INF" &gt;
        &lt;fileset dir="output/service_descriptors/LoginEndpoint" &gt;
-         &lt;!-- axis2 web services definitions file --&gt;
+         &lt;!-- axis2 Web services definitions file --&gt;
          &lt;include name="services.xml"/&gt;
 
        &lt;/fileset&gt;
@@ -575,7 +573,7 @@ That file is placed into build/classes by the above ant task and will be
 needed to compile the generated sources.</p>
 
 <p>The next step is to modify the generated Skeleton Java Source file - the
-Web Service. This file as generated returns null and needs to be updated to
+Web service. This file as generated returns null and needs to be updated to
 contain the business logic.</p>
 
 <p>After the WSDL2Java command runs the file LoginEndpoint.wsdl, edit the
@@ -668,7 +666,7 @@ a servlet container.</p>
 jar file lib/axis2_example_wsdl.jar in the 'lib' directory under the
 build.xml . This jar will be used to compile the client, and also will be
 placed in the servlet container. Next, run the 'aar' ant task from the
-example build.xml, which generates the deployable axis2 web service. Place
+example build.xml, which generates the deployable axis2 Web service. Place
 dist/LoginEndpoint.aar into axis2/WEB-INF/services . Place
 lib/axis2_example_wsdl.jar into axis2/WEB-INF/lib . Verify the happy axis
 page loaded the services correctly - there should be the service

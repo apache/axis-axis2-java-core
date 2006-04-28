@@ -26,8 +26,11 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   <li><a href="#bmBP">The Big Picture</a></li>
   <li><p><a href="#requirements">Requirement of Axis2</a></p>
   </li>
-  <li><a href="#thearchi">Axis2, The Architecture</a>
+  <li><a href="#thearchi">Axis2 Architecture</a>
     <ul>
+      <li><p><a href="#bmcore">Core Modules</a></p>
+      </li>
+      <li><a href="#bmother">Other Modules</a></li>
       <li><p><a href="#bmInfoMod">Information Model</a></p>
       </li>
       <li><a href="#bmXML">XML Processing Model</a></li>
@@ -91,27 +94,27 @@ by looking at the requirements.</p>
 
 <h2>Requirement of Axis2</h2>
 
-<p>In the SOAP terminology, a participant who is taking part in a Web Service
+<p>In the SOAP terminology, a participant who is taking part in a Web service
 interaction is known as a SOAP Node. Delivery of a single SOAP Message is
 defined based on two participants, SOAP Sender and SOAP Receiver. Each SOAP
 Message is sent by SOAP Sender and received by SOAP Receiver. A single SOAP
-delivery is the most basic unit that builds the Web Service interaction.</p>
+delivery is the most basic unit that builds the Web service interaction.</p>
 
 <p>Each SOAP Node may be written in specific programming language, may it be
-Java, C++, .NET or Perl, the Web Services allow them to inter operate. This
-is possible because on the wire each Web Service interaction is done via
+Java, C++, .NET or Perl, the Web services allow them to inter operate. This
+is possible because on the wire each Web service interaction is done via
 SOAP, which is common to every SOAP Node.</p>
 
 <p><img alt="" src="images/archi-guide/soap.gif" name="Graphic1"
 align="bottom" width="691" height="319" border="0"></p>
 
-<p>Web Service middleware handles the complexity in SOAP messaging and lets
+<p>Web service middleware handles the complexity in SOAP messaging and lets
 the users work with the programming language they are accustomed to. Axis2
-allows java users to invoke Web Services using java representations, and
+allows java users to invoke Web services using java representations, and
 handles the SOAP messaging behind the curtain.</p>
 
 <p>Axis2 handles SOAP processing along with numerous other tasks. This makes
-the life of the Web Service developer a whole lot easier. Following are the
+the life of the Web service developer a whole lot easier. Following are the
 identified requirements:</p>
 <ol>
   <li>Provide a framework to process the SOAP messages. The framework should
@@ -119,9 +122,9 @@ identified requirements:</p>
     per service or per operation basis. Furthermore it should be able to
     model different Message Exchange Patterns (MEPs) using the processing
     framework.</li>
-  <li><p>Ability to deploy a Web Services (with or without WSDL)</p>
+  <li><p>Ability to deploy a Web services (with or without WSDL)</p>
   </li>
-  <li>Provide a Client API that can be used to invoke Web Services. This API
+  <li>Provide a Client API that can be used to invoke Web services. This API
     should support both the Synchronous and Asynchronous programming
   models.</li>
   <li><p>Ability to configure Axis2 and it's components via deployment.</p>
@@ -135,7 +138,7 @@ speed is a major consideration for Axis2. Axis2 Core Architecture is built on
 three specifications- WSDL, SOAP and WS-Addressing. Other specifications like
 JAX-RP, SAAJ &amp; WS-Policy are layered on top of the Core Architecture.</p>
 
-<h2><a name="thearchi">Axis2, The Architecture</a></h2>
+<h2><a name="thearchi">Axis2 Architecture</a></h2>
 Axis2 architecture lays out some principals to preserve the uniformity. They
 are as follows:
 <ul>
@@ -149,10 +152,11 @@ are as follows:
 
 <p>Axis2 architecture is modular. Therefore Axis2 Framework is built up of
 core modules which collectively make up the core architecture of Axis2, and
-non-core modules that are layered on top of this core
+non-core/other modules that are layered on top of this core
 modules/architecture.</p>
+<a name="bmother"></a>
 
-<p>Core Modules:</p>
+<h3>Core Modules:</h3>
 <ul>
   <li><a href="#bmInfoMod">Information Model</a>- Axis2 defines a model to
     handle information and all states are kept in this model. The model has a
@@ -175,7 +179,7 @@ modules/architecture.</p>
     SOAP Processing model per system, service or operation basis.</p>
   </li>
   <li><a href="#bmClientAPI">Client API</a>- This provides a convenient API
-    for users to communicate with web services using Axis2. There are set of
+    for users to communicate with Web services using Axis2. There are set of
     classes to interact with IN-OUT and IN-Only style Message Exchange
     Patterns (MEPs) where those can be used to construct any other MEP.</li>
   <li><p><a href="#bmTransports">Transports</a>- Axis2 define a transport
@@ -185,7 +189,9 @@ modules/architecture.</p>
     new ones if and when it is needed.</p>
   </li>
 </ul>
-Non-core Modules:
+<a name="bmcore"></a>
+
+<h3>Other Modules:</h3>
 <ul>
   <li><a href="#bmWSDL">Code Generation</a>- Axis2 provides a code generation
     tool that will generate server side and client side code along with a
@@ -224,7 +230,7 @@ the given relationship holds between A and B.)</p>
 <p>The two hierarchies are connected as shown in the above figure. The
 Description hierarchy represents the static data. This data may be loaded
 from a configuration file that exists throughout the lifetime of Axis2. For
-example, deployed Web Services, operations, etc. On the other hand, the
+example, deployed Web services, operations, etc. On the other hand, the
 context hierarchy holds more dynamic information about the things that have
 more than one instances (e.g.Message Context).</p>
 
@@ -260,7 +266,7 @@ flexibility would serve better in this instant.</p>
       <td width="103"><p>Axis Configuration</p>
       </td>
       <td width="336"><p>Holds all global configurations. Transports, global
-        modules, parameters and Services etc.</p>
+        modules, parameters and services etc.</p>
       </td>
     </tr>
     <tr>
@@ -408,30 +414,31 @@ SOAP Message. Then the <i>In Pipe</i> is executed with the Message Context.
 <p>Let us see what happens at each phase of the execution. This process may
 happen either in the server or in the Client.</p>
 <ol>
-  <li>Transport Phase - The handlers are in the phase ment to be process
-    transport specific information such as validate incoming message by
-    looking at various transport headers, add data into message context
-  etc..</li>
-  <li>Pre-Dispatch Phase- The main functionality of the handlers are in this
-    phase is to populate message context in order to do the dispatching. As
-    an example processing of addressing headers happen in this phase , so by
-    looking at addressing headers it will find the name of the service and
-    operation.</li>
-  <li>Dispatch Phase - The Dispatchers run in this phase and find the Service
-    if the service is not found already. <br>
+  <li><strong>Transport Phase</strong> - The handlers are in the phase meant
+    to process transport specific information such as validating incoming
+    message by looking at various transport headers, add data into message
+    context etc.</li>
+  <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
+    handlers are in this phase is to populate message context in order to do
+    the dispatching. As an example processing of addressing headers happen in
+    this phase , so by looking at addressing headers it will find the name of
+    the service and operation.</li>
+  <li><strong>Dispatch Phase</strong> - The Dispatchers run in this phase and
+    find the service if the service is not found already. <br>
     The post condition of the dispatch phase work as follows; That checks
     whether the service and operation are found or not. If the service or
     operation has not been found by this point the execution will halt and
     send a "service not found error".</li>
-  <li>User Defined Phases - Users are allowed to engage their custom handlers
-    here.</li>
+  <li><strong>User Defined Phases</strong> - Users are allowed to engage
+    their custom handlers here.</li>
   <li>Message Validation Phase - Once the user level execution has taken
     place this phase validates whether SOAP Message Processing has taken
     place correctly.</li>
-  <li>Message Processing Phase - The Business logic of the SOAP message is
-    executed here. A <a href="#mr">Message Receiver</a> is registered with
-    each Operation. This Message receiver (associated to the particular
-    operation) will executed as the last Handler of this phase.</li>
+  <li><strong>Message Processing Phase</strong> - The Business logic of the
+    SOAP message is executed here. A <a href="#mr">Message Receiver</a> is
+    registered with each Operation. This Message receiver (associated to the
+    particular operation) will executed as the last Handler of this
+  phase.</li>
 </ol>
 
 <p>There may be other handlers in any of these phases. Users may use custom
@@ -482,7 +489,7 @@ rules. Phase rules will place a handler
 Modules</a></h4>
 
 <p>Axis2 defines an entity called a 'module' that can introduce handlers and
-web service operations. A Module in terms of Axis2 usually acts as a
+Web service operations. A Module in terms of Axis2 usually acts as a
 convenient packaging that include a set of handlers and an associated
 descriptor which includes the phase rules. Modules have the concept of being
 'available' and 'engaged'. 'Availability' means the module is present in the
@@ -495,7 +502,7 @@ WS-Addressing.</p>
 
 <p>Apart from the extension mechanism based on the handlers the WS-*
 specifications suggest a requirement for adding new operations. For example,
-once a user add a Reliable Messaging capability to a Service the "Create
+once a user add a Reliable Messaging capability to a service the "Create
 Sequence" operation needs to be available to the service end point. This can
 be implemented by letting the modules define the operations, and once the
 module is engaged to a service, the necessary operations will be added to
@@ -535,9 +542,9 @@ contain the dependent classes. The <em>services.xml</em> file has following
 information.</p>
 <ol>
   <li>Service level parameters</li>
-  <li>Modules that are engaged Service level</li>
+  <li>Modules that are engaged service level</li>
   <li>Service Specific <a href="#mr">Message Receivers</a></li>
-  <li>Operations inside the Service</li>
+  <li>Operations inside the service</li>
 </ol>
 
 <h3><a name="modulearchive">Module Archive</a></h3>
@@ -559,7 +566,7 @@ corresponding to the new found service archives to the repository.</p>
 
 <h2>Client API</h2>
 
-<p>There are three parameters that decide the nature of the Web Service
+<p>There are three parameters that decide the nature of the Web service
 interaction.</p>
 <ol>
   <li>Message Exchange Pattern (MEP)</li>
@@ -711,7 +718,5 @@ method will handle the de-serialization.</code></p>
 <p><code>public static org.apache.xmlbeans.XmlObject
 getTestObject(java.lang.Class type) /*This will be a utility method that can
 be used to create sample objects of the given data bound object.*/</code></p>
-
-<p></p>
 </body>
 </html>
