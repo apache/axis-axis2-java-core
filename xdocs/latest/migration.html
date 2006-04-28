@@ -19,7 +19,7 @@
 <h1>Migrating from Apache Axis 1.x to Axis 2</h1>
 
 <p>For all those users who are familiar with Axis2 1.x series will be
-assisted through this document to swtich to Axis2 series. We begin by listing
+assisted through this document to switch to Axis2 series. We begin by listing
 the improvements in Axis2 in comparison with Axis1. This is followed by
 guidelines for the migration.</p>
 
@@ -32,8 +32,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <ul>
   <li><a href="#comp">Compatibility</a></li>
   <li><a href="#start">Getting Started</a></li>
-  <li><a href="#custom_deployment">Custom Deployment of Services, Handlers and
-    Modules</a></li>
+  <li><a href="#custom_deployment">Custom Deployment of Services, Handlers
+    and Modules</a></li>
   <li><a href="#transports">Transports for HTTP Connection</a></li>
   <li><a href="#data_binding">Data Binding Support</a></li>
   <li><a href="#best">Best Usage</a></li>
@@ -316,6 +316,7 @@ module.xml :</b></p>
 
 <p>See the user guide for more info on axis2 modules.</p>
 <a name="transports"></a>
+
 <h2>Transports for HTTP Connection</h2>
 
 <p>Axis2 comes with two  CommonsHTTPTransportSender which is based on
@@ -330,6 +331,7 @@ transports, with the statement,</p>
 &lt;/transportSender&gt;
 ...</pre>
 <a name="data_binding"></a>
+
 <h2>Data Binding Support</h2>
 
 <p>ADB is used to provide data binding support. In Axis2, xml is manipulated
@@ -410,8 +412,7 @@ uses the following ant task:</p>
          url="wsdl/simple.wsdl"
          serverside="true"
          skeletondeploy="true"
-         nowrapped="true"
-         &gt;
+         nowrapped="true"&gt;
        &lt;/axis-wsdl2java&gt;
    &lt;/target&gt;</pre>
 
@@ -582,7 +583,7 @@ org/simple/endpoint/SimpleEndpointSkeleton.java from:</p>
                 SimpleLogin simpleLogin = simpleLoginDocument.getSimpleLogin();
                 String userName = simpleLogin.getUserName();
                 String password = simpleLogin.getUserPassword();
-                // do something with those vars...
+                // do something with those variables...
 
                 retElement.setWebUserName(userName);
                 retElement.setSoapSessionId("my random string");
@@ -661,6 +662,7 @@ public class Tester {
 <p>Axis2 clients also have asynchronous options via a Callback and
 alternatively 'Fire and forget'. See the user guide for more details.</p>
 <a name="best"></a>
+
 <h2>Best Usage</h2>
 
 <p>Axis1.x and Axis2 have different ways of seeing the SOAP stack. So the

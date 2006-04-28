@@ -87,16 +87,16 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     stubs, Client API and in skeletons. Where is data binding?</strong><br>
 
     <p>Axis2 supports databinding using XML-Beans from 0.9 release. For more
-    information please read the <a href="1_0/userguide.html">User
-    Guide</a></p>
+    information please read the <a href="1_0/userguide.html"
+    target="_blank">User Guide</a></p>
   </li>
   <li><a name="a2"></a><strong>What is OMElement, What does it
     represents?</strong><br>
 
     <p>OMElement is Axis2 representation of XML, it provide a tree model like
     DOM. If you are familiar with DOM or JDOM you can soon get familiarize
-    with OM quickly. For more information read<a href="1_0/OMTutorial.html">
-    Axiom Tutorial</a></p>
+    with OM quickly. For more information read<a href="1_0/OMTutorial.html"
+    target="_blank"> Axiom Tutorial</a></p>
   </li>
   <li><a name="a3"></a><strong>Integration security tests fail with JDK
     1.5</strong><br>
@@ -158,16 +158,17 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     should I look?</strong><br>
 
     <p>Look at the <a
-    href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java">ServiceClient</a>
-    class, for more information please read the <a
-    href="0_94/userguide.html">user guide</a></p>
+    href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java"
+    target="_blank">ServiceClient</a> class, for more information please read
+    the <a href="1_0/userguide.html" target="_blank">User's Guide</a></p>
   </li>
   <li><a name="c2"></a><strong>I want to do One Way Messaging, Where should I
     look?</strong><br>
 
     <p>From Axis2 0.94 onwards, both request-response and one way messaging
     will be handled by <a
-    href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java">ServiceClient</a>.</p>
+    href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java"
+    target="_blank">ServiceClient</a>.</p>
   </li>
   <li><a name="c3"></a><strong>When I try to do a non blocking call with use
     Separate Listener true I get the error <i>to do two Transport Channels
@@ -183,7 +184,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
     <p>If you have engaged addressing , then you have to have wsa:action , so
     you have to called  <br>
-    option.setAction(“urn:myaction”); <br>
+    option.setAction("urn:myaction"); <br>
     It should be not that the action should be a URI.</p>
   </li>
   <li><a name="c5"><strong>What is Axis Repository?</strong></a><br>
@@ -410,9 +411,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     <p>This happens specifically with tomcat 4.x and 5.0 in a JDK 1.5
     environment. The reason is that the system picks up a wrong transformer
     factory class. This can be solved simply by putting the xalan-2.7.0.jar
-    (found <a
-    href="http://www.apache.org/dist/java-repository/xalan/jars/">here</a>)
-    into the axis2/WEB-INF/lib directory</p>
+    (found <a href="http://www.apache.org/dist/java-repository/xalan/jars/"
+    target="_blank">here</a>) into the axis2/WEB-INF/lib directory</p>
   </li>
 </ol>
 
