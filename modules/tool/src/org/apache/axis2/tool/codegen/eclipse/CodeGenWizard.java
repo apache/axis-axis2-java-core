@@ -14,9 +14,9 @@ import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
+import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -276,39 +276,39 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                     monitor.worked(1);
                     //fill the option map
                     Map optionsMap = new HashMap();
-                    CommandLineOption option = new CommandLineOption(
+                    Java2WSDLCommandLineOption option = new Java2WSDLCommandLineOption(
                     		CLASSNAME_OPTION,new String[]{javaSourceSelectionPage.getClassName()});
                     optionsMap.put(CLASSNAME_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		CLASSPATH_OPTION,javaSourceSelectionPage.getClassPathList());
                     optionsMap.put(CLASSPATH_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		TARGET_NAMESPACE_OPTION,
                     		new String[]{java2wsdlOptionsPage.getTargetNamespace()});
                     optionsMap.put(TARGET_NAMESPACE_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		TARGET_NAMESPACE_PREFIX_OPTION,
                     		new String[]{java2wsdlOptionsPage.getTargetNamespacePrefix()});
                     optionsMap.put(TARGET_NAMESPACE_PREFIX_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		SCHEMA_TARGET_NAMESPACE_OPTION,
                     		new String[]{java2wsdlOptionsPage.getSchemaTargetNamespace()});
                     optionsMap.put(SCHEMA_TARGET_NAMESPACE_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,
                     		new String[]{java2wsdlOptionsPage.getSchemaTargetNamespacePrefix()});
                     optionsMap.put(SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		OUTPUT_LOCATION_OPTION,new String[]{java2wsdlOutputLocationPage.getOutputLocation()});
                     optionsMap.put(OUTPUT_LOCATION_OPTION,option);
                     
-                    option = new CommandLineOption(
+                    option = new Java2WSDLCommandLineOption(
                     		OUTPUT_FILENAME_OPTION,new String[]{java2wsdlOutputLocationPage.getOutputWSDLName()});
                     optionsMap.put(OUTPUT_FILENAME_OPTION,option);
                     
@@ -321,6 +321,7 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                     
                     
                 } catch (Throwable e) {
+                	
                 	    throw new RuntimeException(e);
                 }
 

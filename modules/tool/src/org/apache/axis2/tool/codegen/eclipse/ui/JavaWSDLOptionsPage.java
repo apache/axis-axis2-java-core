@@ -194,11 +194,11 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 	}
 
 	public String getTargetNamespace() {
-		return this.targetNamespacePrefixText.getText();
+		return this.targetNamespaceText.getText();
 	}
 
 	public String getTargetNamespacePrefix() {
-		return this.targetNamespaceText.getText();
+		return this.targetNamespacePrefixText.getText();
 	}
 
 	public String getSchemaTargetNamespace() {
