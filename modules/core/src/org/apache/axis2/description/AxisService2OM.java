@@ -124,9 +124,9 @@ public class AxisService2OM implements Java2WSDLConstants {
         String prefix = getPrefix(axisService.getTargetNamespace());
         if (prefix == null || "".equals(prefix)) {
             prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
-            axisService.getNameSpacesMap().put(prefix,
-                    axisService.getTargetNamespace());
         }
+        axisService.getNameSpacesMap().put(prefix,
+                    axisService.getTargetNamespace());
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
         ele.addAttribute("targetNamespace", axisService.getTargetNamespace(),
@@ -250,7 +250,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         OMElement messageElement = fac
                 .createOMElement(MESSAGE_LOCAL_NAME, wsdl);
         messageElement.addAttribute(ATTRIBUTE_NAME, axismessage.getName()
-                + MESSAGE_SUFFIX, null);
+                , null);
         defintions.addChild(messageElement);
         if (scheamElementName != null) {
             OMElement messagePart = fac.createOMElement(PART_ATTRIBUTE_NAME,
@@ -301,7 +301,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
                             wsdl);
                     input.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
-                            + ":" + inaxisMessage.getName() + MESSAGE_SUFFIX,
+                            + ":" + inaxisMessage.getName() ,
                             null);
                     addPolicy(PolicyInclude.INPUT_POLICY, inaxisMessage
                             .getPolicyInclude(), input, fac);
@@ -321,7 +321,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
                             wsdl);
                     output.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
-                            + ":" + outAxisMessage.getName() + MESSAGE_SUFFIX,
+                            + ":" + outAxisMessage.getName() ,
                             null);
                     addPolicy(PolicyInclude.OUTPUT_POLICY, outAxisMessage
                             .getPolicyInclude(), output, fac);
@@ -338,7 +338,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
                             wsdl);
                     fault.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
-                            + ":" + faultyMessge.getName() + MESSAGE_SUFFIX,
+                            + ":" + faultyMessge.getName() ,
                             null);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(),
                             null);

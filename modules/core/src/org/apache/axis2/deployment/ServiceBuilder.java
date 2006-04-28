@@ -96,7 +96,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setTargetNamespace(nameSpeceVale);
                 }
             } else {
-                service.setTargetNamespace(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
+                if (service.getTargetNamespace() == null ||
+                        "".equals(service.getTargetNamespace())) {
+                    service.setTargetNamespace(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
+                }
             }
             //Setting schema namespece if any
             OMElement scheamElement = service_element.getFirstChildWithName(new QName(SCHEMA));
@@ -378,7 +381,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     AxisMessage inaxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     if (inaxisMessage != null) {
-                        inaxisMessage.setName(opname);
+                        inaxisMessage.setName(opname + Java2WSDLConstants.MESSAGE_SUFFIX);
                     }
                 }
 

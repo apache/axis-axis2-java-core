@@ -193,7 +193,7 @@ public class Utils {
                 AxisMessage inMessage = operation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (inMessage != null) {
-                    inMessage.setName(opName);
+                    inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
                     inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
                 }
                 if (!jmethod.getReturnType().isVoidType()) {
@@ -242,7 +242,7 @@ public class Utils {
         AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         if (inMessage != null) {
             inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
-            inMessage.setName(opName);
+            inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
         }
         return operation;
     }
