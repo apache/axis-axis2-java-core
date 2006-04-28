@@ -231,7 +231,6 @@ public class WSDL2AxisServiceBuilder {
                 for (int i = 0; i < schemaElements.length; i++) {
                     Element schemaElement = schemaElements[i];
                     if (schemaElement != null) {
-                        System.out.println(schemaElement.getNamespaceURI());
                         axisService.addSchema(getXMLSchema(schemaElement, null));
                     }
                 }
@@ -894,8 +893,18 @@ public class WSDL2AxisServiceBuilder {
                         Definition importedDef = wsdlImport.getDefinition();
                         if (importedDef != null) {
                             processImports(importedDef);
-                             //copy ns
-                            wsdl4jDefinition.getNamespaces().putAll(importedDef.getNamespaces());
+                            //copy ns
+
+                            Map namespaces = importedDef.getNamespaces();
+                            Iterator keys = namespaces.keySet().iterator();
+                            while (keys.hasNext()) {
+                                Object key = keys.next();
+                                if (! wsdl4jDefinition.getNamespaces().containsValue(namespaces.get(key))) {
+                                    wsdl4jDefinition.getNamespaces().put(key, namespaces.get(key));
+                                }
+                            }
+
+                            wsdl4jDefinition.getNamespaces().putAll(namespaces);
                             //copy types
                             Types t = importedDef.getTypes();
                             List typesList = t.getExtensibilityElements();
