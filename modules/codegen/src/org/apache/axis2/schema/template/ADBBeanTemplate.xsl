@@ -154,8 +154,23 @@
                        clearAllSettingTrackers();
                    </xsl:if>
                    <xsl:if test="$min=0 or $choice">
-                   //update the setting tracker
-                   <xsl:value-of select="$settingTracker"/> = true;
+                       <!-- the updating of setting tracker for null values should
+                            happen if the attribute is marked as nillable. Else
+                            the user can set a null value and it is never marked
+                            as set
+                       -->
+                       <xsl:choose>
+                          <xsl:when test="not(@nillable) and not(@primitive)">
+                              if (param !=null){
+                              //update the setting tracker
+                              <xsl:value-of select="$settingTracker"/> = true;
+                               }
+                           </xsl:when>
+                           <xsl:otherwise>
+                               //update the setting tracker
+                              <xsl:value-of select="$settingTracker"/> = true;
+                           </xsl:otherwise>
+                       </xsl:choose>
                    </xsl:if>
                   this.<xsl:value-of select="$varName"/>=param;
                   }
