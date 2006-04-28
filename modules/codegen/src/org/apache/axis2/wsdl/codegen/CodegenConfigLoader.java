@@ -109,15 +109,16 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             String value = ns2packageOption.getOptionValue();
             if (value != null) {
                 String valuepairs[] = value.split(",");
-                if (valuepairs.length > 0 && valuepairs.length % 2 == 0) {
+                if (valuepairs.length > 0) {
                     //put them in the hash map
                     HashMap map = new HashMap(valuepairs.length);
-                    for (int i = 0; i < valuepairs.length; i = i + 2) {
-                        map.put(valuepairs[i], valuepairs[i + 1]);
+                    for (int i = 0; i < valuepairs.length; i++) {
+                        String values[] = valuepairs[i].split("=");
+                        if(values.length == 2) {
+                            map.put(values[0], values[1]);
+                        }
                     }
                     config.setUri2PackageNameMap(map);
-                } else {
-                    //todo throw an exception here
                 }
             }
         }
