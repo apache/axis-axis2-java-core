@@ -124,9 +124,10 @@ public class PopulateComplexMinOccurs0Test  extends TestCase {
             }else if ("address".equals(propertyDescriptor.getDisplayName())) {
                 readMethod = propertyDescriptor.getReadMethod();
                 addressObject = readMethod.invoke(obj, null);
-
-                Object[] objArray = (Object[])addressObject;
-                assertEquals(expectedAddressCount,objArray.length);
+                if (expectedAddressCount!=0) {
+                    Object[] objArray = (Object[])addressObject;
+                    assertEquals(expectedAddressCount,objArray.length);
+                }
             }
         }
 

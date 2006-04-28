@@ -76,8 +76,13 @@ public class PopulateMinOccurs0Test extends TestCase {
         populateAndAssert(xmlString3, 1, "a");
     }
 
-    private void populateAndAssert(String s, int expectedCount, String itemtoTest) throws XMLStreamException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, IntrospectionException {
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
+    private void populateAndAssert(String s, int expectedCount,
+                                   String itemtoTest) throws XMLStreamException,
+            ClassNotFoundException, NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException,
+            IntrospectionException {
+        XMLStreamReader reader =
+                XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
         Class clazz = Class.forName("org.test.Root");
         Class innerClazz = clazz.getDeclaredClasses()[0];
         Method parseMethod = innerClazz.getMethod("parse", new Class[]{XMLStreamReader.class});
@@ -99,9 +104,11 @@ public class PopulateMinOccurs0Test extends TestCase {
             }
         }
 
-        assertNotNull(stringArray);
-        String[] array = (String[]) stringArray;
-        assertEquals(array.length, expectedCount);
+        if (expectedCount!=0){
+            assertNotNull(stringArray);
+            String[] array = (String[]) stringArray;
+            assertEquals(array.length, expectedCount);
+        }
     }
 
 
