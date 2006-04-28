@@ -300,6 +300,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
             fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");
         } catch (AxisFault axisFault) {
             String val = axisFault.getFaultDetailElement().toString();
+            System.out.println("val = " + val);
             int index = val.indexOf("org.apache.axis2.AxisFault: Invalid reference :2");
             if (index < 0) {
                 fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");

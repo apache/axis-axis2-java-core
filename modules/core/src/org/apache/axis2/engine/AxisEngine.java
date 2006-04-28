@@ -350,7 +350,10 @@ public class AxisEngine {
                 fault.setReason((SOAPFaultReason) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME));
             } else {
                 message = axisFault.getReason();
-                message = message != null && "".equals(message) ? message : e.getMessage();
+                if (message == null || "".equals(message)) {
+                    message = getFaulReasonFromException(e, context);
+                }
+//                message = message != null && "".equals(message) ? message : e.getMessage();
             }
 
 
@@ -399,15 +402,15 @@ public class AxisEngine {
             if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) != null)
             {
                 fault.setDetail((SOAPFaultDetail) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
-            }else {
+            } else {
                 OMElement detail = axisFault.getDetail();
                 if (detail != null) {
                     fault.getDetail().addDetailEntry(detail);
-                }else if(sendStacktraceDetailsWithFaults){
+                } else if (sendStacktraceDetailsWithFaults) {
                     fault.setException(axisFault);
                 }
             }
-        }else if (fault.getException() == null && sendStacktraceDetailsWithFaults) {
+        } else if (fault.getException() == null && sendStacktraceDetailsWithFaults) {
             if (e instanceof Exception) {
                 fault.setException((Exception) e);
             } else {
@@ -416,6 +419,24 @@ public class AxisEngine {
         }
 
 
+    }
+
+    /**
+     * By the time the exception comes here it can be wrapped by so many levels. This will crip down
+     * to the root cause and get the initial error depending on the property
+     *
+     * @param e
+     */
+    private String getFaulReasonFromException(Throwable e, MessageContext context) {
+        Throwable throwable = e;
+        Parameter param = context.getParameter("DrillDownToRootCauseForFaultReason");
+        boolean drillDownToRootCauseForFaultReason = param != null && ((String) param.getValue()).equalsIgnoreCase("true");
+        if (drillDownToRootCauseForFaultReason) {
+            while (throwable.getCause() != null) {
+                throwable = throwable.getCause();
+            }
+        }
+        return throwable.getMessage();
     }
 
     /**
@@ -652,7 +673,7 @@ public class AxisEngine {
         private TransportSender sender;
 
         public TransportNonBlockingInvocationWorker(MessageContext msgctx,
-                                                   TransportSender sender) {
+                                                    TransportSender sender) {
             this.msgctx = msgctx;
             this.sender = sender;
         }
