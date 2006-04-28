@@ -2,15 +2,15 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>The Security Module</title>
+  <title>Aegis: WS-Security module for Axis2</title>
 </head>
 
 <body>
 <h1>Securing SOAP Messages with WSS4J</h1>
 
 <p>Axis2 comes with a module based on WSS4J [1] to provide WS-Security
-features. This document explains how to engage and configure the security
-module.</p>
+features, called "aegis". This document explains how to engage and 
+configure aegis module.</p>
 
 <h2>Content</h2>
 <ul>
@@ -22,16 +22,16 @@ module.</p>
 </ul>
 <a name="intro"></a>
 <h2>Introduction</h2>
-<p>Since the security module inserts handlers in the system specific
+<p>Since aegis module inserts handlers in the system specific
 pre-dispatch phase, it must be engaged globally. But it is possible to
-activate the security module for the inflow or the outflow when required by
+activate aegis module for the inflow or the outflow when required by
 the service or the clients.</p>
 
-<p>The security module (security.mar) is available with the Axis2 release.</p>
+<p>The aegis module (aegis.mar) is available with the Axis2 release.</p>
 
 <p>First it should be engaged by inserting the following in the axis2.xml
 file.</p>
-<source><pre>    &lt;module ref="security"/&gt;</pre>
+<source><pre>    &lt;module ref="aegis"/&gt;</pre>
 </source>
 <p>The web admin interface can be used when Axis2 is deployed in a servlet
 container such as Apache Tomcat.</p>
@@ -41,7 +41,7 @@ The configuration parameters should be set in the service.xml file of the
 service. The client side config parameters should be set in the axis2.xml of
 the client's Axis2 repository.</p>
 
-<p>The security module uses two parameters:</p>
+<p>Aegis module uses two parameters:</p>
 <ul>
   <li>OutflowSecurity</li>
   <li>InflowSecurity</li>
