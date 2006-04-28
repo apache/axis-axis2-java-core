@@ -1,5 +1,6 @@
 package org.apache.axis2.tool.codegen.eclipse;
 
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage;
@@ -13,10 +14,9 @@ import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.codegen.Java2WSDLCodegenEngine;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.wsdl.WSDLDescription;
+import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -189,7 +189,7 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                   */
                  WSDL2JavaGenerator generator = new WSDL2JavaGenerator(); 
                  monitor.subTask(CodegenWizardPlugin.getResourceString("generator.readingWOM"));
-                 WSDLDescription wom = generator.getWOM(wsdlSelectionPage.getFileName());
+                 AxisService service = generator.getAxisService(wsdlSelectionPage.getFileName());
                  monitor.worked(1);
                  
                  Map optionsMap = generator.fillOptionMap(optionsPage.isAsyncOnlyOn(),
@@ -205,18 +205,24 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                          									optionsPage.getPackageName(),
                          									optionsPage.getSelectedLanguage(),
                          									outputPage.getOutputLocation());
-                 CodeGenConfiguration codegenConfig = new CodeGenConfiguration(wom, optionsMap);
+                 CodeGenConfiguration codegenConfig = new CodeGenConfiguration(service, optionsMap);
+                 //set the baseURI
+                 codegenConfig.setBaseURI(generator.getBaseUri(wsdlSelectionPage.getFileName()));
                  monitor.worked(1);
                  
                  monitor.subTask(CodegenWizardPlugin.getResourceString("generator.generating"));
                  
                  new CodeGenerationEngine(codegenConfig).generate();
-                
+                 
+                 //TODO refresh the eclipse project space to show the generated files
+                 
                  monitor.worked(1);
               }
               catch (Exception e)
               {
-                
+                 ///////////////////////////////
+            	  e.printStackTrace();
+            	 ///////////////////////////// 
                  throw new InterruptedException(e.getMessage());
               }
 
@@ -235,6 +241,9 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
         }
         catch (InvocationTargetException e1)
         {
+        	/////////////////////////
+        	e1.printStackTrace();
+        	////////////////////////
             throw new RuntimeException(e1);
         }
         catch (InterruptedException e1)

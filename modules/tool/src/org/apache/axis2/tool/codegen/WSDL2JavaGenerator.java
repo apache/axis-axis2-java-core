@@ -15,17 +15,17 @@
  */
 package org.apache.axis2.tool.codegen;
 
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2AxisServiceBuilder;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,6 +130,33 @@ public class WSDL2JavaGenerator {
        return optionMap;
        
     }
+    
+    public String getBaseUri(String wsdlURI){
+    	
+    	try {
+			URL url;
+			if (wsdlURI.indexOf("://")==-1){
+				url = new URL("file","",wsdlURI);
+			}else{
+				url = new URL(wsdlURI);	
+			}
+
+			
+			String baseUri;
+			if ("file".equals(url.getProtocol())){
+				baseUri = new File(url.getFile()).getParentFile().toURL().toExternalForm();
+			}else{
+				baseUri = url.toExternalForm().substring(0,
+						url.toExternalForm().lastIndexOf("/")
+				);
+			}
+		
+			
+			return baseUri;
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+    }
     /**
      * Reads the WSDL Object Model from the given location.
      * 
@@ -138,26 +165,21 @@ public class WSDL2JavaGenerator {
      * @throws WSDLException when WSDL File is invalid
      * @throws IOException on errors reading the WSDL file
      */
-    public WSDLDescription getWOM(String wsdlURI) throws WSDLException, IOException
-    {
-       try {
-           InputStream in = null;
-           if (wsdlURI.startsWith("http")){
-              in = new URL(wsdlURI).openStream();
-           }else{
-               //treat the uri as a file name
-               in = new FileInputStream(new File(wsdlURI)); 
-           }
-         
-        return WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(in).getDescription();
-    } catch (FileNotFoundException e) {
-       throw e;
-    } catch (WSDLException e) {
-       throw e;
-    } catch (Exception e){
-        throw new RuntimeException(e);
-    }
-    
+    public AxisService getAxisService(String wsdlURI) throws Exception{
+    	
+    		URL url;
+			if (wsdlURI.indexOf("://")==-1){
+				url = new URL("file","",wsdlURI);
+			}else{
+				url = new URL(wsdlURI);	
+			}
+
+			
+			WSDL2AxisServiceBuilder builder = 
+				new WSDL2AxisServiceBuilder(url.openConnection().getInputStream());
+					
+			builder.setBaseUri(getBaseUri(wsdlURI));
+			return builder.populateService();
     }
 
     /**

@@ -93,6 +93,8 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
     /**
      * Handle the dialog change event. Basically evaluates the file name and
      * sets the error message accordingly
+     * 
+     * TODO - we might need to call this in a different event!!!
      */
     private void dialogChanged() {
         String fileName = getFileName();
