@@ -84,7 +84,6 @@ public class FileSystemConfigurator implements AxisConfigurator {
             // In either case, check that the file exists... if not
             // we'll use the default axis2.xml on the classpath.
             try {
-                axis2xml = this.repoLocation + File.separator + axis2xml;
                 File configFile = new File(axis2xml);
                 if (!configFile.exists()) {
                     axis2xml = null;

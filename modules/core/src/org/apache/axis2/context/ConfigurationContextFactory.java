@@ -76,7 +76,8 @@ public class ConfigurationContextFactory {
      * </ul>
      *
      * @param path     : location of the repository
-     * @param axis2xml : location of the axis2.xml (configuration) file
+     * @param axis2xml : location of the axis2.xml (configuration) , you can not give
+     *                    axis2xml relative to repository.
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */

@@ -1,8 +1,8 @@
 package org.apache.axis2.description;
 
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class AxisMessage extends AxisDescription {
     }
 
     public void setElementQName(QName element) {
-       this.elementQname = element;
+        this.elementQname = element;
     }
 
     public Object getKey() {
@@ -100,41 +100,52 @@ public class AxisMessage extends AxisDescription {
         ArrayList schemas = service.getSchema();
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
-            Iterator scheamItms = schema.getItems().getIterator();
-            while (scheamItms.hasNext()) {
-                XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) scheamItms.next();
-                if (xmlSchemaElement.getName().equals(getElementQName().getLocalPart())) {
-                    return xmlSchemaElement;
+            if (schema.getItems() != null) {
+                Iterator scheamItms = schema.getItems().getIterator();
+                while (scheamItms.hasNext()) {
+                    Object item = scheamItms.next();
+                    if (item instanceof XmlSchemaElement) {
+                        XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
+                        if (xmlSchemaElement.getName().equals(getElementQName().getLocalPart())) {
+                            return xmlSchemaElement;
+                        }
+                    }
                 }
             }
         }
         return null;
     }
 
-    public String getName() {
+    public String getName
+            () {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName
+            (String
+                    name) {
         this.name = name;
     }
 
     /**
      * This will return a list of WSDLExtensibilityAttribute
-     *
      */
-    public List getExtensibilityAttributes() {
+    public List getExtensibilityAttributes
+            () {
         // TODO : Deepal implement this properly.
 
         // the list should contain list of WSDLExtensibilityAttribute
         return new ArrayList(0);
     }
 
-    public void addSopaHeader(SOAPHeaderMessage soapHeaderMessage) {
+    public void addSopaHeader
+            (SOAPHeaderMessage
+                    soapHeaderMessage) {
         soapHeaders.add(soapHeaderMessage);
     }
 
-    public ArrayList getSoapHeaders() {
+    public ArrayList getSoapHeaders
+            () {
         return soapHeaders;
     }
 }
