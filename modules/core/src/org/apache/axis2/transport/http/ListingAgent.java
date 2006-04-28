@@ -17,14 +17,19 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.transport.TransportListener;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -44,9 +49,40 @@ public class ListingAgent extends AbstractAgent {
         super(aConfigContext);
     }
 
+    private void addTransportListner(String scheam, int port) {
+        try {
+            TransportInDescription trsIn =
+                    configContext.getAxisConfiguration().getTransportIn(
+                            new QName(scheam));
+            if (trsIn == null) {
+                trsIn = new TransportInDescription(new QName(scheam));
+                trsIn.setReceiver(new HTTPSTListener(port, scheam));
+                configContext.getListenerManager().addListener(trsIn, true);
+            }
+        } catch (AxisFault axisFault) {
+            //
+        }
+    }
+
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
+        // httpServletRequest.getLocalPort() , giving me a build error so I had to use the followin
+        String filePart = httpServletRequest.getRequestURL().toString();
+        int ipindex = filePart.indexOf("//");
+        String ip = null;
+        if (ipindex >= 0) {
+            ip = filePart.substring(ipindex + 2, filePart.length());
+            int seperatorIndex = ip.indexOf(":");
+            int slashIndex = ip.indexOf("/");
+            String portstr = ip.substring(seperatorIndex + 1,
+                    slashIndex);
+            try {
+                addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
+            } catch (NumberFormatException e) {
+                //
+            }
+        }
         if (httpServletRequest.getParameter("wsdl") != null ||
                 httpServletRequest.getParameter("xsd") != null) {
             processListService(httpServletRequest, httpServletResponse);
@@ -86,7 +122,9 @@ public class ListingAgent extends AbstractAgent {
                         int slashIndex = ip.indexOf("/");
                         String port = ip.substring(seperatorIndex + 1,
                                 slashIndex);
-                        configContext.setProperty(RUNNING_PORT, port);
+                        if ("http".equals(req.getScheme())) {
+                            configContext.setProperty(RUNNING_PORT, port);
+                        }
                         if (seperatorIndex > 0) {
                             ip = ip.substring(0, seperatorIndex);
                         }
@@ -108,25 +146,25 @@ public class ListingAgent extends AbstractAgent {
                     //a name is present - try to pump the requested schema
                     if (!"".equals(xsd)) {
                         XmlSchema scheam =
-                                (XmlSchema)schemaMappingtable.get(xsd);
-                        if (scheam!=null){
+                                (XmlSchema) schemaMappingtable.get(xsd);
+                        if (scheam != null) {
                             //schema is there - pump it outs
                             scheam.write(out);
                             out.flush();
                             out.close();
-                        }else{
+                        } else {
                             //the schema is not found - pump a 404
                             res.sendError(HttpServletResponse.SC_NOT_FOUND);
                         }
 
-                    //multiple schemas are present and the user specified
-                    //no name - in this case we cannot possibly pump a schema
-                    //so redirect to the service root    
-                    }else  if (scheams.size() > 1) {
+                        //multiple schemas are present and the user specified
+                        //no name - in this case we cannot possibly pump a schema
+                        //so redirect to the service root
+                    } else if (scheams.size() > 1) {
                         res.sendRedirect("");
-                    //user specified no name and there is only one schema
-                    //so pump that out
-                    }else{
+                        //user specified no name and there is only one schema
+                        //so pump that out
+                    } else {
                         XmlSchema scheam = axisService.getSchema(0);
                         if (scheam != null) {
                             scheam.write(out);
@@ -157,6 +195,35 @@ public class ListingAgent extends AbstractAgent {
                 configContext.getAxisConfiguration().getFaultyServices());
 
         renderView(LIST_MULTIPLE_SERVICE_JSP_NAME, req, res);
+    }
+
+    /**
+     * This class is just to add tarnsport at the runtime if user send requet using
+     * diffrent schemes , simly to handle http/https seperetaly
+     */
+    private class HTTPSTListener implements TransportListener {
+
+        private int port;
+        private String scheam;
+
+        public HTTPSTListener(int port, String scheam) {
+            this.port = port;
+            this.scheam = scheam;
+        }
+
+        public void init(ConfigurationContext axisConf,
+                         TransportInDescription transprtIn) throws AxisFault {
+        }
+
+        public void start() throws AxisFault {
+        }
+
+        public void stop() throws AxisFault {
+        }
+
+        public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+            return new EndpointReference(scheam + "://" + ip + ":" + port + "/axis2/services/" + serviceName);
+        }
     }
 
 }

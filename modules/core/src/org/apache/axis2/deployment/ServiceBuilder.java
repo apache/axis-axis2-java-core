@@ -135,7 +135,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                      * it is not posible to generate scheam, so no pint of throwing that
                      * error ,  I know we have to handle this , untill that I have
                      * to log this
-                     * TODO : Pls fix this , you are doing worng this here : Deepal
                      */
                     log.error(Messages.getMessage("errorinscheamgen", e.getMessage()), e);
                 }
