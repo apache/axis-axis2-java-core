@@ -336,7 +336,6 @@ ready for deployment:</p>
   &lt;property file="build.properties"/&gt;
   
   &lt;property name="build" value="build"/&gt;
-
   &lt;property name="src" value="src"/&gt;
   &lt;property name="build.classes"      value="build/classes" /&gt;
 
@@ -344,7 +343,17 @@ ready for deployment:</p>
      &lt;pathelement location="build/classes" /&gt;
      &lt;fileset dir="${axis.home}/lib"&gt;
        &lt;include name="**/*.jar" /&gt;
+     &lt;/fileset&gt;
+     &lt;pathelement location="${build.classes}" /&gt;
+  &lt;/path&gt;
 
+  &lt;path id="axis_client.classpath"&gt;
+     &lt;pathelement location="build/classes" /&gt;
+     &lt;fileset dir="${axis.home}"&gt;
+       &lt;include name="**/*.jar" /&gt;
+     &lt;/fileset&gt;
+     &lt;fileset dir="lib"&gt;
+       &lt;include name="*.jar" /&gt;
      &lt;/fileset&gt;
      &lt;pathelement location="${build.classes}" /&gt;
   &lt;/path&gt;
@@ -352,28 +361,24 @@ ready for deployment:</p>
   &lt;target name="usage" description="Build file usage info (default task)"&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message="${project-name} " /&gt;
-
     &lt;echo message="-------------------------------------------------------" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message="Available Targets:" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Compiling:" /&gt;
-    &lt;echo message="  compile         - Compiles the WSDL2Java source code" /&gt;
-
+    &lt;echo message="  compile           - Compiles the WSDL2Java source code" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Compiling client:" /&gt;
-    &lt;echo message="  compile_client   - Compiles the client source code" /&gt;
+    &lt;echo message="  compile_client           - Compiles the client source code" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Cleaning up:" /&gt;
     &lt;echo message="  clean             - Delete class files" /&gt;
-
     &lt;echo message=" " /&gt;
     &lt;echo message=" WSDL:" /&gt;
     &lt;echo message="  wsdl2java               - Generate source from WSDL" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" AAR:" /&gt;
-    &lt;echo message="  aar   - Generate an .aar for deployment into WEB-INF/services" /&gt;
-
+    &lt;echo message="  aar               - Generate an .aar for deployment into WEB-INF/services" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Executing:" /&gt;
     &lt;echo message="  runLogin               - Execute the runLogin client" /&gt;
@@ -381,7 +386,6 @@ ready for deployment:</p>
 
   &lt;target name="prepare" &gt;
     &lt;mkdir dir="${build.classes}" /&gt;
-
   &lt;/target&gt;
 
   &lt;target name="clean" &gt;
@@ -396,7 +400,8 @@ ready for deployment:</p>
      srcdir="output"
      destdir="${build.classes}"
      deprecation="true"
-     failonerror="true" debug="true"&gt;
+     failonerror="true" debug="true"
+    &gt;
 
      &lt;classpath refid="axis.classpath"/&gt; 
     &lt;/javac&gt;
@@ -407,23 +412,23 @@ ready for deployment:</p>
       &lt;delete dir="output" /&gt;
       &lt;java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true"&gt;
           &lt;classpath refid="axis.classpath"/&gt; 
+          &lt;arg value="-d"/&gt;
+          &lt;arg value="xmlbeans"/&gt;
           &lt;arg value="-uri"/&gt;
-
           &lt;arg file="wsdl/LoginEndpoint.wsdl"/&gt;
           &lt;arg value="-ss"/&gt;
+          &lt;arg value="-g"/&gt;
           &lt;arg value="-sd"/&gt;
           &lt;arg value="-o"/&gt;
           &lt;arg file="output"/&gt;
           &lt;arg value="-p"/&gt;
-
           &lt;arg value="org.example.types"/&gt;
       &lt;/java&gt;
 
       &lt;!-- Move the schema folder to classpath--&gt;
       &lt;move todir="${build.classes}"&gt;
-          &lt;fileset dir="output"&gt;
+          &lt;fileset dir="output/resources"&gt;
               &lt;include name="**/*schema*/**/*.class"/&gt;
-
               &lt;include name="**/*schema*/**/*.xsb"/&gt;
           &lt;/fileset&gt;
       &lt;/move&gt;
@@ -431,29 +436,25 @@ ready for deployment:</p>
   &lt;/target&gt;
 
   &lt;target name="jar_wsdl" depends="compile"&gt;
-
-  &lt;jar jarfile="lib/axis2_example_wsdl.jar" &gt;
-  &lt;fileset dir="${build}/classes" /&gt;
-  &lt;/jar&gt;
+	  &lt;jar jarfile="lib/axis2_example_wsdl.jar" &gt;
+              &lt;fileset dir="${build.classes}" /&gt;
+	  &lt;/jar&gt;
   &lt;/target&gt;
   
-  &lt;!-- build an .aar file for axis2 Web services --&gt;
+  &lt;!-- build an .aar file for axis2 web services --&gt;
   &lt;target name="aar" depends="compile"&gt;
-
      &lt;delete dir="${build.classes}/META-INF" /&gt;
      &lt;mkdir dir="${build.classes}/META-INF" /&gt;
      &lt;copy todir="${build.classes}/META-INF" &gt;
-       &lt;fileset dir="output/service_descriptors/LoginEndpoint" &gt;
-         &lt;!-- axis2 Web services definitions file --&gt;
+       &lt;fileset dir="output/resources" &gt;
+         &lt;!-- axis2 web services definitions file --&gt;
          &lt;include name="services.xml"/&gt;
-
        &lt;/fileset&gt;
        &lt;fileset dir="wsdl" &gt;
          &lt;include name="LoginEndpoint.wsdl"/&gt;
        &lt;/fileset&gt;
      &lt;/copy&gt;
      &lt;jar jarfile="dist/LoginEndpoint.aar" &gt;
-
        &lt;fileset dir="${build.classes}" /&gt;
      &lt;/jar&gt;
   &lt;/target&gt;
@@ -465,18 +466,17 @@ ready for deployment:</p>
      srcdir="src"
      destdir="${build.classes}"
      deprecation="true"
-     failonerror="true" debug="true"&gt;
+     failonerror="true" debug="true"
+    &gt;
 
      &lt;classpath refid="axis.classpath"/&gt; 
     &lt;/javac&gt;
 
   &lt;/target&gt;
 
-  &lt;target name="runLogin" depends="compile_client" description="run webLogin client"&gt;
-
-     &lt;echo message="running the webLogin client" /&gt;
+  &lt;target name="runLogin" depends="prepare,compile_client" description="run simple Login client"&gt;
      &lt;java classname="org.client.LoginClient" &gt;
-      &lt;classpath refid="axis.classpath"/&gt; 
+     &lt;classpath refid="axis_client.classpath"/&gt;
     &lt;/java&gt;
   &lt;/target&gt;
 
@@ -561,16 +561,27 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://login/types
 
   &lt;service name="LoginService"&gt;
     &lt;port name="LoginEndpointPort" binding="tns:LoginEndpointBinding"&gt;
-      &lt;soap:address location="http://localhost:8080/axis2/services/LoginEndpoint"/&gt;&lt;/port&gt;
+      &lt;soap:address location="http://localhost:8080/axis2/services/LoginService"/&gt;&lt;/port&gt;
       &lt;/service&gt;&lt;/definitions&gt;</pre>
 
 <p>Place the above file, named LoginEndpoint.wsdl, in the directory 'wsdl'
 below the build.xml file. Run the WSDL2Java command via the ant task defined
 above, and there will be a directory called 'output' created. This directory
-contains the WSDL2Java generated source. An important detail is that an
-XMLBean class file is also generated by WSDL2Java, TypeSystemHolder.class.
-That file is placed into build/classes by the above ant task and will be
-needed to compile the generated sources.</p>
+contains the WSDL2Java generated source. 
+
+An important detail is that an XMLBean class file is also generated by WSDL2Java, 
+TypeSystemHolder.class. That file is placed into build/classes by the above ant task and will be
+needed to compile the generated sources. A frequent problem is users get an error such as: </p>
+
+<p>ClassNotFoundException :
+
+Cannot load SchemaTypeSystem. Unable to load class with name
+schemaorg_apache_xmlbeans.system.s68C41DB812F52C975439BA10FE4FEE54.TypeSystemHolder. 
+Make sure the generated binary files are on the classpath.
+</p>
+
+<p>The TypeSystemHolder.class generated by WSDL2Java must be placed in your 
+classpath in order to avoid this error. </p>
 
 <p>The next step is to modify the generated Skeleton Java Source file - the
 Web service. This file as generated returns null and needs to be updated to
@@ -579,39 +590,55 @@ contain the business logic.</p>
 <p>After the WSDL2Java command runs the file LoginEndpoint.wsdl, edit the
 following file:</p>
 
-<p>output/org/example/types/LoginEndpointSkeleton.java. You should see the
+<p>output/org/example/types/LoginServiceSkeleton.java. You should see the
 following code:</p>
-<pre class="code">package org.example.types;
-    /**
-     *  Auto generated java skeleton for the service by the Axis code generator
+<pre class="code">/**
+     * LoginServiceSkeleton.java
+     *
+     * This file was auto-generated from WSDL
+     * by the Apache Axis2 version: 1.0-RC4 Apr 28, 2006 (05:23:23 IST)
      */
-    public class LoginEndpointSkeleton {
+    package org.example.types;
+    /**
+     *  LoginServiceSkeleton java skeleton for the axisService
+     */
+    public class LoginServiceSkeleton {
      
- 
+		 
         /**
          * Auto generated method signature
          
           * @param param0
          
          */
-        public  org.example.types.databinding.login.ReturnWebLoginElementDocument webLogin
-           (org.example.types.databinding.login.WebLoginElementDocument param0 ){
+        public  login.types.ReturnWebLoginElementDocument webLogin
+                  (login.types.WebLoginElementDocument param0 )
+         
+           {
                 //Todo fill this with the necessary business logic
-                return null;
+                throw new  java.lang.UnsupportedOperationException();
         }
      
     }</pre>
 
 <p>Replace the contents of this file with the following, which uses the
 complex types generated by WSDL2Java and the example wsdl file:</p>
-<pre class="code">package org.example.types;
-import org.example.types.databinding.login.ReturnWebLoginElementDocument;
-import org.example.types.databinding.login.WebLoginElementDocument.WebLoginElement;
+<pre class="code">/**
+ * LoginServiceSkeleton.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: 1.0-RC4 Apr 28, 2006 (05:23:23 IST)
+ */
+package org.example.types;
+import login.types.ReturnWebLoginElementDocument;
+import login.types.ReturnWebLoginElementDocument.*;
+import login.types.WebLoginElementDocument;
+import login.types.WebLoginElementDocument.*;
 
 /**
  *  Auto generated java skeleton for the service by the Axis code generator
  */
-public class LoginEndpointSkeleton {
+public class LoginServiceSkeleton {
  
     /**
      * Auto generated method signature
@@ -619,29 +646,26 @@ public class LoginEndpointSkeleton {
       * @param webLoginElementDocument changed from param0
      
      */
-    public  org.example.types.databinding.login.ReturnWebLoginElementDocument webLogin
-       (org.example.types.databinding.login.WebLoginElementDocument webLoginElementDocument ){
+    public ReturnWebLoginElementDocument webLogin
+       (WebLoginElementDocument webLoginElementDocument ){
 
             //Todo fill this with the necessary business logic
-            System.out.println("LoginEndpointSkeleton.webLogin reached successfully!");
+            System.out.println("LoginServiceSkeleton.webLogin reached successfully!");
 
             // Get parameters passed in 
             WebLoginElement webLoginElement = webLoginElementDocument.getWebLoginElement();
             String userName = webLoginElement.getUserNameElement();
             String password = webLoginElement.getUserPasswordElement();
-            System.out.println("LoginEndpointSkeleton.webLogin userName: " + userName);
-            System.out.println("LoginEndpointSkeleton.webLogin password: " + password);
+            System.out.println("LoginServiceSkeleton.webLogin userName: " + userName);
+            System.out.println("LoginServiceSkeleton.webLogin password: " + password);
      
             // input paramaters would be used here 
     
             // prepare output
-            org.example.types.databinding.login.ReturnWebLoginElementDocument retDoc =
-                org.example.types.databinding.login.ReturnWebLoginElementDocument.Factory.newInstance();
+            ReturnWebLoginElementDocument retDoc =
+                ReturnWebLoginElementDocument.Factory.newInstance();
             
-            org.example.types.databinding.login.ReturnWebLoginElementDocument.ReturnWebLoginElement
-            retElement =
-             org.example.types.databinding.login.ReturnWebLoginElementDocument.ReturnWebLoginElement.
-             Factory.newInstance();
+            ReturnWebLoginElement retElement = ReturnWebLoginElement.Factory.newInstance();
             
             retElement.setWebUserNameElement("joe sixpack");
             retElement.setSoapSessionIdElement("some_random_string");
@@ -650,13 +674,11 @@ public class LoginEndpointSkeleton {
             retDoc.setReturnWebLoginElement(retElement);
             System.out.println("validate retDoc: " + retDoc.validate());
             
-            System.out.println("LoginEndpointSkeleton.webLogin returning...");
+            System.out.println("LoginServiceSkeleton.webLogin returning...");
     
             return retDoc; 
-    
 
     }
- 
 }</pre>
 
 <p>The next steps assume the axis2.war has been deployed and has expanded in
@@ -678,12 +700,11 @@ the file org.client.LoginClient.java, with the contents below:</p>
 
 import org.apache.axis2.AxisFault;
 
-import org.example.types.LoginEndpointStub;
-import org.example.types.databinding.login.WebLoginElementDocument;
-import org.example.types.databinding.login.WebLoginElementDocument.WebLoginElement;
-import org.example.types.databinding.login.ReturnWebLoginElementDocument;
-import org.example.types.databinding.login.WebLoginElementDocument;
-import org.example.types.databinding.login.WebLoginElementDocument.WebLoginElement;
+import login.types.ReturnWebLoginElementDocument;
+import login.types.ReturnWebLoginElementDocument.*;
+import login.types.WebLoginElementDocument;
+import login.types.WebLoginElementDocument.*;
+import org.example.types.LoginServiceStub;
 
 /**
  * Login.
@@ -695,9 +716,7 @@ public class LoginClient {
         try {
 
             System.out.println("webLogin, firing...");
-            LoginEndpointStub stub = 
-                new LoginEndpointStub(null, 
-                    "http://localhost:8080/axis2/services/LoginEndpoint");
+            LoginServiceStub stub = new LoginServiceStub();
                     
             WebLoginElementDocument webLoginElementDocument 
                 = WebLoginElementDocument.Factory.newInstance();
@@ -716,7 +735,7 @@ public class LoginClient {
 
             System.out.println("Client returned");
 
-            org.example.types.databinding.login.ReturnWebLoginElementDocument.ReturnWebLoginElement
+            ReturnWebLoginElementDocument.ReturnWebLoginElement
                 retElement = returnWebLoginElementDocument.getReturnWebLoginElement();
 
             System.out.println("WebUserName: " + retElement.getWebUserNameElement());
