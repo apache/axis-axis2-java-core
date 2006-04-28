@@ -284,10 +284,11 @@ the explanation purpose we do not need anything to be implemented here.</p>
 "Axis2SampleDocLitPortTypeSkeleton.java"  and fill the business logic as
 shown below.</p>
 <pre> public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString
-    (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4) {
-    //To do fill this with the necessary business logic
-    return null;
- }</pre>
+   (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4 ){
+      //Todo fill this with the necessary business logic
+      throw new  java.lang.UnsupportedOperationException();
+   }
+ </pre>
 
 <p>Once filled with the business logic it will be as follows. The code is
 simple and the explanations are given as comments.</p>
@@ -349,17 +350,26 @@ service deployed in the Axis2 engine. When we generate the skeleton using the
 WSDL2Java tool, it will also generate the required services.xml for this Web
 service as well. This can be found in the same directory as the skeleton. The
 generated services.xml is as follows.</p>
-<pre>&lt;!-- This services.xml file was auto-generated from WSDL --&gt;
+<pre>&lt;!-- This file was auto-generated from WSDL --&gt;
 &lt;!-- by the Apache Axis2 version: #axisVersion# #today# --&gt;
 &lt;serviceGroup&gt;
-   &lt;service name="Axis2SampleDocLitService"&gt;
-      &lt;messageReceivers&gt;
-      &lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.userguide.Axis2SampleDocLitPortTypeMessageReceiverInOut"/&gt;
-      &lt;/messageReceivers&gt;
-      &lt;parameter locked="false" name="ServiceClass"&gt;org.apache.axis2.userguide.Axis2SampleDocLitPortTypeSkeleton
-      &lt;/parameter&gt;
-    &lt;!--All public methods of the service class are exposed by default--&gt; 
-   &lt;/service&gt;
+    &lt;service name="Axis2SampleDocLitService"&gt;
+        &lt;messageReceivers&gt;
+            &lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" 
+             class="org.apache.axis2.userguide.Axis2SampleDocLitServiceMessageReceiverInOut"/&gt;
+        &lt;/messageReceivers&gt;
+        &lt;parameter locked="false" name="ServiceClass"&gt;
+         org.apache.axis2.userguide.Axis2SampleDocLitServiceSkeleton&lt;/parameter&gt;
+        &lt;operation name="echoStringArray" mep="http://www.w3.org/2004/08/wsdl/in-out"&gt;
+            &lt;actionMapping&gt;echoStringArray&lt;/actionMapping&gt;
+        &lt;/operation&gt;
+        &lt;operation name="echoStruct" mep="http://www.w3.org/2004/08/wsdl/in-out"&gt;
+            &lt;actionMapping&gt;echoStruct&lt;/actionMapping&gt;
+        &lt;/operation&gt;
+        &lt;operation name="echoString" mep="http://www.w3.org/2004/08/wsdl/in-out"&gt;
+            &lt;actionMapping&gt;echoString&lt;/actionMapping&gt;
+        &lt;/operation&gt;
+    &lt;/service&gt;
 &lt;/serviceGroup&gt;</pre>
 
 <p>First line of the "services.xml" gives the name of the Web Service. This
