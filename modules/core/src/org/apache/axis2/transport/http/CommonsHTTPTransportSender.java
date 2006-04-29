@@ -65,7 +65,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     public CommonsHTTPTransportSender() {
     }
 
-    public void cleanUp(MessageContext msgContext) throws AxisFault {
+    public void cleanup(MessageContext msgContext) throws AxisFault {
         HttpMethod httpMethod =
                 (HttpMethod) msgContext.getProperty(HTTPConstants.HTTP_METHOD);
 

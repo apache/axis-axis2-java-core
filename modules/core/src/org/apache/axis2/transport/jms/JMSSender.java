@@ -67,7 +67,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
     public JMSSender() {
     }
 
-    public void cleanUp(MessageContext msgContext) throws AxisFault {
+    public void cleanup(MessageContext msgContext) throws AxisFault {
     }
 
     /**

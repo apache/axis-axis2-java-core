@@ -312,7 +312,7 @@
                 <xsl:choose>
                     <xsl:when test="$style='document' or $style='rpc'">
                            java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
-                           _messageContext.getTransportOut().getSender().cleanUp(_messageContext);
+                           _messageContext.getTransportOut().getSender().cleanup(_messageContext);
                            return (<xsl:value-of select="$outputtype"/>)object;
                     </xsl:when>
                     <xsl:otherwise>

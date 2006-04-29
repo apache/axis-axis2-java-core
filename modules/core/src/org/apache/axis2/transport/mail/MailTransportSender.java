@@ -42,7 +42,7 @@ public class MailTransportSender extends AbstractTransportSender {
     public MailTransportSender() {
     }
 
-    public void cleanUp(MessageContext msgContext) throws AxisFault {
+    public void cleanup(MessageContext msgContext) throws AxisFault {
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,

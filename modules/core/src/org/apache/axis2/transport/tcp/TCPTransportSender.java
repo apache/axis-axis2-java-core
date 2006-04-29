@@ -46,7 +46,7 @@ public class TCPTransportSender extends AbstractTransportSender {
      */
     private Socket socket;
 
-    public void cleanUp(MessageContext msgContext) throws AxisFault {
+    public void cleanup(MessageContext msgContext) throws AxisFault {
         try {
             if (socket != null) {
                 socket.close();

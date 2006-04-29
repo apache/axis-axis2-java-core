@@ -42,7 +42,7 @@ public class LocalResponder extends AbstractTransportSender {
      * @param msgContext
      * @throws org.apache.axis2.AxisFault
      */
-    public void cleanUp(MessageContext msgContext) throws AxisFault {
+    public void cleanup(MessageContext msgContext) throws AxisFault {
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
