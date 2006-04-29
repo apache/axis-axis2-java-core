@@ -144,6 +144,7 @@ public class ListenerManager {
                 }
             }
         }
+        configctx.cleanupContexts();
         stopped = true;
     }
 

@@ -30,8 +30,8 @@ import java.lang.reflect.Method;
  */
 public class DependencyManager {
     public final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
-    private final static String SERVICE_INIT_METHOD = "init";
-    private final static String SERVICE_DESTROY_METHOD = "destroy";
+    public final static String SERVICE_INIT_METHOD = "init";
+    public final static String SERVICE_DESTROY_METHOD = "destroy";
 
     public static void configureBusinessLogicProvider(Object obj,
                                                       OperationContext opCtx)

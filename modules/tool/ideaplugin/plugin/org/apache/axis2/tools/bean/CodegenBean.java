@@ -1,19 +1,17 @@
 package org.apache.axis2.tools.bean;
 
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2AxisServiceBuilder;
 import org.apache.axis2.util.URLProcessor;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionParser;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLDescription;
 
-import javax.wsdl.WSDLException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,11 +33,6 @@ import java.util.Map;
 *
 */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 21, 2005
- * Time: 2:41:26 PM
- */
 public class CodegenBean {
 
     private String WSDLFileName = null;
@@ -52,95 +45,201 @@ public class CodegenBean {
     private boolean serverSide = true;
     private boolean testcase = true;
     private boolean generateServerXml = true;
-    private String dbType = "";
+    private boolean isServerXML;
+    private boolean isGenerateAll;
+    private boolean isTestCase;
+    private String serviceName;
+    private String portName;
+    private String databindingName;
+
+    public boolean isServerXML() {
+        return isServerXML;
+    }
+
+    public void setServerXML(boolean serverXML) {
+        isServerXML = serverXML;
+    }
+
+    public boolean isGenerateAll() {
+        return isGenerateAll;
+    }
+
+    public void setGenerateAll(boolean generateAll) {
+        isGenerateAll = generateAll;
+    }
+
+    public boolean isTestCase() {
+        return isTestCase;
+    }
+
+    public void setTestCase(boolean testCase) {
+        isTestCase = testCase;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getPortName() {
+        return portName;
+    }
+
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
+
+    public String getDatabindingName() {
+        return databindingName;
+    }
+
+    public void setDatabindingName(String databindingName) {
+        this.databindingName = databindingName;
+    }
 
     /**
+     * Maps a string containing the name of a language to a constant defined in CommandLineOptionConstants.LanguageNames
      *
+     * @param UILangValue a string containg a language, e.g. "java", "cs", "cpp" or "vb"
+     * @return a normalized string constant
+     */
+    private String mapLanguagesWithCombo(String UILangValue) {
+        return UILangValue;
+    }
+
+    /**
+     * Creates a list of parameters for the code generator based on the decisions made by the user on the OptionsPage
+     * (page2). For each setting, there is a Command-Line option for the Axis2 code generator.
+     *
+     * @return a Map with keys from CommandLineOptionConstants with the values entered by the user on the Options Page.
      */
     public Map fillOptionMap() {
         Map optionMap = new HashMap();
         //WSDL file name
-        optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(WSDLFileName)));
+        optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION, getStringArray(WSDLFileName)));
 
         //Async only
         if (asyncOnly) {
-            optionMap.put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                            new String[0]));
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION, new String[0]));
         }
         //sync only
         if (syncOnly) {
-            optionMap.put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                            new String[0]));
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION, new String[0]));
         }
         //serverside
         if (serverSide) {
-            optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                            new String[0]));
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION, new String[0]));
             //server xml
-            if (generateServerXml) {
-                optionMap.put(
-                        CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                        new CommandLineOption(
-                                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                                new String[0]));
+            if (isServerXML) {
+                optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new String[0]));
+            }
+            if (isGenerateAll) {
+                optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION, new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION, new String[0]));
             }
         }
         //test case
-        if (testcase) {
-            optionMap.put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                            new String[0]));
+        if (isTestCase) {
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, new String[0]));
         }
         //package name
-        optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.PACKAGE_OPTION,
-                        getStringArray(packageName)));
+        optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.WSDL2JavaConstants.PACKAGE_OPTION, getStringArray(packageName)));
         //selected language
-        optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                        getStringArray(language)));
+        optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION, getStringArray(mapLanguagesWithCombo(language))));
         //output location
-        optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                        getStringArray(output)));
+        optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, getStringArray(output)));
 
-        // System.out.println(page3.getOutputLocation());
-        optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
-                CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(dbType)));
+        //databinding
+        optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, getStringArray(databindingName)));
+
+        //port name
+        if (portName != null) {
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION, getStringArray(portName)));
+        }
+        //service name
+        if (serviceName != null) {
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
+        }
         return optionMap;
+
     }
 
+    public String getBaseUri(String wsdlURI) {
 
+        try {
+            URL url;
+            if (wsdlURI.indexOf("://") == -1) {
+                url = new URL("file", "", wsdlURI);
+            } else {
+                url = new URL(wsdlURI);
+            }
+
+
+            String baseUri;
+            if ("file".equals(url.getProtocol())) {
+                baseUri = new File(url.getFile()).getParentFile().toURL().toExternalForm();
+            } else {
+                baseUri = url.toExternalForm().substring(0,
+                        url.toExternalForm().lastIndexOf("/")
+                );
+            }
+
+
+            return baseUri;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Reads the WSDL Object Model from the given location.
+     *
+     * @param wsdlURI the filesystem location (full path) of the WSDL file to read in.
+     * @return the WSDLDescription object containing the WSDL Object Model of the given WSDL file
+     * @throws IOException on errors reading the WSDL file
+     */
+    public AxisService getAxisService(String wsdlURI) throws Exception {
+
+        URL url;
+        if (wsdlURI.indexOf("://") == -1) {
+            url = new URL("file", "", wsdlURI);
+        } else {
+            url = new URL(wsdlURI);
+        }
+
+
+        WSDL2AxisServiceBuilder builder =
+                new WSDL2AxisServiceBuilder(url.openConnection().getInputStream());
+
+        builder.setBaseUri(getBaseUri(wsdlURI));
+        return builder.populateService();
+    }
+
+    /**
+     * Converts a single String into a String Array
+     *
+     * @param value a single string
+     * @return an array containing only one element
+     */
     private String[] getStringArray(String value) {
         String[] values = new String[1];
         values[0] = value;
         return values;
-    }
-
-    public WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
-            IOException {
-        InputStream in = new FileInputStream(new File(wsdlLocation));
-        return WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1).build(in).getDescription();
-    }
-
-    public void execute() throws Exception {
-        Map optionsMap = fillOptionMap();
-        CommandLineOptionParser parser = new CommandLineOptionParser(optionsMap);
-        CodeGenerationEngine codegen = new CodeGenerationEngine(parser);
-        codegen.generate();
     }
 
     public String getWSDLFileName() {
@@ -215,12 +314,10 @@ public class CodegenBean {
         this.testcase = testcase;
     }
 
-    public String getDbType() {
-        return dbType;
+    public void generate() throws Exception {
+        CodeGenConfiguration codegenConfig = new CodeGenConfiguration(getAxisService(WSDLFileName), fillOptionMap());
+        //set the baseURI
+        codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
+        new CodeGenerationEngine(codegenConfig).generate();
     }
-
-    public void setDbType(String dbType) {
-        this.dbType = dbType;
-    }
-
 }

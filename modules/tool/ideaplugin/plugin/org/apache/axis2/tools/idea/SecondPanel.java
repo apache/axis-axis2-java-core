@@ -62,7 +62,7 @@ public class SecondPanel extends JPanel {
         add(lblol);
 
         comlanguage = new JComboBox();
-        comlanguage.addItem("Java");
+        comlanguage.addItem("java");
         comlanguage.addItem("C#");
         add(comlanguage);
 
@@ -114,15 +114,15 @@ public class SecondPanel extends JPanel {
         index = databindingType.getSelectedIndex();
         switch (index) {
             case 0: {
-                codegenBean.setDbType("adb");
+                codegenBean.setDatabindingName("adb");
                 break;
             }
             case 1: {
-                codegenBean.setDbType("xmlbeans");
+                codegenBean.setDatabindingName("xmlbeans");
                 break;
             }
             case 2: {
-                codegenBean.setDbType("none");
+                codegenBean.setDatabindingName("none");
                 break;
             }
         }

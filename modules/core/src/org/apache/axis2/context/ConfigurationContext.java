@@ -344,4 +344,22 @@ public class ConfigurationContext extends AbstractContext {
             }
         }
     }
+
+    public void cleanupContexts() {
+        if (applicationSessionServiceGroupContextTable.size() > 0) {
+            Iterator applicationScopeSgs = applicationSessionServiceGroupContextTable.values().iterator();
+            while (applicationScopeSgs.hasNext()) {
+                ServiceGroupContext serviceGroupContext =
+                        (ServiceGroupContext) applicationScopeSgs.next();
+                cleanupServiceContextes(serviceGroupContext);
+            }
+        }
+        if (serviceGroupContextMap.size() > 0) {
+            Iterator sopaSessionSgs = serviceGroupContextMap.values().iterator();
+            while (sopaSessionSgs.hasNext()) {
+                ServiceGroupContext serviceGroupContext = (ServiceGroupContext) sopaSessionSgs.next();
+                cleanupServiceContextes(serviceGroupContext);
+            }
+        }
+    }
 }

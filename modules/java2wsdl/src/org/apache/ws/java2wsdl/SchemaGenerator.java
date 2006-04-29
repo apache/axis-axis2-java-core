@@ -148,8 +148,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 // no need to think abt this method , since that is system
                 // config method
                 if (jMethod.getSimpleName().equals("init")
-                        || "setOperationContext"
-                        .equals(jMethod.getSimpleName()))
+                        || "setOperationContext".equals(jMethod.getSimpleName())
+                        || "destroy".equals(jMethod.getSimpleName()))
                     continue;
                 if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
                     throw new Exception(
@@ -221,8 +221,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private void generateWrapperElements(JMethod methods[]) throws Exception {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
-            if (method.getSimpleName().equals("init") ||
-                    method.getSimpleName().equals("setOperationContext"))
+            if (method.getSimpleName().equals("init")
+                    || method.getSimpleName().equals("setOperationContext")
+                    || method.getSimpleName().equals("destroy"))
                 continue;
             if (!method.isPublic())
                 continue;

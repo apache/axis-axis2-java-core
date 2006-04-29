@@ -183,8 +183,9 @@ public class Utils {
                 // no need to expose , private and protected methods
                 continue;
             }
-            if (jmethod.getSimpleName().equals("init") ||
-                    DependencyManager.MESSAGE_CONTEXT_INJECTION_METHOD.equals(jmethod.getSimpleName()))
+            if (jmethod.getSimpleName().equals("init")
+                    || DependencyManager.MESSAGE_CONTEXT_INJECTION_METHOD.equals(jmethod.getSimpleName())
+                    || DependencyManager.SERVICE_DESTROY_METHOD.equals(jmethod.getSimpleName()))
                 continue;
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
