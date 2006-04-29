@@ -51,6 +51,9 @@ public class SecondPanel extends JPanel {
 
     JLabel databiding;
     JComboBox databindingType;
+    JComboBox servicenames;
+    JLabel serviceNames ;
+    JComboBox portNames;
 
     public SecondPanel(CodegenBean codegenBean) {
         this.codegenBean = codegenBean;
@@ -93,6 +96,13 @@ public class SecondPanel extends JPanel {
 
         txtpackage = new JTextField("org.axis2");
         add(txtpackage);
+
+        servicenames = new JComboBox();
+        add(servicenames);
+
+        portNames = new JComboBox();
+        add(portNames);
+
 
         setSize(getPreferredSize());
 

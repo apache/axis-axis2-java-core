@@ -8,12 +8,18 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -319,5 +325,65 @@ public class CodegenBean {
         //set the baseURI
         codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
         new CodeGenerationEngine(codegenConfig).generate();
+    }
+
+    private Definition wsdlDefinition = null;
+
+    public void readWSDL()  {
+        try {
+            WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+            wsdlDefinition = reader.readWSDL(WSDLFileName);
+        } catch (WSDLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //get the default package derived by the targetNamespace
+
+    public String packageFromTargetNamespace() {
+        return URLProcessor.makePackageName(wsdlDefinition.getTargetNamespace());
+
+    }
+
+    /**
+     * Returns a list of service names
+     * the names are QNames
+     */
+    public List getServiceList() {
+        List returnList = new ArrayList();
+        Service service = null;
+        Map serviceMap = wsdlDefinition.getServices();
+        if (serviceMap != null && !serviceMap.isEmpty()) {
+            Iterator serviceIterator = serviceMap.values().iterator();
+            while (serviceIterator.hasNext()) {
+                service = (Service) serviceIterator.next();
+                returnList.add(service.getQName());
+            }
+        }
+
+        return returnList;
+    }
+
+    /**
+     * Returns a list of ports for a particular service
+     * the names are QNames
+     */
+    public List getPortNameList(QName serviceName) {
+        List returnList = new ArrayList();
+        Service service = wsdlDefinition.getService(serviceName);
+        Port port = null;
+        if (service != null) {
+            Map portMap = service.getPorts();
+            if (portMap != null && !portMap.isEmpty()) {
+                Iterator portIterator = portMap.values().iterator();
+                while (portIterator.hasNext()) {
+                    port = (Port) portIterator.next();
+                    returnList.add(port.getName());
+                }
+            }
+
+        }
+
+        return returnList;
     }
 }

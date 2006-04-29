@@ -114,7 +114,7 @@ class BottomLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 541 + insets.left + insets.right;
-        dim.height = 87 + insets.top + insets.bottom;
+        dim.height = 60 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -129,15 +129,15 @@ class BottomLayout implements LayoutManager {
         Component c;
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 232, insets.top + 24, 80, 24);
+            c.setBounds(insets.left + 232, insets.top + 10, 80, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 312, insets.top + 24, 80, 24);
+            c.setBounds(insets.left + 312, insets.top + 10, 80, 24);
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 392, insets.top + 24, 80, 24);
+            c.setBounds(insets.left + 392, insets.top + 10, 80, 24);
         }
     }
 }
