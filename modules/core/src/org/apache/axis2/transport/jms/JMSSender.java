@@ -52,22 +52,13 @@ public class JMSSender extends AbstractHandler implements TransportSender {
     
 	protected static Log log = LogFactory.getLog(JMSSender.class.getName());
 
-    static {
-
-        // add a shutdown hook to close JMS connections
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                JMSSender.closeAllConnectors();
-            }
-        });
-    }
-
     HashMap params = new HashMap();
 
     public JMSSender() {
     }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
+        JMSSender.closeAllConnectors();
     }
 
     /**
