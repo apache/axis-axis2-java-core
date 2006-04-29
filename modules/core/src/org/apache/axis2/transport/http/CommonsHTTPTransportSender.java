@@ -130,6 +130,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
+    public void stop() {
+        // Any code that , need to invoke when sender stop
+    }
+
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         try {

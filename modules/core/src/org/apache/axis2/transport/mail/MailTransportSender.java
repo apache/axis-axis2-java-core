@@ -125,4 +125,7 @@ public class MailTransportSender extends AbstractTransportSender {
             throws AxisFault {
         return out;
     }
+
+    public void stop() {
+    }
 }

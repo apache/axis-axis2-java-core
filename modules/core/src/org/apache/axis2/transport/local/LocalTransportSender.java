@@ -95,4 +95,8 @@ public class LocalTransportSender extends AbstractTransportSender {
     OutputStream getResponse() {
         return response;
     }
+
+    public void stop() {
+       
+    }
 }

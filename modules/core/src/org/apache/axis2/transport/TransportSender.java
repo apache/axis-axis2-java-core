@@ -46,4 +46,6 @@ public interface TransportSender extends Handler {
      */
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
             throws AxisFault;
+
+    public void stop();
 }

@@ -69,4 +69,8 @@ public class LocalResponder extends AbstractTransportSender {
             throws AxisFault {
         return out;
     }
+
+    public void stop() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

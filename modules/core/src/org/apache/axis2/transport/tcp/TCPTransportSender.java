@@ -36,7 +36,7 @@ public class TCPTransportSender extends AbstractTransportSender {
 
     private static final long serialVersionUID = -6780125098288186598L;
 
-	/**
+    /**
      * Field out
      */
     protected Writer out;
@@ -114,5 +114,8 @@ public class TCPTransportSender extends AbstractTransportSender {
     protected void writeTransportHeaders(Writer out, URL url, MessageContext msgContext,
                                          int contentLength)
             throws IOException {
+    }
+
+    public void stop() {
     }
 }

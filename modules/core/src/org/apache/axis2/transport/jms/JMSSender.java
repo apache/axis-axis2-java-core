@@ -47,10 +47,20 @@ import java.util.Map;
  * This is meant to be used on a SOAP Client to call a SOAP server.
  */
 public class JMSSender extends AbstractHandler implements TransportSender {
-	
+
     private static final long serialVersionUID = -3883554138407525394L;
-    
-	protected static Log log = LogFactory.getLog(JMSSender.class.getName());
+
+    protected static Log log = LogFactory.getLog(JMSSender.class.getName());
+
+    static {
+
+        // add a shutdown hook to close JMS connections
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                JMSSender.closeAllConnectors();
+            }
+        });
+    }
 
     HashMap params = new HashMap();
 
@@ -173,6 +183,10 @@ public class JMSSender extends AbstractHandler implements TransportSender {
         }
     }
 
+    public void stop() {
+        closeAllConnectors();
+    }
+
     /**
      * invoke() creates an endpoint, sends the request SOAP message, and then
      * either reads the response SOAP message or simply returns.
@@ -207,7 +221,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 waitForResponse = !((Boolean) msgContext.getProperty(
                         Constants.Configuration.IS_USING_SEPARATE_LISTENER)).booleanValue();
             } else {
-                if(!msgContext.isServerSide()) {
+                if (!msgContext.isServerSide()) {
                     waitForResponse = !msgContext.getOptions().isUseSeparateListener();
                 }
             }

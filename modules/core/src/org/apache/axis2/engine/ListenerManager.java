@@ -6,9 +6,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -131,6 +133,19 @@ public class ListenerManager {
         while (itr_st.hasNext()) {
             TransportListener transportListener = (TransportListener) itr_st.next();
             transportListener.stop();
+        }
+
+        // Stoping Transport senders
+        HashMap transportOut = configctx.getAxisConfiguration().getTransportsOut();
+        if (transportOut.size() > 0) {
+            Iterator trsItr = transportOut.values().iterator();
+            while (trsItr.hasNext()) {
+                TransportOutDescription outDescription = (TransportOutDescription) trsItr.next();
+                TransportSender trsSededer = outDescription.getSender();
+                if (trsSededer != null) {
+                    trsSededer.stop();
+                }
+            }
         }
         //calling module shoutdown method
         HashMap modules = configctx.getAxisConfiguration().getModules();
