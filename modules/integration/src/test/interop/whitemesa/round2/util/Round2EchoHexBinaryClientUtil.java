@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 
 public class Round2EchoHexBinaryClientUtil implements SunClientUtil {
@@ -44,7 +45,7 @@ public class Round2EchoHexBinaryClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputHexBinary", "", null);
         part.addAttribute("xsi:type", "xsd:hexBinary", null);
-        part.addChild(omfactory.createOMText("AAABBAAE"));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_HEX_BINARY));
 
         operation.addChild(part);
         return reqEnv;

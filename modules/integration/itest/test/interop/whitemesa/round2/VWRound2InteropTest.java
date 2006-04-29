@@ -50,10 +50,10 @@ import java.io.File;
  * "base"     http://www.cincomsmalltalk.com:8080/CincomSmalltalkWiki/DOWNLOAD/WebServices/vwInteropSchema.wsdl
  * "Group B"  http://www.cincomsmalltalk.com:8080/CincomSmalltalkWiki/DOWNLOAD/WebServices/vwInteropR2GroupB.wsdl
  * <p/>
- * All Tests fail due to an internal server error.
+ * 
  */
 
-
+//TODO verify the availability of this endpoint
 public class VWRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -212,7 +212,7 @@ public class VWRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**

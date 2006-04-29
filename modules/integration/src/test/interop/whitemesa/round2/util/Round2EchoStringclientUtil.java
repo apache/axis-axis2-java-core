@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 
 public class Round2EchoStringclientUtil implements SunClientUtil {
@@ -46,7 +47,7 @@ public class Round2EchoStringclientUtil implements SunClientUtil {
         OMElement part = omfactory.createOMElement("inputString", null);
         part.declareNamespace(typeNs);
         part.addAttribute("type", "xsd:string", typeNs);
-        part.addChild(omfactory.createOMText("String Argument"));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_STRING));
 
         operation.addChild(part);
         return reqEnv;

@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 
 public class Round2EchoStructClientUtil implements SunClientUtil {
@@ -44,13 +45,13 @@ public class Round2EchoStructClientUtil implements SunClientUtil {
 
         OMElement value0 = omfactory.createOMElement("varString", "", null);
         value0.addAttribute("xsi:type", "xsd:string", null);
-        value0.addChild(omfactory.createOMText("strss fdfing1"));
+        value0.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_STRUCT_STRING));
         OMElement value1 = omfactory.createOMElement("varInt", "", null);
         value1.addAttribute("xsi:type", "xsd:int", null);
-        value1.addChild(omfactory.createOMText("25"));
+        value1.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_STRUCT_INT));
         OMElement value2 = omfactory.createOMElement("varFloat", "", null);
         value2.addAttribute("xsi:type", "xsd:float", null);
-        value2.addChild(omfactory.createOMText("25.23"));
+        value2.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_STRUCT_FLOAT));
 
         part.addChild(value0);
         part.addChild(value1);

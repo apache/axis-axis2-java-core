@@ -224,7 +224,7 @@ public class PSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**

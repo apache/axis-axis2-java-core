@@ -76,7 +76,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringResult(retEnv);
     }
 
     /**
@@ -91,7 +91,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseStringArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringArrayResult(retEnv);
     }
 
     /**
@@ -106,7 +106,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseIntegerRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerResult(retEnv);
     }
 
     /**
@@ -121,7 +121,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseIntegerArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerArrayResult(retEnv);
     }
 
     /**
@@ -136,7 +136,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseFloatRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatResult(retEnv);
     }
 
     /**
@@ -151,7 +151,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseFloatArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatArrayResult(retEnv);
     }
 
     /**
@@ -166,7 +166,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseStructRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStructResult(retEnv);
     }
 
     /**
@@ -181,7 +181,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseStructArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStructArrayResult(retEnv);
     }
 
     /**
@@ -196,7 +196,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoVoidClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseVoidRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoVoidResult(retEnv);
     }
 
     /**
@@ -211,7 +211,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**
@@ -226,7 +226,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseDateRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDateResult(retEnv);
     }
 
 
@@ -242,7 +242,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseHexBinaryRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoHexBinaryResult(retEnv);
     }
 
     /**
@@ -257,7 +257,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseDecimalRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDecimalResult(retEnv);
     }
 
     /**
@@ -272,7 +272,7 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseBooleanRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBooleanResult(retEnv);
     }
 
     /**

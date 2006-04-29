@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 public class Round2EchoFloatArrayClientUtil implements SunClientUtil {
 
@@ -50,13 +51,13 @@ public class Round2EchoFloatArrayClientUtil implements SunClientUtil {
 
         OMElement value0 = omfactory.createOMElement("varString", null);
         value0.addAttribute("xsi:type", "xsd:float", null);
-        value0.addChild(omfactory.createOMText("45.76876"));
+        value0.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_FLOAT_ARR_1));
         OMElement value1 = omfactory.createOMElement("varInt", null);
         value1.addAttribute("xsi:type", "xsd:float", null);
-        value1.addChild(omfactory.createOMText("43.454"));
+        value1.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_FLOAT_ARR_2));
         OMElement value2 = omfactory.createOMElement("varFloat", null);
         value2.addAttribute("xsi:type", "xsd:float", null);
-        value2.addChild(omfactory.createOMText("2523.542"));
+        value2.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_FLOAT_ARR_3));
 
         part.addChild(value0);
         part.addChild(value1);

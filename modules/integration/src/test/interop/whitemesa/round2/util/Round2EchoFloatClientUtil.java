@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 
 public class Round2EchoFloatClientUtil implements SunClientUtil {
@@ -46,7 +47,7 @@ public class Round2EchoFloatClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputFloat", "", null);
         part.addAttribute("xsi:type", "xsd:float", null);
-        part.addChild(omfactory.createOMText("50.25"));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_FLOAT));
 
         operation.addChild(part);
         return reqEnv;

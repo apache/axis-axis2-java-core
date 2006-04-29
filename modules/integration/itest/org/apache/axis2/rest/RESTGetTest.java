@@ -12,13 +12,12 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
 //This Sample test Client is written for Yahoo Web Search
 
-public class RESTGetTest extends TestCase implements TestConstants {
+public class RESTGetTest extends TestCase {
 
     public void testRESTGet() throws Exception {
         String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
@@ -52,7 +51,7 @@ public class RESTGetTest extends TestCase implements TestConstants {
 
         ServiceClient sender = new ServiceClient();
         sender.setOptions(options);
-        options.setTo(targetEPR);
+        options.setTo(new EndpointReference (epr));
         OMElement response = sender.sendReceive(data);
 
         response.serialize(System.out);

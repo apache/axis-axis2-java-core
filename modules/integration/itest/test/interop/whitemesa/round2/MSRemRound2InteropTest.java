@@ -18,9 +18,12 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+
+import sun.java2d.pipe.ValidatePipe;
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.WhiteMesaConstants;
 import test.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedStructUtil;
@@ -72,12 +75,16 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
      */
     public void testR2BaseEchoString() throws AxisFault {
         url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
-        soapAction = "http://soapinterop.org/";
+        try {
+			soapAction = "http://soapinterop.org/";
 
-        util = new Round2EchoStringclientUtil();
-        retEnv = client.sendMsg(util, url, soapAction);
-        tempPath = resFilePath + "MSRemBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
+			util = new Round2EchoStringclientUtil();
+			retEnv = client.sendMsg(util, url, soapAction);
+			tempPath = resFilePath + "MSRemBaseStringRes.xml";
+			compareXML(retEnv, tempPath);
+		} catch (AxisFault e) {
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -86,7 +93,8 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStringArray
      */
     public void testR2BaseEchoStringArray() throws AxisFault {
-        url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
+//        url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
+        url = "http://localhost:8080/Remoting/ServiceA.soap";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStringArrayClientUtil();
@@ -137,7 +145,7 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseFloatRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT);
     }
 
     /**
@@ -152,7 +160,9 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseFloatArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT_ARR_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT_ARR_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT_ARR_3);
     }
 
     /**
@@ -167,7 +177,9 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseStructRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_INT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_FLOAT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_STRING);
     }
 
     /**
@@ -182,7 +194,15 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseStructArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_STR_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_STR_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_STR_3);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_3);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_INT_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_INT_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_INT_3);
     }
 
     /**
@@ -212,7 +232,7 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_BASE_64);
     }
 
     /**
@@ -227,7 +247,7 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseDateRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_DATE);
     }
 
 
@@ -243,7 +263,7 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseHexBinaryRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_HEX_BINARY);
     }
 
     /**
@@ -258,7 +278,7 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseDecimalRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_DECIMAL);
     }
 
     /**
@@ -273,7 +293,7 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "MSRemBaseBooleanRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_BOOLEAN);
     }
 
     /**

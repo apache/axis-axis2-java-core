@@ -2,9 +2,9 @@
 <E:Body>
 <m:echoStringArrayResponse xmlns:m="http://soapinterop.org/">
 <return xmlns="" A:arrayType="y:string[3]" s:type="A:Array">
-<item xmlns="">Apache Axis2</item>
-<item xmlns="">Lanka Software Foundation</item>
-<item xmlns="">www.opensource.lk</item>
+<item xmlns="">String Value1</item>
+<item xmlns="">String Value2</item>
+<item xmlns="">String Value3</item>
 </return>
 </m:echoStringArrayResponse>
 </E:Body>

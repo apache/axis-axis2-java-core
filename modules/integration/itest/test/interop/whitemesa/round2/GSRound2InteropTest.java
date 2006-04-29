@@ -21,6 +21,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.WhiteMesaConstants;
 import test.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
 import test.interop.whitemesa.round2.util.Round2EchoDateClientUtil;
@@ -70,7 +71,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringResult(retEnv);
     }
 
     /**
@@ -85,7 +86,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseStringArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringArrayResult(retEnv);
     }
 
     /**
@@ -100,7 +101,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseIntegerRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerResult(retEnv);
     }
 
     /**
@@ -115,7 +116,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseIntegerArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerArrayResult(retEnv);
     }
 
     /**
@@ -130,7 +131,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseFloatRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatResult(retEnv);
     }
 
     /**
@@ -145,7 +146,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseFloatArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatArrayResult(retEnv);
     }
 
     /**
@@ -176,7 +177,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseStructArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStructArrayResult(retEnv);
     }
 
     /**
@@ -206,7 +207,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**
@@ -221,7 +222,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseDateRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDateResult(retEnv);
     }
 
     /**
@@ -236,7 +237,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseHexBinaryRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoHexBinaryResult(retEnv);
     }
 
     /**
@@ -251,7 +252,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseDecimalRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDecimalResult(retEnv);
     }
 
     /**
@@ -266,7 +267,9 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseBooleanRes.xml";
-        compareXML(retEnv, tempPath);
+//        checkR2EchoBooleanResult(retEnv);
+        
+//        checkForValueInThePayload(retEnv,WhiteMesaConstants.ECHO_BOOLEAN);
     }
 
     /**

@@ -5,6 +5,6 @@
    </SOAP-ENV:Header>
    <SOAP-ENV:Body>
       <i5:echoBase64 id="ref-1" xmlns:i5="http://soapinterop.org/">
-         <return xsi:type="xsd:base64Binary">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</return>
+         <return xsi:type="xsd:base64Binary">SGVsbG8gV29ybGQ=</return>
       </i5:echoBase64>
    </SOAP-ENV:Body></SOAP-ENV:Envelope>

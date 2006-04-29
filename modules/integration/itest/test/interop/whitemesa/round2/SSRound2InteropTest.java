@@ -47,6 +47,7 @@ import java.io.File;
  * All tests failed since no service tag is available in the endpoint WSDL
  */
 
+//TODO check the availability of this smart
 public class SSRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;

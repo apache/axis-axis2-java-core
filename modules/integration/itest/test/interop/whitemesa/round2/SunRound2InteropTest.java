@@ -21,6 +21,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
+import test.interop.whitemesa.WhiteMesaConstants;
 import test.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedStructUtil;
@@ -87,7 +88,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringResult(retEnv);
     }
 
     /**
@@ -102,7 +103,9 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "SunBaseStringArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRING_ARR_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRING_ARR_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRING_ARR_3);
     }
 
     /**
@@ -117,7 +120,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseIntegerRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerResult(retEnv);
     }
 
     /**
@@ -132,8 +135,10 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseIntegerArrayRes.xml";
-        compareXML(retEnv, tempPath);
-    }
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_INTEGER_ARR_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_INTEGER_ARR_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_INTEGER_ARR_3);
+     }
 
     /**
      * Round2
@@ -147,7 +152,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseFloatRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatResult(retEnv);
     }
 
     /**
@@ -162,7 +167,9 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseFloatArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT_ARR_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT_ARR_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_FLOAT_ARR_3);
     }
 
     /**
@@ -177,7 +184,9 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStructRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_FLOAT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_INT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_STRING);
     }
 
     /**
@@ -192,7 +201,15 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseStructArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_INT_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_INT_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_INT_3);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_STR_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_STR_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_STR_3);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_1);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_2);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_3);
     }
 
     /**
@@ -207,7 +224,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoVoidClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseVoidRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoVoidResult(retEnv);
     }
 
     /**
@@ -222,7 +239,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**
@@ -237,7 +254,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseDateRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDateResult(retEnv);
     }
 
 
@@ -253,7 +270,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseHexBinaryRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoHexBinaryResult(retEnv);
     }
 
     /**
@@ -268,7 +285,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseDecimalRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDecimalResult(retEnv);
     }
 
     /**
@@ -283,7 +300,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunBaseBooleanRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBooleanResult(retEnv);
     }
 
     /**
@@ -328,7 +345,7 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
         util = new GroupbEcho2DStringArrayUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "sunGroupb2DStringArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**

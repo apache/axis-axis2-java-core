@@ -32,7 +32,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -41,7 +40,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
  * Sample for synchronous single channel blocking service invocation.
  * Message Exchage Pattern IN-OUT
  */
-public class PostTest extends TestCase implements TestConstants {
+public class PostTest extends TestCase {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8070/onca/xml");
 
     public void testRESTPost() throws Exception {

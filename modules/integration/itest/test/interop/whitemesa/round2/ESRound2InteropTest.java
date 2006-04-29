@@ -84,7 +84,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringResult(retEnv);
     }
 
     /**
@@ -99,7 +99,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseStringArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStringArrayResult(retEnv);
     }
 
     /**
@@ -114,7 +114,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseIntegerRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerResult(retEnv);
     }
 
     /**
@@ -129,7 +129,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoIntegerArrayclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseIntegerArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoIntegerArrayResult(retEnv);
     }
 
     /**
@@ -144,7 +144,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseFloatRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatResult(retEnv);
     }
 
     /**
@@ -159,7 +159,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseFloatArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoFloatArrayResult(retEnv);
     }
 
     /**
@@ -174,7 +174,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseStructRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStructResult(retEnv);
     }
 
     /**
@@ -189,7 +189,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseStructArrayRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoStructArrayResult(retEnv);
     }
 
     /**
@@ -204,7 +204,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoVoidClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseVoidRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoVoidResult(retEnv);
     }
 
     /**
@@ -219,7 +219,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**
@@ -234,7 +234,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDateClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseDateRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDateResult(retEnv);
     }
 
 
@@ -250,7 +250,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoHexBinaryClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseHexBinaryRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoHexBinaryResult(retEnv);
     }
 
     /**
@@ -265,7 +265,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoDecimalClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseDecimalRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoDecimalResult(retEnv);
     }
 
     /**
@@ -280,7 +280,7 @@ public class ESRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBooleanClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "ESBaseBooleanRes.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBooleanResult(retEnv);
     }
 
     /**

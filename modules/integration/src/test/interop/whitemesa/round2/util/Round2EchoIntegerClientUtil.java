@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 public class Round2EchoIntegerClientUtil implements SunClientUtil {
 
@@ -39,7 +40,7 @@ public class Round2EchoIntegerClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputInteger", "", null);
         part.addAttribute("xsi:type", "xsd:int", null);
-        part.addChild(omfactory.createOMText("52"));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_INTEGER));
         operation.addChild(part);
         return reqEnv;
 

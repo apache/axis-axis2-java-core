@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 
 public class Round2EchoDecimalClientUtil implements SunClientUtil {
@@ -43,7 +44,7 @@ public class Round2EchoDecimalClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputDecimal", "", null);
         part.addAttribute("xsi:type", "xsd:decimal", null);
-        part.addChild(omfactory.createOMText("455646152"));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_DECIMAL));
 
         operation.addChild(part);
         return reqEnv;

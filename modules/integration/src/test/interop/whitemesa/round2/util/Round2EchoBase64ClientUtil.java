@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 public class Round2EchoBase64ClientUtil implements SunClientUtil {
 
@@ -44,7 +45,7 @@ public class Round2EchoBase64ClientUtil implements SunClientUtil {
 //        DataHandler data = new DataHandler(new ByteArrayDataSource("WebServices".getBytes()));
 //        OMText base64EncodedText = omfactory.createOMText(data, true );
 //        part.addChild(base64EncodedText);
-        part.addChild(omfactory.createOMText("SGVsbG8gV29ybGQ="));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_BASE_64));
 
         operation.addChild(part);
         return reqEnv;

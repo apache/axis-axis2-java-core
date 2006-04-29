@@ -49,7 +49,10 @@ import java.io.File;
  * "base"     http://www.wingfoot.com/interop/wingfootBase.wsdl
  * "Group B"  http://www.wingfoot.com/interop/wingfootGroupB.wsdl
  * Todo - Endpoint is confusing.
+ * 
  */
+
+//TODO verify the availability of this endpoint
 public class WFRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -208,7 +211,7 @@ public class WFRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoBase64ClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WFBaseBase64Res.xml";
-        compareXML(retEnv, tempPath);
+        assertR2DefaultEchoBase64Result(retEnv);
     }
 
     /**

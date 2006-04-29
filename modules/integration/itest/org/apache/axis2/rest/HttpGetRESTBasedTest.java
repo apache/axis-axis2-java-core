@@ -20,10 +20,6 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.Echo;
-import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
 import java.io.BufferedReader;
@@ -31,33 +27,33 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpGetRESTBasedTest extends UtilServerBasedTestCase implements TestConstants {
+public class HttpGetRESTBasedTest { //extends UtilServerBasedTestCase implements TestConstants {
 
 
-    public HttpGetRESTBasedTest() {
-        super(HttpGetRESTBasedTest.class.getName());
-    }
+//    public HttpGetRESTBasedTest() {
+//        super(HttpGetRESTBasedTest.class.getName());
+//    }
+//
+//    public HttpGetRESTBasedTest(String testName) {
+//        super(testName);
+//    }
+//
+//    public static Test suite() {
+//        return getTestSetup(new TestSuite(HttpGetRESTBasedTest.class));
+//    }
 
-    public HttpGetRESTBasedTest(String testName) {
-        super(testName);
-    }
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(HttpGetRESTBasedTest.class));
-    }
-
-    protected void setUp() throws Exception {
-        AxisService service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
-        UtilServer.deployService(service);
-
-    }
-
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-    }
+//    protected void setUp() throws Exception {
+//        AxisService service =
+//                Utils.createSimpleService(serviceName,
+//                        Echo.class.getName(),
+//                        operationName);
+//        UtilServer.deployService(service);
+//
+//    }
+//
+//    protected void tearDown() throws Exception {
+//        UtilServer.unDeployService(serviceName);
+//    }
 
     public void testEchoXMLSync() throws Exception {
         //TODO support the GET with the Simple Axis Server and enable this test case

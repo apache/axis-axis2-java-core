@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 
 
 public class Round2EchoDateClientUtil implements SunClientUtil {
@@ -45,7 +46,7 @@ public class Round2EchoDateClientUtil implements SunClientUtil {
 
         OMElement part = omfactory.createOMElement("inputDate", null);
         part.addAttribute("xsi:type", "xsd:dateTime", null);
-        part.addChild(omfactory.createOMText("2006-10-18T22:20:00-07:00"));
+        part.addChild(omfactory.createOMText(WhiteMesaConstants.ECHO_DATE));
 
         operation.addChild(part);
         return reqEnv;
