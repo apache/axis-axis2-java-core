@@ -92,6 +92,13 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
     protected void setUp() throws Exception {
+        String className = "org.apache.axis2.rpc.RPCServiceClass";
+        service = new AxisService(serviceName.getLocalPart());
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS,
+                className));
+        UtilServer.start();
+        UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {
@@ -137,17 +144,11 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 new EndpointReference("http://127.0.0.1:"
                         + (UtilServer.TESTING_PORT)
                         + "/axis2/services/EchoXMLService/" + opName);
-        String className = "org.apache.axis2.rpc.RPCServiceClass";
         operationName = new QName("http://org.apache.axis2/xsd", opName, "req");
-        AxisService service = new AxisService(serviceName.getLocalPart());
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS,
-                className));
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new RPCMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
-        UtilServer.deployService(service);
     }
 
     public void testEchoBean() throws AxisFault {
@@ -603,6 +604,36 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 ret.toArray());
         assertNotNull(objs);
         assertEquals(Boolean.TRUE, Boolean.valueOf(objs[0].toString()));
+    }
+
+    public void testmultiArrays() throws AxisFault {
+        configureSystem("multiArrays");
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+        RPCServiceClient sender = new RPCServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        ArrayList args = new ArrayList();
+        String [] values = new String[]{"abc", "cde", "efg"};
+        args.add(values);
+
+        String [] values2 = new String[]{"abc", "cde", "efg"};
+        args.add(values2);
+        String [] values3 = new String[]{"abc", "cde", "efg"};
+        args.add(values3);
+        args.add("10");
+
+        ArrayList ret = new ArrayList();
+        ret.add(Integer.class);
+        Object [] objs = sender.invokeBlocking(operationName, args.toArray(),
+                ret.toArray());
+        assertNotNull(objs);
+        assertEquals(19, Integer.parseInt(objs[0].toString()));
     }
 
     public void testmulReturn() throws AxisFault {

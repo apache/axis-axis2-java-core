@@ -188,4 +188,8 @@ public class RPCServiceClass {
     public Mail echoMail(Mail mail) {
         return mail;
     }
+
+    public int multiArrays(String [] a, String b [],String d [], int c) {
+        return a.length + b.length  + d.length+ c;
+    }
 }

@@ -23,23 +23,14 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.StreamWrapper;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
+import org.apache.axis2.util.StreamWrapper;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -49,7 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-import java.io.ByteArrayOutputStream;
 
 
 public class BeanUtil {
@@ -366,34 +356,52 @@ public class BeanUtil {
             }
             currentLocalName = omElement.getLocalName();
             classType = (Class) javaTypes[count];
-            if (classType.isArray()) {
-                ArrayList valueList = new ArrayList();
-                Class arrayClassType = classType.getComponentType();
-                valueList.add(processObject(omElement, arrayClassType, helper));
-                while (parts.hasNext()) {
-                    objValue = parts.next();
-                    if (objValue instanceof OMElement) {
-                        omElement = (OMElement) objValue;
-                    } else {
-                        continue;
-                    }
-                    if (!currentLocalName.equals(omElement.getLocalName())) {
-                        break;
-                    }
-                    valueList.add(processObject(omElement, arrayClassType,
-                            helper));
-                }
-                retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
-                        valueList);
-            } else {
-                //handling refs
-                retObjs[count] = processObject(omElement, classType, helper);
+            omElement = ProcessElement(classType, omElement, helper, parts, currentLocalName, retObjs, count);
+            while (omElement != null) {
+                count ++;
+                omElement = ProcessElement((Class) javaTypes[count], omElement, helper, parts, omElement.getLocalName(), retObjs, count);
             }
             count ++;
         }
 
         helper.clean();
         return retObjs;
+    }
+
+    private static OMElement ProcessElement(Class classType, OMElement omElement,
+                                            MultirefHelper helper, Iterator parts,
+                                            String currentLocalName,
+                                            Object[] retObjs, int count) throws AxisFault {
+        Object objValue;
+        if (classType.isArray()) {
+            boolean done = true;
+            ArrayList valueList = new ArrayList();
+            Class arrayClassType = classType.getComponentType();
+            valueList.add(processObject(omElement, arrayClassType, helper));
+            while (parts.hasNext()) {
+                objValue = parts.next();
+                if (objValue instanceof OMElement) {
+                    omElement = (OMElement) objValue;
+                } else {
+                    continue;
+                }
+                if (!currentLocalName.equals(omElement.getLocalName())) {
+                    done = false;
+                    break;
+                }
+                valueList.add(processObject(omElement, arrayClassType,
+                        helper));
+            }
+            retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
+                    valueList);
+            if (!done) {
+                return omElement;
+            }
+        } else {
+            //handling refs
+            retObjs[count] = processObject(omElement, classType, helper);
+        }
+        return null;
     }
 
     public static Object processObject(OMElement omElement,
@@ -533,20 +541,20 @@ public class BeanUtil {
     }
 
     /**
-        * JAM convert first name of an attribute into UpperCase as an example
-        * if there is a instance variable called foo in a bean , then Jam give that as Foo
-        * so this method is to correct that error
-        *
-        * @param wrongName
-        * @return the right name, using english as the locale for case conversion
-        */
-       private static String getCorrectName(String wrongName) {
-           if (wrongName.length() > 1) {
-               return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
-                       + wrongName.substring(1, wrongName.length());
-           } else {
-               return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH);
-           }
-       }
+     * JAM convert first name of an attribute into UpperCase as an example
+     * if there is a instance variable called foo in a bean , then Jam give that as Foo
+     * so this method is to correct that error
+     *
+     * @param wrongName
+     * @return the right name, using english as the locale for case conversion
+     */
+    private static String getCorrectName(String wrongName) {
+        if (wrongName.length() > 1) {
+            return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
+                    + wrongName.substring(1, wrongName.length());
+        } else {
+            return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH);
+        }
+    }
 
 }
