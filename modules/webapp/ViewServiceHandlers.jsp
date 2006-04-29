@@ -33,7 +33,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>View Operation specific Chains</h1>
+<h1>View Operation Specific Chains</h1>
    <%
             AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE_HANDLERS);

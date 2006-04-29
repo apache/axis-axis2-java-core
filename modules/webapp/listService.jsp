@@ -35,7 +35,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp" />
 
-  <h1>Available services</h1>
+  <h1>Available Services</h1>
     <%  String prifix = request.getAttribute("frontendHostUrl") + "services/";
         String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>

@@ -40,12 +40,12 @@
       if(status != null && status.equals("MODULE")) {
           action = "listOperations";
           buttonName = " View Operations";
-          heading = "Select a Service to view Operation specific Chains";
+          heading = "Select a Service to View Operation Specific Chains";
           disc = "Select a axisService from the combo and click on the 'View Operations' button to view Operation specific Chains.";
       } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
           action = "viewServiceHandlers";
-          heading = "Select a Service to view Service Handlers";
+          heading = "Select a Service to View Service Handlers";
           disc = "Select a axisService from the combo and click on the 'View' button to view Service Handlers.";
       } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";

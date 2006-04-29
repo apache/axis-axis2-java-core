@@ -38,7 +38,7 @@
                  ArrayList handlers ;
                  ArrayList phases = axisConfig.getGlobalInFlow();
                  %>
-                 <h3> In Flow up to and including dispatcher </h3>
+                 <h3> In Flow Up To and Including Dispatcher </h3>
                  <ul>
                  <%
                  for (int i = 0; i < phases.size(); i++) {

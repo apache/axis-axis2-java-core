@@ -33,7 +33,7 @@
          ArrayList phases = (ArrayList)request.getSession().getAttribute(Constants.PHASE_LIST);
          request.getSession().setAttribute(Constants.PHASE_LIST,null);
          ArrayList tempList;
-     %><h2><font color="blue">System pre-defined phases</font></h2>
+     %><h2><font color="blue">System Pre-defined Phases</font></h2>
      <b>InFlow Up to Dispatcher</b>
      <blockquote>
          <%
@@ -75,7 +75,7 @@
 <%--         %>--%>
          </blockquote>
          <br>
-         <h2><font color="blue">User defined phases</font></h2>
+         <h2><font color="blue">User Defined Phases</font></h2>
          <b>Inflow after Dispatcher</b>
          <blockquote>
          <%

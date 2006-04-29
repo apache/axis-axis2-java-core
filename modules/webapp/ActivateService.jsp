@@ -5,12 +5,12 @@
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Turn on Axis Service</h1>
+<h1>Turn On Service</h1>
 <form method="get" name="serviceActivate" action="axis2-admin/activateService">
   <table width="100%"  border="0">
 <tr>
   <td colspan="2" >
-     <p>The Axis Service will be marked as active , and only display the in-active services</p>
+     <p>The services that are inactive are listed below. Although you can activate the services from this page, once system is restarted the services will be inactive again</p>
 <%--    <b>Remove Service :</b> The selected axisService will be removed from the file system and if the--%>
 <%--    &nbsp; system restart it wont be there next time--%>
   </td>
