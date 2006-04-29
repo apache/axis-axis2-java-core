@@ -41,10 +41,10 @@
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-                <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis-wsdl4j</artifactId>
-            <version>${axis.wsdl4j.version}</version>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>${wsdl4j.version}</version>
             <properties>
                 <module>true</module>
             </properties>

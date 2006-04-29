@@ -97,9 +97,9 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis-wsdl4j</artifactId>
-            <version>${axis.wsdl4j.version}</version>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>${wsdl4j.version}</version>
             <properties>
                 <module>true</module>
             </properties>

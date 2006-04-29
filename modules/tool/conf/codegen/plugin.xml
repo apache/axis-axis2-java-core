@@ -14,7 +14,7 @@
       <library name="lib/axis2-0.95-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis-wsdl4j-1.2.jar">
+      <library name="lib/wsdl4j-1.2.jar">
          <export name="*"/>
       </library>
       <library name="lib/stax-api-1.0.jar">
