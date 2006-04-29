@@ -329,7 +329,7 @@
     </goal>
 
     <goal name="create-lib">
-        <macros:copy-deps copyToDir="${target/lib}"/>
+        <macros:copy-deps copyToDir="${target/lib}" mods="*"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -468,6 +468,11 @@
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
+            <!--
+            PLEASE don't check in with these lines enabled.
+            <ant:echo message="######## MODULES=${mods}"/>
+            <ant:echo message="######## Copy2Dir=${copyToDir}"/>
+            -->
             <j:set var="modules" value="${mods}"/>
 
             <!-- ######################### REACTOR INIT ##########################################-->
@@ -553,6 +558,17 @@
                                   projectDescriptor="${x.getFile()}"/>
             </j:forEach>
             <property name="modules" value="*"/>
+        </define:tag>
+        <define:tag name="copy-release-docs">
+            <ant:copy toFile="${toDir}/README.txt" filtering="on">
+                <ant:fileset file="${readmeFile}"/>
+            </ant:copy>
+            <ant:copy toFile="${toDir}/release-notes.html" filtering="on">
+                <ant:fileset file="release-notes.html"/>
+            </ant:copy>
+            <ant:copy toFile="${toDir}/LICENSE.txt" filtering="on">
+                <ant:fileset file="LICENSE.txt"/>
+            </ant:copy>
         </define:tag>
     </define:taglib>
 </project>
