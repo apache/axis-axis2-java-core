@@ -967,6 +967,7 @@ public class WSDL2AxisServiceBuilder {
         } else {
 
             reader.setFeature("javax.wsdl.importDocuments", false);
+            reader.setFeature("javax.wsdl.verbose", false);
             Document doc;
             try {
                 doc = XMLUtils.newDocument(in);

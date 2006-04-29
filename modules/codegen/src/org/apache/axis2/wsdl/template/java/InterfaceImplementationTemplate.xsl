@@ -311,7 +311,10 @@
                 <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
                 <xsl:choose>
                     <xsl:when test="$style='document' or $style='rpc'">
-                           java.lang.Object object = fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+                           java.lang.Object object = fromOM(
+                                        getElement(_returnEnv,"<xsl:value-of select="$style"/>"),
+                                        <xsl:value-of select="$outputtype"/>.class,
+                                         getEnvelopeNamespaces(_returnEnv));
                            _messageContext.getTransportOut().getSender().cleanup(_messageContext);
                            return (<xsl:value-of select="$outputtype"/>)object;
                     </xsl:when>
@@ -335,7 +338,7 @@
                         //message class
                         java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(faultElt.getQName());
                         java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
-                        java.lang.Object messageObject = fromOM(faultElt,messageClass);
+                        java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
                         java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
                                    new java.lang.Class[]{messageClass});
                         m.invoke(ex,new java.lang.Object[]{messageObject});
@@ -462,7 +465,9 @@
                             org.apache.axis2.client.async.AsyncResult result) {
                         java.lang.Object object = fromOM(getElement(
                                 result.getResponseEnvelope(), "document"),
-                               <xsl:value-of select="$outputtype"/>.class);
+                               <xsl:value-of select="$outputtype"/>.class,
+                               getEnvelopeNamespaces(result.getResponseEnvelope())
+                            );
                         callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>) object);
                     }
 
@@ -544,8 +549,21 @@
            }
             </xsl:if>
         </xsl:for-each>
-	
-	<xsl:if test="//@policy">
+
+       /**
+        *  A utility method that copies the namepaces from the SOAPEnvelope
+        */
+       private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
+        java.util.Map returnMap = new java.util.HashMap();
+        java.util.Iterator namespaceIterator = env.getAllDeclaredNamespaces();
+        while (namespaceIterator.hasNext()) {
+            org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
+            returnMap.put(ns.getPrefix(),ns.getName());
+        }
+       return returnMap;
+    }
+
+    <xsl:if test="//@policy">
 	
 	/** */
 	private java.util.HashMap ns2Modules = new java.util.HashMap();

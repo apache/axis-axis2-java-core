@@ -83,7 +83,10 @@
                     <xsl:choose>
                         <xsl:when test="$paramCount &gt; 0">skel.<xsl:value-of select="@name"/>(
                             <xsl:for-each select="input/param[@location='body']">
-                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(msgContext.getEnvelope().getBody().getFirstElement(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
+                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(
+                                    msgContext.getEnvelope().getBody().getFirstElement(),
+                                    <xsl:value-of select="@type"/>.class,
+                                    getEnvelopeNamespaces(msgContext.getEnvelope()))<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
                             </xsl:for-each>);
                         </xsl:when>
                         <!--No input parameters-->
@@ -129,7 +132,21 @@
          <!-- Call templates recursively-->
         //<xsl:apply-templates/>
 
-        }
+          /**
+          *  A utility method that copies the namepaces from the SOAPEnvelope
+          */
+          private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
+               java.util.Map returnMap = new java.util.HashMap();
+               java.util.Iterator namespaceIterator = env.getAllDeclaredNamespaces();
+               while (namespaceIterator.hasNext()) {
+                   org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
+                   returnMap.put(ns.getPrefix(),ns.getName());
+               }
+              return returnMap;
+              }
+
+
+        }//end of class
     </xsl:template>
    <!-- end of template for in-out message receiver -->
 
@@ -195,7 +212,11 @@
                     <xsl:choose>
                         <xsl:when test="$paramCount &gt; 0"> skel.<xsl:value-of select="@name"/>(
                             <xsl:for-each select="input/param[@location='body']">
-                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(inMessage.getEnvelope().getBody().getFirstElement(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
+                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(
+                                    inMessage.getEnvelope().getBody().getFirstElement(),
+                                    <xsl:value-of select="@type"/>.class,
+                                    getEnvelopeNamespaces(inMessage.getEnvelope())
+                                    )<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
                             </xsl:for-each>);
                         </xsl:when>
                         <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
@@ -216,10 +237,28 @@
         throw org.apache.axis2.AxisFault.makeFault(e);
         }
         }
+
+
          <!-- Call templates recursively-->
         //<xsl:apply-templates/>
 
-        }
+
+
+        /**
+          *  A utility method that copies the namepaces from the SOAPEnvelope
+          */
+          private java.util.Map getEnvelopeNamespaces(org.apache.axiom.soap.SOAPEnvelope env){
+               java.util.Map returnMap = new java.util.HashMap();
+               java.util.Iterator namespaceIterator = env.getAllDeclaredNamespaces();
+               while (namespaceIterator.hasNext()) {
+                   org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
+                   returnMap.put(ns.getPrefix(),ns.getName());
+               }
+              return returnMap;
+              }
+
+
+        }//end of class
 
     </xsl:template>
 

@@ -51,12 +51,20 @@
 
         public org.apache.xmlbeans.XmlObject fromOM(
             org.apache.axiom.om.OMElement param,
-            java.lang.Class type){
+            java.lang.Class type,
+            java.util.Map extraNamespaces){
         try{
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
-                return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching()) ;
+                if (extraNamespaces!=null){
+                 return <xsl:value-of select="@type"/>.Factory.parse(
+                       param.getXMLStreamReaderWithoutCaching(),
+                       new org.apache.xmlbeans.XmlOptions().setLoadAdditionalNamespaces(extraNamespaces));
+                }else{
+                 return <xsl:value-of select="@type"/>.Factory.parse(
+                       param.getXMLStreamReaderWithoutCaching());
+                }
                 }
             </xsl:if>
         </xsl:for-each>
@@ -128,7 +136,8 @@
         }
 
         public java.lang.Object fromOM(org.apache.axiom.om.OMElement param,
-        java.lang.Class type){
+        java.lang.Class type,
+         java.util.Map extraNamespaces){
             try{
                 javax.xml.transform.Source source =
                         new javanet.staxutils.StAXSource(param.getXMLStreamReader());
@@ -218,8 +227,10 @@
            }
 
 
-            private  java.lang.Object fromOM(org.apache.axiom.om.OMElement param,
-            java.lang.Class type){
+            private  java.lang.Object fromOM(
+            org.apache.axiom.om.OMElement param,
+            java.lang.Class type,
+            java.util.Map extraNamespaces){
 
                 try {
                        <xsl:for-each select="param">
@@ -301,8 +312,10 @@
             return factory.getDefaultEnvelope();
         }
         
-        private java.lang.Object fromOM(org.apache.axiom.om.OMElement param,
-            java.lang.Class type) {
+        private java.lang.Object fromOM(
+            org.apache.axiom.om.OMElement param,
+            java.lang.Class type,
+            java.util.Map extraNamespaces) {
             try {
                 if (bindingFactory == null) {
                     throw new RuntimeException("Could not find JiBX binding information for com.sosnoski.seismic.jibxsoap.Query, JiBX binding unusable");
@@ -322,7 +335,10 @@
        <!-- #################################################################################  -->
        <!-- ############################   none template!!!   ##############################  -->
        <xsl:template match="databinders[@dbtype='none']">
-           private  org.apache.axiom.om.OMElement fromOM(org.apache.axiom.om.OMElement param, java.lang.Class type){
+           private  org.apache.axiom.om.OMElement fromOM(
+                 org.apache.axiom.om.OMElement param,
+                 java.lang.Class type,
+                 java.util.Map extraNamespaces){
               return param;
            }
 
