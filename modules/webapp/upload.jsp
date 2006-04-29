@@ -18,12 +18,12 @@
 %>
 
 <jsp:include page="include/adminheader.jsp"/>
-<h2>Upload a AxisService Archive file</h2>
+<h2>Upload a AxisService Archive File</h2>
 
-<p>You can upload a packaged Axis 2 AxisService using this page with two small steps.</p>
+<p>You can upload a packaged Axis 2 AxisService from this page in two small steps.</p>
 <ul>
   <li>Browse to the location and select the axisService archive file you wish to upload</li>
-  <li>Click Upload</li>
+  <li>Click Upload button</li>
 </ul>
 <p>Simple as that!</p>
 
