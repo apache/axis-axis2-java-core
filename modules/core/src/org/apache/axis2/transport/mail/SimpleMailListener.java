@@ -186,7 +186,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
         while (!stopped) {
             try {
                 EmailReceiver receiver = new EmailReceiver(user, host, port, password);
-
                 receiver.connect();
 
                 Message[] msgs = receiver.receive();
@@ -196,7 +195,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
-
                         if (msg != null) {
                             MailWorker worker = new MailWorker(msg, configurationContext);
 

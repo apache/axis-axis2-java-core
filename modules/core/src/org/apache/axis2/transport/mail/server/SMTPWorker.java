@@ -194,7 +194,7 @@ public class SMTPWorker extends Thread {
             try {
                 if (bodyData) {
                     temp += input;
-                    mail.setContent(temp, "text/plain");
+                    mail.setContent(temp, "text/xml"); //Since this is for axis2 :-)
                 } else {
                     mail.addHeaderLine(input);
                 }

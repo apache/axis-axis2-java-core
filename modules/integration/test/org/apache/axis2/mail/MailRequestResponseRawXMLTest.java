@@ -42,6 +42,7 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.mail.SimpleMailListener;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +52,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class MailRequestResponseRawXMLTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference("foo@127.0.0.1"
+    private EndpointReference targetEPR = new EndpointReference("mail:foo@127.0.0.1"
             + "/axis2/services/EchoXMLService/echoOMElement");
 
     private Log log = LogFactory.getLog(getClass());
@@ -64,6 +65,8 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
     private SOAPEnvelope envelope;
 
+    private ConfigurationContext serverConfigContext;
+    
     public MailRequestResponseRawXMLTest() {
         super(MailRequestResponseRawXMLTest.class.getName());
     }
@@ -73,18 +76,17 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        ConfigurationContext configContext = UtilsMailServer.start();
+        serverConfigContext = UtilsMailServer.start();
 
         SimpleMailListener ml = new SimpleMailListener();
-
-        ml.init(configContext, configContext.getAxisConfiguration()
+        ml.init(serverConfigContext, serverConfigContext.getAxisConfiguration()
                 .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
         // configContext.getAxisConfiguration().engageModule(
         // new QName(Constants.MODULE_ADDRESSING));
         AxisService service = Utils.createSimpleService(serviceName, Echo.class
                 .getName(), operationName);
-        configContext.getAxisConfiguration().addService(service);
+        serverConfigContext.getAxisConfiguration().addService(service);
     }
 
     protected void tearDown() throws Exception {
@@ -122,6 +124,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
 
@@ -146,7 +149,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
         ServiceClient sender = new ServiceClient(configContext, service);
         sender.setOptions(options);
-        options.setTo(targetEPR);
+        //options.setTo(targetEPR);
         sender.sendReceiveNonBlocking(operationName, createEnvelope(), callback);
 
         int index = 0;
@@ -155,7 +158,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             index++;
             if (index > 10) {
                 throw new AxisFault(
-                        "Server was shutdown as the async response take too long to complete");
+                        "Server was shutdown as the async response is taking too long to complete.");
             }
         }
 

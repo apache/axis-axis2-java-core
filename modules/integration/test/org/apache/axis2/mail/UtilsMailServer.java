@@ -58,7 +58,7 @@ public class UtilsMailServer {
                     "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                     file.exists());
             SERVER_CONFIG_CONTEXT =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
         }
         return SERVER_CONFIG_CONTEXT;
     }
@@ -71,7 +71,7 @@ public class UtilsMailServer {
                 "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                 file.exists());
         CLIENT_CONFIG_CONTEXT =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
         }
         return CLIENT_CONFIG_CONTEXT;
     }

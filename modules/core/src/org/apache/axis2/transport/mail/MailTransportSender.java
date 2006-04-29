@@ -17,6 +17,13 @@
 
 package org.apache.axis2.transport.mail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
@@ -25,10 +32,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class MailTransportSender extends AbstractTransportSender {
 	
@@ -65,7 +68,8 @@ public class MailTransportSender extends AbstractTransportSender {
                     Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_PORT));
 
             if ((user != null) && (host != null) && (password != null) && (smtpPort != null)) {
-                EMailSender sender = new EMailSender(user, host, smtpPort, password);
+
+            	   EMailSender sender = new EMailSender(user, host, smtpPort, password);
 
                 // TODO this is just a temporary hack, fix this to use input streams
                 String eprAddress = msgContext.getTo().getAddress();
@@ -73,7 +77,6 @@ public class MailTransportSender extends AbstractTransportSender {
                 // In mail char set is what is being used. Charset encoding is not what is expected here.
                 String charSet =
                         (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-
                 if (charSet == null) {
                     charSet = MailSrvConstants.DEFAULT_CHAR_SET;
                 }
@@ -88,7 +91,11 @@ public class MailTransportSender extends AbstractTransportSender {
                 } else {
                     email = eprAddress;
                 }
-
+                int emailColon = email.indexOf(":");
+                if (emailColon >= 0) {
+                		email = email.substring(emailColon + 1);
+                }
+                
                 sender.send(subject, email, new String(byteArrayOutputStream.toByteArray()),
                         charSet);
             } else {
@@ -124,6 +131,29 @@ public class MailTransportSender extends AbstractTransportSender {
     public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out)
             throws AxisFault {
         return out;
+    }
+    public void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+        OMElement outputMessage = envelope;
+
+        if ((envelope != null) && msgContext.isDoingREST()) {
+            outputMessage = envelope.getBody().getFirstElement();
+        }
+
+        if (outputMessage != null) {
+            try {
+                OMOutputFormat format = new OMOutputFormat();
+
+                format.setDoOptimize(msgContext.isDoingMTOM());
+                format.setCharSetEncoding(null); //Set to null so that the code will not fail on 7bit.
+                outputMessage.serializeAndConsume(out, format);
+                out.flush();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
+        } else {
+            throw new AxisFault(Messages.getMessage("outMessageNull"));
+        }
     }
 
     public void stop() {

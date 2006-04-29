@@ -18,6 +18,8 @@ package org.apache.axis2.mail;
 
 //todo
 
+import java.util.Iterator;
+
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -33,6 +35,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.mail.SimpleMailListener;
 
@@ -40,13 +45,14 @@ import javax.xml.namespace.QName;
 
 public class MailOneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("mailto:foo@127.0.0.1" +
+            new EndpointReference("mail:foo@127.0.0.1" +
                     "/axis2/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 
 
     private ConfigurationContext configContext;
+    private ConfigurationContext clientConfigContext;
 
     private SOAPEnvelope envelope;
 
@@ -62,6 +68,7 @@ public class MailOneWayRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         //start the mail server      
         configContext = UtilsMailServer.start();
+        clientConfigContext = UtilsMailServer.createClientConfigurationContext();
 
         SimpleMailListener ml = new SimpleMailListener();
         ml.init(configContext,
@@ -100,7 +107,7 @@ public class MailOneWayRawXMLTest extends TestCase {
 
     public void testOneWay() throws Exception {
         AxisService service = new AxisService(serviceName.getLocalPart());
-        AxisOperation axisOperation = new OutInAxisOperation(
+        AxisOperation axisOperation = new OutOnlyAxisOperation(
         );
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
@@ -109,20 +116,17 @@ public class MailOneWayRawXMLTest extends TestCase {
             }
         });
         service.addOperation(axisOperation);
-        configContext.getAxisConfiguration().addService(service);
+        //configContext.getAxisConfiguration().addService(service);
 
         OMElement payload = createEnvelope();
 
-        ServiceClient servicClient = new ServiceClient(configContext, service);
+        ServiceClient servicClient = new ServiceClient(clientConfigContext, service);
 
         Options options = new Options();
         options.setTo(targetEPR);
 
         servicClient.setOptions(options);
 
-        servicClient.sendRobust(operationName, payload);
-        while (envelope == null) {
-            Thread.sleep(4000);
-        }
+        servicClient.fireAndForget(operationName, payload);
     }
 }

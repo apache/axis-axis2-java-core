@@ -65,16 +65,13 @@ public class MailWorker implements Runnable {
     public void run() {
         AxisEngine engine = new AxisEngine(configContext);
         MessageContext msgContext = null;
-
         // create and initialize a message context
         try {
             TransportInDescription transportIn =
                     configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
             TransportOutDescription transportOut =
                     configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
-
             if ((transportIn != null) && (transportOut != null)) {
-
                 // create Message Context
                 msgContext = new MessageContext();
                 msgContext.setConfigurationContext(configContext);
@@ -84,10 +81,12 @@ public class MailWorker implements Runnable {
                 msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
                 msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
                         mimeMessage.getEncoding());
-
                 String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION);
+                if (soapAction == null){
+                	soapAction = mimeMessage.getSubject();
+                }
 
-                msgContext.setWSAAction(soapAction);
+                //msgContext.setWSAAction(soapAction);
                 msgContext.setSoapAction(soapAction);
                 msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
 
@@ -120,7 +119,6 @@ public class MailWorker implements Runnable {
                 XMLStreamReader reader =
                         XMLInputFactory.newInstance().createXMLStreamReader(bais);
                 String soapNamespaceURI = "";
-
                 if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
                         > -1) {
                     soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
@@ -131,9 +129,7 @@ public class MailWorker implements Runnable {
 
                 StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
-
                 msgContext.setEnvelope(envelope);
-
                 if (envelope.getBody().hasFault()) {
                     engine.receiveFault(msgContext);
                 } else {
@@ -147,7 +143,6 @@ public class MailWorker implements Runnable {
             try {
                 if (msgContext != null) {
                     MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-
                     engine.sendFault(faultContext);
                 } else {
                     log.error(e);
@@ -156,7 +151,6 @@ public class MailWorker implements Runnable {
                 log.error(e);
             }
         }
-
         /*
          *
          * This part is ignored for the time being. CT 07-Feb-2005.
