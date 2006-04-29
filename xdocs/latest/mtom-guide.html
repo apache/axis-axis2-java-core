@@ -172,7 +172,7 @@ content.</p>
         DataHandler dataHandler = new DataHandler(dataSource);
 
         //create an OMText node with the above DataHandler and set optimized to true
-        OMText textData = fac.createText(dataHandler, true);
+        OMText textData = fac.createOMText(dataHandler, true);
         imageElement.addChild(textData);
 
         //User can set optimized to false by using the following
@@ -182,7 +182,7 @@ content.</p>
 encoded string, which contains encoded binary content, given with the mime
 type of the actual binary representation.</p>
 <source><pre>        String base64String = "some_string";
-        OMText binaryNode =  fac.createText(base64String,"image/jpg",true);</pre>
+        OMText binaryNode =  fac.createOMText(base64String,"image/jpg",true);</pre>
 </source>
 <p>Axis2 uses javax.activation.DataHandler to handle the binary data. All
 optimized binary content nodes will be serialized as Base64 Strings if "MTOM
@@ -191,7 +191,7 @@ optimized at any case. They will be serialized and send as Base64 Strings.</p>
 <source><pre>        //create an OMText node with the above DataHandler and set "optimized" to false
         //This data will be send as Base64 encoded string regardless of MTOM is enabled or not
         javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataHandler("someLocation"));
-        OMText textData = fac.createText(dataHandler, false); 
+        OMText textData = fac.createOMText(dataHandler, false); 
         image.addChild(textData);</pre>
 </source><a name="22"></a>
 
@@ -268,19 +268,34 @@ in the server side for outgoing messages,</p>
 </ul>
 <source><pre>public class MTOMService {
     public OMElement mtomSample(OMElement element) throws Exception {
-        OMElement imageEle = element.getFirstElement();
-        OMElement imageName = (OMElement) imageEle.getNextSibling();
-        OMText binaryNode = (OMText) imageEle.getFirstChild();
-        String fileName = imageName.getText();
+        OMElement _fileNameEle = null;
+        OMElement _imageElement = null;
+
+        for (Iterator _iterator = element.getChildElements(); _iterator.hasNext();) {
+             OMElement _ele = (OMElement) _iterator.next();
+            if (_ele.getLocalName().equalsIgnoreCase("fileName")) {
+                  _fileNameEle = _ele;
+            }
+            if (_ele.getLocalName().equalsIgnoreCase("image")) {
+                  _imageElement = _ele;
+            }
+        }
+
+        if (_fileNameEle == null || _imageElement == null ) {
+            throw new AxisFault("Either Image or FileName is null");
+        }
+
+        OMText binaryNode = (OMText) _imageElement.getFirstOMChild();
+
+        String fileName = _fileNameEle.getText();
 
         //Extracting the data and saving
         DataHandler actualDH;
-        actualDH = binaryNode.getDataHandler();
+        actualDH = (DataHandler) binaryNode.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(fileName);
-        new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
-
+        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
         //setting response
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
@@ -294,7 +309,9 @@ in the server side for outgoing messages,</p>
     <li><a name="242"><strong>Client</strong></a></li>
   </ul>
 </ul>
-<source><pre>        Options options = new Options();
+<source><pre>
+        ServiceClient sender = new ServiceClient();        
+        Options options = new Options();
         options.setTo(targetEPR); 
         // enabling MTOM
         options.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
@@ -302,10 +319,9 @@ in the server side for outgoing messages,</p>
                 Constants.TRANSPORT_HTTP, false);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-        OMElement result = (OMElement) call.invokeBlocking(operationName.
-                                getLocalPart(),payload);
-        OMElement ele = (OMElement) result.getFirstChild();
-        OMText binaryNode = (OMText) ele.getFirstChild();
+        OMElement result = sender.sendReceive(payload);
+        OMElement ele = result.getFirstElement();
+        OMText binaryNode = (OMText) ele.getFirstOMChild();
         
         // Retrieving the DataHandler &amp; then do whatever the processing to the data
         DataHandler actualDH;
@@ -338,24 +354,17 @@ Content Location referencing of MIME parts.</p>
     }
 
     public OMElement echoAttachment(OMElement omEle) {
-        OMElement child  = (OMElement)omEle.getFirstChild();
-        //retreiving the Href attribute which contains the Content Id 
-        OMAttribute attr = (OMAttribute)child.getFirstAttribute(new QName("href"));
-        String contentID = attr.getValue();
-        //content-id processing to remove the "cid" prefix
+        OMElement child = (OMElement) omEle.getFirstOMChild();
+        OMAttribute attr = child.getAttribute(new QName("href"));
+        String contentID = attr.getAttributeValue();
+        Attachments attachment = (Attachments) msgcts.getProperty(MTOMConstants.ATTACHMENTS);
         contentID = contentID.trim();
+
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {
             contentID = contentID.substring(4);
         }
-                
-        // Retrieving the MIMEHelper instance (which contains reference to attachments)
-        // from the Message Context
-        MIMEHelper attachments = (MIMEHelper)msgcts.getProperty(MIMEHelper.ATTACHMENTS);
-        // Retrieving the respective DataHandler referenced by the content-id
-        DataHandler dataHandler = attachments.getDataHandler(contentID);
-
-        // Echoing back the attachment. Sends out MTOM message
-        OMText textNode = new OMTextImpl(dataHandler);
+        DataHandler dataHandler = attachment.getDataHandler(contentID);
+        OMText textNode = new OMTextImpl(dataHandler, omEle.getOMFactory());
         omEle.build();
         child.detach();
         omEle.addChild(textNode);
@@ -452,9 +461,9 @@ file caching.</p>
     &lt;!-- ================================================= --&gt;
     &lt;!-- Parameters --&gt;
     &lt;!-- ================================================= --&gt;</em>
-    &lt;parameter name="cacheAttachments" locked="xsd:false"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="attachmentDIR" locked="xsd:false"&gt;<em>temp directory</em>&lt;/parameter&gt;
-    &lt;parameter name="sizeThreshold" locked="xsd:false"&gt;4000&lt;/parameter&gt;
+    &lt;parameter name="cacheAttachments" locked="false"&gt;true&lt;/parameter&gt;
+    &lt;parameter name="attachmentDIR" locked="false"&gt;<em>temp directory</em>&lt;/parameter&gt;
+    &lt;parameter name="sizeThreshold" locked="false"&gt;4000&lt;/parameter&gt;
     .........
     .........
 &lt;/axisconfig&gt;</pre>
