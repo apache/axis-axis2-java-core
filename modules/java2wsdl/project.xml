@@ -86,8 +86,8 @@
             <version>${XmlSchema.version}</version>
         </dependency>
         <dependency>
-            <groupId>${geronimo.spec.groupid}</groupId>
-            <artifactId>${geronimo.spec.javamail.artifactid}</artifactId>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-javamail</artifactId>
             <version>${geronimo.spec.javamail.version}</version>
             <properties>
                 <module>true</module>
@@ -102,8 +102,8 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>${geronimo.spec.groupid}</groupId>
-            <artifactId>${geronimo.spec.activation.artifactid}</artifactId>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-activation</artifactId>
             <version>${geronimo.spec.activation.version}</version>
             <properties>
                 <module>true</module>
