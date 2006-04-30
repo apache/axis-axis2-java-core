@@ -68,7 +68,7 @@
     <!-- use a proper m2 hierarchy -->
     <property name="maven2.groupId" value="org.apache.ws.${project.groupId}"/>
     
-    <available file="${basedir}/target/lib/axis-wsdl4j-${axis.wsdl4j.version}.jar" property="jars.present"/>
+    <available file="${basedir}/target/lib/wsdl4j-${wsdl4j.version}.jar" property="jars.present"/>
 
   </target>
 
