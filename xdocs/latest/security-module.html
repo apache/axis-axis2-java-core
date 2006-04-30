@@ -9,8 +9,8 @@
 <h1>Securing SOAP Messages with WSS4J</h1>
 
 <p>Axis2 comes with a module based on WSS4J [1] to provide WS-Security
-features, called "aegis". This document explains how to engage and 
-configure aegis module.</p>
+features, called "rampart". This document explains how to engage and 
+configure rampart module.</p>
 
 <h2>Content</h2>
 <ul>
@@ -22,16 +22,16 @@ configure aegis module.</p>
 </ul>
 <a name="intro"></a>
 <h2>Introduction</h2>
-<p>Since aegis module inserts handlers in the system specific
+<p>Since rampart module inserts handlers in the system specific
 pre-dispatch phase, it must be engaged globally. But it is possible to
-activate aegis module for the inflow or the outflow when required by
+activate rampart module for the inflow or the outflow when required by
 the service or the clients.</p>
 
-<p>The aegis module (aegis.mar) is available with the Axis2 release.</p>
+<p>The rampart module (rampart.mar) is available with the Axis2 release.</p>
 
 <p>First it should be engaged by inserting the following in the axis2.xml
 file.</p>
-<source><pre>    &lt;module ref="aegis"/&gt;</pre>
+<source><pre>    &lt;module ref="rampart"/&gt;</pre>
 </source>
 <p>The web admin interface can be used when Axis2 is deployed in a servlet
 container such as Apache Tomcat.</p>

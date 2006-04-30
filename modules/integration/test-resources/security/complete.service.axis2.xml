@@ -9,7 +9,7 @@
     <module ref="addressing"/>
 
     <!-- Engage the security module -->
-    <module ref="aegis"/>
+    <module ref="rampart"/>
 
     <!-- ================================================= -->
     <!-- Transport Ins -->
