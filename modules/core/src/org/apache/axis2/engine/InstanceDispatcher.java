@@ -18,7 +18,9 @@
 package org.apache.axis2.engine;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -144,6 +146,9 @@ public class InstanceDispatcher extends AbstractHandler {
     }
 
     private void extractServiceGroupContextId(MessageContext msgContext) throws AxisFault {
+        if(!msgContext.isHeaderPresent()) {
+            return;
+        }
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
         if (soapHeader != null) {
             OMElement serviceGroupId = soapHeader.getFirstChildWithName(new QName(Constants.AXIS2_NAMESPACE_URI,
@@ -153,14 +158,11 @@ public class InstanceDispatcher extends AbstractHandler {
                 ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
                         getServiceGroupContext(groupId, msgContext);
                 if (serviceGroupContext == null) {
-//                handleNoServiceGroupContextIDCase(msgContext);
                     throw new AxisFault(Messages.getMessage(
                             "invalidservicegrouoid", groupId));
                 }
                 msgContext.setServiceGroupContextId(serviceGroupId.getText());
             }
         }
-
     }
-
 }

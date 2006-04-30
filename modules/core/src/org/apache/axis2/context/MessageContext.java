@@ -19,6 +19,9 @@ package org.apache.axis2.context;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPConstants;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
@@ -937,5 +940,24 @@ public class MessageContext extends AbstractContext {
             }
         }
         return false;
+    }
+
+    /**
+     * Gets the first child of the envelope, check if it is a soap:Body, which means there is no header.
+     * We do this basically to make sure we don't parse and build the om tree of the whole envelope
+     * looking for the soap header. If this method returns true, there still is no guarantee that there is
+     * a soap:Header present, use getHeader() and also check for null on getHeader() to be absolutely sure.
+     * 
+     * @return boolean
+     */
+    public boolean isHeaderPresent() {
+        OMNode node = getEnvelope().getFirstOMChild();
+        if(node instanceof OMElement){
+            OMElement firstChild = (OMElement) node;
+            if(firstChild.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

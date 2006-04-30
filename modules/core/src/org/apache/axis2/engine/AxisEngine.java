@@ -65,6 +65,9 @@ public class AxisEngine {
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
+        if(!msgContext.isHeaderPresent()) {
+            return;
+        }
         SOAPEnvelope se = msgContext.getEnvelope();
         if (se.getHeader() == null) {
             return;
