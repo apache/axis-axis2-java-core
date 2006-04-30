@@ -445,14 +445,6 @@
 
 
 
-
-
-    <!-- start of template for choice/all. Select either for the
-         presence of choice or the absence of ordered
-
-         Note :For now the order in the sequence is not enforced. The
-         following template is used for sequence also
-     -->
      /**
       *  Factory class that keeps the parse method
       */
@@ -578,10 +570,13 @@
                                                     reader.next();
                                                 // Step out of this element
                                                 reader.next();
+                                                // Step to next element event.
+                                                while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
+                                                    reader.next();
                                                 if (reader.isEndElement()){
                                                     //two continuous end elements means we are exiting the xml structure
                                                     <xsl:value-of select="$loopBoolName"/> = true;
-                                                } else if (reader.isStartElement()){
+                                                } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                         <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
                                                     }else{
@@ -652,10 +647,13 @@
                                                 }
                                                 // Step out of this element
                                                 reader.next();
+                                                // Step to next element event.
+                                                while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
+                                                    reader.next();
                                                 if (reader.isEndElement()){
                                                     //two continuous end elements means we are exiting the xml structure
                                                     <xsl:value-of select="$loopBoolName"/> = true;
-                                                }else if (reader.isStartElement()){
+                                                } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                         <xsl:value-of select="$listName"/>.add(getElementTextProperly(reader));
                                                     }else{
