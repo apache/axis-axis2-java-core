@@ -217,8 +217,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             options.setWrapClasses(configuration.isPackClasses());
             //for the client side the default setting is not to write the
             //output
-            options.setWriteOutput(false);
-            //options.setWriteOutput(false);
+            options.setWriteOutput(!configuration.isPackClasses());
         }
     }
 }
