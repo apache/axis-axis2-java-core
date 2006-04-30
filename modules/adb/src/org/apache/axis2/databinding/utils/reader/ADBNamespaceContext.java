@@ -1,8 +1,9 @@
 package org.apache.axis2.databinding.utils.reader;
 
+import org.apache.axis2.util.ArrayStack;
+
 import javax.xml.namespace.NamespaceContext;
 import java.util.Iterator;
-import java.util.Stack;
 import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -36,8 +37,8 @@ public class ADBNamespaceContext implements NamespaceContext {
     //since the index of the entry will be used to relate them
     //use the minimum initial capacity to let things handle memory better
 
-    private Stack prefixStack = new Stack();
-    private Stack uriStack = new Stack();
+    private ArrayStack prefixStack = new ArrayStack();
+    private ArrayStack uriStack = new ArrayStack();
 
     /**
      * Register a namespace in this context

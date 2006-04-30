@@ -159,10 +159,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     }
 
-    public int next() throws XMLStreamException {
-        return updateStatus();
-    }
-
     public void require(int i, String string, String string1)
             throws XMLStreamException {
         throw new UnsupportedOperationException();
@@ -793,10 +789,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * By far this should be the most important method in this class
-     * this method changes the state of the parser according to the
-     * change in the
+     * this method changes the state of the parser 
      */
-    private int updateStatus() throws XMLStreamException {
+    public int next() throws XMLStreamException {
         int returnEvent = -1; //invalid state is the default state
         switch (state) {
             case START_ELEMENT_STATE:
