@@ -43,13 +43,11 @@ import java.util.Iterator;
  * Builds a module description from OM
  */
 public class ModuleBuilder extends DescriptionBuilder {
-    private AxisConfiguration axisConfig;
     private AxisModule module;
 
     public ModuleBuilder(InputStream serviceInputStream, AxisModule module,
                          AxisConfiguration axisConfig) {
         super(serviceInputStream, axisConfig);
-        this.axisConfig = axisConfig;
         this.module = module;
     }
 

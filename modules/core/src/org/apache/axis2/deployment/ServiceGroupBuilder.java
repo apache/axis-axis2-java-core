@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ServiceGroupBuilder extends DescriptionBuilder {
-    private AxisConfiguration axisConfig;
     private OMElement serviceElement;
     private HashMap wsdlServices;
 
@@ -42,7 +41,6 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         this.serviceElement = service;
         this.wsdlServices = wsdlServices;
         this.axisConfig = axisConfig;
-        super.axisConfig = axisConfig;
     }
 
     public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup)

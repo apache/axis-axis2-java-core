@@ -42,13 +42,11 @@ import java.util.Iterator;
  * Builds a service description from OM
  */
 public class ServiceBuilder extends DescriptionBuilder {
-    private AxisConfiguration axisConfig;
     private AxisService service;
 
     public ServiceBuilder(AxisConfiguration axisConfig, AxisService service) {
         this.service = service;
         this.axisConfig = axisConfig;
-        super.axisConfig = axisConfig;
     }
 
     public ServiceBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig,
