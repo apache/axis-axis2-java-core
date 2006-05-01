@@ -123,6 +123,11 @@
             <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
         <dependency>
+            <groupId>stax-utils</groupId>
+            <artifactId>stax-utils</artifactId>
+            <version>${stax_utils.version}</version>
+        </dependency>
+        <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
             <version>${wsdl4j.version}</version>
