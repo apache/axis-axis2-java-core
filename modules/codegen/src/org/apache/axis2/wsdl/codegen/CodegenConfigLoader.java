@@ -5,9 +5,12 @@ import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -108,17 +111,29 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             //to be a comma seperated list with uri,packagename,uri,packagename...
             String value = ns2packageOption.getOptionValue();
             if (value != null) {
-                String valuepairs[] = value.split(",");
-                if (valuepairs.length > 0) {
-                    //put them in the hash map
-                    HashMap map = new HashMap(valuepairs.length);
-                    for (int i = 0; i < valuepairs.length; i++) {
-                        String values[] = valuepairs[i].split("=");
-                        if(values.length == 2) {
-                            map.put(values[0], values[1]);
+                // Try treating the values as a name=value pair separated by comma's
+                if (value.indexOf('=') != -1) {
+                    String valuepairs[] = value.split(",");
+                    if (valuepairs.length > 0) {
+                        //put them in the hash map
+                        HashMap map = new HashMap(valuepairs.length);
+                        for (int i = 0; i < valuepairs.length; i++) {
+                            String values[] = valuepairs[i].split("=");
+                            if (values.length == 2) {
+                                map.put(values[0], values[1]);
+                            }
                         }
+                        config.setUri2PackageNameMap(map);
                     }
-                    config.setUri2PackageNameMap(map);
+                } else {
+                    // Try loading the properties from the file specified
+                    try {
+                        Properties p = new Properties();
+                        p.load(new FileInputStream(value));
+                        config.setUri2PackageNameMap(p);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Unable to load file :" + value, e);
+                    }
                 }
             }
         }
