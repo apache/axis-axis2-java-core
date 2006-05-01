@@ -18,8 +18,10 @@ import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
 import org.apache.axis2.util.URLProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -27,11 +29,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import javax.xml.namespace.QName;
+
+
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Options Page lets the user change general settings on the code generation. It
@@ -104,6 +114,14 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	private WSDLPropertyReader reader;
 
 	private List serviceQNameList = null;
+	
+	private static final int EDITABLECOLUMN = 1;
+	
+	/**
+	 * A table to keep the namespace to 
+	 * package mappings
+	 */
+	private Table namespace2packageTable = null;
 
 	/**
 	 * Creates the page and initialize some settings
@@ -377,6 +395,63 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			};
 		});
 
+//		 Databinding
+		label = new Label(container, SWT.NULL);
+		label.setText(CodegenWizardPlugin
+				.getResourceString("page2.namespace2Pkg.caption"));
+		
+		//add a table to set namespace to package mapping
+		gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 3;
+        gd.verticalSpan = 5;
+        
+        namespace2packageTable = new Table(container,SWT.SINGLE|SWT.FULL_SELECTION);
+        namespace2packageTable.setLinesVisible(true);
+        namespace2packageTable.setHeaderVisible(true); 
+        namespace2packageTable.setEnabled(true);
+        namespace2packageTable.setLayoutData(gd);
+       
+        declareColumn(namespace2packageTable,
+        		200, //a default width until we adjust
+        		CodegenWizardPlugin
+				.getResourceString("page2.namespace.caption"));
+        declareColumn(namespace2packageTable,
+        		200,//a default width until we adjust
+        		CodegenWizardPlugin
+				.getResourceString("page2.package.caption"));
+        
+        namespace2packageTable.setVisible(true);
+        
+        // add the table editor
+        final TableEditor editor = new TableEditor(namespace2packageTable);
+        namespace2packageTable.addSelectionListener(new SelectionAdapter() {
+    		public void widgetSelected(SelectionEvent e) {
+    			// Clean up any previous editor control
+    			Control oldEditor = editor.getEditor();
+    			if (oldEditor != null) oldEditor.dispose();
+    	
+    			// Identify the selected row
+    			TableItem item = (TableItem)e.item;
+    			if (item == null) return;
+    	
+    			// The control that will be the editor must be a child of the Table
+    			Text newEditor = new Text(namespace2packageTable, SWT.NONE);
+    			newEditor.setText(item.getText(EDITABLECOLUMN));
+    			newEditor.addModifyListener(new ModifyListener() {
+    				public void modifyText(ModifyEvent me) {
+    					Text text = (Text)editor.getEditor();
+    					editor.getItem().setText(EDITABLECOLUMN, text.getText());
+    				}
+    			});
+    			newEditor.selectAll();
+    			newEditor.setFocus();
+    			editor.setEditor(newEditor, item, EDITABLECOLUMN);
+    		}
+    	});
+        
+        //adjust the width
+        //adjustColumnWidth(namespace2packageTable);
+       
 		/*
 		 * Check the state of server-side selection, so we can enable/disable
 		 * the serverXML checkbox button.
@@ -387,8 +462,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		 * is restored
 		 */
 		if (restoredFromPreviousSettings) {
-			populateServiceAndPort();
-
+			populateParamsFromWSDL();
 			selectDefaults();
 		}
 
@@ -398,6 +472,31 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 	}
 
+	/**
+	 * Adjust the column widths
+	 * @param table
+	 */
+//	private void adjustColumnWidth(Table table){
+//		 Point p = namespace2packageTable.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//	     int columns = table.getColumnCount();
+//	     for (int i=0;i<columns;i++){
+//	    	 table.getColumn(i).setWidth(p.x/columns);
+//	     }
+//	}
+	/**
+	 * A util method to create a new column
+	 * @param table
+	 * @param width
+	 * @param colName
+	 */
+	private void declareColumn(Table table, int width,String colName){
+        TableColumn column = new TableColumn(table,SWT.NONE);
+        column.setWidth(width);
+        column.setText(colName);
+        
+        
+    }
+	
 	private void selectDefaults() {
 		serviceNameCombo.select(settings.getInt(PREF_COMBO_SERVICENAME_INDEX));
 		// ports need to be renamed in order for correct default selection
@@ -413,7 +512,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * populate the service and the port from the WSDL this needs to be public
 	 * since the WSDLselection page may call this
 	 */
-	public void populateServiceAndPort() {
+	public void populateParamsFromWSDL() {
 		if (reader == null)
 			reader = new WSDLPropertyReader();
 		try {
@@ -453,6 +552,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				}
 
 				populatePackageName();
+				
+				//populate the namespacess
+			    loadNamespaces(reader.getDefinitionNamespaceMap());
 			}
 		} catch (Exception e) {
 			// disable the combo's
@@ -492,6 +594,24 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	}
 
 	/**
+	 * Loads the namespaces
+	 * @param namespaceMap
+	 */
+	private void loadNamespaces(Map namespaceMap){
+		Iterator namespaces = namespaceMap.values().iterator();
+		namespace2packageTable.removeAll();
+        TableItem[] items = new TableItem[namespaceMap.size()]; // An item for each field
+        int i = 0;
+        while(namespaces.hasNext()){
+           items[i] = new TableItem(namespace2packageTable, SWT.NONE);
+           items[i].setText(0,(String)namespaces.next());
+           i++;
+        }
+        namespace2packageTable.setVisible(true);
+		
+	}
+	
+	/**
 	 * Fill the combo with proper language names
 	 * 
 	 */
@@ -510,7 +630,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	private void fillLanguageCombo() {
 
 		languageSelectionComboBox.add(JAVA);
-		languageSelectionComboBox.add(C_SHARP);
+		//since we have not looked at C# support seriously
+		//for a long time, we'll just leave it out
+		//languageSelectionComboBox.add(C_SHARP);
 
 		languageSelectionComboBox.select(0);
 	}
@@ -650,7 +772,31 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getGenerateAll() {
 		return this.generateAllCheckBoxButton.getSelection();
+	}
+	
+	/**
+	 * get the package to namespace mappings
+	 * @return
+	 */
+	public String getNs2PkgMapping(){
+		String returnList="";
+		TableItem[] items = namespace2packageTable.getItems();
+		String packageValue; 
+		for (int i=0;i<items.length;i++){
+			packageValue = items[i].getText(1);
+			if (packageValue!=null && !"".equals(packageValue)){
+				returnList = returnList +
+				             ("".equals(returnList)?"":",") +
+				             items[i].getText(0)+ "=" + packageValue;
+			}
+			
+		}
+		return "".equals(returnList)?null:returnList;
 	}
 }

@@ -204,7 +204,8 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                          									wsdlSelectionPage.getFileName(),
                          									optionsPage.getPackageName(),
                          									optionsPage.getSelectedLanguage(),
-                         									outputPage.getOutputLocation());
+                         									outputPage.getOutputLocation(),
+                         									optionsPage.getNs2PkgMapping());
                  CodeGenConfiguration codegenConfig = new CodeGenConfiguration(service, optionsMap);
                  //set the baseURI
                  codegenConfig.setBaseURI(generator.getBaseUri(wsdlSelectionPage.getFileName()));
@@ -380,7 +381,7 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
      *
      */
     public void populateOptions(){
-    	optionsPage.populateServiceAndPort();
+    	optionsPage.populateParamsFromWSDL();
     }
     
     public void setDefaultNamespaces(String fullyQualifiedClassName){

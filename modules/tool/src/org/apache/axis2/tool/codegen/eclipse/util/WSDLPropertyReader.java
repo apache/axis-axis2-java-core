@@ -33,8 +33,17 @@ public class WSDLPropertyReader {
 		wsdlDefinition = reader.readWSDL(filepath); 
 	}
 	
-	//get the default package derived by the targetNamespace
+	/**
+	 * Returns the namespace map from definition
+	 * @return
+	 */
+	public Map getDefinitionNamespaceMap(){
+		return wsdlDefinition.getNamespaces();
+	}
 	
+	/**
+	 * get the default package derived by the targetNamespace
+	 */
 	public String packageFromTargetNamespace(){
 		return  URLProcessor.makePackageName(wsdlDefinition.getTargetNamespace());
 		

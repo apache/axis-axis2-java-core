@@ -61,7 +61,8 @@ public class WSDL2JavaGenerator {
             		  String WSDLURI,
             		  String packageName,
             		  String selectedLanguage,
-            		  String outputLocation
+            		  String outputLocation,
+            		  String namespace2packageList
             		  )
     {
        Map optionMap = new HashMap();
@@ -127,6 +128,12 @@ public class WSDL2JavaGenerator {
 	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, new CommandLineOption(
 	    		   CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
        }
+       //ns2pkg mapping
+       if (namespace2packageList!= null){
+	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, new CommandLineOption(
+	    		   CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, getStringArray(namespace2packageList)));
+       }
+       
        return optionMap;
        
     }
