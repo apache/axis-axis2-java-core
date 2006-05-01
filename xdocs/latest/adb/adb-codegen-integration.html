@@ -51,11 +51,15 @@ and their descriptions.</p>
       <td>-ss (server side)</td>
       <td>wrapClasses=false,writeClasses=true</td>
     </tr>
+   <tr>
+      <td>-u (unwrap classes)</td>
+      <td>wrapClasses=false,writeClasses=true</td>
+    </tr>
   </tbody>
 </table>
 
 <p>If the users want to override these settings manually, they need to use
-the following parameters with the command line (prefixed with -E)</p>
+the following parameters in the command line (prefixed with -E)</p>
 
 <table border="1">
   <caption></caption>
@@ -82,14 +86,16 @@ the following parameters with the command line (prefixed with -E)</p>
 <p></p>
 
 <p>Note that these parameters have no relevant long names and MUST be
-prefixed with a -E to be processed bt the code generator. For example</p>
+prefixed with a -E to be processed by the code generator. For example</p>
 <pre>WSDL2Java .... -Er true</pre>
 <a name="remember"></a>
 
 <h2>Things to Remember</h2>
 <ol>
   <li>SimpleDBExtension is made to process requests only when the databinding
-    framework is specified as ADB (using the switch -d adb )</li>
+    framework is specified as ADB (using the switch -d adb ). In the most
+    recent release, the default has been set as ADB and hence if the -d
+    option is missing then the databinding framework will be ADB.</li>
 </ol>
 <hr>
 </body>

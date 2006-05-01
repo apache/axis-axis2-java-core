@@ -15,8 +15,8 @@
 
 <p>This document aims to provide the architectural overview of the Axis2
 Databinding Framework (referred to as ADB from here onwards) and be a guide
-to anyone who wants to use and modify ADB. The information provided is
-categorized under the following topics.</p>
+to anyone who wants to use and modify ADB. The information is presented under
+the following topics.</p>
 
 <h2>Content</h2>
 <ul>
@@ -35,13 +35,13 @@ categorized under the following topics.</p>
       <li><a href="#example">An Example!</a></li>
     </ul>
   </li>
-  <li><a href="#more">Want to Learn More?</a></li>
   <li><a href="#limitation">Known Limitations</a></li>
+  <li><a href="#more">Want to Learn More?</a></li>
 </ul>
 
 <h2><a name="intro">Introduction</a></h2>
 
-<p>The objective of the Axis2Databinding framework is to provide a
+<p>The objective of the Axis2 Databinding framework is to provide a
 lightweight and simple schema compiler/ Java bean generator for Axis2. By no
 means it's to be a fully functional schema compiler like XMLBeans. Note that
 ADB is written in a fashion that allows it to be used as a stand-alone schema
@@ -72,7 +72,7 @@ default type mapper by overriding the property setting.</p>
 <p>As explained in the previous section, the schema compiler depends on the
 WS-Commons XmlSchema library. The XSLT transformations are dependent on the
 JVM's DOMimplementation (either crimson or xerces) which means that the
-underlying JVM should be 1.4 or higher. Apart from that ADB has no special
+underlying JVM should be 1.4 or higher. Apart from that ADB has no
 dependencies on any other special jar files. The code for the schema compiler
 is completely in the <strong>org.apache.axis2.schema.*</strong> package. This
 package resides in the codegen module of the Axis2 source tree.</p>
@@ -97,20 +97,25 @@ package resides in the codegen module of the Axis2 source tree.</p>
 </ol>
 
 <p>The easiest way to obtain the ADB binaries is to run the maven build for
-the codegen module. This will generate the codegen-{$version}.jar inside the
-target folder which is directly usable when the ADB schema compiler is
-required.</p>
-<a name="code_gen"></a>
+the codegen module. This will generate the
+<strong>axis2-codegen-{$version}.jar</strong> inside the target folder which
+is directly usable when the ADB schema compiler is required.</p>
+
+<p>The runtime dependancies for the ADB generated classes is in the Axis2 ADB
+module. Hence to compile and work with the generated classes the
+<strong>axis2-adb-{$version}.jar</strong> needs to be in the classpath apart
+from other dependancies like the StAX utilities.</p>
+
+<p><a name="code_gen"></a></p>
 
 <h2>Invoking the ADB Code Generator</h2>
-<a name="schema_compiler"></a>
 
 <h3>As a Standalone Schema Compiler</h3>
 
-<p>ADB comes with a mainclass XSD2Java that allows the schemas to be compiled
-just by giving the schema file reference.This main class is pretty much
-primitive and does not provide much control over the code generation process.
-This is bound to improve in the near future.</p>
+<p>ADB comes with a main class XSD2Java that allows the schemas to be
+compiled just by giving the schema file reference.This main class is pretty
+much primitive and does not provide much control over the code generation
+process. This is bound to improve in the near future.</p>
 
 <p>Code generator accepts the following parameters</p>
 <ol>
@@ -150,7 +155,8 @@ important classes and methods of the Schema compiler are as follows.</p>
 <p>For a comprehensive code sample in invoking the schema compiler through
 the API, the following classes would be helpful. One would also need an
 understanding of the generation modes of the ADB schema compiler when using
-it through the API.</p>
+it through the API. Hence the following section includes a brief description
+of the generation modes .</p>
 <ul>
   <li><strong>org.apache.axis2.schema.XSD2Java</strong></li>
   <li><strong>org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension</strong></li>
@@ -168,7 +174,7 @@ classes.</p>
     writing the classes but provides a map of DOM document objects that
     contains the model for the databinding class. The implementers are free
     to use the models for their needs. The Axis2 codegen engine parses these
-    documents with the an XSLT parser to create the necessary code.</p>
+    documents within its own XSLT parser to create the necessary code.</p>
     <p>Integrated mode is supposed to be used by the tool builders.</p>
   </li>
   <li><strong>Wrapped Mode</strong>
@@ -244,17 +250,18 @@ xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org
 <p>For comprehension let us consider the expanded mode for the code
 generator. Unless specifically mentioned, the rest of this document assumes
 that the expanded mode of the code generation is used. This particular schema
-generates the following two classes in the designated package. This package
-is derived from the target namespace of the schema.</p>
+generates the following two classes in the designated package, which in this
+case would be <strong>org.soapinterop.types</strong>. This package is derived
+from the target namespace of the schema.</p>
 <ol>
-  <li>myElement.java</li>
+  <li>MyElement.java</li>
   <li>SOAPStruct.java</li>
 </ol>
 
 <p>As explained earlier, SOAPStruct refers to the complexType. MyElement is
 the class that refers to the element. Just as expected, the SOAPStruct bean
-has getters and Setters for varString, varInt and varFloat which are String,
-int and float respectively. myElement on the other hand has a single field
+has getters and setters for varString, varInt and varFloat which are String,
+int and float respectively. MyElement on the other hand has a single field
 representing the SOAPStruct object that it encapsulates.</p>
 
 <p>The most important aspect of the generated code is that it encapsulates
@@ -270,10 +277,12 @@ work, the generated beans implement the
     this particular object. However there is a subtle difference between
     element based classes and complexType based classes</p>
     <ol>
-      <li>An element based bean class (like myElement.java in the example)
-        will ignore the passed in QName. Instead of using the passed in QName
-        it'll utilize it's own QName which is embedded in the class under the
-        constant MY_QNAME, during the code generation.</li>
+      <li>An element based bean class (like MyElement.java in the example)
+        will <strong><em>ignore the passed in QName</em></strong>. Instead of
+        using the passed in QName it'll utilize it's own QName which is
+        embedded in the class under the constant MY_QNAME, during the code
+        generation. Hence it is usual to call getPullparser with a null for
+        the elements.</li>
       <li>A ComplexType based bean class(like SOAPStruct.java in the example)
         will use the passed in QName to return an instance of the
         ADBpullparser. This will effectively wrap the elements inside with an
@@ -290,7 +299,11 @@ work, the generated beans implement the
     SOAPStruct the method looks like
     <pre>public static SOAPStruct 
                 parse(javax.xml.stream.XMLStreamReader reader) 
-                throws java.lang.Exception </pre>
+                throws java.lang.Exception</pre>
+    <p>Also note that the above parse method is available in the
+    <strong>Factory</strong> class generated into the relevant top level
+    class.Hence one will have to get the static Factory instance before calling the parse methods</p>
+    
   </li>
 </ul>
 <a name="example"></a>
@@ -306,11 +319,11 @@ work, the generated beans implement the
 
 <p>Enthusiastic readers might already have figured out that this piece of XML
 complies to the Schema mentioned above. The following piece of code shows how
-to build a populated instance of myElement with this fragment of XML</p>
+to build a populated instance of MyElement with this fragment of XML</p>
 <pre>XMLStreamReader reader = XMLInputFactory.newInstance().
                                 createXMLStreamReader(
                                         new ByteArrayInputStream(xmlString.getBytes()));
-myElement elt = myElement.parse(reader);</pre>
+MyElement elt = MyElement.parse(reader);</pre>
 
 <p>Although this example takes on the tedious effort of creating a reader out
 of the String, inside the Axis2 environment an XMLStreamReader can be
@@ -324,26 +337,34 @@ method to create an OMElement</p>
 OMElement omElt =  new StAXOMBuilder(reader).getDocumentElement();</pre>
 
 <p>That's all to it! If you are interested in learning more on ADB the
-following documents may also be helpful</p>
-<a name="more"></a>
-
-<h2>Want to Learn More?</h2>
-<ul>
-  <li><a href="adb-tweaking.html">Tweaking the ADB Code Generator</a>- explains available mechanisms to extend ADB and possibly adopt it to compile schemas to support other languages.</li>
-  <li><a href="adb-codegen-integration.html">ADB and Axis2
-  Integration</a></li>
-</ul>
+following documents may also be helpful. However be sure to check the
+limitations section that follows if you are planning to use ADB for something
+serious.</p>
 <a name="limitation"></a>
 
 <h2>Known Limitations</h2>
-ADB is meant to be a 'Simple' databinding framework and was not meant to
+
+<p>ADB is meant to be a 'Simple' databinding framework and was not meant to
 compile all types of schemas. The following limitations are the most
-highlighted.
+highlighted.</p>
 <ol>
-  <li>Complex Extensions and Restrictions are not supported.</li>
-  <li>Choice (Particle) is not supported</li>
-  <li>SimpleType Unions are not supported</li>
+  <li>Complex Extensions and Restrictions, Simple Extensions and Restrictions
+    are not supported.</li>
+  <li>xsi:type based deserialization is not supported. Hence extension based
+    structures that use xsi:type attribute may fail</li>
 </ol>
+
+<p><a name="more"></a></p>
+
+<h2>Want to Learn More?</h2>
+<ul>
+  <li><a href="adb-tweaking.html">Tweaking the ADB Code Generator</a>-
+    explains available mechanisms to extend ADB and possibly adopt it to
+    compile schemas to support other languages.</li>
+  <li><a href="adb-codegen-integration.html">ADB and Axis2 Integration</a> -
+    explains how the ADB schema compiler was attached to the Axis2
+  framework</li>
+</ul>
 <hr>
 </body>
 </html>
