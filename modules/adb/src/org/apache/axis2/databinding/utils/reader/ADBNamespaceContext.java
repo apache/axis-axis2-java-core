@@ -72,8 +72,8 @@ public class ADBNamespaceContext implements NamespaceContext {
 
     public String getPrefix(String uri) {
         //do the corrections as per the javadoc
-        if (uriStack.contains(uri)){
-            int index = uriStack.indexOf(uri);
+        int index = uriStack.indexOf(uri);
+        if (index != -1){
             return (String)prefixStack.get(index);
         }
 
