@@ -626,7 +626,7 @@ public class AxisConfiguration extends AxisDescription {
         notifyObservers(AxisEvent.SERVICE_STOP, service);
     }
 
-    public void stratService(String serviceName) throws AxisFault {
+    public void startService(String serviceName) throws AxisFault {
         AxisService service = (AxisService) allservices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
