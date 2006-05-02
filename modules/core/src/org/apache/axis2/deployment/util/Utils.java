@@ -25,6 +25,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -171,7 +172,8 @@ public class Utils {
                 serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
-        axisService.addSchema(schemaGenerator.generateSchema());
+        Collection schemas = schemaGenerator.generateSchema();
+        axisService.addSchema(schemas);
 
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();

@@ -106,7 +106,7 @@ public class AxisMessage extends AxisDescription {
                     Object item = scheamItms.next();
                     if (item instanceof XmlSchemaElement) {
                         XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
-                        if (xmlSchemaElement.getName().equals(getElementQName().getLocalPart())) {
+                        if (xmlSchemaElement.getQName().equals(getElementQName())) {
                             return xmlSchemaElement;
                         }
                     }

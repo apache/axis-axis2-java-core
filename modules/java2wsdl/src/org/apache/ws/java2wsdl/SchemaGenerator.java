@@ -238,6 +238,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
         // adding this type to the table
         QName elementName = new QName(this.schemaTargetNameSpace, eltOuter
                 .getName(), this.schema_namespace_prefix);
+        eltOuter.setQName(elementName);
         typeTable.addComplexSchema(methodName, elementName);
         xmlSchema.getItems().add(eltOuter);
         xmlSchema.getElements().add(elementName, eltOuter);

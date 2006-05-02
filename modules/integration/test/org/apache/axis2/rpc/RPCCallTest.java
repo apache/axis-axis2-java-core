@@ -21,8 +21,8 @@ import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -35,11 +35,9 @@ import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -48,7 +46,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
@@ -93,10 +90,10 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
     protected void setUp() throws Exception {
         String className = "org.apache.axis2.rpc.RPCServiceClass";
-        service = new AxisService(serviceName.getLocalPart());
+        service = AxisService.createService(
+                className, UtilServer.getConfigurationContext().getAxisConfiguration());
+        service.setName("EchoXMLService");
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS,
-                className));
         UtilServer.start();
         UtilServer.deployService(service);
     }
@@ -143,7 +140,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 new EndpointReference("http://127.0.0.1:"
                         + (UtilServer.TESTING_PORT)
                         + "/axis2/services/EchoXMLService/" + opName);
-        operationName = new QName("http://org.apache.axis2/xsd", opName, "req");
+        operationName = new QName("http://rpc.axis2.apache.org/xsd", opName, "req");
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new RPCMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
@@ -675,7 +672,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
     public void testomElementArray() throws AxisFault {
         configureSystem("omElementArray");
-        String str = "<req:omElementArray xmlns:req=\"http://org.apache.axis2/xsd\">\n" +
+        String str = "<req:omElementArray xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
                 "    <arg0><abc>vaue1</abc></arg0>\n" +
                 "    <arg0><abc>vaue2</abc></arg0>\n" +
                 "    <arg0><abc>vaue3</abc></arg0>\n" +
@@ -708,7 +705,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
     }
 
     private OMElement getpayLoad() throws AxisFault {
-        String str = "<req:handleArrayList xmlns:req=\"http://org.apache.axis2/xsd\">\n" +
+        String str = "<req:handleArrayList xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
                 "  <arg0>\n" +
                 "    <item0>abc</item0>\n" +
                 "    <item0>def</item0>\n" +

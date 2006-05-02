@@ -5,9 +5,11 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
 
@@ -71,8 +73,14 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
 
+           AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            String messageNameSpace = null;
+            if (inaxisMessage != null) {
+                messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
+            }
+
             OMNamespace namespace = methodElement.getNamespace();
-            if (namespace == null || !service.getSchematargetNamespace().equals(namespace.getName())) {
+            if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
                 throw new AxisFault("namespace mismatch require " +
                         service.getSchematargetNamespace() +
                         " found " + methodElement.getNamespace().getName());

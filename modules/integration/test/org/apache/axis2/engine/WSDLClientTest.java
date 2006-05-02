@@ -58,9 +58,9 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
             ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
                     new QName("http://ws.apache.org/axis2", "EchoXMLService"),
                     "EchoXMLServiceSOAP11port0");
-            OMElement payload = TestingUtils.createDummyOMElement();
+            OMElement payload = TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
             OMElement response = serviceClient.sendReceive(
-                    new QName("http://org.apache.axis2/xsd", "echoOM"), payload);
+                    new QName("http://engine.axis2.apache.org/xsd", "echoOM"), payload);
             assertNotNull(response);
             String textValue = response.getFirstElement().getFirstElement().getText();
             assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");

@@ -27,10 +27,13 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -75,11 +78,16 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
+            AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            String messageNameSpace = null;
+            if (inaxisMessage != null) {
+                messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
+            }
 
             OMNamespace namespace = methodElement.getNamespace();
-            if (namespace == null || !service.getSchematargetNamespace().equals(namespace.getName())) {
+            if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
                 throw new AxisFault("namespace mismatch require " +
-                        service.getSchematargetNamespace() +
+                        messageNameSpace +
                         " found " + methodElement.getNamespace().getName());
             }
             String methodName = op.getName().getLocalPart();
@@ -102,7 +110,12 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response
-            OMNamespace ns = fac.createOMNamespace(service.getSchematargetNamespace(),
+            AxisMessage outaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (inaxisMessage != null) {
+                messageNameSpace = outaxisMessage.getElementQName().getNamespaceURI();
+            }
+
+            OMNamespace ns = fac.createOMNamespace(messageNameSpace,
                     service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;

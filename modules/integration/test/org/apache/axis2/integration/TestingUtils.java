@@ -34,6 +34,18 @@ public class TestingUtils {
         return method;
     }
 
+    public static OMElement createDummyOMElement(String nameSpace) {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = fac.createOMNamespace(nameSpace, "ns1");
+        OMElement method = fac.createOMElement("echoOM", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.addChild(
+                fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
+        method.addChild(value);
+        return method;
+    }
+
+
     public static void campareWithCreatedOMElement(OMElement element) {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);

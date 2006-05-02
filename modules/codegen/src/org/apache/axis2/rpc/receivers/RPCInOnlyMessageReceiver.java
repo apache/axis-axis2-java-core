@@ -1,11 +1,14 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
 
@@ -45,7 +48,14 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
 
-            if (!service.getSchematargetNamespace().equals(methodElement.getNamespace().getName())) {
+            AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            String messageNameSpace = null;
+            if (inaxisMessage != null) {
+                messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
+            }
+
+            OMNamespace namespace = methodElement.getNamespace();
+            if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
                 throw new AxisFault("namespace mismatch require " +
                         service.getSchematargetNamespace() +
                         " found " + methodElement.getNamespace().getName());
