@@ -142,7 +142,7 @@
     </dependency>
     <dependency>
       <groupId>ws-commons</groupId>
-      <artifactId>policy</artifactId>
+      <artifactId>neethi</artifactId>
       <version>${policy.version}</version>
     </dependency>
     <dependency>

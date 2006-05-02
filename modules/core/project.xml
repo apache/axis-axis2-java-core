@@ -184,7 +184,7 @@
         <!-- Added this to support WS Policy in Axis2 -->
         <dependency>
             <groupId>ws-commons</groupId>
-            <artifactId>policy</artifactId>
+            <artifactId>neethi</artifactId>
             <version>${policy.version}</version>
             <properties>
                 <module>true</module>
