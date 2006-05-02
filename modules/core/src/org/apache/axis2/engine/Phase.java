@@ -357,7 +357,8 @@ public class Phase implements Handler {
      * @throws org.apache.axis2.AxisFault
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
-        if (log.isDebugEnabled()) {
+        boolean isDebugEnabled = log.isDebugEnabled();
+        if (isDebugEnabled) {
             log.debug("Checking pre-condition for Phase \"" + phaseName + "\"");
         }
 
@@ -367,14 +368,16 @@ public class Phase implements Handler {
             checkPreconditions(msgctx);
         }
 
-        if (log.isDebugEnabled()) {
+        if (isDebugEnabled) {
             log.debug("Invoking phase \"" + phaseName + "\"");
         }
 
         while (currentIndex < handlers.size()) {
             Handler handler = (Handler) handlers.get(currentIndex);
 
-            log.debug("Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+            if (isDebugEnabled) {
+                log.debug("Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+            }
             handler.invoke(msgctx);
 
             if (msgctx.isPaused()) {
@@ -385,7 +388,7 @@ public class Phase implements Handler {
             msgctx.setCurrentPhaseIndex(currentIndex);
         }
 
-        if (log.isDebugEnabled()) {
+        if (isDebugEnabled) {
             log.debug("Checking post-conditions for phase \"" + phaseName + "\"");
         }
 
