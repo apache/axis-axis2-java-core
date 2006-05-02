@@ -89,17 +89,18 @@ it from the mail server side. <br>
         // Start the default mail listener. It will starting poling for mail
         // using the configuration from the XML file.
         SimpleMailListener ml = new SimpleMailListener();
-        ml.init(configContext, configContext.getAxisConfiguration()
-                .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+        ml.init(configContext,
+                configContext.getAxisConfiguration().getTransportIn(
+                        new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
 
+        private QName serviceName = new QName("EchoXMLService");
+        private QName operationName = new QName("echoOMElement");
+    
         // Setup a service that will echo what we send to the server.
-        AxisService axisService = Utils.createSimpleService(serviceName,
-                Echo.class.getName(), new QName("echoOMElement"));
-        configContext.getAxisConfiguration().addService(axisService);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
-        ServiceContext serviceContext = configContext
-                .createServiceContext(new QName("EchoXMLService"));</pre>
+        AxisService service = Utils.createSimpleService(serviceName, Echo.class
+                .getName(), operationName);
+        serverConfigContext.getAxisConfiguration().addService(service);</pre>
 </source>
 <p>This code sets up your Axis2 server working through mail, with a single
 service. If you need to have a look under the hood check out the MailServer
@@ -109,57 +110,60 @@ and UtilsMailServer classes.</p>
 call the axisService that was setup on the previous code listing.</p>
 <source><pre>        ConfigurationContext configContext = UtilsMailServer
                 .createClientConfigurationContext();
-        AxisService axisService = new AxisService(serviceName);
-        AxisOperation axisOperation = new AxisOperation(operationName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
+        AxisOperation axisOperation = new OutInAxisOperation();
+        axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-                public void receive(MessageContext messgeCtx) throws AxisFault {
-                        envelope = messgeCtx.getEnvelope();
-                }
+            public void receive(MessageContext messageCtx) {
+                envelope = messageCtx.getEnvelope();
+            }
         });
-        axisService.addOperation(axisOperation);
-        configContext.getAxisConfiguration().addService(axisService);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
-        ServiceContext serviceContext = configContext
-                .createServiceContext(serviceName);
-                
+        service.addOperation(axisOperation);
+        configContext.getAxisConfiguration().addService(service);
+        ServiceContext serviceContext = new ServiceGroupContext(configContext,
+        		(AxisServiceGroup) service.getParent()).getServiceContext(service);
+
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
-        // Create a callback to set to the axisService invocation.
-        Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
-                        try {
-                                result.getResponseEnvelope().serialize(
-                                        XMLOutputFactory.newInstance()
-                                                .createXMLStreamWriter(System.out));
-                        } catch (XMLStreamException e) {
-                                reportError(e);
-                        } finally {
-                                finish = true;
-                        }
-                }
-                public void reportError(Exception e) {
-                        log.info(e.getMessage());
-                        finish = true;
-                }
-         };
 
-        ServiceClient sender = new ServiceClient(configContext, axisService);
+        Callback callback = new Callback() {
+            public void onComplete(AsyncResult result) {
+                try {
+                    result.getResponseEnvelope().serializeAndConsume(
+                            XMLOutputFactory.newInstance()
+                                    .createXMLStreamWriter(System.out));
+                } catch (XMLStreamException e) {
+                    onError(e);
+                } finally {
+                    finish = true;
+                }
+            }
+
+            public void onError(Exception e) {
+                log.info(e.getMessage());
+                finish = true;
+            }
+        };
+
+        ServiceClient sender = new ServiceClient(configContext, service);
         sender.setOptions(options);
-        options.setTo(targetEPR);
-        // Call the service and start poling for the reply from the server.
-        sender.sendReceiveNonBlocking(operationName.getLocalPart(), createEnvelope(), callback);
+        //options.setTo(targetEPR);
+        sender.sendReceiveNonBlocking(operationName, createEnvelope(), callback);
 
         int index = 0;
         while (!finish) {
-                Thread.sleep(1000);
-                index++;
-                if (index &gt; 10) {
-                        throw new AxisFault(
-                                "Server is being shutdown as the Async response is taking too long.");
-                }
-        }</pre>
+            Thread.sleep(1000);
+            index++;
+            if (index > 10) {
+                throw new AxisFault(
+                        "Server was shutdown as the async response is taking too long to complete.");
+            }
+        }
+
+    }</pre>
 </source>
 <p>This will call the service that was setup on the server and will poll the
 mail server till the response is received.Thats all there is to it. Please do
@@ -173,8 +177,8 @@ as a server and the other will act as the client. For the time being we will
 use server@somewhere.org and client@somewhere.org as the server and the
 client email addresses. Now that we have the email addresses you will have to
 set up the client and the server with Mail Transport <a
-href="http://ws.apache.org/axis2/mail-transport.html"
-target="_blank">introduction document</a>.</p>
+href="mail-configuration.html"
+target="_blank">configuration document</a>.</p>
 
 <p>When calling the generic mail server the client side code will remain the
 same and there will be some modification to the server-side code.</p>
@@ -184,22 +188,24 @@ same and there will be some modification to the server-side code.</p>
         // address to listen to from the configuration file.
         File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext configContextbuilder
+        ConfigurationContext configContext = configContextbuilder
                 .buildConfigurationContext(file.getAbsolutePath());
 
-        // Startup the default mail server and start listening to a 
-        // mail address.
+        // Start the default mail listener. It will starting poling for mail
+        // using the configuration from the XML file.
         SimpleMailListener ml = new SimpleMailListener();
-        ml.init(configContext, configContext.getAxisConfiguration()
-                .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+        ml.init(configContext,
+                configContext.getAxisConfiguration().getTransportIn(
+                        new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
 
-        // Setup a simple service.
-        AxisService axisService = Utils.createSimpleService(serviceName,
-                Echo.class.getName(), operationName);
-        configContext.getAxisConfiguration().addService(axisService);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
-        ServiceContext serviceContext = configContext.createServiceContext(serviceName);</pre>
+        private QName serviceName = new QName("EchoXMLService");
+        private QName operationName = new QName("echoOMElement");
+    
+        // Setup a service that will echo what we send to the server.
+        AxisService service = Utils.createSimpleService(serviceName, Echo.class
+                .getName(), operationName);
+        serverConfigContext.getAxisConfiguration().addService(service);</pre>
 </source>
 <p>Note that a separate ConfigurationContext needs to be created and used.</p>
 <a name="mailet"></a>

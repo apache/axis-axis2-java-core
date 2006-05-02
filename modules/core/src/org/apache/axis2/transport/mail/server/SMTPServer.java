@@ -90,6 +90,7 @@ public class SMTPServer extends Thread {
             synchronized (this) {
                 running = false;
                 ss.close();
+                ss = null;
             }
         } catch (IOException e) {
             throw new AxisFault(e);

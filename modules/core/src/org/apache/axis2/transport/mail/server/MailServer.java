@@ -29,13 +29,6 @@ public class MailServer {
             throws AxisFault {
         this.configurationContext = configurationContext;
 
-        try {
-            log.info("Sleeping for a bit to let the engine start up.");
-            Thread.sleep(2000);
-        } catch (InterruptedException e1) {
-            log.error(e1);
-        }
-
         st = new Storage();
 
         // Start up the two servers and lets have some fun. - CT
@@ -43,6 +36,12 @@ public class MailServer {
         smtpServer.start();
         pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
+        try {
+            log.info("Sleeping for a bit to let the mail server start up.");
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            log.error(e1);
+        } 
     }
 
     public MailServer(String dir, int popPort, int smtpPort) throws AxisFault {
@@ -66,6 +65,12 @@ public class MailServer {
         smtpServer.start();
         pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
+        try {
+            log.info("Sleeping for a bit to let the engine start up.");
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            log.error(e1);
+        }
     }
 
     public static void main(String args[]) {
@@ -94,5 +99,11 @@ public class MailServer {
     public void stop() throws AxisFault {
         smtpServer.stopServer();
         pop3Server.stopServer();
+        try {
+            log.info("Giving some time for the sockets to close.");
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            log.error(e1);
+        }
     }
 }
