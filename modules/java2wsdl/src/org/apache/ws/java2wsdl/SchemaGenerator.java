@@ -1,31 +1,14 @@
 package org.apache.ws.java2wsdl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.*;
 import org.apache.ws.java2wsdl.bytecode.MethodTable;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JParameter;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
+import org.codehaus.jam.*;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -75,6 +58,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private String schema_namespace_prefix;
 
     private Class clazz;
+
+    private ArrayList excludeMethods = new ArrayList();
 
     public SchemaGenerator(ClassLoader loader, String className,
                            String schematargetNamespace, String schematargetNamespacePrefix)
@@ -147,10 +132,13 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 JMethod jMethod = methods[i];
                 // no need to think abt this method , since that is system
                 // config method
-                if (jMethod.getSimpleName().equals("init")
-                        || "setOperationContext".equals(jMethod.getSimpleName())
-                        || "destroy".equals(jMethod.getSimpleName()))
+                if (excludeMethods.contains(jMethod.getSimpleName())) {
                     continue;
+                }
+//                if (jMethod.getSimpleName().equals("init")
+//                        || "setOperationContext".equals(jMethod.getSimpleName())
+//                        || "destroy".equals(jMethod.getSimpleName()))
+//                    continue;
                 if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
                     throw new Exception(
                             " Sorry we don't support methods overloading !!!! ");
@@ -221,10 +209,13 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private void generateWrapperElements(JMethod methods[]) throws Exception {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
-            if (method.getSimpleName().equals("init")
-                    || method.getSimpleName().equals("setOperationContext")
-                    || method.getSimpleName().equals("destroy"))
+            if (excludeMethods.contains(method.getSimpleName())) {
                 continue;
+            }
+//            if (method.getSimpleName().equals("init")
+//                    || method.getSimpleName().equals("setOperationContext")
+//                    || method.getSimpleName().equals("destroy"))
+//                continue;
             if (!method.isPublic())
                 continue;
             generateWrapperElementforMethod(method);
@@ -417,7 +408,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
             xmlSchema.getElements().add(elemntName, eltOuter);
             eltOuter.setSchemaTypeName(complexType.getQName());
 
-           xmlSchema.getItems().add(complexType);
+            xmlSchema.getItems().add(complexType);
             xmlSchema.getSchemaTypes().add(elemntName, complexType);
 
             // adding this type to the table
@@ -463,14 +454,14 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         xmlSchema.getItems().add(importElement);
                         xmlSchema.getPrefixToNamespaceMap().
                                 put(generatePrefix(), typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
+                    }
                 }
             }
         }
     }
-    }
 
     private XmlSchema getXmlSchema(String packageName, String targetNamespace, String targetNamespacePrefix) {
-        XmlSchema xmlSchema ;
+        XmlSchema xmlSchema;
         // schema element that will hold this type i.e. schema element whose
         // targetnamespace
         // corresponds to this type's package
@@ -498,5 +489,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     private String generatePrefix() {
         return NAME_SPACE_PREFIX + prefixCount++;
-	}
+    }
+
+    public void setExcludeMethods(ArrayList excludeMethods) {
+        this.excludeMethods = excludeMethods;
+    }
 }

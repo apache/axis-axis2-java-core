@@ -29,10 +29,9 @@ public class SecondFrame extends JPanel implements ActionListener {
 
     JLabel lblLangauge;
     JComboBox cmbLan;
-    ButtonGroup cbg;
-    JRadioButton rdboth;
-    JRadioButton rdsyn;
-    JRadioButton rdasync;
+    JCheckBox serverside;
+    JCheckBox rdsyn;
+    JCheckBox rdasync;
     JLabel lbldbtype;
     JComboBox cmbdbtype;
     JLabel lblServiceName;
@@ -58,17 +57,13 @@ public class SecondFrame extends JPanel implements ActionListener {
         cmbLan.addItem("C#");
         add(cmbLan);
 
-        cbg = new ButtonGroup();
-        rdboth = new JRadioButton("Generate both sync and async", true);
-        cbg.add(rdboth);
-        add(rdboth);
+        serverside = new JCheckBox("Generate server side ", true);
+        add(serverside);
 
-        rdsyn = new JRadioButton("Generate sync only", false);
-        cbg.add(rdsyn);
+        rdsyn = new JCheckBox("Generate sync", false);
         add(rdsyn);
 
-        rdasync = new JRadioButton("Generate async only", false);
-        cbg.add(rdasync);
+        rdasync = new JCheckBox("Generate async", false);
         add(rdasync);
 
         lbldbtype = new JLabel("Select Databinding type");
@@ -143,11 +138,12 @@ public class SecondFrame extends JPanel implements ActionListener {
 
         if (rdasync.isSelected()) {
             codegenBean.setAsyncOnly(true);
-        } else if (rdsyn.isSelected()) {
+        }
+        if (rdsyn.isSelected()) {
             codegenBean.setSyncOnly(true);
-        } else {
-            codegenBean.setSyncOnly(false);
-            codegenBean.setAsyncOnly(false);
+        }
+        if (serverside.isSelected()) {
+            codegenBean.setServerSide(true);
         }
         codegenBean.setPackageName(txtPacakgeName.getText());
         codegenBean.setServiceName(cmbServiceName.getSelectedItem().toString());
@@ -207,7 +203,7 @@ class SecondFrameLayout implements LayoutManager {
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 32 , 208, 24);
+            c.setBounds(insets.left + 8, insets.top + 32, 208, 24);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {

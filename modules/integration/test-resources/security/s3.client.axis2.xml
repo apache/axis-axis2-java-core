@@ -32,8 +32,7 @@
     <!-- Scenario 3: Client's Configuration:END-->
 
 
-    <transportReceiver name="http">
-    </transportReceiver>
+
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>

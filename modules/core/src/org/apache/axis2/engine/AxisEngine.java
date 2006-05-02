@@ -464,9 +464,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void invoke
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void invoke(MessageContext   msgContext) throws AxisFault {
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
@@ -489,9 +487,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void resumeReceive
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void resumeReceive(MessageContext msgContext) throws AxisFault {
         //invoke the phases
         invoke(msgContext);
         //invoking the MR
@@ -509,9 +505,7 @@ public class AxisEngine {
      *
      * @param msgContext
      */
-    public void resumeSend
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void resumeSend(MessageContext   msgContext) throws AxisFault {
         //invoke the phases
         invoke(msgContext);
         //Invoking Tarnsport Sender
@@ -530,9 +524,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void receiveFault
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void receiveFault(MessageContext msgContext) throws AxisFault {
         log.info(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
@@ -546,9 +538,7 @@ public class AxisEngine {
         invoke(msgContext);
     }
 
-    public void resume
-            (MessageContext
-                    msgctx) throws AxisFault {
+    public void resume(MessageContext msgctx) throws AxisFault {
         msgctx.setPaused(false);
         if (msgctx.getFLOW() == MessageContext.IN_FLOW) {
             resumeReceive(msgctx);
@@ -568,9 +558,7 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public void send
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void send(MessageContext  msgContext) throws AxisFault {
 
         // find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
@@ -600,7 +588,6 @@ public class AxisEngine {
                         new TransportNonBlockingInvocationWorker(msgContext, sender));
             } else {
                 sender.invoke(msgContext);
-//                sender.cleanUp(msgContext);
             }
         }
     }
@@ -611,9 +598,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void sendFault
-            (MessageContext
-                    msgContext) throws AxisFault {
+    public void sendFault(MessageContext  msgContext) throws AxisFault {
         OperationContext opContext = msgContext.getOperationContext();
 
         // find and execute the Fault Out Flow Handlers
@@ -626,10 +611,10 @@ public class AxisEngine {
             invoke(msgContext);
         }
 
-        // TODO: Make this clearer - should we have transport senders and messagereceivers as Handlers?
         if (!msgContext.isPaused()) {
-
-            msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext().getAxisConfiguration().getOutFaultFlow().clone());
+            msgContext.setExecutionChain(
+                    (ArrayList) msgContext.getConfigurationContext()
+                            .getAxisConfiguration().getOutFaultFlow().clone());
             msgContext.setFLOW(MessageContext.OUT_FLOW);
             invoke(msgContext);
 
@@ -640,12 +625,12 @@ public class AxisEngine {
         }
     }
 
-    private String getSenderFaultCode
-            (OMNamespace
-                    soapNamespace) {
+    private String getSenderFaultCode(OMNamespace  soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getName())
-                ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP12Constants.FAULT_CODE_SENDER
-                : SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" + SOAP11Constants.FAULT_CODE_SENDER;
+                ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
+                + SOAP12Constants.FAULT_CODE_SENDER
+                : SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
+                + SOAP11Constants.FAULT_CODE_SENDER;
     }
 
     /**
@@ -666,7 +651,6 @@ public class AxisEngine {
         public void run() {
             try {
                 sender.invoke(msgctx);
-//                sender.cleanUp(msgctx);
             } catch (Exception e) {
                 log.info(e.getMessage());
             }

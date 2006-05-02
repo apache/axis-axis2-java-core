@@ -11,7 +11,6 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
 
 /**
  * Utility methods for various clients to use.
@@ -72,20 +71,9 @@ public class ClientUtils {
                 }
             }
             if (msgCtxt.getAxisService() != null) {
-                AxisService service = msgCtxt.getAxisService();
-                Iterator itr = service.getEngagedModules().iterator();
-                boolean found = false;
-                while (itr.hasNext()) {
-                    AxisModule axisModule = (AxisModule) itr.next();
-                    if (axisModule.getName().getLocalPart().indexOf(Constants.MODULE_ADDRESSING) >= 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
+                if (!msgCtxt.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                     throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
                 }
-
             } else {
                 if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                     throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));

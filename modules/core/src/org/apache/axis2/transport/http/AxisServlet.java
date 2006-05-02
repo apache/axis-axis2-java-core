@@ -64,13 +64,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private transient ListingAgent agent;
 
 
-    protected MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext,
-                                                                MessageContext msgContext, HttpServletResponse httpServletResponse,
+    protected MessageContext createAndSetInitialParamsToMsgCtxt(MessageContext msgContext, HttpServletResponse httpServletResponse,
                                                                 HttpServletRequest httpServletRequest)
             throws AxisFault {
         msgContext = new MessageContext();
         msgContext.setConfigurationContext(configContext);
-        msgContext.setSessionContext((SessionContext) sessionContext);
         msgContext.setTransportIn(axisConfiguration.getTransportIn(new QName(Constants
                 .TRANSPORT_HTTP)));
         msgContext.setTransportOut(axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
@@ -83,6 +81,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, httpServletRequest.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+        msgContext.setProperty(Constants.HTTP_SERVLET_REQUEST, httpServletRequest);
 
         return msgContext;
     }
@@ -127,9 +126,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         OutputStream out = null;
 
         try {
-            Object sessionContext = getSessionContext(req);
+//            Object sessionContext = getSessionContext(req);
 
-            msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext, res, req);
+            msgContext = createAndSetInitialParamsToMsgCtxt(msgContext, res, req);
 
             // adding ServletContext into msgContext;
             msgContext.setProperty(Constants.SERVLET_CONTEXT, servletConfig.getServletContext());

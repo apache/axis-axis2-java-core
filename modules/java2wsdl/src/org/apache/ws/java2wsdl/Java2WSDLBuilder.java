@@ -1,10 +1,10 @@
 package org.apache.ws.java2wsdl;
 
-import java.io.OutputStream;
-import java.util.Collection;
-
 import org.apache.axiom.om.OMElement;
-import org.apache.ws.java2wsdl.utils.TypeTable;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -135,12 +135,17 @@ public class Java2WSDLBuilder {
     public void generateWSDL() throws Exception {
         SchemaGenerator sg = new SchemaGenerator(classLoader, className,
                 schemaTargetNamespace, schemaTargetNamespacePrefix);
+        ArrayList excludeOpeartion = new ArrayList();
+        excludeOpeartion.add("init");
+        excludeOpeartion.add("setOperationContext");
+        excludeOpeartion.add("destroy");
+        sg.setExcludeMethods(excludeOpeartion);
         Collection schemaCollection = sg.generateSchema();
         Java2OMBuilder java2OMBuilder = new Java2OMBuilder(sg.getMethods(),
-        		schemaCollection,
-        		sg.getTypeTable(),
+                schemaCollection,
+                sg.getTypeTable(),
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
-                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className).toString():targetNamespace,
+                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className).toString() : targetNamespace,
                 targetNamespacePrefix,
                 style,
                 use,

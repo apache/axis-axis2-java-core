@@ -2,18 +2,8 @@ package org.apache.ideaplugin.frames;
 
 import org.apache.axis2.tools.idea.Java2CodeFrame;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*
@@ -55,42 +45,42 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         setBounds(200, 200, dim.width, dim.height);
         Axi2PluginPageLayout customLayout = new Axi2PluginPageLayout();
 
-        getContentPane().setFont(new Font("Helvetica", Font.PLAIN, 12));
-        getContentPane().setLayout(customLayout);
+        setFont(new Font("Helvetica", Font.PLAIN, 12));
+        setLayout(customLayout);
 
         cbg = new ButtonGroup();
         service = new JRadioButton("Create a service archive", false);
         cbg.add(service);
-        getContentPane().add(service);
+        add(service);
 
         javawsdl = new JRadioButton("WSDL2Code codegenaration", false);
         cbg.add(javawsdl);
-        getContentPane().add(javawsdl);
+        add(javawsdl);
 
         butOK = new JButton("OK");
         butOK.addActionListener(this);
-        setResizable(false);
-        getContentPane().add(butOK);
+        //setResizable(false);
+        add(butOK);
 
         butCancle = new JButton("Cancel");
         butCancle.addActionListener(this);
-        getContentPane().add(butCancle);
+        add(butCancle);
 
         imglbl = new LogoPage();
-        getContentPane().add(imglbl);
-        setVisible(true);
-    }
+        add(imglbl);
 
+    }
 
     public void showUI() {
         pack();
+        this.setVisible(true);
         show();
     }
 
-    public static void main(String args[]) {
-        Axi2PluginPage window = new Axi2PluginPage();
-        window.showUI();
-    }
+//    public static void main(String args[]) {
+//        Axi2PluginPage window = new Axi2PluginPage();
+//        window.showUI();
+//    }
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -110,6 +100,10 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             }
         }
 
+    }
+
+    public JComponent getRootComponent() {
+        return this.getRootPane();
     }
 }
 

@@ -38,6 +38,9 @@ public class DependencyManager {
             throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
+            // We can not call classToLoad.getDeclaredMethed() , since there
+            //  can be insatnce where mutiple services extends using one class
+            // just for init and other reflection methods
             Method[] methods = classToLoad.getMethods();
 
             for (int i = 0; i < methods.length; i++) {
@@ -63,6 +66,9 @@ public class DependencyManager {
                                         ServiceContext serviceContext) throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
+             // We can not call classToLoad.getDeclaredMethed() , since there
+            //  can be insatnce where mutiple services extends using one class
+            // just for init and other reflection methods
             Method[] methods = classToLoad.getMethods();
 
             for (int i = 0; i < methods.length; i++) {
@@ -89,6 +95,9 @@ public class DependencyManager {
             Object obj = serviceContext.getProperty(ServiceContext.SERVICE_CLASS);
             if (obj != null) {
                 Class classToLoad = obj.getClass();
+                 // We can not call classToLoad.getDeclaredMethed() , since there
+            //  can be insatnce where mutiple services extends using one class
+            // just for init and other reflection methods
                 Method[] methods = classToLoad.getMethods();
 
                 for (int i = 0; i < methods.length; i++) {

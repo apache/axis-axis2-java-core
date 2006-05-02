@@ -188,14 +188,14 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                         Method method = methods[i];
                         OperationObj operationobj = new OperationObj(method.getName(),
                                 method.getReturnType().toString(),
-                                new Integer(method.getParameterTypes().length),new Boolean(true));
+                                new Integer(method.getParameterTypes().length),new Boolean(false));
                         operations.put(method.getName() ,operationobj);
                     }
                 }
 
                 ArchiveTableModel myModel = new ArchiveTableModel(operations);
                 JTable table = new JTable(myModel);
-                tablelbl = new JLabel("Select Operation you want to publish ") ;
+                tablelbl = new JLabel("Mark operation you do not want to publish ") ;
                 add(tablelbl);
                 tablelbl.setBounds(insets.left + 10, insets.top + 45, 400, 24);
 

@@ -1,12 +1,13 @@
 package org.apache.ideaplugin.plugin;
 
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import org.apache.ideaplugin.frames.Axi2PluginPage;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -39,8 +40,11 @@ public class Axis2PluginAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
-        Axi2PluginPage axis2lugin= new Axi2PluginPage();
-        axis2lugin.showUI();
+        Application application =
+                ApplicationManager.getApplication();
+        Axis2IdeaPlugin axis2component =
+                application.getComponent(Axis2IdeaPlugin.class);
+        axis2component.showTool();
     }
 
     public void update(AnActionEvent event) {
@@ -54,6 +58,5 @@ public class Axis2PluginAction extends AnAction {
             presentation.setIcon(myIcon);
         }
     }
-
 
 }

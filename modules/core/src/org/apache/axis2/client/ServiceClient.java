@@ -304,7 +304,9 @@ public class ServiceClient {
      * To remove all the headers in ServiceClient
      */
     public void removeHeaders() {
-        headers.clear();
+        if (headers != null) {
+            headers.clear();
+        }
     }
 
 

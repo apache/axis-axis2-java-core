@@ -1,6 +1,12 @@
 package org.apache.ideaplugin.plugin;
 
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurationException;
+import org.apache.ideaplugin.frames.Axi2PluginPage;
+
+import javax.swing.*;
+import javax.xml.stream.XMLInputFactory;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -19,18 +25,30 @@ import com.intellij.openapi.components.ApplicationComponent;
 *
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 24, 2005
- * Time: 10:18:36 AM
- */
-public class Axis2IdeaPlugin implements ApplicationComponent {
+public class Axis2IdeaPlugin implements ApplicationComponent, Configurable {
+    private Axi2PluginPage form;
+    private ImageIcon myIcon;
+
     /**
      * Method is called after plugin is already created and configured. Plugin can start to communicate with
      * other plugins only in this method.
      */
     public void initComponent() {
+        try {
+            XMLInputFactory.newInstance();
+        } catch (Exception e) {
+            //Fixing class loading issue
+        } catch (Throwable e) {
+            ////Fixing class loading issue
+        }
 
+        if (form == null) {
+            form = new Axi2PluginPage();
+        }
+        if (myIcon == null) {
+            java.net.URL resource = Axis2IdeaPlugin.class.getResource("/icons/icon.png");
+            myIcon = new ImageIcon(resource);
+        }
     }
 
     /**
@@ -43,10 +61,54 @@ public class Axis2IdeaPlugin implements ApplicationComponent {
      * Returns the name of component
      *
      * @return String representing component name. Use PluginName.ComponentName notation
-     *  to avoid conflicts.
+     *         to avoid conflicts.
      */
     public String getComponentName() {
         return "ActionsSample.ActionsPlugin";
+    }
+
+    public String getDisplayName() {
+        return "Axis2 Plug-ins";
+    }
+
+    public Icon getIcon() {
+        return myIcon;
+    }
+
+    public String getHelpTopic() {
+        return "No help available";
+    }
+
+    public JComponent createComponent() {
+        if (form == null) {
+            form = new Axi2PluginPage();
+        }
+        return form.getRootComponent();
+    }
+
+    public boolean isModified() {
+        return false;
+    }
+
+    public void apply() throws ConfigurationException {
+
+    }
+
+    public void reset() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void disposeUIResources() {
+        form = null;
+    }
+
+    public void showTool() {
+        form.showUI();
+//        createComponent();
+
+//        if(form!=null){
+//            form.show();
+//        }
     }
 }
 

@@ -48,7 +48,7 @@ public class CodegenBean {
 
     private boolean asyncOnly = false;
     private boolean syncOnly = false;
-    private boolean serverSide = true;
+    private boolean serverSide = false;
     private boolean testcase = true;
     private boolean generateServerXml = true;
     private boolean isServerXML;
@@ -321,15 +321,36 @@ public class CodegenBean {
     }
 
     public void generate() throws Exception {
-        CodeGenConfiguration codegenConfig = new CodeGenConfiguration(getAxisService(WSDLFileName), fillOptionMap());
-        //set the baseURI
-        codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
-        new CodeGenerationEngine(codegenConfig).generate();
+        ClassLoader tcl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (!"xmlbeans".equals(getDatabindingName())) {
+                Thread.currentThread().setContextClassLoader(Class.class.getClassLoader());
+            }
+            CodeGenConfiguration codegenConfig = new CodeGenConfiguration(getAxisService(WSDLFileName), fillOptionMap());
+            //set the baseURI
+            codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
+            new CodeGenerationEngine(codegenConfig).generate();
+        } catch (Throwable e) {
+            try {
+                CodeGenConfiguration codegenConfig = new CodeGenConfiguration(getAxisService(WSDLFileName), fillOptionMap());
+                //set the baseURI
+                codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
+                new CodeGenerationEngine(codegenConfig).generate();
+            } catch (Throwable e1) {
+                e1.printStackTrace();
+                throw new Exception("Code generation failed due to " + e.getLocalizedMessage());
+            }
+        } finally {
+            if (!"xmlbeans".equals(getDatabindingName())) {
+                Thread.currentThread().setContextClassLoader(tcl);
+            }
+
+        }
     }
 
     private Definition wsdlDefinition = null;
 
-    public void readWSDL()  {
+    public void readWSDL() {
         try {
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             wsdlDefinition = reader.readWSDL(WSDLFileName);

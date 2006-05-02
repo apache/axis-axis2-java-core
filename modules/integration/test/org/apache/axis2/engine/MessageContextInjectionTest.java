@@ -23,6 +23,8 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.Constants;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -40,6 +42,7 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
+import org.apache.axis2.transport.TransportListener;
 
 import javax.xml.namespace.QName;
 
@@ -92,6 +95,24 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         dispatchPhase.addHandler(id);
         config.getGlobalInFlow().add(dispatchPhase);
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
+        tIn.setReceiver(new TransportListener(){
+
+            public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) throws AxisFault {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            public void start() throws AxisFault {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            public void stop() throws AxisFault {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
         config.addTransportIn(tIn);
 
         tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));

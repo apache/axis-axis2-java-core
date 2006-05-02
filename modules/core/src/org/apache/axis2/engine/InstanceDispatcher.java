@@ -18,21 +18,16 @@
 package org.apache.axis2.engine;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 
 /**
@@ -118,6 +113,16 @@ public class InstanceDispatcher extends AbstractHandler {
             throw new AxisFault(Messages.getMessage("unabletofindservice"));
         }
         SessionContext sessionContext = msgContext.getSessionContext();
+        String scope = service.getScope();
+        if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
+            if (sessionContext == null) {
+                Object obj = msgContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
+                if (obj != null) {
+                    sessionContext = (SessionContext) getSessionContext((HttpServletRequest) obj);
+                    msgContext.setSessionContext(sessionContext);
+                }
+            }
+        }
         String serviceGroupContextId = msgContext.getServiceGroupContextId();
         if (serviceGroupContextId != null && sessionContext != null) {
             //setting service group context which is teken from session context
@@ -131,7 +136,6 @@ public class InstanceDispatcher extends AbstractHandler {
                 return;
             }
         }
-        String scope = service.getScope();
 
         if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope) && sessionContext != null) {
             ServiceContext serviceContext = sessionContext.getServiceContext(service);
@@ -143,7 +147,7 @@ public class InstanceDispatcher extends AbstractHandler {
     }
 
     private void extractServiceGroupContextId(MessageContext msgContext) throws AxisFault {
-        if(!msgContext.isHeaderPresent()) {
+        if (!msgContext.isHeaderPresent()) {
             return;
         }
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
@@ -161,5 +165,16 @@ public class InstanceDispatcher extends AbstractHandler {
                 msgContext.setServiceGroupContextId(serviceGroupId.getText());
             }
         }
+    }
+
+    private Object getSessionContext(HttpServletRequest httpServletRequest) {
+        Object sessionContext =
+                httpServletRequest.getSession(true).getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+        if (sessionContext == null) {
+            sessionContext = new SessionContext(null);
+            httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
+                    sessionContext);
+        }
+        return sessionContext;
     }
 }

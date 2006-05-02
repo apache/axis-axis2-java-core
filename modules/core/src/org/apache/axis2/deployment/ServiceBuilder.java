@@ -124,11 +124,25 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
+            //Removing exclude operations
+            OMElement excludeOperations = service_element.getFirstChildWithName(
+                    new QName(TAG_EXCLUDE_OPERATIONS));
+            ArrayList excludeops = null;
+            if (excludeOperations != null) {
+                excludeops = processExcludeOperations(excludeOperations);
+            }
+            if (excludeops == null) {
+                excludeops = new ArrayList();
+            }
+            excludeops.add("init");
+            excludeops.add("setOperationContext");
+            excludeops.add("destroy");
+
             // Generating schema for the service if the imple class is JAVA
             if (!service.isWsdlfound()) {
                 //trying to generate WSDL for the service using JAM  and Java refelection
                 try {
-                    Utils.fillAxisService(service, axisConfig);
+                    Utils.fillAxisService(service, axisConfig, excludeops);
                 } catch (Exception e) {
                     /**
                      * I have log here if some error occours , since service impl
@@ -204,11 +218,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
-            //Removing exclude operations
-            OMElement excludeOperations = service_element.getFirstChildWithName(
-                    new QName(TAG_EXCLUDE_OPERATIONS));
-            if (excludeOperations != null) {
-                processExcludeOperations(excludeOperations);
+            for (int i = 0; i < excludeops.size(); i++) {
+                String opName = (String) excludeops.get(i);
+                service.removeOperation(new QName(opName));
             }
 
             // Set the default message receiver for the operations that were 
@@ -243,13 +255,15 @@ public class ServiceBuilder extends DescriptionBuilder {
      *
      * @param exculeOperations
      */
-    private void processExcludeOperations(OMElement exculeOperations) {
+    private ArrayList processExcludeOperations(OMElement exculeOperations) {
+        ArrayList exOps = new ArrayList();
         Iterator excludeOp_itr = exculeOperations.getChildrenWithName(new QName(TAG_OPERATION));
         while (excludeOp_itr.hasNext()) {
             OMElement opName = (OMElement) excludeOp_itr.next();
-            service.removeOperation(new QName(opName.getText()));
-            log.info("removed the operation:" + opName.getText());
+            exOps.add(opName.getText().trim());
+            // service.removeOperation(new QName(opName.getText().trim()));
         }
+        return exOps;
     }
 
     private void processMessages(Iterator messages, AxisOperation operation)

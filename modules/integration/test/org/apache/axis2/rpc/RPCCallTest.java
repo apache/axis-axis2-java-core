@@ -16,7 +16,6 @@
 */
 package org.apache.axis2.rpc;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -26,7 +25,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -44,6 +42,7 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -134,13 +133,12 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add("159");
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-//        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
 
-    private void configureSystem(String opName) throws AxisFault {
+    private void configureSystem(String opName) {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
                         + (UtilServer.TESTING_PORT)

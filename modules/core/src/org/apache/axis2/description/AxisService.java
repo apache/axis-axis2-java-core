@@ -1033,6 +1033,11 @@ public class AxisService extends AxisDescription {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
                     implClass, axisService.getSchematargetNamespace(),
                     axisService.getSchematargetNamespacePrefix());
+            ArrayList excludeOpeartion = new ArrayList();
+            excludeOpeartion.add("init");
+            excludeOpeartion.add("setOperationContext");
+            excludeOpeartion.add("destroy");
+            schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
         } catch (Exception e) {
             throw new AxisFault(e);

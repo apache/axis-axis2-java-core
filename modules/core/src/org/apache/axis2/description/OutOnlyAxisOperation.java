@@ -17,7 +17,6 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -27,9 +26,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -330,7 +329,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();
             senderTransport = ClientUtils.inferOutTransport(cc
-                    .getAxisConfiguration(), toEPR,mc);
+                    .getAxisConfiguration(), toEPR, mc);
         }
         mc.setTransportOut(senderTransport);
 
@@ -372,10 +371,9 @@ class OutOnlyAxisOperationClient implements OperationClient {
     }
 
     public void complete(MessageContext msgCtxt) throws AxisFault {
-        ListenerManager listenerManager =
-                msgCtxt.getConfigurationContext().getListenerManager();
-        if (listenerManager != null) {
-            listenerManager.stop();
+        TransportOutDescription trsout = msgCtxt.getTransportOut();
+        if (trsout != null) {
+            trsout.getSender().cleanup(msgCtxt);
         }
     }
 

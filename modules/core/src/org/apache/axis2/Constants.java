@@ -129,6 +129,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String SINGLE_SERVICE = "singleservice";
     public static final String SERVLET_CONTEXT = "servletContext";
+    public static final String HTTP_SERVLET_REQUEST = "HttpServletRequest";
     public static final String SERVICE_MAP = "servicemap";
     public static final String SERVICE_HANDLERS = "serviceHandlers";
     public static final String SERVICE_GROUP_MAP = "serviceGroupmap";

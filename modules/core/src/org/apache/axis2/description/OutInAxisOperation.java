@@ -20,7 +20,6 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -35,11 +34,13 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 public class OutInAxisOperation extends InOutAxisOperation {
     public OutInAxisOperation() {
         super();
@@ -380,7 +381,10 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     public void complete(MessageContext msgCtxt) throws AxisFault {
-        msgCtxt.getConfigurationContext().getListenerManager().stop();
+        TransportOutDescription trsout = msgCtxt.getTransportOut();
+        if (trsout != null) {
+            trsout.getSender().cleanup(msgCtxt);
+        }
     }
 
     public OperationContext getOperationContext() {

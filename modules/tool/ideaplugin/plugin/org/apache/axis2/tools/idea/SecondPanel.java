@@ -2,18 +2,8 @@ package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -32,122 +22,6 @@ import java.awt.LayoutManager;
 *
 *
 */
-
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 20, 2005
- * Time: 10:52:36 PM
- */
-public class SecondPanel extends JPanel {
-    JLabel lblol;
-    JComboBox comlanguage;
-    ButtonGroup cbg;
-    JRadioButton rdsynasyn;
-    JRadioButton rdsyn;
-    JRadioButton rdasync;
-    JLabel lblpakage;
-    JTextField txtpackage;
-    private CodegenBean codegenBean;
-
-    JLabel databiding;
-    JComboBox databindingType;
-    JComboBox servicenames;
-    JLabel serviceNames ;
-    JComboBox portNames;
-
-    public SecondPanel(CodegenBean codegenBean) {
-        this.codegenBean = codegenBean;
-        SecondPanelLayout customLayout = new SecondPanelLayout();
-        setFont(new Font("Helvetica", Font.PLAIN, 12));
-        setLayout(customLayout);
-
-        lblol = new JLabel("   Select the output language");
-        add(lblol);
-
-        comlanguage = new JComboBox();
-        comlanguage.addItem("java");
-        comlanguage.addItem("C#");
-        add(comlanguage);
-
-        cbg = new ButtonGroup();
-        rdsynasyn = new JRadioButton(" Generate both sync and async", true);
-        cbg.add(rdsynasyn);
-        add(rdsynasyn);
-
-        rdsyn = new JRadioButton(" Generate sync only", false);
-        cbg.add(rdsyn);
-        add(rdsyn);
-
-        rdasync = new JRadioButton(" Generate async only", false);
-        cbg.add(rdasync);
-        add(rdasync);
-
-        databiding = new JLabel("Select Databinding type");
-        add(databiding);
-        databindingType = new JComboBox();
-        databindingType.addItem("adb");
-        databindingType.addItem("xmlbeans");
-        databindingType.addItem("none");
-        databindingType.setEnabled(true);
-        add(databindingType);
-
-        lblpakage = new JLabel("Set the package name");
-        add(lblpakage);
-
-        txtpackage = new JTextField("org.axis2");
-        add(txtpackage);
-
-        servicenames = new JComboBox();
-        add(servicenames);
-
-        portNames = new JComboBox();
-        add(portNames);
-
-
-        setSize(getPreferredSize());
-
-    }
-
-    public void fillBean() {
-        int index = comlanguage.getSelectedIndex();
-        switch (index) {
-            case 0: {
-                codegenBean.setLanguage("java");
-                break;
-            }
-            case 1: {
-                codegenBean.setLanguage("c-sharp");
-                break;
-            }
-        }
-
-        index = databindingType.getSelectedIndex();
-        switch (index) {
-            case 0: {
-                codegenBean.setDatabindingName("adb");
-                break;
-            }
-            case 1: {
-                codegenBean.setDatabindingName("xmlbeans");
-                break;
-            }
-            case 2: {
-                codegenBean.setDatabindingName("none");
-                break;
-            }
-        }
-
-        if (rdasync.isSelected()) {
-            codegenBean.setAsyncOnly(true);
-        } else if (rdsyn.isSelected()) {
-            codegenBean.setSyncOnly(true);
-        } else {
-            codegenBean.setSyncOnly(false);
-            codegenBean.setAsyncOnly(false);
-        }
-        codegenBean.setPackageName(txtpackage.getText());
-    }
-}
 
 class SecondPanelLayout implements LayoutManager {
 

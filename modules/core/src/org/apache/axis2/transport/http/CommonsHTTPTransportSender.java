@@ -224,7 +224,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
-    private void sendUsingOutputStream(MessageContext msgContext, OMOutputFormat format, OMElement dataOut) throws AxisFault, XMLStreamException {
+    private void sendUsingOutputStream(MessageContext msgContext,
+                                       OMOutputFormat format,
+                                       OMElement dataOut) throws AxisFault, XMLStreamException {
         OutputStream out =
                 (OutputStream) msgContext
                         .getProperty(MessageContext.TRANSPORT_OUT);

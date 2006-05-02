@@ -152,7 +152,7 @@ public class Utils {
      * This guy will create a AxisService using java reflection
      */
     public static void fillAxisService(AxisService axisService,
-                                       AxisConfiguration axisConfig) throws Exception {
+                                       AxisConfiguration axisConfig , ArrayList excludeOperations) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         if (implInfoParam == null) {
             // Nothing to do.
@@ -170,6 +170,7 @@ public class Utils {
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
                 serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());
+        schemaGenerator.setExcludeMethods(excludeOperations);
         axisService.addSchema(schemaGenerator.generateSchema());
 
         JMethod [] method = schemaGenerator.getMethods();

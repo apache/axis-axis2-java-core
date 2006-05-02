@@ -219,6 +219,10 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault
      */
     public void addTransportIn(TransportInDescription transport) throws AxisFault {
+        if (transport.getReceiver() == null) {
+            throw new AxisFault("Transport Receiver can not be null for the transport "
+                    + transport.getName().getLocalPart());
+        }
         transportsIn.put(transport.getName(), transport);
     }
 
@@ -229,6 +233,10 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault
      */
     public void addTransportOut(TransportOutDescription transport) throws AxisFault {
+        if (transport.getSender() == null) {
+            throw new AxisFault("Transport sender can not be null for the transport "
+                    + transport.getName().getLocalPart());
+        }
         transportsOut.put(transport.getName(), transport);
     }
 

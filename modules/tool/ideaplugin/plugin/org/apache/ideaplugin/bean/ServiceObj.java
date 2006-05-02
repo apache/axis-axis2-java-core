@@ -47,16 +47,20 @@ public class ServiceObj {
         return operations;
     }
 
-    public String toString(){
-        String serviceXML = "<service name=\""+ serviceName + "\"  scope=\"transportsession\">\n" +
+    public String toString() {
+        String serviceXML = "<service name=\"" + serviceName + "\"  scope=\"transportsession\">\n" +
                 "<description>\n" +
                 "Please Type your service description here\n" +
-                "</description>\n"+
+                "</description>\n" +
                 "<parameter name=\"ServiceClass\" locked=\"false\">" + serviceClass + "</parameter>\n";
-        for (int i = 0; i < operations.size(); i++) {
-            String s = (String) operations.get(i);
-            String op = "<operation name=\"" + s + "\">\n" +   "</operation>\n";
-            serviceXML = serviceXML + op;
+        if (operations.size() > 0) {
+            serviceXML = serviceXML + "<excludeOperations>\n";
+            for (int i = 0; i < operations.size(); i++) {
+                String s = (String) operations.get(i);
+                String op = "<operation>" + s + "</operation>\n";
+                serviceXML = serviceXML + op;
+            }
+            serviceXML = serviceXML + "</excludeOperations>\n";
         }
         serviceXML = serviceXML + "</service>\n";
         return serviceXML;

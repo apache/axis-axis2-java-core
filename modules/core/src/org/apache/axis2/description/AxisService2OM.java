@@ -154,6 +154,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                 wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
             }
         }
+        
 
         generateMessages(fac, ele);
         generatePortType(fac, ele);
