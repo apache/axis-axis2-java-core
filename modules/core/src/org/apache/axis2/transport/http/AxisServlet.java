@@ -245,17 +245,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     protected Map getTransportHeaders(HttpServletRequest req) {
-        HashMap headerMap = new HashMap();
-        Enumeration headerNames = req.getHeaderNames();
-
-        while (headerNames.hasMoreElements()) {
-            String key = (String) headerNames.nextElement();
-            String value = req.getHeader(key);
-
-            headerMap.put(key, value);
-        }
-
-        return headerMap;
+        return new TransportHeaders(req);
     }
 
     /**
