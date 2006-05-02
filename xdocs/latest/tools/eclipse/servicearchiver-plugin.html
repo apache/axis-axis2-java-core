@@ -25,37 +25,50 @@ target="_blank">[Download Plugin Tool]</a></p>
 
 <p>As part of the Axis2 tool set, the service archive generator is an
 important tool that allows the generation of service archives ("aar" file or
-a "jar" files) that can be deployed as a Web services to the Axis2. </p>
+a "jar" files) that can be deployed as a Web services to the Axis2.</p>
 <a name="installation"></a>
 
 <h2>Installation</h2>
 
 <p>Download the binary version of the plug-in and extract the content of the
-zip file into the Eclipse installation folder. (The plug-in will actually go
-into the plugins directory in the Eclipse installation root). Restarting
-Eclipse will set the plug-in automatically.</p>
+zip file into the eclipse installation folder. (The plug-in will actually go
+into the plugins directory in the eclipse installation root). Restarting
+eclipse will set the plug-in automatically.</p>
 <a name="operation"></a>
 
 <h2>Operation</h2>
 
 <p>If the plug-in is properly installed you should see a new wizard under the
-"New" section.(use the File -&gt; New -&gt; Other or Ctrl + N )</p>
+"New" section. (Use the File -&gt; New -&gt; Other or Ctrl + N )</p>
 
 <p align="center"><img border="0" src="images/ServiceWizardSelection.jpg"></p>
 
-<p>Selecting the wizard and pressing the next button will start the service
-generator wizard. Following is the first wizard page.</p>
+<p>Selecting the wizard and pressing the Next button will start the service
+generator wizard. Following is the first page of the wizard.</p>
+
+<p><strong>Page 1:</strong></p>
 
 <p align="center"><img border="0" src="images/ServicePage1.jpg"></p>
 
-<p>Once the class file folder  is given (which should be a folder in the file
-system) the next button will be enabled. Page 2 of the wizard requires you to
-locate the wsdl file. Note that the WSDL file cannot be skipped in this
-version of the tool</p>
+<p>Once the class file folder (which should be a folder in the file system)
+is browsed and selected, the Next button will be enabled and you can move to
+the next page. Note that you have the option of either including all the
+files or the class files only of the folder on page 1.</p>
+
+<p><strong>Page 2:</strong></p>
+
+<p>Page 2 of the wizard as seen below requires you to locate/browse the wsdl
+file. Note that the WSDL file cannot be skipped in this version of the
+tool.</p>
 
 <p align="center"><img border="0" src="images/service_page2.jpg"></p>
 
-<p align="center">Select the service.XML file in the next wizard page</p>
+<p><strong>Page 3:</strong></p>
+
+<p>Select the service.xml file on this wizard page by browsing or select the
+option of generating service xml automatically, after which you can click
+Next button to go to the next page. Notice how the browsing option disables
+when selecting the 'Generate service xml automatically'. '</p>
 
 <p align="center"><img border="0" src="images/service_page3.jpg"></p>
 <!--
@@ -79,6 +92,8 @@ For the implementation class type in the fully qualified class name and hit the 
 
 -->
 
+<p><strong>Page 4:</strong></p>
+<!--START-->
 <p>The next step is to add the libraries. The library addition page looks
 like this</p>
 
