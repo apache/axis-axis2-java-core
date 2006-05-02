@@ -105,7 +105,7 @@
 			<ant:echo>Running codegen for Enterprise WSDL - take 4</ant:echo>
 				<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 					<classpath refid="maven.dependency.classpath"/>
-					<arg line="-ns2p urn:sobject.enterprise.soap.sforce.com,com.salesforce -d xmlbeans -ss -sd -g -o target/enterprise-test4 -s -uri test-resources/enterprise.wsdl"/>
+					<arg line="-ns2p urn:sobject.enterprise.soap.sforce.com=com.salesforce -d xmlbeans -ss -sd -g -o target/enterprise-test4 -s -uri test-resources/enterprise.wsdl"/>
 				</java>
 			 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 						 target="jar.server"/>
