@@ -75,19 +75,13 @@ public class FileSystemConfigurator implements AxisConfigurator {
         if (axis2xml == null) {
             // If not, check for a system property setting
             axis2xml = System.getProperty(Constants.AXIS2_CONF);
-
-            // If system property not set, use default filename
-            if (axis2xml == null) {
-                axis2xml = Constants.AXIS2_CONF;
-            }
-
             // In either case, check that the file exists... if not
             // we'll use the default axis2.xml on the classpath.
             try {
                 File configFile = new File(axis2xml);
                 if (!configFile.exists()) {
                     axis2xml = null;
-                }
+                } 
             } catch (Exception e) {
                 axis2xml = null;
                 log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
