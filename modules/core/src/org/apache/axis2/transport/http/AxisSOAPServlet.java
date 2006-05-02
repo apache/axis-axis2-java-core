@@ -17,6 +17,8 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.transport.http.util.SOAPUtil;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.AxisFault;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,14 +42,20 @@ public class AxisSOAPServlet extends AxisServlet {
 
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
+
+        MessageContext msgCtx = null;
         try {
-            new SOAPUtil().processPostRequest(createMessageContext(req, resp),
+            msgCtx = createMessageContext(req, resp);
+            new SOAPUtil().processPostRequest(msgCtx,
                                               req,
                                               resp);
         } catch (Exception e) {
-//            e.printStackTrace();
             log.error(e);
-            throw new ServletException(e);
+            if (msgCtx != null) {
+                handleFault(msgCtx, resp.getOutputStream(), new AxisFault(e));
+            } else {
+                throw new ServletException(e);
+            }
         }
     }
 
@@ -60,7 +68,7 @@ public class AxisSOAPServlet extends AxisServlet {
     }
 
     public void init() throws ServletException {
-        if(this.servletConfig != null){
+        if (this.servletConfig != null) {
             init(this.servletConfig);
         }
     }
