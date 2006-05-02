@@ -16,12 +16,15 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.security.handler.WSDoAllHandler;
@@ -43,6 +46,7 @@ import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
 import javax.security.auth.callback.CallbackHandler;
+import javax.xml.namespace.QName;
 
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
@@ -328,8 +332,10 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             }
             
         } catch (WSSecurityException wssEx) {
+            setAddressingInformationOnFault(msgContext);
             throw new AxisFault(wssEx);
         } catch (AxisFault axisFault) {
+            setAddressingInformationOnFault(msgContext);
             throw axisFault;
         } finally {
             if(reqData != null) {
@@ -345,6 +351,21 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             DocumentBuilderFactoryImpl.setDOOMRequired(false);
         }
         
+    }
+
+    private void setAddressingInformationOnFault(MessageContext msgContext) {
+        SOAPEnvelope env = msgContext.getEnvelope();
+        SOAPHeader header = env.getHeader();
+        
+        if(header != null) {
+            OMElement msgIdElem = header.getFirstChildWithName(new QName(AddressingConstants.Final.WSA_NAMESPACE,AddressingConstants.WSA_MESSAGE_ID));
+            if(msgIdElem != null) {
+                msgIdElem = header.getFirstChildWithName(new QName(AddressingConstants.Submission.WSA_NAMESPACE,AddressingConstants.WSA_MESSAGE_ID));
+            }
+            if(msgIdElem != null && msgIdElem.getText() != null) {
+                msgContext.getOptions().setMessageId(msgIdElem.getText());
+            }
+        }
     }
     
     

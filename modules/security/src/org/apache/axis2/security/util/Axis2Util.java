@@ -20,10 +20,10 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -39,7 +39,6 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import java.io.ByteArrayInputStream;
@@ -89,6 +88,13 @@ public class Axis2Util {
             
             if(!disableDoom) {
     			env.build();
+                
+                //Workaround to prevent a bug in AXIOM where 
+                //there can be an incomplete OMElement as the first child body 
+                OMElement firstElement = env.getBody().getFirstElement();
+                if(firstElement != null) {
+                    firstElement.build();
+                }
     			
     			//Check the namespace and find SOAP version and factory
     			String nsURI = null;
