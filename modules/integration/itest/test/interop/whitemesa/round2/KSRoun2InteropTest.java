@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -46,6 +49,11 @@ import java.io.File;
  * Todo - All Tests fail. Is the Endpoint deprecated or removed ?.
  */
 
+/**
+ * All tests are failing since the endpoint is giving a SOAP fault.
+ * 
+ */
+
 public class KSRoun2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -57,6 +65,8 @@ public class KSRoun2InteropTest extends WhiteMesaIneterop {
     SunClientUtil util;
     SunClient client = new SunClient();
 
+    private Log log = LogFactory.getLog(getClass());
+    
     /**
      * Round2
      * Group Base

@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -65,6 +68,11 @@ import java.io.File;
  * "Group C"  http://soapinterop.java.sun.com/round2/groupc?WSDL
  */
 
+/**
+ * Test cases that work on date values may fail since the response
+ * date format may be different from the request date format.
+ */
+
 public class SunRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -76,6 +84,8 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
     SunClientUtil util;
     SunClient client = new SunClient();
 
+    private Log log = LogFactory.getLog(getClass());
+    
     /**
      * Round2
      * Group Base
@@ -248,6 +258,9 @@ public class SunRound2InteropTest extends WhiteMesaIneterop {
      * operation echoBase64
      */
     public void testR2BaseEchoDate() throws AxisFault {
+
+        log.info("This may fail if the echoed date format is different");    
+
         url = "http://soapinterop.java.sun.com:80/round2/base";
         soapAction = "http://soapinterop.org/";
 

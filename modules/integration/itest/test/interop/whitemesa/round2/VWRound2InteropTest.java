@@ -53,7 +53,9 @@ import java.io.File;
  * 
  */
 
-//TODO verify the availability of this endpoint
+/**
+ * verify the availability of this endpoint
+ */ 
 public class VWRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;

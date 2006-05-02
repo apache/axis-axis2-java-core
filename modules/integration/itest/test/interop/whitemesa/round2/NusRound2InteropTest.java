@@ -73,13 +73,15 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
      */
     public void testR2BaseEchoString() throws AxisFault {
         url = "http://dietrich.ganx4.com/nusoap/testbed/round2_base_server.php";
+
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStringclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         System.out.println("Returned Envelope    " + retEnv);
         tempPath = resFilePath + "NusBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
+
+        assertR2DefaultEchoStringResult(retEnv);
     }
 
     /**

@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -50,6 +53,10 @@ import java.io.File;
  * "Group B"  http://www.jin.gr.jp/~nahi/Ruby/SOAP4R/SOAPBuildersInterop/SOAP4R_SOAPBuildersInteropTest_R2GroupB.wsdl
  */
 
+/**
+ * Test cases that work on float values may fail since the response value is in a different
+ * format.
+ */
 public class S4rRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -61,6 +68,8 @@ public class S4rRound2InteropTest extends WhiteMesaIneterop {
     SunClientUtil util;
     SunClient client = new SunClient();
 
+    private Log log = LogFactory.getLog(getClass());
+    
     /**
      * Round2
      * Group Base
@@ -73,8 +82,7 @@ public class S4rRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStringclientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "S4rBaseStringRes.xml";
-        compareXML(retEnv, tempPath);
-        
+
         assertR2DefaultEchoStringResult(retEnv);
     }
 
@@ -129,6 +137,9 @@ public class S4rRound2InteropTest extends WhiteMesaIneterop {
      * operation echoFloat
      */
     public void testR2BaseEchoFloat()  throws AxisFault {
+
+        log.info("This may fail if the echoed float value is different");    
+
         url = "http://dev.ctor.org/soapsrv";
         soapAction = "http://soapinterop.org/";
 
@@ -144,6 +155,9 @@ public class S4rRound2InteropTest extends WhiteMesaIneterop {
      * operation echoFloatArray
      */
     public void testR2BaseEchoFloatArray()  throws AxisFault {
+    	
+        log.info("This may fail if the echoed float values is different");    
+
         url = "http://dev.ctor.org/soapsrv";
         soapAction = "http://soapinterop.org/";
 
@@ -159,6 +173,9 @@ public class S4rRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStruct
      */
     public void testRBaseEchoStruct() throws AxisFault  {
+
+        log.info("This may fail if the echoed float value is different");    
+
         url = "http://dev.ctor.org/soapsrv";
         soapAction = "";
 
@@ -174,6 +191,9 @@ public class S4rRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStructArray
      */
     public void testR2BaseEchoStructArray() throws AxisFault  {
+
+        log.info("This may fail if the echoed float value is different");    
+
         url = "http://dev.ctor.org/soapsrv";
         soapAction = "http://soapinterop.org/";
 

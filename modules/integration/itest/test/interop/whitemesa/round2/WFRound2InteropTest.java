@@ -52,7 +52,10 @@ import java.io.File;
  * 
  */
 
-//TODO verify the availability of this endpoint
+/**
+ * Endpoint seems to be unavailable.
+ * 
+ */
 public class WFRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;

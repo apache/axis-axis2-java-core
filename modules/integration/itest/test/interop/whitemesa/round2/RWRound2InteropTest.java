@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
@@ -64,6 +65,20 @@ import java.io.File;
  * "Group C"  http://soapinterop.roguewave.com:8013/interop2testC/InteropRound2TestC
  * <p/>
  * Todo - Group C tests fail. Check the request.
+ */
+
+/**
+ * Following test cases are failing with the Fault: Couldn't find end tag
+ * testR2BaseEchoStringArray, testR2BaseEchoIntegerArray, testR2BaseEchoFloatArray ,
+ * testR2GBEcho2DStringArray
+ * 
+ */
+
+/**
+ * Test cases that work on float values may fail since the response value is in a different
+ * format. E.g:
+ * request :12.45
+ * response:1.245000e+01
  */
 
 public class RWRound2InteropTest extends WhiteMesaIneterop {
@@ -174,12 +189,15 @@ public class RWRound2InteropTest extends WhiteMesaIneterop {
      */
     public void testRBaseEchoStruct() throws AxisFault {
         url = "http://soapinterop.roguewave.com:8013/interop2base/InteropRound2BaseTest";
-        soapAction = "";
+        soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "RWBaseStructRes.xml";
-        assertR2DefaultEchoStructResult(retEnv);
+
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_INT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_FLOAT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_STRING);
     }
 
     /**

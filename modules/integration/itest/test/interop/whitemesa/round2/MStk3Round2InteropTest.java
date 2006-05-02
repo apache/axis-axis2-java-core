@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -56,6 +59,17 @@ import java.io.File;
  * Group c         http://mssoapinterop.org/stkV3/InteropC.wsdl
  */
 
+/**
+ * Some of the test cases that work on float values may fail since the endpoint seems to be sending
+ * approximated values for e.g.: 45.7599983215332 as the echo of 45.76
+ */
+
+/**
+ * EchoDate testcase is failing since the result is sent in a diferent date format
+ * request :2006-10-18T22:20:00-07:00
+ * response:2006-10-19T05:20:00Z
+ */
+
 public class MStk3Round2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -66,6 +80,8 @@ public class MStk3Round2InteropTest extends WhiteMesaIneterop {
     String tempPath = "";
     SunClientUtil util;
     SunClient client = new SunClient();
+    
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Round2
@@ -248,7 +264,10 @@ public class MStk3Round2InteropTest extends WhiteMesaIneterop {
      * operation echoBase64
      */
     public void testR2BaseEchoDate() throws AxisFault {
-        url = "http://mssoapinterop.org/stkV3/Interop.wsdl";
+
+        log.info("This may fail if the echoed date format is different");    
+
+    	url = "http://mssoapinterop.org/stkV3/Interop.wsdl";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoDateClientUtil();

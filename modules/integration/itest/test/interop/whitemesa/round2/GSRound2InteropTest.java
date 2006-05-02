@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -48,6 +51,11 @@ import java.io.File;
  * IMO: the request and response SOAP envelopes are correct.
  */
 
+/**
+ * Some of the test cases that work on float values may fail since the endpoint seems to be sending
+ * approximated values for e.g.: 47.459999 as the echo of 47.46
+ */
+
 public class GSRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -59,6 +67,8 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
     SunClientUtil util;
     SunClient client = new SunClient();
 
+    private Log log = LogFactory.getLog(getClass());
+    
     /**
      * Round2
      * Group Base
@@ -125,7 +135,10 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoFloat
      */
     public void testR2BaseEchoFloat() throws AxisFault {
-        url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
+
+        log.info("This may fail if the echoed float value is different");    
+
+    	url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoFloatClientUtil();
@@ -140,13 +153,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoFloatArray
      */
     public void testR2BaseEchoFloatArray() throws AxisFault {
-        url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
+        log.info("This may fail if an echoed float value is different");     
+
+    	url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoFloatArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseFloatArrayRes.xml";
         assertR2DefaultEchoFloatArrayResult(retEnv);
+        
     }
 
     /**
@@ -171,14 +187,17 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStructArray
      */
     public void testR2BaseEchoStructArray() throws AxisFault {
-        url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
+        
+        log.info("This may fail if an echoed float value is different");
+
+    	url = "http://websrv.cs.fsu.edu/~engelen/interop2.cgi";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStructArrayClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "GSBaseStructArrayRes.xml";
         assertR2DefaultEchoStructArrayResult(retEnv);
-    }
+     }
 
     /**
      * Round2

@@ -19,8 +19,12 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
@@ -65,6 +69,11 @@ import java.io.File;
  * "Group C"  http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl
  */
 
+/**
+ * Test cases that work on date values may fail since the response date format
+ * could be different.
+ * 
+ */
 public class WMRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -76,6 +85,8 @@ public class WMRound2InteropTest extends WhiteMesaIneterop {
     SunClientUtil util;
     SunClient client = new SunClient();
 
+    private Log log = LogFactory.getLog(getClass());
+    
     /**
      * Round2
      * Group Base
@@ -181,7 +192,11 @@ public class WMRound2InteropTest extends WhiteMesaIneterop {
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WMBaseStructRes.xml";
-        assertR2DefaultEchoStructResult(retEnv);
+
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_INT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_FLOAT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_STRING);
+ 
     }
 
     /**
@@ -236,6 +251,9 @@ public class WMRound2InteropTest extends WhiteMesaIneterop {
      * operation echoBase64
      */
     public void testR2BaseEchoDate() throws AxisFault {
+
+        log.info("This may fail if the echoed date format is different");    
+
         url = "http://www.whitemesa.net/interop/std";
         soapAction = "http://soapinterop.org/";
 

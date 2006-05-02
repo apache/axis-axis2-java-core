@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -65,6 +68,23 @@ import java.io.File;
  * Todo - All tests failed giving a null pointer exception.
  */
 
+
+
+/**
+ * Test cases that work on date values may fail since the response comes in
+ * a different format. E.g.:
+ * 
+ * request :2006-10-18T22:20:00-07:00
+ * response:2006-10-19T05:20:00Z
+ */
+
+/**
+ * Test cases that work on Hex Binary may fail since the response look different from
+ * the request
+ * 
+ * request :AAABBAAE
+ * response:qqu6rg==
+ */
 public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -75,6 +95,8 @@ public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
     String tempPath = "";
     SunClientUtil util;
     SunClient client = new SunClient();
+    
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Round2
@@ -146,6 +168,10 @@ public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
      * operation echoFloat
      */
     public void testR2BaseEchoFloat()  throws AxisFault {
+    	
+
+        log.info("This may fail if the echoed float format is different");    
+
         url = "http://soap.4s4c.com/ilab2/soap.asp";
         soapAction = "urn:interopLab#echoFloat";
 
@@ -161,6 +187,9 @@ public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
      * operation echoFloatArray
      */
     public void testR2BaseEchoFloatArray()  throws AxisFault {
+    	
+        log.info("This may fail if the echoed float format is different");    
+
         url = "http://soap.4s4c.com/ilab2/soap.asp";
         soapAction = "urn:interopLab#echoFloatArray";
 
@@ -178,6 +207,9 @@ public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
      * operation echoStruct
      */
     public void testRBaseEchoStruct() throws AxisFault  {
+    	
+        log.info("This may fail if the echoed float format is different");    
+
         url = "http://soap.4s4c.com/ilab2/soap.asp";
         soapAction = "urn:interopLab#echoStruct";
 
@@ -195,6 +227,9 @@ public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
      * operation echoStructArray
      */
     public void testR2BaseEchoStructArray() throws AxisFault  {
+    	
+        log.info("This may fail if the echoed float format is different");    
+
         url = "http://soap.4s4c.com/ilab2/soap.asp";
         soapAction = "urn:interopLab#echoStructArray";
 
@@ -249,6 +284,9 @@ public class S4s4c2Round2InteropTest extends WhiteMesaIneterop {
      * operation echoDate
      */
     public void testR2BaseEchoDate() throws AxisFault  {
+
+        log.info("This may fail if the echoed date format is different");    
+
         url = "http://soap.4s4c.com/ilab2/soap.asp";
         soapAction = "urn:interopLab#echoDate";
 

@@ -234,8 +234,7 @@ public class SqlDataRound2InteropTest extends WhiteMesaIneterop {
      * operation echoBase64
      */
     public void testR2BaseEchoBase64() throws AxisFault {
-        // url = "http://soapclient.com/interop/sqldatainterop.wsdl";
-        url = "http://127.0.0.1:8080/interop/sqldatainterop.wsdl";
+         url = "http://soapclient.com/interop/sqldatainterop.wsdl";
         soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoBase64ClientUtil();

@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
+import test.interop.whitemesa.WhiteMesaConstants;
 import test.interop.whitemesa.WhiteMesaIneterop;
 import test.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
 import test.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
@@ -161,12 +162,15 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
      */
     public void testRBaseEchoStruct() throws AxisFault {
         url = "http://soap.systinet.net:6060/InteropService/";
-        soapAction = "";
+        soapAction = "http://soapinterop.org/";
 
         util = new Round2EchoStructClientUtil();
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "WaspBaseStructRes.xml";
-        assertR2DefaultEchoStructResult(retEnv);
+
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_INT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_FLOAT);
+        assertValueIsInThePayload(retEnv,WhiteMesaConstants.ECHO_STRUCT_STRING);
     }
 
     /**

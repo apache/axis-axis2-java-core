@@ -28,11 +28,11 @@ public interface WhiteMesaConstants {
 	String ECHO_INTEGER_ARR_2 = "425";
 	String ECHO_INTEGER_ARR_3 = "2523";
 	String ECHO_FLOAT = "50.25";
-	String ECHO_FLOAT_ARR_1 = "45.768";
-	String ECHO_FLOAT_ARR_2 = "43.453";
-	String ECHO_FLOAT_ARR_3 = "2523.541";
+	String ECHO_FLOAT_ARR_1 = "45.76";
+	String ECHO_FLOAT_ARR_2 = "43.45";
+	String ECHO_FLOAT_ARR_3 = "2523.54";
 	String ECHO_STRUCT_INT = "42";
-	String ECHO_STRUCT_FLOAT = "0.005";
+	String ECHO_STRUCT_FLOAT = "12.45";
 	String ECHO_STRUCT_STRING = "hello world";
 	String ECHO_STRUCT_ARRAY_STR_1 = "String Value1"; 
 	String ECHO_STRUCT_ARRAY_STR_2 = "String Value2"; 
@@ -40,9 +40,9 @@ public interface WhiteMesaConstants {
 	String ECHO_STRUCT_ARRAY_INT_1 = "25"; 
 	String ECHO_STRUCT_ARRAY_INT_2 = "26"; 
 	String ECHO_STRUCT_ARRAY_INT_3 = "27"; 
-	String ECHO_STRUCT_ARRAY_FLOAT_1 = "25.231"; 
-	String ECHO_STRUCT_ARRAY_FLOAT_2 = "25.251"; 
-	String ECHO_STRUCT_ARRAY_FLOAT_3 = "25.251"; 
+	String ECHO_STRUCT_ARRAY_FLOAT_1 = "25.23"; 
+	String ECHO_STRUCT_ARRAY_FLOAT_2 = "25.25"; 
+	String ECHO_STRUCT_ARRAY_FLOAT_3 = "25.25"; 
 	String ECHO_BASE_64 = "SGVsbG8gV29ybGQ=";
 	String ECHO_HEX_BINARY = "AAABBAAE";
 	String ECHO_DATE = "2006-10-18T22:20:00-07:00";

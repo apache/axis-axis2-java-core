@@ -18,6 +18,9 @@ package test.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import test.interop.whitemesa.SunClient;
 import test.interop.whitemesa.SunClientUtil;
 import test.interop.whitemesa.WhiteMesaIneterop;
@@ -50,6 +53,13 @@ import test.interop.whitemesa.round2.util.Round2EchoVoidClientUtil;
  * "Group B"  http://www.pocketsoap.com/services/ilab_b.wsdl
  */
 
+/**
+ * Test cases that work on Date values may fail since the response look different from
+ * the requst date. E.g:
+ * request :2006-10-18T22:20:00-07:00
+ * response:2006-10-19T05:20:00Z
+ */
+
 public class S4s4cRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
@@ -60,6 +70,8 @@ public class S4s4cRound2InteropTest extends WhiteMesaIneterop {
     String tempPath = "";
     SunClientUtil util;
     SunClient client = new SunClient();
+    
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Round2
@@ -234,6 +246,9 @@ public class S4s4cRound2InteropTest extends WhiteMesaIneterop {
      * operation echoBase64
      */
     public void testR2BaseEchoDate() throws AxisFault  {
+    	
+        log.info("This may fail if the echoed date format is different");    
+
         url = "http://soap.4s4c.com/ilab/soap.asp";
         soapAction = "http://soapinterop.org/";
 

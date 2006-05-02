@@ -66,6 +66,11 @@ import java.io.File;
  * The returned envelope doesn't contain a valid xml content.
  */
 
+/**
+ * All test cases are failing since the server is not sending response
+ * messages.
+ */
+
 public class PSRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;

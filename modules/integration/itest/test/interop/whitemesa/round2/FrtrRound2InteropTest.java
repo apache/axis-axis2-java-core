@@ -47,6 +47,11 @@ import java.io.File;
  * All Tests failed, since the service tag is missing in the given WSDL
  */
 
+/**
+ * All tests are failing since :
+ * Service does not seems to be following the default wsdl even though it is claimed to be in the Whitemesa site.
+ */
+
 public class FrtrRound2InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
