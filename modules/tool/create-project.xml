@@ -13,9 +13,11 @@
     <property name="codegen.resource.dir" value="./conf/codegen"></property>
     <property name="service.resource.dir" value="./conf/service"></property>
 
-    <property name="codegen.help.resource.dir" value="./help/codegen"></property>
-    <property name="service.help.resource.dir" value="./help/service"></property>
-
+    <property name="codegen.help.resource.file" value="../../xdocs/latest/tools/eclipse/wsdl2java-plugin.html"></property>
+    <property name="service.help.resource.file" value="../../xdocs/latest/tools/eclipse/servicearchiver-plugin.html"></property>
+    
+     <property name="codegen.help.images.dir" value="../../xdocs/latest/tools/eclipse/images"></property>
+     <property name="service.help.images.dir" value="../../xdocs/latest/tools/eclipse/images"></property>
 
     <!-- Default target to generate all the services -->
     <target name="all">
@@ -46,10 +48,13 @@
         <mkdir dir="${service.output.dir}/${help.dir.name}"></mkdir>
 	  <!-- copy the help directory -->
         <copy todir="${service.output.dir}/${help.dir.name}">
-            <fileset dir="${service.help.resource.dir}"></fileset>
+            <fileset file="${service.help.resource.file}"></fileset>
         </copy>
-	 <available property="images.dir" file="../../xdocs/0_94/images/tools/service" type="dir" value="../../xdocs/0_94/images/tools/service"/>
-         <copy todir="${service.output.dir}/${help.dir.name}">
+	 <available property="images.dir" 
+	                    file="${service.help.images.dir}" 
+	                    type="dir" 
+	                    value="${service.help.images.dir}"/>
+         <copy todir="${service.output.dir}/${help.dir.name}/images">
           <fileset dir="${images.dir}"/>
          </copy> 
 
@@ -72,10 +77,10 @@
         <mkdir dir="${codegen.output.dir}/${help.dir.name}"></mkdir>
 	  <!-- copy the help directory -->
         <copy todir="${codegen.output.dir}/${help.dir.name}">
-            <fileset dir="${codegen.help.resource.dir}"></fileset>
+            <fileset file="${codegen.help.resource.file}"></fileset>
         </copy>
-          <available property="images.dir" file="../../xdocs/0_94/images/tools/wsdl" type="dir" value="../../xdocs/0_94/images/tools/wsdl"/>
-          <copy todir="${codegen.output.dir}/${help.dir.name}">
+          <available property="images.dir" file="${codegen.help.images.dir}" type="dir" value="${codegen.help.images.dir}"/>
+          <copy todir="${codegen.output.dir}/${help.dir.name}/images">
             <fileset dir="${images.dir}"/>
          </copy>
 
