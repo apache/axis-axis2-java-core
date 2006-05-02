@@ -97,14 +97,29 @@ jars in the classpath.</p>
 <h2>Using Mail Transport in the Client Side</h2>
 
 <p>Following code segment shows how to send a oneway SOAP message using the
-mail transport, this need the Transport Sender configured.</p>
-<source><pre>OMElement payload = ....
+mail transport, this needs the Transport Sender configured.</p>
+<source><pre>        OMElement payload = ....
 
-MessageSender sender = new MessageSender(serviceContext);
-sender.setTo(targetEPR);
-sender.setSenderTransport(Constants.TRANSPORT_MAIL);
+        AxisService service = new AxisService(serviceName.getLocalPart());
+        AxisOperation axisOperation = new OutOnlyAxisOperation(
+        );
+        axisOperation.setName(operationName);
+        axisOperation.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messageCtx) {
+                envelope = messageCtx.getEnvelope();
+            }
+        });
+        service.addOperation(axisOperation);
+        //configContext.getAxisConfiguration().addService(service);
 
-sender.send(operationName.getLocalPart(), payload);</pre>
+        ServiceClient servicClient = new ServiceClient(clientConfigContext, service);
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+
+        servicClient.setOptions(options);
+
+        servicClient.fireAndForget(operationName, payload);</pre>
 </source><a name="james"></a>
 
 <h2>Configure James as SMTP and POP Server</h2>
