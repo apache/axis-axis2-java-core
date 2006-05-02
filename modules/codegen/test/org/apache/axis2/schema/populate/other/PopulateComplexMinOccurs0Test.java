@@ -12,6 +12,8 @@ import java.beans.Introspector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.io.ByteArrayInputStream;
+
+import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -97,7 +99,7 @@ public class PopulateComplexMinOccurs0Test  extends TestCase {
     private void populateAndAssert(String s,
                                    int expectedAddressCount,
                                    boolean personPresent) throws XMLStreamException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, IntrospectionException {
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
         Class clazz = Class.forName("org.test1.Root");
         Class innerClazz = clazz.getDeclaredClasses()[0];
         Method parseMethod = innerClazz.getMethod("parse", new Class[]{XMLStreamReader.class});

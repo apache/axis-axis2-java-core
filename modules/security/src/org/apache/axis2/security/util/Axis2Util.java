@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
@@ -172,7 +173,7 @@ public class Axis2Util {
 			XMLUtils.outputDOM(element, os, true);
 			
 			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-			XMLStreamReader reader = XMLInputFactory.newInstance()
+			XMLStreamReader reader = StAXUtils
 					.createXMLStreamReader(is);
 
 			StAXOMBuilder builder = new StAXOMBuilder(reader);

@@ -9,6 +9,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
+
+import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -32,7 +34,7 @@ public abstract class AbstractDerivedPopulater extends TestCase {
 
     // Simple reusable method to make object instances via reflection
     protected Object process(String testString,String className) throws Exception{
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(testString.getBytes()));
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(testString.getBytes()));
         Class clazz = Class.forName(className);
         Class[] declaredClasse = clazz.getDeclaredClasses();
         //ideally this should be 1

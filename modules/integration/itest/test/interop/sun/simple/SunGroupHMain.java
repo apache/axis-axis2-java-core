@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.exception.XMLComparisonException;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
@@ -43,7 +44,7 @@ public class SunGroupHMain extends TestCase{
         if(retEle!=null){
              InputStream stream = Thread.currentThread()
                      .getContextClassLoader().getResourceAsStream(filepath);
-            javax.xml.stream.XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
+            javax.xml.stream.XMLStreamReader parser = StAXUtils.createXMLStreamReader(stream);
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
             SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
             OMElement resElementtobe = resEnv.getBody().getFirstElement();

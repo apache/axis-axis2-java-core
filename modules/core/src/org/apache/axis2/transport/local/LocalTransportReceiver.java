@@ -18,6 +18,7 @@
 package org.apache.axis2.transport.local;
 
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
@@ -70,7 +71,7 @@ public class LocalTransportReceiver {
             msgCtx.setServerSide(true);
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+            XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                     new BufferedReader(new InputStreamReader(in)));
             StAXBuilder builder = new StAXSOAPModelBuilder(reader, null);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();

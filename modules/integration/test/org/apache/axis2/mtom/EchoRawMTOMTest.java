@@ -167,8 +167,6 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setTo(targetEPR);
         OMElement result = sender.sendReceive(payload);
 
-        // result.serializeAndConsume(new
-        // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         OMElement ele = (OMElement) result.getFirstOMChild();
         OMText binaryNode = (OMText) ele.getFirstOMChild();
 
@@ -180,9 +178,6 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         actualDH = (DataHandler) binaryNode.getDataHandler();
         new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
-//        FileOutputStream imageOutStream = new FileOutputStream("target/testout.jpg");
-//        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
-
     }
 
     protected InputStream getResourceAsStream(String path) {

@@ -6,6 +6,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
+
+import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -37,7 +39,7 @@ public class PopulateAnyTypeTest extends TestCase {
 
     public void testPopulate() throws Exception{
 
-               XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlString.getBytes()));
+               XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(xmlString.getBytes()));
                Class clazz = Class.forName("org.soapinterop.xsd2.MyObject");
                Class innerClazz = clazz.getDeclaredClasses()[0];
                Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});

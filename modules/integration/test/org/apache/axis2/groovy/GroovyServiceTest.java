@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -113,7 +114,7 @@ public class GroovyServiceTest extends TestCase {
                 "<GENDER>Male</GENDER></DET><DET><NAME>Sriskantharaja Ahilan</NAME>" +
                 "<OCC>Student</OCC><ADD>Trincomalee</ADD><GENDER>Male</GENDER>" +
                 "</DET></ADDRESS>";
-        XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
                 ByteArrayInputStream(str.getBytes()));
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

@@ -10,6 +10,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.xml.sax.SAXException;
@@ -812,7 +813,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
 
         StreamingOMSerializer ser = new StreamingOMSerializer();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(byteArrayOutputStream);
+        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(byteArrayOutputStream);
         ser.serialize(
                 new StreamWrapper(reader),
                 writer);

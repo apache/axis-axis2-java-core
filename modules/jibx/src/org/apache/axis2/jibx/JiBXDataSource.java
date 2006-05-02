@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.util.StAXUtils;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallable;
 import org.jibx.runtime.IMarshallingContext;
@@ -103,7 +104,6 @@ public class JiBXDataSource implements OMDataSource
     public XMLStreamReader getReader() throws XMLStreamException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         serialize(bos, null);
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        return inputFactory.createXMLStreamReader(new ByteArrayInputStream(bos.toByteArray()));
+        return StAXUtils.createXMLStreamReader(new ByteArrayInputStream(bos.toByteArray()));
     }
 }

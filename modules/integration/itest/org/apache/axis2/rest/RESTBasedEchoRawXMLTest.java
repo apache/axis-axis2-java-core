@@ -46,25 +46,6 @@ public class RESTBasedEchoRawXMLTest extends TestCase { //extends UtilServerBase
         super(testName);
     }
 
-//    public static Test suite() {
-//        return getTestSetup(new TestSuite(RESTBasedEchoRawXMLTest.class));
-//    }
-//
-//    protected void setUp() throws Exception {
-//        Parameter parameter = new Parameter(
-//                Constants.Configuration.ENABLE_REST, "true");
-//        UtilServer.getConfigurationContext()
-//                .getAxisConfiguration().addParameter(parameter);
-//        AxisService service = Utils.createSimpleService(serviceName,
-//                Echo.class.getName(),
-//                operationName);
-//        UtilServer.deployService(service);
-//    }
-//
-//    protected void tearDown() throws Exception {
-//        UtilServer.unDeployService(serviceName);
-//    }
-
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
@@ -77,24 +58,4 @@ public class RESTBasedEchoRawXMLTest extends TestCase { //extends UtilServerBase
         return method;
     }
 
-
-//    public void testEchoXMLSync() throws Exception {
-//        OMElement payload = createEnvelope();
-//        Options options = new Options();
-//        options.setTo(targetEPR);
-//        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-//        options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
-//
-//        ConfigurationContext configContext =
-//                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-//        ServiceClient sender = new ServiceClient(configContext, null);
-//        sender.setOptions(options);
-//        options.setTo(targetEPR);
-//        OMElement result = sender.sendReceive(payload);
-//
-//        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
-//                System.out));
-//
-//
-//    }
 }

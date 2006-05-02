@@ -18,6 +18,7 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -91,7 +92,7 @@ public class SimpleJMSWorker implements Runnable {
 
                     // If charset is not specified
                     if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                        xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
+                        xmlreader = StAXUtils.createXMLStreamReader(in,
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                         // Set the encoding scheme in the message context
@@ -102,7 +103,7 @@ public class SimpleJMSWorker implements Runnable {
                         // get the type of char encoding
                         String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
 
-                        xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
+                        xmlreader = StAXUtils.createXMLStreamReader(in,
                                 charSetEnc);
 
                         // Setting the value in msgCtx

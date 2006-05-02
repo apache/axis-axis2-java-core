@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.xpath.AXIOMXPath;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -50,7 +51,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
                             .getContextClassLoader().getResourceAsStream(
                             filePath);
 
-                    XMLStreamReader parser = XMLInputFactory.newInstance()
+                    XMLStreamReader parser = StAXUtils
                             .createXMLStreamReader(stream);
                     OMXMLParserWrapper builder = new StAXSOAPModelBuilder(
                             parser, null);

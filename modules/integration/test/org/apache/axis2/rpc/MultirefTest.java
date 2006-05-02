@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -496,7 +497,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
     private OMElement getOMelemnt(String str, OMFactory fac) throws AxisFault {
         StAXOMBuilder staxOMBuilder;
         try {
-            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
                     ByteArrayInputStream(str.getBytes()));
             staxOMBuilder = new
                     StAXOMBuilder(fac, xmlReader);
@@ -592,7 +593,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
                 "</reference>";
         StAXOMBuilder staxOMBuilder;
         try {
-            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
                     ByteArrayInputStream(str.getBytes()));
             staxOMBuilder = new
                     StAXOMBuilder(fac, xmlReader);

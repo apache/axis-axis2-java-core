@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -109,7 +110,7 @@ public class HandlerFailureTest extends UtilServerBasedTestCase implements TestC
             OMElement result = sender.sendReceive(method);
 
 
-            result.serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
+            result.serializeAndConsume(StAXUtils.createXMLStreamWriter(
                     System.out));
             fail("the test must fail due to the intentional failure of the \"culprit\" handler");
         } catch (AxisFault e) {

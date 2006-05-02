@@ -17,6 +17,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -145,8 +146,7 @@ public class AxisService2OM implements Java2WSDLConstants {
 
             schema.write(writer);
             if (!"".equals(writer.toString())) {
-                XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-                XMLStreamReader xmlReader = xmlInputFactory
+                XMLStreamReader xmlReader = StAXUtils
                         .createXMLStreamReader(new ByteArrayInputStream(writer
                                 .toString().getBytes()));
 
@@ -786,7 +786,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                         .toByteArray());
                 element.addChild(OMXMLBuilderFactory.createStAXOMBuilder(
                         factory,
-                        XMLInputFactory.newInstance().createXMLStreamReader(
+                        StAXUtils.createXMLStreamReader(
                                 bais)).getDocumentElement());
 
             } else if (policyElement instanceof PolicyReference) {
@@ -806,7 +806,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                         .toByteArray());
                 getDefinitionElement().addChild(OMXMLBuilderFactory.createStAXOMBuilder(
                         factory,
-                        XMLInputFactory.newInstance().createXMLStreamReader(
+                        StAXUtils.createXMLStreamReader(
                                 bais)).getDocumentElement());
                 
                 // TODO refactor this ..

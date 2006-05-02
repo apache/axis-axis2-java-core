@@ -20,6 +20,7 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.*;
@@ -184,7 +185,7 @@ public class HTTPTransportUtils {
 
                     // If charset is not specified
                     if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                        xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
+                        xmlreader = StAXUtils.createXMLStreamReader(in,
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                         // Set the encoding scheme in the message context
@@ -195,7 +196,7 @@ public class HTTPTransportUtils {
                         // get the type of char encoding
                         String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
 
-                        xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
+                        xmlreader = StAXUtils.createXMLStreamReader(in,
                                 charSetEnc);
 
                         // Setting the value in msgCtx
@@ -243,7 +244,7 @@ public class HTTPTransportUtils {
             }
 
             if (builder == null) {
-                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,
+                XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
                         MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                 // Set the encoding scheme in the message context

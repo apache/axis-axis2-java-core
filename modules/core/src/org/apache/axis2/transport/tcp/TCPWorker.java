@@ -18,6 +18,7 @@
 package org.apache.axis2.transport.tcp;
 
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
@@ -81,7 +82,7 @@ public class TCPWorker implements Runnable {
 
                 // create the SOAP Envelope
                 Reader in = new InputStreamReader(socket.getInputStream());
-                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
                 StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 

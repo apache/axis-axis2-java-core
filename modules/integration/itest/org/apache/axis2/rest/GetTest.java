@@ -29,6 +29,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
 public class GetTest extends TestCase {
@@ -46,8 +47,7 @@ public class GetTest extends TestCase {
 
         XMLStreamReader reader = null;
         try {
-            XMLInputFactory xif = XMLInputFactory.newInstance();
-            reader = xif.createXMLStreamReader(bais);
+            reader = StAXUtils.createXMLStreamReader(bais);
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }

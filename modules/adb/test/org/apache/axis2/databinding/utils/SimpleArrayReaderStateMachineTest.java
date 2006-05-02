@@ -8,6 +8,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
+
+import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -29,7 +31,7 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
     public void testStateMachine() throws Exception{
         String xmlDoc="<wrapper><myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal>" +
                 "<myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal></wrapper>";
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
         SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));
@@ -46,7 +48,7 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
     public void testStateMachine3() throws Exception{
         String xmlDoc="<wrapper><myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal>" +
                 "<myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal></wrapper>";
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
 
         while(reader.hasNext()){
@@ -71,7 +73,7 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
 
     public void testStateMachine2() throws Exception{
         String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
         SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));
@@ -86,7 +88,7 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
 
      public void testStateMachineEmptyArray() throws Exception{
         String xmlDoc="<wrapper></wrapper>";
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
         SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));

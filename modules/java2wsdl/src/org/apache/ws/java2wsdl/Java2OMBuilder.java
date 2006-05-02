@@ -16,6 +16,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaObject;
@@ -152,7 +153,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         writer.write("<xmlSchemas>");
         writeSchemas(writer);
         writer.write("</xmlSchemas>");
-        XMLStreamReader xmlReader = XMLInputFactory.newInstance()
+        XMLStreamReader xmlReader = StAXUtils
                 .createXMLStreamReader(
                         new ByteArrayInputStream(writer.toString().getBytes()));
 

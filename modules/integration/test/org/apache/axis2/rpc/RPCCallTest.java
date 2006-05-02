@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -684,7 +685,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 "</req:omElementArray>";
         StAXOMBuilder staxOMBuilder;
         try {
-            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
                     ByteArrayInputStream(str.getBytes()));
             OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -719,7 +720,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 "</req:handleArrayList>";
         StAXOMBuilder staxOMBuilder;
         try {
-            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
                     ByteArrayInputStream(str.getBytes()));
             OMFactory fac = OMAbstractFactory.getOMFactory();
 

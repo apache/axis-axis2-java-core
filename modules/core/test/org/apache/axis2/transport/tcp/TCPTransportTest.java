@@ -18,6 +18,7 @@ package org.apache.axis2.transport.tcp;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
@@ -37,7 +38,7 @@ public class TCPTransportTest extends TestCase {
     public SOAPEnvelope createSOAPEnvelope(InputStream in) throws AxisFault {
         try {
             XMLStreamReader xmlreader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(in);
+                    StAXUtils.createXMLStreamReader(in);
             StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
             return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {

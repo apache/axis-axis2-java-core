@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -122,7 +123,7 @@ public class GroovyReceiver
 
     private OMElement getpayLoad(String str) throws XMLStreamException {
         XMLStreamReader xmlReader =
-            XMLInputFactory.newInstance().createXMLStreamReader(
+            StAXUtils.createXMLStreamReader(
                 new ByteArrayInputStream(str.getBytes()));
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

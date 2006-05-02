@@ -12,6 +12,8 @@ import java.beans.PropertyDescriptor;
 import java.beans.Introspector;
 import java.beans.BeanInfo;
 import java.io.ByteArrayInputStream;
+
+import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -45,7 +47,7 @@ public class PopulateRecursiveTest extends TestCase {
 
     private void populateAndAssert(String s
     ) throws XMLStreamException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, IntrospectionException {
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
         Class clazz = Class.forName("org.recursion.E");
         Class innerClazz = clazz.getDeclaredClasses()[0];
         Method parseMethod = innerClazz.getMethod("parse", new Class[]{XMLStreamReader.class});

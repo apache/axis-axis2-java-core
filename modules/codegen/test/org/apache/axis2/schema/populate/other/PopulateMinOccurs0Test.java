@@ -13,6 +13,8 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.IntrospectionException;
+
+import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -82,7 +84,7 @@ public class PopulateMinOccurs0Test extends TestCase {
             IllegalAccessException, InvocationTargetException,
             IntrospectionException {
         XMLStreamReader reader =
-                XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
+                StAXUtils.createXMLStreamReader(new ByteArrayInputStream(s.getBytes()));
         Class clazz = Class.forName("org.test.Root");
         Class innerClazz = clazz.getDeclaredClasses()[0];
         Method parseMethod = innerClazz.getMethod("parse", new Class[]{XMLStreamReader.class});

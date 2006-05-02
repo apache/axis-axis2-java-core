@@ -17,6 +17,7 @@
 package org.apache.axis2.handlers.util;
 
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -34,7 +35,7 @@ public class TestUtil {
         if ("".equals(fileName) || fileName == null) {
             fileName = IN_FILE_NAME;
         }
-        XMLStreamReader parser = XMLInputFactory.newInstance()
+        XMLStreamReader parser = StAXUtils
                 .createXMLStreamReader(
                         new FileReader(getTestResourceFile(fileName)));
         builder = new StAXSOAPModelBuilder(parser, null);

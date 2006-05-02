@@ -17,6 +17,7 @@
 package test.soap12testing.client;
 
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
@@ -63,7 +64,7 @@ public class SOAPCreater {
         File file = new File(pathAndFileName);
         try {
             XMLStreamReader parser =
-                XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+                StAXUtils.createXMLStreamReader(new FileReader(file));
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
             return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {

@@ -18,6 +18,7 @@ package org.apache.axis2.databinding;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -103,7 +104,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
 
         String s2 = writer.toString();
 
-        XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(s2));
+        XMLStreamReader r = StAXUtils.createXMLStreamReader(new StringReader(s2));
         PrintEvents.print(r);
 
         assertXMLEqual(s2,xml);
@@ -148,7 +149,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         envelope.serialize(writer);
         writer.flush();
 
-        XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(writer.toString()));
+        XMLStreamReader r = StAXUtils.createXMLStreamReader(new StringReader(writer.toString()));
         PrintEvents.print(r);
 
         //TODO: FIXME. Simpler test in testPrintEvents2

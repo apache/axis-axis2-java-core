@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.util.StreamWrapper;
 
 import javax.xml.namespace.QName;
@@ -29,7 +30,7 @@ public class NamedStaxOMBuilderTest extends TestCase {
     public void testNamedOMBuilder() throws Exception{
 
         String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
 
         NamedStaxOMBuilder  sm = new NamedStaxOMBuilder(reader,new QName("wrapper"));
@@ -46,7 +47,7 @@ public class NamedStaxOMBuilderTest extends TestCase {
     public void testNamedOMBuilder1() throws Exception{
 
         String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
 
         //move upto the  myIntVal start element first

@@ -516,23 +516,6 @@ public class BeanUtil {
         XMLStreamReader xr = new ADBXMLStreamReaderImpl(opName, objects.toArray(), null);
 
         StreamWrapper parser = new StreamWrapper(xr);
-//      /////////////////////////////////////////////////////////////////////////
-//      /////////////////////////////////////////////////////////////////////////
-//        StreamWrapper parser = null;
-//        try {
-//
-//            StreamingOMSerializer ser = new StreamingOMSerializer();
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-//            ser.serialize(
-//                    new StreamWrapper(parser),
-//                    writer);
-//            writer.flush();
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//
-////       ////////////////////////////////////
         StAXOMBuilder stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(
                         OMAbstractFactory.getSOAP11Factory(), parser);

@@ -1,6 +1,7 @@
 package org.apache.axis2.transport.mail.server;
 
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -98,7 +99,7 @@ public class MailSorter {
 
             ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
             XMLStreamReader reader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(bais);
+                    StAXUtils.createXMLStreamReader(bais);
             String soapNamespaceURI = "";
 
             if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {

@@ -16,6 +16,7 @@
 package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -193,7 +194,7 @@ public class RESTUtil {
                     // get the type of char encoding
                     String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
 
-                    xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream,
+                    xmlreader = StAXUtils.createXMLStreamReader(inputStream,
                             charSetEnc);
 
                     // Setting the value in msgCtx

@@ -19,6 +19,7 @@ package org.apache.axis2.transport;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -99,7 +100,7 @@ public class TransportUtils {
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else if (msgContext.isDoingREST()) {
                 XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(inStream, charSetEnc);
+                        StAXUtils.createXMLStreamReader(inStream, charSetEnc);
                 SOAPFactory soapFactory = new SOAP11Factory();
 
                 builder = new StAXOMBuilder(xmlreader);
@@ -114,7 +115,7 @@ public class TransportUtils {
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else {
                 XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(inStream, charSetEnc);
+                        StAXUtils.createXMLStreamReader(inStream, charSetEnc);
 
                 builder = new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -210,7 +211,7 @@ public class TransportUtils {
         }
 
         try {
-            streamReader = XMLInputFactory.newInstance().createXMLStreamReader(
+            streamReader = StAXUtils.createXMLStreamReader(
                     getReader(attachments.getSOAPPartInputStream(), charSetEncoding));
         } catch (IOException e) {
             throw new XMLStreamException(e);

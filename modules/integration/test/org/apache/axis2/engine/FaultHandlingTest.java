@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -139,7 +140,9 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
                 "         <m:echoIn xmlns:m=\"http://example.org/echo\" />  \n" +
                 "      </env:Body>\n" +
                 "   </env:Envelope>";
-        return (SOAPEnvelope) new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(soap.getBytes())), SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI).getDocumentElement();
+        return (SOAPEnvelope) new StAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(soap.getBytes())),
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI).getDocumentElement();
     }
 
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {

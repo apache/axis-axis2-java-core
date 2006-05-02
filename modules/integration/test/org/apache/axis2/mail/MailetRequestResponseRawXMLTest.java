@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -120,7 +121,7 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
             public void onComplete(AsyncResult result) {
                 try {
                     result.getResponseEnvelope().serializeAndConsume(
-                            XMLOutputFactory.newInstance()
+                            StAXUtils
                                     .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     onError(e);

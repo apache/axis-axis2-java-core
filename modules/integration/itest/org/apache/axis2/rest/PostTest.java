@@ -34,6 +34,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
 /**
@@ -60,8 +61,7 @@ public class PostTest extends TestCase {
 
             XMLStreamReader reader = null;
             try {
-                XMLInputFactory xif = XMLInputFactory.newInstance();
-                reader = xif.createXMLStreamReader(bais);
+                reader = StAXUtils.createXMLStreamReader(bais);
             } catch (XMLStreamException e) {
                 e.printStackTrace();
             }
@@ -80,7 +80,7 @@ public class PostTest extends TestCase {
             OMElement result = sender.sendReceive(websearch);
 
             StringWriter writer = new StringWriter();
-            result.serialize(XMLOutputFactory.newInstance()
+            result.serialize(StAXUtils
                     .createXMLStreamWriter(writer));
             writer.flush();
 

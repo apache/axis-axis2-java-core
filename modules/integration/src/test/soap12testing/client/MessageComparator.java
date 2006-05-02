@@ -17,6 +17,7 @@
 package test.soap12testing.client;
 
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.exception.XMLComparisonException;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
@@ -48,11 +49,11 @@ public class MessageComparator {
             //This step is needed to skip the headers :)
             receiver.parseTheHeaders(replyMessage, false);
 
-            XMLStreamReader requiredMessageParser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+            XMLStreamReader requiredMessageParser = StAXUtils.createXMLStreamReader(new FileReader(file));
             OMXMLParserWrapper requiredMessageBuilder = new StAXSOAPModelBuilder(requiredMessageParser,null);
             requiredMessageEnvelope = (SOAPEnvelope) requiredMessageBuilder.getDocumentElement();
 
-            XMLStreamReader replyMessageParser = XMLInputFactory.newInstance().createXMLStreamReader(replyMessage);
+            XMLStreamReader replyMessageParser = StAXUtils.createXMLStreamReader(replyMessage);
             OMXMLParserWrapper replyMessageBuilder = new StAXSOAPModelBuilder(replyMessageParser,null);
             replyMessageEnvelope = (SOAPEnvelope) replyMessageBuilder.getDocumentElement();
 

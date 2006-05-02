@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.databinding.types.Day;
@@ -282,7 +283,7 @@ public class ConverterUtil {
 
     public static OMElement convertToanyType(String s) {
         try {
-            XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(
+            XMLStreamReader r = StAXUtils.createXMLStreamReader(
                     new ByteArrayInputStream(s.getBytes()));
             StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(),r);
             return builder.getDocumentElement();

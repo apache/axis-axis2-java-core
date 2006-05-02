@@ -19,6 +19,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -101,7 +102,7 @@ public abstract class TestClient extends TestCase {
             OMElement result = serviceClient.sendReceive(getEchoElement());
             
             StringWriter writer = new StringWriter();
-            result.serialize(XMLOutputFactory.newInstance()
+            result.serialize(StAXUtils
                     .createXMLStreamWriter(writer));
             writer.flush();
             

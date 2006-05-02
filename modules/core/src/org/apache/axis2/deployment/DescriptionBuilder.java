@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -78,7 +79,7 @@ public class DescriptionBuilder implements DeploymentConstants {
      */
     public OMElement buildOM() throws XMLStreamException {
         XMLStreamReader xmlReader =
-                XMLInputFactory.newInstance().createXMLStreamReader(descriptionStream);
+                StAXUtils.createXMLStreamReader(descriptionStream);
         OMFactory fac = OMAbstractFactory.getOMFactory();
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement element = staxOMBuilder.getDocumentElement();
