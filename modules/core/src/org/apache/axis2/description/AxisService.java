@@ -110,8 +110,7 @@ public class AxisService extends AxisDescription {
             Java2WSDLConstants.TARGETNAMESPACE_PREFIX;
 
     // to store the target namespace for the schema
-    private String schematargetNamespace =
-            Java2WSDLConstants.AXIS2_XSD;
+    private String schematargetNamespace;// = Java2WSDLConstants.AXIS2_XSD;
     private String schematargetNamespacePrefix =
             Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
 

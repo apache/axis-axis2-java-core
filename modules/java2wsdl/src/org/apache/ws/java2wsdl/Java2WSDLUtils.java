@@ -46,9 +46,9 @@ public class Java2WSDLUtils
         return qualifiedName;
     }
     
-    public static StringBuffer namespaceFromClassName( String className ) throws Exception
+    public static StringBuffer namespaceFromClassName(String className , ClassLoader classLoader) throws Exception
     {
-    	return namespaceFromPackageName(Class.forName(className).getPackage().getName());
+    	return namespaceFromPackageName(Class.forName(className, true, classLoader).getPackage().getName());
     }
     
     public static StringBuffer namespaceFromPackageName(String packageName)
@@ -72,9 +72,9 @@ public class Java2WSDLUtils
 		return strBuf;
 	}
     
-    public static StringBuffer schemaNamespaceFromClassName(String packageName) throws Exception
+    public static StringBuffer schemaNamespaceFromClassName(String packageName , ClassLoader loader) throws Exception
 	{
-		return namespaceFromClassName(packageName).append(SCHEMA_NAMESPACE_EXTN);
+		return namespaceFromClassName(packageName,loader).append(SCHEMA_NAMESPACE_EXTN);
 	}
     
     public static StringBuffer schemaNamespaceFromPackageName(String packageName)

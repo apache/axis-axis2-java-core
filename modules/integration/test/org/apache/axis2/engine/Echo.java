@@ -40,6 +40,9 @@ public class Echo {
         omEle.setLocalName(omEle.getLocalName() + "Response");
         return omEle;
     }
+     public OMElement echoOM(OMElement omEle) {
+        return omEle;
+    }
 
     public String echoString(String in) {
         return in;

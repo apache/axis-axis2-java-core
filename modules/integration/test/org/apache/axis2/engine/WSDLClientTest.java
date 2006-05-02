@@ -60,9 +60,9 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
                     "EchoXMLServiceSOAP11port0");
             OMElement payload = TestingUtils.createDummyOMElement();
             OMElement response = serviceClient.sendReceive(
-                    new QName("http://org.apache.axis2/xsd", "echoOMElement"), payload);
+                    new QName("http://org.apache.axis2/xsd", "echoOM"), payload);
             assertNotNull(response);
-            String textValue = response.getText();
+            String textValue = response.getFirstElement().getFirstElement().getText();
             assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
         } catch (IOException e) {
             throw new AxisFault(e);

@@ -25,6 +25,7 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -169,6 +170,9 @@ public class AxisConfiguration extends AxisDescription {
                 throw new AxisFault(Messages.getMessage(
                         "twoservicecannothavesamename",
                         description.getName()));
+            }
+            if(description.getSchematargetNamespace()==null){
+                description.setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
         }
         services = axisServiceGroup.getServices();

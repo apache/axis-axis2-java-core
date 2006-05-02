@@ -26,7 +26,7 @@ public class TestingUtils {
     public static OMElement createDummyOMElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "ns1");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement method = fac.createOMElement("echoOM", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
                 fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));

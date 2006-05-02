@@ -61,16 +61,17 @@ public class RPCServiceClass {
     }
 
     public OMElement echoOM(OMElement b) {
-        SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
-        OMNamespace ns = fac.createOMNamespace(
-                "http://soapenc/", "res");
-        OMElement bodyContent = fac.createOMElement(
-                "echoOMResponse", ns);
-        OMElement child = fac.createOMElement("return", null);
-        child.addChild(fac.createOMText(child, b.getText()));
-        bodyContent.addChild(child);
-//        bodyContent.addChild(b);
-        return bodyContent;
+        b.build();
+//        SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
+//        OMNamespace ns = fac.createOMNamespace(
+//                "http://soapenc/", "res");
+//        OMElement bodyContent = fac.createOMElement(
+//                "echoOMResponse", ns);
+//        OMElement child = fac.createOMElement("return", null);
+//        child.addChild(fac.createOMText(child, b.getText()));
+//        bodyContent.addChild(child);
+////        bodyContent.addChild(b);
+        return (OMElement)b.detach();
     }
 
     public double divide(double a, double b) {

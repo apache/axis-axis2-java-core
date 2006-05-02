@@ -145,7 +145,7 @@ public class Java2WSDLBuilder {
                 schemaCollection,
                 sg.getTypeTable(),
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
-                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className).toString() : targetNamespace,
+                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className,classLoader).toString() : targetNamespace,
                 targetNamespacePrefix,
                 style,
                 use,

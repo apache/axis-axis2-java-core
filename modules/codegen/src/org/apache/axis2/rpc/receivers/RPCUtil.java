@@ -45,7 +45,12 @@ public class RPCUtil {
         if (resObject != null) {
             //simple type
             if (resObject instanceof OMElement) {
-                bodyContent = (OMElement) resObject;
+                OMElement result = (OMElement) resObject;
+                bodyContent = fac.createOMElement(
+                        method.getName() + "Response", ns);
+                OMElement resWrapper = fac.createOMElement(RETURN_WRAPPER, null);
+                resWrapper.addChild(result);
+                bodyContent.addChild(resWrapper);
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);

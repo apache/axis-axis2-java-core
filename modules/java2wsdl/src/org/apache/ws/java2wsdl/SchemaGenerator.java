@@ -75,7 +75,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
             this.schemaTargetNameSpace = schematargetNamespace;
         } else {
             this.schemaTargetNameSpace = Java2WSDLUtils
-                    .schemaNamespaceFromClassName(className).toString();
+                    .schemaNamespaceFromClassName(className,loader).toString();
         }
         if (schematargetNamespacePrefix != null
                 && !schematargetNamespacePrefix.trim().equals("")) {
