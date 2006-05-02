@@ -107,56 +107,86 @@ directly do that by adding a handler element into it . In addition to that
 there is no any hard coding stuffs for handler  chain in anywhere in Axis2
 (at any Axis*) , so all those configuration are also done here in phase order
 element. The complete configuration will look like as follows; <source>
-<pre>&lt;phaseOrder type="inflow""&gt;
-        &lt;!--  System pre defined phases       --"&gt;
-        &lt;phase name="TransportIn"/"&gt;
-        &lt;phase name="PreDispatch"/"&gt;
+<pre>&lt;phaseOrder type="inflow"&gt;
+        &lt;!--  System pre defined phases       --&gt;
+         &lt;phase name="Transport"&gt;
+            &lt;handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+            &lt;handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+        &lt;/phase&gt;
+        &lt;phase name="Security"/&gt;
+        &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
             &lt;handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher""&gt;
-                &lt;order phase="Dispatch"/"&gt;
-            &lt;/handler"&gt;
-             &lt;handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher""&gt;
-                &lt;order phase="Dispatch"/"&gt;
-            &lt;/handler"&gt;
-             &lt;handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher""&gt;
-                &lt;order phase="Dispatch"/"&gt;
-            &lt;/handler"&gt;
-             &lt;handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher""&gt;
-                &lt;order phase="Dispatch"/"&gt;
-            &lt;/handler"&gt;
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="SOAPMessageBodyBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
             &lt;handler name="InstanceDispatcher"
-                     class="org.apache.axis2.engine.InstanceDispatcher""&gt;
-                &lt;order phase="Dispatch"/"&gt;
-            &lt;/handler"&gt;
-        &lt;/phase"&gt;
-        &lt;!--  System pre defined phases       --"&gt;
-        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --"&gt;
-        &lt;phase name="OperationInPhase"/"&gt;
-    &lt;/phaseOrder"&gt;
-    &lt;phaseOrder type="outflow""&gt;
-        &lt;!--      user can add his own phases to this area  --"&gt;
-        &lt;phase name="OperationOutPhase"/"&gt;
-        &lt;!--system predefined phase--"&gt;
-        &lt;!--these phase will run irrespective of the service--"&gt;
-        &lt;phase name="PolicyDetermination"/"&gt;
-        &lt;phase name="MessageOut"/"&gt;
-    &lt;/phaseOrder"&gt;
-    &lt;phaseOrder type="INfaultflow""&gt;
-        &lt;!--      user can add his own phases to this area  --"&gt;
-        &lt;phase name="OperationInFaultPhase"/"&gt;
-    &lt;/phaseOrder"&gt;
-    &lt;phaseOrder type="Outfaultflow""&gt;
-        &lt;!--      user can add his own phases to this area  --"&gt;
-        &lt;phase name="OperationOutFaultPhase"/"&gt;
-        &lt;phase name="PolicyDetermination"/"&gt;
-        &lt;phase name="MessageOut"/"&gt;
-    &lt;/phaseOrder"&gt;</pre>
-</source>type: the attribute represent type of the flow and which can only be
-one of the following
+                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
+                &lt;order phase="PostDispatch"/&gt;
+            &lt;/handler&gt;
+        &lt;/phase&gt;
+        &lt;!--  System pre defined phases       --&gt;
+        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --&gt;
+        &lt;phase name="OperationInPhase"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="outflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="OperationOutPhase"/&gt;
+        &lt;!--system predefined phase--&gt;
+        &lt;!--these phase will run irrespective of the service--&gt;
+        &lt;phase name="PolicyDetermination"/&gt;
+        &lt;phase name="MessageOut"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="INfaultflow"&gt;
+        &lt;phase name="PreDispatch"/&gt;
+        &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
+            &lt;handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+
+            &lt;handler name="SOAPMessageBodyBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                &lt;order phase="Dispatch"/&gt;
+            &lt;/handler&gt;
+            &lt;handler name="InstanceDispatcher"
+                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
+                &lt;order phase="PostDispatch"/&gt;
+            &lt;/handler&gt;
+        &lt;/phase&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="OperationInFaultPhase"/&gt;
+    &lt;/phaseOrder&gt;
+    &lt;phaseOrder type="Outfaultflow"&gt;
+        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;phase name="OperationOutFaultPhase"/&gt;
+        &lt;phase name="PolicyDetermination"/&gt;
+        &lt;phase name="MessageOut"/&gt;
+    &lt;/phaseOrder&gt;</pre>
+</source>
+<p>type: the attribute represent type of the flow and which can only be one
+of the following</p>
 <ul>
   <li>inflow</li>
   <li>outflow</li>
@@ -169,7 +199,7 @@ element, which represents available phases in the execution chain. The way of
 specifying phase inside phaseOrder has to be done as follows;</p>
 
 <p><source></p>
-<pre> &lt;phase name="TransportIn"/&gt;</pre>
+<pre> &lt;phase name="Transport"/&gt;</pre>
 </source>name: Name of the phase. <br>
 There are number of things that one has to keep in mind when changing
 pahseOrder,
