@@ -52,6 +52,7 @@ public class AxisSOAPServlet extends AxisServlet {
         } catch (Exception e) {
             log.error(e);
             if (msgCtx != null) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 handleFault(msgCtx, resp.getOutputStream(), new AxisFault(e));
             } else {
                 throw new ServletException(e);
