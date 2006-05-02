@@ -228,52 +228,66 @@ listing below for more details</p>
         // create an Axis server
         AxisEngine engine = new AxisEngine(confContext);
         MessageContext msgContext = null;
+
         // create and initialize a message context
         try {
-            // Create a message context with mail as in and out transports.
-            msgContext =
-                    new MessageContext(confContext,
-                            confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
-                            confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
+            msgContext = new MessageContext();
+            msgContext.setConfigurationContext(confContext);
+            msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+            msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
+
             msgContext.setServerSide(true);
+            msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
+            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                    mimeMessage.getEncoding());
+            String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION, mimeMessage);
+            if (soapAction == null){
+            	soapAction = mimeMessage.getSubject();
+            }
 
-            msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage));
+            msgContext.setSoapAction(soapAction);
+            msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
 
-            // The service path is in the subject of the mail.
             String serviceURL = mimeMessage.getSubject();
+
             if (serviceURL == null) {
                 serviceURL = "";
             }
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
+
             if (replyTo != null) {
                 msgContext.setReplyTo(new EndpointReference(replyTo));
             }
 
-            String recipients = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
+            String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
 
-            if (recipients != null) {
-                msgContext.setTo(new EndpointReference(recipients + "/" + serviceURL));
+            if (recepainets != null) {
+                msgContext.setTo(new EndpointReference(recepainets + "/" + serviceURL));
             }
 
             // add the SOAPEnvelope
             String message = mimeMessage.getContent().toString();
+
+            log.info("message[" + message + "]");
+
             ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-
-            // This is just in place to work with SOAP 1.1 and 1.2.
+            XMLStreamReader reader =
+                    StAXUtils.createXMLStreamReader(bais);
             String soapNamespaceURI = "";
-            if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) &gt; -1) {
+
+            if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                 soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            } else if (mimeMessage.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) &gt; -1) {
+            } else if (mimeMessage.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE)
+                    > -1) {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-
             }
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
 
+            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+
             msgContext.setEnvelope(envelope);
+
             if (envelope.getBody().hasFault()) {
                 engine.receiveFault(msgContext);
             } else {
@@ -283,6 +297,7 @@ listing below for more details</p>
             try {
                 if (msgContext != null) {
                     MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+
                     engine.sendFault(faultContext);
                 }
             } catch (Exception e1) {
@@ -294,10 +309,11 @@ listing below for more details</p>
 <p>If you don't happen to have a ConfigurationContext lying around to call
 this method you can use the following bit of code to get one. Once you create
 one you can store that on the mailet and keep using it.</p>
-<source><pre>        File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext configContextbuilder
-                .buildConfigurationContext(file.getAbsolutePath());</pre>
+<source><pre>            File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
+            SERVER_CONFIG_CONTEXT =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                    	file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
+</pre>
 </source>
 <p></p>
 </body>
