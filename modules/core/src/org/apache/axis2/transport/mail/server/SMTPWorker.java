@@ -93,7 +93,6 @@ public class SMTPWorker extends Thread {
     }
 
     private String processInput(String input) {
-
         if (input == null) {
             return MailSrvConstants.COMMAND_UNKNOWN;
         }

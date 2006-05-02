@@ -52,7 +52,7 @@ import javax.xml.stream.XMLStreamException;
  */
 public class MailetRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("axis2-server@127.0.0.1" +
+            new EndpointReference("mail:axis2-server@127.0.0.1" +
                     "/axis2/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -115,8 +115,10 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
+        
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {

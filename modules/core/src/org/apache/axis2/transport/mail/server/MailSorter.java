@@ -11,6 +11,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +55,6 @@ public class MailSorter {
     }
 
     public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
-
         // create an Axis server
         AxisEngine engine = new AxisEngine(confContext);
         MessageContext msgContext = null;
@@ -62,17 +63,20 @@ public class MailSorter {
         try {
             msgContext = new MessageContext();
             msgContext.setConfigurationContext(confContext);
-            msgContext.setTransportIn(confContext.getAxisConfiguration()
-                    .getTransportIn(new QName(Constants
-                    .TRANSPORT_MAIL)));
-            msgContext.setTransportOut(confContext.getAxisConfiguration()
-                    .getTransportOut(new QName(Constants
-                    .TRANSPORT_MAIL)));
+            msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+            msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
 
             msgContext.setServerSide(true);
             msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            msgContext.setWSAAction(getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION,
-                    mimeMessage));
+            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                    mimeMessage.getEncoding());
+            String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION, mimeMessage);
+            if (soapAction == null){
+            	soapAction = mimeMessage.getSubject();
+            }
+
+            msgContext.setSoapAction(soapAction);
+            msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
 
             String serviceURL = mimeMessage.getSubject();
 

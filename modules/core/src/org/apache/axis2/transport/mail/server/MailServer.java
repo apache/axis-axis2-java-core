@@ -23,6 +23,12 @@ public class MailServer {
         smtpServer.start();
         pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
+        try {
+            log.info("Sleeping for a bit to let the mail server start up.");
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            log.error(e1);
+        }
     }
 
     public MailServer(ConfigurationContext configurationContext, int popPort, int smtpPort)
