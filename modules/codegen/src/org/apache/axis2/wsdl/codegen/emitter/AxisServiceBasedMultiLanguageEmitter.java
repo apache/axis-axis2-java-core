@@ -72,6 +72,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
     private static final String SKELETON_CLASS_SUFFIX = "Skeleton";
+    private static final String SKELETON_INTERFACE_SUFFIX = "SkeletonInterface";
     private static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
     private static final String FAULT_SUFFIX = "Exception";
     private static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
@@ -689,6 +690,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         generateAndPopulateFaultNames();
         updateFaultPackageForSkeleton();
 
+        //write skeletonInterface
+        writeSkeletonInterface();
+
         // write skeleton
         writeSkeleton();
 
@@ -702,7 +706,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         writeAntBuild();
 
         //for the server side codegen
-        //we need to seriali
+        //we need to serialize the WSDL's
         writeWSDLFiles();
     }
 
@@ -822,6 +826,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
         addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX, rootElement);
+         addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
+                rootElement);
+
         addAttribute(doc, "basereceiver", (String) MEPtoClassMap.get(mep), rootElement);
         fillSyncAttributes(doc, rootElement);
 
@@ -1080,6 +1087,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         writeClass(skeletonModel, skeletonWriter);
     }
 
+    /**
+     * Write the skeletonInterface
+     * @throws Exception
+     */
+     private void writeSkeletonInterface() throws Exception {
+        Document skeletonModel = createDOMDocumentForSkeletonInterface();
+        debugLogDocument("Document for skeleton Interface:", skeletonModel);
+        ClassWriter skeletonInterfaceWriter = new SkeletonInterfaceWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
+                "src"), this.codeGenConfiguration.getOutputLanguage());
+
+        writeClass(skeletonModel, skeletonInterfaceWriter);
+    }
+
+
     private Document createDOMDocumentForSkeleton() {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
@@ -1089,7 +1110,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX, rootElement);
         addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
-
+        addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX,
+                rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
 
@@ -1097,14 +1119,30 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         doc.appendChild(rootElement);
-
-        /////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
-        /////////////////////////////////////////////////////
-
         return doc;
 
     }
+
+    private Document createDOMDocumentForSkeletonInterface() {
+            Document doc = getEmptyDocument();
+            Element rootElement = doc.createElement("interface");
+
+            String serviceName = makeJavaClassName(axisService.getName());
+            addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+            addAttribute(doc, "name", serviceName + SKELETON_INTERFACE_SUFFIX, rootElement);
+            addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
+                    rootElement);
+
+            fillSyncAttributes(doc, rootElement);
+            loadOperations(doc, rootElement, null);
+
+            //attach a list of faults
+            rootElement.appendChild(getUniqueListofFaults(doc));
+
+            doc.appendChild(rootElement);
+            return doc;
+
+        }
 
     private boolean loadOperations(Document doc, Element rootElement, String mep) {
         Element methodElement;

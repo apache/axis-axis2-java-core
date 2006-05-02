@@ -7,7 +7,7 @@ package samples.wsdl.perf2;
 /**
  * PerfPortTypeSkeleton java skeleton for the axisService
  */
-public class PerfPortTypeSkeleton {
+public class PerfPortTypeSkeleton implements PerfPortTypeSkeletonInterface {
     /**
      * Auto generated method signature
      *

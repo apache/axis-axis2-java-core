@@ -13,7 +13,7 @@
     <!--Template for in out message receiver -->
     <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver']">
 
-        <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonname"/></xsl:variable>
+        <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
         <xsl:variable name="dbsupportpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
 
         /**

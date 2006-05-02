@@ -457,8 +457,8 @@
         // of commons and so cannot just be fixed in axis2.  This method should be removed and the calls to it below replaced with
         // simple calls to getElementText() as soon as this serious bug can be fixed.
 
-        private static String getElementTextProperly(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
-            String value = reader.getElementText();
+        private static java.lang.String getElementTextProperly(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
+            java.lang.String value = reader.getElementText();
             while (!reader.isEndElement())
                 reader.next();
             return value;
@@ -723,7 +723,7 @@
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
-                                    String content = getElementTextProperly(reader);
+                                    java.lang.String content = getElementTextProperly(reader);
                                     object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->

@@ -108,7 +108,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                 optionMap);
         if (ns2packageOption != null) {
             //the syntax for the value of the namespaces and packages is
-            //to be a comma seperated list with uri,packagename,uri,packagename...
+            //to be a comma seperated list with uri=packagename,uri=packagename...
             String value = ns2packageOption.getOptionValue();
             if (value != null) {
                 // Try treating the values as a name=value pair separated by comma's

@@ -9,9 +9,9 @@
      */
     package <xsl:value-of select="@package"/>;
     /**
-     *  <xsl:value-of select="@name"/> java skeleton for the axisService
+     *  <xsl:value-of select="@name"/> java skeleton interface for the axisService
      */
-    public class <xsl:value-of select="@name"></xsl:value-of> implements <xsl:value-of select="@skeletonInterfaceName"/>{
+    public interface <xsl:value-of select="@name"></xsl:value-of> {
      <xsl:for-each select="method">
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
@@ -32,28 +32,8 @@
            <xsl:for-each select="fault/param[@type!='']">
                <xsl:if test="position()=1">throws </xsl:if>
                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>
-           </xsl:for-each>{
-                //Todo fill this with the necessary business logic
-                <xsl:if test="$outputtype!=''">throw new  java.lang.UnsupportedOperationException();</xsl:if>
-        }
+           </xsl:for-each>;
      </xsl:for-each>
-
-
-    <!-- write the classes for the exceptions if there are any present -->
-   <xsl:for-each select="fault-list/fault">
-         public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
-
-            private <xsl:value-of select="@type"/> faultMessage;
-
-            public void setFaultMessage(<xsl:value-of select="@type"/> msg){
-               faultMessage = msg;
-            }
-
-            public <xsl:value-of select="@type"/> getFaultMessage(){
-               return faultMessage;
-            }
-         }
-   </xsl:for-each>
     }
     </xsl:template>
  </xsl:stylesheet>
