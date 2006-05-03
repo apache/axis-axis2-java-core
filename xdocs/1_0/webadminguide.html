@@ -11,9 +11,9 @@
 
 <p><i>-Axis2 Version 1.0</i></p>
 
-<p>This document will give you detailed intructions on administration console
-of Axis2 Web application. Axis2 Administration is all about configuring Axis2
-at the run time and the configuration will be transient.</p>
+<p>This document will give you detailed instructions on administration
+console of Axis2 Web application. Axis2 Administration is all about
+configuring Axis2 at the run time and the configuration will be transient.</p>
 
 <p><i>Feedback: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i></p>
@@ -52,8 +52,8 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i></p>
       </li>
       <li><a href="#services">Services</a>
         <ul>
-          <li><a href="#turnoffservice">Inacivate Service</a></li>
-          <li><a href="#turnonservice">Acivate Service</a></li>
+          <li><a href="#turnoffservice">Inactivate Service</a></li>
+          <li><a href="#turnonservice">Activate Service</a></li>
           <li><a href="#editservicepara">Edit service parameters</a></li>
         </ul>
       </li>
@@ -70,9 +70,9 @@ href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i></p>
 
 <p>Axis2 Web application has three main sections, 'Services'- lists all the
 available services deployed in this server, 'Validate'-checks the system to
-see whether all the required libraries are in place and view view the system
+see whether all the required libraries are in place and views the system
 information, and 'Administration'- Axis2 Web Administration module which is
-the console for administering this Axis2 installation or the .</p>
+the console for administering this Axis2 installation.</p>
 
 <p>Axis2 Web Administration module provides a way to configure Axis2
 dynamically. It's important to note that this dynamic configuration will NOT
@@ -83,7 +83,7 @@ dynamic configuration changes will be lost.</p>
 
 <h4>Login into Administration Site</h4>
 
-<p>Once Axis2 is successfully installed, the Web applicaion can be accessed
+<p>Once Axis2 is successfully installed, the Web application can be accessed
 (See <a href="installationguide.html">Installation Guide</a> for
 instructions). From <a href="#homepage">Axis2 Web Application Home page</a>
 you can go to Administration page by following 'Administration' link, then
@@ -124,8 +124,14 @@ dynamically configure it.</p>
     <li><a href="#operationchains">Operation specific chains</a></li>
   </ul>
   <b><a href="#engaginmodule">Engage module</a></b> <br>
-  <br>
-  <a name="services"> <b>Services</b></a>
+
+  <ul>
+    <li>For all Services</li>
+    <li>For a Service Group</li>
+    <li>For a Service</li>
+    <li>For an Operation</li>
+  </ul>
+  <a name="services"><b>Services</b></a>
   <ul>
     <li><a href="#turnoffservice">Inactivate service</a></li>
     <li><a href="#turnonservice">Activate service</a></li>
@@ -150,7 +156,7 @@ page. This can be done in two simple steps:</p>
 <ul>
   <li>Browse to the location and select the axisService archive file you wish
     to upload</li>
-  <li>then click Upload</li>
+  <li>Then click Upload</li>
 </ul>
 
 <p align="center"><img alt="" src="images/clip_image010.jpg"></p>
@@ -166,8 +172,8 @@ details will also be displayed here.</p>
 
 <p><strong>Faulty services</strong> of this system will also be listed on
 this page. Click on each faulty service, it will take you to a page that
-lists the exception stack trace of the excpetion that caused service to be
-faulty</p>
+lists the exception stack trace of the exception that caused service to be
+faulty.</p>
 
 <p align="center"><img alt="" src="images/adminmain.jpg"></p>
 <a name="servgroups"></a>
@@ -273,9 +279,10 @@ indicating whether it is engaged properly or not.</p>
 
 <h3>Inactivate Service</h3>
 
-<p>This functionality provide a way to remove unnecessary services from the
-running system, but the removal is transient which means if you restart the
-system the service will be available.</p>
+<p>'Inactivate Service' link under 'Services' list will lead to page below.
+Inactivate service functionality provide a way to remove unnecessary services
+from the running system, but the removal is transient which means if you
+restart the system the service will be available.</p>
 
 <p>To inactivate service, select service from list box, tick 'Inactivate
 service' check box, then click on 'Inactivate' button. 'Clear' button will
@@ -287,13 +294,14 @@ clear the 'Inactivate service' check box</p>
 
 <h3>Activate Service</h3>
 
-<p>This functionality provide a way to activate services while the system is
-running, but the activation is transient which means if you restart the
-system the service will be inactive.</p>
+<p>'Activate Service' link under 'Services' list will lead to page below.
+Activate service functionality provide a way to activate services while the
+system is running, but the activation is transient which means if you restart
+the system the service will be inactive.</p>
 
 <p>To activate service, select service from list box, tick 'Activate Service'
 check box, then click on 'Activate' button. 'Clear' button will clear the
-'Activate service' check box</p>
+'Activate service' check box.</p>
 
 <p align="center"><img alt="" src="images/activate.jpg"></p>
 <br>
@@ -301,13 +309,13 @@ check box, then click on 'Activate' button. 'Clear' button will clear the
 
 <h3>Edit Service Parameters</h3>
 
-<p>This functionality provide a way to change parameters in a service or its
-operations.These changes will be transient too, which means if you restart
+<p>This functionality provides a way to change parameters in a service or its
+operations. These changes will be transient too, which means if you restart
 the system changes will not be reflected.</p>
 
-<p>The Edit Parameters link under servies on navigation bar will link to page
-where you can select service to edit Parameters. Once service is selected
-click on 'Edit Parameters' button. This will lead to page below.</p>
+<p>The 'Edit Parameters' link under 'Services' list on navigation bar will
+link to page where you can select service to edit Parameters. Once service is
+selected click on 'Edit Parameters' button. This will lead to page below.</p>
 
 <p align="center"><img alt="" src="images/editserviecpara.jpg"></p>
 <a name="viewhierarchy"></a>
@@ -315,8 +323,9 @@ click on 'Edit Parameters' button. This will lead to page below.</p>
 <h3>View Hierarchy</h3>
 
 <p>By listing current context hierarchy 'View Hierarchy' link provides a
-means to look at the run time system. This will list out all the available
-service group contexts , service contexts , operation context and etc.</p>
+means to look at the system state at run time. This will list out all the
+available service group contexts, service contexts, operation context and
+etc.</p>
 
 <p></p>
 </body>
