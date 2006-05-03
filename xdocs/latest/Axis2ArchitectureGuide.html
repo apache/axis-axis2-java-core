@@ -1,11 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=windows-1252">
   <title>Axis2 Architecture Guide</title>
   <meta content="20050916;22455288">
-  <meta name="CHANGEDBY" content="Chamikara Jayalath">
-  <meta name="CHANGED" content="20050918;22493797">
 </head>
 
 <body lang="en-US" dir="ltr">
@@ -122,13 +119,11 @@ identified requirements:</p>
     per service or per operation basis. Furthermore it should be able to
     model different Message Exchange Patterns (MEPs) using the processing
     framework.</li>
-  <li><p>Ability to deploy a Web services (with or without WSDL)</p>
-  </li>
+  <li>Ability to deploy a Web service (with or without WSDL)</li>
   <li>Provide a Client API that can be used to invoke Web services. This API
     should support both the Synchronous and Asynchronous programming
   models.</li>
-  <li><p>Ability to configure Axis2 and it's components via deployment.</p>
-  </li>
+  <li>Ability to configure Axis2 and it's components via deployment.</li>
   <li>Ability to send and receive SOAP messages with different
   transports.</li>
 </ol>
@@ -152,7 +147,7 @@ are as follows:
 
 <p>Axis2 architecture is modular. Therefore Axis2 Framework is built up of
 core modules which collectively make up the core architecture of Axis2, and
-non-core/other modules that are layered on top of this core
+non-core/other modules are layered on top of this core
 modules/architecture.</p>
 <a name="bmother"></a>
 
@@ -165,8 +160,8 @@ modules/architecture.</p>
   <li><p><a href="#bmXML">XML processing Model</a>- Handling the SOAP Message
     is the most important and most complex task. The efficiency of this is
     the single most important factor that decides the performance. It makes
-    sense to delegate this task to a separate module allowing that
-    module(AXIOM) to provide a simple API for SOAP and XML info-set while
+    sense to delegate this task to a separate sub-project itself, under Web service project, allowing that
+    sub-project (AXIOM) to provide a simple API for SOAP and XML info-set while
     hiding the complexities of the efficient XML processing within the
     implementation.</p>
   </li>
@@ -339,7 +334,7 @@ align="bottom" width="755" height="348" border="0"></p>
 perform, sending and receiving SOAP messages. The architecture provides two
 Pipes ('Flows'), to perform these two basic actions. Axis Engine or the
 driver of Axis2 defines two methods send() and receive() to implement these
-two Pipes. The two pipes are named <i>In Pipe</i> and <i>Out Pipe</i>, and
+two Pipes. The two pipes are named <i><b>In</b> Pipe</i> and <i><b>Out</b> Pipe</i>, and
 the complex Message Exchange Patterns (MEPs) are constructed by combining
 these two pipes.</p>
 
@@ -351,7 +346,7 @@ all the scopes.</p>
 
 <p>The handlers act as interceptors and they process parts of the SOAP
 message and provide add-on services. Usually handlers work on the SOAP
-headers yet they may access or change the SOAP Body as well.</p>
+headers, yet they may access or change the SOAP Body as well.</p>
 
 <p>When a SOAP message is being sent through the Client API, an <i>Out
 Pipe</i> would begin, the <i>Out Pipe</i> invokes the handlers and end with a
@@ -375,12 +370,6 @@ always runs inside a phase, and the phase provides a mechanism to specify the
 ordering of handlers. Both Pipes have built in phases, and both define the
 areas for 'User Phases' which can be defined by the user.</p>
 
-<p>Following figure shows the two pipes with their pre-defined phases &amp;
-user-defined phases. User-defined phases fit in to the User Phases.</p>
-
-<p><img src="images/archi-guide/phases.png" name="Graphic5" align="bottom"
-alt="" width="525" height="226" border="0"></p>
-
 <h3><a name="default">Axis2 Default Processing Model</a></h3>
 
 <p>Axis2 has some inbuilt handlers that run in inbuilt phases and they create
@@ -395,7 +384,7 @@ There are four special handlers defined in Axis2.
     URI information, SOAP action information, etc.,</li>
 </ol>
 <ul>
-  <li><a name="mr">Message Receiver - Consume the SOAP Message And hands that
+  <li><a name="mr">Message Receiver - Consume the SOAP Message and hands that
     over to application , Message receiver is the last handler of the
     in-pipe</a></li>
   <li><p>Transport Sender - Send the SOAP message to the SOAP endpoint the
@@ -408,7 +397,7 @@ There are four special handlers defined in Axis2.
 <p>Incoming SOAP Message is always received by a Transport Receiver waiting
 for the SOAP Messages. Once the SOAP Message arrives the transport Headers
 are parsed and a</p>
-<a href="#messageContext">Message Context</a> is created for the incoming
+<a href="#messageContext">Message Context</a> is created from the incoming
 SOAP Message. Then the <i>In Pipe</i> is executed with the Message Context.
 
 <p>Let us see what happens at each phase of the execution. This process may
@@ -420,9 +409,8 @@ happen either in the server or in the Client.</p>
     context etc.</li>
   <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
     handlers are in this phase is to populate message context in order to do
-    the dispatching. As an example processing of addressing headers happen in
-    this phase , so by looking at addressing headers it will find the name of
-    the service and operation.</li>
+    the dispatching. As an example, processing of addressing headers of the SOAP message happen in
+    this phase.Addressing handlers extract information and put them in to the message context.</li>
   <li><strong>Dispatch Phase</strong> - The Dispatchers run in this phase and
     find the service if the service is not found already. <br>
     The post condition of the dispatch phase work as follows; That checks
