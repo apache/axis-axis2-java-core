@@ -161,6 +161,15 @@
             </j:choose>
         </j:forEach>
     </goal>
+ <goal name="cache-war-deps" prereqs="init-dist">
+        <ant:mkdir dir="${war_dep_cache}"/>
+        <j:if test="${warDeps.uptodate != 'yes'}">
+            <macros:copy-deps copyToDir="${war_dep_cache}"
+                              mods="webapp"/>
+            <property name="warDeps.uptodate" value="yes"/>
+        </j:if>
+    </goal>
+
 
     <!-- Helper tags for modules -->
     <define:taglib uri="local:modules">
@@ -293,6 +302,115 @@
         <attainGoal name="modules:clean"/>
         <attainGoal name="clean-repo"/>
     </goal>
+
+<!-- ================================================================ -->
+    <!--- Create the War -->
+    <!-- ================================================================ -->
+    <goal name="war" prereqs="jar,init-dist,cache-war-deps">
+
+        <ant:mkdir dir="target/temp/war/toWEB-INF/modules"/>
+        <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
+        <ant:mkdir dir="target/temp/war/toWEB-INF/conf"/>
+
+        <attainGoal name="create-kernel"/>
+        
+        <!-- Create axis2-core.jar -->
+        <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
+            <fileset dir="modules/java2wsdl/target/classes"/>
+            <fileset dir="modules/core/target/classes/"/>
+            <fileset dir="modules/common/target/classes/"/>
+        </jar>
+
+        <!-- Copy the adb jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the java2wsdl jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the codegen jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the xmlbeans jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the jibx jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the soapmonitor jar - the servlet classes -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/soapmonitor/target/axis2-soapmonitor-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- copy the soapmonitor mar -->
+        <ant:copy toDir="target/temp/war/toWEB-INF/modules">
+            <ant:fileset file="modules/soapmonitor/target/soapmonitor-${soapmonitor_version}.mar"/>
+        </ant:copy>
+
+        <!-- copy the addressing mar -->
+        <ant:copy toDir="target/temp/war/toWEB-INF/modules">
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
+        </ant:copy>
+
+        <!-- copy the sample services -->
+        <ant:copy toDir="target/temp/war/toWEB-INF/services">
+            <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
+        </ant:copy>
+
+        <!-- copy the axis2.xml into conf directoy -->
+        <ant:copy toDir="target/temp/war/toWEB-INF/conf">
+            <ant:fileset file="modules/core/conf/axis2.xml"/>
+        </ant:copy>
+        <ant:copy toDir="target/temp/war/axis2-web">
+            <ant:fileset dir="modules/webapp">
+                <ant:exclude name="project.xml"/>
+                <ant:exclude name="**/*.iml"/>
+                <ant:exclude name="**/.*"/>
+                <ant:exclude name="**/conf/**"/>
+            </ant:fileset>
+        </ant:copy>
+
+        <ant:war destfile="target/dist/axis2.war"
+                 webxml="modules/webapp/conf/web.xml">
+            <!--<ant:fileset dir="modules/webapp">-->
+                <!--<ant:exclude name="project.xml"/>-->
+                <!--<ant:exclude name="**/*.iml"/>-->
+                <!--<ant:exclude name="**/.*"/>-->
+                <!--<ant:exclude name="**/conf/**"/>-->
+            <!--</ant:fileset>-->
+            <ant:lib dir="target/temp/war/lib">
+                <ant:include name="**"/>
+                <ant:exclude name="**servlet**"/>
+                <ant:exclude name="ant*.jar"/>
+            </ant:lib>
+            <ant:lib dir="${war_dep_cache}">
+                <ant:include name="**"/>
+                <ant:exclude name="**servlet**"/>
+                <ant:exclude name="ant*.jar"/>
+            </ant:lib>
+            <ant:classes dir="modules/core/conf">
+                <ant:include name="*.properties"/>
+            </ant:classes>
+          <!--  <ant:webinf dir="modules/core/src/org/apache/axis2/deployment">
+                <ant:include name="*.xml"/>
+            </ant:webinf> -->
+            <ant:webinf dir="target/temp/war/toWEB-INF"/>
+            <ant:fileset dir="target/temp/war">
+              <ant:include name="**/axis2-web/**" />
+            </ant:fileset>
+        </ant:war>
+    </goal>
+
+
 
     <!-- ================================================================ -->
     <!--- Clean the Repository -->
