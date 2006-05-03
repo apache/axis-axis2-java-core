@@ -13,7 +13,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Running Context hierarchy</h1>
+<h1>Running Context Hierarchy</h1>
 <%
     ConfigurationContext configContext = (ConfigurationContext)request.getSession().getAttribute(
             Constants.CONFIG_CONTEXT);
