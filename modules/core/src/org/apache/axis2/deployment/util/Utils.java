@@ -19,6 +19,8 @@ import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -82,6 +86,40 @@ public class Utils {
             throw new DeploymentException(e);
         } catch (Exception e) {
             throw new DeploymentException(e);
+        }
+    }
+
+    public static URL[] getURLsForAllJars(URL url) {
+        try {
+            ArrayList array = new ArrayList();
+            array.add(url);
+            ZipInputStream zin = new ZipInputStream(url.openStream());
+            ZipEntry entry;
+            String entryName;
+            while ((entry = zin.getNextEntry()) != null) {
+                entryName = entry.getName();
+                /**
+                 * id the entry name start with /lib and end with .jar
+                 * then those entry name will be added to the arraylist
+                 */
+                if ((entryName != null) && entryName.toLowerCase().startsWith("lib/")
+                        && entryName.toLowerCase().endsWith(".jar")) {
+                    byte data[] = new byte[2048];
+                    int count;
+                    File f = File.createTempFile("axis2", entryName.substring(4));
+                    f.deleteOnExit();
+                    FileOutputStream out = new FileOutputStream(f);
+                    while ((count = zin.read(data, 0, 2048)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                    out.close();
+                    array.add(f.toURL());
+                }
+            }
+            zin.close();
+            return (URL[]) array.toArray(new URL[array.size()]);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

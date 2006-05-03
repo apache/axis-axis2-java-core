@@ -53,14 +53,13 @@ public class AxisEngine {
     /**
      * Field log
      */
-    private Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AxisEngine.class);
     private ConfigurationContext engineContext;
 
     /**
      * Constructor AxisEngine
      */
     public AxisEngine(ConfigurationContext engineContext) {
-        log.debug(Messages.getMessage("enginestarted"));
         this.engineContext = engineContext;
     }
 
