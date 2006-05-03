@@ -89,11 +89,13 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             JavaTypeMapper mapper = new JavaTypeMapper();
             for (Iterator iter = elements.iterator(); iter.hasNext();) {
                 QName qname = (QName)iter.next();
-                String cname = (String)jibxmap.get(qname);
-                if (cname == null) {
-                    throw new RuntimeException("No JiBX mapping defined for " + qname);
+                if (qname != null) {
+                    String cname = (String)jibxmap.get(qname);
+                    if (cname == null) {
+                        throw new RuntimeException("No JiBX mapping defined for " + qname);
+                    }
+                    mapper.addTypeMappingName(qname, cname);
                 }
-                mapper.addTypeMappingName(qname, cname);
             }
 
             // set the type mapper to the config
