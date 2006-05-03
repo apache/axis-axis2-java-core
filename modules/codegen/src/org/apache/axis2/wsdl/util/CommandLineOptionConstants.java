@@ -37,6 +37,7 @@ public interface CommandLineOptionConstants {
         String SERVICE_NAME_OPTION = "sn";
         String REPOSITORY_PATH_OPTION = "r";
         String NAME_SPACE_TO_PACKAGE_OPTION = "ns2p";
+        String SERVER_SIDE_INTERFACE_OPTION = "ssi";
 
         //long option constants
         String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -56,6 +57,7 @@ public interface CommandLineOptionConstants {
         String EXTRA_OPTIONTYPE_PREFIX = "E";
         String REPOSITORY_PATH_OPTION_LONG = "repository-path";
         String NAME_SPACE_TO_PACKAGE_OPTION_LONG = "namespace2package";
+        String SERVER_SIDE_INTERFACE_OPTION_LONG = "serverside-interface";
 
     }
 

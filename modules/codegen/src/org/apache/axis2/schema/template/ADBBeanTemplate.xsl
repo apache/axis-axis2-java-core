@@ -473,6 +473,7 @@
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
             <xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();
+            int event;
             try {
                 <!-- Advance to our start element, or if we are a complex type, to our first property start element or the outer end element if no properties -->
                 while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())

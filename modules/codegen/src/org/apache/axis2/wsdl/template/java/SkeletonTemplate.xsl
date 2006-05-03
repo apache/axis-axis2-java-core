@@ -11,7 +11,8 @@
     /**
      *  <xsl:value-of select="@name"/> java skeleton for the axisService
      */
-    public class <xsl:value-of select="@name"></xsl:value-of> implements <xsl:value-of select="@skeletonInterfaceName"/>{
+    public class <xsl:value-of select="@name"></xsl:value-of>
+        <xsl:if test="@skeletonInterfaceName">implements <xsl:value-of select="@skeletonInterfaceName"/></xsl:if>{
      <xsl:for-each select="method">
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>

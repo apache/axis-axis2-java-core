@@ -682,9 +682,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         generateAndPopulateFaultNames();
         updateFaultPackageForSkeleton();
 
-        //write skeletonInterface
-        writeSkeletonInterface();
-
+        if (codeGenConfiguration.isServerSideInterface()){
+            //write skeletonInterface
+            writeSkeletonInterface();
+        }
         // write skeleton
         writeSkeleton();
 
@@ -792,7 +793,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Iterator it = MEPtoClassMap.keySet().iterator();
             while (it.hasNext()) {
                 String mep = (String) it.next();
-                Document classModel = createDocumentForMessageReceiver(mep);
+                Document classModel = createDocumentForMessageReceiver(
+                        mep,
+                        codeGenConfiguration.isServerSideInterface());
                 debugLogDocument("Document for message receiver:", classModel);
                 //write the class only if any methods are found
                 if (Boolean.TRUE.equals(infoHolder.get(mep))) {
@@ -806,7 +809,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-    protected Document createDocumentForMessageReceiver(String mep) {
+    protected Document createDocumentForMessageReceiver(String mep,boolean isServerSideInterface) {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
@@ -817,9 +820,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
         addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX, rootElement);
-        addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
-                rootElement);
-
+        if (isServerSideInterface){
+            addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
+                    rootElement);
+        }else{
+             addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX,
+                    rootElement);
+        }
         addAttribute(doc, "basereceiver", (String) MEPtoClassMap.get(mep), rootElement);
         fillSyncAttributes(doc, rootElement);
 
@@ -1070,7 +1077,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     private void writeSkeleton() throws Exception {
-        Document skeletonModel = createDOMDocumentForSkeleton();
+        Document skeletonModel = createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
         debugLogDocument("Document for skeleton:", skeletonModel);
         ClassWriter skeletonWriter = new SkeletonWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
                 "src"), this.codeGenConfiguration.getOutputLanguage());
@@ -1093,7 +1100,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
 
-    private Document createDOMDocumentForSkeleton() {
+    private Document createDOMDocumentForSkeleton(boolean isSkeletonInterface) {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
 
@@ -1102,8 +1109,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX, rootElement);
         addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
-        addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX,
-                rootElement);
+        if (isSkeletonInterface){
+            addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX,
+                    rootElement);
+        }
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
 

@@ -17,7 +17,7 @@ import java.util.Vector;
 /**
  * Auto generated java skeleton for the service by the Axis code generator
  */
-public class PingPortSkeleton implements PingPortSkeletonInterface{
+public class PingPortSkeleton{
 
     private MessageContext mc;
 

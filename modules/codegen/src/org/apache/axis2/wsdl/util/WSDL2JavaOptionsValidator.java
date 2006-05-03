@@ -42,6 +42,7 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants,Opt
                     (WSDL2JavaConstants.SERVICE_NAME_OPTION).equalsIgnoreCase(optionType) ||
                     (WSDL2JavaConstants.REPOSITORY_PATH_OPTION).equalsIgnoreCase(optionType) ||
                     (WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION).equalsIgnoreCase(optionType) ||
+                    (WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION).equalsIgnoreCase(optionType) ||
 
                     (WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION_LONG).equalsIgnoreCase(optionType) ||
@@ -57,6 +58,7 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants,Opt
                     (WSDL2JavaConstants.SERVICE_NAME_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION_LONG).equalsIgnoreCase(optionType) ||
+                    (WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION_LONG).equalsIgnoreCase(optionType) ||
                     (WSDL2JavaConstants.REPOSITORY_PATH_OPTION_LONG).equalsIgnoreCase(optionType)
             );
 

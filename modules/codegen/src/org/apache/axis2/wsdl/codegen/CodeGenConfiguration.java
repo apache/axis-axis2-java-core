@@ -140,6 +140,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     //user selected servicename
     private String serviceName;
 
+    //option to generate server side interface or not
+    private boolean serverSideInterface = false;
+
+    
+    public boolean isServerSideInterface() {
+        return serverSideInterface;
+    }
+
+    public void setServerSideInterface(boolean serverSideInterface) {
+        this.serverSideInterface = serverSideInterface;
+    }
+
 
     public String getPortName() {
         return portName;
