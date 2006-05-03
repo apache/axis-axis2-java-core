@@ -4,7 +4,6 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2 User's Guide</title>
-  <meta name="generator" content="Bluefish 1.0.4">
 </head>
 
 <body lang="en-US" dir="ltr">
@@ -21,8 +20,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <a
 href="userguide3.html">3</a>, <b>4</b>, <a href="userguide5.html">5</a></p>
 
-<p><b><font size="4">Note (on samples):</font></b> All the user's guide
-samples are located in the <b>"samples/userguide/src"</b> directory of the
+<p><b><font size="4">Note (on samples):</font></b> All samples mentioned in
+the user guide are located at <b>"samples/userguide/src"</b> directory of the
 binary distribution.</p>
 
 <h2><a name="Modules"></a>Modules</h2>
@@ -67,28 +66,34 @@ width="185" height="120" border="0"></p>
 <h4><a name="Step1_:_LoggingModule_Class">Step1 : LoggingModule Class</a></h4>
 
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2
-modules should implement the "<a href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/modules/Module.java?rev=396785&view=log">org.apache.axis2.modules.Module</a>" interface with
-the following methods.</p>
+modules should implement the "<a
+href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/modules/Module.java?rev=396785&amp;view=log">org.apache.axis2.modules.Module</a>"
+interface with the following methods.</p>
 <pre>public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault;//Initialize the module
 public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing
 public void engageNotify(AxisDescription axisDescription) throws AxisFault;</pre>
 
 <p>These methods can be used to control the module initialization and the
-termination. With the input parameter AxisConfiguration, user is provided with
-the complete configuration hierarchy. This can be used to fine-tune the
-module behavior by the module writers. For the simple logging service we
-can keep these methods blank in our implementation class.</p>
+termination. With the input parameter AxisConfiguration, user is provided
+with the complete configuration hierarchy. This can be used to fine-tune the
+module behavior by the module writers. For the simple logging service we can
+keep these methods blank in our implementation class.</p>
 
 <h4><a name="Step2_:_LogHandler">Step2 : LogHandler</a></h4>
 
 <p>A module in Axis2 can contain, one or more handlers that perform various
 SOAP header processing at different phases. (See<a
 href="Axis2ArchitectureGuide.html" target="_blank"> Architecture Guide</a>
-for more information about phases). To write a handler one should implement <a href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/engine/Handler.java?rev=357187&view=log">org.apache.axis2.engine.Handler</a>. But for convenience, <a href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/handlers/AbstractHandler.java?rev=396788&view=log">org.apache.axis2.handlers.AbstractHandler</a> provides an abstract implementation of the Handler interface.
-For the logging module we will write a handler with the following methods. "public void invoke(MessageContext ctx);"
-is the method that is called by Axis2 engine when the control is passed to
-the handler. "public void revoke(MessageContext ctx);" is called when the
-handlers are revoked by the Axis2 engine.</p>
+for more information about phases). To write a handler one should implement
+<a
+href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/engine/Handler.java?rev=357187&amp;view=log">org.apache.axis2.engine.Handler</a>.
+But for convenience, <a
+href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/handlers/AbstractHandler.java?rev=396788&amp;view=log">org.apache.axis2.handlers.AbstractHandler</a>
+provides an abstract implementation of the Handler interface. For the logging
+module we will write a handler with the following methods. "public void
+invoke(MessageContext ctx);" is the method that is called by Axis2 engine
+when the control is passed to the handler. "public void revoke(MessageContext
+ctx);" is called when the handlers are revoked by the Axis2 engine.</p>
 <pre>public class LogHandler extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
     private QName name;
@@ -303,9 +308,9 @@ directory.</p>
 have created a separate service archive (MyServiceWithModule.aar) for users
 to deploy and see. Deploy this service using the <a
 href="userguide2.html#Step4_:Deploy_the_Web_Service">same steps that you used
-to deploy "MyService"</a> and copy the "logging.mar" file to the
-"modules" directory. Then run using the "TestWebServiceWithModuleClient.bat"
-or "TestWebServiceWithModuleClient.sh" in the
+to deploy "MyService"</a> and copy the "logging.mar" file to the "modules"
+directory. Then run using the "TestWebServiceWithModuleClient.bat" or
+"TestWebServiceWithModuleClient.sh" in the
 "Axis2Home/samples/userguide/src/userguide/clients/bin" directory.</p>
 
 <p>Note: To see the logs, the user needs to modify the "log4j.properties" to
