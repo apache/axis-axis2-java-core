@@ -81,7 +81,7 @@
         </dependency>
         <!--added this to support to keep WSDL information in AxisService-->
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>

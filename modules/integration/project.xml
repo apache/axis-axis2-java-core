@@ -286,7 +286,7 @@
             </properties>
         </dependency>
          <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>

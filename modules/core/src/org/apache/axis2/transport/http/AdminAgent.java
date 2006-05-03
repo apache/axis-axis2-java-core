@@ -318,7 +318,7 @@ public class AdminAgent extends AbstractAgent {
     req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
     req.getSession().setAttribute("modules", null);
 
-    String serviceName = req.getParameter("service");
+    String serviceName = req.getParameter("axisService");
 
     req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
 
@@ -335,7 +335,7 @@ public class AdminAgent extends AbstractAgent {
       }
     }
 
-    req.getSession().setAttribute("service", null);
+    req.getSession().setAttribute("axisService", null);
     renderView(ENGAGING_MODULE_TO_SERVICE_JSP_NAME, req, res);
   }
 
@@ -354,7 +354,7 @@ public class AdminAgent extends AbstractAgent {
     req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
     req.getSession().setAttribute("modules", null);
 
-    String serviceName = req.getParameter("service");
+    String serviceName = req.getParameter("axisService");
 
     req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
 
@@ -366,7 +366,7 @@ public class AdminAgent extends AbstractAgent {
           + " module engaged to the serviceGroup Successfully");
     }
 
-    req.getSession().setAttribute("service", null);
+    req.getSession().setAttribute("axisService", null);
     renderView(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME, req, res);
   }
 
@@ -454,20 +454,8 @@ public class AdminAgent extends AbstractAgent {
 
 
   protected void processListPhases(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-    ArrayList phaselist = new ArrayList();
-
     PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
-
-    phaselist.add(info.getINPhases());
-    phaselist.add(info.getIN_FaultPhases());
-    phaselist.add(info.getOUTPhases());
-    phaselist.add(info.getOUT_FaultPhases());
-    phaselist.add(info.getOperationInPhases());
-    phaselist.add(info.getOperationInFaultPhases());
-    phaselist.add(info.getOperationOutPhases());
-    phaselist.add(info.getOperationOutFaultPhases());
-    req.getSession().setAttribute(Constants.PHASE_LIST, phaselist);
-
+    req.getSession().setAttribute(Constants.PHASE_LIST, info);
     renderView(LIST_PHASES_JSP_NAME, req, res);
   }
 

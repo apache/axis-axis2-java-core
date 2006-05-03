@@ -37,8 +37,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -535,12 +535,13 @@ public class AxisService extends AxisDescription {
 
     /**
      * Print the WSDL with a default URL
+     *
      * @param out
      * @throws AxisFault
      */
     public void printWSDL(OutputStream out) throws AxisFault {
         //pick the endpoint and take it as the epr for the WSDL
-        getWSDL(out,new String[]{getEndpoint()});
+        getWSDL(out, new String[]{getEndpoint()});
     }
 
     private void getWSDL(OutputStream out, String [] serviceURL) throws AxisFault {
@@ -1075,6 +1076,94 @@ public class AxisService extends AxisDescription {
 
     }
 
+    /**
+     * To create a service for a given java class with user defined schema and target
+     * namespaces
+     *
+     * @param implClass            : full name of the class
+     * @param axisConfig           : currcent AxisConfgiuration
+     * @param messageReceiverClass : Messge reciver that you want to use
+     * @param targetNameSpace      : Service namespace
+     * @param scheamNameSpace      : Scheam Name space
+     * @return
+     * @throws AxisFault
+     */
+
+    public static AxisService createService(String implClass,
+                                            AxisConfiguration axisConfig,
+                                            Class messageReceiverClass,
+                                            String targetNameSpace,
+                                            String scheamNameSpace) throws AxisFault {
+        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
+        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
+        parameter.setParameterElement(paraElement);
+        AxisService axisService = new AxisService();
+        axisService.setUseDefaultChains(false);
+        axisService.addParameter(parameter);
+
+        int index = implClass.lastIndexOf(".");
+        String serviceName;
+        if (index > 0) {
+            serviceName = implClass.substring(index + 1, implClass.length());
+        } else {
+            serviceName = implClass;
+        }
+
+        axisService.setName(serviceName);
+        axisService.setClassLoader(axisConfig.getServiceClassLoader());
+
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
+        SchemaGenerator schemaGenerator;
+        try {
+            schemaGenerator = new SchemaGenerator(serviceClassLoader,
+                    implClass, scheamNameSpace,
+                    axisService.getSchematargetNamespacePrefix());
+            ArrayList excludeOpeartion = new ArrayList();
+            excludeOpeartion.add("init");
+            excludeOpeartion.add("setOperationContext");
+            excludeOpeartion.add("destroy");
+            schemaGenerator.setExcludeMethods(excludeOpeartion);
+            axisService.addSchema(schemaGenerator.generateSchema());
+            if (targetNameSpace != null && !"".equals(targetNameSpace)) {
+                axisService.setTargetNamespace(targetNameSpace);
+            }
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+
+        JMethod [] method = schemaGenerator.getMethods();
+        TypeTable table = schemaGenerator.getTypeTable();
+
+        PhasesInfo pinfo = axisConfig.getPhasesInfo();
+
+        for (int i = 0; i < method.length; i++) {
+            JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                // no need to expose , private and protected methods
+                continue;
+            } else if ("init".equals(jmethod.getSimpleName())) {
+                continue;
+            }
+            AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
+
+            // loading message receivers
+            try {
+                MessageReceiver messageReceiver = (MessageReceiver) messageReceiverClass.newInstance();
+                operation.setMessageReceiver(messageReceiver);
+            } catch (IllegalAccessException e) {
+                throw new AxisFault("IllegalAccessException occured during message receiver loading"
+                        + e.getMessage());
+            } catch (InstantiationException e) {
+                throw new AxisFault("InstantiationException occured during message receiver loading"
+                        + e.getMessage());
+            }
+            pinfo.setOperationPhases(operation);
+            axisService.addOperation(operation);
+        }
+        return axisService;
+
+    }
+
     public static AxisService createService(String implClass,
                                             AxisConfiguration axisConfig) throws AxisFault {
         Class clazz;
@@ -1167,19 +1256,19 @@ public class AxisService extends AxisDescription {
             XmlSchemaObjectCollection includes = schema.getIncludes();
             for (int j = 0; j < includes.getCount(); j++) {
                 Object item = includes.getItem(j);
-                XmlSchema s = null;
+                XmlSchema s ;
                 if (item instanceof XmlSchemaExternal) {
                     //recursively call the calculating
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
-                    if (s != null){
+                    if (s != null) {
                         calcualteSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}),
                                 nameTable);
                         nameTable.put(s,
                                 ("xsd" + count++)
-                                        +(customSchemaNameSuffix!=null?
-                                        customSchemaNameSuffix:
+                                        + (customSchemaNameSuffix != null ?
+                                        customSchemaNameSuffix :
                                         ""));
                     }
 
@@ -1205,7 +1294,7 @@ public class AxisService extends AxisDescription {
                     //recursively call the name adjusting
                     XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
                     XmlSchema s = xmlSchemaExternal.getSchema();
-                    if (s!=null){
+                    if (s != null) {
                         adjustSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}), nameTable);
                         xmlSchemaExternal.setSchemaLocation(
@@ -1228,7 +1317,6 @@ public class AxisService extends AxisDescription {
      * Swap the key,value pairs
      *
      * @param originalTable
-     * @return
      */
     private Hashtable swapMappingTable(Hashtable originalTable) {
         Hashtable swappedTable = new Hashtable(originalTable.size());

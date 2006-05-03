@@ -160,16 +160,41 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationInFaultPhases() throws DeploymentException {
-        ArrayList oprationIN_FaultPhases = new ArrayList();
-
+        ArrayList operationINPhases = new ArrayList();
+        boolean foundDispathPhase = false;
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
             Phase phase = (Phase) IN_FaultPhases.get(i);
-
-            oprationIN_FaultPhases.add(copyPhase(phase));
+            String phaseName = phase.getPhaseName();
+            if (foundDispathPhase) {
+                operationINPhases.add(copyPhase(phase));
+            }
+            if (PhaseMetadata.PHASE_DISPATCH.equals(phaseName)) {
+                foundDispathPhase = true;
+            }
         }
-
-        return oprationIN_FaultPhases;
+        return operationINPhases;
     }
+
+    public ArrayList getGlobalInFaultPhases() throws DeploymentException {
+        ArrayList globalInfaultphase = new ArrayList();
+        boolean foundDispathcPase = false;
+        for (int i = 0; i < IN_FaultPhases.size(); i++) {
+            Phase phase = (Phase) IN_FaultPhases.get(i);
+            String phaseName = phase.getPhaseName();
+            if (!foundDispathcPase) {
+                if (PhaseMetadata.PHASE_DISPATCH.equals(phaseName)) {
+                    foundDispathcPase = true;
+                }
+                globalInfaultphase.add(phase);
+            }
+        }
+        if (!foundDispathcPase) {
+            throw new DeploymentException(
+                    Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
+        }
+        return globalInfaultphase;
+    }
+
 
     public ArrayList getOperationInPhases() throws DeploymentException {
         ArrayList operationINPhases = new ArrayList();

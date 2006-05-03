@@ -815,7 +815,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void validateSystemPredefinedPhases() throws DeploymentException {
         axisConfig.setInPhasesUptoAndIncludingPostDispatch(phasesinfo.getGlobalInflow());
-        axisConfig.setInFaultPhases(phasesinfo.getIN_FaultPhases());
+        axisConfig.setInFaultPhases(phasesinfo.getGlobalInFaultPhases());
         axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());
         axisConfig.setOutFaultPhases(phasesinfo.getOUT_FaultPhases());
     }
