@@ -9,4 +9,4 @@ done
 export AXIS2_CLASSPATH
 
 echo the classpath $AXIS2_CLASSPATH
-java -classpath $AXIS2_CLASSPATH org.apache.axis2.transport.http.SimpleHTTPServer $1 $2
+java -classpath $AXIS2_CLASSPATH org.apache.axis2.transport.http.SimpleHTTPServer $*
