@@ -179,10 +179,10 @@ client code you need to write is as follows.</p>
 <p>The green lines shows the set of operations that you need to perform in
 order to invoke a Web service. The rest is used to create the OMElement that
 needs to be sent and display the response OMElement. To test this client, use
-the provided ant build file that can be found in the "Axis2Home/samples"
-directory. Run the "testEchoBlockingClient" target . If you can see the
-response OMElement printed in your command line,  then you have successfully
-tested the client. </p>
+the provided ant build file that can be found in the
+"Axis2Home/samples/userguide" directory. Run the "testEchoBlockingClient"
+target . If you can see the response OMElement printed in your command line, 
+then you have successfully tested the client. </p>
 
 <h4><a name="PingClient">PingClient</a></h4>
 
@@ -198,7 +198,7 @@ code is as follows:</p>
        serviceClient.setOptions(options);
        serviceClient.fireAndForget(payload);
         /**
-         * We have to bock this thread untill we send the request , the problem
+         * We have to block this thread untill we send the request , the problem
          * is if we go out of the main thread , then request wont send ,so
          * you have to wait some time :)
          */
@@ -212,7 +212,7 @@ catch (AxisFault axisFault) {
 "fireAndForget()" in ServiceClient to invoke this operation , and that will
 not block the invocation, hence it will return the control immediately back
 to the client. You can test this client by running the target
-"testPingClient" of the ant build file at "Axis2Home/samples".</p>
+"testPingClient" of the ant build file at "Axis2Home/samples/userguide".</p>
 
 <p>We have invoked the two operations in our service. Are we done? No! There
 are lot more to explore. Let's see some other ways to invoke the same
@@ -220,7 +220,7 @@ operations...</p>
 
 <h4><a name="EchoNonBlockingClient">EchoNonBlockingClient</a></h4>
 
-<p>In the EchoBlockingClient once the "serviceCleint.sendReceive(payload);"
+<p>In the EchoBlockingClient once the "serviceClient.sendReceive(payload);"
 is called, the client is blocked till the operation is completed. This
 behavior is not desirable when there are many Web service invocations to be
 done in a single client application or within a GUI. A solution would be to
@@ -330,43 +330,50 @@ asynchrony!!</strong></p>
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
 in the "<b>options.setUseSeparateListener(...)</b>" method informs the Axis2
 engine to use separate transport connections for request and response.
-Finally "<b>serviceClinet.finalizeInvoke()</b>" informs the Axis2 engine to
+Finally "<b>serviceClient.finalizeInvoke()</b>" informs the Axis2 engine to
 stop the client side listener started to retrieve the
 response.</font></font></p>
 
 <p>Before we run the sample client we have one more step to perform. As
 mentioned earlier Axis2 uses addressing based correlation mechanism, hence we
-need to "engage" addressing module in both client and server sides. 
+need to "engage" addressing module in both client and server sides.</p>
 
 <h5>Engaging Addressing in Server Side</h5>
-According to the Axis2 architecture, addressing module put its handlers in the
-"<strong>pre-dispatch</strong>" phase (See <a
+According to the Axis2 architecture, addressing module put its handlers in
+the "<strong>pre-dispatch</strong>" phase (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about phases)  and hence "engaging" means simply adding module
 reference in the "axis2.xml" (NOT the "services.xml"). Now add the following
 line to the "axis2.xml" that you can find in the "/webapps/axis2/WEB-INF"
-directory in the servlet container. </p>
+directory in the servlet container. 
 <pre style="margin-bottom: 0.2in"> &lt;module ref="addressing"/&gt;</pre>
 
 <p>Note: <font color="#000000">Once you change the "axis2.xml" you need to
 restart the servlet container.</font></p>
 
 <h5>Engaging Addressing in Client Side</h5>
-There are two ways of doing that. <br>One is to get the addressing-&lt;version&gt;.mar from modules folder of the std-bin distribution. And then making that available in your classpath.
-<br>The second method is to create a ConfigurationContext giving a repository location. Axis2 has the concept of a repository to keep the services and modules. You can use the extracted standard binary distribution itself as the repository as it contains the proper structure of an Axis2 repository (having services and modules folders inside it). ConfigurationContext has the runtime context information of Axis2 system. <br>
-If you have extracted the standard binary distribution to, say, $user_home/axis2/dist, then put the following line just before sender = new ServiceClient(); 
+There are two ways of doing that. <br>
+One is to get the addressing-&lt;version&gt;.mar from modules folder of the
+std-bin distribution. And then making that available in your classpath. <br>
+The second method is to create a ConfigurationContext giving a repository
+location. Axis2 has the concept of a repository to keep the services and
+modules. You can use the extracted standard binary distribution itself as the
+repository as it contains the proper structure of an Axis2 repository (having
+services and modules folders inside it). ConfigurationContext has the runtime
+context information of Axis2 system. <br>
+If you have extracted the standard binary distribution to, say,
+$user_home/axis2/dist, then put the following line just before sender = new
+ServiceClient();
+<pre>ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(&lt; Axis2RepositoryLocation &gt;, null);</pre>
+Then replace "sender = new ServiceClient();" line with "sender = new
+ServiceClient(configContext, null);"
 
-<pre>
-ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(&lt; Axis2RepositoryLocation &gt;, null);
-</pre>
-Then replace "sender = new ServiceClient();" line with "sender = new ServiceClient(configContext, null);"
-
-<p>This will enable addressing in both client and server sides. Now you can test the
-"TestEchoNonBlockingDualClient" using the "testEchoNonBlockingDualClient"
-target of the ant file found at "Axis2Home/samples" directory. If you see the
-response OMElement printed in the client side, then you have successfully
-tested the Non Blocking API with two transport channels at the client
-side.</p>
+<p>This will enable addressing in both client and server sides. Now you can
+test the "TestEchoNonBlockingDualClient" using the
+"testEchoNonBlockingDualClient" target of the ant file found at
+"Axis2Home/samples/userguide" directory. If you see the response OMElement
+printed in the client side, then you have successfully tested the Non
+Blocking API with two transport channels at the client side.</p>
 
 <h4><a name="EchoBlockingDualClient">EchoBlockingDualClient</a></h4>
 
@@ -380,7 +387,7 @@ useful mechanism when the service invocation is IN-OUT in nature and the
 transports are One-Way (e.g. SMTP). For the sample client we use two HTTP
 connections for request and response. User can test this client using the
 "echoBlockingDualClient" target of the ant build file found in the
-"Axis2Home/samples" directory.</p>
+"Axis2Home/samples/userguide" directory.</p>
 
 <p>See <a href="http-transport.html" target="_blank">Configuring
 Transports</a> for use different transports.</p>
