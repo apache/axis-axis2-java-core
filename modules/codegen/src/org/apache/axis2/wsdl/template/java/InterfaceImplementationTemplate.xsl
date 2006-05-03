@@ -401,7 +401,7 @@
           <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
-              org.apache.axiom.soap.SOAPEnvelope env;
+              org.apache.axiom.soap.SOAPEnvelope env=null;
                     <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -505,7 +505,7 @@
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-                org.apache.axiom.soap.SOAPEnvelope env;
+                org.apache.axiom.soap.SOAPEnvelope env = null;
 
                 <xsl:choose>
                     <!-- test the number of input parameters
