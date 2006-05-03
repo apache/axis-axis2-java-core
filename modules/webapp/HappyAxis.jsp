@@ -335,7 +335,7 @@
 
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "ns1");
+        OMNamespace omNs = fac.createOMNamespace("http://axisversion.sample/xsd", "ns1");
         OMElement method = fac.createOMElement("getVersion", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         method.addChild(value);
@@ -444,14 +444,14 @@
     web axisService will work, because there are many configuration options that we do
     not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 
-<h2>Examining echo axisService</h2>
+<h2>Examining Version axisService</h2>
 <%
     boolean serviceStatus = inVokeTheService();
     if (serviceStatus) {
 %>
 <p>
     <font color="blue">
-        Found the Axis2 default Version axisService and Axis2 is working properly.Now you can drop a
+        Found the Axis2 default Version service and Axis2 is working properly.Now you can drop a
         web axisService in
         axis2/WEB-INF/services and refresh this page.
 
@@ -464,10 +464,8 @@
 } else {
 %>
 <p>
-    <font color="brown">
-        You can test the deployement functionality by uploading the echo axisService jar, which can
-        be found in the
-        samples directory of the axis distribution.
+    <font color="brown"> There was a problem of examine Version service , may be the service not available or some thing has gone wrong. But this does not mean system does not working !
+           Try to upload a some other service and check to see whether it is working.
         <br>
     </font>
 </p>
