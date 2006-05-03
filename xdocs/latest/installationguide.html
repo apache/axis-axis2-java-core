@@ -61,10 +61,10 @@ Axis2 is version 1.0.</p>
       <td>Minimal Distribution - Binary</td>
       <td>This distribution is aimed at advanced users who will be embedding
         Axis2. It will contain the minimal runtime required to act as a Web
-        service client and/or a server (axis2-core-1.0.jar will contain
-        compiled versions of common, xml, wsdl and core modules.)</td>
+        service client and/or a server (axis2-kernel-1.0.jar will contain
+        compiled versions of common and core modules.)</td>
       <td><ul>
-          <li>axis2-core-1.0.jar, axis2-adb-1.0.jar</li>
+          <li>axis2-kernel-1.0.jar, axis2-adb-1.0.jar</li>
           <li>third party distributable libraries</li>
           <li>README.TXT and release-notes.html</li>
         </ul>
@@ -79,7 +79,7 @@ Axis2 is version 1.0.</p>
         running this command)</p>
       </td>
       <td><ul>
-          <li>sources of Axis2 common, xml, wsdl, adb and core modules</li>
+          <li>sources of Axis2 common, java2wsdl , adb and core modules</li>
           <li>README.TXT and release-notes.html</li>
         </ul>
       </td>
@@ -95,9 +95,9 @@ Axis2 is version 1.0.</p>
         href="http://ws.apache.org/axis2/modules/index.html">here</a>.)</td>
       <td><ul>
           <li>all the content of minimal-binary distribution</li>
-          <li>Contents of codegen and DOOM modules</li>
+          <li>Contents of codegen and doom modules</li>
           <li>Samples</li>
-          <li>addressing.mar</li>
+          <li>addressing-1.0.mar</li>
         </ul>
       </td>
     </tr>
@@ -110,7 +110,7 @@ Axis2 is version 1.0.</p>
         command)</td>
       <td><ul>
           <li>all the content of minimal-source distribution</li>
-          <li>Contents of codegen and DOOM modules</li>
+          <li>Contents of codegen and doom modules</li>
           <li>Samples</li>
         </ul>
       </td>
@@ -135,7 +135,7 @@ Axis2 is version 1.0.</p>
       </td>
     </tr>
     <tr>
-      <td>Plugin Distribution</td>
+      <td><a name="Plugin" id="Plugin">Plugin Distribution</a></td>
       <td>This will contain the plugins that are created for Eclipse and
       IDEA.</td>
       <td><ul>
@@ -205,13 +205,13 @@ using source distribution.</p>
 
 <h3>Maven</h3>
 
-<p>The Axis2 build is based on <a
-href="http://maven.apache.org/maven-1.x/" target="_blank">Maven </a>. Hence the only
-prerequisite to build Axis2 from source distribution is to have Maven
-installed. Extensive instruction guides are available at the Maven site.This
-guide however contains the easiest path for quick environment setting.
-Advanced users who wish to know more about Maven can visit <a
-href="http://maven.apache.org/start/index.html" target="_blank">here </a>.</p>
+<p>The Axis2 build is based on <a href="http://maven.apache.org/maven-1.x/"
+target="_blank">Maven </a>. Hence the only prerequisite to build Axis2 from
+source distribution is to have Maven installed. Extensive instruction guides
+are available at the Maven site.This guide however contains the easiest path
+for quick environment setting. Advanced users who wish to know more about
+Maven can visit <a href="http://maven.apache.org/start/index.html"
+target="_blank">here </a>.</p>
 <ul>
   <li>MS Windows</li>
 </ul>
@@ -235,18 +235,20 @@ src="images/clip_image002.jpg" height="211" width="477"></p>
 downloaded expand it to a directory of choice and set the environment
 variable MAVEN_HOME and add MAVEN_HOME/bin to the path as well. More
 instructions for installing Maven in Unix based operating systems can be
-found <a href="http://maven.apache.org/start/install.html" target="_blank">here </a>.</p>
+found <a href="http://maven.apache.org/start/install.html"
+target="_blank">here </a>.</p>
 
 <p>Once maven is properly installed you can start building Axis2.</p>
 <a name="_Toc96698085"></a>
 
 <h3>The Axis2 Source Distribution</h3>
 
-<p>The <a href="http://ws.apache.org/axis2/download.cgi" target="_blank">source distribution
-</a> is available as a zipped archive. All the necessary build scripts are
-included with the source distribution. Once the source archive is expanded
-into a directory of choice, moving to the particular directory and running
-maven command will build the Axis2 jar file.</p>
+<p>The <a href="http://ws.apache.org/axis2/download.cgi"
+target="_blank">source distribution </a> is available as a zipped archive.
+All the necessary build scripts are included with the source distribution.
+Once the source archive is expanded into a directory of choice, moving to the
+particular directory and running maven command will build the Axis2 jar
+file.</p>
 
 <p align="center"><img alt="clip_image004 (43K)" src="images/maven.jpg"><br
 clear="all">
@@ -271,8 +273,8 @@ deployed.</p>
 
 <h2>Installing Axis2 in a Servlet Container</h2>
 <ol>
-  <li><a href="http://ws.apache.org/axis2/download.cgi" target="_blank">Download</a> Axis2
-    war file</li>
+  <li><a href="http://ws.apache.org/axis2/download.cgi"
+    target="_blank">Download</a> Axis2 war file</li>
   <li>Drop the war in the webapps folder. Most servlet containers will
     automatically install war. (some servlet containers may require a restart
     in order to capture the new web application. Refer your servlet container
@@ -343,7 +345,8 @@ deployed.</p>
 
   <p>Axis2 Administration is all about configuring Axis2 at the run time and
   the configuration will be transient. More descriptions are available in <a
-  href="webadminguide.html" target="_blank">Axis2 Web Administration Guide</a></p>
+  href="webadminguide.html" target="_blank">Axis2 Web Administration
+  Guide</a></p>
 </ol>
 </body>
 </html>
