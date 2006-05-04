@@ -540,21 +540,38 @@ public class AxisService extends AxisDescription {
      * @throws AxisFault
      */
     public void printWSDL(OutputStream out) throws AxisFault {
+        setWsdlfound(true);
         //pick the endpoint and take it as the epr for the WSDL
         getWSDL(out, new String[]{getEndpoint()});
     }
 
     private void getWSDL(OutputStream out, String [] serviceURL) throws AxisFault {
-        AxisService2OM axisService2WOM = new AxisService2OM(this,
-                serviceURL, "document", "literal");
-        try {
-            OMElement wsdlElement = axisService2WOM.generateOM();
-            wsdlElement.serialize(out);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            throw new AxisFault(e);
+        if (isWsdlfound()) {
+            AxisService2OM axisService2WOM = new AxisService2OM(this,
+                    serviceURL, "document", "literal");
+            try {
+                OMElement wsdlElement = axisService2WOM.generateOM();
+                wsdlElement.serialize(out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
+        } else {
+            try {
+                String wsdlntfound = "<error>" +
+                        "<description>Unable to generate wsdl for this service</description>" +
+                        "<reason>Either user does not drop the wsdl into META-INF or" +
+                        " operations uses message receivers other than RPC.</reason>" +
+                        "</error>";
+                out.write(wsdlntfound.getBytes());
+                out.flush();
+                out.close();
+            } catch (IOException e) {
+                throw new AxisFault(e);
+            }
         }
+
     }
 
     /**
@@ -1256,7 +1273,7 @@ public class AxisService extends AxisDescription {
             XmlSchemaObjectCollection includes = schema.getIncludes();
             for (int j = 0; j < includes.getCount(); j++) {
                 Object item = includes.getItem(j);
-                XmlSchema s ;
+                XmlSchema s;
                 if (item instanceof XmlSchemaExternal) {
                     //recursively call the calculating
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;

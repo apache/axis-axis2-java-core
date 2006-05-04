@@ -5,6 +5,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -41,7 +42,7 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
 
     protected void setUp() throws Exception {
         service = AxisService.createService(Echo.class.getName(),
-                UtilServer.getConfigurationContext().getAxisConfiguration());
+                UtilServer.getConfigurationContext().getAxisConfiguration(),RPCMessageReceiver.class );
         service.setName(serviceName.getLocalPart());
         UtilServer.deployService(service);
     }

@@ -160,6 +160,34 @@ public class AxisConfiguration extends AxisDescription {
         addServiceGroup(axisServiceGroup);
     }
 
+    /**
+     * This method will check whethere for a given service , can we ganerate valid
+     * wsdl or not. So if user derop a wsdl we print that out , else if all the operation
+     * uses RPC message recivers we will generate wsdl
+     *
+     * @param axisService
+     */
+    private void isWSDLEnable(AxisService axisService) {
+        if (!axisService.isWsdlfound()) {
+            Iterator operatins = axisService.getOperations();
+            while (operatins.hasNext()) {
+                AxisOperation axisOperation = (AxisOperation) operatins.next();
+                if (axisOperation.getMessageReceiver() == null) {
+                    axisService.setWsdlfound(false);
+                    return;
+                }
+                String messageReceiverClass = axisOperation.getMessageReceiver().getClass().getName();
+                if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver".equals(messageReceiverClass) ||
+                        "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver".equals(messageReceiverClass) ||
+                        "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver".equals(messageReceiverClass))) {
+                    axisService.setWsdlfound(false);
+                    return;
+                }
+            }
+            axisService.setWsdlfound(true);
+        }
+    }
+
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
         Iterator services = axisServiceGroup.getServices();
         axisServiceGroup.setParent(this);
@@ -171,9 +199,10 @@ public class AxisConfiguration extends AxisDescription {
                         "twoservicecannothavesamename",
                         description.getName()));
             }
-            if(description.getSchematargetNamespace()==null){
+            if (description.getSchematargetNamespace() == null) {
                 description.setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
+            isWSDLEnable(description);
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
