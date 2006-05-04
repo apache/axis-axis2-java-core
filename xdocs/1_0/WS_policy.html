@@ -13,7 +13,7 @@
 <p><em>-Axis2 version 1.0</em></p>
 
 <p>This document will give you an introduction to the role of Web services
-policy in Axis2. </p>
+policy in Axis2.</p>
 
 <p><i>E-mail comments/ suggestions to: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
@@ -22,11 +22,12 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Content</h2>
 <ul>
-  <li><a href="#intro">What is Web Services (WS) Policy?</a></li>
-  <li><a href="#archi">Client Side WS-Policy Support</a></li>
-  <li><a href="#code_depend">Server Side WS-Policy Support</a></li>
-  <li><a href="#code_gen">References</a></li>
+  <li><a href="#what">What is Web Services (WS) Policy?</a></li>
+  <li><a href="#client">Client Side WS-Policy Support</a></li>
+  <li><a href="#server">Server Side WS-Policy Support</a></li>
+  <li><a href="#resources">Resources</a></li>
 </ul>
+<a name="what"></a>
 
 <h2>What is Web Services (WS) Policy?</h2>
 
@@ -45,6 +46,7 @@ can adhere to this policy information to use the service or not.</p>
 <p>Further more, web service infrastructure could be enhanced to enforce
 those requirements without requiring the service author to write even single
 line of code.</p>
+<a name="client"></a>
 
 <h2>Client Side WS-Policy Support</h2>
 
@@ -130,15 +132,15 @@ MessageContext which get stored by stub methods which the module has added to
 the stub earlier. The modules are required to loads their configurations
 according to the effective policy which is set in AxisOperation and
 properties they get via MessageContext.</p>
+<a name="server"></a>
 
 <h2>Server Side WS-Policy Support</h2>
 
-<p>In this current release Axis2 framework uses ws-commons/policy as an
-object model to manipulate policy documents. All its description builders
-store any policy information included in description documents (services.xml,
-axis2.xml, .. etc) in the appropriate description classes. This information
-is available at both deployment and run time via these description
-classes.</p>
+<p>In this current release Axis2 framework uses WS-Commons/Neethi framework
+to manipulate policy documents. All its description builders store any policy
+information included in description documents (services.xml, axis2.xml, ..
+etc) in the appropriate description classes. This information is available at
+both deployment and run time via these description classes.</p>
 
 <p>When generating WSDL dynamically for each service, policy information in
 the description classes is included. For instance, if you declare a policy in
@@ -154,16 +156,18 @@ fledged ws-policy supported web service infrastructure. But it is encouraging
 to note that we've taken the first steps towards this goal. We appreciate any
 suggestions, patches etc you send us in this regard. Keep on
 contributing...!</p>
+<a name="resources"></a>
 
 <h2>Resources</h2>
 <ul>
-  <li>Apache WS-Commons Policy Implementaion or Apache Neethi official site-
-    <a href="http://ws.apache.org/commons/policy/index.html"
+  <li>Apache Neethi (WS Policy Implementation) official site- <a
+    href="http://ws.apache.org/commons/neethi/index.html"
     target="_blank">Home Page</a></li>
-  <li>Sanka Samaranayake, March 2006. <a href="" target="_blank">Web services
-    Policy - Why, What &amp; How</a></li>
+  <li>Sanka Samaranayake, March 2006. <a
+    href="http://www.wso2.net/2006/01/web_services_policy_why_what_how"
+    target="_blank">Web services Policy - Why, What &amp; How</a></li>
   <li><a
-    href="http://svn.apache.org/viewcvs.cgi/webservices/commons/modules/policy/"
+    href="http://svn.apache.org/viewcvs.cgi/webservices/commons/trunk/modules/neethi/"
     target="_blank">WS-commons/policy SVN</a></li>
   <li><a href="http://specs.xmlsoap.org/ws/2004/09/policy/ws-policy.pdf"
     target="_blank">Web Services Policy Framework (WS-Policy)</a></li>
