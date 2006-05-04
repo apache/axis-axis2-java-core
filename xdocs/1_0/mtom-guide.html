@@ -346,11 +346,15 @@ Content Location referencing of MIME parts.</p>
 <ul>
   <li><strong>Sample service which accepts a SwA message</strong></li>
 </ul>
-<source><pre>public class EchoSwA {
+<source><pre>
+public class EchoSwA {
     private MessageContext msgcts;
 
-    public void init(MessageContext msgcts) {
-        this.msgcts = msgcts;
+    public EchoSwA() {
+    }
+
+    public void setOperationContext(OperationContext oc) throws AxisFault {
+        msgcts = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
     }
 
     public OMElement echoAttachment(OMElement omEle) {
@@ -370,7 +374,8 @@ Content Location referencing of MIME parts.</p>
         omEle.addChild(textNode);
         return omEle;
     }
-}</pre>
+}
+</pre>
 </source>
 <p>MTOM specification is designed to be backward compatible with the SOAP
 with Attachments specification. Even though the representation is different,
