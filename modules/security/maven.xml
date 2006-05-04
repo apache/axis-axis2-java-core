@@ -33,12 +33,14 @@
         </copy>
 
         <!--include the license for jars-->
-
         <ant:copy toDir="target/temp-mar/lib">
             <ant:fileset dir="../../legal/security">
                 <ant:include name="*.txt"/>
             </ant:fileset>
         </ant:copy>
+
+        <copy file="../../LICENSE.txt"
+            tofile="target/temp-mar/META-INF/LICENSE.txt" overwrite="true"/>
 
         <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
 			<copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
