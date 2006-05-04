@@ -11,7 +11,13 @@
       <library name="Axis_Service_Archiver.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-0.94.jar">
+      <library name="lib/axis2-codegen-1.0.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/commons-logging-1.0.4.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/log4j-1.2.13.jar">
          <export name="*"/>
       </library>
    </runtime>
