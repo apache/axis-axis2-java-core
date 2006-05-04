@@ -88,6 +88,7 @@ public interface SettingsConstants {
     static final String PREF_DATABINDER_INDEX = "PREF_DATABINDER_INDEX";
     
     static final String PREF_GEN_ALL = "PREF_GEN_ALL";
+    static final String PREF_GEN_SS_INTERFACE = "PREF_GEN_SERVERSIDE_INTERFACE";
 
     // ##################################################################################
     // Java source file selection page

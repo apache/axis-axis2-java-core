@@ -205,7 +205,9 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                          									optionsPage.getPackageName(),
                          									optionsPage.getSelectedLanguage(),
                          									outputPage.getOutputLocation(),
-                         									optionsPage.getNs2PkgMapping());
+                         									optionsPage.getNs2PkgMapping(),
+                         									optionsPage.getGenerateServerSideInterface());
+                 
                  CodeGenConfiguration codegenConfig = new CodeGenConfiguration(service, optionsMap);
                  //set the baseURI
                  codegenConfig.setBaseURI(generator.getBaseUri(wsdlSelectionPage.getFileName()));

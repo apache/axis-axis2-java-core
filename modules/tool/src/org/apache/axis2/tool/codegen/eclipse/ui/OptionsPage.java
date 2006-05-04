@@ -98,6 +98,11 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * Checkbox to enable the generate all classes
 	 */
 	private Button generateAllCheckBoxButton;
+	
+	/**
+	 *  check box for server side interface
+	 */
+	private Button generateServerSideInterfaceCheckBoxButton;
 
 	private Combo databindingTypeCombo;
 
@@ -148,6 +153,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		settings.put(PREF_COMBO_SERVICENAME_INDEX, 0);
 		settings.put(PREF_DATABINDER_INDEX, 0);
 		settings.put(PREF_GEN_ALL, false);
+		settings.put(PREF_GEN_SS_INTERFACE, false);
 	}
 
 	/*
@@ -319,7 +325,10 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			}
 		});
 		// Server side check box
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
 		serverSideCheckBoxButton = new Button(container, SWT.CHECK);
+		serverSideCheckBoxButton.setLayoutData(gd);
 		serverSideCheckBoxButton.setText(CodegenWizardPlugin
 				.getResourceString("page2.serverside.caption"));
 		serverSideCheckBoxButton.setSelection(settings
@@ -372,6 +381,26 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			}
 		});
 
+		//the server side interface option
+		generateServerSideInterfaceCheckBoxButton = new Button(container, SWT.CHECK);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		generateServerSideInterfaceCheckBoxButton.setLayoutData(gd);
+		generateServerSideInterfaceCheckBoxButton.setSelection(settings
+				.getBoolean(PREF_GEN_SS_INTERFACE));
+		generateServerSideInterfaceCheckBoxButton.setText(CodegenWizardPlugin
+				.getResourceString("page2.ssInterface.caption"));
+		generateServerSideInterfaceCheckBoxButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_GEN_SS_INTERFACE, generateServerSideInterfaceCheckBoxButton
+						.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		
 		// Databinding
 		label = new Label(container, SWT.NULL);
 		label.setText(CodegenWizardPlugin
@@ -612,13 +641,15 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	}
 	
 	/**
-	 * Fill the combo with proper language names
+	 * Fill the combo with proper databinding names
 	 * 
 	 */
 	private void fillDatabinderCombo() {
 
 		databindingTypeCombo.add(DATA_BINDING_ADB);
 		databindingTypeCombo.add(DATA_BINDING_XMLBEANS);
+		//databindingTypeCombo.add(DATA_BINDING_JIBX);
+		//databindingTypeCombo.add(DATA_BINDING_JAXME);
 		databindingTypeCombo.add(DATA_BINDING_NONE);
 
 	}
@@ -645,9 +676,11 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		if (this.serverSideCheckBoxButton.getSelection()) {
 			this.serverXMLCheckBoxButton.setEnabled(true);
 			this.generateAllCheckBoxButton.setEnabled(true);
+			this.generateServerSideInterfaceCheckBoxButton.setEnabled(true);
 		} else {
 			this.serverXMLCheckBoxButton.setEnabled(false);
 			this.generateAllCheckBoxButton.setEnabled(false);
+			this.generateServerSideInterfaceCheckBoxButton.setEnabled(false);
 		}
 	}
 
@@ -772,6 +805,14 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean getGenerateServerSideInterface() {
+		return this.generateServerSideInterfaceCheckBoxButton.getSelection();
+	}
+	
 	/**
 	 * 
 	 * @return
