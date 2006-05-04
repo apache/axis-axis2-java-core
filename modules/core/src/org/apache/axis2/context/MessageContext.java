@@ -16,12 +16,11 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPConstants;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
@@ -635,6 +634,7 @@ public class MessageContext extends AbstractContext {
 
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
+        this.axisServiceGroup = (AxisServiceGroup)this.axisService.getParent();
     }
 
     public void setAxisServiceGroup(AxisServiceGroup axisServiceGroup) {
@@ -947,7 +947,7 @@ public class MessageContext extends AbstractContext {
      * We do this basically to make sure we don't parse and build the om tree of the whole envelope
      * looking for the soap header. If this method returns true, there still is no guarantee that there is
      * a soap:Header present, use getHeader() and also check for null on getHeader() to be absolutely sure.
-     * 
+     *
      * @return boolean
      */
     public boolean isHeaderPresent() {
