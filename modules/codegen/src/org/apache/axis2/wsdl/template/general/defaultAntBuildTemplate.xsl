@@ -32,6 +32,21 @@
 
             <property name="jars.ok" value=""></property>
 
+            <path id="axis2.class.path">
+                <pathelement>
+                    <xsl:attribute name="path">${java.class.path}</xsl:attribute>
+                </pathelement>
+                <pathelement>
+                    <xsl:attribute name="path">${maven.class.path}</xsl:attribute>
+                </pathelement>
+                <fileset>
+                    <xsl:attribute name="dir">${axis2.home}</xsl:attribute>
+                    <include>
+                        <xsl:attribute name="name">lib/*.jar</xsl:attribute>
+                    </include>
+                </fileset>
+            </path>
+
             <target name="init">
                 <mkdir>
                     <xsl:attribute name="dir">${build}</xsl:attribute>
@@ -77,10 +92,7 @@
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
-                        <xsl:attribute name="location">${bin}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    </classpath>
-                    <classpath>
-                        <xsl:attribute name="location">${java.class.path}</xsl:attribute>
+                        <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
                 </javac>
             </target>
@@ -91,10 +103,7 @@
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${test}</xsl:attribute>
                     <classpath>
-                        <xsl:attribute name="location">${bin}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    </classpath>
-                    <classpath>
-                        <xsl:attribute name="location">${java.class.path}</xsl:attribute>
+                        <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
                 </javac>
             </target>
