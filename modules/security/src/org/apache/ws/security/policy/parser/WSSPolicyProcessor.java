@@ -51,7 +51,7 @@ import java.util.List;
 
 public class WSSPolicyProcessor {
     
-    private static Log log = LogFactory.getLog(WSSPolicyProcessor.class);
+	private static final Log log = LogFactory.getLog(WSSPolicyProcessor.class);
 
     FileInputStream fis = null;
 

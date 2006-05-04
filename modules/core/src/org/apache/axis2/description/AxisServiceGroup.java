@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 public class AxisServiceGroup extends AxisDescription {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AxisServiceGroup.class);
 
     // to store module ref at deploy time parsing
     private ArrayList modulesList = new ArrayList();

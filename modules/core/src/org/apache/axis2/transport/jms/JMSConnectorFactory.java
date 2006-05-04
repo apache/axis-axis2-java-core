@@ -32,7 +32,7 @@ import java.util.HashMap;
  * JMSConnector from an existing pool of connectors.
  */
 public abstract class JMSConnectorFactory {
-    protected static Log log = LogFactory.getLog(JMSConnectorFactory.class.getName());
+	private static final Log log = LogFactory.getLog(JMSConnectorFactory.class);
 
     /**
      * Static method to create a client connector. Client connectors cannot

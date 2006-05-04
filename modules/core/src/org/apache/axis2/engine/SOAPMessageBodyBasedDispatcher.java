@@ -43,7 +43,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",
             "SOAPMessageBodyBasedDispatcher");
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedDispatcher.class);
     String serviceName = null;
     QName operationName = null;
 

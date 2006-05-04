@@ -52,7 +52,7 @@ public class SimpleHTTPServer implements TransportListener {
     /**
      * Field log
      */
-    protected static Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
+	private static final Log log = LogFactory.getLog(SimpleHTTPServer.class);
 
     /**
      * Embedded commons http client based server

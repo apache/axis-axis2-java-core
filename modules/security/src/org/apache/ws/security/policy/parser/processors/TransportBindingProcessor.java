@@ -25,7 +25,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class TransportBindingProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(TransportBindingProcessor.class);
     
     private boolean initializedTransportBinding = false;
     

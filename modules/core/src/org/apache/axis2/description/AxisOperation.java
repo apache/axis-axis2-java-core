@@ -28,7 +28,7 @@ public abstract class AxisOperation extends AxisDescription
     public static final String STYLE_RPC = "rpc";
     public static final String STYLE_MSG = "msg";
     public static final String STYLE_DOC = "doc";
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AxisOperation.class);
     private int mep = MEP_CONSTANT_INVALID;
 
     public static final String SOAP_ACTION = "soapaction";

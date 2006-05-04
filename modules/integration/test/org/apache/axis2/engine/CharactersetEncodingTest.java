@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CharactersetEncodingTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(CharactersetEncodingTest.class);
 
     private AxisService service;
 

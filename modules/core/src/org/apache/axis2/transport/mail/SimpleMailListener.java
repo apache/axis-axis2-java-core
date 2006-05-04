@@ -50,7 +50,7 @@ import java.io.File;
  *
  */
 public class SimpleMailListener implements Runnable, TransportListener {
-    protected static Log log = LogFactory.getLog(SimpleMailListener.class.getName());
+	private static final Log log = LogFactory.getLog(SimpleMailListener.class);
 
     // Are we doing threads?
     private static boolean doThreads = true;

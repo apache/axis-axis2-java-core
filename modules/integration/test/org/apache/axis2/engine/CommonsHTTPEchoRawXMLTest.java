@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(CommonsHTTPEchoRawXMLTest.class);
 
     private AxisService service;
 

@@ -33,7 +33,7 @@ import java.io.InputStream;
 
 public class FileSystemConfigurator implements AxisConfigurator {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(FileSystemConfigurator.class);
     /**
      * To check whether need to create a service side or client side
      */

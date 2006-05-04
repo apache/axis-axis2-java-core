@@ -31,6 +31,9 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.Utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.xml.namespace.QName;
 
 import java.util.ArrayList;
@@ -42,6 +45,9 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
     private static final long serialVersionUID = 3907988439637261572L;
     private OMNamespace addressingNSObject;
+
+    private static final Log log = LogFactory.getLog(AddressingInHandler.class);
+
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         String namespace = addressingNamespace;
@@ -61,7 +67,9 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             return;
         }
 
-        logger.debug("Starting " + addressingVersion + " IN handler ...");
+		if(log.isDebugEnabled()) {
+			log.debug("Starting " + addressingVersion + " IN handler ...");
+		}
 
         ArrayList addressingHeaders;
         addressingHeaders = header.getHeaderBlocksWithNSURI(namespace);
@@ -69,11 +77,15 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
             msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
             addressingNSObject = ((OMElement) addressingHeaders.get(0)).findNamespace(namespace, "");
-            logger.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
+			if(log.isDebugEnabled()) {
+				log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
+			}
             extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
         } else {
             msgContext.setProperty(Constants.Configuration.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-            logger.debug("No Headers present corresponding to " + addressingVersion);
+			if(log.isDebugEnabled()) {
+				log.debug("No Headers present corresponding to " + addressingVersion);
+			}
         }
 
 

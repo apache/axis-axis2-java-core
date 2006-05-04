@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
 
-    private transient Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AxisServlet.class);
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";

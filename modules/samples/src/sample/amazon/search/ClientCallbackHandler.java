@@ -59,7 +59,7 @@ public class ClientCallbackHandler extends Callback {
      * Stores the response
      */
     private AsyncResult myResult;
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ClientCallbackHandler.class);
 
     /**
      * method onComplete

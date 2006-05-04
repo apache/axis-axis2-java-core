@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class AxisConfiguration extends AxisDescription {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AxisConfiguration.class);
     /**
      * Field modules
      */

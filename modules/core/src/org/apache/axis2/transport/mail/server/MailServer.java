@@ -8,8 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MailServer {
-    protected static Log log =
-            LogFactory.getLog(SimpleMailListener.class.getName());
+	private static final Log log = LogFactory.getLog(MailServer.class);
     Storage st = null;
     public ConfigurationContext configurationContext = null;
     private POP3Server pop3Server;

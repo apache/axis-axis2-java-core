@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawXMLOnTwoChannelsTest.class);
 
 
     private boolean finish = false;

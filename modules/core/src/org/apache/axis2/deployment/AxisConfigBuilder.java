@@ -36,6 +36,8 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -45,6 +47,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
+
+    protected static final Log log = LogFactory.getLog(AxisConfigBuilder.class);
 
     private DeploymentEngine engine;
 

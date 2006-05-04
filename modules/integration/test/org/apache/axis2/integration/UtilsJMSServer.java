@@ -42,7 +42,7 @@ public class UtilsJMSServer {
 
     public static final String REPOSITORY_JMS = "target/test-resources/jms-enabled-server-repository";
 
-    private static Log log = LogFactory.getLog(UtilsJMSServer.class);
+	private static final Log log = LogFactory.getLog(UtilsJMSServer.class);
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {

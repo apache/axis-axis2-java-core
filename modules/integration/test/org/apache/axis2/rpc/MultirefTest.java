@@ -66,7 +66,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
                     + "/axis2/services/EchoXMLService/concat");
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(MultirefTest.class);
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName(NAMESPACE, "concat");
     protected QName transportName = new QName(NAMESPACE,

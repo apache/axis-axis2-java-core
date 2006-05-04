@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 import java.util.Map;
 
 public class AddressingInHandlerTest extends TestCase {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AddressingInHandlerTest.class);
     AddressingInHandler inHandler;
     TestUtil testUtil = new TestUtil();
     private static final String testFileName = "soapmessage.xml";

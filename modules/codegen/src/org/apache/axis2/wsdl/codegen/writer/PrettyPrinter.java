@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
  * Tidies up the java source code using Jalopy.
  */
 public class PrettyPrinter {
-    private static Log log = LogFactory.getLog(PrettyPrinter.class);
+	private static final Log log = LogFactory.getLog(PrettyPrinter.class);
 
 
     /**

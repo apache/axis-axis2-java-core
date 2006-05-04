@@ -38,7 +38,7 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
     /**
      * Field log
      */
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(RawXMLINOnlyMessageReceiver.class);
 
     /**
      * Field scope

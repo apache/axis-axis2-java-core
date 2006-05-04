@@ -65,7 +65,7 @@ public class JMSEchoRawXMLTest extends TestCase {
     private ConfigurationContext configContext;
 
     private boolean finish = false;
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(JMSEchoRawXMLTest.class);
 
     public JMSEchoRawXMLTest() {
         super(JMSEchoRawXMLTest.class.getName());

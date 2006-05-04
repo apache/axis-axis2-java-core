@@ -125,7 +125,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     //~--- fields -------------------------------------------------------------
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AxisServiceBasedMultiLanguageEmitter.class);
     protected URIResolver resolver;
 
     private Map infoHolder;

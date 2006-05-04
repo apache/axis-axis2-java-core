@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class POP3Server extends Thread {
-    protected static Log log = LogFactory.getLog(POP3Server.class.getName());
+	private static final Log log = LogFactory.getLog(POP3Server.class);
     private Storage st = null;
     private ServerSocket serverSocket;
 

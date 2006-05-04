@@ -46,7 +46,7 @@ import java.net.Socket;
  * This Class is the work hoarse of the TCP request, this process the incomming SOAP Message.
  */
 public class TCPWorker implements Runnable {
-    protected Log log = LogFactory.getLog(getClass().getName());
+	private static final Log log = LogFactory.getLog(TCPWorker.class);
     private ConfigurationContext configurationContext;
     private Socket socket;
 

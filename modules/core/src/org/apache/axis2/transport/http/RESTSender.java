@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class RESTSender extends AbstractHTTPSender {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(RESTSender.class);
 
     /*Obtain two strings;one to go in the url and rest to pass in the body
     **when doing POST in application/x-www-form-urlencoded form.

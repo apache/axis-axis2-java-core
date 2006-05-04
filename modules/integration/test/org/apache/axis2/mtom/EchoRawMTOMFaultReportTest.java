@@ -43,7 +43,7 @@ import java.io.InputStream;
 
 public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawMTOMFaultReportTest.class);
 
     private QName serviceName = new QName("EchoService");
 

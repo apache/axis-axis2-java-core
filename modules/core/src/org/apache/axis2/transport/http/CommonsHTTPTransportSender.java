@@ -55,7 +55,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
      * proxydiscription
      */
     protected TransportOutDescription proxyOutSetting = null;
-    protected Log log = LogFactory.getLog(getClass().getName());
+	private static final Log log = LogFactory.getLog(CommonsHTTPTransportSender.class);
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
     private boolean chunked = false;

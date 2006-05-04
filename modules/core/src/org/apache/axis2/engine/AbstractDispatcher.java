@@ -42,7 +42,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/", "AbstractDispatcher");
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
 
     public AbstractDispatcher() {
         init(new HandlerDescription(NAME));

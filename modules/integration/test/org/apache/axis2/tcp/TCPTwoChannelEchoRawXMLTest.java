@@ -53,7 +53,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     private AxisService service;
     private ConfigurationContext configContext;
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(TCPTwoChannelEchoRawXMLTest.class);
 
     private boolean finish = false;
 

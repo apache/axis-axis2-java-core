@@ -45,7 +45,7 @@ public abstract class AbstractHTTPSender {
     protected static final String PROXY_PORT = "proxy_port";
     protected boolean chunked = false;
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-    protected Log log = LogFactory.getLog(getClass().getName());
+	private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     /**

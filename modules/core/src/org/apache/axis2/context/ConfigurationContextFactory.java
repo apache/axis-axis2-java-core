@@ -12,6 +12,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.net.URL;
 import java.util.Collection;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
+
+    protected static final Log log = LogFactory.getLog(ConfigurationContextFactory.class);
 
     /**
      * Creates a AxisConfiguration depending on the user requirment.
@@ -151,8 +154,7 @@ public class ConfigurationContextFactory {
                 try {
                     sender.init(configContext, transportOut);
                 } catch (AxisFault axisFault) {
-                    LogFactory.getLog(ConfigurationContextFactory.class)
-                            .info(Messages.getMessage("transportiniterror", transportOut.getName().getLocalPart()));
+                    log.info(Messages.getMessage("transportiniterror", transportOut.getName().getLocalPart()));
                 }
             }
         }

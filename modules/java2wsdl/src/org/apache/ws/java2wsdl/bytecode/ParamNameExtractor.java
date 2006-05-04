@@ -13,7 +13,7 @@ import java.lang.reflect.Proxy;
  */
 public class ParamNameExtractor {
 
-    protected static Log log = LogFactory.getLog(ParamNameExtractor.class.getName());
+	private static final Log log = LogFactory.getLog(ParamNameExtractor.class);
 
     /**
      * Retrieves a list of function parameter names from a method. 

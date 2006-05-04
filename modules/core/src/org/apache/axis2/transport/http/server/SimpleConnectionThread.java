@@ -40,8 +40,7 @@ import java.io.InterruptedIOException;
  * Simple HTTP connection thread.
  */
 public class SimpleConnectionThread implements Runnable {
-    private static final Log log =
-            LogFactory.getLog(SimpleConnectionThread.class);
+	private static final Log log = LogFactory.getLog(SimpleConnectionThread.class);
     public static final String DEFAULT_CONTENT_CHARSET = "ISO-8859-1";
     private SimpleHttpServerConnection conn = null;
     private SimpleConnSet connpool = null;

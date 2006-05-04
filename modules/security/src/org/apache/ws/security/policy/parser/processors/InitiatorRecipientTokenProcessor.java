@@ -27,7 +27,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class InitiatorRecipientTokenProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(InitiatorRecipientTokenProcessor.class);
     
     private boolean initializedInitiatorToken = false;
 

@@ -46,7 +46,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",
             "AddressingBasedDispatcher");
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AddressingBasedDispatcher.class);
 
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)

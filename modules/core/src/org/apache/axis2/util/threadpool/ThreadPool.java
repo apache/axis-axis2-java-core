@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * in the thread pool.
  */
 public class ThreadPool implements ThreadFactory {
-    protected static Log log = LogFactory.getLog(ThreadPool.class.getName());
+	private static final Log log = LogFactory.getLog(ThreadPool.class);
     protected static long SLEEP_INTERVAL = 1000;
     private static boolean shutDown;
     protected ThreadPoolExecutor executor;

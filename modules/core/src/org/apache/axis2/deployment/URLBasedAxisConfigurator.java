@@ -31,7 +31,7 @@ import java.net.URL;
 
 public class URLBasedAxisConfigurator implements AxisConfigurator {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(URLBasedAxisConfigurator.class);
     private URL axis2xml;
     private URL repositoy;
     private DeploymentEngine deploymentEngine;

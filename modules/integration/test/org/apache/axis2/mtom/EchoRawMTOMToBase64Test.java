@@ -53,7 +53,7 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
             + (UtilServer.TESTING_PORT)
             + "/axis2/services/EchoXMLService/echoMTOMtoBase64");
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawMTOMToBase64Test.class);
 
     private QName serviceName = new QName("EchoXMLService");
 

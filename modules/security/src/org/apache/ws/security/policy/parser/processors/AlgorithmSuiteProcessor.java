@@ -29,7 +29,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class AlgorithmSuiteProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AlgorithmSuiteProcessor.class);
     
     private boolean initializedAlgorithmSuite = false;
 

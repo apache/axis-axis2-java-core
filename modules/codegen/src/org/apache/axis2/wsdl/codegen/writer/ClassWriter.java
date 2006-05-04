@@ -35,7 +35,7 @@ import java.util.Map;
 
 public abstract class ClassWriter {
 
-    private static Log log = LogFactory.getLog(ClassWriter.class);
+	private static final Log log = LogFactory.getLog(ClassWriter.class);
 
     protected File outputFileLocation = null;
     protected File outputFile = null;

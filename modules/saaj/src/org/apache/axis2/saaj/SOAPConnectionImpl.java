@@ -63,7 +63,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
     private ServiceClient serviceClient;
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SOAPConnectionImpl.class);
 
     /**
      * Sends the given message to the specified endpoint and

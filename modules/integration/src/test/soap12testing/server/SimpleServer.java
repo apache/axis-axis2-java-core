@@ -28,7 +28,7 @@ import java.io.File;
 
 public class SimpleServer {
     private int port;
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SimpleServer.class);
 
     public SimpleServer() {
         this.port = 8008;

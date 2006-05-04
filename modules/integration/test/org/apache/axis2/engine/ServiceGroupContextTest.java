@@ -60,7 +60,7 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
     protected EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:" +
             (UtilServer.TESTING_PORT) +
             "/axis2/services/RequestCounter");
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ServiceGroupContextTest.class);
     protected QName serviceName = new QName("RequestCounter");
     protected QName operationName = new QName("getRequestCount");
     protected QName transportName = new QName("http://localhost/my", "NullTransport");

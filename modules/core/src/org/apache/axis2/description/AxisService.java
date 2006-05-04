@@ -64,7 +64,7 @@ import java.util.*;
 public class AxisService extends AxisDescription {
 
     private int nsCount = 0;
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
 
     private HashMap operationsAliasesMap = null;

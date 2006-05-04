@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 
 public class UsernameTokenProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(UsernameTokenProcessor.class);
 
 	private boolean initializedUsernameToken = false;
 

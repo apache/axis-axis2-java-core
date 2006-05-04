@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class POP3Worker extends Thread {
-    protected static Log log = LogFactory.getLog(POP3Server.class.getName());
+	private static final Log log = LogFactory.getLog(POP3Worker.class);
     boolean doneProcess = false;
     int numDeleted = 0;    // This is a small hack to get the deleting working with the ArrayList. To keep it simple.
     ArrayList messages = new ArrayList();

@@ -28,7 +28,7 @@ import java.util.Date;
 
 public class PerfPortTypeTest extends UtilServerBasedTestCase {
 
-    static Log log = LogFactory.getLog(PerfPortTypeTest.class.getName());
+	private static final Log log = LogFactory.getLog(PerfPortTypeTest.class);
 
     protected static final String SERVICE_REPOSITORY = "target/perf/build/repo";
 

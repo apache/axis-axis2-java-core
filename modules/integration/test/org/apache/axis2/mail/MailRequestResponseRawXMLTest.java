@@ -56,7 +56,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("mail:foo@127.0.0.1"
             + "/axis2/services/EchoXMLService/echoOMElement");
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(MailRequestResponseRawXMLTest.class);
 
     private QName serviceName = new QName("EchoXMLService");
 

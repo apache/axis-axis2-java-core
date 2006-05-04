@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 
 public class RepositoryListener implements DeploymentConstants {
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(RepositoryListener.class);
     private DeploymentEngine deploymentEngine;
     private File rootDir;
 

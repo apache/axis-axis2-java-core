@@ -32,6 +32,6 @@ public abstract class AddressingHandler extends AbstractHandler implements Addre
     protected String anonymousURI = Final.WSA_ANONYMOUS_URL;   // defaulting to final version
 
 
-    protected Log logger = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AddressingHandler.class);
 
 }

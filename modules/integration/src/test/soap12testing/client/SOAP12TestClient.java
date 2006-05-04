@@ -30,7 +30,7 @@ import java.net.URL;
 
 public class SOAP12TestClient {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SOAP12TestClient.class);
 
     public String getReply(int port, String webserviceName,String testNumber) {
         String replyMessage = "";

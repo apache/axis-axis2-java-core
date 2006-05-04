@@ -56,7 +56,7 @@ import java.util.Iterator;
  */
 public class DescriptionBuilder implements DeploymentConstants {
 
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(DescriptionBuilder.class);
     protected AxisConfiguration axisConfig;
 
     protected InputStream descriptionStream;

@@ -27,7 +27,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SMTPServer extends Thread {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SMTPServer.class);
     private boolean actAsMailet = false;
     private boolean running = false;
     private ConfigurationContext configurationContext;

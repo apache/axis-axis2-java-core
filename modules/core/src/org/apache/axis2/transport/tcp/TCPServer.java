@@ -45,7 +45,7 @@ import java.net.SocketException;
 public class TCPServer implements Runnable, TransportListener {
     private int port = 8000;
     private boolean started = false;
-    protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
+	private static final Log log = LogFactory.getLog(TCPServer.class);
     private ConfigurationContext configContext;
     private ServerSocket serversocket;
     private String hostAddress = null;

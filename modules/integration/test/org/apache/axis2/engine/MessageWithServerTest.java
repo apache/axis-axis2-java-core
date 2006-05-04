@@ -42,7 +42,7 @@ import java.io.Reader;
 import java.net.Socket;
 
 public class MessageWithServerTest extends UtilServerBasedTestCase {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(MessageWithServerTest.class);
     private QName serviceName = new QName("", "EchoService");
     private QName operationName =
             new QName("http://ws.apache.org/axis2", "echoVoid");

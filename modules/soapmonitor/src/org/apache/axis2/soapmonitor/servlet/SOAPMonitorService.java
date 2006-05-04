@@ -64,7 +64,7 @@ public class SOAPMonitorService extends HttpServlet {
   private static ServerSocket server_socket = null;
   private static Vector       connections = null;
 
-  private Log log = LogFactory.getLog(getClass());
+  private static final Log log = LogFactory.getLog(SOAPMonitorService.class);
 
   /**
    * Constructor

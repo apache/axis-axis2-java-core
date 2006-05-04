@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class STSMessageReceiver extends AbstractInOutSyncMessageReceiver {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(STSMessageReceiver.class);
     
     public void invokeBusinessLogic(MessageContext inMessage,
             MessageContext outMessage) throws AxisFault {

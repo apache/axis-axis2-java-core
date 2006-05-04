@@ -39,7 +39,7 @@ public class UtilsTCPServer {
 
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 
-    private static Log log = LogFactory.getLog(UtilsTCPServer.class);
+	private static final Log log = LogFactory.getLog(UtilsTCPServer.class);
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {

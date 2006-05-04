@@ -39,7 +39,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     protected XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SchemaGenerator.class);
 
     private ClassLoader classLoader;
 

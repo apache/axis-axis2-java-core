@@ -54,7 +54,7 @@ import java.io.InputStream;
 public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestConstants {
 
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawMTOMTest.class);
 
     private AxisService service;
 

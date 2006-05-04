@@ -40,7 +40,7 @@ public class InvokerThread extends Thread {
                     + (UtilServer.TESTING_PORT)
                     + "/axis2/services/EchoXMLService/echoOMElement");
     protected QName operationName = new QName("echoOMElement");
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(InvokerThread.class);
     private Exception thrownException = null;
     ConfigurationContext configContext;
 

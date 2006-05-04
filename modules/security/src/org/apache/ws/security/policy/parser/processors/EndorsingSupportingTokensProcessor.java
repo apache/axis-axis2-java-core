@@ -24,7 +24,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class EndorsingSupportingTokensProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EndorsingSupportingTokensProcessor.class);
     
     private boolean initializedEndorsingSupportingTokens = false;
 

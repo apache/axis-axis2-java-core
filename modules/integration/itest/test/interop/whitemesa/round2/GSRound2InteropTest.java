@@ -67,7 +67,7 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
     SunClientUtil util;
     SunClient client = new SunClient();
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(GSRound2InteropTest.class);
     
     /**
      * Round2

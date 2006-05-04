@@ -40,7 +40,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ArchiveReader implements DeploymentConstants {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
     private ArrayList buildServiceGroup(InputStream zin, DeploymentEngine engine,
                                         AxisServiceGroup axisServiceGroup, HashMap wsdlServices,

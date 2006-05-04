@@ -27,7 +27,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class SignEncProtectTokenProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SignEncProtectTokenProcessor.class);
     
     private boolean initializedSignatureToken = false;
 

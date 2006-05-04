@@ -39,7 +39,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",
             "SOAPActionBasedDispatcher");
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SOAPActionBasedDispatcher.class);
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {

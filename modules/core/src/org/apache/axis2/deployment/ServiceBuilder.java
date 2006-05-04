@@ -30,6 +30,9 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
@@ -42,6 +45,7 @@ import java.util.Iterator;
  * Builds a service description from OM
  */
 public class ServiceBuilder extends DescriptionBuilder {
+	private static final Log log = LogFactory.getLog(ServiceBuilder.class);
     private AxisService service;
 
     public ServiceBuilder(AxisConfiguration axisConfig, AxisService service) {

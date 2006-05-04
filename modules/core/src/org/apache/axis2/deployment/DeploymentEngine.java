@@ -49,7 +49,7 @@ import java.util.zip.ZipInputStream;
 
 public class DeploymentEngine implements DeploymentConstants {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(DeploymentEngine.class);
     private boolean hotUpdate = true;    // to do hot update or not
     private boolean hotDeployment = true;    // to do hot deployment or not
     /**

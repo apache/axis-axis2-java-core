@@ -46,7 +46,7 @@ public class AddressingOutHandler extends AddressingHandler {
 
     private static final long serialVersionUID = -2623986992336863995L;
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
 
     public void invoke(MessageContext msgContext) throws AxisFault {
 

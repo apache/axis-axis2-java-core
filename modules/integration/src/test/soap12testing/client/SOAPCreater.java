@@ -37,7 +37,7 @@ import java.net.URL;
 
 public class SOAPCreater {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SOAPCreater.class);
     public String getStringFromSOAPMessage(String testNumber, URL url) throws IOException {
         File file =
             new File(

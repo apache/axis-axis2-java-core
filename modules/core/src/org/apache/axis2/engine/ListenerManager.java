@@ -37,7 +37,7 @@ import java.util.Iterator;
 
 public class ListenerManager {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ListenerManager.class);
 
     public static ConfigurationContext defaultConfigurationContext;
 

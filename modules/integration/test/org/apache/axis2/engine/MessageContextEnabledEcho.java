@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 public class MessageContextEnabledEcho {
     private MessageContext msgcts;
-      private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(MessageContextEnabledEcho.class);
 
     public MessageContextEnabledEcho() {
     }

@@ -19,7 +19,9 @@ import org.apache.axis2.transport.http.util.SOAPUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
-import org.apache.log4j.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +34,7 @@ import java.io.IOException;
  * 
  */
 public class AxisSOAPServlet extends AxisServlet {
-    private Logger log = Logger.getLogger(AxisSOAPServlet.class);
+	private static final Log log = LogFactory.getLog(AxisSOAPServlet.class);
 
     protected void doGet(HttpServletRequest httpServletRequest,
                          HttpServletResponse httpServletResponse) throws ServletException, IOException {

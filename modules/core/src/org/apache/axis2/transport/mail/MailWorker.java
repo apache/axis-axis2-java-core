@@ -45,7 +45,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
 public class MailWorker implements Runnable {
-    protected static Log log = LogFactory.getLog(MailWorker.class.getName());
+	private static final Log log = LogFactory.getLog(MailWorker.class);
     private ConfigurationContext configContext = null;
     private MimeMessage mimeMessage;
 

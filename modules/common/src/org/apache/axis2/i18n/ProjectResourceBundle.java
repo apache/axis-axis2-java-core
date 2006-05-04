@@ -47,8 +47,7 @@ import java.util.ResourceBundle;
  * Argument values are specified in the various overloaded getString() methods.</p>
  */
 public class ProjectResourceBundle extends ResourceBundle {
-    protected static Log log =
-            LogFactory.getLog(ProjectResourceBundle.class.getName());
+	private static final Log log = LogFactory.getLog(ProjectResourceBundle.class);
 
 
     // The static cache of ResourceBundles.

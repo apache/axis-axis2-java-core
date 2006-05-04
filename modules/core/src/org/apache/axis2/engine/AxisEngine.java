@@ -53,7 +53,7 @@ public class AxisEngine {
     /**
      * Field log
      */
-    private static final Log log = LogFactory.getLog(AxisEngine.class);
+	private static final Log log = LogFactory.getLog(AxisEngine.class);
     private ConfigurationContext engineContext;
 
     /**
@@ -637,7 +637,6 @@ public class AxisEngine {
      * way transport.
      */
     private class TransportNonBlockingInvocationWorker implements Runnable {
-        private Log log = LogFactory.getLog(getClass());
         private MessageContext msgctx;
         private TransportSender sender;
 

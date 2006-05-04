@@ -27,7 +27,7 @@ import java.net.URL;
  * Loads resources (or images) from various sources.
  */
 public class Loader {
-    private static Log log = LogFactory.getLog(Loader.class.getName());
+	private static final Log log = LogFactory.getLog(Loader.class);
 
     /**
      * Searches for <code>resource</code> in different

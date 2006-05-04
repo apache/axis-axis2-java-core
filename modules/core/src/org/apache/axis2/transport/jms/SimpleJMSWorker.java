@@ -56,7 +56,7 @@ import java.io.InputStream;
  * the server, and sends back response msg to the replyTo destination.
  */
 public class SimpleJMSWorker implements Runnable {
-    protected static Log log = LogFactory.getLog(SimpleJMSWorker.class.getName());
+	private static final Log log = LogFactory.getLog(SimpleJMSWorker.class);
     private ConfigurationContext configurationContext;
     SimpleJMSListener listener;
     BytesMessage message;

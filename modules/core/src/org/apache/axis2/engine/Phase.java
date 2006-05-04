@@ -62,7 +62,7 @@ public class Phase implements Handler {
     /**
      * Field log
      */
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(Phase.class);
 
     /**
      * Field handlers

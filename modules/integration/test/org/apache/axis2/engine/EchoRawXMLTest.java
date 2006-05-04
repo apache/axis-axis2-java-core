@@ -48,7 +48,7 @@ import javax.xml.namespace.QName;
 
 public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
 
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawXMLTest.class);
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 

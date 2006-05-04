@@ -30,7 +30,7 @@ public class PhaseRuleHandlers extends AbstractHandler implements Handler {
 
     private static final long serialVersionUID = 2941436920684525811L;
     
-	private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(PhaseRuleHandlers.class);
     private QName name;
   
     public void invoke(MessageContext msgContext) throws AxisFault {

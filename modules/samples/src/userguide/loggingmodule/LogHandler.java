@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 public class LogHandler extends AbstractHandler implements Handler {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(LogHandler.class);
     private QName name;
 
     public QName getName() {

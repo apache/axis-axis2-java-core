@@ -41,7 +41,7 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
     /**
      * Field log
      */
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(RawXMLINOutMessageReceiver.class);
 
     /**
      * Constructor RawXMLProvider

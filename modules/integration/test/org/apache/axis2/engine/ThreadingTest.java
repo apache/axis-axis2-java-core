@@ -38,7 +38,7 @@ import java.util.GregorianCalendar;
 public class ThreadingTest extends UtilServerBasedTestCase implements TestConstants {
 
 
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ThreadingTest.class);
 
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");

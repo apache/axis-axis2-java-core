@@ -32,7 +32,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
 
     InvalidPhaseRuleTest phaserul;
     AxisConfiguration axisSytem;
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(InvalidPhaseRuleTest.class);
 
     public InvalidPhaseRuleTest(String testName) {
         super(testName);

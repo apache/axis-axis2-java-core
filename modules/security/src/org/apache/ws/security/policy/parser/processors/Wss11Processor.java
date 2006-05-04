@@ -26,7 +26,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class Wss11Processor {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(Wss11Processor.class);
     
 	private boolean initializedWss11 = false;
 

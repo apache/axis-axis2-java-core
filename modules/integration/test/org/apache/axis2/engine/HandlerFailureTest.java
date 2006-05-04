@@ -49,7 +49,7 @@ import java.util.ArrayList;
 
 
 public class HandlerFailureTest extends UtilServerBasedTestCase implements TestConstants {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(HandlerFailureTest.class);
 
     public HandlerFailureTest() {
         super(HandlerFailureTest.class.getName());

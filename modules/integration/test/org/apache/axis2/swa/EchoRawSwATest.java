@@ -45,7 +45,7 @@ import java.net.SocketException;
 
 public class EchoRawSwATest extends UtilServerBasedTestCase {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawSwATest.class);
 
     private QName serviceName = new QName("EchoSwAService");
 

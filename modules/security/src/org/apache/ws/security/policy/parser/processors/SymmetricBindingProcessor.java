@@ -28,7 +28,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class SymmetricBindingProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SymmetricBindingProcessor.class);
     
 	private boolean initializedSymmetricBinding = false;
 

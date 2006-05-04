@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 public class ModuleHandler1  extends AbstractHandler implements Handler {
     private static final long serialVersionUID = 8180024686236178934L;
-	private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ModuleHandler1 .class);
     private String message;
     private QName name;
     public ModuleHandler1() {

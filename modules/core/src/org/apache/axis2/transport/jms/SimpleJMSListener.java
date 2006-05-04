@@ -53,7 +53,7 @@ import java.util.Properties;
  * for production code, but for demos, debugging, and performance profiling.
  */
 public class SimpleJMSListener implements MessageListener, TransportListener {
-    protected static Log log = LogFactory.getLog(SimpleJMSListener.class.getName());
+	private static final Log log = LogFactory.getLog(SimpleJMSListener.class);
 
     // Do we use (multiple) threads to process incoming messages?
     private boolean doThreads = true;

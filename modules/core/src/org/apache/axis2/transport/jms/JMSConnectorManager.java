@@ -30,8 +30,7 @@ import java.util.Iterator;
  * vendor adapters to support the reuse of JMS connections.
  */
 public class JMSConnectorManager {
-    protected static Log log =
-            LogFactory.getLog(JMSConnectorManager.class.getName());
+	private static final Log log = LogFactory.getLog(JMSConnectorManager.class);
     private static JMSConnectorManager s_instance = new JMSConnectorManager();
     private static HashMap vendorConnectorPools = new HashMap();
     private int DEFAULT_WAIT_FOR_SHUTDOWN = 90000;    // 1.5 minutes

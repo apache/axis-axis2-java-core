@@ -56,7 +56,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
     
     private static final long serialVersionUID = 7685802089392898320L;
     
-    protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
+	private static final Log log = LogFactory.getLog(WSDoAllReceiver.class);
     
     public WSDoAllReceiver() {
         super();

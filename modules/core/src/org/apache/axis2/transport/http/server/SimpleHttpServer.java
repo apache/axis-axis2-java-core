@@ -44,7 +44,7 @@ import java.net.Socket;
  * A simple, but extensible HTTP server, mostly for testing purposes.
  */
 public class SimpleHttpServer implements Runnable {
-    private static final Log LOG = LogFactory.getLog(SimpleHttpServer.class);
+	private static final Log log = LogFactory.getLog(SimpleHttpServer.class);
     private String testname = "Simple test";
     private ServerSocket listener = null;
     private long count = 0;
@@ -120,8 +120,8 @@ public class SimpleHttpServer implements Runnable {
         this.threadPool = threadPool;
         listener = socketfactory.createServerSocket(port);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting test HTTP server on port " + getLocalPort());
+        if (log.isDebugEnabled()) {
+            log.debug("Starting test HTTP server on port " + getLocalPort());
         }
 
         t = new Thread(this);
@@ -138,8 +138,8 @@ public class SimpleHttpServer implements Runnable {
 
         this.stopped = true;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping test HTTP server on port " + getLocalPort());
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping test HTTP server on port " + getLocalPort());
         }
 
         t.interrupt();
@@ -172,7 +172,7 @@ public class SimpleHttpServer implements Runnable {
                     this.threadPool.execute(new SimpleConnectionThread(this.testname + " thread "
                             + this.count, conn, this.connectionsPool, this.requestHandler));
                 } catch (IOException e) {
-                    LOG.debug("I/O error: " + e.getMessage());
+                    log.debug("I/O error: " + e.getMessage());
                 }
 
                 this.count++;
@@ -182,7 +182,7 @@ public class SimpleHttpServer implements Runnable {
         }
         catch (IOException e) {
             if (!stopped) {
-                LOG.debug("I/O error: " + e.getMessage());
+                log.debug("I/O error: " + e.getMessage());
             }
         } finally {
             destroy();

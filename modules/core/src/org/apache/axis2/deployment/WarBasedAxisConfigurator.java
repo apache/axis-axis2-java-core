@@ -33,7 +33,7 @@ import java.net.URL;
 public class WarBasedAxisConfigurator implements AxisConfigurator {
 
     private AxisConfiguration axisConfig;
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(WarBasedAxisConfigurator.class);
     private ServletConfig config;
     private DeploymentEngine deploymentEngine;
 

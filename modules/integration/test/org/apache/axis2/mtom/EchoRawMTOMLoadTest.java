@@ -45,7 +45,7 @@ import javax.activation.DataHandler;
 
 public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EchoRawMTOMLoadTest.class);
 
     private ServiceContext serviceContext;
 

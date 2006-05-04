@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 
 public class SignedPartsElementsProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SignedPartsElementsProcessor.class);
     
 	private boolean initializedSignedParts = false;
 

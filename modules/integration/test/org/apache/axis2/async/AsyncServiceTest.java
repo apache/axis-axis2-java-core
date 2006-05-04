@@ -49,7 +49,7 @@ import javax.xml.namespace.QName;
 
 public class AsyncServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AsyncServiceTest.class);
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
     EndpointReference targetEPR = new EndpointReference(

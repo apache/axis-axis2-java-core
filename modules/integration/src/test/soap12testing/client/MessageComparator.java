@@ -37,7 +37,7 @@ import java.io.InputStream;
 public class MessageComparator {
     //public static final String TEST_MAIN_DIR = "./modules/samples/";
     public static final String TEST_MAIN_DIR = "./";
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(MessageComparator.class);
 
     public boolean compare(String testNumber, InputStream replyMessage) {
         SOAPEnvelope replyMessageEnvelope;

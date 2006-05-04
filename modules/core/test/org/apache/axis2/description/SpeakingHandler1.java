@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 
 public class SpeakingHandler1 extends AbstractHandler implements Handler {
     private static final long serialVersionUID = -9147014780463234096L;
-	private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SpeakingHandler1.class);
     private String message;
     private QName name;
 

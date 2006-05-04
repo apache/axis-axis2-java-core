@@ -62,7 +62,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
     protected EndpointReference targetEPR;
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(RPCCallTest.class);
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
     protected QName transportName = new QName("http://org.apache.axis2/xsd",

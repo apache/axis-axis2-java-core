@@ -40,7 +40,7 @@ import java.util.*;
  */
 public class ConfigurationContext extends AbstractContext {
 
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(ConfigurationContext.class);
     /**
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.

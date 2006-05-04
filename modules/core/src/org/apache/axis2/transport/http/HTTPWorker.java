@@ -48,7 +48,7 @@ import java.util.*;
 
 public class HTTPWorker implements HttpRequestHandler {
 
-    protected Log log = LogFactory.getLog(getClass().getName());
+	private static final Log log = LogFactory.getLog(HTTPWorker.class);
     private ConfigurationContext configurationContext;
     // to store session object
     private Hashtable sessionContextTable = new Hashtable();

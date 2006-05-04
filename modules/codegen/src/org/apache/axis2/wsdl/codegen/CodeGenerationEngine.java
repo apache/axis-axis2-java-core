@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeGenerationEngine {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
 
     private List extensions = new ArrayList();
 

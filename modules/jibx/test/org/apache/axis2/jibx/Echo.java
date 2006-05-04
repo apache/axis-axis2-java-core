@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class Echo {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(Echo.class);
     
     public Echo() {
     }

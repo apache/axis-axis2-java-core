@@ -25,7 +25,7 @@ import org.apache.ws.security.policy.parser.SecurityProcessorContext;
 
 public class Trust10Processor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(Trust10Processor.class);
     
 	private boolean initializedTrust10 = false;
 

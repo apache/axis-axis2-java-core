@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 public class PolicyEngineData {
 
-    private static Log log = LogFactory.getLog(PolicyEngineData.class);
+	private static final Log log = LogFactory.getLog(PolicyEngineData.class);
     
     public void initializeWithDefaults() {
         

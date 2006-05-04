@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 
 public class EncryptedPartsElementsProcessor {
 
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(EncryptedPartsElementsProcessor.class);
 
 	private boolean initializedEncryptedParts = false;
 

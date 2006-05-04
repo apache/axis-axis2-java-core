@@ -50,7 +50,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
     private static final long serialVersionUID = -3883554138407525394L;
 
-    protected static Log log = LogFactory.getLog(JMSSender.class.getName());
+	private static final Log log = LogFactory.getLog(JMSSender.class);
 
     HashMap params = new HashMap();
 

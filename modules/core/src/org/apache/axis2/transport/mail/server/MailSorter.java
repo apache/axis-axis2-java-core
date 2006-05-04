@@ -33,7 +33,7 @@ import java.util.ArrayList;
  * and the receive method is called.
  */
 public class MailSorter {
-    protected static Log log = LogFactory.getLog(MailSorter.class.getName());
+	private static final Log log = LogFactory.getLog(MailSorter.class);
     Storage st = null;
     private ArrayList sUsers = new ArrayList();
 

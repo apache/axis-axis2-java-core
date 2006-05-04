@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 
 public class X509TokenProcessor {
     
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(X509TokenProcessor.class);
     
 	private boolean initializedX509Token = false;
 

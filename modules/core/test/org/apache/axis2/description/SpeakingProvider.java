@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class SpeakingProvider implements MessageReceiver {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(SpeakingProvider.class);
 
     public SpeakingProvider() {
     }

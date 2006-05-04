@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.Iterator;
 import java.util.Vector;
 public class XMLComparatorInterop {
-    private Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(XMLComparatorInterop.class);
 
     String failureNotice = "";
 

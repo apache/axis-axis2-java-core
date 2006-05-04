@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * This is takes care of the IN-OUT sync MEP in the server side
  */
 public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageReceiver {
-    protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(AbstractInOutAsyncMessageReceiver.class);
 
     public abstract void invokeBusinessLogic(MessageContext inMessage,
                                              MessageContext outMessage) throws AxisFault;
