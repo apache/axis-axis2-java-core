@@ -72,8 +72,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
       </li>
       <li><a href="#bmDB">Data Binding</a>
         <ul>
-          <li><a href="#integration">Integration with the code generation
-            engine</a></li>
+          <li><a href="#integration">Integration with Code Generation
+            Engine</a></li>
           <li><p><a href="#serial">Serialization and De-Serialization</a></p>
           </li>
         </ul>
@@ -656,7 +656,7 @@ that arrives, it uses the <i>In Pipe</i> to process the SOAP Message.</p>
 <p>Although the basic objective of the code generation tools has not changed,
 the code generation module of Axis2 has taken a different approach to
 generate code. Primarily the change is in the use of templates, namely XSL
-templates, which gives the code generator the flexibility to generate code in
+templates which gives the code generator the flexibility to generate code in
 multiple languages.</p>
 
 <p>The basic approach is to set the code generator to generate an XML and
@@ -669,64 +669,64 @@ alt="" align="bottom" width="478" height="218" border="0"></p>
 <p>The fact here is that it is the same information that is extracted from
 the WSDL no matter what code is generated. First, an AxisService is populated
 from a WSDL. Then the code generator extracts information from the
-AxisService and creates an XML, which is language independent. This emitted
+AxisService and creates an XML which is language independent. This emitted
 XML is then parsed with the relevant XSL to generate code for the relevant
-language. No matter what the out put language, the process is the same except
+language. No matter what the output language, the process is the same except
 for the template that is being used.</p>
 
 <h2><a name="bmDB" id="bmDB">Data Binding</a></h2>
 
-<h3>Integration with the code generation engine</h3>
+<h3>Integration with Code Generation Engine</h3>
 
 <p>Databinding for Axis2 is implemented in an interesting manner. Databinding
-has not been included in the core deliberately and hence the codegeneation
-allows plugin in different data binding frameworks. This is done through an
-extensions mechanism where the code gen engine calls extensions first and
-then executes the core emitter. The extensions populate a map of QNames vs
-class names that is passed to the code generator on which the emitter
-operates on.</p>
+has not been included in the core deliberately and hence the code geneation
+allows different data binding frameworks to be plugged in. This is done
+through an extension mechanism where the codegen engine calls extensions
+first and then executes the core emitter. The extensions populate a map of
+QNames vs. class names that is passed to the code generator on which the
+emitter operates on.</p>
 
-<p>The following diagram show the structure</p>
+<p><strong>The following diagram shows the structure:</strong></p>
 
 <p><img src="images/codegen.gif" name="Graphic7" align="bottom" width="406"
 alt="" height="467" border="0"></p>
 
-<p>The following databinding extesnions are available</p>
-
-<p>1. ADB - ADB (Axis Data Binding ) is a simple framework that allows simple
-schemas to be compiled. It is lightweight and simple, works off StAX and
-failry performant. However it does not support the complete set of schema
-constructs and is likely to complain for certain schemas!</p>
-
-<p>2. XMLBeans - XMLbeans claims that it supports the complete schema
-specification and it is the choice if full schema support is needed!</p>
-
-<p>3. JAX-Me - JaxMe support has been added in a similar manner to XMLbeans
-and serves as another option for the user</p>
-
-<p>4. JibX - This is the most recent addition to the family of databinding
-extensions and it is also another option the users have for data binding</p>
+<p><strong>The following databinding extensions are available:</strong></p>
+<ol>
+  <li><strong>ADB</strong> - ADB (Axis Data Binding ) is a simple framework
+    that allows simple schemas to be compiled. It is lightweight and simple,
+    works off StAX and fairly performant. However, it does not support the
+    complete set of schema constructs and is likely to complain for certain
+    schemas!</li>
+  <li><strong>XMLBeans</strong> - XMLbeans claims that it supports the
+    complete schema specification and it is the choice, if full schema
+    support is needed!</li>
+  <li><strong>JAX-Me</strong> - JaxMe support has been added in a similar
+    manner to XMLbeans and serves as another option for the user</li>
+  <li><strong>JibX</strong> - This is the most recent addition to the family
+    of databinding extensions and it is also another option the users have
+    for data binding.</li>
+</ol>
 
 <h3><a name="serial" id="serial">Serialization and De-Serialization of Data
 bound classes</a></h3>
 
-<p>AXIOM is based on a StAX (Streaming API for XML) API. Xml-beans supports
+<p>AXIOM is based on a StAX API (Streaming API for XML). Xml-beans supports
 StAX API. Data binding in Axis2 is achieved through interfacing the AXIOM
 with the Xml-beans using the StAX API which is supported by both parties. At
 the time of the code generation there will be utility methods generated
-inside the stub (or the message reciever) that can de-serialize from AXIOM to
-data bound object and serialize from data bound object to AXIOM. For example
+inside the stub (or the message receiver) that can de-serialize from AXIOM to
+data bound object and serialize from data bound object to AXIOM. For example,
 if the WSDL has an operation called "echoString", once the code is generated
-the following methods will be generated inside the relevant classes</p>
+the following methods will be generated inside the relevant classes.</p>
 
-<p><code>public static
+<pre>public static
 org.apache.axiom.om.OMElementtoOM(org.soapinterop.xsd.EchoStringParamDocument
-param)</code><code>// This method will handle the serialization.</code></p>
+param)// This method will handle the serialization.
 
-<p><code>public static org.apache.xmlbeans.XmlObject
+public static org.apache.xmlbeans.XmlObject
 fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type) //This
-method will handle the de-serialization.</code></p>
+method will handle the de-serialization.</pre>
 
-<p><code></code></p>
 </body>
 </html>
