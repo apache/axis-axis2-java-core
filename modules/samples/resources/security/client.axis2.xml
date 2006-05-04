@@ -4,8 +4,8 @@
     <module ref="addressing"/>
 
     <!-- Engage the security module -->
-    <module ref="aegis"/>
-
+    <module ref="rampart"/>
+    
     <!-- Test with addressing and MTOM: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
