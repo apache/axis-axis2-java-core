@@ -24,7 +24,7 @@ public interface WSSHandlerConstants {
     /**
      * Name of the .mar file
      */
-    public final static String SECURITY_MODULE_NAME = "security";
+    public final static String SECURITY_MODULE_NAME = "rampart";
     
    /**
      * Inflow security parameter

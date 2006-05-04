@@ -37,11 +37,7 @@ public class PingPortSkeleton{
                 (Vector) mc.getProperty(WSHandlerConstants.RECV_RESULTS))
                 == null) {
             System.out.println("No security results!!");
-            PingResponseDocument response = PingResponseDocument.Factory.newInstance();
-            PingResponse pingRes = response.addNewPingResponse();
-            pingRes.setText("Response: " + param0.getPing().getText() + "\n" +
-                    "WARNING: wsse:Security missing !!!!");
-            return response;
+            throw new RuntimeException("No security results!!");
         } else {
             System.out.println("Number of results: " + results.size());
             for (int i = 0; i < results.size(); i++) {
