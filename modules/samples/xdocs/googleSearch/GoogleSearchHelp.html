@@ -110,7 +110,7 @@
  processing response soap and extract elements which have the local names as 
  &quot;snippet&quot; and &quot;URL&quot;. It has to work with AXIOM. You can notice that it uses several Iterators to go through the children of an OMElement.&nbsp; the Iterator 
  returns an object that can be cast into an OMNode. Since you can't call for the children of an OMNode we have to cast it to an OMElement 
- where a type cheking needs to be done as follows. </p>
+ where a type checking needs to be done as follows. </p>
  <p><font face="Courier New"><font size="2">Iterator iterator0 = operation.getChildren();<br/> 
  while (iterator0.hasNext()) { <br/>
  OMNode node = (OMNode) iterator0.next(); <br/>
