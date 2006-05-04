@@ -47,6 +47,7 @@ public class AntCodegenTask extends Task {
     private boolean generateServiceXml = false;
     private boolean generateAllClasses = false;
     private boolean unpackClasses = false;
+    private boolean serverSideInterface  = false;
 
     private String namespaceToPackages = null;
 
@@ -72,6 +73,22 @@ public class AntCodegenTask extends Task {
             classpath = new Path(getProject());
         }
         return classpath.createPath();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isServerSideInterface() {
+        return serverSideInterface;
+    }
+
+    /**
+     *
+     * @param serverSideInterface
+     */
+    public void setServerSideInterface(boolean serverSideInterface) {
+        this.serverSideInterface = serverSideInterface;
     }
 
     /**
@@ -182,6 +199,14 @@ public class AntCodegenTask extends Task {
                             new String[0]));
         }
 
+        //server side interface option
+        if (serverSideInterface) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION,
+                            new String[0]));
+        }
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
                 new CommandLineOption(
