@@ -135,7 +135,7 @@
 	org.apache.axis2.engine.AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
 	java.util.Collection modules = axisConfiguration.getModules().values();
 		
-	for (java.util.Iterator iterator = modules.iterator(); iterator.hasNext(); iterator.next()) {
+	for (java.util.Iterator iterator = modules.iterator(); iterator.hasNext();) {
 		org.apache.axis2.description.AxisModule axisModule = (org.apache.axis2.description.AxisModule) iterator.next();
 		java.lang.String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 			
