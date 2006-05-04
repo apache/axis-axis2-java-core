@@ -57,13 +57,13 @@ public class FileSystemConfigurator implements AxisConfigurator {
         // OK, we've got a repository location in mind.  Let's make
         // sure it exists.
         try {
-		    if(repoLocation != null) {
-				File repo = new File(repoLocation);
-				if (repo.exists()) {
-					// ok, save it if so
-					this.repoLocation = repo.getAbsolutePath();
-				}
-			}
+            if (repoLocation != null) {
+                File repo = new File(repoLocation);
+                if (repo.exists()) {
+                    // ok, save it if so
+                    this.repoLocation = repo.getAbsolutePath();
+                }
+            }
         } catch (Exception e) {
             log.info("Couldn't find repository location '" +
                     repoLocation + "'");
@@ -77,14 +77,16 @@ public class FileSystemConfigurator implements AxisConfigurator {
             axis2xml = System.getProperty(Constants.AXIS2_CONF);
             // In either case, check that the file exists... if not
             // we'll use the default axis2.xml on the classpath.
-            try {
-                File configFile = new File(axis2xml);
-                if (!configFile.exists()) {
+            if (axis2xml != null) {
+                try {
+                    File configFile = new File(axis2xml);
+                    if (!configFile.exists()) {
+                        axis2xml = null;
+                    }
+                } catch (Exception e) {
                     axis2xml = null;
-                } 
-            } catch (Exception e) {
-                axis2xml = null;
-                log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+                    log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+                }
             }
         }
 
