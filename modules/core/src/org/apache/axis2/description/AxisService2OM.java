@@ -771,7 +771,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addPolicy(int type, PolicyInclude policyInclude,
-            OMElement element, OMFactory factory) throws XMLStreamException {
+            OMElement element, OMFactory factory) throws Exception {
         ArrayList elementList = policyInclude.getPolicyElements(type);
         StAXPolicyWriter pwrt = (StAXPolicyWriter) PolicyFactory
                 .getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
@@ -793,12 +793,17 @@ public class AxisService2OM implements Java2WSDLConstants {
             } else if (policyElement instanceof PolicyReference) {
                 OMNamespace ns = factory.createOMNamespace(PolicyConstants.WS_POLICY_NAMESPACE_URI, PolicyConstants.WS_POLICY_PREFIX);
                 OMElement refElement = factory.createOMElement(PolicyConstants.WS_POLICY_REFERENCE, ns);
-                OMAttribute attribute = factory.createOMAttribute("URI", ns, ((PolicyReference) policyElement).getPolicyURIString());
+                String policyURIString = ((PolicyReference) policyElement).getPolicyURIString();
+                OMAttribute attribute = factory.createOMAttribute("URI", ns, policyURIString);
                 refElement.addAttribute(attribute);
                 element.addChild(refElement);
                 
                 PolicyRegistry reg = policyInclude.getPolicyRegistry();
-                Policy p = reg.lookup(((PolicyReference) policyElement).getPolicyURIString());
+                Policy p = reg.lookup(policyURIString);
+                
+                if(p == null) {
+                    throw new Exception("POlicy not found for uri : " + policyURIString);
+                }
                 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 pwrt.writePolicy(p, baos);
