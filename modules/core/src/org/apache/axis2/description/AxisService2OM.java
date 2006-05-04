@@ -794,7 +794,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                 OMNamespace ns = factory.createOMNamespace(PolicyConstants.WS_POLICY_NAMESPACE_URI, PolicyConstants.WS_POLICY_PREFIX);
                 OMElement refElement = factory.createOMElement(PolicyConstants.WS_POLICY_REFERENCE, ns);
                 String policyURIString = ((PolicyReference) policyElement).getPolicyURIString();
-                OMAttribute attribute = factory.createOMAttribute("URI", ns, policyURIString);
+                OMAttribute attribute = factory.createOMAttribute("URI", null, policyURIString);
                 refElement.addAttribute(attribute);
                 element.addChild(refElement);
                 
