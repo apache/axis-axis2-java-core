@@ -560,9 +560,9 @@ public class AxisService extends AxisDescription {
         } else {
             try {
                 String wsdlntfound = "<error>" +
-                        "<description>Unable to generate wsdl for this service</description>" +
-                        "<reason>Either user does not drop the wsdl into META-INF or" +
-                        " operations uses message receivers other than RPC.</reason>" +
+                        "<description>Unable to generate WSDL for this service</description>" +
+                        "<reason>Either user has not dropped the wsdl into META-INF or" +
+                        " operations use message receivers other than RPC.</reason>" +
                         "</error>";
                 out.write(wsdlntfound.getBytes());
                 out.flush();
