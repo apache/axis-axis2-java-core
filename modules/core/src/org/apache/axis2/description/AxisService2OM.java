@@ -802,7 +802,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                 Policy p = reg.lookup(policyURIString);
                 
                 if(p == null) {
-                    throw new Exception("POlicy not found for uri : " + policyURIString);
+                    throw new Exception("Policy not found for uri : " + policyURIString);
                 }
                 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();

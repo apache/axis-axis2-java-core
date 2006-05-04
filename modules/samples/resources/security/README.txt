@@ -40,4 +40,7 @@ securitySample:
 BUILD SUCCESSFUL
 Total time: XX seconds
 
+If you are using JDK 1.5, please download and copy xalan-2.7.0.jar to axis2/WEB-INF/lib/ and samples/security/lib.
+xalan-2.7.0 - http://www.apache.org/dist/java-repository/xalan/jars/xalan-2.7.0.jar
+
 If you want to see the signed and encrypted messages fireup tcpmon and change the securitySample ant task in the samples directory to set the required port number.
