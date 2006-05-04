@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
+  <meta http-equiv="content-type" content="">
   <title>Axis2 Architecture Guide</title>
   <meta content="20050916;22455288">
 </head>
@@ -160,10 +161,10 @@ modules/architecture.</p>
   <li><p><a href="#bmXML">XML processing Model</a>- Handling the SOAP Message
     is the most important and most complex task. The efficiency of this is
     the single most important factor that decides the performance. It makes
-    sense to delegate this task to a separate sub-project itself, under Web service project, allowing that
-    sub-project (AXIOM) to provide a simple API for SOAP and XML info-set while
-    hiding the complexities of the efficient XML processing within the
-    implementation.</p>
+    sense to delegate this task to a separate sub-project itself, under Web
+    service project, allowing that sub-project (AXIOM) to provide a simple
+    API for SOAP and XML info-set while hiding the complexities of the
+    efficient XML processing within the implementation.</p>
   </li>
   <li><a href="#bmSOAPPM">SOAP Processing Model</a>- This controls the
     execution of the processing. The model defines different phases the
@@ -334,9 +335,9 @@ align="bottom" width="755" height="348" border="0"></p>
 perform, sending and receiving SOAP messages. The architecture provides two
 Pipes ('Flows'), to perform these two basic actions. Axis Engine or the
 driver of Axis2 defines two methods send() and receive() to implement these
-two Pipes. The two pipes are named <i><b>In</b> Pipe</i> and <i><b>Out</b> Pipe</i>, and
-the complex Message Exchange Patterns (MEPs) are constructed by combining
-these two pipes.</p>
+two Pipes. The two pipes are named <i><b>In</b> Pipe</i> and <i><b>Out</b>
+Pipe</i>, and the complex Message Exchange Patterns (MEPs) are constructed by
+combining these two pipes.</p>
 
 <p>Extensibility of the SOAP processing model is provided through handlers.
 When a SOAP message is being processed the handlers that are registered would
@@ -409,13 +410,16 @@ happen either in the server or in the Client.</p>
     context etc.</li>
   <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
     handlers are in this phase is to populate message context in order to do
-    the dispatching. As an example, processing of addressing headers of the SOAP message happen in
-    this phase.Addressing handlers extract information and put them in to the message context.</li>
-  <li><strong>Dispatch Phase</strong> - The Dispatchers run in this phase and tries
-  to find the correct service and operation this particular message is destined to.<br>
-    The post condition of the dispatch phase (any phase can contain a post condition)
-    checks whether a service and an operation was found by the dispatchers. If not
-     the execution will halt and throws out a "service not found error".</li>
+    the dispatching. As an example, processing of addressing headers of the
+    SOAP message happen in this phase.Addressing handlers extract information
+    and put them in to the message context.</li>
+  <li><strong>Dispatch Phase</strong> - The Dispatchers run in this phase and
+    tries to find the correct service and operation this particular message
+    is destined to.<br>
+    The post condition of the dispatch phase (any phase can contain a post
+    condition) checks whether a service and an operation was found by the
+    dispatchers. If not the execution will halt and throws out a "service not
+    found error".</li>
   <li><strong>User Defined Phases</strong> - Users are allowed to engage
     their custom handlers here.</li>
   <li>Message Validation Phase - Once the user level execution has taken
@@ -449,17 +453,18 @@ the <em>Out Pipe</em> are described below:
 
 <h3><a name="extending">Extending SOAP Processing Model</a></h3>
 
-<p>Above we discussed the default processing model of Axis2. Now let us discuss
-the extension mechanism for the SOAP processing model. After all, the whole
-effort of making this SOAP engine/processing model was focused much on making
-it extendable.</p>
+<p>Above we discussed the default processing model of Axis2. Now let us
+discuss the extension mechanism for the SOAP processing model. After all, the
+whole effort of making this SOAP engine/processing model was focused much on
+making it extendable.</p>
 
 <p>Idea behind introducing step wise processing of the SOAP message in terms
 of handlers &amp; phases is to allow easier modification of the processing
 order. The notion of phases makes it easier to place handlers in between
 other handlers. This enables modification on the default processing behavior.
-SOAP Processing Model can be extended with <a href="#extendingwithhandlers">handler</a>
- or <a href="#extendingwithmodules">modules</a>.</p>
+SOAP Processing Model can be extended with <a
+href="#extendingwithhandlers">handler</a> or <a
+href="#extendingwithmodules">modules</a>.</p>
 <a name="extendingwithhandlers"></a>
 
 <h4>Extending the SOAP Processing Model with Handlers</h4>
@@ -478,33 +483,33 @@ Modules</a></h4>
 
 <p>Axis2 defines an entity called a 'module' that can introduce handlers and
 Web service operations. A Module in terms of Axis2 usually acts as a
-convenient packaging that includes
-<ul><li>a set of handlers and</li>
-<li>an associated
-descriptor which includes the phase rules</li></ul>. 
-Modules have the concept of being
-'available' and 'engaged'. 'Availability' means the module is present in the
-system, but has not been activated, i.e., the handlers included inside the
-module have not been used in the processing mechanism. When a module is
-'engaged' it becomes active and the handlers get placed in the proper phases.
-The handlers will act in the same way as explained in the previous section.
-Usually a module will be used to implement a WS-* functionality such as
-WS-Addressing.</p>
+convenient packaging that includes</p>
+<ul>
+  <li>a set of handlers and</li>
+  <li>an associated descriptor which includes the phase rules</li>
+</ul>
+. Modules have the concept of being 'available' and 'engaged'. 'Availability'
+means the module is present in the system, but has not been activated, i.e.,
+the handlers included inside the module have not been used in the processing
+mechanism. When a module is 'engaged' it becomes active and the handlers get
+placed in the proper phases. The handlers will act in the same way as
+explained in the previous section. Usually a module will be used to implement
+a WS-* functionality such as WS-Addressing.
 
 <p>Apart from the extension mechanism based on the handlers, the WS-*
-specifications may suggest a requirement for adding new operations. For example,
-once a user add a Reliable Messaging capability to a service, the "Create
-Sequence" operation needs to be available to the service end point. This can
-be implemented by letting the modules define the operations. Once the
-module is engaged to a service, the necessary operations will be added to
+specifications may suggest a requirement for adding new operations. For
+example, once a user add a Reliable Messaging capability to a service, the
+"Create Sequence" operation needs to be available to the service end point.
+This can be implemented by letting the modules define the operations. Once
+the module is engaged to a service, the necessary operations will be added to
 that service.</p>
 
 <p>A service, operations or the system may engage a module. Once the module
 is engaged the handlers and the operations defined in the module are added to
 the entity that engaged them.</p>
 
-<p>Modules can not be added (no hot deployment) while the Axis2 engine is running, but they will
-be available once the system is restarted.</p>
+<p>Modules can not be added (no hot deployment) while the Axis2 engine is
+running, but they will be available once the system is restarted.</p>
 <a name="bmDeployment"></a>
 
 <h2>Deployment</h2>
@@ -528,7 +533,8 @@ provide following information:</p>
 
 <h3>Service Archive</h3>
 
-<p>Service archive must have a <em>META-INF/<a href="resources/schemas/services.xsd">services.xml</a></em> file and may
+<p>Service archive must have a <em>META-INF/<a
+href="resources/schemas/services.xsd">services.xml</a></em> file and may
 contain the dependent classes. The <em>services.xml</em> file has following
 information.</p>
 <ol>
@@ -540,9 +546,10 @@ information.</p>
 
 <h3><a name="modulearchive">Module Archive</a></h3>
 
-<p>Module archive must have a META-INF/<a href="resources/schemas/module.xsd">module.xml</a> file and dependent classes.
-The <em>module.xml</em> file has Module parameters and the Operations defined
-in the module.</p>
+<p>Module archive must have a META-INF/<a
+href="resources/schemas/module.xsd">module.xml</a> file and dependent
+classes. The <em>module.xml</em> file has Module parameters and the
+Operations defined in the module.</p>
 
 <p>When the system is starting up Axis2 ask the deployment model to create a
 Axis Configuration. Deployment Model first finds the axis2.xml file and build
@@ -550,7 +557,7 @@ the global configuration. Then it checks for the module archives and then for
 the service archives. After that the corresponding services and modules are
 added to the Axis Configuration. System will build contexts on top of the
 Axis Configurations. After this Axis2 is ready to send or receive the SOAP
-messages. Hot deployment is only allowed for services. </p>
+messages. Hot deployment is only allowed for services.</p>
 <a name="bmClientAPI"></a>
 
 <h2>Client API</h2>
@@ -568,24 +575,24 @@ scenarios, even though Axis2 is built on a core that support any messaging
 interaction, the developers were compelled to support only two most widely
 used Message Exchange Patterns (MEPs).</p>
 
-<p>Two supported MEPs are One-Way and the In-Out (Request-Response) scenarios in
-the Client API. The implementation is based on a class called
+<p>Two supported MEPs are One-Way and the In-Out (Request-Response) scenarios
+in the Client API. The implementation is based on a class called
 <code>ServiceClient</code> and there are extensions for each MEP that Axis2
 Client API supports.</p>
 
 <h3><a name="oneway">One Way Messaging Support</a></h3>
 
-<p>The One-Way support is provided by the <code>fireAndForget</code> method 
-of <code>ServiceClient</code>. For one way invocations one can use HTTP , SMTP 
-and TCP transports. In the case of the HTTP transport the return channel is not used and the HTTP 202 OK is
-returned in the return Channel.</p>
+<p>The One-Way support is provided by the <code>fireAndForget</code> method
+of <code>ServiceClient</code>. For one way invocations one can use HTTP ,
+SMTP and TCP transports. In the case of the HTTP transport the return channel
+is not used and the HTTP 202 OK is returned in the return Channel.</p>
 <a name="requestresponse"></a>
 
 <h3>In-Out (Request Response) Messaging Support</h3>
 
-<p>The In-Out support is provided by the <code>sendReceive()</code>
-method in ServiceClient. This provides a much simpler interface for the user.
-The Client API has four ways to configure a given Message Exchange</p>
+<p>The In-Out support is provided by the <code>sendReceive()</code> method in
+ServiceClient. This provides a much simpler interface for the user. The
+Client API has four ways to configure a given Message Exchange</p>
 <ol>
   <li>Blocking or Non-Blocking nature - this can be decided by using
     <code>sendReceive()</code> or <code>sendReceiveNonBlocking()</code>
@@ -603,14 +610,15 @@ differently.</p>
 
 <h2>Transports</h2>
 
-<p>Axis2 has two basic constructs for transports, namely; Transport Senders and
-Transport Receivers . These are accessed via the AxisConfiguration.</p>
+<p>Axis2 has two basic constructs for transports, namely; Transport Senders
+and Transport Receivers . These are accessed via the AxisConfiguration.</p>
 
 <p>The incoming transport is the transport via which the AxisEngine receives
 the message. The outgoing transport is decided based on the addressing
 information (wsa:ReplyTo and wsa:FaultTo). If addressing information is not
-available and if server is trying to respond, then the out going transport will 
-be the outputstream of the incoming transport (if it is two-way transport).</p>
+available and if server is trying to respond, then the out going transport
+will be the outputstream of the incoming transport (if it is two-way
+transport).</p>
 
 <p>At the client side the user is free to specify the transport to be
 used.</p>
@@ -624,8 +632,7 @@ information.</p>
 </ol>
 
 <p>Each and every transport out configuration defines a transport sender.
-Transport sender sends the SOAP message, depending on its
-configuration.</p>
+Transport sender sends the SOAP message, depending on its configuration.</p>
 
 <p>Transport receiver waits for the SOAP Messages and for each SOAP Message
 that arrives, it uses the <i>In Pipe</i> to process the SOAP Message.</p>
@@ -640,7 +647,7 @@ that arrives, it uses the <i>In Pipe</i> to process the SOAP Message.</p>
     Addressing support to be functional.</li>
   <li>SMTP - This works off a single email account. Transport receiver is a
     thread that checks for emails in fixed time intervals.</li>
-    <li>JMS</li>
+  <li>JMS</li>
 </ol>
 <a name="bmWSDL" id="bmWSDL"></a>
 
@@ -660,42 +667,57 @@ describes how this shows up in the architecture of the tool.</p>
 alt="" align="bottom" width="478" height="218" border="0"></p>
 
 <p>The fact here is that it is the same information that is extracted from
-the WSDL no matter what code is generated. First, an AxisService is populated from a WSDL.
-Then the code generator extracts information from the AxisService and creates an XML, which is 
-language independent. This emitted XML is then parsed with the relevant
-language XSL to generate the code. No matter what the language, the process is the
-same except for the template that is being used</p>
+the WSDL no matter what code is generated. First, an AxisService is populated
+from a WSDL. Then the code generator extracts information from the
+AxisService and creates an XML, which is language independent. This emitted
+XML is then parsed with the relevant XSL to generate code for the relevant
+language. No matter what the out put language, the process is the same except
+for the template that is being used.</p>
 
 <h2><a name="bmDB" id="bmDB">Data Binding</a></h2>
-<a name="integration"></a>
 
 <h3>Integration with the code generation engine</h3>
 
-<p>Axis2 M2 was released with code generation support but without data
-binding. The version 0.9 was shipped with data binding support with complete
-schema support. Such claim is made possible because of the fact that the data
-binding tool, xml-beans, has the full schema support. The original
-architecture of the code generation framework did not undergo significant
-changes because of the way that the code generation framework was originally
-designed. Data binding was incorporated as a pluggable extension to the code
-generation engine. Axis2 version 0.91 does not support SOAP encoding. It only
-supports RPC literal or document literal massages.Axis2 1.0 comes with its own simple
-data binding implementation ADB.</p>
+<p>Databinding for Axis2 is implemented in an interesting manner. Databinding
+has not been included in the core deliberately and hence the codegeneation
+allows plugin in different data binding frameworks. This is done through an
+extensions mechanism where the code gen engine calls extensions first and
+then executes the core emitter. The extensions populate a map of QNames vs
+class names that is passed to the code generator on which the emitter
+operates on.</p>
+
+<p>The following diagram show the structure</p>
 
 <p><img src="images/codegen.gif" name="Graphic7" align="bottom" width="406"
 alt="" height="467" border="0"></p>
 
-<h3><a name="serial">Serialization and De-Serialization</a></h3>
+<p>The following databinding extesnions are available</p>
+
+<p>1. ADB - ADB (Axis Data Binding ) is a simple framework that allows simple
+schemas to be compiled. It is lightweight and simple, works off StAX and
+failry performant. However it does not support the complete set of schema
+constructs and is likely to complain for certain schemas!</p>
+
+<p>2. XMLBeans - XMLbeans claims that it supports the complete schema
+specification and it is the choice if full schema support is needed!</p>
+
+<p>3. JAX-Me - JaxMe support has been added in a similar manner to XMLbeans
+and serves as another option for the user</p>
+
+<p>4. JibX - This is the most recent addition to the family of databinding
+extensions and it is also another option the users have for data binding</p>
+
+<h3><a name="serial" id="serial">Serialization and De-Serialization of Data
+bound classes</a></h3>
 
 <p>AXIOM is based on a StAX (Streaming API for XML) API. Xml-beans supports
 StAX API. Data binding in Axis2 is achieved through interfacing the AXIOM
 with the Xml-beans using the StAX API which is supported by both parties. At
-the time of the code generation there will be supporter classes for each WSDL
-operation that will have the utility methods that can de-serialize from
-AXIOM to data bound object and serialize from data bound object to AXIOM. For
-example if the WSDL has an operation called "echoString", once the code is
-generated there will be an echoStringDatabindingSupporter.java class
-generated that will have methods that will look like the following.</p>
+the time of the code generation there will be utility methods generated
+inside the stub (or the message reciever) that can de-serialize from AXIOM to
+data bound object and serialize from data bound object to AXIOM. For example
+if the WSDL has an operation called "echoString", once the code is generated
+the following methods will be generated inside the relevant classes</p>
 
 <p><code>public static
 org.apache.axiom.om.OMElementtoOM(org.soapinterop.xsd.EchoStringParamDocument
@@ -705,8 +727,6 @@ param)</code><code>// This method will handle the serialization.</code></p>
 fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type) //This
 method will handle the de-serialization.</code></p>
 
-<p><code>public static org.apache.xmlbeans.XmlObject
-getTestObject(java.lang.Class type) /*This will be a utility method that can
-be used to create sample objects of the given data bound object.*/</code></p>
+<p><code></code></p>
 </body>
 </html>
