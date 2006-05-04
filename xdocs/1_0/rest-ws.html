@@ -47,27 +47,22 @@ accessed in two ways, i.e. using HTTP GET and POST.</p>
 
 <h2>Doing REST Web Services with HTTP POST</h2>
 
-<p>The REST default HTTP interface is POST. It can be enabled in the
-Server/Client side by adding the following line to the axis2.xml file.</p>
-<pre>&lt; parameter name="enableREST" locked="false" &gt; true
-&lt;/parameter&gt; </pre>
-
-<p>It however acts as both a REST endpoint and SOAP endpoint. When a Message
+<p>Axis will acts as both a REST endpoint and SOAP endpoint. When a Message
 is received, if the content type is text/xml and if the SOAP Action Headers
 are missing, then the Message is treated as a RESTful Message. Else it is
 treated as a usual SOAP Message.</p>
 
 <p>On sending a message out, the fact that the message is RESTful or not, can
-be decided from the client API or by deployment descriptor of the client.</p>
-<ol>
-  <li>By adding an entry in the client repositories axis2.xml file.</li>
-  <li>Setting as a property in client API e.g. <source>
+be decided from the client API.<br>
+    Set a property in the client api.<br>
+    <source>
     <pre>...
 Options options = new Options();
 options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 ...</pre>
-    </source></li>
-</ol>
+    </source>
+</p>
+
 <a name="sample"></a>
 
 <h3>Sample REST - HTTP POST Client</h3>
