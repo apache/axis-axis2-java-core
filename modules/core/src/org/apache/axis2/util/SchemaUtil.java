@@ -77,7 +77,7 @@ public class SchemaUtil {
             }
         } else {
 
-            String targetNamespace = msgCtxt.getAxisService().getSchematargetNamespace();
+            String targetNamespace = xmlSchemaElement.getQName().getNamespaceURI();
             QName bodyFirstChildQName;
             if (targetNamespace != null && !"".equals(targetNamespace)) {
                 bodyFirstChildQName = new QName(targetNamespace, xmlSchemaElement.getName());
