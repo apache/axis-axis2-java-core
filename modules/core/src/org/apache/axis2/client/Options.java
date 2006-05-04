@@ -53,7 +53,7 @@ public class Options {
     private Map properties = new HashMap();
 
     // ==========================================================================
-    // Parameters that can be set via Options
+    //                  Parameters that can be set via Options
     // ==========================================================================
     private String soapVersionURI; // defaults to
     // SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
