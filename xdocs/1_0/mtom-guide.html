@@ -337,8 +337,8 @@ message it extracts the binary attachment parts and puts a reference to those
 parts in the Message Context. Users can access binary attachments using the
 content-id. Care should be taken to rip off the "cid" prefix when content-id
 is taken from the "Href" attributes. When accessing the message context from
-a service users need to use the message context injection mechanism by
-introducing an "init" method to the service class.(see the following service
+a service users need to get hold of the message context from "setOperationContext()"
+method from the service class.(see the following service
 example)</p>
 
 <p>Note: Axis2 supports content-id referencing only. Axis2 does not support
