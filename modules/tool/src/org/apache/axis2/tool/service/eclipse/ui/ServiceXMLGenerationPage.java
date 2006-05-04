@@ -219,8 +219,22 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         try {
             String classFileLocation = getClassFileLocation();
             URL classFileURL = new File(classFileLocation).toURL();
-            ClassLoader loader = new URLClassLoader(new URL[] { classFileURL });
-            Class clazz = Class.forName(classNameTextBox.getText(),false,loader);
+            
+           ArrayList listofURLs = new ArrayList();
+           listofURLs.add(classFileURL);
+           
+            //get the libraries from the lib page and load it 
+            String[] libFileList = ((ServiceArchiveWizard)this.getWizard()).getLibFileList();
+            if (libFileList!=null){
+            	int count = libFileList.length;
+				for (int i=0;i<count;i++){
+					listofURLs.add(new File(libFileList[i]).toURL());
+            	}
+            }
+           
+            
+            ClassLoader loader = new URLClassLoader((URL[])listofURLs.toArray(new URL[listofURLs.size()]));
+            Class clazz = Class.forName(classNameTextBox.getText(),true,loader);
             Method[] methods = null;
             
             

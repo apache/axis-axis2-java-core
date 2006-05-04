@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
@@ -62,6 +63,11 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     }
     public  String getClassFileLocation(){
         return classFileLocation;
+    }
+    
+    //get the lib file list
+    public String[] getLibFileList(){
+        return libPage.getBean().getFileList();
     }
     
     public  void setClassFileLocation(String location){
@@ -106,12 +112,12 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         this.addPage(classFileLocationPage);
         wsdlFileSelectionPage = new WSDLFileSelectionPage();
         this.addPage(wsdlFileSelectionPage);
+        libPage = new LibraryAddingPage();
+        this.addPage(libPage);
         serviceXMLFileSelectionPage = new ServiceXMLFileSelectionPage();
         this.addPage(serviceXMLFileSelectionPage);
         serviceXMLGenerationPage = new ServiceXMLGenerationPage();
         this.addPage(serviceXMLGenerationPage);
-        libPage = new LibraryAddingPage();
-        this.addPage(libPage);
         serviceArchiveOutputLocationPage = new ServiceArchiveOutputLocationPage();
         this.addPage(serviceArchiveOutputLocationPage);
     }
