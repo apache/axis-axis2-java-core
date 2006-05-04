@@ -374,7 +374,7 @@
         <ant:mkdir dir="target/temp/war/toWEB-INF/conf"/>
 
         <attainGoal name="create-kernel"/>
-        
+
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes"/>
@@ -409,7 +409,8 @@
 
         <!-- Copy the soapmonitor jar - the servlet classes -->
         <ant:copy toDir="target/temp/war/lib">
-            <ant:fileset file="modules/soapmonitor/target/axis2-soapmonitor-${pom.currentVersion}.jar"/>
+            <ant:fileset
+                    file="modules/soapmonitor/target/axis2-soapmonitor-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- copy the soapmonitor mar -->
@@ -455,12 +456,12 @@
             <ant:classes dir="modules/core/conf">
                 <ant:include name="*.properties"/>
             </ant:classes>
-          <!--  <ant:webinf dir="modules/core/src/org/apache/axis2/deployment">
-                <ant:include name="*.xml"/>
-            </ant:webinf> -->
+            <!--  <ant:webinf dir="modules/core/src/org/apache/axis2/deployment">
+               <ant:include name="*.xml"/>
+           </ant:webinf> -->
             <ant:webinf dir="target/temp/war/toWEB-INF"/>
             <ant:fileset dir="target/temp/war">
-              <ant:include name="**/axis2-web/**" />
+                <ant:include name="**/axis2-web/**"/>
             </ant:fileset>
         </ant:war>
     </goal>
@@ -525,6 +526,12 @@
                 <include name="**/junit*.jar"/>
             </fileset>
         </ant:delete>
+
+
+        <!--copy NOTICE.txt file-->
+        <ant:copy toFile="target/temp/min/bin/NOTICE.txt">
+            <ant:fileset file="NOTICE.txt"/>
+        </ant:copy>
 
         <!-- Create axis2-core.jar -->
         <jar destfile="target/temp/min/bin/lib/axis2-kernel-${pom.currentVersion}.jar">
@@ -612,6 +619,12 @@
         <!-- Copy bin scripts -->
         <ant:copy todir="${std.bin.temp.dir}/bin">
             <ant:fileset dir="modules/tool/script"/>
+        </ant:copy>
+
+
+        <!--copy NOTICE.txt file-->
+        <ant:copy toFile="${std.bin.temp.dir}/NOTICE.txt" filtering="on">
+            <ant:fileset file="NOTICE.txt"/>
         </ant:copy>
 
         <!-- Copy the 3rd party libs -->
@@ -836,7 +849,7 @@
             <property name="warDeps.uptodate" value="yes"/>
         </j:if>
 
-         <!--copy the license files also-->
+        <!--copy the license files also-->
         <ant:copy toDir="${war_dep_cache}">
             <ant:fileset dir="legal/war">
                 <ant:include name="*.txt"/>
@@ -1073,9 +1086,6 @@
             </ant:copy>
             <ant:copy toFile="${toDir}/LICENSE.txt" filtering="on">
                 <ant:fileset file="LICENSE.txt"/>
-            </ant:copy>
-            <ant:copy toFile="${toDir}/NOTICE.txt" filtering="on">
-                <ant:fileset file="NOTICE.txt"/>
             </ant:copy>
         </define:tag>
     </define:taglib>
