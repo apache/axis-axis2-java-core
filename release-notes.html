@@ -1,71 +1,101 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>:: Axis2 Release Notes ::</title>
+  <title>Apache Axis2 Release Notes</title>
 </head>
 
 <body>
 <h1>Axis2 Release Notes</h1>
 
-<h2>This is the Apache Axis2 1.0 Release!</h2>
+<p>After nearly two years of development, we are very proud to announce the release of Apache Axis2 1.0!</p>
+<p>Apache Axis2 is a complete re-design and re-write of the widely
+used Apache Axis SOAP stack to build on the lessons learnt from Apache
+Axis. Apache Axis2 is more efficient, more modular and more
+XML-oriented than the older version. It is carefully designed to
+support the easy addition of plugin "modules" that extend its
+functionality for features such as security and reliability. A module
+supporting WS-Security (Apache Rampart) is available immediately and a
+module supporting WS-Reliable Messaging (Apache Sandesha) will be
+available within days.</p>
+<p>Apache Axis2 not only supports SOAP 1.1 and SOAP 1.2, but it also
+has integrated support for the widely popular REST style of Web
+services: the same business logic implementation can offer both a WS-*
+style interface as well as a REST style interface simultaneously.</p>
+<p>Apache Axis2 is built on Apache Axiom, a new high performant,
+pull-based XML object model that was released two days ago.</p>
 
-<h3>Complete Feature List</h3>
-<ol type="1">
-  <li>AXIOM, an XML object model working on StAX (Streaming API for XML)
-    parsing optimized for SOAP 1.1/1.2 Messages. This has complete XML
-    infoset support.</li>
-  <li>Support for One-Way Messaging (In-Only) and Request Response Messaging
-    (In-Out).</li>
-  <li>Module Architecture, mechanism to extend the SOAP Processing model.</li>
-  <li>Module version support, can have multiple versions of the same module
-    and use them depending on the requirement.</li>
-  <li>Context hierarchy</li>
-  <li>Archive based deployment model and Directory based deployment model</li>
-  <li>JWS like deployment (making Java class into Web service)</li>
-  <li>WSDL Code Generation tool for stubs and skeletons</li>
-  <li>WS-Addressing, both the submission (2004/08) and final (2005/08)
-    versions</li>
-  <li>WSS4J module for security (Apache Rampart)</li>
-  <li>Improved and user friendly Client API</li>
-  <li>WSDL2Java and Java2WSDL</li>
-  <li>REST (REpresentational State Transfer) Support</li>
-  <li>Transports supports: HTTP, SMTP, TCP, JMS</li>
-  <li>Raw XML and RPC providers</li>
-  <li>Support for MTOM/ MIME/ SwA</li>
-  <li>SAAJ implementation</li>
-  <li>DOOM (OM DOM implementation)</li>
-  <li>Pack/Unpack capability for the generated code</li>
-  <li>Axis Data Binding - ADB (Framework and Schema Compiler)</li>
-  <li>Transport framework improvements (ListenerManager)</li>
-  <li>Module disengagement support</li>
-  <li>Loading modules (.mar files) from classpath</li>
-  <li>Sessions scoping for Application, SOAP, Transport and Request
-  levels</li>
-  <li>Server side and client side Web service Policy support</li>
-  <li>?wsdl and ?xsd support</li>
-  <li>Dynamic ServiceClient generation for a given WSDL and invoking the
-    corresponding service using generated client</li>
-  <li>WSDL fault handling (fault code generation)</li>
-  <li>SOAP 1.1 &amp; 1.2 and HTTP binding generation (?wsdl)</li>
-  <li>Streaming Attachments support for MTOM (SOAP Message Transmission
-    Optimization Mechanism)</li>
-  <li>URL based deployment mechanism (starting Axis with remote
-  repository)</li>
-  <li>Unexpanded war support (location of axis2.xml and repository can be
-    specified in web.xml )</li>
-</ol>
-<!--<h4>Experimental Features List</h4>
-<ol type="1">
-</ol>-->
-<!--<h3>Major Changes Since Last Release</h3>
-<ol type="1">
-</ol>-->
+- pulls data binding out
+- no java specs
 
-<p>Apache Axis2 1.0 version is released! If you happen to have a vision of
-how the next generation Web services platform should be, contribute to Apache
-Axis2, and help us shape it. Any contribution in the form of coding, testing,
-submitting improvements to the documentation, and reporting bugs are always
-welcome.</p>
+<h2>Features</h2>
+
+<h3>Programming Model</h3>
+<ul>
+<li>Improved, XML-centric client API including full WSDL and policy support</li>
+<li>Support for any message exchange pattern</li>
+<li>Synchronous and asynchronous calls</li>
+<li>Archived service deployment model supporting full service encapsulation with versioning support</li>
+<li>Archived module deployment model supporting controlled extensibility with versioning support</li>
+<li>Hot deployment</li>
+<li>WS-Policy driven code generation extensions</li>
+<li>Flexible service lifecyle model</li>
+<li>Support for querying service's WSDL (using ?wsdl), schema (using ?xsd) and policies (using ?policy)
+</ul>
+
+<h3>Supported Specifications</h3>
+<ul>
+<li>SOAP 1.1 and 1.2</li>
+<li>Message Transmission Optimization Mechanism (MTOM), XML Optimized
+Packaging (XOP) and SOAP with Attachments</li>
+<li>WSDL 1.1, including both SOAP and HTTP bindings</li>
+<li>WS-Addressing (submission and final)</li>
+<li>WS-Policy</li>
+<li>SAAJ 1.1</li>
+</ul>
+
+<h3>Transports</h3>
+<ul>
+<li>HTTP</li>
+<li>SMTP</li>
+<li>JMS</li>
+<li>TCP</li>
+</ul>
+
+<h3>Supported Data Bindings</h3>
+<ul>
+<li>Axis Data Binding (ADB)</li>
+<li>XMLBeans</li>
+<li>JibX</li>
+<li>JaxMe</li>
+</ul>
+
+<h3>Tools</h3>
+<ul>
+<li>WSDL2Java: Generate Java stubs and skeletons from a WSDL document.</li>
+<li>Java2WSDL: Generate a WSDL document from a Java class.</li>
+<li>Eclipse Plugins</li>
+<li>Intellij Idea Plugins</li>
+</ul>
+
+<h3>Extension Modules</h3>
+<ul>
+<li>Apache Rampart: Supporting WS-Security (and soon WS-Policy)</li>
+<li>Apache Sandesha2: Supporting WS-Reliable Messaging</li>
+</ul>
+(Apache Axis2 comes built in with a module that supports WS-Addressing.)
+
+<h2>Known Issues and Limitations</h2>
+<ul>
+<li>Recursive schemas (A includes B which includes A) may cause problems</li>
+<li>JaxMe data binding support is experimental</li>
+<li>Axis2-595: Hot redployment in Apache Tomcat has problems</li>
+<li>Axis2-666: AddressingSubmissionInHandler does not deserialize EPR extensibility attributes and elements</li>
+<li>AXIS2-667: Operation dispatch based on message body has a known issue</li>
+<li>Axis Data Binding (ADB) does not cover all of XML Schema; its an 80-20 design point. Unsupported XML Schema features include: A, B, and C.</li>
+<li>ADB does not support xsi:type based deserialization at runtime</li>
+<li>No support yet for unwrapping of doc/lit WSDL files (in stub generation)</li>
+<li>No support yet for rpc/encoded style WSDL documents (in stub generation)</li>
+</ul>
 
 <p>Thank you for your interest in Axis2.</p>
 <strong><em>-The Axis2 Development Team</em></strong></body>
