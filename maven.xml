@@ -442,12 +442,6 @@
 
         <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
-            <!--<ant:fileset dir="modules/webapp">-->
-                <!--<ant:exclude name="project.xml"/>-->
-                <!--<ant:exclude name="**/*.iml"/>-->
-                <!--<ant:exclude name="**/.*"/>-->
-                <!--<ant:exclude name="**/conf/**"/>-->
-            <!--</ant:fileset>-->
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
@@ -841,6 +835,22 @@
                               mods="webapp"/>
             <property name="warDeps.uptodate" value="yes"/>
         </j:if>
+
+         <!--copy the license files also-->
+        <ant:copy toDir="${war_dep_cache}">
+            <ant:fileset dir="legal/war">
+                <ant:include name="*.txt"/>
+            </ant:fileset>
+            <ant:fileset dir="legal/min">
+                <ant:include name="*.txt"/>
+            </ant:fileset>
+        </ant:copy>
+
+        <!--remove testing jars-->
+        <ant:delete dir="${war_dep_cache}">
+            <ant:include name="junit*.jar"/>
+            <ant:include name="xmlunit*.jar"/>
+        </ant:delete>
     </goal>
 
 
@@ -1063,6 +1073,9 @@
             </ant:copy>
             <ant:copy toFile="${toDir}/LICENSE.txt" filtering="on">
                 <ant:fileset file="LICENSE.txt"/>
+            </ant:copy>
+            <ant:copy toFile="${toDir}/NOTICE.txt" filtering="on">
+                <ant:fileset file="NOTICE.txt"/>
             </ant:copy>
         </define:tag>
     </define:taglib>
