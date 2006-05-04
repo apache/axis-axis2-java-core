@@ -10,10 +10,11 @@ This sample uses the WSS4J module with the addressing module to secure the messa
 Setup the service
 ------------------------------------------------------------------------------
 Please follow each of the following steps:
+Note - These instructions assume that the Axis2.war is already deployed in Tomcat
 
 1.) Download the rampart-1.0.mar and addressing-1.0.mar from 
 	http://ws.apache.org/axis2/modules/
-2.) To engage the rampart (WSS4J) module add the following line to axis2.xml in axis
+2.) To engage the rampart (WSS4J) module add the following line to axis2.xml in axis2/WEB-INF/conf/
 	<module ref="rampart"/>
 3.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
 4.) Copy all jars other than the secUtil.jar in the samples/security/lib directory to axis2/WEB-INF/lib/
