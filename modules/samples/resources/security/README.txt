@@ -13,8 +13,8 @@ Please follow each of the following steps:
 
 1.) Download the rampart-1.0.mar and addressing-1.0.mar from 
 	http://ws.apache.org/axis2/modules/
-2.) To engage the aegis (WSS4J) module add the following line to axis2.xml in axis
-	<module ref="aegis"/>
+2.) To engage the rampart (WSS4J) module add the following line to axis2.xml in axis
+	<module ref="rampart"/>
 3.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
 4.) Copy all jars other than the secUtil.jar in the samples/security/lib directory to axis2/WEB-INF/lib/
 5.) Copy the downloaded rampart-1.0.mar to Axis2/WEB-INF/modules/ directory
