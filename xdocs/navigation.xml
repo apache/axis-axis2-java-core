@@ -27,10 +27,11 @@
         <item name="FAQ" href="faq.html"/>
       </item>
       <item name="Acknowledgements" href="thanks.html"/>
+      <item name="License" href="http://www.apache.org/licenses/LICENSE-2.0.html"/>
       <item name="Project Information">
         <item name="Project Team" href="team-list.html"/>
         <item name="Issue Tracking" href="issue-tracking.html"/>
-      </item>
+       </item>
     </menu>
   </body>
 </project>
