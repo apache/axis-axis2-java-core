@@ -444,16 +444,14 @@
     web axisService will work, because there are many configuration options that we do
     not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 
-<h2>Examining Version axisService</h2>
+<h2>Examining Version Service</h2>
 <%
     boolean serviceStatus = inVokeTheService();
     if (serviceStatus) {
 %>
 <p>
     <font color="blue">
-        Found the Axis2 default Version service and Axis2 is working properly.Now you can drop a
-        web axisService in
-        axis2/WEB-INF/services and refresh this page.
+        Found the Axis2 default Version service and Axis2 is working properly.Now you can drop a service archive in axis2/WEB-INF/services.
 
         Following output was produced while invoking the version axisService:
         <br>

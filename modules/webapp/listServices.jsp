@@ -85,7 +85,7 @@
                 Enumeration faultyservices = errornessservice.keys();
                 while (faultyservices.hasMoreElements()) {
                     String faultyserviceName = (String) faultyservices.nextElement();
-                    %><h3><font color="blue"><a href="listSingleService.jsp?serviceName=<%=faultyserviceName%>">
+                    %><h3><font color="blue"><a href="services/ListFaultyServices?serviceName=<%=faultyserviceName%>">
                     <%=faultyserviceName%></a></font></h3>
                     <%
                 }

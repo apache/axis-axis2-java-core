@@ -23,7 +23,7 @@
             AxisService axisService = (AxisService) axisServiceIter.next();
             String serviceName = axisService.getName();
     %>
-    <li><font color="blue"><a href="axis2-admin/listService?serviceName=<%=serviceName%>">
+    <li><font color="blue"><a href="axis2-admin/ListSingleService?serviceName=<%=serviceName%>">
         <%=serviceName%></a></font></li>
     <%
         }

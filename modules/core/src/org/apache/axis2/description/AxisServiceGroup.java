@@ -209,8 +209,8 @@ public class AxisServiceGroup extends AxisDescription {
         }
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {
-            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().getLocalPart().equals(module.getName().getLocalPart())) {
+            QName axisModule = (QName) engagedModuleItr.next();
+            if (axisModule.getLocalPart().equals(module.getName().getLocalPart())) {
                 return true;
             }
         }

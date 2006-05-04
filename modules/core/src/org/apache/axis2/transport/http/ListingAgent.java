@@ -42,6 +42,7 @@ public class ListingAgent extends AbstractAgent {
             "listServices.jsp";
     private static final String LIST_SINGLE_SERVICE_JSP_NAME =
             "listSingleService.jsp";
+    private static final String LIST_FAULTY_SERVICES_JSP_NAME = "listFaultyService.jsp";
 
     public static final String RUNNING_PORT = "RUNNING_PORT";
 
@@ -90,6 +91,17 @@ public class ListingAgent extends AbstractAgent {
             super.handle(httpServletRequest, httpServletResponse);
         }
     }
+
+    protected void processListFaultyServices(HttpServletRequest req, HttpServletResponse res)
+                throws IOException, ServletException {
+            String serviceName = req.getParameter("serviceName");
+            if (serviceName != null) {
+                AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+                req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
+            }
+            renderView(LIST_FAULTY_SERVICES_JSP_NAME, req, res);
+        }
+
 
 
     protected void processIndex(HttpServletRequest httpServletRequest,

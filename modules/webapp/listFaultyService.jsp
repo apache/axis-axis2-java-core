@@ -4,8 +4,15 @@
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"/>
-<h1>List Single service</h1>
+<html>
+  <head>
+    <jsp:include page="include/httpbase.jsp"/>
+    <title>List Single service</title>
+    <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+  <jsp:include page="include/header.inc"></jsp:include>
+    <jsp:include page="include/link-footer.jsp"></jsp:include>
   <%
         String prifix = request.getAttribute("frontendHostUrl") + "services/";
         String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
@@ -57,4 +64,6 @@
 
             }
         %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="include/footer.inc"></jsp:include>
+        </body>
+</html>
