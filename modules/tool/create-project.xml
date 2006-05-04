@@ -13,11 +13,11 @@
     <property name="codegen.resource.dir" value="./conf/codegen"></property>
     <property name="service.resource.dir" value="./conf/service"></property>
 
-    <property name="codegen.help.resource.file" value="../../xdocs/latest/tools/eclipse/wsdl2java-plugin.html"></property>
-    <property name="service.help.resource.file" value="../../xdocs/latest/tools/eclipse/servicearchiver-plugin.html"></property>
+    <property name="codegen.help.resource.file" value="../../xdocs/tools/1_0/eclipse/wsdl2java-plugin.html"></property>
+    <property name="service.help.resource.file" value="../../xdocs/tools/1_0/eclipse/servicearchiver-plugin.html"></property>
     
-     <property name="codegen.help.images.dir" value="../../xdocs/latest/tools/eclipse/images"></property>
-     <property name="service.help.images.dir" value="../../xdocs/latest/tools/eclipse/images"></property>
+     <property name="codegen.help.images.dir" value="../../xdocs/tools/1_0/eclipse/images"></property>
+     <property name="service.help.images.dir" value="../../xdocs/tools/1_0/eclipse/images"></property>
 
     <!-- Default target to generate all the services -->
     <target name="all">
