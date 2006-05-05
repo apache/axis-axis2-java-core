@@ -85,6 +85,12 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                         HTTPConstants.HEADER_EXPECT_100_Continue);
             }
         }
+        
+        // set timeout in client
+        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
+        if (timeout != 0) {
+            httpClient.getParams().setSoTimeout((int)timeout);
+        }
 
         /*
          *   main excecution takes place..
