@@ -407,6 +407,11 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the jaxbri jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- Copy the soapmonitor jar - the servlet classes -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset
@@ -656,6 +661,7 @@
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy addressing mar -->
@@ -719,6 +725,7 @@
                 <ant:include name="**/modules/webapp/**"/>
                 <ant:include name="**/modules/xmlbeans/**"/>
                 <ant:include name="**/modules/jibx/**"/>
+                <ant:include name="**/modules/jaxbri/**"/>
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
@@ -891,6 +898,7 @@
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/jaxws/src"/>
                 <ant:pathelement location="modules/jibx/src"/>
+                <ant:pathelement location="modules/jaxbri/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
                 <ant:pathelement location="modules/security/src"/>
                 <ant:pathelement location="modules/soapmonitor/src"/>
@@ -980,6 +988,7 @@
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
     </goal>
