@@ -281,6 +281,9 @@
                             <xsl:choose>
                                 <xsl:when test="$style='rpc' or $style='document'">
                                     //Style is Doc. No input parameters
+                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                    env = factory.getDefaultEnvelope();
+                                    env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -438,6 +441,9 @@
                             <xsl:choose>
                                 <xsl:when test="$style='document' or $style='rpc'">
                                     //Style is Doc. No input parameters
+                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                    env = factory.getDefaultEnvelope();
+                                    env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style!! No code is generated
@@ -528,6 +534,9 @@
                         <xsl:choose>
                             <xsl:when test="$style='document' or $style='rpc'">
                                 //Style is Doc. No input parameters
+                                org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                env = factory.getDefaultEnvelope();
+                                env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
                             </xsl:when>
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
