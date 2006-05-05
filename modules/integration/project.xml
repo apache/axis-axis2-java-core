@@ -270,7 +270,7 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
-            <version>2.6.0</version>
+            <version>${xalan.version}</version>
             <properties>
                 <module>true</module>
             </properties>
