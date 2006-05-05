@@ -98,13 +98,18 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>2.0EA3</groupId>
-            <artifactId>../jaxb-impl</artifactId>
+            <groupId>xfire</groupId>
+            <artifactId>jaxb-impl</artifactId>
             <version>${jaxbri.version}</version>
         </dependency>
         <dependency>
-            <groupId>2.0EA3</groupId>
-            <artifactId>../jaxb-xjc</artifactId>
+            <groupId>xfire</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>${jaxbri.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>jaxb-api</artifactId>
             <version>${jaxbri.version}</version>
         </dependency>
     </dependencies>
