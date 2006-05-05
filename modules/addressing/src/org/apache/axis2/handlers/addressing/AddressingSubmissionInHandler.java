@@ -1,5 +1,6 @@
 package org.apache.axis2.handlers.addressing;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
@@ -73,7 +74,15 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
                     OMElement element = (OMElement) referenceParameters.next();
                     epr.addReferenceParameter(element);
                 }
+            }else {
+                epr.addExtensibleElement(eprChildElement);
             }
+        }
+        
+        Iterator allAttributes = headerBlock.getAllAttributes();
+        while (allAttributes.hasNext()) {
+            OMAttribute attribute = (OMAttribute) allAttributes.next();
+            epr.addAttribute(attribute);
         }
     }
 }
