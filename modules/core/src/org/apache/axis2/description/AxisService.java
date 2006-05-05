@@ -326,7 +326,10 @@ public class AxisService extends AxisDescription {
         }
         addChild(axisOperation);
         operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
-        operationsAliasesMap.put(axisOperation.getSoapAction(), axisOperation);
+        String action = axisOperation.getSoapAction();
+        if (action.length() > 0) {
+            operationsAliasesMap.put(action, axisOperation);
+        }
     }
 
 

@@ -215,7 +215,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
                 for (int j = 0; j < wsamappings.size(); j++) {
                     String mapping = (String) wsamappings.get(j);
-                    service.mapActionToOperation(mapping, operationDesc);
+                    if (mapping.length() > 0) {
+                        service.mapActionToOperation(mapping, operationDesc);
+                    }
                 }
                 if (service.getOperation(operationDesc.getName()) == null) {
                     service.addOperation(operationDesc);
