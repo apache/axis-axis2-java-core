@@ -57,6 +57,17 @@
         <format property="release_date" pattern="MMMM d, yyyy" locale="en"/>
     </tstamp>
 
+    <!-- Test for JDK 1.5 to determine whether to include modules that require it -->
+    <j:set var="java.specification.version" value="${systemScope.getProperty('java.specification.version')}"/>
+    <j:if test="${java.specification.version == '1.5'}">
+        <ant:echo>
+            JDK 1.5.x detected, including the following modules:
+             ${maven.multiproject.includes.requiresJDK15}
+        </ant:echo>
+        <j:set var="maven.multiproject.includes"
+            value="${maven.multiproject.includes},${maven.multiproject.includes.requiresJDK15}"/>
+    </j:if>
+
     <j:set var="modules" value="*"/>
 
     <preGoal name="modules:reactor:init">
@@ -157,6 +168,7 @@
             <j:set var="directory"
                    value="${file.parentFile.parentFile.name}/${file.parentFile.name}"/>
             <j:set var="filename" value="${directory}/${file.name}"/>
+            <ant:echo>Adding to modules.reactor.includes: ${filename}</ant:echo>
             <j:choose>
                 <j:when test="${context.getVariable('modules.reactor.includes') == null}">
                     <j:set var="modules.directories" value="${directory}"/>
