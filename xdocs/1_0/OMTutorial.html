@@ -261,7 +261,7 @@ creating an OM document from an input stream.</p>
 <p><b>Code Listing 1</b></p>
 </div>
 <source><pre>//create the parser<br>
-XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(file));
 <br>//create the builder<br>
 StAXOMBuilder builder = new StAXOMBuilder(parser);
 //get the root element (in this case the envelope)<br>
@@ -413,11 +413,7 @@ elt1.addChild(elt2);
 root.addChild(elt1);</pre>
 
 <p>Serilization of the root element produces the following XML</p>
-<pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;
-  &lt;x:foo&gt;
-        &lt;y:yuck&gt;blah&lt;/y:yuck&gt;
-  &lt;/x:foo&gt;
-&lt;/x:root&gt;</pre>
+<pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;&lt;x:foo&gt;&lt;y:yuck&gt;blah&lt;/y:yuck&gt;&lt;/x:foo&gt;&lt;/x:root&gt;</pre>
 <a name="traversing"></a>
 
 <h3>Traversing</h3>
@@ -511,16 +507,10 @@ serializations show how the serialization mechanism takes the trouble to
 accurately figure out the namespaces. The example is from Code Listing 6
 which creates a small OM programmatically. Serialization of the root element
 produces the following,</p>
-<pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;
- &lt;x:foo&gt;
-   &lt;y:yuck&gt;blah&lt;/y:yuck&gt;
- &lt;/x:foo&gt;
-&lt;/x:root&gt;</pre>
+<pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;&lt;x:foo&gt;&lt;y:yuck&gt;blah&lt;/y:yuck&gt;&lt;/x:foo&gt;&lt;/x:root&gt;</pre>
 
 <p>However serialization of only the foo element produces the following</p>
-<pre class="xml">&lt;x:foo xmlns:x="bar"&gt;
-&lt;y:yuck xmlns:y="bar1"&gt;blah&lt;/y:yuck&gt;
-&lt;/x:foo&gt;</pre>
+<pre class="xml">&lt;x:foo xmlns:x="bar"&gt;&lt;y:yuck xmlns:y="bar1"&gt;blah&lt;/y:yuck&gt;&lt;/x:foo&gt;</pre>
 
 <p>Note how the serializer puts the relevant namespace declarations in
 place.</p>
@@ -535,7 +525,7 @@ listing can be found in the appendix.</p>
 <p><b>Code Listing 9</b></p>
 </div>
 <pre class="code">//create the parser
-XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(file));
 //create the builder
 StAXOMBuilder builder = new StAXOMBuilder(parser);
 
@@ -646,19 +636,11 @@ elt1.addChild(elt2);
 root.addChild(elt1);</pre>
 
 <p>Serialization of the root element provides the following XML</p>
-<pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;
-&lt;x:foo&gt;
- &lt;y:yuck&gt;blahblah&lt;/y:yuck&gt;
- &lt;y:yuck&gt;blah&lt;/y:yuck&gt;
-&lt;/x:foo&gt;
-&lt;/x:root&gt;</pre>
+<pre class="xml">&lt;x:root xmlns:x="bar" xmlns:y="bar1"&gt;&lt;x:foo&gt;&lt;y:yuck&gt;blahblah&lt;/y:yuck&gt;&lt;y:yuck&gt;blah&lt;/y:yuck&gt;&lt;/x:foo&gt;&lt;/x:root&gt;</pre>
 
 <p>However if the serialization is carried on the foo element then the
 following XML is produced</p>
-<pre class="xml">&lt;x:foo xmlns:x="bar" &gt;
- &lt;y:yuck " xmlns:y="bar1"&gt;blahblah&lt;/y:yuck&gt;
- &lt;y:yuck " xmlns:y="bar1"&gt;blah&lt;/y:yuck&gt;
-&lt;/x:foo&gt;</pre>
+<pre class="xml">&lt;x:foo xmlns:x="bar" &gt;&lt;y:yuck " xmlns:y="bar1"&gt;blahblah&lt;/y:yuck&gt;&lt;y:yuck " xmlns:y="bar1"&gt;blah&lt;/y:yuck&gt;&lt;/x:foo&gt;</pre>
 
 <p>Note that the same Namespace is serialized twice. This XML is semantically
 correct but the same semantics could have been achieved by placing the y
@@ -686,7 +668,7 @@ import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axis2.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.*;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class TestOMBuilder {
@@ -698,7 +680,7 @@ public class TestOMBuilder {
     public static void main(String[] args) {
         try {
             //create the parser
-            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(args[0]));
+            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(args[0]));
             //get the root element (in this case the envelope)
             OMElement documentElement = builder.getDocumentElement();
 
