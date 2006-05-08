@@ -98,17 +98,17 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>xfire</groupId>
+            <groupId>javax.xml</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxbri.version}</version>
         </dependency>
         <dependency>
-            <groupId>xfire</groupId>
+            <groupId>javax.xml</groupId>
             <artifactId>jaxb-xjc</artifactId>
             <version>${jaxbri.version}</version>
         </dependency>
         <dependency>
-            <groupId>xfire</groupId>
+            <groupId>javax.xml</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>${jaxbri.version}</version>
         </dependency>
