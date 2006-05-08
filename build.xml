@@ -247,15 +247,9 @@
       </fileset>
     </copy>
     <mkdir dir="${basedir}/target/repo/modules"/>
-    <copy todir="${basedir}/target/repo/modules">
-      <fileset dir="${basedir}/modules/addressing/target">
-        <include name="**/*.mar"/>
-      </fileset>
-      <fileset dir="${basedir}/modules/security/target">
-        <include name="**/*.mar"/>
-      </fileset>
-      <fileset dir="${basedir}/modules/soapmonitor/target">
-        <include name="**/*.mar"/>
+    <copy todir="${basedir}/target/repo/modules" flatten="true">
+      <fileset dir="${basedir}/modules/">
+        <include name="**/target/*.mar"/>
       </fileset>
     </copy>
     <copy todir="${basedir}/target/repo">
