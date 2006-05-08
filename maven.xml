@@ -56,12 +56,11 @@
     <tstamp>
         <format property="release_date" pattern="MMMM d, yyyy" locale="en"/>
     </tstamp>
-
-    <!-- Test for JDK 1.5 to determine whether to include modules that require it -->
-    <j:set var="java.specification.version" value="${systemScope.getProperty('java.specification.version')}"/>
-    <j:if test="${java.specification.version == '1.5'}">
+    
+    <!-- Test for >= JDK 1.5 to determine whether to include modules that require it -->
+    <j:if test="${ant.java.version.compareTo('1.4') gt 0}">
         <ant:echo>
-            JDK 1.5.x detected, including the following modules:
+            JDK ${ant.java.version} detected, including the following modules:
              ${maven.multiproject.includes.requiresJDK15}
         </ant:echo>
         <j:set var="maven.multiproject.includes"
@@ -419,10 +418,13 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-        <!-- Copy the jaxbri jar -->
-        <ant:copy toDir="target/temp/war/lib">
-            <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
-        </ant:copy>
+		<!-- Copy items that depend on JDK1.5 -->
+		<j:if test="${ant.java.version.compareTo('1.4') gt 0}">
+			<!-- Copy the jaxbri jar -->
+			<ant:copy toDir="target/temp/war/lib">
+				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+			</ant:copy>
+        </j:if>
 
         <!-- Copy the soapmonitor jar - the servlet classes -->
         <ant:copy toDir="target/temp/war/lib">
@@ -673,8 +675,14 @@
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
         </ant:copy>
+
+		<!-- Copy items that depend on JDK1.5 -->
+		<j:if test="${ant.java.version.compareTo('1.4') gt 0}">
+			<ant:copy toDir="${std.bin.temp.dir}/lib">
+				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+			</ant:copy>
+		</j:if>
 
         <!-- Copy addressing mar -->
         <ant:copy toDir="${std.bin.temp.dir}/modules">
@@ -1000,9 +1008,14 @@
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
+		<!-- Copy items that depend on JDK1.5 -->
+		<j:if test="${ant.java.version.compareTo('1.4') gt 0}">
+			<ant:copy toDir="${destdir}">
+				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+			</ant:copy>
+		</j:if>
     </goal>
 
     <define:taglib uri="macros">
