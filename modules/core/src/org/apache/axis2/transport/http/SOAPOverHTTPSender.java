@@ -52,7 +52,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
         }
-        //TODO FixMe : Fix User Agent
 
         String userAgentString = getUserAgent(msgContext);
 
@@ -148,7 +147,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         // Runtime overing part
         if (!locked) {
             if (messageContext.getProperty(HTTPConstants.USER_AGENT) != null) {
-                userAgentString = (String)messageContext.getProperty(HTTPConstants.USER_AGENT); 
+                userAgentString = (String)messageContext.getProperty(HTTPConstants.USER_AGENT);
             }
         }
 
