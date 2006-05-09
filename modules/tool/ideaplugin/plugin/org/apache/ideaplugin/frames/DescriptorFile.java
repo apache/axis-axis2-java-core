@@ -46,7 +46,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
     protected JScrollPane sp;
 
     protected ParameterDialog pradialog;
-    protected ModuleDialog mdouledialog;
+    protected ModuleDialog moduledialog;
     private JPanel previous;
 
     public DescriptorFile(ServiceArciveFrame parent, String XML) {
@@ -73,7 +73,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
         addModuleRef.setBounds(insets.left + 135, insets.top + 2, 120, 20);
 
         pradialog = new ParameterDialog();
-        mdouledialog = new ModuleDialog();
+        moduledialog = new ModuleDialog();
         setSize(getPreferredSize());
 
 
@@ -113,8 +113,8 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
         }  else if(obj == addModuleRef){
             String str = "";
             int cusrpos =  desArea.getCaretPosition();
-            mdouledialog.showDialog(str,desArea,cusrpos);
-            mdouledialog.hideForm();
+            moduledialog.showDialog(str,desArea,cusrpos);
+            moduledialog.hideForm();
         }
     }
 
