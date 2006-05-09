@@ -132,7 +132,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
     }
 
     private String getUserAgent(MessageContext messageContext) {
-        String userAgentString = "Axis/2.0";
+        String userAgentString = "Axis2";
         boolean locked = false;
         if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null){
             OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();

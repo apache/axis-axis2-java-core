@@ -20,6 +20,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.axiom.om.OMElement;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +48,7 @@ public class SOAPUtil {
                                       HttpServletResponse response) throws AxisFault {
         try {
             response.setHeader("Content-Type","text/html");
+            response.addHeader(HTTPConstants.HEADER_USER_AGENT, getUserAgent(msgContext));
             String soapAction = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                                                       request.getInputStream(),
@@ -61,6 +63,7 @@ public class SOAPUtil {
             response.setContentType("text/xml; charset="
                                     + msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
 
+
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
@@ -68,5 +71,17 @@ public class SOAPUtil {
         } catch (IOException ioException) {
             throw new AxisFault(ioException);
         }
+    }
+
+    private String getUserAgent(MessageContext messageContext) {
+        String userAgentString = "Axis2";
+        if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null){
+            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();
+            return userAgentElement.getText().trim();
+
+        }
+
+
+        return userAgentString;
     }
 }
