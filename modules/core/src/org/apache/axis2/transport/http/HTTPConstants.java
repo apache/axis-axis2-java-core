@@ -458,4 +458,6 @@ public class HTTPConstants {
 
         return data.getBytes();
     }
+
+    public static final String USER_AGENT = "userAgent";
 }

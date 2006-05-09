@@ -2,6 +2,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -17,6 +18,7 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,8 +52,11 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
         }
+        //TODO FixMe : Fix User Agent
 
-        postMethod.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
+        String userAgentString = getUserAgent(msgContext);
+
+        postMethod.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, userAgentString);
 
         if (msgContext.isSOAP11()) {
             if ("".equals(soapActionString)){
@@ -125,6 +130,29 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         throw new AxisFault(Messages.getMessage("transportError",
                 String.valueOf(postMethod.getStatusCode()), postMethod.getResponseBodyAsString()));
+    }
+
+    private String getUserAgent(MessageContext messageContext) {
+        String userAgentString = "Axis/2.0";
+        boolean locked = false;
+        if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null){
+            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();
+            userAgentString = userAgentElement.getText().trim();
+            OMAttribute lockedAttribute = userAgentElement.getAttribute(new QName("locked"));
+            if (lockedAttribute != null) {
+                if (lockedAttribute.getAttributeValue().equalsIgnoreCase("true")) {
+                    locked = true;
+                }
+            }
+        }
+        // Runtime overing part
+        if (!locked) {
+            if (messageContext.getProperty(HTTPConstants.USER_AGENT) != null) {
+                userAgentString = (String)messageContext.getProperty(HTTPConstants.USER_AGENT); 
+            }
+        }
+
+        return userAgentString;
     }
 
     public class AxisSOAPRequestEntity implements RequestEntity {
