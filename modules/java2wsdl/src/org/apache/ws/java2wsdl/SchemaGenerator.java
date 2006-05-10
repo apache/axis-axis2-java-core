@@ -39,7 +39,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     protected XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
-	private static final Log log = LogFactory.getLog(SchemaGenerator.class);
+    private static final Log log = LogFactory.getLog(SchemaGenerator.class);
 
     private ClassLoader classLoader;
 
@@ -75,7 +75,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
             this.schemaTargetNameSpace = schematargetNamespace;
         } else {
             this.schemaTargetNameSpace = Java2WSDLUtils
-                    .schemaNamespaceFromClassName(className,loader).toString();
+                    .schemaNamespaceFromClassName(className, loader).toString();
         }
         if (schematargetNamespacePrefix != null
                 && !schematargetNamespacePrefix.trim().equals("")) {
@@ -124,6 +124,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
              * messages and port types will be creteated
              */
             methods = jclass.getDeclaredMethods();
+            //short the elements in the array
+            Arrays.sort(methods);
 
             // since we do not support overload
             HashMap uniqueMethods = new HashMap();
@@ -135,10 +137,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 if (excludeMethods.contains(jMethod.getSimpleName())) {
                     continue;
                 }
-//                if (jMethod.getSimpleName().equals("init")
-//                        || "setOperationContext".equals(jMethod.getSimpleName())
-//                        || "destroy".equals(jMethod.getSimpleName()))
-//                    continue;
+
                 if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
                     throw new Exception(
                             " Sorry we don't support methods overloading !!!! ");

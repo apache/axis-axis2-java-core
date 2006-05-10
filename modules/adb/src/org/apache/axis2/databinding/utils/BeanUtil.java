@@ -36,10 +36,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.*;
 
 
 public class BeanUtil {
@@ -55,9 +52,6 @@ public class BeanUtil {
         try {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
-            //setting the classLoder
-//        jam_service_parms.setParentClassLoader(factory.createJamClassLoader(classLoader));
-            //it can posible to add the classLoader as well
             jam_service_parms.addClassLoader(beanObject.getClass().getClassLoader());
             jam_service_parms.includeClass(beanObject.getClass().getName());
             JamService service = factory.createService(jam_service_parms);
@@ -69,7 +63,7 @@ public class BeanUtil {
             }
             // properties from JAM
             JProperty properties [] = jClass.getDeclaredProperties();
-
+            Arrays.sort(properties);
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
             HashMap propertMap = new HashMap();
