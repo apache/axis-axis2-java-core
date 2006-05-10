@@ -155,6 +155,7 @@
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <copy>
                     <xsl:attribute name="toDir">${classes}/META-INF</xsl:attribute>
+                    <xsl:attribute name="failonerror">false</xsl:attribute>
                     <fileset>
                         <xsl:attribute name="dir">${resources}</xsl:attribute>
                         <include>
