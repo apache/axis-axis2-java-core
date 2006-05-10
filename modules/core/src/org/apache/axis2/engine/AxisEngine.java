@@ -180,7 +180,7 @@ public class AxisEngine {
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null && !doNotSendFaultUsingFaultTo) {
             faultContext.setTo(processingContext.getFaultTo());
-        } else if (!doNotSendFaultUsingFaultTo && processingContext.getEnvelope().getHeader() != null && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
+        } else if (!doNotSendFaultUsingFaultTo && processingContext.isHeaderPresent() && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
             OMElement faultToElement = processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo"));
             faultTo = new EndpointReference("");
             faultTo.fromOM(faultToElement);
