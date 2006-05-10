@@ -44,6 +44,10 @@ public class SCTIssuerConfig {
     
     protected boolean addRequestedUnattachedRef;
     
+    protected byte[] requesterEntropy;
+    
+    protected int keySize;
+    
     public SCTIssuerConfig(OMElement elem) throws TrustException {
         OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
                 new QName("proofToken"));
@@ -85,5 +89,7 @@ public class SCTIssuerConfig {
         
         return builder != null ? load(builder.getDocumentElement()) : null;
     }
+    
+    
 
 }

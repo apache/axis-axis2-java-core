@@ -271,6 +271,10 @@ public class RahasConfiguration {
         return null;
     }
 
+    /**
+     * Generate the Axis2 parameter representing RahasConfiguration
+     * @return
+     */
     public Parameter getParameter() {
         Parameter param = new Parameter();
         OMElement element = this.getOMElement();
@@ -325,7 +329,15 @@ public class RahasConfiguration {
         return elem;
     }
     
-    
+    /**
+     * This registers the security context mapping ?e context identifier to 
+     * the wsa:Action/soapAction or the service address, depending on the scope.
+     * 
+     * @param identifier The security context identifier
+     * @throws RahasException 
+     *      If scope is "operation" and the wsa:Action is not available.
+     *      If scope is "service" and the wsa:To is missing.  
+     */
     protected void resgisterContext(String identifier) throws RahasException {
         this.contextIdentifier = identifier;
         

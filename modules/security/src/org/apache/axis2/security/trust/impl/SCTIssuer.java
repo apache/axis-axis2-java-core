@@ -42,6 +42,8 @@ import org.apache.ws.security.message.token.SecurityContextToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
+
 import java.security.Principal;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -130,6 +132,8 @@ public class SCTIssuer implements TokenIssuer {
                         new String[] { SCTIssuerConfig.SCT_ISSUER_CONFIG
                                 .getLocalPart() });
             }
+
+            parseEntropyInfo(inMsgCtx.getEnvelope(), config);
             
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
                 SOAPEnvelope responseEnv = this.doEncryptedKey(config,
@@ -151,6 +155,17 @@ public class SCTIssuer implements TokenIssuer {
 
     }
     
+    /**
+     * @param envelope
+     * @param config
+     */
+    private void parseEntropyInfo(SOAPEnvelope envelope, SCTIssuerConfig config) {
+        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(Constants.WST_NS, Constants.REQUEST_SECURITY_TOKEN_LN));
+        if(elem != null) {
+            //TODO get the entropy and keysize info
+        }
+    }
+
     /**
      * @param config
      * @param inMsgCtx

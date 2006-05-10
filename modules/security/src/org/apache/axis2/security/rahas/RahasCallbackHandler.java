@@ -25,6 +25,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import java.io.IOException;
 
+/**
+ * This is ths callback handler used to extract he secure conversation
+ * session key for a given context identifier
+ */
 public class RahasCallbackHandler implements CallbackHandler {
 
     private RahasConfiguration config;
@@ -41,8 +45,11 @@ public class RahasCallbackHandler implements CallbackHandler {
                 String id = pc.getIdentifer();
                 Token tok;
                 try {
+                    //Pick up the token from the token store
                     tok = this.config.getTokenStore().getToken(id);
+                    //Get the secret and set it in the callback object
                     pc.setKey(tok.getSecret());
+                    //Register the security context in the current configuration
                     this.config.resgisterContext(id);
                 } catch (Exception e) {
                     e.printStackTrace();

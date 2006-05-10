@@ -32,10 +32,8 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
-import org.apache.axis2.security.rahas.RahasConfiguration;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import java.io.StringWriter;
