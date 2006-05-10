@@ -126,6 +126,48 @@ public class BeanUtil {
                         }
 
                     }
+                } else if (SimpleTypeMapper.isHasMap(ptype)) {
+                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                            null);
+                    HashMap hashmap = (HashMap) value;
+                    if (hashmap.values() != null && hashmap.values().size() > 0) {
+                        Object objList [] = hashmap.values().toArray();
+                        //this was given error , when the array.size = 0
+                        // and if the array contain simple type , then the ADBPullParser asked
+                        // PullParser from That simpel type
+                        for (int j = 0; j < objList.length; j++) {
+                            Object o = objList[j];
+                            if (SimpleTypeMapper.isSimpleType(o)) {
+                                object.add(propDesc.getName());
+                                object.add(o);
+                            } else {
+                                object.add(new QName(propDesc.getName()));
+                                object.add(o);
+                            }
+                        }
+
+                    }
+                } else if (SimpleTypeMapper.isHasTable(ptype)) {
+                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                            null);
+                    Hashtable hashtable = (Hashtable) value;
+                    if (hashtable.values() != null && hashtable.values().size() > 0) {
+                        Object objList [] = hashtable.values().toArray();
+                        //this was given error , when the array.size = 0
+                        // and if the array contain simple type , then the ADBPullParser asked
+                        // PullParser from That simpel type
+                        for (int j = 0; j < objList.length; j++) {
+                            Object o = objList[j];
+                            if (SimpleTypeMapper.isSimpleType(o)) {
+                                object.add(propDesc.getName());
+                                object.add(o);
+                            } else {
+                                object.add(new QName(propDesc.getName()));
+                                object.add(o);
+                            }
+                        }
+
+                    }
                 } else {
                     object.add(new QName(propDesc.getName()));
                     Object value = propDesc.getReadMethod().invoke(beanObject,

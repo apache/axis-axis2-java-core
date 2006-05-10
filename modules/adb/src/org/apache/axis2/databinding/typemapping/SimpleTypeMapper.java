@@ -49,6 +49,8 @@ public class SimpleTypeMapper {
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALANDER = "java.util.Calendar";
     private static final String ARRAY_LIST = "java.util.ArrayList";
+    private static final String HASH_MAP = "java.util. HashMap";
+    private static final String HASH_TABLE = "java.util. Hashtable";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -137,6 +139,15 @@ public class SimpleTypeMapper {
     public static boolean isArrayList(Class obj){
         String objClassName = obj.getName();
         return ARRAY_LIST.equals(objClassName);
+    }
+
+      public static boolean isHasMap(Class obj){
+        String objClassName = obj.getName();
+        return HASH_MAP.equals(objClassName);
+    }
+    public static boolean isHasTable(Class obj){
+        String objClassName = obj.getName();
+        return HASH_TABLE.equals(objClassName);
     }
 
     public static boolean isSimpleType(String objClassName) {
