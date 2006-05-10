@@ -412,7 +412,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
             xmlSchema.getSchemaTypes().add(elemntName, complexType);
 
             // adding this type to the table
-            //  typeTable.addComplexScheam(name, complexType.getQName());
             typeTable.addComplexSchema(name, eltOuter.getQName());
 
             JProperty [] properties = javaType.getDeclaredProperties();

@@ -110,7 +110,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         constructorMap.put("byte[]", "new byte[0]");
         constructorMap.put("java.util.Calendar", "java.util.Calendar.getInstance()");
         constructorMap.put("javax.xml.namespace.QName",
-                "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
+                "new javax.xml.namespace.QName(\"http://foo\", \"bar\")");
 
         //populate the MEP -> class map
         MEPtoClassMap = new HashMap();

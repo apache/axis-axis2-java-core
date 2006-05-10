@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -23,10 +21,6 @@ import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaRedefine;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
@@ -35,9 +29,6 @@ import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.util.PolicyRegistry;
 import org.apache.ws.policy.util.StAXPolicyWriter;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.Hashtable;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  * 
@@ -248,20 +239,20 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private void writeMessage(AxisMessage axismessage, OMFactory fac,
             OMElement defintions) {
-        QName scheamElementName = axismessage.getElementQName();
+        QName schemaElementName = axismessage.getElementQName();
         OMElement messageElement = fac
                 .createOMElement(MESSAGE_LOCAL_NAME, wsdl);
         messageElement.addAttribute(ATTRIBUTE_NAME, axismessage.getName()
                 , null);
         defintions.addChild(messageElement);
-        if (scheamElementName != null) {
+        if (schemaElementName != null) {
             OMElement messagePart = fac.createOMElement(PART_ATTRIBUTE_NAME,
                     wsdl);
             messageElement.addChild(messagePart);
             messagePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
             messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                    getPrefix(scheamElementName.getNamespaceURI()) + ":"
-                            + scheamElementName.getLocalPart(), null);
+                    getPrefix(schemaElementName.getNamespaceURI()) + ":"
+                            + schemaElementName.getLocalPart(), null);
         }
 
     }
@@ -382,7 +373,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     + SOAP11PORT + i, null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + BINDING_NAME_SUFFIX, null);
-            addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION, urlString,
+            addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
                     soap);
 
             addPolicy(PolicyInclude.PORT_POLICY,
@@ -420,7 +411,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     + SOAP12PORT + i, null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + SOAP12BINDING_NAME_SUFFIX, null);
-            addExtensionElemnet(fac, port, SOAP_ADDRESS, LOCATION, urlString,
+            addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
                     soap12);
 
             addPolicy(PolicyInclude.PORT_POLICY,
@@ -725,9 +716,9 @@ public class AxisService2OM implements Java2WSDLConstants {
         soapbinding.addAttribute(att2Name, att2Value, null);
     }
 
-    private void addExtensionElemnet(OMFactory fac, OMElement element,
-            String name, String att1Name, String att1Value,
-            OMNamespace soapNameSpace) {
+    private void addExtensionElement(OMFactory fac, OMElement element,
+                                     String name, String att1Name, String att1Value,
+                                     OMNamespace soapNameSpace) {
         OMElement extElement = fac.createOMElement(name, soapNameSpace);
         element.addChild(extElement);
         extElement.addAttribute(att1Name, att1Value, null);

@@ -68,7 +68,7 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
         AxisModule m1 = new AxisModule(
-                new QName("", "A Mdoule 1"));
+                new QName("", "A Module 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
         config = new AxisConfiguration();

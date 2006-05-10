@@ -104,9 +104,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
             //Setting schema namespece if any
-            OMElement scheamElement = service_element.getFirstChildWithName(new QName(SCHEMA));
-            if (scheamElement != null) {
-                OMAttribute schemaNameSpace = scheamElement.
+            OMElement schemaElement = service_element.getFirstChildWithName(new QName(SCHEMA));
+            if (schemaElement != null) {
+                OMAttribute schemaNameSpace = schemaElement.
                         getAttribute(new QName(SCHEMA_NAME_SPACE));
                 if (schemaNameSpace != null) {
                     String nameSpeceVale = schemaNameSpace.getAttributeValue();
@@ -220,7 +220,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                      * error ,  I know we have to handle this , untill that I have
                      * to log this
                      */
-                    log.error(Messages.getMessage("errorinscheamgen", e.getMessage()), e);
+                    log.error(Messages.getMessage("errorinschemagen", e.getMessage()), e);
                 }
             }
 

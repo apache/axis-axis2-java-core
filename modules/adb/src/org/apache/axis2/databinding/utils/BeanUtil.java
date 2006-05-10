@@ -140,7 +140,7 @@ public class BeanUtil {
     }
 
     /**
-     * to get the pull parser for a given bean object , generate the wrpper elemnet using class name
+     * to get the pull parser for a given bean object , generate the wrpper element using class name
      *
      * @param beanObject
      */

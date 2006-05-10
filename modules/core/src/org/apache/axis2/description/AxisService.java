@@ -1104,7 +1104,7 @@ public class AxisService extends AxisDescription {
      * @param axisConfig           : currcent AxisConfgiuration
      * @param messageReceiverClass : Messge reciver that you want to use
      * @param targetNameSpace      : Service namespace
-     * @param scheamNameSpace      : Scheam Name space
+     * @param schemaNameSpace      : Scheam Name space
      * @return
      * @throws AxisFault
      */
@@ -1113,7 +1113,7 @@ public class AxisService extends AxisDescription {
                                             AxisConfiguration axisConfig,
                                             Class messageReceiverClass,
                                             String targetNameSpace,
-                                            String scheamNameSpace) throws AxisFault {
+                                            String schemaNameSpace) throws AxisFault {
         Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
         OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
         parameter.setParameterElement(paraElement);
@@ -1136,7 +1136,7 @@ public class AxisService extends AxisDescription {
         SchemaGenerator schemaGenerator;
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                    implClass, scheamNameSpace,
+                    implClass, schemaNameSpace,
                     axisService.getSchematargetNamespacePrefix());
             ArrayList excludeOpeartion = new ArrayList();
             excludeOpeartion.add("init");

@@ -50,14 +50,14 @@ public class ListingAgent extends AbstractAgent {
         super(aConfigContext);
     }
 
-    private void addTransportListner(String scheam, int port) {
+    private void addTransportListner(String schema, int port) {
         try {
             TransportInDescription trsIn =
                     configContext.getAxisConfiguration().getTransportIn(
-                            new QName(scheam));
+                            new QName(schema));
             if (trsIn == null) {
-                trsIn = new TransportInDescription(new QName(scheam));
-                trsIn.setReceiver(new HTTPSTListener(port, scheam));
+                trsIn = new TransportInDescription(new QName(schema));
+                trsIn.setReceiver(new HTTPSTListener(port, schema));
                 configContext.getListenerManager().addListener(trsIn, true);
             }
         } catch (AxisFault axisFault) {
@@ -153,15 +153,15 @@ public class ListingAgent extends AbstractAgent {
                     axisService.populateSchemaMappings();
                     Hashtable schemaMappingtable =
                             axisService.getSchemaMappingTable();
-                    ArrayList scheams = axisService.getSchema();
+                    ArrayList schemas = axisService.getSchema();
 
                     //a name is present - try to pump the requested schema
                     if (!"".equals(xsd)) {
-                        XmlSchema scheam =
+                        XmlSchema schema =
                                 (XmlSchema) schemaMappingtable.get(xsd);
-                        if (scheam != null) {
+                        if (schema != null) {
                             //schema is there - pump it outs
-                            scheam.write(out);
+                            schema.write(out);
                             out.flush();
                             out.close();
                         } else {
@@ -172,14 +172,14 @@ public class ListingAgent extends AbstractAgent {
                         //multiple schemas are present and the user specified
                         //no name - in this case we cannot possibly pump a schema
                         //so redirect to the service root
-                    } else if (scheams.size() > 1) {
+                    } else if (schemas.size() > 1) {
                         res.sendRedirect("");
                         //user specified no name and there is only one schema
                         //so pump that out
                     } else {
-                        XmlSchema scheam = axisService.getSchema(0);
-                        if (scheam != null) {
-                            scheam.write(out);
+                        XmlSchema schema = axisService.getSchema(0);
+                        if (schema != null) {
+                            schema.write(out);
                             out.flush();
                             out.close();
                         }
@@ -216,11 +216,11 @@ public class ListingAgent extends AbstractAgent {
     private class HTTPSTListener implements TransportListener {
 
         private int port;
-        private String scheam;
+        private String schema;
 
-        public HTTPSTListener(int port, String scheam) {
+        public HTTPSTListener(int port, String schema) {
             this.port = port;
-            this.scheam = scheam;
+            this.schema = schema;
         }
 
         public void init(ConfigurationContext axisConf,
@@ -234,7 +234,7 @@ public class ListingAgent extends AbstractAgent {
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-            return new EndpointReference(scheam + "://" + ip + ":" + port + "/axis2/services/" + serviceName);
+            return new EndpointReference(schema + "://" + ip + ":" + port + "/axis2/services/" + serviceName);
         }
     }
 

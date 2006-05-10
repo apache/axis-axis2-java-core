@@ -213,7 +213,7 @@ public class WSDL2AxisServiceBuilder {
                     .getTargetNamespace());
             //adding ns in the original WSDL
             processPoliciesInDefintion(wsdl4jDefinition);
-            //scheam generation
+            //schema generation
             processImports(wsdl4jDefinition);
             axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
             Types wsdl4jTypes = wsdl4jDefinition.getTypes();

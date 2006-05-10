@@ -150,8 +150,8 @@ public class Java2WSDLBuilder {
                 style,
                 use,
                 locationUri);
-        OMElement wsdlElemnet = java2OMBuilder.generateOM();
-        wsdlElemnet.serialize(out);
+        OMElement wsdlElement = java2OMBuilder.generateOM();
+        wsdlElement.serialize(out);
         out.flush();
         out.close();
     }

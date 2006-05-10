@@ -337,7 +337,7 @@ public class AxisEngine {
             } else {
                 message = axisFault.getReason();
                 if (message == null || "".equals(message)) {
-                    message = getFaulReasonFromException(e, context);
+                    message = getFaultReasonFromException(e, context);
                 }
 //                message = message != null && "".equals(message) ? message : e.getMessage();
             }
@@ -410,7 +410,7 @@ public class AxisEngine {
      *
      * @param e
      */
-    private String getFaulReasonFromException(Throwable e, MessageContext context) {
+    private String getFaultReasonFromException(Throwable e, MessageContext context) {
         Throwable throwable = e;
         Parameter param = context.getParameter("DrillDownToRootCauseForFaultReason");
         boolean drillDownToRootCauseForFaultReason = param != null && ((String) param.getValue()).equalsIgnoreCase("true");

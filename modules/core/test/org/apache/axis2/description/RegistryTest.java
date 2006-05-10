@@ -34,29 +34,7 @@ public class RegistryTest extends AbstractTestCase {
     }
 
 
-    public void testRegistry() throws Exception {
-        //TODO fix me Srinath
-        /*  GlobalDescription ag = new GlobalDescription();
-          testParameteInClude(ag);
-          reg = new AxisSystemImpl(ag);
-
-          QName moduleName = new QName("module1");
-          ModuleDescription modlue = new ModuleDescription(moduleName);
-          reg.addMdoule(modlue);
-
-          QName serviceName = new QName("service");
-          AxisService service = new AxisService(serviceName);
-          reg.addService(service);
-
-          assertSame(modlue, reg.getModule(moduleName));
-          assertSame(service, reg.getService(serviceName));
-          reg.removeService(serviceName);
-          assertSame(ag, reg.getGlobal());
-          assertNull(reg.getService(serviceName));*/
-
-    }
-
-    public void testHandlerMedatata() throws AxisFault {
+    public void testHandlerMetadata() throws AxisFault {
         HandlerDescription hmd = new HandlerDescription();
         testParameteInClude(hmd);
     }

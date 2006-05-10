@@ -101,9 +101,9 @@ public class AxisMessage extends AxisDescription {
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
             if (schema.getItems() != null) {
-                Iterator scheamItms = schema.getItems().getIterator();
-                while (scheamItms.hasNext()) {
-                    Object item = scheamItms.next();
+                Iterator schemaItems = schema.getItems().getIterator();
+                while (schemaItems.hasNext()) {
+                    Object item = schemaItems.next();
                     if (item instanceof XmlSchemaElement) {
                         XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
                         if (xmlSchemaElement.getQName().equals(getElementQName())) {
