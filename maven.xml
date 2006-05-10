@@ -58,7 +58,10 @@
     </tstamp>
     
     <!-- Test for >= JDK 1.5 to determine whether to include modules that require it -->
-    <j:if test="${ant.java.version.compareTo('1.4') gt 0}">
+    
+    <ant:echo>${ant.java.version}</ant:echo>
+    
+    <j:if test="${ant.java.version == '1.5'}">
         <ant:echo>
             JDK ${ant.java.version} detected, including the following modules:
              ${maven.multiproject.includes.requiresJDK15}
@@ -66,7 +69,7 @@
         <j:set var="maven.multiproject.includes"
             value="${maven.multiproject.includes},${maven.multiproject.includes.requiresJDK15}"/>
     </j:if>
-
+   
     <j:set var="modules" value="*"/>
 
     <preGoal name="modules:reactor:init">
@@ -418,9 +421,9 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-		<!-- Copy items that depend on JDK1.5 -->
-		<j:if test="${ant.java.version.compareTo('1.4') gt 0}">
-			<!-- Copy the jaxbri jar -->
+		<!-- Copy items that depend on JDK1.5  -->
+		<j:if test="${ant.java.version == '1.5'}">
+			
 			<ant:copy toDir="target/temp/war/lib">
 				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
 			</ant:copy>
@@ -677,8 +680,8 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-		<!-- Copy items that depend on JDK1.5 -->
-		<j:if test="${ant.java.version.compareTo('1.4') gt 0}">
+		<!-- Copy items that depend on JDK1.5  -->
+		<j:if test="${ant.java.version == '1.5'}">
 			<ant:copy toDir="${std.bin.temp.dir}/lib">
 				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
 			</ant:copy>
@@ -1010,12 +1013,13 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
-		<!-- Copy items that depend on JDK1.5 -->
-		<j:if test="${ant.java.version.compareTo('1.4') gt 0}">
+		<!-- Copy items that depend on JDK1.5  -->
+		<j:if test="${ant.java.version == '1.5'}">
 			<ant:copy toDir="${destdir}">
 				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
 			</ant:copy>
 		</j:if>
+		
     </goal>
 
     <define:taglib uri="macros">
