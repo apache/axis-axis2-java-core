@@ -24,8 +24,8 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.Handler;
 
 /**
- * This send the SOAP Message to other SOAP nodes and this alone write the SOAP Message to the
- * wire. Out flow must be end with one of this kind.
+ * TransportSender sends the SOAP Message to other SOAP nodes. A TransportSender is responsible for 
+ * writing the SOAP Message to the wire. Out flow must be terminated end with a TransportSender
  */
 public interface TransportSender extends Handler {
 
