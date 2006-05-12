@@ -5,6 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axis2.databinding.types.Day;
 import org.apache.axis2.databinding.types.Duration;
 import org.apache.axis2.databinding.types.Entities;
@@ -327,7 +328,7 @@ public class ConverterUtil {
             throws Exception{
         // reusing the byteArrayDataSource from the Axiom classes
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
-                s.getBytes()
+                Base64.decode(s)
         );
         return new DataHandler(byteArrayDataSource);
     }
@@ -718,26 +719,13 @@ public class ConverterUtil {
     /**
      * Converts the given datahandler to a string
      * @return
-     * @throws XMLStreamException
      */
     public static String getStringFromDatahandler(DataHandler dataHandler){
         try {
             InputStream inStream;
             inStream = dataHandler.getDataSource().getInputStream();
-            byte[] data;
-            StringBuffer text = new StringBuffer();
-            do {
-                data = new byte[1024];
-                int len;
-                while ((len = inStream.read(data)) > 0) {
-                    byte[] temp = new byte[len];
-                    System.arraycopy(data, 0, temp, 0, len);
-                    text.append(Base64.encode(temp));
-                }
-
-            } while (inStream.available() > 0);
-
-            return text.toString();
+            byte[] data = IOUtils.getStreamAsByteArray(inStream);
+            return Base64.encode(data);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
