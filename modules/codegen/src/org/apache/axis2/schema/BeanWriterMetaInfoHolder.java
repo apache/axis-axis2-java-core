@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.LinkedHashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -39,12 +40,12 @@ public class BeanWriterMetaInfoHolder {
 
     protected boolean extension = false;
     private String extensionClassName = "";
-    protected Map elementToSchemaQNameMap = new HashMap();
-    protected Map elementToJavaClassMap = new HashMap();
-    protected Map specialTypeFlagMap = new HashMap();
-    protected Map qNameMaxOccursCountMap = new HashMap();
-    protected Map qNameMinOccursCountMap = new HashMap();
-    protected Map qNameOrderMap = new HashMap();
+    protected Map elementToSchemaQNameMap = new LinkedHashMap();
+    protected Map elementToJavaClassMap = new LinkedHashMap();
+    protected Map specialTypeFlagMap = new LinkedHashMap();
+    protected Map qNameMaxOccursCountMap = new LinkedHashMap();
+    protected Map qNameMinOccursCountMap = new LinkedHashMap();
+    protected Map qNameOrderMap = new LinkedHashMap();
 
     protected List nillableQNameList  = new ArrayList();
 

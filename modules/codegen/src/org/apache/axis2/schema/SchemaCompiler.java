@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.LinkedHashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -92,6 +93,11 @@ public class SchemaCompiler {
     private List nillableElementList;
     private BeanWriter writer = null;
     private Map baseSchemaTypeMap = null;
+
+    //a map for keeping the already loaded schemas
+    //the key is the targetnamespace and the value is the schema object
+    private Map loadedSchemaMap = new HashMap();
+
 
     // a list of externally identified QNames to be processed. This becomes
     // useful when  only a list of external elements need to be processed
@@ -197,6 +203,11 @@ public class SchemaCompiler {
         //First look for the schemas that are imported and process them
         //Note that these are processed recursively!
 
+        //add the schema to the loaded schema list
+        if (!loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
+            loadedSchemaMap.put(schema.getTargetNamespace(),schema) ;
+        }
+
         XmlSchemaObjectCollection includes = schema.getIncludes();
         if (includes != null) {
             Iterator tempIterator = includes.getIterator();
@@ -225,7 +236,6 @@ public class SchemaCompiler {
             //to check for arraytypes
             processElement((XmlSchemaElement) xmlSchemaElement1Iterator.next(), schema);
         }
-
 
         Iterator xmlSchemaElement2Iterator = elements.getValues();
 
@@ -446,10 +456,13 @@ public class SchemaCompiler {
             //There can be instances where the SchemaType is null but the schemaTypeName is not!
             //this specifically happens with xsd:anyType.
             QName schemaTypeName = xsElt.getSchemaTypeName();
-            XmlSchemaType typeByName = parentSchema.getTypeByName(schemaTypeName);
+
+            XmlSchema currentParentSchema = resolveParentSchema(schemaTypeName,parentSchema);
+            XmlSchemaType typeByName = currentParentSchema.getTypeByName(schemaTypeName);
+
             if (typeByName!=null){
                 //this type is found in the schema so we can process it
-                processSchema(xsElt, typeByName,parentSchema);
+                processSchema(xsElt, typeByName,currentParentSchema);
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     //since this is a inner element we should add it to the inner element map
@@ -477,6 +490,23 @@ public class SchemaCompiler {
             }
         }
 
+    }
+
+    /**
+     * resolve the parent schema for the given schema type name
+     *
+     * @param schemaTypeName
+     * @param currentSchema
+     * @return
+     */
+    private XmlSchema resolveParentSchema(QName schemaTypeName,XmlSchema currentSchema) {
+        String targetNamespace = schemaTypeName.getNamespaceURI();
+        Object loadedSchema = loadedSchemaMap.get(targetNamespace);
+        if (loadedSchema!=null){
+            return  (XmlSchema)loadedSchema;
+        }else{
+            return currentSchema;
+        }
     }
 
     /**
@@ -563,9 +593,9 @@ public class SchemaCompiler {
         return className;
     }
 
+
     /**
-     * Process a schema element
-     *
+     * Process a schema element which has been refered to by an element
      * @param schemaType
      * @throws SchemaCompilationException
      */
@@ -835,7 +865,7 @@ public class SchemaCompiler {
         metainf.registerMapping(qName,
                 null,
                 DEFAULT_ATTRIB_ARRAY_CLASS_NAME,//always generate an array of
-                                                //OMAttributes
+                //OMAttributes
                 SchemaConstants.ANY_TYPE);
         metainf.addtStatus(qName, SchemaConstants.ATTRIBUTE_TYPE);
         metainf.addtStatus(qName, SchemaConstants.ARRAY_TYPE);
@@ -898,8 +928,8 @@ public class SchemaCompiler {
                          boolean order,
                          XmlSchema parentSchema) throws SchemaCompilationException {
         int count = items.getCount();
-        Map processedElementArrayStatusMap = new HashMap();
-        Map processedElementTypeMap = new HashMap();
+        Map processedElementArrayStatusMap = new LinkedHashMap();
+        Map processedElementTypeMap = new LinkedHashMap();
         List localNillableList = new ArrayList();
 
         Map elementOrderMap = new HashMap();
