@@ -20,6 +20,7 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -154,7 +155,21 @@ public class AxisService extends AxisDescription {
     private String soapNsUri;
     private String endpoint;
 
-
+    // Flag representing whether WS-Addressing is required to use this service.
+    // Reflects the wsaw:UsingAddressing wsdl extension element
+    private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
+    
+    public String getWSAddressingFlag(){
+    	return wsaddressingFlag;
+    }
+    
+    public void setWSAddressingFlag(String ar){
+    	wsaddressingFlag = ar;
+    	if(wsaddressingFlag == null){
+    		wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
+    	}
+    }
+    
     public boolean isSchemaLocationsAdjusted() {
         return schemaLocationsAdjusted;
     }

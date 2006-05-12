@@ -17,7 +17,9 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -375,7 +377,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     + axisService.getName() + BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
                     soap);
-
+            
             addPolicy(PolicyInclude.PORT_POLICY,
                     axisService.getPolicyInclude(), service, fac);
         }
@@ -437,6 +439,16 @@ public class AxisService2OM implements Java2WSDLConstants {
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME, TRANSPORT,
                 TRANSPORT_URI, STYLE, style, soap);
 
+        // Add WS-Addressing UsingAddressing element if appropriate
+        // SHOULD be on the binding element per the specification 
+        if(axisService.getWSAddressingFlag().equals(AddressingConstants.ADDRESSING_OPTIONAL)){
+        	OMNamespace wsawNamespace = fac.createOMNamespace(AddressingConstants.Final.WSAW_NAMESPACE,"wsaw");
+        	addExtensionElement(fac, binding, AddressingConstants.USING_ADDRESSING, DEFAULT_WSDL_NAMESPACE_PREFIX+":required", "true", wsawNamespace);
+        } else if(axisService.getWSAddressingFlag().equals(AddressingConstants.ADDRESSING_REQUIRED)){
+        	OMNamespace wsawNamespace = fac.createOMNamespace(AddressingConstants.Final.WSAW_NAMESPACE,"wsaw");
+        	addExtensionElement(fac, binding, AddressingConstants.USING_ADDRESSING, DEFAULT_WSDL_NAMESPACE_PREFIX+":required", "true", wsawNamespace);
+        }
+        
         Iterator operations = axisService.getOperations();
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
@@ -538,6 +550,16 @@ public class AxisService2OM implements Java2WSDLConstants {
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME, TRANSPORT,
                 TRANSPORT_URI, STYLE, style, soap12);
 
+        // Add WS-Addressing UsingAddressing element if appropriate
+        // SHOULD be on the binding element per the specification
+        if(axisService.getWSAddressingFlag().equals(AddressingConstants.ADDRESSING_OPTIONAL)){
+        	OMNamespace wsawNamespace = fac.createOMNamespace(AddressingConstants.Final.WSAW_NAMESPACE,"wsaw");
+        	addExtensionElement(fac, binding, AddressingConstants.USING_ADDRESSING, DEFAULT_WSDL_NAMESPACE_PREFIX+":required", "true", wsawNamespace);
+        } else if(axisService.getWSAddressingFlag().equals(AddressingConstants.ADDRESSING_REQUIRED)){
+        	OMNamespace wsawNamespace = fac.createOMNamespace(AddressingConstants.Final.WSAW_NAMESPACE,"wsaw");
+        	addExtensionElement(fac, binding, AddressingConstants.USING_ADDRESSING, DEFAULT_WSDL_NAMESPACE_PREFIX+":required", "true", wsawNamespace);
+        }
+        
         Iterator operations = axisService.getOperations();
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();

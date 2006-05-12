@@ -78,6 +78,7 @@ public interface DeploymentConstants {
 
     // for parameters
     String ATTRIBUTE_NAME = "name";
+    String ATTRIBUTE_WSADDRESSING = "wsaddressing";
     String TARGET_NAME_SPACE = "targetNamespace";
     String SCHEMA_NAME_SPACE = "schemaNamespace";
     String SCHEMA = "schema";

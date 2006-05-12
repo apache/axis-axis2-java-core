@@ -120,6 +120,30 @@ public class AxisEngine {
         }
     }
 
+    /*
+     * Check that if the wsaddressing="required" attribute exists on the service
+     * definition or <wsaw:UsingAddressing wsdl:required="true" /> was found in the
+     * WSDL that WS-Addressing headers were found on the inbound message
+     */
+    private void checkUsingAddressing(MessageContext msgContext)
+			throws AxisFault {
+		String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
+		if(log.isTraceEnabled())
+			log.trace("checkUsingAddressing: WSAddressingFlag="+ addressingFlag);
+		if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
+			Object flag = msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+			if(log.isTraceEnabled())
+				log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
+			if (flag == null) {
+				String message = Messages.getMessage("wsaddressingrequirednotpresent");
+				AxisFault af = new AxisFault(message);
+				af.printStackTrace();
+				log.debug(message, af);
+				throw af;
+			}
+		}
+    }
+    
     /**
      * This method is called to handle any error that occurs at inflow or outflow. But if the
      * method is called twice, it implies that sending the error handling has failed, in which case
@@ -448,6 +472,8 @@ public class AxisEngine {
 
             // invoke the Message Receivers
             checkMustUnderstand(msgContext);
+            
+            checkUsingAddressing(msgContext);
 
             MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
 

@@ -17,6 +17,8 @@
 
 package org.apache.axis2.addressing;
 
+import javax.xml.namespace.QName;
+
 /**
  * Interface AddressingConstants
  */
@@ -42,6 +44,22 @@ public interface AddressingConstants {
             "ServiceGroupContextIdFromAddressing";
     public static final String IS_ADDR_INFO_ALREADY_PROCESSED = "IsAddressingProcessed";
 
+    // ====================== WSDL Binding Constants ========================
+    public static final String USING_ADDRESSING = "UsingAddressing";
+    
+    // ====================== Addressing Requirement Levels ==================
+    // These are used to represent the requirement level on WS-Addressing indicated
+    // in a services.xml or a WSDL file.
+    // ADDRESSING_UNSPECIFIED is the equivalent of no UsingAddressing flag in a
+    // WSDL file and the default of the WSAddressingRequred attribute in service.xml
+    public static final String ADDRESSING_UNSPECIFIED = "unspecified";
+    // ADDRESSING_OPTIONAL is the equivalent of <wsaw:UsingAddressing required="false" />
+    // in a WSDL file
+    public static final String ADDRESSING_OPTIONAL    = "optional";
+    // ADDRESSING_REQUIRED is the equivalent of <wsaw:UsingAddressing required="true" />
+    // in a WSDL file
+    public static final String ADDRESSING_REQUIRED    = "required";
+    
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================
@@ -74,6 +92,7 @@ public interface AddressingConstants {
         public static final String FAULT_ADDRESSING_HEADER_REQUIRED = "MessageAddressingHeaderRequired";
         public static final String FAULT_INVALID_CARDINALITY = "InvalidCardinality";
 
+        public static final QName WSAW_USING_ADDRESSING = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
     }
 
 
@@ -87,5 +106,7 @@ public interface AddressingConstants {
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
 
         public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
+        
+        public static final QName WSAW_USING_ADDRESSING = new QName(WSA_NAMESPACE,USING_ADDRESSING);
     }
 }

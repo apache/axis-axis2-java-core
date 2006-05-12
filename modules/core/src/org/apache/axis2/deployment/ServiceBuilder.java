@@ -89,6 +89,13 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
+            // Process WS-Addressing flag attribute
+            OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
+            if(addressingRequiredatt!=null){
+            	String addressingRequiredString = addressingRequiredatt.getAttributeValue();
+            	service.setWSAddressingFlag(addressingRequiredString);
+            }
+            
             //Setting service tratget namespace if any
             OMAttribute targetNameSpace = service_element.
                     getAttribute(new QName(TARGET_NAME_SPACE));

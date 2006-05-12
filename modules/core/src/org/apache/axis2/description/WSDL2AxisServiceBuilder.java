@@ -2,6 +2,7 @@ package org.apache.axis2.description;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -1054,6 +1055,17 @@ public class WSDL2AxisServiceBuilder {
                     addPolicyRef(description, originOfExtensibilityElements,
                             policyRef);
 
+                } else if(AddressingConstants.Final.WSAW_USING_ADDRESSING.equals(unknown.getElementType()) ||
+                		  AddressingConstants.Submission.WSAW_USING_ADDRESSING.equals(unknown.getElementType())){
+                	// Read the wsaw:UsingAddressing flag from the WSDL. It is only valid on the Port or Binding
+                	// so only recognise it as en extensibility elemtn of one of those.
+                	if(originOfExtensibilityElements.equals(PORT) || originOfExtensibilityElements.equals(BINDING)){
+                		if(Boolean.TRUE.equals(unknown.getRequired())){
+                		    axisService.setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
+                		}else{
+                			axisService.setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
+                		}
+                	}
                 } else {
                     //TODO : we are ignored that.
                 }
