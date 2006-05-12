@@ -70,10 +70,9 @@ public class Phase implements Handler {
     private ArrayList handlers;
 
     /**
-     * this is want if the phaseFirst and phaseLst same hanlder
-     * that is for this phase there is only one phase
+     * A handler has been marked as present in both the first phase and the last phase
      */
-    private boolean isOneHanlder;
+    private boolean isOneHandler;
 
     /**
      * Field phaseName
@@ -140,7 +139,7 @@ public class Phase implements Handler {
                 return;
             }
         }
-        if (isOneHanlder) {
+        if (isOneHandler) {
             // TODO : should we allow both phaseFirst and phaseLast to be true for one Handler??
             throw new PhaseException(this.getPhaseName()
                     + "can only have one handler, since there is a "
@@ -155,7 +154,7 @@ public class Phase implements Handler {
                         + " is invalid or incorrect phase rules");
             } else {
                 handlers.add(handler.getHandler());
-                isOneHanlder = true;
+                isOneHandler = true;
             }
         } else if (handler.getRules().isPhaseFirst()) {
             setPhaseFirst(handler.getHandler());
@@ -534,7 +533,7 @@ public class Phase implements Handler {
                 phaselastset = false;
             }
             if(rule.isPhaseFirst()&& rule.isPhaseLast()){
-                isOneHanlder = false;
+                isOneHandler = false;
             }
             log.info("removed handler " + handler.getName().getLocalPart()
                     + " from the phase " + phaseName);
