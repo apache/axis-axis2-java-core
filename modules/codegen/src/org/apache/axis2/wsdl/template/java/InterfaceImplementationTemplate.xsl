@@ -263,6 +263,12 @@
                                         </xsl:choose>
 
                                     </xsl:for-each>	
+                                    <xsl:choose>
+                                        <!-- If there are headers then build the envelope -->
+                                        <xsl:when test="count(input/param[@location='header'])>0">
+                                            env.build();
+                                        </xsl:when>
+                                    </xsl:choose>
                                     <xsl:for-each select="input/param[@location='header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
@@ -423,6 +429,12 @@
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:for-each>
+                                    <xsl:choose>
+                                        <!-- If there are headers then build the envelope  -->
+                                        <xsl:when test="count(input/param[@location='header'])>0">
+                                            env.build();
+                                        </xsl:when>
+                                    </xsl:choose>
                                     <xsl:for-each select="input/param[@location='header']">
                                          // add the headers only if they are not null
                                         if (<xsl:value-of select="@name"/>!=null){
