@@ -83,8 +83,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
         } else {
             this.schema_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
         }
-
-        XmlSchema xmlSchema = getXmlSchema(clazz.getPackage().getName(), schemaTargetNameSpace, schema_namespace_prefix);
+        XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.getPacakgeName(className,loader), schemaTargetNameSpace, schema_namespace_prefix);
         xmlSchema.getPrefixToNamespaceMap().put(DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 URI_2001_SCHEMA_XSD);
     }
@@ -224,7 +223,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private void generateWrapperElementforMethod(JMethod method) throws Exception {
         //since the wrapper elements are generated for the methods of the service interface
         //we get the schema that corresponds to the package of the service interface classname
-        XmlSchema xmlSchema = getXmlSchema(clazz.getPackage().getName(),
+        XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.getPacakgeName(className,classLoader),
                 schemaTargetNameSpace,
                 schema_namespace_prefix);
         String methodName = method.getSimpleName();
@@ -306,7 +305,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
                                               String methodName) throws Exception {
         //since the wrapper elements are generated for the methods of the service interface
         //we get the schema that corresponds to the package of the service interface classname
-        XmlSchema xmlSchema = getXmlSchema(clazz.getPackage().getName(),
+        XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.getPacakgeName(className,classLoader),
                 schemaTargetNameSpace,
                 schema_namespace_prefix);
         if (!retuenType.isVoidType()) {

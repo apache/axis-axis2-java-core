@@ -28,10 +28,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -45,7 +44,7 @@ import java.util.Iterator;
  * Builds a service description from OM
  */
 public class ServiceBuilder extends DescriptionBuilder {
-	private static final Log log = LogFactory.getLog(ServiceBuilder.class);
+    private static final Log log = LogFactory.getLog(ServiceBuilder.class);
     private AxisService service;
 
     public ServiceBuilder(AxisConfiguration axisConfig, AxisService service) {
@@ -203,14 +202,14 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (wsamappings == null) {
                     continue;
                 }
+                if (service.getOperation(operationDesc.getName()) == null) {
+                    service.addOperation(operationDesc);
+                }
                 for (int j = 0; j < wsamappings.size(); j++) {
                     String mapping = (String) wsamappings.get(j);
                     if (mapping.length() > 0) {
                         service.mapActionToOperation(mapping, operationDesc);
                     }
-                }
-                if (service.getOperation(operationDesc.getName()) == null) {
-                    service.addOperation(operationDesc);
                 }
             }
 

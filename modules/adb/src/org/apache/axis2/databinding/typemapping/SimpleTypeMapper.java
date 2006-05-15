@@ -21,12 +21,7 @@ import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.TimeZone;
+import java.util.*;
 
 public class SimpleTypeMapper {
 
@@ -49,8 +44,6 @@ public class SimpleTypeMapper {
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALANDER = "java.util.Calendar";
     private static final String ARRAY_LIST = "java.util.ArrayList";
-    private static final String HASH_MAP = "java.util. HashMap";
-    private static final String HASH_TABLE = "java.util. Hashtable";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -79,7 +72,7 @@ public class SimpleTypeMapper {
             return new Float(value.getText());
         } else if (parameter.getName().equals(CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
-        }  else if (parameter.getName().equals(W_INT)) {
+        } else if (parameter.getName().equals(W_INT)) {
             return new Integer(value.getText());
         } else if (parameter.getName().equals(W_BOOLEAN)) {
             return Boolean.valueOf(value.getText());
@@ -96,13 +89,13 @@ public class SimpleTypeMapper {
         } else if (parameter.getName().equals(W_CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
         } else if (parameter.getName().equals(W_CALANDER)) {
-            return makeCalendar(value.getText(),false);
-        }else {
+            return makeCalendar(value.getText(), false);
+        } else {
             return null;
         }
     }
 
-    public static ArrayList getArrayList(OMElement element, String localName){
+    public static ArrayList getArrayList(OMElement element, String localName) {
         Iterator childitr = element.getChildrenWithName(new QName(localName));
         ArrayList list = new ArrayList();
         while (childitr.hasNext()) {
@@ -112,7 +105,7 @@ public class SimpleTypeMapper {
         return list;
     }
 
-    public static ArrayList getArrayList(OMElement element){
+    public static ArrayList getArrayList(OMElement element) {
         Iterator childitr = element.getChildren();
         ArrayList list = new ArrayList();
         while (childitr.hasNext()) {
@@ -124,7 +117,7 @@ public class SimpleTypeMapper {
 
     public static boolean isSimpleType(Object obj) {
         String objClassName = obj.getClass().getName();
-        if (obj instanceof  Calendar) {
+        if (obj instanceof Calendar) {
             return true;
         } else {
             return isSimpleType(objClassName);
@@ -136,18 +129,9 @@ public class SimpleTypeMapper {
         return isSimpleType(objClassName);
     }
 
-    public static boolean isArrayList(Class obj){
+    public static boolean isArrayList(Class obj) {
         String objClassName = obj.getName();
         return ARRAY_LIST.equals(objClassName);
-    }
-
-      public static boolean isHasMap(Class obj){
-        String objClassName = obj.getName();
-        return HASH_MAP.equals(objClassName);
-    }
-    public static boolean isHasTable(Class obj){
-        String objClassName = obj.getName();
-        return HASH_TABLE.equals(objClassName);
     }
 
     public static boolean isSimpleType(String objClassName) {
@@ -183,7 +167,7 @@ public class SimpleTypeMapper {
             return true;
         } else if (objClassName.equals(W_FLOAT)) {
             return true;
-        } else if(objClassName.equals(W_CALANDER)) {
+        } else if (objClassName.equals(W_CALANDER)) {
             return true;
         } else return objClassName.equals(W_CHAR);
     }
@@ -203,11 +187,11 @@ public class SimpleTypeMapper {
                 return "INF";
             } else if (data == Double.NEGATIVE_INFINITY) {
                 return "-INF";
-            }  else {
+            } else {
                 return obj.toString();
             }
-        } else if(obj instanceof Calendar){
-            return zulu.format(((Calendar)obj).getTime());
+        } else if (obj instanceof Calendar) {
+            return zulu.format(((Calendar) obj).getTime());
         }
         return obj.toString();
     }
@@ -252,7 +236,7 @@ public class SimpleTypeMapper {
 
         // parse optional milliseconds
         if (pos < source.length() && source.charAt(pos) == '.') {
-            int milliseconds ;
+            int milliseconds;
             int start = ++pos;
             while (pos < source.length() &&
                     Character.isDigit(source.charAt(pos))) {

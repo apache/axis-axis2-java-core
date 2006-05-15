@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class AxisConfiguration extends AxisDescription {
 
-	private static final Log log = LogFactory.getLog(AxisConfiguration.class);
+    private static final Log log = LogFactory.getLog(AxisConfiguration.class);
     /**
      * Field modules
      */
@@ -170,21 +170,25 @@ public class AxisConfiguration extends AxisDescription {
     private void isWSDLEnable(AxisService axisService) {
         if (!axisService.isWsdlfound()) {
             Iterator operatins = axisService.getOperations();
-            while (operatins.hasNext()) {
-                AxisOperation axisOperation = (AxisOperation) operatins.next();
-                if (axisOperation.getMessageReceiver() == null) {
-                    axisService.setWsdlfound(false);
-                    return;
+            if (operatins.hasNext()) {
+                while (operatins.hasNext()) {
+                    AxisOperation axisOperation = (AxisOperation) operatins.next();
+                    if (axisOperation.getMessageReceiver() == null) {
+                        axisService.setWsdlfound(false);
+                        return;
+                    }
+                    String messageReceiverClass = axisOperation.getMessageReceiver().getClass().getName();
+                    if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver".equals(messageReceiverClass) ||
+                            "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver".equals(messageReceiverClass) ||
+                            "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver".equals(messageReceiverClass))) {
+                        axisService.setWsdlfound(false);
+                        return;
+                    }
                 }
-                String messageReceiverClass = axisOperation.getMessageReceiver().getClass().getName();
-                if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver".equals(messageReceiverClass) ||
-                        "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver".equals(messageReceiverClass) ||
-                        "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver".equals(messageReceiverClass))) {
-                    axisService.setWsdlfound(false);
-                    return;
-                }
+                axisService.setWsdlfound(true);
+            } else {
+                axisService.setWsdlfound(false);
             }
-            axisService.setWsdlfound(true);
         }
     }
 

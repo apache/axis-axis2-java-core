@@ -65,7 +65,7 @@ import java.util.*;
 public class AxisService extends AxisDescription {
 
     private int nsCount = 0;
-	private static final Log log = LogFactory.getLog(AxisService.class);
+    private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
 
     private HashMap operationsAliasesMap = null;
@@ -344,6 +344,11 @@ public class AxisService extends AxisDescription {
         String action = axisOperation.getSoapAction();
         if (action.length() > 0) {
             operationsAliasesMap.put(action, axisOperation);
+        }
+        if (axisOperation.getMessageReceiver() == null) {
+            axisOperation.setMessageReceiver(
+                    loadDefaultMessageReceiver(
+                            axisOperation.getMessageExchangePattern(), this));
         }
     }
 

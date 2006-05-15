@@ -28,6 +28,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +44,7 @@ import java.util.*;
  * Provides methods to process axis2 admin requests.
  */
 public class AdminAgent extends AbstractAgent {
-
+    private static final Log log = LogFactory.getLog(AbstractAgent.class);
     /**
      * Field LIST_MULTIPLE_SERVICE_JSP_NAME
      */
@@ -73,11 +75,18 @@ public class AdminAgent extends AbstractAgent {
 
     public AdminAgent(ConfigurationContext aConfigContext) {
         super(aConfigContext);
-        File repoDir = new File(configContext.getAxisConfiguration().getRepository().getFile());
-        serviceDir = new File(repoDir, "services");
-
-        if (!serviceDir.exists()) {
-            serviceDir.mkdirs();
+        try {
+            if (configContext.getAxisConfiguration().getRepository() != null) {
+                File repoDir = new File(configContext.getAxisConfiguration().getRepository().getFile());
+                serviceDir = new File(repoDir, "services");
+                if (!serviceDir.exists()) {
+                    serviceDir.mkdirs();
+                }
+            }
+        } catch (Exception e) {
+            log.info(e);
+        } catch (Throwable e) {
+            log.error(e);
         }
     }
 
@@ -490,8 +499,6 @@ public class AdminAgent extends AbstractAgent {
         }
         renderView(LIST_SINGLE_SERVICES_JSP_NAME, req, res);
     }
-
-
 
 
     protected void processListContexts(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {

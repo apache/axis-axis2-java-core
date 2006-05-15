@@ -19,17 +19,16 @@ import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collection;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -191,7 +190,7 @@ public class Utils {
      * This guy will create a AxisService using java reflection
      */
     public static void fillAxisService(AxisService axisService,
-                                       AxisConfiguration axisConfig , ArrayList excludeOperations) throws Exception {
+                                       AxisConfiguration axisConfig, ArrayList excludeOperations) throws Exception {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         if (implInfoParam == null) {
             // Nothing to do.

@@ -397,7 +397,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         ArrayList mappingList = new ArrayList();
         while (mappingIterator.hasNext()) {
             OMElement mappingElement = (OMElement) mappingIterator.next();
-            mappingList.add(mappingElement.getText());
+            mappingList.add(mappingElement.getText().trim());
         }
         return mappingList;
     }
