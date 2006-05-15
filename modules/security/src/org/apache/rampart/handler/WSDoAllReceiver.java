@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security;
+package org.apache.rampart.handler;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
@@ -27,10 +27,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.security.handler.WSDoAllHandler;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.util.Axis2Util;
-import org.apache.axis2.security.util.HandlerParameterDecoder;
+import org.apache.rampart.util.Axis2Util;
+import org.apache.rampart.util.HandlerParameterDecoder;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

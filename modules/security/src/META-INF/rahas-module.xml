@@ -1,4 +1,4 @@
-<module name="rahas" class="org.apache.axis2.security.SecurityModule">
+<module name="rahas" class="org.apache.rampart.Rampart">
 	    <Description>RAHAS - Implementation of WS-SecureConversation specification</Description>
     <inflow>
         <handler name="inflowHandler" class="org.apache.axis2.security.rahas.Receiver">

@@ -17,8 +17,8 @@
 package org.apache.axis2.security.rahas;
 
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 
 /**
  * This tests the use computed keys when the requester provides entropy

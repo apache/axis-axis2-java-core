@@ -1,13 +1,13 @@
-<module name="rampart" class="org.apache.axis2.security.SecurityModule">
+<module name="rampart" class="org.apache.rampart.Rampart">
 	    <Description>This module provides the WS-Security functionalities for Axis2, based on Apache WSS4J and Apache XML-Security implementations</Description>
     <inflow>
-        <handler name="SecurityInHandler" class="org.apache.axis2.security.WSDoAllReceiver">
+        <handler name="SecurityInHandler" class="org.apache.rampart.handler.WSDoAllReceiver">
             <order phase="Security" phaseFirst="true"/>
         </handler>
     </inflow>
 
     <outflow>
-        <handler name="SecurityOutHandler" class="org.apache.axis2.security.WSDoAllSender">
+        <handler name="SecurityOutHandler" class="org.apache.rampart.handler.WSDoAllSender">
             <order phase="MessageOut"/>
         </handler>
     </outflow>

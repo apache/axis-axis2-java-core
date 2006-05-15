@@ -29,9 +29,9 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.rampart.handler.WSSHandlerConstants;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

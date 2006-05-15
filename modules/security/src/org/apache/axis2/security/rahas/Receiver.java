@@ -25,9 +25,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.security.WSDoAllReceiver;
 import org.apache.axis2.security.trust.Constants;
-import org.apache.axis2.security.util.Axis2Util;
+import org.apache.rampart.handler.WSDoAllReceiver;
+import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.security.WSSecurityEngine;
 
 import javax.xml.namespace.QName;

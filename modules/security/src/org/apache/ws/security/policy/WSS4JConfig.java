@@ -16,8 +16,8 @@
 
 package org.apache.ws.security.policy;
 
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.security.policy.model.Binding;
 import org.apache.ws.security.policy.model.SupportingToken;
 

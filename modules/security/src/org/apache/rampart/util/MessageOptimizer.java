@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.util;
+package org.apache.rampart.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;

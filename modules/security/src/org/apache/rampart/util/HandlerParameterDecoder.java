@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.security.util;
+package org.apache.rampart.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.rampart.handler.WSSHandlerConstants;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 

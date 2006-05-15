@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.handler.config;
+package org.apache.rampart.handler.config;
 
-import junit.framework.TestCase;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
+
+import junit.framework.TestCase;
 
 /**
  * Tests the org.apache.axis2.security.handler.config.OutflowConfiguration

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security;
+package org.apache.rampart;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
@@ -23,16 +23,16 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
-import org.apache.axis2.security.util.HandlerParameterDecoder;
+import org.apache.rampart.util.HandlerParameterDecoder;
+import org.apache.rampart.handler.WSSHandlerConstants;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.security.policy.WSS4JConfig;
 import org.apache.ws.security.policy.WSS4JConfigBuilder;
 import org.apache.ws.security.policy.parser.WSSPolicyProcessor;
 
-public class SecurityModule implements Module {
+public class Rampart implements Module {
     private AxisModule module;
 
     public void init(ConfigurationContext configContext, AxisModule module)

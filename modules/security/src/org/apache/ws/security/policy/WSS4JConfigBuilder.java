@@ -15,7 +15,7 @@
  */
 package org.apache.ws.security.policy;
 
-import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.policy.model.AsymmetricBinding;
 import org.apache.ws.security.policy.model.Binding;

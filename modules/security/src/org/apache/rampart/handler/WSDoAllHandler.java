@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.handler;
+package org.apache.rampart.handler;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.security.util.Axis2Util;
+import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandler;
 

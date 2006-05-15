@@ -27,7 +27,7 @@
 
         <copy todir="target/temp-mar">
             <fileset dir="target/classes">
-                <include name="**/org/apache/axis2/*/**/*.class"/>
+                <include name="**/org/apache/*/**/*.class"/>
                 <exclude name="**/org/apache/axis2/security/InteropScenarioClient.class"/>
             </fileset>
         </copy>

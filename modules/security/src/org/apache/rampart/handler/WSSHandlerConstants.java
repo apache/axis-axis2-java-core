@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.handler;
+package org.apache.rampart.handler;
 
 /**
  * Constants specific to the Axis2 security module

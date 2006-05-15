@@ -24,7 +24,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.security.trust.SimpleTokenStore;
 import org.apache.axis2.security.trust.TokenStorage;
-import org.apache.axis2.security.util.Axis2Util;
+import org.apache.rampart.util.Axis2Util;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.handler.WSHandlerConstants;

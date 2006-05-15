@@ -16,9 +16,9 @@
 
 package org.apache.axis2.security;
 
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.rampart.handler.WSSHandlerConstants;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 
 /**
  * WS-Security interop scenario 5

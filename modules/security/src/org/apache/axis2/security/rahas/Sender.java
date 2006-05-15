@@ -26,7 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.security.WSDoAllSender;
+import org.apache.rampart.handler.WSDoAllSender;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.Token;
 import org.apache.axis2.security.trust.TrustException;

@@ -16,16 +16,17 @@
 
 package org.apache.axis2.security;
 
-import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.security.handler.config.InflowConfiguration;
-import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.security.WSConstants;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+
+import junit.framework.TestCase;
 
 public abstract class InteropTestBase extends TestCase {
 
