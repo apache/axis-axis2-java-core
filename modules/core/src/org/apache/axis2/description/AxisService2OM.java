@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -173,6 +174,8 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private void generateMessages(OMFactory fac,
                                   OMElement defintions) {
+        HashSet faultMessageNames = new HashSet();
+        
         Iterator operations = axisService.getOperations();
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
@@ -212,8 +215,11 @@ public class AxisService2OM implements Java2WSDLConstants {
                 for (int i = 0; i < faultyMessages.size(); i++) {
                     AxisMessage axisMessage = (AxisMessage) faultyMessages
                             .get(i);
-                    writeMessage(axisMessage, fac, defintions);
-                    generateHeaderMessages(axisMessage, fac, defintions);
+                    String name = axisMessage.getName();
+                    if (faultMessageNames.add(name)) {
+                        writeMessage(axisMessage, fac, defintions);
+                        generateHeaderMessages(axisMessage, fac, defintions);
+                    }
                 }
             }
         }
