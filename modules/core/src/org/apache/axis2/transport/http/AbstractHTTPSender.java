@@ -270,6 +270,8 @@ public abstract class AbstractHTTPSender {
                                                      URL targetURL)
             throws AxisFault {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
+
+        boolean basicAuthenticationEnabled = serverBasicPreemtiveAuthentication(msgCtx); // server authentication
         int port = targetURL.getPort();
 
         if (port == -1) {
@@ -279,8 +281,11 @@ public abstract class AbstractHTTPSender {
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
-        if (!isHostProxy) {
+        if (!isHostProxy && !basicAuthenticationEnabled) {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
+        }else if(basicAuthenticationEnabled){
+             // premtive authentication
+            this.configServerPreemtiveAuthenticaiton(client,msgCtx,config,targetURL);
         } else {
 
             // proxy and NTLM configuration
@@ -289,6 +294,42 @@ public abstract class AbstractHTTPSender {
         }
 
         return config;
+    }
+
+    private void configServerPreemtiveAuthenticaiton(HttpClient agent,
+                                                     MessageContext msgCtx,
+                                                     HostConfiguration config,
+                                                     URL targetURL) {
+        config.setHost(targetURL.getHost(), targetURL.getPort(),
+                       targetURL.getProtocol());
+
+        agent.getParams().setAuthenticationPreemptive(true);
+
+        HttpTransportProperties.BasicAuthentication basicAuthentication =
+                (HttpTransportProperties.BasicAuthentication) msgCtx
+                        .getProperty(HTTPConstants.BASIC_AUTHENTICATION);
+        Credentials defaultCredentials = new UsernamePasswordCredentials(
+                basicAuthentication.getUsername(),
+                basicAuthentication.getPassword());
+        if (basicAuthentication.getPort() == -1 ||
+            basicAuthentication.getHost() == null) {
+            agent.getState().setCredentials(AuthScope.ANY, defaultCredentials);
+        } else {
+            if (basicAuthentication.getRealm() == null) {
+                agent.getState().setCredentials(new AuthScope(
+                        basicAuthentication.getHost(),
+                        basicAuthentication.getPort(),
+                        AuthScope.ANY_REALM), defaultCredentials);
+
+            } else {
+                agent.getState().setCredentials(new AuthScope(
+                        basicAuthentication.getHost(),
+                        basicAuthentication.getPort(),
+                        basicAuthentication.getRealm()), defaultCredentials);
+            }
+        }
+
+
     }
 
     /**
@@ -321,6 +362,14 @@ public abstract class AbstractHTTPSender {
             // If there's a problem log it and use the default values
             log.error("Invalid timeout value format: not a number", nfe);
         }
+    }
+
+    //Server Preemptive Authentication RUNTIME
+
+    private boolean serverBasicPreemtiveAuthentication(MessageContext msgContext) {
+
+        return msgContext.getProperty(HTTPConstants.BASIC_AUTHENTICATION) !=
+               null;
     }
 
     private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
