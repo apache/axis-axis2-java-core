@@ -461,4 +461,5 @@ public class HTTPConstants {
     }
 
     public static final String USER_AGENT = "userAgent";
+    public static final String SERVER = "server";
 }

@@ -49,6 +49,10 @@ public class SOAPUtil {
         try {
             response.setHeader("Content-Type","text/html");
             response.addHeader(HTTPConstants.HEADER_USER_AGENT, getUserAgent(msgContext));
+
+            if(server(msgContext) != null){
+                response.setHeader("Server",server(msgContext));
+            }
             String soapAction = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                                                       request.getInputStream(),
@@ -83,5 +87,15 @@ public class SOAPUtil {
 
 
         return userAgentString;
+    }
+
+    private String server(MessageContext messageContext) {
+        if (messageContext.getParameter(HTTPConstants.SERVER) != null){
+            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.SERVER).getParameterElement();
+            return userAgentElement.getText().trim();
+
+        }
+        return null;
+
     }
 }
