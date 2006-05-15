@@ -91,11 +91,11 @@ public class ClientInfo
         java.util.ArrayList attribList = new java.util.ArrayList();
 
 
-        elementList.add(new javax.xml.namespace.QName("",
+        elementList.add(new javax.xml.namespace.QName("http://www.wso2.com/types",
                 "name"));
         elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localName));
 
-        elementList.add(new javax.xml.namespace.QName("",
+        elementList.add(new javax.xml.namespace.QName("http://www.wso2.com/types",
                 "ssn"));
         elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSsn));
 

@@ -1023,7 +1023,7 @@ public class SchemaCompiler {
                 //get the binary state and add that to the status map
                 if (isBinary(elt)){
                     metainfHolder.addtStatus(elt.getQName(),
-                           SchemaConstants.BINARY_TYPE);
+                            SchemaConstants.BINARY_TYPE);
                 }
                 // process the XMLSchemaAny
             }else if (child instanceof XmlSchemaAny){

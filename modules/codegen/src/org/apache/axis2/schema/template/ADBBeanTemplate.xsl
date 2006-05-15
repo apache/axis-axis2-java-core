@@ -33,6 +33,8 @@
 
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="choice" select="@choice"/>
+        <xsl:variable name="ordered" select="@ordered"/>
+        <xsl:variable name="unordered" select="not($ordered)"/>  <!-- for convenience -->
         <xsl:variable name="isType" select="@type"/>
         <xsl:variable name="anon" select="@anon"/>
     <!-- write the class header. this should be done only when unwrapped -->
@@ -514,19 +516,21 @@
                       <!-- If we are not a type and not an element with anonymous type, then we are an element with one property for our named type. -->
                       <!-- Our single named-type property applies to our entire outer element, so don't skip it. -->
                 <!-- First loop creates arrayLists for handling arrays -->
-                <xsl:for-each select="property">
+                <xsl:for-each select="property[not(@attribute)]">
                     <xsl:if test="@array">
                         java.util.ArrayList list<xsl:value-of select="position()"/> = new java.util.ArrayList();
                     </xsl:if>
                 </xsl:for-each>
 
-                <xsl:if test="$choice">   <!-- If choice, properties can be in any order -->
+                <xsl:if test="property[not(@attribute)]">
+                <xsl:if test="$unordered">   <!-- Properties can be in any order -->
                 while(!reader.isEndElement()) {
                     if (reader.isStartElement()){
                 </xsl:if>
+                </xsl:if>
 
                         <!-- Now reloop and populate the code -->
-                        <xsl:for-each select="property">
+                        <xsl:for-each select="property[not(@attribute)]">
                             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                             <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
                             <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
@@ -543,14 +547,14 @@
                             <xsl:variable name="propQName">new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")</xsl:variable>
 
                            <xsl:choose>
-                                <xsl:when test="$choice">  <!-- One property per iteration if choice -->
+                                <xsl:when test="$unordered">  <!-- One property per iteration if unordered -->
                                     <xsl:if test="position()>1">
                                         else
                                     </xsl:if>
                                 </xsl:when>
-                                <xsl:otherwise>            <!-- If sequence, advance to start of next property or to end of outer element -->
-                                    while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
-                                        reader.next();
+                                <xsl:otherwise>
+                                    <!-- If sequence, advance to start of next property or to end of outer element -->
+                                    while (!reader.isStartElement() &amp;&amp; !reader.isEndElement()) reader.next();
                                 </xsl:otherwise>
                             </xsl:choose>
                             if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())){
@@ -735,7 +739,7 @@
 
                               }  // End of if for expected property start element
 
-                            <xsl:if test="not($choice) and $min!=0">
+                            <xsl:if test="$ordered and $min!=0">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
                                     throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
@@ -743,7 +747,8 @@
                             </xsl:if>
                         </xsl:for-each>
 
-                        <xsl:if test="$choice">
+                        <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
+                        <xsl:if test="$unordered">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
                                         throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
@@ -751,6 +756,7 @@
                              } else reader.next();  <!-- At neither a start nor an end element, skip it -->
                             }  // end of while loop
                             </xsl:if>
+                          </xsl:if>
 
 
             } catch (javax.xml.stream.XMLStreamException e) {
