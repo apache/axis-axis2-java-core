@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title>Axis2 intergration with the Spring Framework</title>
+</head>
+
+<body>
+<h1>Axis2 intergration with the Spring Framework</h1>
+
+<p>The idea behind Axis2 and Spring integration is that Axis2 simply needs to 
+have Spring inject its ApplicationContext object into an Axis2 class. The web 
+service itself acts like any other Spring wired bean. No further spring 
+configuration is necessary. These Spring beans can be loaded any way desired, 
+as Axis2 has no file dependencies from Spring. Spring versions 1.2.6 and 1.2.8 have
+been tested, but probably any version would work as only core functionality is required.</p>
+
+<p>This guide assumes some basic knowledge of Axis2. See the userguide for more info.</p>
+
+<p>From an Axis2 standpoint, two needed hooks are to be placed into the AAR services.xml: 
+The spring message receiver that follows the desired Message Exchange Pattern (MEP),
+and the name of the Spring bean that is your web service.</p>
+
+<p>For the purpose of this example, and for no other reason besides simplicity, we'll 
+configure Spring via a WAR file's web.xml. Lets add a context-param and a listener:</p>
+<pre>&lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+&lt;/listener&gt;
+&lt;context-param&gt;
+      &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+      &lt;param-value&gt;/WEB-INF/applicationContext.xml&lt;/param-value&gt;
+    &lt;/context-param&gt;</pre>
+
+<p>A simple Spring configuration is shown below, including the Axis2 hook, the web service, 
+and a bean that will be injected into the web service. This files path is /WEB-INF/applicationContext.xml:</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
+
+&lt;beans&gt;
+  &lt;!-- Configure spring to give a hook to axis2 --&gt;
+  &lt;bean id="applicationContext" 
+    class="org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" /&gt;
+
+  &lt;!-- Axis2 Web Service, but to Spring, its just another bean that has dependencies --&gt;
+  &lt;bean id="springAwareService"
+        class="spring.SpringAwareService"&gt;
+    &lt;property name="myBean" ref="myBean" /&gt;
+  &lt;/bean&gt;
+
+  &lt;!-- just another bean with a wired implementation, that's injected by Spring 
+          into the Web Service --&gt;
+   &lt;bean id="myBean"
+        class="spring.MyBeanImpl"&gt;
+     &lt;property name="val" value="Spring, emerge thyself" /&gt;
+  &lt;/bean&gt;
+&lt;/beans&gt;</pre>
+
+<p>Lets move now to the Axis2 services.xml file. This example uses an In / Out 
+synchronous MEP, but really, just pick a supported MEP and use a Spring prefix. 
+The other required part is the bean name, as shown below. 
+
+IMPORTANT: The ServiceClass referenced MUST be placed in the Threaded Context Classloader 
+(TCCL) - in a typical servlet container that simply is WEB-INF/lib or WEB-INF/classes. This is 
+because Spring uses the TCCL, and loads its beans from there. Inside the AAR, unfortunately, 
+won't work. </p>
+<pre>&lt;service name="SpringAwareService"&gt;
+    &lt;description&gt;
+        simple spring example
+    &lt;/description&gt;
+    &lt;!-- place class in TCCL, such as WEB-INF/classes --&gt;
+    &lt;parameter name="ServiceClass" 
+      locked="false"&gt;spring.SpringAwareService&lt;/parameter&gt;
+    &lt;parameter name="SpringBeanName" 
+      locked="false"&gt;springAwareService&lt;/parameter&gt;
+    &lt;operation name="getValue"&gt;
+        &lt;messageReceiver 
+      class="org.apache.axis2.extensions.spring.receivers.SpringRawXMLINOutMessageReceiver"/&gt;
+    &lt;/operation&gt;
+&lt;/service&gt;</pre>
+
+<p>From here, its just standard Axis2 coding, only now the service has Spring wiring
+capabilities. The service is below: </p>
+<pre>package org;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
+
+public class SpringAwareService {
+
+    private MyBeanImpl myBean = null;
+
+    //spring 'injects' this implementation
+    public void setMyBean(MyBeanImpl myBean) {
+            this.myBean = myBean;
+    }
+
+    // The web service
+    public OMElement getValue(OMElement ignore) {
+            OMFactory factory=
+                OMAbstractFactory.getOMFactory();
+            OMNamespace payloadNs= factory.createOMNamespace(
+                "http://springExample.org/example1", "example1");
+            OMElement payload =
+                factory.createOMElement("string", payloadNs);
+            OMText response = factory.createOMText(this.myBean.emerge());
+            payload.addChild(response);
+            return payload;
+    }
+}</pre>
+<p>For those new to Spring, one of the ideas is that you program to an Interface, and the 
+implementation is pluggable. This idea is referenced in the Spring config file above. Below is 
+the interface followed by the implementation: </p>
+<pre>package spring;
+
+/** Interface for Spring aware Bean */
+public interface MyBean {
+         String emerge(String s);
+}
+
+package spring;
+
+/** Spring wired implementation */
+public class MyBeanImpl {
+
+    String str = null;
+    // spring 'injects' this value
+    public void setVal(String s) {
+        str = s;
+    }
+    // web service gets this value
+    public String emerge() {
+        return str;
+    }
+}</pre>
+<p>Lastly here's the client - not really necessary for the example, other than for completeness:</p>
+<pre>package client;
+
+import java.io.StringWriter;
+
+import javax.xml.stream.XMLOutputFactory;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+
+public class TestClient {
+          /** Access point inside the servlet container. **/
+    private static EndpointReference targetEPR =
+        new EndpointReference(
+                "http://localhost:8080/axis2/services/springExample");
+
+    /**
+     * Simple axis2 client.
+     *
+     * @param args Main
+     */
+    public static void main(String[] args) {
+        try {
+            OMFactory factory = OMAbstractFactory.getOMFactory();
+            OMNamespace omNs = factory.createOMNamespace(
+                        "http://springExample.org/example1", "example1");
+
+            OMElement method = factory.createOMElement("getValue", omNs);
+            OMElement value = factory.createOMElement("Text", omNs);
+            value.addChild(factory.createOMText(value, "Some String "));
+            method.addChild(value);
+
+            ServiceClient serviceClient = new ServiceClient();
+
+            Options options = new Options();
+            serviceClient.setOptions(options);
+            options.setTo(targetEPR);
+
+            //Blocking invocation
+            OMElement result = serviceClient.sendReceive(method);
+
+            StringWriter writer = new StringWriter();
+            result.serialize(XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter(writer));
+            writer.flush();
+
+            System.out.println("Response: " + writer.toString());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}</pre>
+<p>Running the client, you should see this output:</p>
+<pre>
+Response: &lt;example1:string xmlns:example1="http://springExample.org/example1" 
+  xmlns:tns="http://ws.apache.org/axis2"&gt;Spring, emerge thyself&lt;/example1:string&gt;
+</pre>
+</body>
+</html>
