@@ -11,17 +11,17 @@
 
     /**
      *  <xsl:value-of select="@name"/> Callback class, Users can extend this class and implement
-     *  their own receiveResult and receiveError methods. 
+     *  their own receiveResult and receiveError methods.
      */
-    public abstract class <xsl:value-of select="@name"/> {
+    public abstract class <xsl:value-of select="@name"/>{
 
 
 
-	private Object clientData;
+	protected Object clientData;
 
 
 	/**
-	* User can pass in any object that needs to be accessed once the NonBlocking 
+	* User can pass in any object that needs to be accessed once the NonBlocking
 	* Web service call is finished and appropreate method of this CallBack is called.
 	* @param clientData Object mechanism by which the user can pass in user data
 	* that will be avilable at the time this callback is called.
