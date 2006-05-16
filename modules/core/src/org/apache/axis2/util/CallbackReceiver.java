@@ -40,4 +40,9 @@ public class CallbackReceiver implements MessageReceiver {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }
     }
+
+    //to get the pending request
+    public HashMap getCallbackStore() {
+        return callbackStore;
+    }
 }
