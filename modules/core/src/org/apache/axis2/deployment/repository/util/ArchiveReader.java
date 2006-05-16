@@ -19,13 +19,20 @@ package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.*;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DescriptionBuilder;
+import org.apache.axis2.deployment.ModuleBuilder;
+import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.deployment.ServiceGroupBuilder;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.WSDL2AxisServiceBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -33,7 +40,13 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -175,8 +188,8 @@ public class ArchiveReader implements DeploymentConstants {
     private AxisService processWSDLFile(InputStream in, File serviceArchiveFile,
                                         boolean isArchive) throws DeploymentException {
         try {
-            WSDL2AxisServiceBuilder wsdl2AxisServiceBuilder =
-                    new WSDL2AxisServiceBuilder(in, null, null);
+            WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
+                    new WSDL11ToAxisServiceBuilder(in, null, null);
             if (serviceArchiveFile != null && isArchive) {
                 wsdl2AxisServiceBuilder.setCustomResolver(
                         new AARFileBasedURIResolver(serviceArchiveFile));

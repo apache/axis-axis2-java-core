@@ -57,7 +57,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class AxisService
@@ -1025,8 +1033,8 @@ public class AxisService extends AxisDescription {
                                                           QName wsdlServiceName,
                                                           String portName,
                                                           Options options) throws AxisFault {
-        WSDL2AxisServiceBuilder serviceBuilder =
-                new WSDL2AxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
+        WSDL11ToAxisServiceBuilder serviceBuilder =
+                new WSDL11ToAxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
         serviceBuilder.setServerSide(false);
         AxisService axisService = serviceBuilder.populateService();
         options.setTo(new EndpointReference(axisService.getEndpoint()));

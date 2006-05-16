@@ -27,7 +27,13 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -37,7 +43,15 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -247,8 +261,8 @@ public class DeploymentEngine implements DeploymentConstants {
                 if (wsdlStream == null) {
                     wsdlStream = serviceClassLoader.getResourceAsStream(metainf + "/" + serviceName + ".wsdl");
                     if (wsdlStream != null) {
-                        WSDL2AxisServiceBuilder wsdl2AxisServiceBuilder =
-                                new WSDL2AxisServiceBuilder(wsdlStream, null, null);
+                        WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
+                                new WSDL11ToAxisServiceBuilder(wsdlStream, null, null);
                         axisService = wsdl2AxisServiceBuilder.populateService();
                         axisService.setWsdlfound(true);
                         axisService.setName(serviceName);
@@ -278,8 +292,8 @@ public class DeploymentEngine implements DeploymentConstants {
                     if (wsdlStream == null) {
                         wsdlStream = serviceClassLoader.getResourceAsStream(metainf + "/" + serviceName + ".wsdl");
                         if (wsdlStream != null) {
-                            WSDL2AxisServiceBuilder wsdl2AxisServiceBuilder =
-                                    new WSDL2AxisServiceBuilder(wsdlStream, axisService);
+                            WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
+                                    new WSDL11ToAxisServiceBuilder(wsdlStream, axisService);
                             axisService = wsdl2AxisServiceBuilder.populateService();
                             axisService.setWsdlfound(true);
                             // Set the default message receiver for the operations that were

@@ -17,8 +17,8 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.description.WSDL2AxisServiceBuilder;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
@@ -32,12 +32,12 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.WSDLException;
 import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -84,7 +84,7 @@ public class CodeGenerationEngine {
                 serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
             }
 
-            configuration.setAxisService(new WSDL2AxisServiceBuilder(
+            configuration.setAxisService(new WSDL11ToAxisServiceBuilder(
                     wsdl4jDef,
                     serviceQname,
                     configuration.getPortName()).

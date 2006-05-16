@@ -28,6 +28,7 @@ public interface WSDLConstants {
     String STYLE_MSG = "msg";
 
     String WSDL_4_J_DEFINITION  = "wsdl4jDefinition";
+    String WSDL_20_DESCRIPTION  = "WSDL20Description";
     /**
      * Field WSDL2_0_NAMESPACE
      */

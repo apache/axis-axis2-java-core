@@ -5,7 +5,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2AxisServiceBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.ListenerManager;
 
 import java.io.File;
@@ -62,7 +62,7 @@ public class WSDLServiceBuilderTest extends TestCase {
                         continue;
                     }
                     try {
-                        WSDL2AxisServiceBuilder builder = new WSDL2AxisServiceBuilder(new FileInputStream(file1), null, null);
+                        WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(new FileInputStream(file1), null, null);
                         AxisService service = builder.populateService();
                         System.out.println("Testinf file: " + file1.getName());
                         configContext.getAxisConfiguration().addService(service);
@@ -72,7 +72,7 @@ public class WSDLServiceBuilderTest extends TestCase {
                         out.close();
 //                        URL wsdlURL = new URL("http://localhost:" + 6060 +
 //                                "/axis2/services/" + service.getName() + "?wsdl");
-//                        builder = new WSDL2AxisServiceBuilder(wsdlURL.openStream(), null, null);
+//                        builder = new WSDL11ToAxisServiceBuilder(wsdlURL.openStream(), null, null);
 //                        service = builder.populateService();
                         configContext.getAxisConfiguration().removeService(service.getName());
                     } catch (Exception e) {

@@ -2,25 +2,36 @@ package org.apache.axis2.description;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.resolver.URIResolver;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.ws.policy.util.PolicyRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Import;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -32,12 +43,16 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -57,53 +72,11 @@ import java.util.*;
  *
  */
 
-public class WSDL2AxisServiceBuilder {
+public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder{
 
-    private static final String XMLSCHEMA_NAMESPACE_URI = Constants.URI_2001_SCHEMA_XSD;
 
-    private static final String XMLSCHEMA_NAMESPACE_PREFIX = "xs";
-
-    private static final String XML_SCHEMA_LOCAL_NAME = "schema";
-
-    private static final String XML_SCHEMA_SEQUENCE_LOCAL_NAME = "sequence";
-
-    private static final String XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME = "complexType";
-
-    private static final String XML_SCHEMA_ELEMENT_LOCAL_NAME = "element";
-
-    private static final String XML_SCHEMA_IMPORT_LOCAL_NAME = "import";
-
-    private static final String XSD_NAME = "name";
-
-    private static final String XSD_TARGETNAMESPACE = "targetNamespace";
-
-    private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
-
-    private static final String AXIS2WRAPPED = "axis2wrapped";
-
-    private static final String XSD_TYPE = "type";
-
-    private static final String XSD_REF = "ref";
-
-    private static int nsCount = 0;
-
-    private Map resolvedRpcWrappedElementMap = new HashMap();
-
-    private static final String XSD_ELEMENT_FORM_DEFAULT = "elementFormDefault";
-
-    private static final String XSD_UNQUALIFIED = "unqualified";
-
-    private InputStream in;
-
-    private AxisService axisService;
-
-    private PolicyRegistry registry;
-
-    private QName serviceName;
 
     private String portName;
-
-    private boolean isServerSide = true;
 
     private static final String BINDING = "Binding";
 
@@ -131,50 +104,29 @@ public class WSDL2AxisServiceBuilder {
 
     private Definition wsdl4jDefinition = null;
 
-    private String style = null;
-
-    private URIResolver customResolver;
-
     private WSDLLocator customWSLD4JResolver;
-    private String baseUri = null;
 
 
-    public WSDL2AxisServiceBuilder(InputStream in, QName serviceName,
-                                   String portName) {
-        this.in = in;
-        this.serviceName = serviceName;
+    public WSDL11ToAxisServiceBuilder(InputStream in, QName serviceName,
+                                      String portName) {
+        super(in, serviceName);
         this.portName = portName;
-        this.axisService = new AxisService();
-        setPolicyRegistryFromService(axisService);
     }
 
 
-    public WSDL2AxisServiceBuilder(Definition def, QName serviceName,
-                                   String portName) {
+    public WSDL11ToAxisServiceBuilder(Definition def, QName serviceName,
+                                      String portName) {
+        super(null, serviceName);
         this.wsdl4jDefinition = def;
-        this.serviceName = serviceName;
         this.portName = portName;
-        this.axisService = new AxisService();
-        setPolicyRegistryFromService(axisService);
     }
 
-    public WSDL2AxisServiceBuilder(InputStream in, AxisService service) {
-        this(in);
-        this.axisService = service;
-        setPolicyRegistryFromService(service);
+    public WSDL11ToAxisServiceBuilder(InputStream in, AxisService service) {
+        super(in, service);
     }
 
-    public WSDL2AxisServiceBuilder(InputStream in) {
+    public WSDL11ToAxisServiceBuilder(InputStream in) {
         this(in, null, null);
-    }
-
-    /**
-     * Sets a custom xmlschema resolver
-     *
-     * @param customResolver
-     */
-    public void setCustomResolver(URIResolver customResolver) {
-        this.customResolver = customResolver;
     }
 
     /**
@@ -184,14 +136,6 @@ public class WSDL2AxisServiceBuilder {
      */
     public void setCustomWSLD4JResolver(WSDLLocator customWSLD4JResolver) {
         this.customWSLD4JResolver = customWSLD4JResolver;
-    }
-
-    public boolean isServerSide() {
-        return isServerSide;
-    }
-
-    public void setServerSide(boolean serverSide) {
-        isServerSide = serverSide;
     }
 
     public AxisService populateService() throws AxisFault {
@@ -214,7 +158,7 @@ public class WSDL2AxisServiceBuilder {
                     .getTargetNamespace());
             //adding ns in the original WSDL
             processPoliciesInDefintion(wsdl4jDefinition);
-            //schema generation
+            //scheam generation
             processImports(wsdl4jDefinition);
             axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
             Types wsdl4jTypes = wsdl4jDefinition.getTypes();
@@ -243,11 +187,6 @@ public class WSDL2AxisServiceBuilder {
         } catch (Exception e) {
             throw new AxisFault(e);
         }
-    }
-
-    private void setPolicyRegistryFromService(AxisService axisService) {
-        PolicyInclude policyInclude = axisService.getPolicyInclude();
-        this.registry = policyInclude.getPolicyRegistry();
     }
 
     private Binding findBinding(Definition dif) throws AxisFault {
@@ -941,25 +880,6 @@ public class WSDL2AxisServiceBuilder {
         }
     }
 
-    private XmlSchema getXMLSchema(Element element, String baseUri) {
-        XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
-        Map nsMap = axisService.getNameSpacesMap();
-        Iterator keys = nsMap.keySet().iterator();
-        String key;
-        while (keys.hasNext()) {
-            key = (String) keys.next();
-            schemaCollection.mapNamespace(key, (String) nsMap.get(key));
-        }
-
-        if (baseUri != null) schemaCollection.setBaseUri(baseUri);
-
-        if (customResolver != null) {
-            schemaCollection.setSchemaResolver(customResolver);
-        }
-
-        return schemaCollection.read(element);
-    }
-
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
@@ -1055,17 +975,6 @@ public class WSDL2AxisServiceBuilder {
                     addPolicyRef(description, originOfExtensibilityElements,
                             policyRef);
 
-                } else if(AddressingConstants.Final.WSAW_USING_ADDRESSING.equals(unknown.getElementType()) ||
-                		  AddressingConstants.Submission.WSAW_USING_ADDRESSING.equals(unknown.getElementType())){
-                	// Read the wsaw:UsingAddressing flag from the WSDL. It is only valid on the Port or Binding
-                	// so only recognise it as en extensibility elemtn of one of those.
-                	if(originOfExtensibilityElements.equals(PORT) || originOfExtensibilityElements.equals(BINDING)){
-                		if(Boolean.TRUE.equals(unknown.getRequired())){
-                		    axisService.setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
-                		}else{
-                			axisService.setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
-                		}
-                	}
                 } else {
                     //TODO : we are ignored that.
                 }
@@ -1296,51 +1205,6 @@ public class WSDL2AxisServiceBuilder {
         return wrappable;
     }
 
-    /**
-     * Find the XML schema prefix
-     */
-    private String findSchemaPrefix() {
-        String xsdPrefix = null;
-        Map declaredNameSpaces = axisService.getNameSpacesMap();
-        if (declaredNameSpaces.containsValue(XMLSCHEMA_NAMESPACE_URI)) {
-            //loop and find the prefix
-            Iterator it = declaredNameSpaces.keySet().iterator();
-            String key;
-            while (it.hasNext()) {
-                key = (String) it.next();
-                if (XMLSCHEMA_NAMESPACE_URI.equals(declaredNameSpaces.get(key))) {
-                    xsdPrefix = key;
-                    break;
-                }
-            }
-        } else {
-            xsdPrefix = XMLSCHEMA_NAMESPACE_PREFIX; //default prefix
-        }
-        return xsdPrefix;
-    }
-
-    /**
-     * Utility method that returns a DOM Builder
-     */
-    private DocumentBuilder getDOMDocumentBuilder() {
-        DocumentBuilder documentBuilder;
-        try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-                    .newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        return documentBuilder;
-    }
-
-    /**
-     */
-    private String getTemporaryNamespacePrefix() {
-        return "ns" + nsCount++;
-    }
-
     private String getMEP(Operation operation) throws Exception {
         OperationType operationType = operation.getStyle();
         if (isServerSide) {
@@ -1429,14 +1293,6 @@ public class WSDL2AxisServiceBuilder {
                 }
             }
         }
-    }
-
-    public String getBaseUri() {
-        return baseUri;
-    }
-
-    public void setBaseUri(String baseUri) {
-        this.baseUri = baseUri;
     }
 
 }
