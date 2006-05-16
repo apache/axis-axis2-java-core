@@ -2,6 +2,7 @@ package org.apache.axis2.description;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -72,8 +73,7 @@ import java.util.Vector;
  *
  */
 
-public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder{
-
+public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
 
     private String portName;
@@ -839,7 +839,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder{
                             Iterator keys = namespaces.keySet().iterator();
                             while (keys.hasNext()) {
                                 Object key = keys.next();
-                                if (! wsdl4jDefinition.getNamespaces().containsValue(namespaces.get(key))) {
+                                if (! wsdl4jDefinition.getNamespaces().containsValue(namespaces.get(key)))
+                                {
                                     wsdl4jDefinition.getNamespaces().put(key, namespaces.get(key));
                                 }
                             }
@@ -974,6 +975,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder{
                             .readPolicyReference(unknown.getElement());
                     addPolicyRef(description, originOfExtensibilityElements,
                             policyRef);
+                } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING.equals(unknown.getElementType()) ||
+                        AddressingConstants.Submission.WSAW_USING_ADDRESSING.equals(unknown.getElementType()))
+                {
+                    // Read the wsaw:UsingAddressing flag from the WSDL. It is only valid on the Port or Binding
+                    // so only recognise it as en extensibility elemtn of one of those.
+                    if (originOfExtensibilityElements.equals(PORT) || originOfExtensibilityElements.equals(BINDING))
+                    {
+                        if (Boolean.TRUE.equals(unknown.getRequired())) {
+                            axisService.setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
+                        } else {
+                            axisService.setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
+                        }
+                    }
 
                 } else {
                     //TODO : we are ignored that.
