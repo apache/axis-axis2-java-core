@@ -105,7 +105,7 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
                 }
 
             } else {
-                throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
+                throw new AxisFault(Messages.getMessage("rawXmlProviderIsLimited"));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

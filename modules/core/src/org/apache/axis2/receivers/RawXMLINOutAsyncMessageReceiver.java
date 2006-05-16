@@ -74,7 +74,7 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
                     OMElement omElement = msgContext.getEnvelope().getBody().getFirstElement();
                     args = new Object[]{omElement};
                 } else {
-                    throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
+                    throw new AxisFault(Messages.getMessage("rawXmlProviderIsLimited"));
                 }
 
                 OMElement result;
