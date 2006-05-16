@@ -1249,7 +1249,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder{
 
         for (Iterator iterator = extAttributes.keySet().iterator(); iterator.hasNext();) {
             key = (QName) iterator.next();
-            if (PolicyConstants.WS_POLICY_NAMESPACE_URI.equals(key.getNamespaceURI()) &&
+            if (PolicyConstants.POLICY_NAMESPACE_URI.equals(key.getNamespaceURI()) &&
                     "PolicyURIs".equals(key.getLocalPart())) {
                 value = (QName) extAttributes.get(key);
                 String policyURIs = value.getLocalPart();

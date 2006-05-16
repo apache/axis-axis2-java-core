@@ -19,11 +19,11 @@ package org.apache.ws.security.policy.parser;
 import org.apache.axis2.namespace.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.policy.AndCompositeAssertion;
+import org.apache.ws.policy.All;
 import org.apache.ws.policy.Assertion;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
-import org.apache.ws.policy.XorCompositeAssertion;
+import org.apache.ws.policy.ExactlyOne;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.util.PolicyReader;
 import org.apache.ws.security.policy.WSSPolicyException;
@@ -202,7 +202,7 @@ public class WSSPolicyProcessor {
         	policy = (Policy) policy.normalize();
         }
 
-        XorCompositeAssertion xor = (XorCompositeAssertion) policy.getTerms()
+        ExactlyOne xor = (ExactlyOne) policy.getTerms()
                 .get(0);
         List listOfPolicyAlternatives = xor.getTerms();
 
@@ -210,7 +210,7 @@ public class WSSPolicyProcessor {
         int numberOfAlternatives = listOfPolicyAlternatives.size();
 
         for (int i = 0; !success && i < numberOfAlternatives; i++) {
-            AndCompositeAssertion aPolicyAlternative = (AndCompositeAssertion) listOfPolicyAlternatives
+            All aPolicyAlternative = (All) listOfPolicyAlternatives
                     .get(i);
 
             List listOfAssertions = aPolicyAlternative.getTerms();

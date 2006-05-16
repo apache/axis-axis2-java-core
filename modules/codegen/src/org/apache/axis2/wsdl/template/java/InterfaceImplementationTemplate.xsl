@@ -652,12 +652,12 @@
 			policy = (org.apache.ws.policy.Policy) policy.normalize();
 		}
 		
-		org.apache.ws.policy.XorCompositeAssertion xor = (org.apache.ws.policy.XorCompositeAssertion) policy.getTerms().get(0);
+		org.apache.ws.policy.ExactlyOne xor = (org.apache.ws.policy.ExactlyOne) policy.getTerms().get(0);
 		if (xor.isEmpty()) {
 			// TODO
 			throw new RuntimeException("No policy alternative found");
 		}
-		org.apache.ws.policy.AndCompositeAssertion anAlternative = (org.apache.ws.policy.AndCompositeAssertion) xor.getTerms().get(0);
+		org.apache.ws.policy.All anAlternative = (org.apache.ws.policy.All) xor.getTerms().get(0);
 		java.util.List moduleList = getModules(anAlternative.getTerms());
 		
 		if (axisDescription instanceof org.apache.axis2.description.AxisService) {

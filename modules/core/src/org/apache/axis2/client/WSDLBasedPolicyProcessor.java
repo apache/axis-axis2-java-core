@@ -23,10 +23,10 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.ws.policy.AndCompositeAssertion;
+import org.apache.ws.policy.All;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
-import org.apache.ws.policy.XorCompositeAssertion;
+import org.apache.ws.policy.ExactlyOne;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,9 +89,9 @@ public class WSDLBasedPolicyProcessor {
                     policy = (Policy) policy.normalize();
                 }
 
-                XorCompositeAssertion XOR = (XorCompositeAssertion) policy
+                ExactlyOne XOR = (ExactlyOne) policy
                         .getTerms().get(0);
-                AndCompositeAssertion AND = (AndCompositeAssertion) XOR
+                All AND = (All) XOR
                         .getTerms().get(0);
 
                 Iterator pAsserations = AND.getTerms().iterator();

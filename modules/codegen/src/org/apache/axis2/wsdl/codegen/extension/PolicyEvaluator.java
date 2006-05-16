@@ -36,10 +36,10 @@ import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.util.XSLTConstants;
-import org.apache.ws.policy.AndCompositeAssertion;
+import org.apache.ws.policy.All;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
-import org.apache.ws.policy.XorCompositeAssertion;
+import org.apache.ws.policy.ExactlyOne;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -144,14 +144,14 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 		HashMap map = new HashMap();
 
-		XorCompositeAssertion XOR = (XorCompositeAssertion) policy.getTerms()
+		ExactlyOne XOR = (ExactlyOne) policy.getTerms()
 				.get(0);
-		AndCompositeAssertion AND = (AndCompositeAssertion) XOR.getTerms().get(
+		All AND = (All) XOR.getTerms().get(
 				0);
 
 		for (Iterator iterator = AND.getTerms().iterator(); iterator.hasNext();) {
 
-			AndCompositeAssertion nAND = new AndCompositeAssertion();
+			All nAND = new All();
 			PrimitiveAssertion pa = (PrimitiveAssertion) iterator.next();
 
 			String namespace = pa.getName().getNamespaceURI();
@@ -184,10 +184,10 @@ public class PolicyEvaluator implements CodeGenExtension {
 			}
 
 			Policy nPolicy = new Policy();
-			XorCompositeAssertion nXOR = new XorCompositeAssertion();
+			ExactlyOne nXOR = new ExactlyOne();
 			nPolicy.addTerm(nXOR);
 
-			AndCompositeAssertion nAND = (AndCompositeAssertion) map
+			All nAND = (All) map
 					.get(namespace);
 			nXOR.addTerm(nAND);
             
