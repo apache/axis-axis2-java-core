@@ -227,6 +227,7 @@
       <include name="samples/src/**/*.java"/>
       <include name="security/src/**/*.java"/>
       <include name="soapmonitor/src/**/*.java"/>
+      <include name="spring/src/**/*.java"/>
       <include name="xmlbeans/src/**/*.java"/>
     </javac>
     <copy todir="${basedir}/target/classes/">
