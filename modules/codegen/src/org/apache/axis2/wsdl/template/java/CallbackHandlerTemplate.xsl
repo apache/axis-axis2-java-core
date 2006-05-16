@@ -10,10 +10,10 @@
     package <xsl:value-of select="@package"/>;
 
     /**
-     *  <xsl:value-of select="@name"/> Callback class 
+     *  <xsl:value-of select="@name"/> Callback class, Users can extend this class and implement
+     *  their own receiveResult and receiveError methods. 
      */
-
-    public abstract class <xsl:value-of select="@name"/>{
+    public abstract class <xsl:value-of select="@name"/> {
 
 
 
@@ -30,6 +30,13 @@
 		this.clientData = clientData;
 	}
 
+    /**
+     * Get the client data
+     */
+
+     public Object getClientData() {
+		return clientData;
+	 }
 
         <xsl:for-each select="method">
             <xsl:variable name="outParamType"><xsl:value-of select="output/param/@type"/></xsl:variable>
@@ -45,7 +52,6 @@
             */
            public void receiveResult<xsl:value-of select="@name"/>(
                     <xsl:if test="$outParamType!=''"><xsl:value-of select="$outParamType"/><xsl:text> </xsl:text><xsl:value-of select="$outParamName"/></xsl:if>) {
-			        //Fill here with the code to handle the response
            }
 
           /**
@@ -53,7 +59,6 @@
            *
            */
             public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {
-                //Fill here with the code to handle the exception
             }
                 </xsl:when>
                 <xsl:otherwise>
