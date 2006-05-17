@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
     private Method method;
-    private Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
+    private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
         try {

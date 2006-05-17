@@ -44,8 +44,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 
     private Method method;
-    private Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
-    
+    private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
+
     /**
      * reflect and get the Java method
      * - for each i'th param in the java method

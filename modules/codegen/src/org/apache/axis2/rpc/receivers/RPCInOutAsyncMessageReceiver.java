@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
     private Method method;
-    private Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
+    private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     /**
      * reflect and get the Java method
