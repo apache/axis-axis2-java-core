@@ -12,6 +12,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -36,6 +38,7 @@ import java.lang.reflect.Method;
 public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
     private Method method;
+    private Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     /**
      * reflect and get the Java method
@@ -123,9 +126,10 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             outMessage.setEnvelope(envelope);
 
         } catch (Exception e) {
-            throw AxisFault.makeFault(e);
+            String msg = "Exception occurred while trying to invoke service method " +
+                         method.getName();
+            log.error(msg, e);
+            throw new AxisFault(msg, e);
         }
     }
-
-
 }

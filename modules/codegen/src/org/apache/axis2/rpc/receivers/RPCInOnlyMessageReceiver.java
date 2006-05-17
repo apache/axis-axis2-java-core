@@ -11,6 +11,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.lang.reflect.Method;
 /*
@@ -32,6 +34,7 @@ import java.lang.reflect.Method;
 public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
     private Method method;
+    private Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
         try {
@@ -40,7 +43,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj,
-                    inMessage.getOperationContext());
+                                                             inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
@@ -57,8 +60,8 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             OMNamespace namespace = methodElement.getNamespace();
             if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
                 throw new AxisFault("namespace mismatch require " +
-                        service.getSchematargetNamespace() +
-                        " found " + methodElement.getNamespace().getName());
+                                    service.getSchematargetNamespace() +
+                                    " found " + methodElement.getNamespace().getName());
             }
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
@@ -69,13 +72,12 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                 }
             }
             Object[] objectArray = processRequest(methodElement);
-            try {
-                method.invoke(obj, objectArray);
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage());
-            }
+            method.invoke(obj, objectArray);
         } catch (Exception e) {
-            throw new AxisFault(e);
+            String msg = "Exception occurred while trying to invoke service method " +
+                         method.getName();
+            log.error(msg, e);
+            throw new AxisFault(msg, e);
         }
     }
 
