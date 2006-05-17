@@ -16,9 +16,9 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -437,7 +437,10 @@ public class AxisService2OM implements Java2WSDLConstants {
                 + BINDING_NAME_SUFFIX, null);
         binding.addAttribute("type", tns.getPrefix() + ":"
                 + axisService.getName() + PORT_TYPE_SUFFIX, null);
-        addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(),
+        
+        addPolicy(PolicyInclude.AXIS_SERVICE_POLICY, axisService.getPolicyInclude(),
+                binding, fac);    
+        addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(), 
                 binding, fac);
 
 //Adding ext elements
@@ -470,7 +473,10 @@ public class AxisService2OM implements Java2WSDLConstants {
             }
             addExtensionElemnet(fac, operation, OPERATION_LOCAL_NAME,
                     SOAP_ACTION, soapAction, STYLE, style, soap);
+            
             addPolicy(PolicyInclude.BINDING_OPERATION_POLICY, axisOperation
+                    .getPolicyInclude(), operation, fac);
+            addPolicy(PolicyInclude.AXIS_OPERATION_POLICY, axisOperation
                     .getPolicyInclude(), operation, fac);
 
             String MEP = axisOperation.getMessageExchangePattern();
@@ -548,6 +554,9 @@ public class AxisService2OM implements Java2WSDLConstants {
                 + SOAP12BINDING_NAME_SUFFIX, null);
         binding.addAttribute("type", tns.getPrefix() + ":"
                 + axisService.getName() + PORT_TYPE_SUFFIX, null);
+     
+        addPolicy(PolicyInclude.AXIS_SERVICE_POLICY, axisService.getPolicyInclude(),
+                binding, fac);
         addPolicy(PolicyInclude.BINDING_POLICY, axisService.getPolicyInclude(),
                 binding, fac);
 
@@ -581,8 +590,12 @@ public class AxisService2OM implements Java2WSDLConstants {
             }
             addExtensionElemnet(fac, operation, OPERATION_LOCAL_NAME,
                     SOAP_ACTION, soapAction, STYLE, style, soap12);
+
             addPolicy(PolicyInclude.BINDING_OPERATION_POLICY, axisOperation
                     .getPolicyInclude(), operation, fac);
+            addPolicy(PolicyInclude.AXIS_OPERATION_POLICY, axisOperation
+                    .getPolicyInclude(), operation, fac);
+
 
             String MEP = axisOperation.getMessageExchangePattern();
 
