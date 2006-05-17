@@ -166,18 +166,18 @@ public class AxisService extends AxisDescription {
     // Flag representing whether WS-Addressing is required to use this service.
     // Reflects the wsaw:UsingAddressing wsdl extension element
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
-    
+
     public String getWSAddressingFlag(){
     	return wsaddressingFlag;
     }
-    
+
     public void setWSAddressingFlag(String ar){
     	wsaddressingFlag = ar;
     	if(wsaddressingFlag == null){
     		wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     	}
     }
-    
+
     public boolean isSchemaLocationsAdjusted() {
         return schemaLocationsAdjusted;
     }

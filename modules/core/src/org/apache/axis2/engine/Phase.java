@@ -535,10 +535,10 @@ public class Phase implements Handler {
             if(rule.isPhaseFirst()&& rule.isPhaseLast()){
                 isOneHandler = false;
             }
-            log.info("removed handler " + handler.getName().getLocalPart()
+            log.debug("removed handler " + handler.getName().getLocalPart()
                     + " from the phase " + phaseName);
         } else {
-            log.info("unable to remove handler " + handler.getName().getLocalPart()
+            log.debug("unable to remove handler " + handler.getName().getLocalPart()
                     + " from the phase " + phaseName);
         }
     }

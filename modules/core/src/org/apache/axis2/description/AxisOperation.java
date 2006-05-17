@@ -162,7 +162,7 @@ public abstract class AxisOperation extends AxisDescription
                 }
             }
             engagedModules.remove(module);
-            log.info("removed module from engaged modules list "
+            log.debug("removed module from engaged modules list "
                     + module.getName().getLocalPart());
         }
     }
@@ -174,7 +174,7 @@ public abstract class AxisOperation extends AxisDescription
      */
     public void removeFromEngageModueList(AxisModule module) {
         engagedModules.remove(module);
-        log.info("removed module from engaged modules list " + module.getName().getLocalPart());
+        log.debug("removed module from engaged modules list " + module.getName().getLocalPart());
     }
 
 
