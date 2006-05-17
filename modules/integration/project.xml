@@ -301,7 +301,7 @@
         <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>neethi</artifactId>
-            <version>${policy.version}</version>
+            <version>${neethi.version}</version>
             <properties>
                 <module>true</module>
             </properties>
