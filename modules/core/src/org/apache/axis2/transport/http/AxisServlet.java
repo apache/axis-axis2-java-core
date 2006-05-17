@@ -275,7 +275,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (port == null) {
             port = "8080";
         }
-        return new EndpointReference("http://" + ip + ":" + port + "/axis2/services/" + serviceName);
+        String webappName = null;
+        // HACK ALERT!!! - Is there a better way to get the webapp name?
+        try{
+            String[] array =  servletConfig.getServletContext().getResource("/").toString().split("/");
+            webappName = array[array.length-1];
+        }catch(Exception e){
+        }
+        if(webappName == null) {
+            webappName = "axis2";
+        }
+        return new EndpointReference("http://" + ip + ":" + port + '/' +  webappName + "/services/" + serviceName);
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,
