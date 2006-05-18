@@ -57,15 +57,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -167,15 +159,15 @@ public class AxisService extends AxisDescription {
     // Reflects the wsaw:UsingAddressing wsdl extension element
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
 
-    public String getWSAddressingFlag(){
-    	return wsaddressingFlag;
+    public String getWSAddressingFlag() {
+        return wsaddressingFlag;
     }
 
-    public void setWSAddressingFlag(String ar){
-    	wsaddressingFlag = ar;
-    	if(wsaddressingFlag == null){
-    		wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
-    	}
+    public void setWSAddressingFlag(String ar) {
+        wsaddressingFlag = ar;
+        if (wsaddressingFlag == null) {
+            wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
+        }
     }
 
     public boolean isSchemaLocationsAdjusted() {
@@ -1087,6 +1079,7 @@ public class AxisService extends AxisDescription {
             excludeOpeartion.add("destroy");
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
+            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
         } catch (Exception e) {
             throw new AxisFault(e);
         }
@@ -1172,6 +1165,7 @@ public class AxisService extends AxisDescription {
             excludeOpeartion.add("destroy");
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
+            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
             if (targetNameSpace != null && !"".equals(targetNameSpace)) {
                 axisService.setTargetNamespace(targetNameSpace);
             }

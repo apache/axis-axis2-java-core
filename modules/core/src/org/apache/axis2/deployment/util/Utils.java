@@ -211,6 +211,7 @@ public class Utils {
         schemaGenerator.setExcludeMethods(excludeOperations);
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
+        axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
 
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();

@@ -493,4 +493,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
     public void setExcludeMethods(ArrayList excludeMethods) {
         this.excludeMethods = excludeMethods;
     }
+
+    public String getSchemaTargetNameSpace() {
+        return schemaTargetNameSpace;
+    }
 }
