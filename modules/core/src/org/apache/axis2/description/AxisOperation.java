@@ -193,6 +193,7 @@ public abstract class AxisOperation extends AxisDescription
         ArrayList ops = new ArrayList();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
+            axisOperation.setParent(service);
             ArrayList wsamappings = axisOperation.getWsamappingList();
             if (service.getOperation(axisOperation.getName()) == null) {
                 // this opration is a control operation.
