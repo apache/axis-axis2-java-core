@@ -154,7 +154,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator policyElements = service_element.getChildrenWithName(
                     new QName(POLICY_NS_URI, TAG_POLICY));
 
-            if (policyElements != null) {
+            if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(
                         PolicyInclude.AXIS_SERVICE_POLICY, policyElements,
                         service.getPolicyInclude());
@@ -164,7 +164,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator policyRefElements = service_element.getChildrenWithName(
                     new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
-            if (policyRefElements != null) {
+            if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY,
                         policyRefElements, service.getPolicyInclude());
             }
@@ -428,14 +428,14 @@ public class ServiceBuilder extends DescriptionBuilder {
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
-            if (policyElements != null) {
+            if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(PolicyInclude.AXIS_OPERATION_POLICY, policyElements, op_descrip.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
-            if (policyRefElements != null) {
+            if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_OPERATION_POLICY, policyRefElements, op_descrip.getPolicyInclude());
             }
 

@@ -112,7 +112,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
                     TAG_POLICY));
 
-            if (policyElements != null) {
+            if (policyElements != null && policyElements.hasNext()) {
                 processPolicyElements(PolicyInclude.AXIS_POLICY, policyElements, axisConfig.getPolicyInclude());
             }
 
@@ -120,7 +120,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
                     TAG_POLICY_REF));
 
-            if (policyRefElements != null) {
+            if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_POLICY, policyElements, axisConfig.getPolicyInclude());
             }
 

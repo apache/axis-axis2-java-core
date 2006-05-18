@@ -66,7 +66,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     /*
     * to store policies which are falid for any service for which the module is
     */
-    private PolicyInclude policyInclude;
+    private PolicyInclude policyInclude = null;
 
     // Small description about the module
     private String moduleDescription;
@@ -78,7 +78,6 @@ public class AxisModule implements FlowInclude, ParameterInclude {
      */
     public AxisModule() {
         operations = new HashMap();
-        policyInclude = new PolicyInclude();
     }
 
     /**
@@ -255,6 +254,9 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     }
 
     public PolicyInclude getPolicyInclude() {
+        if(policyInclude == null) {
+            policyInclude = new PolicyInclude();
+        }
         return policyInclude;
     }
 

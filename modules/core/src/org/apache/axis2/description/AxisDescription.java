@@ -15,14 +15,13 @@ public abstract class AxisDescription implements ParameterInclude,
 
     private ParameterInclude parameterInclude;
 
-    private PolicyInclude policyInclude;
+    private PolicyInclude policyInclude = null;
 
     private HashMap children;
 
 
     public AxisDescription() {
         parameterInclude = new ParameterIncludeImpl();
-        policyInclude = new PolicyInclude(this);
         children = new HashMap();
     }
 
@@ -87,6 +86,9 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public PolicyInclude getPolicyInclude() {
+        if(policyInclude == null) {
+            policyInclude = new PolicyInclude(this);
+        }
         return policyInclude;
     }
 
