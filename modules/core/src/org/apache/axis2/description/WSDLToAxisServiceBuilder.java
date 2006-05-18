@@ -78,6 +78,7 @@ public abstract class WSDLToAxisServiceBuilder {
     protected String style = null;
     private URIResolver customResolver;
     private String baseUri = null;
+    protected static final String TYPES = "Types";
 
     public WSDLToAxisServiceBuilder(InputStream in, QName serviceName) {
         this.in = in;

@@ -85,8 +85,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private static final String PORT_TYPE = "PortType";
 
-    private static final String TYPES = "Types";
-
     private static final String PORT_TYPE_OPERATION = "PortType.Operation";
 
     private static final String PORT_TYPE_OPERATION_INPUT = "PortType.Operation.Input";
