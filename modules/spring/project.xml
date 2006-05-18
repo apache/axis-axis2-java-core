@@ -71,15 +71,6 @@
                 <module>true</module>
             </properties>
         </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-            <url>http://dist.codehaus.org/stax/jars/</url>
-        </dependency>
 	  <!-- added for the QName -->	
         <dependency>
             <groupId>stax</groupId>

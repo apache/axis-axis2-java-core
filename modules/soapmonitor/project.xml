@@ -62,15 +62,6 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-            <url>http://dist.codehaus.org/stax/jars/</url>
-        </dependency>
-        <dependency>
           <groupId>servletapi</groupId>
           <artifactId>servletapi</artifactId>
           <version>${servletapi.version}</version>

@@ -69,6 +69,8 @@ public class PrettyPrinter {
             log.info("Jalopy not found - unable to pretty print " + file);
         } catch (Exception e) {
             log.warn("Exception occurred while trying to pretty print file " + file, e);
+        } catch (Throwable t) {
+            log.debug("Exception occurred while trying to pretty print file " + file, t);
         }
     }
 }

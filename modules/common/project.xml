@@ -40,14 +40,6 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
             <version>${stax.api.version}</version>
