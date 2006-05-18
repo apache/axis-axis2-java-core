@@ -65,8 +65,11 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                     }
                 }
             }
-
-
+            if(axisConfig == null) {
+                throw new RuntimeException("Unable to load axis2.xml configuration");
+            }
+            Parameter unableHttp = new Parameter("enableHTTP", "true");
+            axisConfig.addParameter(unableHttp);
         } catch (FileNotFoundException e) {
             log.info(e.getMessage());
         } catch (DeploymentException e) {
@@ -75,13 +78,6 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
             log.info(e.getMessage());
         } catch (IOException e) {
             log.info(e.getMessage());
-        } finally {
-            try {
-                Parameter unableHttp = new Parameter("enableHTTP", "true");
-                axisConfig.addParameter(unableHttp);
-            } catch (AxisFault axisFault) {
-                log.info(axisFault.getMessage());
-            }
         }
     }
 
