@@ -187,6 +187,8 @@ public class ServiceClient {
                         createConfigurationContextFromFileSystem(null, null);
                 trsManager = new ListenerManager();
                 trsManager.init(this.configContext);
+            } else {
+                this.configContext = ListenerManager.defaultConfigurationContext;
             }
         }
     }
