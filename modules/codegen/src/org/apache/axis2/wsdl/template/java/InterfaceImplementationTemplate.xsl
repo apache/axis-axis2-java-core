@@ -131,7 +131,11 @@
          //To populate AxisService
          populateAxisService();
          populateFaults();
-	<xsl:if test="//@policy">
+
+        _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
+        configurationContext = _serviceClient.getServiceContext().getConfigurationContext();
+
+    <xsl:if test="//@policy">
 	
 	////////////////////////////////////////////////////////////////////////
 		
@@ -153,7 +157,7 @@
 		
 	</xsl:if>
 	
-        _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
+
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
                 targetEndpoint));
         <xsl:if test="$soapVersion='1.2'">
