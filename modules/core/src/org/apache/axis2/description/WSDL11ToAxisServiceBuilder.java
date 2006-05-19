@@ -1070,8 +1070,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 description.getPolicyInclude().addPolicyElement(
                         PolicyInclude.BINDING_POLICY, policy);
 
-            } 
-            
+            }
+
             //TODO wsdl:portType ?
 
         } else if (description instanceof AxisOperation) {
@@ -1311,8 +1311,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Policy policy = policyReader.readPolicy(unknown
                             .getElement());
 
-                    registry.register(policy.getPolicyURI(), policy);
+                    if (policy.getId() != null) {
+                        registry.register(policy.getId(), policy);
+                    }
 
+                    if (policy.getName() != null) {
+                        registry.register(policy.getName(), policy);
+                    }
                 }
             }
         }

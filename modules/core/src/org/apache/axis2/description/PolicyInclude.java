@@ -260,9 +260,13 @@ public class PolicyInclude {
 		Wrapper wrapper = new Wrapper(type, policy);
 		wrapperElements.put(policy.getPolicyURI(), wrapper);
 
-		if (policy.getPolicyURI() != null) {
-			reg.register(policy.getPolicyURI(), policy);
-		}
+        if (policy.getId() != null) {
+            reg.register(policy.getId(), policy);
+        }
+        
+        if (policy.getName() != null) {
+            reg.register(policy.getName(), policy);
+        }
 	}
 
 	public void addPolicyRefElement(int type, PolicyReference policyReference) {
