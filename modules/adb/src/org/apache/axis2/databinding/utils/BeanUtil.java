@@ -49,7 +49,7 @@ public class BeanUtil {
      * @param beanName
      */
     public static XMLStreamReader getPullParser(Object beanObject, QName beanName) {
-        try {
+		try {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
             jam_service_parms.addClassLoader(beanObject.getClass().getClassLoader());
@@ -88,7 +88,7 @@ public class BeanUtil {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
                     object.add(propDesc.getName());
-                    object.add(value.toString());
+                    object.add(value == null ? null : value.toString());
                 } else if (ptype.isArray()) {
                     Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
@@ -96,7 +96,7 @@ public class BeanUtil {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
                             object.add(propDesc.getName());
-                            object.add(o.toString());
+                            object.add(o == null ? null :o.toString());
                         }
                     } else {
                         for (int j = 0; j < value.length; j++) {
@@ -134,9 +134,15 @@ public class BeanUtil {
                 }
             }
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null);
-        } catch (Exception e) {
-            return null;
-        }
+		} catch (java.io.IOException e){
+			throw new RuntimeException(e);
+		} catch (java.beans.IntrospectionException e){
+			throw new RuntimeException(e);
+		} catch (java.lang.reflect.InvocationTargetException e){
+			throw new RuntimeException(e);
+		} catch (java.lang.IllegalAccessException e){
+			throw new RuntimeException(e);
+		}
     }
 
     /**
@@ -455,7 +461,7 @@ public class BeanUtil {
                     Object o = array[j];
                     if (SimpleTypeMapper.isSimpleType(o)) {
                         objects.add("item" + argCount);
-                        objects.add(o.toString());
+                        objects.add(o == null ? null : o.toString());
                     } else {
                         objects.add(new QName("item" + argCount));
                         if (o instanceof OMElement) {
