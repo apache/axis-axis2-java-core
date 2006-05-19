@@ -20,7 +20,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -31,15 +30,15 @@ import java.util.ArrayList;
 public class ServiceClient {
 
     // service and operation names used for anonymously stuff
-    public static final String ANON_SERVICE = "__ANONYMOUS_SERVICE__";
+    public static final String ANON_SERVICE = "annonService";
 
     public static final QName ANON_OUT_ONLY_OP = new QName(
-            "__OPERATION_OUT_ONLY__");
+            "annonOutonlyOp");
 
     public static final QName ANON_ROBUST_OUT_ONLY_OP = new QName(
-            "__OPERATION_ROBUST_OUT_ONLY__");
+            "annonRobustOp");
 
-    public static final QName ANON_OUT_IN_OP = new QName("__OPERATION_OUT_IN__");
+    public static final QName ANON_OUT_IN_OP = new QName("annonOutInOp");
 
     // the metadata for the service that I'm clienting for
     private AxisService axisService;
@@ -63,6 +62,8 @@ public class ServiceClient {
     private ArrayList headers;
 
     private CallbackReceiver callbackReceiver;
+    //whther we creat configctx or not
+    private boolean createConfigCtx;
 
     /**
      * Create a service client configured to work with a specific AxisService.
@@ -78,23 +79,24 @@ public class ServiceClient {
      */
     public ServiceClient(ConfigurationContext configContext,
                          AxisService axisService) throws AxisFault {
-        // create a config context if needed
+        configureServiceClient(configContext, axisService);
+    }
 
+    private void configureServiceClient(ConfigurationContext configContext, AxisService axisService) throws AxisFault {
         initializeTransports(configContext);
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
         if (axisService != null) {
             this.axisService = axisService;
         } else {
-            if (this.axisConfig.getService(ANON_SERVICE) != null) {
-                this.axisService = this.axisConfig.getService(ANON_SERVICE);
-            } else {
-                this.axisService = createAnonymousService();
-            }
+            this.axisService = createAnonymousService();
         }
-
         if (this.axisConfig.getService(this.axisService.getName()) == null) {
             this.axisConfig.addService(this.axisService);
+        } else {
+            throw new AxisFault(Messages.getMessage(
+                    "twoservicecannothavesamename",
+                    this.axisService.getName()));
         }
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
                 (AxisServiceGroup) this.axisService.getParent());
@@ -114,23 +116,8 @@ public class ServiceClient {
 
     public ServiceClient(ConfigurationContext configContext, Definition wsdl4jDefinition,
                          QName wsdlServiceName, String portName) throws AxisFault {
-        // create a config context if needed
-        initializeTransports(configContext);
-        try {
-            this.axisConfig = this.configContext.getAxisConfiguration();
-            this.axisService = AxisService.createClientSideAxisService(
-                    wsdl4jDefinition, wsdlServiceName, portName, options);
-            // add the service to the config context if it isn't in there
-            // already
-            if (this.axisConfig.getService(this.axisService.getName()) == null) {
-                this.axisConfig.addService(this.axisService);
-            }
-            ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
-                    (AxisServiceGroup) this.axisService.getParent());
-            this.serviceContext = sgc.getServiceContext(this.axisService);
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
+        configureServiceClient(configContext, AxisService.createClientSideAxisService(
+                wsdl4jDefinition, wsdlServiceName, portName, options));
     }
 
     /**
@@ -149,27 +136,8 @@ public class ServiceClient {
      */
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
                          QName wsdlServiceName, String portName) throws AxisFault {
-        // create a config context if needed
-        initializeTransports(configContext);
-        try {
-            this.axisConfig = this.configContext.getAxisConfiguration();
-            axisService = AxisService.createClientSideAxisService(wsdlURL,
-                    wsdlServiceName, portName, options);
-            // add the service to the config context if it isn't in there
-            // already
-            if (this.axisConfig.getService(this.axisService.getName()) == null) {
-                this.axisConfig.addService(this.axisService);
-            } else {
-                throw new AxisFault(Messages.getMessage(
-                        "twoservicecannothavesamename",
-                        this.axisService.getName()));
-            }
-            ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
-                    (AxisServiceGroup) this.axisService.getParent());
-            this.serviceContext = sgc.getServiceContext(this.axisService);
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
+        configureServiceClient(configContext, AxisService.createClientSideAxisService(wsdlURL,
+                wsdlServiceName, portName, options));
     }
 
     private void initializeTransports(ConfigurationContext configContext) throws AxisFault {
@@ -187,6 +155,7 @@ public class ServiceClient {
                         createConfigurationContextFromFileSystem(null, null);
                 trsManager = new ListenerManager();
                 trsManager.init(this.configContext);
+                createConfigCtx = true;
             } else {
                 this.configContext = ListenerManager.defaultConfigurationContext;
             }
@@ -213,7 +182,7 @@ public class ServiceClient {
         // shortcut client API. NOTE: We only add the ones we know we'll use
         // later in the convenience API; if you use
         // this constructor then you can't expect any magic!
-        AxisService axisService = new AxisService(ANON_SERVICE);
+        AxisService axisService = new AxisService(ANON_SERVICE + this.hashCode());
         RobustOutOnlyAxisOperation robustoutoonlyOperation = new RobustOutOnlyAxisOperation(
                 ANON_ROBUST_OUT_ONLY_OP);
         axisService.addOperation(robustoutoonlyOperation);
@@ -635,5 +604,24 @@ public class ServiceClient {
      */
     public ServiceContext getServiceContext() {
         return serviceContext;
+    }
+
+    protected void finalize() throws Throwable {
+        super.finalize();
+        cleanup();
+    }
+
+    /**
+     * This will remove axissrevice , if it is passed configuration context into it.
+     * The problem is if some one keep of on creating service client by giving
+     * configuration conetxt and null aixsService , in that case it SC will
+     * create new axisServices and add that into axisConfig , so to remove the
+     * one that this particular SC instance create one can use this method.
+     */
+    public void cleanup() throws AxisFault {
+        if (!createConfigCtx) {
+            configContext.getAxisConfiguration().removeServiceGroup(
+                    ((AxisServiceGroup) axisService.getParent()).getServiceGroupName());
+        }
     }
 }

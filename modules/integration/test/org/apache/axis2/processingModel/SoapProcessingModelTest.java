@@ -83,15 +83,10 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
         try {
             ConfigurationContext configContext = Utils
                     .getNewConfigurationContext(Constants.TESTING_REPOSITORY);
-            configContext.getAxisConfiguration().addService(clientService);
-
-            ServiceContext serviceContext = new ServiceGroupContext(
-                    configContext, (AxisServiceGroup) clientService.getParent())
-                    .getServiceContext(clientService);
             serviceClient = new ServiceClient(configContext, clientService);
 
             MessageContext msgctx = new MessageContext();
-            msgctx.setConfigurationContext(serviceContext.getConfigurationContext());
+            msgctx.setConfigurationContext(configContext);
 
             msgctx.setEnvelope(envelope);
 
