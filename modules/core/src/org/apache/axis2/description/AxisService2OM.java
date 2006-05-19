@@ -32,8 +32,6 @@ import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.util.PolicyRegistry;
 import org.apache.ws.policy.util.StAXPolicyWriter;
 
-import com.sun.rsasign.i;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
