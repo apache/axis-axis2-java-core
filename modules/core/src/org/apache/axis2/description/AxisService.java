@@ -158,6 +158,7 @@ public class AxisService extends AxisDescription {
     // Flag representing whether WS-Addressing is required to use this service.
     // Reflects the wsaw:UsingAddressing wsdl extension element
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
+    private boolean clientSide = false;
 
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
@@ -1369,6 +1370,14 @@ public class AxisService extends AxisDescription {
         }
 
         return swappedTable;
+    }
+
+    public boolean isClientSide() {
+        return clientSide;
+    }
+
+    public void setClientSide(boolean clientSide) {
+        this.clientSide = clientSide;
     }
 
 }

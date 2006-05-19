@@ -228,7 +228,7 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             description = (AxisService) services.next();
             allservices.put(description.getName(), description);
-            if (!axisServiceGroup.isClientSide()) {
+            if (!description.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
             }
         }
@@ -246,7 +246,7 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
             allservices.remove(axisService.getName());
-            if (!axisServiceGroup.isClientSide()) {
+            if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
             }
         }
@@ -373,8 +373,7 @@ public class AxisConfiguration extends AxisDescription {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
 
             try {
-                AxisServiceGroup parent = (AxisServiceGroup) service.getParent();
-                if (!parent.isClientSide()) {
+                if (!service.isClientSide()) {
                     axisObserver.serviceUpdate(event, service);
                 }
             } catch (Throwable e) {

@@ -92,6 +92,7 @@ public class ServiceClient {
             this.axisService = createAnonymousService();
         }
         if (this.axisConfig.getService(this.axisService.getName()) == null) {
+            this.axisService.setClientSide(true);
             this.axisConfig.addService(this.axisService);
         } else {
             throw new AxisFault(Messages.getMessage(
@@ -99,7 +100,6 @@ public class ServiceClient {
                     this.axisService.getName()));
         }
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
-        axisServiceGroup.setClientSide(true);
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
                 axisServiceGroup);
         this.serviceContext = sgc.getServiceContext(this.axisService);

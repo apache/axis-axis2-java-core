@@ -47,7 +47,6 @@ public class AxisServiceGroup extends AxisDescription {
     private String serviceGroupName;
 
     //To check whether server side service or client side service
-    private boolean clientSide = false;
 
     /**
      * Field services
@@ -212,13 +211,5 @@ public class AxisServiceGroup extends AxisDescription {
             }
         }
         return false;
-    }
-
-    public boolean isClientSide() {
-        return clientSide;
-    }
-
-    public void setClientSide(boolean clientSide) {
-        this.clientSide = clientSide;
     }
 }
