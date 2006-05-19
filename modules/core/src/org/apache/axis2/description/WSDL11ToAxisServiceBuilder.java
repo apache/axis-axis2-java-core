@@ -881,7 +881,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        //swithc off the verbose mode for all usecases
+        //switch off the verbose mode for all usecases
         reader.setFeature("javax.wsdl.verbose", false);
 
         if (customWSLD4JResolver != null) {

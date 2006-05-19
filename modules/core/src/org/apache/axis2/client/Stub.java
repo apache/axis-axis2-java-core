@@ -30,11 +30,14 @@ import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 
-public abstract class Stub {
+public abstract class
+        Stub {
+
     protected static AxisService _service;
     protected ArrayList modules = new ArrayList();
 
@@ -93,5 +96,21 @@ public abstract class Stub {
         }
     }
 
+    /**
+     * Finalize overridden to cleanup
+     * @throws Throwable
+     */
+    protected void finalize() throws Throwable {
+         super.finalize();
+         cleanup();
+    }
+
+    /**
+     * Cleanup by removing the axis service
+     * @throws AxisFault
+     */
+    public void cleanup() throws AxisFault {
+        _service.getAxisConfiguration().removeService(_service.getName());
+    }
 
 }

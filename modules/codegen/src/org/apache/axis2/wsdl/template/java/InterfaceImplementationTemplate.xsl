@@ -48,8 +48,8 @@
 	
     private void populateAxisService(){
 
-        //creating the Service
-        _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");
+     //creating the Service with a unique name
+     _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + this.hashCode());
 	<xsl:if test="@policy">
 	/*
 	 * setting the endpont policy
@@ -122,7 +122,10 @@
 
     }
 
-     public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
+   /**
+    Constructor that takes in a configContext
+    */
+   public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
         java.lang.String targetEndpoint)
         throws java.lang.Exception {
          //To populate AxisService
@@ -193,8 +196,7 @@
      * Constructor taking the target endpoint
      */
     public <xsl:value-of select="@name"/>(java.lang.String targetEndpoint) throws java.lang.Exception {
-        this(org.apache.axis2.context.ConfigurationContextFactory.createConfigurationContextFromFileSystem(AXIS2_HOME,null),
-                targetEndpoint);
+        this(null,targetEndpoint);
     }
 
 
