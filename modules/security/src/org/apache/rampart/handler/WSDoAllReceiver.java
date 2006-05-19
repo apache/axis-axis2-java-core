@@ -357,7 +357,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         
         if(header != null) {
             OMElement msgIdElem = header.getFirstChildWithName(new QName(AddressingConstants.Final.WSA_NAMESPACE,AddressingConstants.WSA_MESSAGE_ID));
-            if(msgIdElem != null) {
+            if(msgIdElem == null) {
                 msgIdElem = header.getFirstChildWithName(new QName(AddressingConstants.Submission.WSA_NAMESPACE,AddressingConstants.WSA_MESSAGE_ID));
             }
             if(msgIdElem != null && msgIdElem.getText() != null) {
