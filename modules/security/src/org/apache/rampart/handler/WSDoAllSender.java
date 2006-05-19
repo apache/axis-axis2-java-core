@@ -39,9 +39,7 @@ import java.util.Vector;
 
 public class WSDoAllSender extends WSDoAllHandler {
     
-    private static final long serialVersionUID = 3016802164501419165L;
-    
-	private static final Log log = LogFactory.getLog(WSDoAllSender.class);
+    private static final Log log = LogFactory.getLog(WSDoAllSender.class);
     
     /**
      * TODO: This is not handled right now since converting to DOOM does not preserve

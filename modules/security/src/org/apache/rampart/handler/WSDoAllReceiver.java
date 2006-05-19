@@ -52,9 +52,7 @@ import java.util.Vector;
 
 public class WSDoAllReceiver extends WSDoAllHandler {
     
-    private static final long serialVersionUID = 7685802089392898320L;
-    
-	private static final Log log = LogFactory.getLog(WSDoAllReceiver.class);
+    private static final Log log = LogFactory.getLog(WSDoAllReceiver.class);
     
     public WSDoAllReceiver() {
         super();

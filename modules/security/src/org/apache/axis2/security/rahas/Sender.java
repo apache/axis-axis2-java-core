@@ -51,8 +51,6 @@ import java.security.cert.X509Certificate;
  */
 public class Sender implements Handler {
 
-    private static final long serialVersionUID = 2041716475269157753L;
-    
     private HandlerDescription handlerDescription;
     
     public void invoke(MessageContext msgContext) throws AxisFault {

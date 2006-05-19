@@ -34,8 +34,6 @@ import javax.xml.namespace.QName;
 
 public class Receiver implements Handler {
 
-    private static final long serialVersionUID = 8450183308062119444L;
-
     private HandlerDescription handlerDescription;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
