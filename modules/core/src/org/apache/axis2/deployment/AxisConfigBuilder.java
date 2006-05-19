@@ -22,12 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
@@ -36,8 +31,8 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -200,7 +195,13 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Iterator itr = observerelement.getChildrenWithName(new QName(TAG_PARAMETER));
                 processParameters(itr, observer, axisConfig);
                 // initialization
-                observer.init(axisConfig);
+                try {
+                    observer.init(axisConfig);
+                } catch (Throwable e) {
+                    //Obserer init may throw runtime exception , but we can stil
+                    // start Axis2
+                    log.info(e.getMessage());
+                }
                 axisConfig.addObservers(observer);
             } catch (Exception e) {
                 log.info(e.getMessage());

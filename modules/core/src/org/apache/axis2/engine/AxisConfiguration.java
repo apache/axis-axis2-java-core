@@ -369,7 +369,12 @@ public class AxisConfiguration extends AxisDescription {
         for (int i = 0; i < observersList.size(); i++) {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
 
-            axisObserver.serviceUpdate(event, service);
+            try {
+                axisObserver.serviceUpdate(event, service);
+            } catch (Throwable e) {
+                //No need to stop the system due to this , So log and ignore
+                log.debug(e);
+            }
         }
     }
 
@@ -379,7 +384,12 @@ public class AxisConfiguration extends AxisDescription {
         for (int i = 0; i < observersList.size(); i++) {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
 
-            axisObserver.moduleUpdate(event, moule);
+            try {
+                axisObserver.moduleUpdate(event, moule);
+            } catch (Throwable e) {
+                //No need to stop the system due to this , So log and ignore
+                log.debug(e);
+            }
         }
     }
 

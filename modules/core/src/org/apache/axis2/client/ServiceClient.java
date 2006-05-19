@@ -182,10 +182,12 @@ public class ServiceClient {
                 trsManager.init(this.configContext);
             }
         } else {
-            this.configContext = ConfigurationContextFactory.
-                    createConfigurationContextFromFileSystem(null, null);
-            trsManager = new ListenerManager();
-            trsManager.init(this.configContext);
+            if (ListenerManager.defaultConfigurationContext == null) {
+                this.configContext = ConfigurationContextFactory.
+                        createConfigurationContextFromFileSystem(null, null);
+                trsManager = new ListenerManager();
+                trsManager.init(this.configContext);
+            }
         }
     }
 
