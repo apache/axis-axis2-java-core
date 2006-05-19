@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
@@ -33,6 +32,7 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -271,6 +271,36 @@ public class Utils {
         return new QName(moduleName);
     }
 
+    /**
+     * Will check whether a given module can be engage or not
+     * if the version mismamathc then thow en exception
+     * - if he trying to engage the same module then method will returen false
+     * - else it will return true
+     *
+     * @param deployingModuleName
+     * @param deployedModulename
+     * @return
+     * @throws AxisFault
+     */
+    public static boolean checkVersion(QName deployingModuleName,
+                                       QName deployedModulename) throws AxisFault {
+        String module1name = getModuleName(deployingModuleName.getLocalPart());
+        String module2name = getModuleName(deployedModulename.getLocalPart());
+        String module1version = getModuleVersion(deployingModuleName.getLocalPart());
+        String module2version = getModuleVersion(deployedModulename.getLocalPart());
+        if (module1name.equals(module2name)) {
+            if (module1version != null) {
+                if (!module1version.equals(module2version)) {
+                    throw new AxisFault("trying to engage two different module versions " +
+                            module1version + " : " + module2version);
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static void calculateDefaultModuleVersion(HashMap modules, AxisConfiguration axisConfig) {
         Iterator allModules = modules.values().iterator();
         HashMap defaultModules = new HashMap();
@@ -282,7 +312,7 @@ public class Utils {
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
             if (currentDefaultVerison != null) {
                 // if the module version is null then , that will be ignore in this case
-                if (moduleVersionString!=null&&isLatest(moduleVersionString, currentDefaultVerison)) {
+                if (moduleVersionString != null && isLatest(moduleVersionString, currentDefaultVerison)) {
                     defaultModules.put(moduleNameString, moduleVersionString);
                 }
             } else {

@@ -315,16 +315,15 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     private void engageModule(AxisModule module) throws AxisFault {
-        QName moduleQName;
+        QName moduleQName = module.getName();
+        boolean isEngagable;
         if (module != null) {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
-                moduleQName = module.getName();
-                if (moduleQName.equals(qName)) {
-                    log.info(Messages.getMessage("modulealredyengagedglobaly",
-                            qName.getLocalPart()));
-                    throw new AxisFault(Messages.getMessage("modulealredyengagedglobaly",
-                            qName.getLocalPart()));
+
+                isEngagable = Utils.checkVersion(moduleQName, qName);
+                if (!isEngagable) {
+                    return;
                 }
             }
         } else {

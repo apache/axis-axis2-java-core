@@ -22,6 +22,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,7 +33,7 @@ import java.util.Iterator;
 
 public class AxisServiceGroup extends AxisDescription {
 
-	private static final Log log = LogFactory.getLog(AxisServiceGroup.class);
+    private static final Log log = LogFactory.getLog(AxisServiceGroup.class);
 
     // to store module ref at deploy time parsing
     private ArrayList modulesList = new ArrayList();
@@ -121,17 +122,14 @@ public class AxisServiceGroup extends AxisDescription {
 
     public void engageModule(AxisModule module) throws AxisFault {
         QName moduleName = module.getName();
+        boolean isEngagable ;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
             QName modu = (QName) iterator.next();
-
-            if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
-                log.debug(Messages.getMessage(
-                        "modulealredyengagedtoservicegroup", moduleName.getLocalPart()));
-                throw new AxisFault(Messages.getMessage(
-                        "modulealredyengagedtoservicegroup", moduleName.getLocalPart()));
+            isEngagable = Utils.checkVersion(moduleName, modu);
+            if (!isEngagable) {
+                return;
             }
         }
-
         Iterator srevice = getServices();
         while (srevice.hasNext()) {
             // engaging each service

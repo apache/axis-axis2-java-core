@@ -1,7 +1,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -14,6 +13,7 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,7 +28,7 @@ public abstract class AxisOperation extends AxisDescription
     public static final String STYLE_RPC = "rpc";
     public static final String STYLE_MSG = "msg";
     public static final String STYLE_DOC = "doc";
-	private static final Log log = LogFactory.getLog(AxisOperation.class);
+    private static final Log log = LogFactory.getLog(AxisOperation.class);
     private int mep = MEP_CONSTANT_INVALID;
 
     public static final String SOAP_ACTION = "soapaction";
@@ -114,14 +114,14 @@ public abstract class AxisOperation extends AxisDescription
             return null;
         }
         Iterator module_itr = engagedModules.iterator();
+        boolean isEngagable;
+        QName moduleName = moduleref.getName();
         while (module_itr.hasNext()) {
             AxisModule module = (AxisModule) module_itr.next();
-
-            if (module.getName().equals(moduleref.getName())) {
-                log.debug(Messages.getMessage("modulealredyengaged",
-                        moduleref.getName().getLocalPart()));
-                throw new AxisFault(Messages.getMessage("modulealredyengaged",
-                        moduleref.getName().getLocalPart()));
+            QName modu = module.getName();
+            isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
+            if (!isEngagable) {
+                return new ArrayList();
             }
         }
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);

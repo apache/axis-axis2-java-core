@@ -418,15 +418,14 @@ public class AxisService extends AxisDescription {
             throw new AxisFault(Messages.getMessage("modulenf"));
         }
         Iterator itr_engageModules = engagedModules.iterator();
-
+        boolean isEngagable;
+        QName moduleName = axisModule.getName();
         while (itr_engageModules.hasNext()) {
             AxisModule module = (AxisModule) itr_engageModules.next();
-
-            if (module.getName().equals(axisModule.getName())) {
-                log.debug(Messages.getMessage("modulealredyengagetoservice",
-                        axisModule.getName().getLocalPart()));
-                throw new AxisFault(Messages.getMessage("modulealredyengagetoservice",
-                        axisModule.getName().getLocalPart()));
+            QName modu = module.getName();
+            isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
+            if (!isEngagable) {
+                return;
             }
         }
 
