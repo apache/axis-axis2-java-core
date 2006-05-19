@@ -23,8 +23,6 @@ import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -32,8 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class AxisServiceGroup extends AxisDescription {
-
-    private static final Log log = LogFactory.getLog(AxisServiceGroup.class);
 
     // to store module ref at deploy time parsing
     private ArrayList modulesList = new ArrayList();
@@ -49,6 +45,9 @@ public class AxisServiceGroup extends AxisDescription {
 
     // to keep name of the service group
     private String serviceGroupName;
+
+    //To check whether server side service or client side service
+    private boolean clientSide = false;
 
     /**
      * Field services
@@ -122,7 +121,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     public void engageModule(AxisModule module) throws AxisFault {
         QName moduleName = module.getName();
-        boolean isEngagable ;
+        boolean isEngagable;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
             QName modu = (QName) iterator.next();
             isEngagable = Utils.checkVersion(moduleName, modu);
@@ -213,5 +212,13 @@ public class AxisServiceGroup extends AxisDescription {
             }
         }
         return false;
+    }
+
+    public boolean isClientSide() {
+        return clientSide;
+    }
+
+    public void setClientSide(boolean clientSide) {
+        this.clientSide = clientSide;
     }
 }

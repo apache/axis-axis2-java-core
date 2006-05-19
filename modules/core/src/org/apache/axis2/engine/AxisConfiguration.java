@@ -228,7 +228,9 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             description = (AxisService) services.next();
             allservices.put(description.getName(), description);
-            notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
+            if (!axisServiceGroup.isClientSide()) {
+                notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
+            }
         }
 //        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
         addChild(axisServiceGroup);
@@ -244,7 +246,9 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
             allservices.remove(axisService.getName());
-            notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
+            if (!axisServiceGroup.isClientSide()) {
+                notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
+            }
         }
         removeChild(serviceGroupName);
     }
@@ -369,7 +373,10 @@ public class AxisConfiguration extends AxisDescription {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
 
             try {
-                axisObserver.serviceUpdate(event, service);
+                AxisServiceGroup parent = (AxisServiceGroup) service.getParent();
+                if (!parent.isClientSide()) {
+                    axisObserver.serviceUpdate(event, service);
+                }
             } catch (Throwable e) {
                 //No need to stop the system due to this , So log and ignore
                 log.debug(e);

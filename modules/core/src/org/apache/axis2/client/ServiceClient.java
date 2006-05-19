@@ -98,8 +98,10 @@ public class ServiceClient {
                     "twoservicecannothavesamename",
                     this.axisService.getName()));
         }
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
+        axisServiceGroup.setClientSide(true);
         ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
-                (AxisServiceGroup) this.axisService.getParent());
+                axisServiceGroup);
         this.serviceContext = sgc.getServiceContext(this.axisService);
     }
 
