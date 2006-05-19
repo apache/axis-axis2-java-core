@@ -39,8 +39,6 @@ import javax.xml.namespace.QName;
  */
 public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
 
-    private static final long serialVersionUID = 8294130617631587374L;
-
     /**
      * Field NAME
      */
@@ -126,7 +124,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setAxisService(
                             ((ServiceContext) operationContext.getParent()).getAxisService());
-                    msgctx.getAxisOperation().registerOperationContext(msgctx, operationContext);
+                    //InstanceDispatcher do this again , so let it go
+                    //msgctx.getAxisOperation().registerOperationContext(msgctx, operationContext);
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
                 }
