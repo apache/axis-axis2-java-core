@@ -28,7 +28,7 @@ import java.io.Serializable;
 /**
  * Interface Handler
  */
-public interface Handler extends Serializable {
+public interface Handler {
 
     /**
      * Method cleanup.
