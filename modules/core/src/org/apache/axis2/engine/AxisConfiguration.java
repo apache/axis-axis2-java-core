@@ -408,7 +408,7 @@ public class AxisConfiguration extends AxisDescription {
         AxisService service = (AxisService) allservices.remove(name);
 
         if (service != null) {
-            log.info(Messages.getMessage("serviceremoved", name));
+            log.debug(Messages.getMessage("serviceremoved", name));
         }
     }
 
