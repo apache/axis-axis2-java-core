@@ -379,7 +379,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     soap);
 
             addPolicyAsExtElement(PolicyInclude.PORT_POLICY, axisService
-                    .getPolicyInclude(), service, fac);
+                    .getPolicyInclude(), port, fac);
         }
 
     }
@@ -417,7 +417,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     soap12);
 
             addPolicyAsExtElement(PolicyInclude.PORT_POLICY, axisService
-                    .getPolicyInclude(), service, fac);
+                    .getPolicyInclude(), port, fac);
         }
     }
 
