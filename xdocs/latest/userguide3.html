@@ -167,7 +167,7 @@ client code you need to write is as follows.</p>
             ServiceClient serviceClient = new ServiceClient();
             serviceClient.setOptions(options);
 
-            OMElement result = sender.sendReceive(payload);
+            OMElement result = serviceClient.sendReceive(payload);
             </span>
             System.out.println(result);
 
