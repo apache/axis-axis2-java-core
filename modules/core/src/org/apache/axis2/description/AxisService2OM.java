@@ -499,7 +499,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
                             wsdl);
                     addExtensionElemnet(fac, input, SOAP_BODY, SOAP_USE, use,
-                            "namespace", targetNamespace, soap);
+                            null, targetNamespace, soap);
                     addPolicyAsExtElement(PolicyInclude.BINDING_INPUT_POLICY,
                             inaxisMessage.getPolicyInclude(), input, fac);
                     operation.addChild(input);
@@ -519,7 +519,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
                             wsdl);
                     addExtensionElemnet(fac, output, SOAP_BODY, SOAP_USE, use,
-                            "namespace", targetNamespace, soap);
+                            null, targetNamespace, soap);
                     addPolicyAsExtElement(PolicyInclude.BINDING_OUTPUT_POLICY,
                             outAxisMessage.getPolicyInclude(), output, fac);
                     operation.addChild(output);
@@ -536,7 +536,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
                             wsdl);
                     addExtensionElemnet(fac, fault, SOAP_BODY, SOAP_USE, use,
-                            "namespace", targetNamespace, soap);
+                            null, targetNamespace, soap);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(),
                             null);
                     // TODO adding policies for fault messages
@@ -626,7 +626,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
                             wsdl);
                     addExtensionElemnet(fac, input, SOAP_BODY, SOAP_USE, use,
-                            "namespace", targetNamespace, soap12);
+                            null, targetNamespace, soap12);
                     addPolicyAsExtElement(PolicyInclude.BINDING_INPUT_POLICY,
                             inaxisMessage.getPolicyInclude(), input, fac);
                     operation.addChild(input);
@@ -646,7 +646,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
                             wsdl);
                     addExtensionElemnet(fac, output, SOAP_BODY, SOAP_USE, use,
-                            "namespace", targetNamespace, soap12);
+                            null, targetNamespace, soap12);
                     addPolicyAsExtElement(PolicyInclude.BINDING_OUTPUT_POLICY,
                             outAxisMessage.getPolicyInclude(), output, fac);
                     operation.addChild(output);
@@ -663,7 +663,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
                             wsdl);
                     addExtensionElemnet(fac, fault, SOAP_BODY, SOAP_USE, use,
-                            "namespace", targetNamespace, soap12);
+                            null, targetNamespace, soap12);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(),
                             null);
                     // add policies for fault messages
@@ -767,7 +767,9 @@ public class AxisService2OM implements Java2WSDLConstants {
         OMElement soapbinding = fac.createOMElement(name, soapNameSpace);
         element.addChild(soapbinding);
         soapbinding.addAttribute(att1Name, att1Value, null);
-        soapbinding.addAttribute(att2Name, att2Value, null);
+        if (att2Name != null) {
+            soapbinding.addAttribute(att2Name, att2Value, null);
+        }
     }
 
     private void addExtensionElement(OMFactory fac, OMElement element,
