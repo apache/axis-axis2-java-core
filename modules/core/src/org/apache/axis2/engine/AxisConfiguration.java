@@ -319,9 +319,9 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     private void engageModule(AxisModule module) throws AxisFault {
-        QName moduleQName = module.getName();
         boolean isEngagable;
         if (module != null) {
+            QName moduleQName = module.getName();
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
 

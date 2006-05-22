@@ -33,7 +33,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -137,7 +136,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                         method.getName();
+                    inMessage.getAxisOperation().getName().getLocalPart();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }

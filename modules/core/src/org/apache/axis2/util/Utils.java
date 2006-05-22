@@ -296,6 +296,8 @@ public class Utils {
                 } else {
                     return false;
                 }
+            } else if (module2version == null) {
+                return false;
             }
         }
         return true;
