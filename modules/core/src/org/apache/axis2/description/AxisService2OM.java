@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -369,10 +370,11 @@ public class AxisService2OM implements Java2WSDLConstants {
             throws Exception {
         for (int i = 0; i < url.length; i++) {
             String urlString = url[i];
+            URL url = new URL(urlString);
             OMElement port = fac.createOMElement(PORT, wsdl);
             service.addChild(port);
             port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                    + SOAP11PORT + i, null);
+                    + SOAP11PORT + "_" + url.getProtocol(), null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
@@ -407,10 +409,11 @@ public class AxisService2OM implements Java2WSDLConstants {
             throws Exception {
         for (int i = 0; i < url.length; i++) {
             String urlString = url[i];
+            URL url = new URL(urlString);
             OMElement port = fac.createOMElement(PORT, wsdl);
             service.addChild(port);
             port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                    + SOAP12PORT + i, null);
+                    + SOAP12PORT + "_" + url.getProtocol(), null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + SOAP12BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
