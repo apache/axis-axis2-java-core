@@ -46,7 +46,7 @@ public class Options {
 
     public static final String COPY_PROPERTIES = "CopyProperties";
 
-    public static final int DEFAULT_TIMEOUT_MILLISECONDS = 5000;
+    public static final int DEFAULT_TIMEOUT_MILLISECONDS = 30 * 1000;
 
     private Options parent;
 
