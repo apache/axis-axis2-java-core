@@ -46,7 +46,7 @@ public class Rampart implements Module {
             try {
                 WSSPolicyProcessor wssPolicyProcessor = new WSSPolicyProcessor();
                 wssPolicyProcessor.setup();
-                wssPolicyProcessor.processPolicy(policy);
+                wssPolicyProcessor.processPolicy((Policy)policy.normalize(axisDescription.getPolicyInclude().getPolicyRegistry()));
 
                 //create server side config
                 WSS4JConfig serverConfig = WSS4JConfigBuilder
