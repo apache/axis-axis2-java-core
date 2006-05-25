@@ -15,6 +15,9 @@ import org.apache.woden.wsdl20.xml.InterfaceElement;
 import org.apache.woden.wsdl20.xml.InterfaceOperationElement;
 import org.apache.woden.wsdl20.xml.ServiceElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
+import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
+import org.apache.woden.wsdl20.xml.InterfaceFaultReferenceElement;
+import org.apache.woden.wsdl20.enumeration.Direction;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -51,18 +55,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private DescriptionElement descriptionElement;
 
     private String wsdlURI;
-    
+
     //FIXME @author Chathura THis shoud be a URI. Fine whats used by
     //woden.
     private static String RPC = "rpc";
-    
+
     private String interfaceName;
-    
-    private DescriptionElement wodenDescription;
-    
-    
+
     public WSDL20ToAxisServiceBuilder(InputStream in, QName serviceName,
-            String interfaceName) {
+                                      String interfaceName) {
         this.in = in;
         this.serviceName = serviceName;
         this.interfaceName = interfaceName;
@@ -71,14 +72,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     public WSDL20ToAxisServiceBuilder(DescriptionElement des, QName serviceName,
-            String interfaceName) {
-        this.wodenDescription = des;
+                                      String interfaceName) {
+        this.descriptionElement = des;
         this.serviceName = serviceName;
         this.interfaceName = interfaceName;
         this.axisService = new AxisService();
         setPolicyRegistryFromService(axisService);
     }
-    
+
 
     public WSDL20ToAxisServiceBuilder(String wsdlUri, QName serviceName) {
         super(null, serviceName);
@@ -86,7 +87,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     public WSDL20ToAxisServiceBuilder(DescriptionElement descriptionElement,
-            QName serviceName) {
+                                      QName serviceName) {
         super(null, serviceName);
         this.descriptionElement = descriptionElement;
     }
@@ -128,21 +129,21 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         typesElement.getExtensionElements(),
                         descriptionElement, axisService, TYPES);
             }
-            // Binding binding = findBinding(wsdl4jDefinition);
+             BindingElement binding = findBinding(descriptionElement);
             // //////////////////(1.2) /////////////////////////////
             // // create new Schema extensions element for wrapping
-            // Element[] schemaElements =
-            // generateWrapperSchema(wsdl4jDefinition,
-            // binding);
-            // if (schemaElements != null && schemaElements.length > 0) {
-            // for (int i = 0; i < schemaElements.length; i++) {
-            // Element schemaElement = schemaElements[i];
-            // if (schemaElement != null) {
-            // axisService.addSchema(getXMLSchema(schemaElement, null));
-            // }
-            // }
-            // }
-            // processBinding(binding, wsdl4jDefinition);
+            Element[] schemaElements =
+                    generateWrapperSchema(descriptionElement,
+                            binding);
+            if (schemaElements != null && schemaElements.length > 0) {
+                for (int i = 0; i < schemaElements.length; i++) {
+                    Element schemaElement = schemaElements[i];
+                    if (schemaElement != null) {
+                        axisService.addSchema(getXMLSchema(schemaElement, null));
+                    }
+                }
+            }
+//            processBinding(binding, wsdl4jDefinition);
             return axisService;
         } catch (WSDLException e) {
             throw new AxisFault(e);
@@ -195,8 +196,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     // }
 
     private void copyExtensibleElements(ExtensionElement[] extensionElement,
-            DescriptionElement descriptionElement, AxisDescription description,
-            String originOfExtensibilityElements) {
+                                        DescriptionElement descriptionElement, AxisDescription description,
+                                        String originOfExtensibilityElements) {
         for (int i = 0; i < extensionElement.length; i++) {
             ExtensionElement element = extensionElement[i];
 
@@ -255,64 +256,66 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // TODO : we are ignored that.
                 }
 
-                // } else if (element instanceof SOAPAddress) {
-                // SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
-                // axisService.setEndpoint(soapAddress.getLocationURI());
-                // } else if (wsdl4jElement instanceof Schema) {
-                // Schema schema = (Schema) wsdl4jElement;
-                // //just add this schema - no need to worry about the imported
-                // ones
-                // axisService.addSchema(getXMLSchema(schema.getElement(),
-                // wsdl4jDefinition.getDocumentBaseURI()));
-                // } else if
-                // (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
-                // .getElementType())) {
-                // SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
-                // if (description instanceof AxisOperation) {
-                // AxisOperation axisOperation = (AxisOperation) description;
-                // if (soapOperation.getStyle() != null) {
-                // axisOperation.setStyle(soapOperation.getStyle());
-                // }
-                // axisOperation.setSoapAction(soapOperation
-                // .getSoapActionURI());
-                // }
-                // } else if
-                // (SOAPConstants.Q_ELEM_SOAP_HEADER.equals(wsdl4jElement
-                // .getElementType())) {
-                // SOAPHeader soapHeader = (SOAPHeader) wsdl4jElement;
-                // SOAPHeaderMessage headerMessage = new SOAPHeaderMessage();
-                // headerMessage.setNamespaceURI(soapHeader.getNamespaceURI());
-                // headerMessage.setUse(soapHeader.getUse());
-                // Boolean required = soapHeader.getRequired();
-                // if (null != required) {
-                // headerMessage.setRequired(required.booleanValue());
-                // }
-                // if (null != wsdl4jDefinition) {
-                // //find the relevant schema part from the messages
-                // Message msg = wsdl4jDefinition.getMessage(soapHeader
-                // .getMessage());
-                // Part msgPart = msg.getPart(soapHeader.getPart());
-                // headerMessage.setElement(msgPart.getElementName());
-                // }
-                // headerMessage.setMessage(soapHeader.getMessage());
-                //
-                // headerMessage.setPart(soapHeader.getPart());
-                // if (description instanceof AxisMessage) {
-                // ((AxisMessage) description).addSopaHeader(headerMessage);
-                // }
-                // } else if
-                // (SOAPConstants.Q_ELEM_SOAP_BINDING.equals(wsdl4jElement
-                // .getElementType())) {
-                // SOAPBinding soapBinding = (SOAPBinding) wsdl4jElement;
-                // style = soapBinding.getStyle();
-                // axisService.setSoapNsUri(soapBinding.getElementType()
-                // .getNamespaceURI());
-                // }
+//            } else if (element instanceof SOAPAddress) {
+//                SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
+//                axisService.setEndpoint(soapAddress.getLocationURI());
+//            } else if (wsdl4jElement instanceof Schema) {
+//                Schema schema = (Schema) wsdl4jElement;
+//                //just add this schema - no need to worry about the imported
+//                ones
+//                axisService.addSchema(getXMLSchema(schema.getElement(),
+//                        wsdl4jDefinition.getDocumentBaseURI()));
+//            } else if
+//                    (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
+//                    .getElementType())) {
+//                SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
+//                if (description instanceof AxisOperation) {
+//                    AxisOperation axisOperation = (AxisOperation) description;
+//                    if (soapOperation.getStyle() != null) {
+//                        axisOperation.setStyle(soapOperation.getStyle());
+//                    }
+//                    axisOperation.setSoapAction(soapOperation
+//                            .getSoapActionURI());
+//                }
+//            } else if
+//                    (SOAPConstants.Q_ELEM_SOAP_HEADER.equals(wsdl4jElement
+//                    .getElementType())) {
+//                SOAPHeader soapHeader = (SOAPHeader) wsdl4jElement;
+//                SOAPHeaderMessage headerMessage = new SOAPHeaderMessage();
+//                headerMessage.setNamespaceURI(soapHeader.getNamespaceURI());
+//                headerMessage.setUse(soapHeader.getUse());
+//                Boolean required = soapHeader.getRequired();
+//                if (null != required) {
+//                    headerMessage.setRequired(required.booleanValue());
+//                }
+//                if (null != wsdl4jDefinition) {
+//                    //find the relevant schema part from the messages
+//                    Message msg = wsdl4jDefinition.getMessage(soapHeader
+//                            .getMessage());
+//                    Part msgPart = msg.getPart(soapHeader.getPart());
+//                    headerMessage.setElement(msgPart.getElementName());
+//                }
+//                headerMessage.setMessage(soapHeader.getMessage());
+//
+//                headerMessage.setPart(soapHeader.getPart());
+//                if (description instanceof AxisMessage) {
+//                    ((AxisMessage) description).addSopaHeader(headerMessage);
+//                }
+//            } else if
+//                    (SOAPConstants.Q_ELEM_SOAP_BINDING.equals(wsdl4jElement
+//                    .getElementType())) {
+//                SOAPBinding soapBinding = (SOAPBinding) wsdl4jElement;
+//                style = soapBinding.getStyle();
+//                axisService.setSoapNsUri(soapBinding.getElementType()
+//                        .getNamespaceURI());
+//            }
             }
         }
     }
 
-    private void processImports(DescriptionElement descriptionElement) {
+    private void processImports
+            (DescriptionElement
+                    descriptionElement) {
         ImportElement[] wsdlImports = descriptionElement.getImportElements();
 
         for (int i = 0; i < wsdlImports.length; i++) {
@@ -321,7 +324,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     .getDescriptionElement();
             if (importedDescriptionElement != null) {
                 processImports(importedDescriptionElement);
-                // copy ns
+// copy ns
 
                 Map namespaces = importedDescriptionElement.getNamespaces();
                 Iterator keys = namespaces.keySet().iterator();
@@ -335,7 +338,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 descriptionElement.getNamespaces().putAll(namespaces);
-                // copy types
+// copy types
                 TypesElement t = importedDescriptionElement.getTypesElement();
                 ExtensionElement[] typesList = t.getExtensionElements();
 
@@ -369,10 +372,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private BindingElement findBinding(DescriptionElement discription)
+    private BindingElement findBinding (DescriptionElement discription)
             throws AxisFault {
         ServiceElement[] services = discription.getServiceElements();
-        // services[0].getEndpointElements()[0].getBindingElement();
         ServiceElement service = null;
         EndpointElement endpoint = null;
         BindingElement binding = null;
@@ -431,31 +433,354 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return binding;
     }
 
-    private Element[] generateWrapperSchema(
-            DescriptionElement wodenDescription, BindingElement binding) {
+    private Element[] generateWrapperSchema (DescriptionElement wodenDescription, BindingElement binding) {
 
         List schemaElementList = new ArrayList();
         String targetNamespaceUri = wodenDescription.getTargetNamespace()
                 .toString();
 
-        // ///////////////////////////////////////////////////////////////////////////////////////////
-        // if there are any bindings present then we have to process them. we
-        // have to generate a schema
-        // per binding (that is the safest option). if not we just resolve to
-        // the good old port type
-        // list, in which case we'll generate a schema per porttype
-        // //////////////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////
+// if there are any bindings present then we have to process them. we
+// have to generate a schema
+// per binding (that is the safest option). if not we just resolve to
+// the good old port type
+// list, in which case we'll generate a schema per porttype
+// //////////////////////////////////////////////////////////////////////////////////////////
 
-        //FIXME @author Chathura Once this method is done we could run the
-        //basic codgen
-//        schemaElementList.add(createSchemaForPorttype(binding
-//                .getInterfaceElement(), targetNamespaceUri,
-//                findWrapForceable(binding)));
+//FIXME @author Chathura Once this method is done we could run the
+//basic codgen
+        schemaElementList.add(createSchemaForInterface(binding
+                .getInterfaceElement(), targetNamespaceUri,
+                findWrapForceable(binding)));
         return (Element[]) schemaElementList
                 .toArray(new Element[schemaElementList.size()]);
     }
 
-    private boolean findWrapForceable(BindingElement binding) {
+    private Element createSchemaForInterface(InterfaceElement interfaceElement,
+                                             String targetNamespaceUri, boolean forceWrapping) {
+
+        //loop through the messages. We'll populate things map with the relevant
+        // messages
+        //from the operations
+
+        // this will have name (QName) as the key and InterfaceMessageReferenceElement as the value
+        Map messagesMap = new HashMap();
+
+        // this will have operation name (a QName) as the key and InterfaceMessageReferenceElement as the value
+        Map inputOperationsMap = new HashMap();
+
+        // this will have operation name (a QName) as the key and InterfaceMessageReferenceElement as the value
+        Map outputOperationsMap = new HashMap();
+
+        Map faultyOperationsMap = new HashMap();
+        //this contains the required namespace imports. the key in this
+        //map would be the namaspace URI
+        Map namespaceImportsMap = new HashMap();
+        //generated complextypes. Keep in the list for writing later
+        //the key for the complexType map is the message QName
+        Map complexTypeElementsMap = new HashMap();
+        //generated Elements. Kep in the list for later writing
+        List elementElementsList = new ArrayList();
+        //list namespace prefix map. This map will include uri -> prefix
+        Map namespacePrefixMap = new HashMap();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        // First thing is to populate the message map with the messages to
+        // process.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //we really need to do this for a single porttype!
+        InterfaceOperationElement[] operationElements = interfaceElement.getInterfaceOperationElements();
+        InterfaceOperationElement opElement;
+        for (int k = 0; k < operationElements.length; k++) {
+            opElement = operationElements[k];
+            InterfaceMessageReferenceElement[] interfaceMessageReferenceElements =
+                    opElement.getInterfaceMessageReferenceElements();
+
+            for (int i = 0; i < interfaceMessageReferenceElements.length; i++) {
+                InterfaceMessageReferenceElement interfaceMessageReferenceElement = interfaceMessageReferenceElements[i];
+                String direction = interfaceMessageReferenceElement.getDirection().toString();
+                messagesMap.put(interfaceMessageReferenceElement.getElementName(), interfaceMessageReferenceElement);
+                if (Direction.IN.toString().equalsIgnoreCase(direction)) {
+                    inputOperationsMap.put(opElement.getName(), interfaceMessageReferenceElement);
+                } else if (Direction.OUT.toString().equalsIgnoreCase(direction)) {
+                    outputOperationsMap.put(opElement.getName(), interfaceMessageReferenceElement);
+                }
+            }
+
+            InterfaceFaultReferenceElement[] interfaceFaultReferenceElements
+                    = opElement.getInterfaceFaultReferenceElements();
+
+            for (int i = 0; i < interfaceFaultReferenceElements.length; i++) {
+                InterfaceFaultReferenceElement interfaceFaultReferenceElement 
+                        = interfaceFaultReferenceElements[i];
+                String direction = interfaceFaultReferenceElement.getDirection().toString();
+                messagesMap.put(interfaceFaultReferenceElement.getRef(), interfaceFaultReferenceElement);
+                faultyOperationsMap.put(interfaceFaultReferenceElement.getInterfaceFaultElement(), interfaceFaultReferenceElement);
+            }
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //check whether there are messages that are wrappable. If there are no
+        // messages that are wrappable we'll
+        //just return null and endup this process. However we need to take the
+        // force flag into account here
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        QName[] keys;
+        if (forceWrapping) {
+            //just take all the messages and wrap them, we've been told to
+            // force wrapping!
+            keys = (QName[]) messagesMap.keySet().toArray(
+                    new QName[messagesMap.size()]);
+        } else {
+            //
+            QName[] allKeys = (QName[]) messagesMap.keySet().toArray(
+                    new QName[messagesMap.size()]);
+            List wrappableMessageNames = new ArrayList();
+            boolean noMessagesTobeProcessed = true;
+
+            // TODO Fix this
+//            for (int i = 0; i < allKeys.length; i++) {
+//                if (findWrapppable((Message) messagesMap.get(allKeys[i]))) {
+//                    noMessagesTobeProcessed = false;
+//                    //add that message to the list
+//                    wrappableMessageNames.add(allKeys[i]);
+//                }
+//            }
+            if (noMessagesTobeProcessed) {
+                return null;
+            }
+
+            keys = (QName[]) wrappableMessageNames
+                    .toArray(new QName[wrappableMessageNames.size()]);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Now we have the message list to process - Process the whole list of
+        // messages at once
+        // since we need to generate one single schema
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//        List resolvedMessageQNames = new ArrayList();
+//        //find the xsd prefix
+//        String xsdPrefix = findSchemaPrefix();
+//        Message wsdl4jMessage;
+//        //DOM document that will be the ultimate creator
+//        Document document = getDOMDocumentBuilder().newDocument();
+//        for (int i = 0; i < keys.length; i++) {
+//            wsdl4jMessage = (Message) messagesMap.get(keys[i]);
+//            //No need to check the wrappable,
+//
+//            //This message is wrappabel. However we need to see whether the
+//            // message is already
+//            //resolved!
+//            if (!resolvedMessageQNames.contains(wsdl4jMessage.getQName())) {
+//                //This message has not been touched before!. So we can go ahead
+//                // now
+//                Map parts = wsdl4jMessage.getParts();
+//                //add the complex type
+//                String name = wsdl4jMessage.getQName().getLocalPart();
+//                Element newComplexType = document.createElementNS(
+//                        XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                                + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
+//                newComplexType.setAttribute(XSD_NAME, name);
+//
+//                Element cmplxContentSequence = document.createElementNS(
+//                        XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                                + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
+//                Element child;
+//                Iterator iterator = parts.keySet().iterator();
+//                while (iterator.hasNext()) {
+//                    Part part = (Part) parts.get(iterator.next());
+//                    //the part name
+//                    String elementName = part.getName();
+//                    boolean isTyped = true;
+//                    //the type name
+//                    QName schemaTypeName;
+//                    if (part.getTypeName() != null) {
+//                        schemaTypeName = part.getTypeName();
+//                    } else if (part.getElementName() != null) {
+//                        schemaTypeName = part.getElementName();
+//                        isTyped = false;
+//                    } else {
+//                        throw new RuntimeException(" Unqualified Message part!");
+//                    }
+//
+//                    child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI,
+//                            xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+//
+//                    String prefix;
+//                    if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName
+//                            .getNamespaceURI())) {
+//                        prefix = xsdPrefix;
+//                    } else {
+//                        //this schema is a third party one. So we need to have
+//                        // an import statement in our generated schema
+//                        String uri = schemaTypeName.getNamespaceURI();
+//                        if (!namespaceImportsMap.containsKey(uri)) {
+//                            //create Element for namespace import
+//                            Element namespaceImport = document.createElementNS(
+//                                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                                            + XML_SCHEMA_IMPORT_LOCAL_NAME);
+//                            namespaceImport.setAttribute("namespace", uri);
+//                            //add this to the map
+//                            namespaceImportsMap.put(uri, namespaceImport);
+//                            //we also need to associate this uri with a prefix
+//                            // and include that prefix
+//                            //in the schema's namspace declarations. So add
+//                            // theis particular namespace to the
+//                            //prefix map as well
+//                            prefix = getTemporaryNamespacePrefix();
+//                            namespacePrefixMap.put(uri, prefix);
+//                        } else {
+//                            //this URI should be already in the namspace prefix
+//                            // map
+//                            prefix = (String) namespacePrefixMap.get(uri);
+//                        }
+//
+//                    }
+//                    // If it's from a type the element we need to add a name and
+//                    // the type
+//                    //if not it's the element reference
+//                    if (isTyped) {
+//                        child.setAttribute(XSD_NAME, elementName);
+//                        child.setAttribute(XSD_TYPE, prefix + ":"
+//                                + schemaTypeName.getLocalPart());
+//                    } else {
+//                        child.setAttribute(XSD_REF, prefix + ":"
+//                                + schemaTypeName.getLocalPart());
+//                    }
+//                    cmplxContentSequence.appendChild(child);
+//                }
+//                newComplexType.appendChild(cmplxContentSequence);
+//                //add this newly created complextype to the list
+//                complexTypeElementsMap.put(wsdl4jMessage.getQName(),
+//                        newComplexType);
+//                resolvedMessageQNames.add(wsdl4jMessage.getQName());
+//            }
+//
+//        }
+//
+//        Element elementDeclaration;
+//
+//        //loop through the input op map and generate the elements
+//        String[] inputOperationtNames = (String[]) inputOperationsMap.keySet()
+//                .toArray(new String[inputOperationsMap.size()]);
+//        for (int j = 0; j < inputOperationtNames.length; j++) {
+//            String inputOpName = inputOperationtNames[j];
+//            elementDeclaration = document.createElementNS(
+//                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+//            elementDeclaration.setAttribute(XSD_NAME, inputOpName);
+//
+//            String typeValue = ((Message) inputOperationsMap.get(inputOpName))
+//                    .getQName().getLocalPart();
+//            elementDeclaration.setAttribute(XSD_TYPE, AXIS2WRAPPED + ":"
+//                    + typeValue);
+//            elementElementsList.add(elementDeclaration);
+//            resolvedRpcWrappedElementMap.put(inputOpName, new QName(
+//                    targetNamespaceUri, inputOpName, AXIS2WRAPPED));
+//        }
+//
+//        //loop through the output op map and generate the elements
+//        String[] outputOperationtNames = (String[]) outputOperationsMap
+//                .keySet().toArray(new String[outputOperationsMap.size()]);
+//        for (int j = 0; j < outputOperationtNames.length; j++) {
+//
+//            String baseoutputOpName = outputOperationtNames[j];
+//            String outputOpName = baseoutputOpName + "Response";
+//            elementDeclaration = document.createElementNS(
+//                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+//            elementDeclaration.setAttribute(XSD_NAME, outputOpName);
+//            String typeValue = ((Message) outputOperationsMap
+//                    .get(baseoutputOpName)).getQName().getLocalPart();
+//            elementDeclaration.setAttribute(XSD_TYPE, AXIS2WRAPPED + ":"
+//                    + typeValue);
+//            elementElementsList.add(elementDeclaration);
+//            resolvedRpcWrappedElementMap.put(outputOpName, new QName(
+//                    targetNamespaceUri, outputOpName, AXIS2WRAPPED));
+//
+//        }
+//
+//        //loop through the faultoutput op map and generate the elements
+//        String[] faultyOperationtNames = (String[]) faultyOperationsMap
+//                .keySet().toArray(new String[faultyOperationsMap.size()]);
+//        for (int j = 0; j < faultyOperationtNames.length; j++) {
+//
+//            String baseFaultOpName = faultyOperationtNames[j];
+//            elementDeclaration = document.createElementNS(
+//                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+//            elementDeclaration.setAttribute(XSD_NAME, baseFaultOpName);
+//            String typeValue = ((Message) faultyOperationsMap
+//                    .get(baseFaultOpName)).getQName().getLocalPart();
+//            elementDeclaration.setAttribute(XSD_TYPE, AXIS2WRAPPED + ":"
+//                    + typeValue);
+//            elementElementsList.add(elementDeclaration);
+//            resolvedRpcWrappedElementMap.put(baseFaultOpName, new QName(
+//                    targetNamespaceUri, baseFaultOpName, AXIS2WRAPPED));
+//
+//        }
+//
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        // Now we are done with processing the messages and generating the right
+//        // schema object model
+//        // time to write out the schema
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//
+//        Element schemaElement = document.createElementNS(
+//                XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                        + XML_SCHEMA_LOCAL_NAME);
+//
+//        //loop through the namespace declarations first
+//        String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
+//                .keySet().toArray(new String[namespacePrefixMap.size()]);
+//        for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
+//            String s = nameSpaceDeclarationArray[i];
+//            schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+//                    "xmlns:" + namespacePrefixMap.get(s).toString(), s);
+//
+//        }
+//
+//        //add the targetNamespace
+//
+//        schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+//                XMLNS_AXIS2WRAPPED, targetNamespaceUri);
+//        schemaElement.setAttribute(XSD_TARGETNAMESPACE, targetNamespaceUri);
+//        schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT, XSD_UNQUALIFIED);
+//
+//        Element[] namespaceImports = (Element[]) namespaceImportsMap.values()
+//                .toArray(new Element[namespaceImportsMap.size()]);
+//        for (int i = 0; i < namespaceImports.length; i++) {
+//            schemaElement.appendChild(namespaceImports[i]);
+//
+//        }
+//
+//        Element[] complexTypeElements = (Element[]) complexTypeElementsMap
+//                .values().toArray(new Element[complexTypeElementsMap.size()]);
+//        for (int i = 0; i < complexTypeElements.length; i++) {
+//            schemaElement.appendChild(complexTypeElements[i]);
+//
+//        }
+//
+//        Element[] elementDeclarations = (Element[]) elementElementsList
+//                .toArray(new Element[elementElementsList.size()]);
+//        for (int i = 0; i < elementDeclarations.length; i++) {
+//            schemaElement.appendChild(elementDeclarations[i]);
+//
+//        }
+
+//        return schemaElement;
+
+        return null;
+    }
+
+    private boolean findWrapForceable
+            (BindingElement
+                    binding) {
         boolean retVal = false;
         if (RPC.equalsIgnoreCase(binding.getInterfaceElement()
                 .getStyleDefault().toString())) {
@@ -477,13 +802,16 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return false;
     }
 
-    private DescriptionElement readInTheWSDLFile(String wsdlURI)
+    private DescriptionElement readInTheWSDLFile
+            (String
+                    wsdlURI)
             throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
 
-        // TODO : I can not find a constant for this feature in WSDLReader
-        // reader.setFeature("javax.wsdl.importDocuments", false);
+// TODO : I can not find a constant for this feature in WSDLReader
+// reader.setFeature("javax.wsdl.importDocuments", false);
+
         reader.setFeature(WSDLReader.FEATURE_VERBOSE, false);
         return reader.readWSDL(wsdlURI);
     }
