@@ -354,7 +354,7 @@ public class EchoSwA {
     }
 
     public void setOperationContext(OperationContext oc) throws AxisFault {
-        msgcts = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+        msgcts = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
     }
 
     public OMElement echoAttachment(OMElement omEle) {
