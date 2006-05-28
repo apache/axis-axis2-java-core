@@ -80,10 +80,11 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
-            AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
-            if (inaxisMessage != null) {
-                messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
+            QName elementQName = null;
+            if (inAxisMessage != null && (elementQName = inAxisMessage.getElementQName()) != null) {
+                messageNameSpace = elementQName.getNamespaceURI();
             }
 
             OMNamespace namespace = methodElement.getNamespace();
@@ -113,7 +114,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
             // Handling the response
             AxisMessage outaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (inaxisMessage != null) {
+            if (inAxisMessage != null) {
                 messageNameSpace = outaxisMessage.getElementQName().getNamespaceURI();
             }
 
