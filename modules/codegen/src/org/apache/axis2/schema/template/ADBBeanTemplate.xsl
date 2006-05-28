@@ -746,6 +746,14 @@
                                 }
                             </xsl:if>
                         </xsl:for-each>
+                        
+                        <xsl:if test="$ordered">  <!-- pick up trailing cruft after final property before outer endElement and verify no trailing properties -->
+                            while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
+                                reader.next();
+                            if (reader.isStartElement())
+                                // A start element we are not expecting indicates a trailing invalid property
+                                throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                        </xsl:if>
 
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
                         <xsl:if test="$unordered">
