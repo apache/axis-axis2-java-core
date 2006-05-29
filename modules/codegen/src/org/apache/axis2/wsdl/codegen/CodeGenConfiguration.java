@@ -28,11 +28,22 @@ import java.util.Map;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
+    /**  Axis Service reference*/
     private AxisService axisService;
-
+    /**  Base URI */
     private String baseURI;
-
+    /** path to the repository - used for evaluating policy */
     private String repositoryPath;
+    /** Mapping file including the qname to type map */
+    private File typeMappingFile;
+
+    public File getTypeMappingFile() {
+        return typeMappingFile;
+    }
+
+    public void setTypeMappingFile(File typeMappingFile) {
+        this.typeMappingFile = typeMappingFile;
+    }
 
     /**
      * A map to keep the custom namespace and package name mappings
@@ -47,6 +58,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setUri2PackageNameMap(Map uri2PackageNameMap) {
         this.uri2PackageNameMap = uri2PackageNameMap;
     }
+
+
 
     /**
      * Determines whether the parameters are wrappedor unwrapped
@@ -143,7 +156,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     //option to generate server side interface or not
     private boolean serverSideInterface = false;
 
-    
+
     public boolean isServerSideInterface() {
         return serverSideInterface;
     }

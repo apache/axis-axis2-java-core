@@ -42,7 +42,8 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         //check and create the directories
         if (outputLocationFile.exists()) {
             if (outputLocationFile.isFile()) {
-                throw new RuntimeException(CodegenMessages.getMessage("options.notADirectoryException"));
+                throw new RuntimeException(
+                        CodegenMessages.getMessage("options.notADirectoryException"));
             }
         } else {
             outputLocationFile.mkdirs();
@@ -107,6 +108,21 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setGenerateAll(true);
         }
 
+        //populate the external mapping
+        CommandLineOption externalMapping = loadOption(
+                WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION_LONG,
+                optionMap);
+        if (externalMapping!=null){
+            try {
+                config.setTypeMappingFile(new File(externalMapping.getOptionValue()));
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        CodegenMessages.getMessage("options.nomappingFile"), e);
+            }
+        }
+
+        // load the namespace to package list
         CommandLineOption ns2packageOption = loadOption(
                 WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
                 WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION_LONG,
@@ -137,7 +153,9 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                         p.load(new FileInputStream(value));
                         config.setUri2PackageNameMap(p);
                     } catch (IOException e) {
-                        throw new RuntimeException("Unable to load file :" + value, e);
+                        throw new RuntimeException(
+                                CodegenMessages.
+                                        getMessage("options.noFile", value), e);
                     }
                 }
             }
