@@ -186,10 +186,18 @@ public class WSS4JConfigBuilder {
                     if(token instanceof UsernameToken) {
                         String items = config.getInflowConfiguration().getActionItems();
                         if(items == null || items.length() == 0) {
-                            config.getInflowConfiguration().setActionItems("UsernameToken");
+                            if(serverSide) {
+                                config.getInflowConfiguration().setActionItems("UsernameToken");
+                            } else {
+                                config.getOutflowConfiguration().setActionItems("UsernameToken") ;
+                            }
                         } else {
                             items = "UsernameToken " + items;
-                            config.getInflowConfiguration().setActionItems(items);
+                            if(serverSide) {
+                                config.getInflowConfiguration().setActionItems(items);
+                            } else {
+                                config.getOutflowConfiguration().setActionItems(items);
+                            }
                         }
                     }
                 }
