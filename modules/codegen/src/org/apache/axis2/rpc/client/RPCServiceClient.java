@@ -30,8 +30,13 @@ import java.net.URL;
 
 public class RPCServiceClient extends ServiceClient {
 
+    private boolean notNullService;
+
     public RPCServiceClient(ConfigurationContext configContext, AxisService service) throws AxisFault {
         super(configContext, service);
+        if (service != null) {
+            notNullService = true;
+        }
     }
 
     public RPCServiceClient() throws AxisFault {
@@ -42,6 +47,7 @@ public class RPCServiceClient extends ServiceClient {
                             URL wsdlURL, QName wsdlServiceName,
                             String portName) throws AxisFault {
         super(configContext, wsdlURL, wsdlServiceName, portName);
+        notNullService = true;
     }
 
     /**
@@ -57,6 +63,9 @@ public class RPCServiceClient extends ServiceClient {
      */
     public OMElement invokeBlocking(QName opName, Object [] args) throws AxisFault {
         OMElement omElement = BeanUtil.getOMElement(opName, args, null);
+        if (notNullService) {
+            return super.sendReceive(opName, omElement);
+        }
         return super.sendReceive(omElement);
     }
 
@@ -78,7 +87,12 @@ public class RPCServiceClient extends ServiceClient {
 
     public Object[]  invokeBlocking(QName opName, Object [] args, Object [] returnTypes) throws AxisFault {
         OMElement omElement = BeanUtil.getOMElement(opName, args, null);
-        OMElement response = super.sendReceive(omElement);
+        OMElement response;
+        if (notNullService) {
+            response = super.sendReceive(opName, omElement);
+        } else {
+            response = super.sendReceive(omElement);
+        }
         return BeanUtil.deserialize(response, returnTypes);
     }
 
@@ -98,7 +112,11 @@ public class RPCServiceClient extends ServiceClient {
             throws AxisFault {
         OMElement omElement = BeanUtil.getOMElement(opName, args, null);
         //call the underline implementation
-        super.sendReceiveNonBlocking(omElement, callback);
+        if (notNullService) {
+            super.sendReceiveNonBlocking(opName, omElement, callback);
+        } else {
+            super.sendReceiveNonBlocking(omElement, callback);
+        }
     }
 
 
