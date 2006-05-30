@@ -31,12 +31,15 @@ import javax.xml.namespace.QName;
 /**
  * The purpose of this extension is to populate the type mapper from the
  * type mapping file. The format of the type mapping file is as follows
- * <mappings>
+ * <mappings dbf="adb">
  *     <mapping>
  *         <qname namespace="ns" prefix="p1">localName</qname>
  *         <value>type</value>
  *     </mapping>
  * </mappings>
+ *
+ * In any case it is best that the type mapper extension be after all the
+ * databinding extensions
  */
 
 public class TypeMapperExtension implements CodeGenExtension {
@@ -47,6 +50,7 @@ public class TypeMapperExtension implements CodeGenExtension {
     private static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
     private static final String QNAME_ELEMENT_NAME = "qname";
     private static final String VALUE_ELEMENT_NAME = "value";
+    private static final String DB_FRAMEWORK_ATTRIBUTE_NAME = "dbf";
 
     /**
      * Initialize the entension
@@ -76,7 +80,20 @@ public class TypeMapperExtension implements CodeGenExtension {
 
             //read the file as a DOM
             Document mappingDocument = buildDocument();
-            NodeList mappingList = mappingDocument.getDocumentElement().
+            Element rootMappingsElement = mappingDocument.getDocumentElement();
+
+            //override the databinding framework name. If a mapping file is
+            //present then the databinding framework name will be overridden
+            //if present. If a user wants to mix types then it must be
+            //from the same databinding framework!
+
+            configuration.
+                    setDatabindingType(
+                            rootMappingsElement.
+                                    getAttribute(DB_FRAMEWORK_ATTRIBUTE_NAME));
+
+
+            NodeList mappingList = rootMappingsElement.
                                     getElementsByTagName(MAPPING_ELEMENT_NAME);
             int length = mappingList.getLength();
             for (int i = 0; i < length; i++) {

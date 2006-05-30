@@ -49,7 +49,7 @@ public class BeanUtil {
      * @param beanName
      */
     public static XMLStreamReader getPullParser(Object beanObject, QName beanName) {
-		try {
+        try {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
             jam_service_parms.addClassLoader(beanObject.getClass().getClassLoader());
@@ -134,15 +134,15 @@ public class BeanUtil {
                 }
             }
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null);
-		} catch (java.io.IOException e){
-			throw new RuntimeException(e);
-		} catch (java.beans.IntrospectionException e){
-			throw new RuntimeException(e);
-		} catch (java.lang.reflect.InvocationTargetException e){
-			throw new RuntimeException(e);
-		} catch (java.lang.IllegalAccessException e){
-			throw new RuntimeException(e);
-		}
+        } catch (java.io.IOException e){
+            throw new RuntimeException(e);
+        } catch (java.beans.IntrospectionException e){
+            throw new RuntimeException(e);
+        } catch (java.lang.reflect.InvocationTargetException e){
+            throw new RuntimeException(e);
+        } catch (java.lang.IllegalAccessException e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -307,7 +307,7 @@ public class BeanUtil {
      * @throws AxisFault
      */
     public static Object [] deserialize(OMElement response, Object [] javaTypes) throws AxisFault {
-        /**
+        /*
          * Take the number of parameters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
          * if the method is , foo(String a , int b)
@@ -323,21 +323,21 @@ public class BeanUtil {
         int count = 0;
         Object [] retObjs = new Object[length];
 
-/**
- * If the body first child contains , then there can not be any other element withot
- * refs , so I can assume if the first child of the body first element has ref then
- * the message has to handle as mutiref message.
- * as an exmple if the body is like below
- * <foo>
- *  <arg0 href="#0"/>
- * </foo>
- *
- * then there can not be any element without refs , meaning following we are not handling
- * <foo>
- *  <arg0 href="#0"/>
- *  <arg1>absbsbs</arg1>
- * </foo>
- */
+        /*
+        * If the body first child contains , then there can not be any other element withot
+        * refs , so I can assume if the first child of the body first element has ref then
+        * the message has to handle as mutiref message.
+        * as an exmple if the body is like below
+        * <foo>
+        *  <arg0 href="#0"/>
+        * </foo>
+        *
+        * then there can not be any element without refs , meaning following we are not handling
+        * <foo>
+        *  <arg0 href="#0"/>
+        *  <arg1>absbsbs</arg1>
+        * </foo>
+        */
         Iterator parts = response.getChildren();
         //to handle multirefs
         //have to check the instanceof
