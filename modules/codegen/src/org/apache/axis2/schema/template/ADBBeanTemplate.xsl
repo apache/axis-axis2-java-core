@@ -509,6 +509,15 @@
 
                 </xsl:for-each>
 
+                boolean isReaderMTOMAware = false;
+                <!-- workaround for the issues in the wstx reader!-->
+                try{
+                  isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
+                }catch(java.lang.IllegalArgumentException e){
+                  isReaderMTOMAware = false;
+                }
+
+
                 <xsl:if test="$isType or $anon">
                     <!-- Skip the outer start element in order to process the subelements. -->
                     reader.next();
@@ -726,6 +735,26 @@
                                      </xsl:if>
                                 </xsl:when>
                                 <!-- end of OMelement handling -->
+                                <!-- start of the simple types handling for binary content-->
+                                <xsl:when test="@binary">
+                                    if (isReaderMTOMAware
+                                      &amp;&amp;
+                                    java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY))){
+                                         //MTOM aware reader - get the datahandler directly and put it in the object
+                                         object.set<xsl:value-of select="$javaName"/>(
+                                         (javax.activation.DataHandler)reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
+                                     }else{
+                                        //Do the usual conversion
+                                        java.lang.String content = getElementTextProperly(reader);
+                                        object.set<xsl:value-of select="$javaName"/>(
+                                        org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
+
+                                     }
+
+                                    <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
+                                        reader.next();
+                                    </xsl:if>
+                                </xsl:when>
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
                                     java.lang.String content = getElementTextProperly(reader);
