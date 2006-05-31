@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.wsdl.codegen.writer;
+package org.apache.axis2.util;
 
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;

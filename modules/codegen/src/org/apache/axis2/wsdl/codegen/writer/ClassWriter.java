@@ -19,6 +19,7 @@ package org.apache.axis2.wsdl.codegen.writer;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.FileWriter;
 import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.apache.axis2.util.PrettyPrinter;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;

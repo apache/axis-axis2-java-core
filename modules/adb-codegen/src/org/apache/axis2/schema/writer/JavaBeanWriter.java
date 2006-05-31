@@ -12,7 +12,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.util.XSLTUtils;
-import org.apache.axis2.wsdl.codegen.writer.PrettyPrinter;
+import org.apache.axis2.util.PrettyPrinter;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;

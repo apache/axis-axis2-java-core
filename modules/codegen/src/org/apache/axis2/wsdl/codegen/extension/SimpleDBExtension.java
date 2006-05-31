@@ -16,24 +16,19 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.schema.CompilerOptions;
-import org.apache.axis2.schema.SchemaCompiler;
-import org.apache.axis2.schema.SchemaConstants;
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.util.XSLTConstants;
 
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+
+import java.lang.reflect.Method;
 
 /**
  * Extension for simple data binding.
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
+
+    private static final String ADB_INVOKE_CLASS_NAME =
+            "org.apache.axis2.schema.ExtensionUtility";
+    private static final String INVOKE_METHOD_NAME = "invoke";
 
     /**
      * 
@@ -45,73 +40,13 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
         }
         try {
 
-            List schemaList = configuration.getAxisService().getSchema();
-            if (schemaList == null || schemaList.isEmpty()) {
-                //there are no types to be code generated
-                //However if the type mapper is left empty it will be a problem for the other
-                //processes. Hence the default type mapper is set to the configuration
-                this.configuration.setTypeMapper(new DefaultTypeMapper());
-                return;
-            }
-
-            //call the schema compiler
-            CompilerOptions options = new CompilerOptions();
-
-            //set the default options
-            populateDefaultOptions(options);
-
-            //set the user parameters. the user parameters get the preference over
-            //the default ones. But the user better know what he's doing if he
-            //used module specific parameters
-            populateUserparameters(options);
-
-            SchemaCompiler schemaCompiler = new SchemaCompiler(options);
-            // run the schema compiler
-            schemaCompiler.compile(schemaList);
-
-            //create the type mapper
-            JavaTypeMapper mapper = new JavaTypeMapper();
-
-            if (options.isWriteOutput()){
-                //get the processed element map and transfer it to the type mapper
-                Map processedMap = schemaCompiler.getProcessedElementMap();
-                Iterator processedkeys = processedMap.keySet().iterator();
-                QName qNameKey;
-                while (processedkeys.hasNext()) {
-                    qNameKey = (QName) processedkeys.next();
-                    mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
-                }
-
-            }else{
-                //get the processed model map and transfer it to the type mapper
-                //since the options mentiond that its not writable, it should have
-                //populated the model map
-                Map processedModelMap = schemaCompiler.getProcessedModelMap();
-                Iterator processedkeys = processedModelMap.keySet().iterator();
-                QName qNameKey;
-                while (processedkeys.hasNext()) {
-                    qNameKey = (QName) processedkeys.next();
-                    mapper.addTypeMappingObject(qNameKey, processedModelMap.get(qNameKey));
-                }
-
-                Map processedMap = schemaCompiler.getProcessedElementMap();
-                processedkeys = processedMap.keySet().iterator();
-                while (processedkeys.hasNext()) {
-                    qNameKey = (QName) processedkeys.next();
-                    mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
-                }
-
-                //get the ADB template from the schema compilers property bag and set the
-                //template
-                configuration.putProperty(XSLTConstants.EXTERNAL_TEMPLATE_PROPERTY_KEY,
-                        schemaCompiler.getCompilerProperties().getProperty(
-                                SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY));
-
-            }
-
-            //set the type mapper to the config
-            configuration.setTypeMapper(mapper);
-
+            //invoke the adb codegen by reflection
+            Class adbGeneratorClass = Class.
+                    forName(ADB_INVOKE_CLASS_NAME);
+            Method invokeMethod = adbGeneratorClass.getMethod(
+                    INVOKE_METHOD_NAME,
+                    new Class[]{CodeGenConfiguration.class});
+            invokeMethod.invoke(null,new Object[]{configuration});
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -119,105 +54,4 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
     }
 
-//    /**
-//     *  populates the unwrapped Qnames from the messagereference
-//     */
-//
-//    private void populateUnwrappedElements(List unwrappedElementQNames) {
-//        Map wsdlInterfaces = configuration.getWom().getWsdlInterfaces();
-//        Iterator interaceIterator = wsdlInterfaces.values().iterator();
-//        WSDLInterface wsdlInterface;
-//        while (interaceIterator.hasNext()) {
-//            wsdlInterface =  (WSDLInterface)interaceIterator.next();
-//            HashMap allOperations = wsdlInterface.getAllOperations();
-//            Iterator operationsIterator = allOperations.values().iterator();
-//            while (operationsIterator.hasNext()) {
-//                WSDLOperation operation =  (WSDLOperation)operationsIterator.next();
-//                MessageReference inputMessage = operation.getInputMessage();
-//                if (inputMessage!= null){
-//                    Map metadataBag = inputMessage.getMetadataBag();
-//                    Iterator qNameIterator = metadataBag.keySet().iterator();
-//                    while (qNameIterator.hasNext()) {
-//                        unwrappedElementQNames.add(qNameIterator.next());
-//                    }
-//                }
-//
-//                //at this point we should add the output messages as well
-//                MessageReference outputMessage = operation.getOutputMessage();
-//                if (outputMessage!=null){
-//                    unwrappedElementQNames.add(outputMessage.getElementQName());
-//                }
-//            }
-//        }
-//    }
-
-    /**
-     *
-     * @param options
-     */
-    private void populateUserparameters(CompilerOptions options){
-        Map propertyMap = configuration.getProperties();
-        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES)){
-            if (Boolean.valueOf(
-                    propertyMap.get(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES).toString()).
-                    booleanValue()) {
-                options.setWrapClasses(true);
-            }else{
-                options.setWrapClasses(false);
-            }
-        }
-
-        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.WRITE_SCHEMA_CLASSES)){
-            if (Boolean.valueOf(
-                    propertyMap.get(SchemaConstants.SchemaCompilerArguments.WRITE_SCHEMA_CLASSES).toString()).
-                    booleanValue()) {
-                options.setWriteOutput(true);
-            }else{
-                options.setWriteOutput(false);
-            }
-        }
-
-        // add the custom package name
-        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.PACKAGE)){
-            String packageName = (String)propertyMap.get(SchemaConstants.SchemaCompilerArguments.PACKAGE);
-            if (packageName!=null || !"".equals(packageName)){
-                options.setPackageName(packageName);
-            }
-
-        }
-    }
-
-
-    /**
-     *
-     * @param options
-     */
-    private void populateDefaultOptions(CompilerOptions options) {
-        //create the output directory
-        File outputDir = new File(configuration.getOutputLocation(), "src");
-        if(!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-
-        /// these options need to be taken from the command line
-        options.setOutputLocation(outputDir);
-        options.setNs2PackageMap(configuration.getUri2PackageNameMap()==null?
-                new HashMap():
-                configuration.getUri2PackageNameMap());
-
-        //default setting is to set the wrap status depending on whether it's
-        //the server side or the client side
-        if (configuration.isServerSide()){
-            //for the serverside we generate unwrapped  by default
-            options.setWrapClasses(false);
-            //for the serverside we write the output by default
-            options.setWriteOutput(true);
-        }else{
-            // for the client let the users preference be the word here
-            options.setWrapClasses(configuration.isPackClasses());
-            //for the client side the default setting is not to write the
-            //output
-            options.setWriteOutput(!configuration.isPackClasses());
-        }
-    }
 }
