@@ -153,15 +153,15 @@ public class AttachmentPartImpl extends AttachmentPart {
      *                                      into this <CODE>AttachmentPart</CODE> object or if there
      *                                      was a data transformation error
      */
-     public Object getContent() throws SOAPException {
+    public Object getContent() throws SOAPException {
         if (dataHandler == null) {
             throw new SOAPException("No content is present in this AttachmentPart");
         }
         try {
             String contentType = dataHandler.getContentType();
             if (contentType.equals("text/plain") ||
-                contentType.equals("text/xml") ||
-                contentType.equals("text/html")) {
+                    contentType.equals("text/xml") ||
+                    contentType.equals("text/html")) {
 
                 //For these content types underlying DataContentHandler surely does
                 //the conversion to appropriate java object and we will return that java object
@@ -209,8 +209,8 @@ public class AttachmentPartImpl extends AttachmentPart {
                 String s = (String) object;
                 java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(s.getBytes());
                 source = new SAAJDataSource(bais,
-                                            SAAJDataSource.MAX_MEMORY_DISK_CACHED,
-                                            contentType, true);
+                        SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                        contentType, true);
                 extractFilename(source);
                 dataHandler = new DataHandler(source);
                 contentObject = object;
@@ -220,8 +220,8 @@ public class AttachmentPartImpl extends AttachmentPart {
         } else if (object instanceof java.io.InputStream) {
             try {
                 source = new SAAJDataSource((java.io.InputStream) object,
-                                            SAAJDataSource.MAX_MEMORY_DISK_CACHED,
-                                            contentType, true);
+                        SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                        contentType, true);
                 extractFilename(source);
                 dataHandler = new DataHandler(source);
                 contentObject = null; // the stream has been consumed
@@ -231,8 +231,8 @@ public class AttachmentPartImpl extends AttachmentPart {
         } else if (object instanceof StreamSource) {
             try {
                 source = new SAAJDataSource(((StreamSource) object).getInputStream(),
-                                            SAAJDataSource.MAX_MEMORY_DISK_CACHED,
-                                            contentType, true);
+                        SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                        contentType, true);
                 extractFilename(source);
                 dataHandler = new DataHandler(source);
                 contentObject = null; // the stream has been consumed
@@ -254,9 +254,14 @@ public class AttachmentPartImpl extends AttachmentPart {
      *                                      no data in this <CODE>AttachmentPart</CODE> object
      */
     public DataHandler getDataHandler() throws SOAPException {
-        if (getContent() == null) {
+//        if (getContent() == null) {
+//            throw new SOAPException("No Content present in the Attachment part");
+//        }
+        //commented to fix AXIS2-778
+        if (dataHandler == null) {
             throw new SOAPException("No Content present in the Attachment part");
         }
+
         return dataHandler;
     }
 
