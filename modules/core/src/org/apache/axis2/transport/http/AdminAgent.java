@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -188,7 +188,7 @@ public class AdminAgent extends AbstractAgent {
     }
 
     protected void processEditServicePara(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        if (req.getParameter("editServicepara") != null) {
+        if (req.getParameter("changePara") != null) {
             String serviceName = req.getParameter("axisService");
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
 
@@ -216,13 +216,11 @@ public class AdminAgent extends AbstractAgent {
                 }
             }
 
-            res.setContentType("text/css");
-
-            PrintWriter out_writer = new PrintWriter(res.getOutputStream());
-
-            out_writer.println("Parameters  changed Successfully");
-            out_writer.flush();
-            out_writer.close();
+            OutputStream out = res.getOutputStream();
+            res.setContentType("text/xml");
+            out.write("Parameters  changed Successfully".getBytes());
+            out.flush();
+            out.close();
             req.getSession().removeAttribute(Constants.SERVICE);
 
             return;
