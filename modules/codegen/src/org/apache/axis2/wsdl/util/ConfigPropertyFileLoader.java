@@ -3,12 +3,13 @@ package org.apache.axis2.wsdl.util;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -19,7 +20,7 @@ public class ConfigPropertyFileLoader {
 
 
 
-    private static String dbSupporterTemplateName;
+    private static Map dbSupporterTemplateNameMap;
     private static String testObjectTemplateName;
     private static String[] extensionClassNames;
     private static String[] thirdPartySchemaNames;
@@ -41,7 +42,8 @@ public class ConfigPropertyFileLoader {
     private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
     private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
     private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
-    private static final String DATA_BINDING_TEMPLATE_NAME_KEY = "codegen.databinding.supporter.template";
+    private static final String DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX = "codegen.databinding.";
+    private static final String DATA_BINDING_TEMPLATE_NAME_KEY_SUFFIX = "template";
     private static final String DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY = "codegen.databinding.testobject.template";
 
 
@@ -76,7 +78,7 @@ public class ConfigPropertyFileLoader {
     }
 
     private static void reset(){
-        dbSupporterTemplateName = null;
+        dbSupporterTemplateNameMap = new HashMap();
         testObjectTemplateName = null;
         extensionClassNames = null;
         thirdPartySchemaNames = null;
@@ -94,7 +96,7 @@ public class ConfigPropertyFileLoader {
             //look for the system property "org.apache.axis2.codegen.config" to for a property
             //entry refering to the config properties
             String property = System.getProperty("org.apache.axis2.codegen.config");
-            InputStream stream = null;
+            InputStream stream;
 
             if (property!=null){
                 stream = getStream(property);
@@ -156,8 +158,20 @@ public class ConfigPropertyFileLoader {
                 thirdPartySchemaNames = tempString.split(SEPARATOR_CHAR);
 
             }
-            //the db supporter template name
-            dbSupporterTemplateName = props.getProperty(DATA_BINDING_TEMPLATE_NAME_KEY);
+
+            //populate the db supporter template names.
+            dbSupporterTemplateNameMap = new HashMap();
+            String key;
+            for (Iterator allProperties = props.keySet().iterator();
+                 allProperties.hasNext();){
+                key = (String)allProperties.next();
+                if (key.startsWith(DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX) &&
+                        key.endsWith(DATA_BINDING_TEMPLATE_NAME_KEY_SUFFIX)){
+                    dbSupporterTemplateNameMap.put(key,
+                            props.getProperty(key));
+                }
+
+            }
 
             testObjectTemplateName = props.getProperty(DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY);
 
@@ -228,12 +242,12 @@ public class ConfigPropertyFileLoader {
     }
 
     /**
-     * Gets the databinder template name. This is the template that has the
+     * Gets the databinder template names. This is the template that has the
      * logic for creating the databind supporters.
      * @return Returns String.
      */
-    public static String getDbSupporterTemplateName() {
-        return dbSupporterTemplateName;
+    public static Map getDbSupporterTemplatesMap() {
+        return dbSupporterTemplateNameMap;
     }
     /**
      * Gets the extension class names.

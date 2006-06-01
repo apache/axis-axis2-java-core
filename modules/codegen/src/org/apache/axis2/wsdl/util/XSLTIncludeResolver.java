@@ -1,6 +1,7 @@
 package org.apache.axis2.wsdl.util;
 
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -9,6 +10,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Iterator;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -27,24 +29,34 @@ import java.util.Map;
 
 public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
 
-    private Map externalPropertyMap;
+    private CodeGenConfiguration configuration;
 
     public XSLTIncludeResolver() {
     }
 
-    public XSLTIncludeResolver(Map externalPropertyMap) {
-        this.externalPropertyMap = externalPropertyMap;
+    public XSLTIncludeResolver(CodeGenConfiguration config) {
+        this.configuration = config;
     }
 
-    public void setExternalPropertyMap(Map externalPropertyMap) {
-        this.externalPropertyMap = externalPropertyMap;
-    }
+
 
     public Source resolve(String href, String base) throws TransformerException {
         String templateName;
+        Map externalPropertyMap = configuration.getProperties();
+
         InputStream supporterTemplateStream;
         if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY.equals(href)){
-            return getSourceFromTemplateName(ConfigPropertyFileLoader.getDbSupporterTemplateName());
+            //use the language name from the configuration to search the key
+            //our search only consists of looking for the data binding name
+            //in the key
+            Map dbSupporterMap = ConfigPropertyFileLoader.getDbSupporterTemplatesMap();
+            String key;
+            for (Iterator keys = dbSupporterMap.keySet().iterator();keys.hasNext();){
+                key = (String) keys.next();
+                if (key.indexOf(configuration.getDatabindingType())!=-1){
+                    return getSourceFromTemplateName((String)dbSupporterMap.get(key));
+                }
+            }
         }
 
         if (XSLT_INCLUDE_TEST_OBJECT_HREF_KEY.equals((href))){

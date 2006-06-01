@@ -152,7 +152,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.codeGenConfiguration = configuration;
         this.axisService = codeGenConfiguration.getAxisService();
-        resolver = new XSLTIncludeResolver(this.codeGenConfiguration.getProperties());
+        resolver = new XSLTIncludeResolver(codeGenConfiguration);
     }
 
     public void setMapper(TypeMapper mapper) {
