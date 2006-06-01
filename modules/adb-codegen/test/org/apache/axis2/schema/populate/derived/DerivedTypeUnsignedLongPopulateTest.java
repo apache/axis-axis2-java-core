@@ -25,6 +25,7 @@ public class DerivedTypeUnsignedLongPopulateTest extends AbstractDerivedPopulate
             "1",
             "0",
             "26758223334334" ,
+	    "18446744073709551615",
             "-1" ,
             "-267582233"
 
@@ -35,7 +36,8 @@ public class DerivedTypeUnsignedLongPopulateTest extends AbstractDerivedPopulate
             "<DerivedUnsignedLong xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</DerivedUnsignedLong>",
             "<DerivedUnsignedLong xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</DerivedUnsignedLong>",
             "<DerivedUnsignedLong xmlns=\"http://soapinterop.org/xsd\">"+values[3]+"</DerivedUnsignedLong>",
-            "<DerivedUnsignedLong xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedUnsignedLong>"
+            "<DerivedUnsignedLong xmlns=\"http://soapinterop.org/xsd\">"+values[4]+"</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong xmlns=\"http://soapinterop.org/xsd\">"+values[5]+"</DerivedUnsignedLong>"
     };
 
 
@@ -49,11 +51,11 @@ public class DerivedTypeUnsignedLongPopulateTest extends AbstractDerivedPopulate
     // force others to implement this method
     public void testPopulate() throws Exception {
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             checkValue(xmlString[i],values[i]);
         }
 
-        for (int i = 3; i < values.length; i++) {
+        for (int i = 4; i < values.length; i++) {
             try {
                 checkValue(xmlString[i],values[i]);
                 fail();
