@@ -227,20 +227,15 @@ public class EndpointReference implements Serializable {
         }
     }
 
-    public void toOM() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-    
-    
     public OMElement toOM(String nsurl,String localName,String prefix) throws AxisFault{
         OMFactory fac = OMAbstractFactory.getOMFactory();
         if(prefix!=null){
             OMNamespace wrapNs = fac.createOMNamespace(nsurl,prefix);
             OMElement epr = fac.createOMElement(localName,wrapNs);
-            OMNamespace wsans = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE,AddressingConstants.WSA_DEFAULT_PREFIX);
-            OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS,wsans,epr);
+            OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE,AddressingConstants.WSA_DEFAULT_PREFIX);
+            OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS,wsaNS,epr);
             addressE.setText(address);
-            OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA,wsans,epr);
+            OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA,wsaNS,epr);
 
             if(this.metaData != null){
                 Iterator metadata = this.metaData.iterator();
@@ -250,9 +245,10 @@ public class EndpointReference implements Serializable {
             }
 
             if(this.referenceParameters != null){
+                OMElement refParameterElement = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
                 Iterator refParms = referenceParameters.values().iterator();
                 while(refParms.hasNext()){
-                    metadataE.addChild((OMNode)refParms.next());
+                    refParameterElement.addChild((OMNode)refParms.next());
                 }
             }
             return epr;
