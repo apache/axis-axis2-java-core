@@ -84,7 +84,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
-                    service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    service.setName(serviceNameatt.getAttributeValue());
                 }
             }
 
