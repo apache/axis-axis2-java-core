@@ -181,11 +181,8 @@ public class RESTUtil {
                 // If charset is not specified
                 XMLStreamReader xmlreader;
                 if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                    xmlreader = XMLInputFactory.
-                            newInstance().
-                            createXMLStreamReader(inputStream,
-                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
+                	xmlreader = StAXUtils.createXMLStreamReader(inputStream, MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                	
                     // Set the encoding scheme in the message context
                     msgCtxt.setProperty(MessageContext.CHARACTER_SET_ENCODING,
                             MessageContext.DEFAULT_CHAR_SET_ENCODING);
