@@ -27,17 +27,17 @@ import org.apache.rampart.handler.config.OutflowConfiguration;
  * The client side rahas outflow handler will create the RSTR with the SCT
  * and RPT with a secret in a EncryptedKey and will send it over to the service.
  */
-public class RahasScenario3Test extends TestClient {
+public class ConversationScenario3Test extends TestClient {
 
-    public RahasScenario3Test(String name) {
+    public ConversationScenario3Test(String name) {
         super(name);
     }
 
-    public Parameter getClientRahasConfiguration() {
-        RahasConfiguration config = new RahasConfiguration();
+    public Parameter getClientConversationConfiguration() {
+        ConversationConfiguration config = new ConversationConfiguration();
 
         config.setCryptoPropertiesFile("sec.properties");
-        config.setScope(RahasConfiguration.SCOPE_SERVICE);
+        config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
         config.setEncryptionUser("sts");
 

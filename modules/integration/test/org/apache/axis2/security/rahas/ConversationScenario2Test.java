@@ -20,9 +20,9 @@ package org.apache.axis2.security.rahas;
  * The RSTR will hold a  RequestedProofToken with a base64 encoded 
  * secret held in a BinarySecret element.
  */
-public class RahasScenario2Test extends RahasScenario1Test {
+public class ConversationScenario2Test extends ConversationScenario1Test {
 
-    public RahasScenario2Test(String name) {
+    public ConversationScenario2Test(String name) {
         super(name);
     }
 

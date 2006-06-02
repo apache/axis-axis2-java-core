@@ -23,18 +23,18 @@ import org.apache.rampart.handler.config.OutflowConfiguration;
 /**
  * This tests the use computed keys when the requester provides entropy
  */
-public class RahasScenario4Test extends TestClient {
+public class ConversationScenario4Test extends TestClient {
 
-    public RahasScenario4Test(String name) {
+    public ConversationScenario4Test(String name) {
         super(name);
         // TODO Auto-generated constructor stub
     }
 
-    public Parameter getClientRahasConfiguration() {
-        RahasConfiguration config = new RahasConfiguration();
+    public Parameter getClientConversationConfiguration() {
+        ConversationConfiguration config = new ConversationConfiguration();
 
         config.setCryptoPropertiesFile("sec.properties");
-        config.setScope(RahasConfiguration.SCOPE_SERVICE);
+        config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
         config.setProvideEntropy(true);
         config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/Service");

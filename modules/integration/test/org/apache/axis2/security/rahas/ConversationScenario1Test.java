@@ -24,20 +24,20 @@ import org.apache.rampart.handler.config.OutflowConfiguration;
  * The RequestedProofToken is an EncryptedKey
  * which holds the secret of security context.
  */
-public class RahasScenario1Test extends TestClient {
+public class ConversationScenario1Test extends TestClient {
 
     /**
      * @param name
      */
-    public RahasScenario1Test(String name) {
+    public ConversationScenario1Test(String name) {
         super(name);
     }
 
-    public Parameter getClientRahasConfiguration() {
-        RahasConfiguration config = new RahasConfiguration();
+    public Parameter getClientConversationConfiguration() {
+        ConversationConfiguration config = new ConversationConfiguration();
 
         config.setCryptoPropertiesFile("sec.properties");
-        config.setScope(RahasConfiguration.SCOPE_SERVICE);
+        config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
         config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/Service");
 

@@ -61,7 +61,7 @@ public abstract class TestClient extends TestCase {
     /**
      * @param args
      */
-    public void testRahas() {
+    public void testConversation() {
         try {
 
             // Get the repository location from the args
@@ -84,7 +84,7 @@ public abstract class TestClient extends TestCase {
             if(clientInflowConfiguration != null) {
                 options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
             }
-            options.setProperty(RahasConfiguration.RAHAS_CONFIG, getClientRahasConfiguration());
+            options.setProperty(ConversationConfiguration.RAHAS_CONFIG, getClientConversationConfiguration());
             
             options.setAction("urn:echo");
             
@@ -127,7 +127,7 @@ public abstract class TestClient extends TestCase {
         return method;
     }
 
-    public abstract Parameter getClientRahasConfiguration();
+    public abstract Parameter getClientConversationConfiguration();
     
     public abstract OutflowConfiguration getClientOutflowConfiguration();
 
