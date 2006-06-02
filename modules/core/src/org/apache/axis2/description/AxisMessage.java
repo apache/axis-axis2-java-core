@@ -1,14 +1,3 @@
-package org.apache.axis2.description;
-
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -25,6 +14,18 @@ import java.util.List;
 * limitations under the License.
 *
 */
+
+package org.apache.axis2.description;
+
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 
 /**
  * This class represents the messages in WSDL. There can be message element in services.xml
