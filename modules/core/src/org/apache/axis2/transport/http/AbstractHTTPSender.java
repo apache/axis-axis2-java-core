@@ -308,9 +308,24 @@ public abstract class AbstractHTTPSender {
         HttpTransportProperties.BasicAuthentication basicAuthentication =
                 (HttpTransportProperties.BasicAuthentication) msgCtx
                         .getProperty(HTTPConstants.BASIC_AUTHENTICATION);
-        Credentials defaultCredentials = new UsernamePasswordCredentials(
-                basicAuthentication.getUsername(),
-                basicAuthentication.getPassword());
+        Credentials defaultCredentials = null;
+        if (basicAuthentication.getRealm() == null) {
+            defaultCredentials = new UsernamePasswordCredentials(
+                    basicAuthentication.getUsername(),
+                    basicAuthentication.getPassword());
+        } else {
+            defaultCredentials = new NTCredentials(
+                    basicAuthentication.getUsername(),
+                    basicAuthentication.getPassword(),
+                    basicAuthentication.getHost(),
+                    basicAuthentication.getRealm());
+            agent.getState().setCredentials(new AuthScope(
+                    basicAuthentication.getHost(),
+                    basicAuthentication.getPort(),
+                    null), defaultCredentials);
+
+            return;
+        }
         if (basicAuthentication.getPort() == -1 ||
             basicAuthentication.getHost() == null) {
             agent.getState().setCredentials(AuthScope.ANY, defaultCredentials);
