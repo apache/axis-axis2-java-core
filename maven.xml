@@ -357,6 +357,7 @@
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/>
             <fileset dir="modules/adb/target/classes"/>
+            <fileset dir="modules/adb-codegen/target/classes"/>
             <fileset dir="modules/xmlbeans/target/classes"/>
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing-${addressing_version}.mar"/>
@@ -399,6 +400,11 @@
         <!-- Copy the adb jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
+        </ant:copy>
+        
+         <!-- Copy the adb  codegen jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy the java2wsdl jar -->
@@ -567,6 +573,11 @@
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+ <!-- Copy the adb  codegen jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
+        </ant:copy>
+        
         <!-- Copy the release documents -->
         <macros:copy-release-docs toDir="target/temp/min/bin"
                                   readmeFile="release-docs/readme-files/README-min-bin.txt"/>
@@ -676,6 +687,7 @@
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
@@ -1016,6 +1028,7 @@
             <ant:fileset file="modules/common/target/axis2-common-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
