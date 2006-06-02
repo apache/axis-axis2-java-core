@@ -16,6 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
 
-    public void engage() throws CodeGenerationException {
+    public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         //WSDLDescription wom = this.configuration.getWom();
         List schemaList = configuration.getAxisService().getSchema();
         if (schemaList == null || schemaList.isEmpty()) {

@@ -1,5 +1,6 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -25,7 +26,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
  */
 public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
-    public void engage() throws CodeGenerationException {
+    public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
           if (!configuration.isParametersWrapped()){
 //              //unwrap the schema since we are told to do so
 //             SchemaUnwrapper.unwrap(configuration.getWom());

@@ -17,12 +17,13 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 
 public class PackageFinder extends AbstractCodeGenerationExtension {
 
 
-    public void engage() {
-        String packageName = this.configuration.getPackageName();
+    public void engage(CodeGenConfiguration configuration) {
+        String packageName = configuration.getPackageName();
         if (packageName == null || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
             //use the target namespace from the axis service to form a package
             //name
@@ -34,7 +35,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
         if (null == packageName || "".equals(packageName))
             packageName = URLProcessor.DEFAULT_PACKAGE;
 
-        this.configuration.setPackageName(packageName.toLowerCase());
+        configuration.setPackageName(packageName.toLowerCase());
 
     }
 

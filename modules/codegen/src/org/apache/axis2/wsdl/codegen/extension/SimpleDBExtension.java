@@ -33,7 +33,7 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
     /**
      * 
      */
-    public void engage() {
+    public void engage(CodeGenConfiguration configuration) {
         //test the databinding type. If not just fall through
         if (testFallThrough(configuration.getDatabindingType())) {
             return;

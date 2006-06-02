@@ -16,19 +16,11 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public abstract class AbstractCodeGenerationExtension implements CodeGenExtension {
 
-	private static final Log log = LogFactory.getLog(AbstractCodeGenerationExtension.class);
-
-    protected CodeGenConfiguration configuration;
-
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
+	protected Log log = LogFactory.getLog(this.getClass());
 
 }

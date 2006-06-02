@@ -16,6 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
@@ -23,7 +24,7 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
 
-    public void engage() throws CodeGenerationException {
+    public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         TypeMapper mapper = configuration.getTypeMapper();
         if (testFallThrough(configuration.getDatabindingType())) {
             //if it's fall through for the default databinding extension and a mapper has

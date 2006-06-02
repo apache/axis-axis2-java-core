@@ -16,18 +16,17 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+
+import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisMessage;
 
 public class JiBXExtension extends AbstractDBProcessingExtension {
 
@@ -38,7 +37,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             "org.apache.axis2.jibx.CodeGenerationUtility";
     public static final String BINDING_MAP_METHOD = "getBindingMap";
 
-    public void engage() {
+    public void engage(CodeGenConfiguration configuration) {
 
         // just return if JiBX binding not active
         if (testFallThrough(configuration.getDatabindingType())) {
@@ -61,7 +60,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             }
             
             // load the actual utility class
-            Class clazz = null;
+            Class clazz;
             try {
                 clazz = JiBXExtension.class.getClassLoader().loadClass(JIBX_UTILITY_CLASS);
             } catch (ClassNotFoundException e) {

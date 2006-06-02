@@ -21,10 +21,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
 public interface CodeGenExtension {
 
-
-    public void init(CodeGenConfiguration configuration);
-
-    public void engage() throws CodeGenerationException;
+    public void engage(CodeGenConfiguration configuration) throws CodeGenerationException;
 
 
 }

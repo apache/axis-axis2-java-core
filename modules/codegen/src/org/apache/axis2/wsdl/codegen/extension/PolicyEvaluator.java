@@ -16,14 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
@@ -37,26 +29,26 @@ import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.ws.policy.All;
+import org.apache.ws.policy.ExactlyOne;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PrimitiveAssertion;
-import org.apache.ws.policy.ExactlyOne;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class PolicyEvaluator implements CodeGenExtension {
 
-	CodeGenConfiguration configuration;
-    
-    AxisService axisService;
-	
-	HashMap ns2Exts = new HashMap();
+	private CodeGenConfiguration configuration;
+    private AxisService axisService;
+	private HashMap ns2Exts = new HashMap();
 
-	Element rootElement;
-
-	public PolicyEvaluator() {
-	}
-
-	public void init(CodeGenConfiguration configuration) {
+	private void init(CodeGenConfiguration configuration) {
 		this.configuration = configuration;
         this.axisService = configuration.getAxisService();
         
@@ -109,16 +101,19 @@ public class PolicyEvaluator implements CodeGenExtension {
 		}
 	}
 
-	public void engage() {
-        
-		Document document = getEmptyDocument();
+	public void engage(CodeGenConfiguration configuration) {
+
+         //initialize
+        init(configuration);
+
+        Document document = getEmptyDocument();
 		Element rootElement = document.createElement("stubMethods");
         
         AxisOperation axisOperation;
         QName opName;
         PolicyInclude policyInclude;
         Policy policy;
-        Iterator a = axisService.getOperations();
+
         
         for (Iterator iterator = axisService.getOperations(); iterator.hasNext(); ) {
             axisOperation = (AxisOperation) iterator.next();
@@ -208,7 +203,7 @@ public class PolicyEvaluator implements CodeGenExtension {
 	
 	class MTOMPolicyExtension implements PolicyExtension {
         
-        boolean setOnce = false;
+        private boolean setOnce = false;
         
 		public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
             
@@ -229,7 +224,7 @@ public class PolicyEvaluator implements CodeGenExtension {
             
             element.appendChild(optimizeContent);
 		}
-	};
+	}
     
     class EncodePolicyExtension implements PolicyExtension {
     	public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {

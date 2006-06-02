@@ -16,6 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
@@ -59,7 +60,7 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
 
     boolean debug = false;
 
-    public void engage() {
+    public void engage(CodeGenConfiguration configuration) {
 
         //test the databinding type. If not just fall through
         if (testFallThrough(configuration.getDatabindingType())) {
@@ -75,7 +76,7 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
                 //there are no types to be code generated
                 //However if the type mapper is left empty it will be a problem for the other
                 //processes. Hence the default type mapper is set to the configuration
-                this.configuration.setTypeMapper(new DefaultTypeMapper());
+                configuration.setTypeMapper(new DefaultTypeMapper());
                 return;
             }
 

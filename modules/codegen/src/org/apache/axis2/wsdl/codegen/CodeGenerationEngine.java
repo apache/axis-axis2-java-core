@@ -125,8 +125,7 @@ public class CodeGenerationEngine {
      */
     private void addExtension(CodeGenExtension ext) {
         if(ext != null) {
-            ext.init(configuration);
-            extensions.add(ext);
+           extensions.add(ext);
         }
     }
 
@@ -137,7 +136,7 @@ public class CodeGenerationEngine {
     public void generate() throws CodeGenerationException {
         try {
             for (int i = 0; i < extensions.size(); i++) {
-                ((CodeGenExtension) extensions.get(i)).engage();
+                ((CodeGenExtension) extensions.get(i)).engage(configuration);
             }
 
             Emitter emitter;
@@ -274,7 +273,7 @@ public class CodeGenerationEngine {
      * @return
      */
     private String getBaseURI(String currentURI){
-        String baseURI= null;
+        String baseURI;
         if (!currentURI.startsWith("http://")) {
             // the uri should be a file
             try {

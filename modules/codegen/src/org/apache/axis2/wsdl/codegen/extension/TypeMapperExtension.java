@@ -2,16 +2,16 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -44,7 +44,7 @@ import javax.xml.namespace.QName;
 
 public class TypeMapperExtension implements CodeGenExtension {
 
-    private CodeGenConfiguration configuration;
+
 
     private static final String MAPPING_ELEMENT_NAME = "mapping";
     private static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
@@ -52,19 +52,12 @@ public class TypeMapperExtension implements CodeGenExtension {
     private static final String VALUE_ELEMENT_NAME = "value";
     private static final String DB_FRAMEWORK_ATTRIBUTE_NAME = "dbf";
 
-    /**
-     * Initialize the entension
-     * @param configuration
-     */
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-    }
 
     /**
      *
      * @throws CodeGenerationException
      */
-    public void engage() throws CodeGenerationException {
+    public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         if (configuration.getTypeMappingFile()!=null){
             //a type mapping is present. try building the
             //mapping from it
@@ -79,7 +72,7 @@ public class TypeMapperExtension implements CodeGenExtension {
             }
 
             //read the file as a DOM
-            Document mappingDocument = buildDocument();
+            Document mappingDocument = buildDocument(configuration);
             Element rootMappingsElement = mappingDocument.getDocumentElement();
 
             //override the databinding framework name. If a mapping file is
@@ -124,7 +117,7 @@ public class TypeMapperExtension implements CodeGenExtension {
      * @return
      * @throws CodeGenerationException
      */
-    private Document buildDocument() throws CodeGenerationException {
+    private Document buildDocument(CodeGenConfiguration configuration) throws CodeGenerationException {
         try {
             DocumentBuilderFactory documentBuilderFactory
                     = DocumentBuilderFactory.newInstance();

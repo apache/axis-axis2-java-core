@@ -53,7 +53,7 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
     public static final String JAXB_RI_PROCESS_METHOD = "processSchemas";
     
 
-    public void engage() {
+    public void engage(CodeGenConfiguration configuration) {
 
         //test the databinding type. If not just fall through
         if (testFallThrough(configuration.getDatabindingType())) {
