@@ -74,7 +74,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     /**
      * To chenage the service path to somthing else
      */
-    public static final String SERVICE_PATH = "SERVICE_PATH";
+    public static final String SERVICE_PATH = "servicePath";
 
     /**
      * Field APPLICATION_SCOPE
