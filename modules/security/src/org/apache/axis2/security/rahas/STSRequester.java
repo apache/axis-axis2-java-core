@@ -42,7 +42,7 @@ import javax.xml.namespace.QName;
 
 public class STSRequester {
     
-    public static void issueRequest(RahasConfiguration config) throws RahasException, AxisFault {
+    public static void issueRequest(ConversationConfiguration config) throws ConversationException, AxisFault {
         MessageContext msgCtx = config.getMsgCtx();
         AxisService axisService = new AxisService("SecurityTokenService");
         QName rstQn = new QName("requestSecurityToken");
@@ -121,7 +121,7 @@ public class STSRequester {
             
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RahasException(e.getMessage());
+            throw new ConversationException(e.getMessage());
         }
     }
     

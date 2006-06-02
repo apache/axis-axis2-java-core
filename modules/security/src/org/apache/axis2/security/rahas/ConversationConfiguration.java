@@ -39,9 +39,9 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 /**
- * Configuration manager for Rahas
+ * Configuration manager for Ramapart-SecConv
  */
-public class RahasConfiguration {
+public class ConversationConfiguration {
     
     public final static String RAHAS_CONFIG = "rahas-configuration";
     
@@ -99,7 +99,7 @@ public class RahasConfiguration {
      * This is the <code>Crypto</code> impl class name.
      * 
      * This will ONLY be set via the message context as a property using 
-     * <code>org.apache.axis2.security.rahas.RahasHandlerConstants#CRYPTO_PROPERTIES_KEY<code>. 
+     * <code>org.apache.axis2.security.rahas.ConversationHandlerConstants#CRYPTO_PROPERTIES_KEY<code>. 
      * 
      * @see org.apache.ws.security.components.crypto.Crypto
      * @see org.apache.ws.security.components.crypto.Merlin
@@ -139,7 +139,7 @@ public class RahasConfiguration {
     
     private boolean provideEntropy;
     
-    public static RahasConfiguration load(MessageContext msgCtx, boolean sender)
+    public static ConversationConfiguration load(MessageContext msgCtx, boolean sender)
             throws Exception {
         Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
         if(param == null) {
@@ -154,7 +154,7 @@ public class RahasConfiguration {
                 
                 OMElement confElem = elem.getFirstElement();
                 
-                RahasConfiguration config = new RahasConfiguration();
+                ConversationConfiguration config = new ConversationConfiguration();
                 
                 config.msgCtx = msgCtx;
                 msgCtx.setProperty(RAHAS_CONFIG, config);
@@ -184,7 +184,7 @@ public class RahasConfiguration {
                 
                 //Get the action<->ctx-identifier map
                 config.contextMap = (Hashtable) msgCtx
-                        .getProperty(RahasHandlerConstants.CONTEXT_MAP_KEY);
+                        .getProperty(ConversationHandlerConstants.CONTEXT_MAP_KEY);
 
                 //Convert the Envelop to DOOM
                 config.doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx
@@ -198,7 +198,7 @@ public class RahasConfiguration {
                 if(sender) {
                     if(!msgCtx.isServerSide()) {
                         //Client side sender
-                        if (config.scope.equals(RahasConfiguration.SCOPE_OPERATION)) {
+                        if (config.scope.equals(ConversationConfiguration.SCOPE_OPERATION)) {
                             // Operation scope
                             String action = msgCtx.getSoapAction();
                             config.contextIdentifier = (String) config.getContextMap()
@@ -218,9 +218,9 @@ public class RahasConfiguration {
                         //Server side sender
                         OperationContext opCtx = msgCtx.getOperationContext();
                         MessageContext inMsgCtx;
-                        RahasConfiguration inConfig = null;
+                        ConversationConfiguration inConfig = null;
                         if(opCtx != null && (inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
-                            inConfig = (RahasConfiguration)inMsgCtx.getProperty(RAHAS_CONFIG);
+                            inConfig = (ConversationConfiguration)inMsgCtx.getProperty(RAHAS_CONFIG);
                         }
                         if(inConfig != null && inConfig.contextIdentifier != null) {
                             config.contextIdentifier = inConfig.contextIdentifier;
@@ -228,7 +228,7 @@ public class RahasConfiguration {
                             OMElement token = config.tokenStore.getToken(config.contextIdentifier).getToken();
                             config.sct = new SecurityContextToken((Element)config.doc.importNode((Element)token, true));
                         } else {
-                            throw new RahasException("canotFindContextIdentifier");
+                            throw new ConversationException("canotFindContextIdentifier");
                         }
                         
                         config.setClassLoader(msgCtx.getAxisService().getClassLoader());
@@ -237,10 +237,10 @@ public class RahasConfiguration {
 
                 //Crypto properties
                 config.cryptoProperties = (Properties)msgCtx
-                        .getProperty(RahasHandlerConstants.CRYPTO_PROPERTIES_KEY);
+                        .getProperty(ConversationHandlerConstants.CRYPTO_PROPERTIES_KEY);
 
                 config.cryptoClassName = (String) msgCtx
-                        .getProperty(RahasHandlerConstants.CRYPTO_CLASS_KEY);
+                        .getProperty(ConversationHandlerConstants.CRYPTO_CLASS_KEY);
                 
                 config.passwordCallbackRef = (CallbackHandler)msgCtx
                         .getProperty(WSHandlerConstants.PW_CALLBACK_REF);
@@ -249,11 +249,11 @@ public class RahasConfiguration {
                 
                 return config;
             } else {
-                throw new RahasException("missingConfiguration",
+                throw new ConversationException("missingConfiguration",
                         new String[] { RAHAS_CONFIG });
             }
         } else {
-            throw new RahasException("expectedParameterMissing",
+            throw new ConversationException("expectedParameterMissing",
                     new String[] { RAHAS_CONFIG });
         }
         
@@ -261,9 +261,9 @@ public class RahasConfiguration {
 
     /**
      * @param elem
-     * @throws RahasException
+     * @throws ConversationException
      */
-    private static String getStringValue(OMElement elem) throws RahasException {
+    private static String getStringValue(OMElement elem) throws ConversationException {
         if(elem != null) {
             String tempVal = elem.getText();
             return tempVal;
@@ -272,14 +272,14 @@ public class RahasConfiguration {
     }
 
     /**
-     * Generate the Axis2 parameter representing RahasConfiguration
+     * Generate the Axis2 parameter representing ConversationConfiguration
      * @return
      */
     public Parameter getParameter() {
         Parameter param = new Parameter();
         OMElement element = this.getOMElement();
         OMElement paramElem = element.getOMFactory().createOMElement("parameter", null);
-        paramElem.addAttribute("name", RahasConfiguration.RAHAS_CONFIG, null);
+        paramElem.addAttribute("name", ConversationConfiguration.RAHAS_CONFIG, null);
         paramElem.addChild(element);
         param.setParameterElement(paramElem);
         return param;
@@ -334,11 +334,11 @@ public class RahasConfiguration {
      * the wsa:Action/soapAction or the service address, depending on the scope.
      * 
      * @param identifier The security context identifier
-     * @throws RahasException 
+     * @throws ConversationException 
      *      If scope is "operation" and the wsa:Action is not available.
      *      If scope is "service" and the wsa:To is missing.  
      */
-    protected void resgisterContext(String identifier) throws RahasException {
+    protected void resgisterContext(String identifier) throws ConversationException {
         this.contextIdentifier = identifier;
         
         if(this.scope.equals(SCOPE_OPERATION)) {
@@ -346,14 +346,14 @@ public class RahasConfiguration {
             if(action != null) {
                 this.getContextMap().put(action, identifier);
             } else {
-                throw new RahasException("missingWSAAction");
+                throw new ConversationException("missingWSAAction");
             }
         } else {
             String to = msgCtx.getTo().getAddress();
             if(to != null) {
                 this.getContextMap().put(to, identifier);
             } else {
-                throw new RahasException("missingWSATo");
+                throw new ConversationException("missingWSATo");
             }
         }
         //TODO
@@ -425,7 +425,7 @@ public class RahasConfiguration {
             
             //Context map should be global
             this.msgCtx.getConfigurationContext().setProperty(
-                    RahasHandlerConstants.CONTEXT_MAP_KEY, contextMap);
+                    ConversationHandlerConstants.CONTEXT_MAP_KEY, contextMap);
         }
         
         return contextMap;

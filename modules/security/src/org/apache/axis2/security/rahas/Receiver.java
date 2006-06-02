@@ -50,7 +50,7 @@ public class Receiver implements Handler {
             }
             
             // Parse the configuration
-            RahasConfiguration config = RahasConfiguration.load(msgContext,
+            ConversationConfiguration config = ConversationConfiguration.load(msgContext,
                     false);
             
             
@@ -67,7 +67,7 @@ public class Receiver implements Handler {
             
             WSSecurityEngine secEngine = new WSSecurityEngine();
             secEngine.processSecurityHeader(config.getDocument(), null,
-                    new RahasCallbackHandler(config), config
+                    new ConversationCallbackHandler(config), config
                             .getCrypto());
 
             //Convert back to llom since the inflow cannot use llom
@@ -75,8 +75,8 @@ public class Receiver implements Handler {
                     config.getDocument()));
             
         } catch (Exception e) {
-            if (e instanceof RahasException) {
-                RahasException re = (RahasException) e;
+            if (e instanceof ConversationException) {
+                ConversationException re = (ConversationException) e;
                 throw new AxisFault(re.getFaultString(), re.getFaultCode());
             } else {
                 throw new AxisFault(e.getMessage());

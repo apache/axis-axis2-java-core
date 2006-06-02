@@ -46,8 +46,8 @@ public class Util {
      * @return
      * @throws RahasException
      */
-    public static Crypto getCryptoInstace(RahasConfiguration config)
-            throws RahasException {
+    public static Crypto getCryptoInstace(ConversationConfiguration config)
+            throws ConversationException {
         if (config.getCrypto() != null) {
             return config.getCrypto();
         } else {
@@ -66,14 +66,14 @@ public class Util {
                             .getCryptoPropertiesFile());
                 }
             } else {
-                throw new RahasException("cannotCrateCryptoInstance");
+                throw new ConversationException("cannotCrateCryptoInstance");
             }
             config.setCrypto(crypto);
             return crypto;
         }
     }
 
-    public static void processRSTR(OMElement rstr, RahasConfiguration config)
+    public static void processRSTR(OMElement rstr, ConversationConfiguration config)
             throws Exception {
         // Extract the SecurityContextToken
         OMElement rstElem = rstr.getFirstChildWithName(new QName(
@@ -88,7 +88,7 @@ public class Util {
                 token = new Token(sct.getIdentifier(), sctElem);
                 config.resgisterContext(sct.getIdentifier());
             } else {
-                throw new RahasException("sctMissingInResponse");
+                throw new ConversationException("sctMissingInResponse");
             }
         } else {
             throw new TrustException("reqestedSecTokMissing");
@@ -141,7 +141,7 @@ public class Util {
     }
     
     private static CallbackHandler getCallbackHandlerInstance(
-            RahasConfiguration config) throws Exception {
+            ConversationConfiguration config) throws Exception {
         if (config.getPasswordCallbackRef() != null) {
             return config.getPasswordCallbackRef();
         } else if (config.getPasswordCallbackClass() != null) {
@@ -155,7 +155,7 @@ public class Util {
                 return (CallbackHandler) clazz.newInstance();
             }
         } else {
-            throw new RahasException("noInfoForCBhandler");
+            throw new ConversationException("noInfoForCBhandler");
         }
     }
 

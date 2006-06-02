@@ -17,9 +17,9 @@
 package org.apache.axis2.security.rahas;
 
 /**
- * Constants of the Rahas handlers
+ * Constants of the Conversation handlers
  */
-public interface RahasHandlerConstants {
+public interface ConversationHandlerConstants {
 
     /**
      * Key to hod the map of security context identifiers against the 

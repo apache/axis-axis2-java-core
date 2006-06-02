@@ -47,7 +47,7 @@ import javax.xml.namespace.QName;
 import java.security.cert.X509Certificate;
 
 /**
- * Rahas outflow handler
+ * Conversation outflow handler
  */
 public class Sender implements Handler {
 
@@ -64,8 +64,8 @@ public class Sender implements Handler {
                 return;
             }
             
-            //Parse the rahas configuration
-            RahasConfiguration config = RahasConfiguration.load(msgContext, true);
+            //Parse the Conversation configuration
+            ConversationConfiguration config = ConversationConfiguration.load(msgContext, true);
             msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
                     .getDocumentElement());
             
@@ -88,8 +88,8 @@ public class Sender implements Handler {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if(e instanceof RahasException) {
-                RahasException re = (RahasException)e;
+            if(e instanceof ConversationException) {
+                ConversationException re = (ConversationException)e;
                 throw new AxisFault(re.getFaultString(), re.getFaultCode());
             } else {
                 throw new AxisFault(e.getMessage());
@@ -112,13 +112,13 @@ public class Sender implements Handler {
      * @param config
      * @throws Exception
      */
-    private void createRSTR(RahasConfiguration config) throws Exception {
+    private void createRSTR(ConversationConfiguration config) throws Exception {
         
         WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
         Crypto crypto = Util.getCryptoInstace(config);
         String encryptionUser = config.getEncryptionUser();
         if(encryptionUser == null) {
-            throw new RahasException("missingEncryptionUser");
+            throw new ConversationException("missingEncryptionUser");
         }
         X509Certificate cert = crypto.getCertificates(encryptionUser)[0];
         
@@ -171,7 +171,7 @@ public class Sender implements Handler {
         
     }
     
-    private void constructMessage(RahasConfiguration config) throws Exception {
+    private void constructMessage(ConversationConfiguration config) throws Exception {
         
         Crypto crypto = Util.getCryptoInstace(config);
 

@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class RahasException extends Exception {
+public class ConversationException extends Exception {
     
     private static final long serialVersionUID = 8674795537585339704L;
 
@@ -37,7 +37,7 @@ public class RahasException extends Exception {
         }
     }
     
-    public RahasException(String faultCode, Object[] args) {
+    public ConversationException(String faultCode, Object[] args) {
         super(getMessage(faultCode, args));
         this.faultCode = getFaultCode(faultCode);
         this.faultString = getMessage(faultCode, args);
@@ -53,17 +53,17 @@ public class RahasException extends Exception {
         return code;
     }
 
-    public RahasException(String faultCode) {
+    public ConversationException(String faultCode) {
         this(faultCode, (Object[])null);
     }
     
-    public RahasException(String faultCode, Object[] args, Throwable e) {
+    public ConversationException(String faultCode, Object[] args, Throwable e) {
         super(getMessage(faultCode, args),e);
         this.faultCode = faultCode;
         this.faultString = getMessage(faultCode, args);
     }
     
-    public RahasException(String faultCode, Throwable e) {
+    public ConversationException(String faultCode, Throwable e) {
         this(faultCode, null, e);
     }
 

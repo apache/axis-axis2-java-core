@@ -29,11 +29,11 @@ import java.io.IOException;
  * This is ths callback handler used to extract he secure conversation
  * session key for a given context identifier
  */
-public class RahasCallbackHandler implements CallbackHandler {
+public class ConversationCallbackHandler implements CallbackHandler {
 
-    private RahasConfiguration config;
+    private ConversationConfiguration config;
     
-    public RahasCallbackHandler(RahasConfiguration config) {
+    public ConversationCallbackHandler(ConversationConfiguration config) {
         this.config = config;
     }
     
