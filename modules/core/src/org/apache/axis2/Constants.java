@@ -68,6 +68,15 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String MESSAGE_SCOPE = "message";
 
     /**
+     * To chenge the conetext path from axis2/service to something else
+     */
+    public static final String CONTEXT_PATH = "contextPath";
+    /**
+     * To chenage the service path to somthing else
+     */
+    public static final String SERVICE_PATH = "SERVICE_PATH";
+
+    /**
      * Field APPLICATION_SCOPE
      */
     public static final String SCOPE_APPLICATION = "application";
@@ -98,10 +107,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     /**
      * Field REQUEST_URL_PREFIX
      */
-    public static final String REQUEST_URL_PREFIX = "/services";
-    public static final String LOGOUT = "logout";
-    public static final String LIST_SERVICE_FOR_MODULE_ENGAGEMENT = "listoperation";
-    public static final String LIST_SERVICES = "listServices";
     public static final String LIST_PHASES = "listPhases";
     public static final String LIST_MODULES = "listModules";
     public static final String LIST_GLOABLLY_ENGAGED_MODULES = "globalModules";

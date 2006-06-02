@@ -70,11 +70,12 @@ public class AxisService2OM implements Java2WSDLConstants {
     private String style;
 
     private String use;
+    private String servicePath ;
 
     private boolean generateHttp = false;
 
     public AxisService2OM(AxisService service, String[] serviceURL,
-                          String style, String use) {
+                          String style, String use , String servicePath) {
         this.axisService = service;
         url = serviceURL;
         if (style == null) {
@@ -87,6 +88,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         } else {
             this.use = use;
         }
+        this.servicePath = servicePath;
         this.targetNamespace = service.getTargetNamespace();
     }
 
@@ -399,7 +401,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                         + axisService.getName() + HTTP_BINDING, null);
                 OMElement extElement = fac.createOMElement("address", http);
                 port.addChild(extElement);
-                urlString = urlString.replaceAll("services", "rest");
+                urlString = urlString.replaceAll(servicePath, "rest");
                 extElement.addAttribute("location", urlString, null);
             }
         }

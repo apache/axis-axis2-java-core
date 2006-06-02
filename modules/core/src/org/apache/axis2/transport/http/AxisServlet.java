@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
 
-	private static final Log log = LogFactory.getLog(AxisServlet.class);
+    private static final Log log = LogFactory.getLog(AxisServlet.class);
     private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
@@ -62,6 +62,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient ServletConfig servletConfig;
 
     private transient ListingAgent agent;
+    public static String SERVICE_PATH;
+    private String conetxtPath;
 
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(MessageContext msgContext, HttpServletResponse httpServletResponse,
@@ -204,6 +206,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             listenerManager.addListener(transportInDescription, true);
             ListenerManager.defaultConfigurationContext = configContext;
             agent = new ListingAgent(configContext);
+            SERVICE_PATH = configContext.getServicePath();
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -287,17 +290,20 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (port == null) {
             port = "8080";
         }
-        String webappName = null;
-        // HACK ALERT!!! - Is there a better way to get the webapp name?
-        try{
-            String[] array =  servletConfig.getServletContext().getResource("/").toString().split("/");
-            webappName = array[array.length-1];
-        }catch(Exception e){
+        if (conetxtPath == null) {
+            // HACK ALERT!!! - Is there a better way to get the webapp name?
+            try {
+                String[] array = servletConfig.getServletContext().getResource("/").toString().split("/");
+                conetxtPath = array[array.length - 1];
+                configContext.setContextPath(conetxtPath);
+            } catch (Exception e) {
+            }
+            if (conetxtPath == null) {
+                conetxtPath = "axis2";
+            }
         }
-        if(webappName == null) {
-            webappName = "axis2";
-        }
-        return new EndpointReference("http://" + ip + ":" + port + '/' +  webappName + "/services/" + serviceName);
+        return new EndpointReference("http://" + ip + ":" + port + '/' +
+                conetxtPath + "/" + SERVICE_PATH + "/" + serviceName);
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,
@@ -321,7 +327,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setServerSide(true);
 
         String requestURI = req.getRequestURI();
-        requestURI = requestURI.replaceFirst("rest", "services");
+        requestURI = requestURI.replaceFirst("rest", SERVICE_PATH);
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(resp));

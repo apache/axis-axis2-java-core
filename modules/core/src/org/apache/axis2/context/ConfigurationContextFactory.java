@@ -1,18 +1,20 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.deployment.URLBasedAxisConfigurator;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.URL;
 import java.util.Collection;
@@ -37,10 +39,30 @@ public class ConfigurationContextFactory {
             AxisConfigurator axisConfigurator) throws AxisFault {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        //To override context path
+        setContextPath(axisConfig, configContext);
         init(configContext);
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
         return configContext;
+    }
+
+    private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext) {
+        // Checking for context path
+        Parameter servicePath = axisConfig.getParameter(Constants.SERVICE_PATH);
+        if (servicePath != null) {
+            String spath = ((String) servicePath.getValue()).trim();
+            if (spath.length() > 0) {
+                configContext.setServicePath(spath);
+            }
+        }
+        Parameter contextPath = axisConfig.getParameter(Constants.CONTEXT_PATH);
+        if (contextPath != null) {
+            String cpath = ((String) contextPath.getValue()).trim();
+            if (cpath.length() > 0) {
+                configContext.setContextPath(cpath);
+            }
+        }
     }
 
     /**
@@ -80,7 +102,7 @@ public class ConfigurationContextFactory {
      *
      * @param path     : location of the repository
      * @param axis2xml : location of the axis2.xml (configuration) , you can not give
-     *                    axis2xml relative to repository.
+     *                 axis2xml relative to repository.
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */

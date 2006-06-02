@@ -48,13 +48,17 @@ import java.util.*;
 
 public class HTTPWorker implements HttpRequestHandler {
 
-	private static final Log log = LogFactory.getLog(HTTPWorker.class);
+    private static final Log log = LogFactory.getLog(HTTPWorker.class);
     private ConfigurationContext configurationContext;
     // to store session object
     private Hashtable sessionContextTable = new Hashtable();
+    private String contextPath = null;
+    private String servicePath = null;
 
     public HTTPWorker(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
+        contextPath = configurationContext.getContextPath();
+        servicePath = configurationContext.getServicePath();
     }
 
     public boolean processRequest(final SimpleHttpServerConnection conn,
@@ -131,16 +135,16 @@ public class HTTPWorker implements HttpRequestHandler {
                     conn.writeResponse(response);
                     return true;
                 }
-                if (!uri.startsWith("/axis2/services/")) {
+                if (!uri.startsWith(contextPath)) {
                     response.setStatusLine(request.getRequestLine().getHttpVersion(), 301, "Redirect");
-                    response.addHeader(new Header("Location", "/axis2/services/"));
+                    response.addHeader(new Header("Location", contextPath));
                     conn.writeResponse(response);
                     return true;
                 }
 
                 if (uri.indexOf("?") < 0) {
-                    if (!(uri.endsWith("/axis2/services/") || uri.endsWith("/axis2/services"))) {
-                        String serviceName = uri.replaceAll("/axis2/services/", "");
+                    if (!(uri.endsWith(contextPath))) {
+                        String serviceName = uri.replaceAll(contextPath, "");
                         if (serviceName.indexOf("/") < 0) {
                             response.addHeader(new Header("Content-Type", "text/html"));
                             String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
@@ -169,7 +173,7 @@ public class HTTPWorker implements HttpRequestHandler {
                                 ip = ip.substring(0, seperatorIndex);
                             }
                         }
-                        service.printWSDL(baos, ip);
+                        service.printWSDL(baos, ip,servicePath);
                         byte[] buf = baos.toByteArray();
                         response.setBody(new ByteArrayInputStream(buf));
                         conn.writeResponse(response);
@@ -191,7 +195,7 @@ public class HTTPWorker implements HttpRequestHandler {
                 }
 
                 //cater for named xsds - check for the xsd name
-                if (uri.indexOf("?xsd=")>0) {
+                if (uri.indexOf("?xsd=") > 0) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?xsd="));
                     String schemaName = uri.substring(uri.lastIndexOf("=") + 1);
 
@@ -202,23 +206,23 @@ public class HTTPWorker implements HttpRequestHandler {
                         service.populateSchemaMappings();
                         //write out the correct schema
                         Hashtable schemaTable = service.getSchemaMappingTable();
-                        XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
+                        XmlSchema schema = (XmlSchema) schemaTable.get(schemaName);
                         //schema found - write it to the stream
-                        if (schema!=null){
+                        if (schema != null) {
                             response.addHeader(new Header("Content-Type", "text/xml"));
                             schema.write(baos);
                             byte[] buf = baos.toByteArray();
                             response.setBody(new ByteArrayInputStream(buf));
                             conn.writeResponse(response);
 
-                        }else{
-                          // no schema available by that name  - send 404
-                          response.setStatusLine(
-                                  request.getRequestLine().getHttpVersion(),
-                                  404, "Schema Not Found!");
+                        } else {
+                            // no schema available by that name  - send 404
+                            response.setStatusLine(
+                                    request.getRequestLine().getHttpVersion(),
+                                    404, "Schema Not Found!");
                         }
 
-                         return true;
+                        return true;
 
                     }
                 }

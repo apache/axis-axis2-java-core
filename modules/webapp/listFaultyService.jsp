@@ -3,6 +3,7 @@
 <%@ page import="org.apache.axis2.description.AxisService"%>
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
+<%@ page import="org.apache.axis2.transport.http.AxisServlet"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head>
@@ -14,7 +15,7 @@
   <jsp:include page="include/header.inc"></jsp:include>
     <jsp:include page="include/link-footer.jsp"></jsp:include>
   <%
-        String prifix = request.getAttribute("frontendHostUrl") + "services/";
+        String prifix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH +"services/";
         String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
         <%

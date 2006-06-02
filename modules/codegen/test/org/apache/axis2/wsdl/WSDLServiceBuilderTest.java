@@ -67,7 +67,7 @@ public class WSDLServiceBuilderTest extends TestCase {
                         System.out.println("Testinf file: " + file1.getName());
                         configContext.getAxisConfiguration().addService(service);
                         OutputStream out = new FileOutputStream(new File(outLocation, file1.getName()));
-                        service.printWSDL(out, "http://google.com/axis2/services");
+                        service.printWSDL(out, "http://google.com/axis2/services" ,"services");
                         out.flush();
                         out.close();
 //                        URL wsdlURL = new URL("http://localhost:" + 6060 +

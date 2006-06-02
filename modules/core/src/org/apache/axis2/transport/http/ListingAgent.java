@@ -45,9 +45,11 @@ public class ListingAgent extends AbstractAgent {
     private static final String LIST_FAULTY_SERVICES_JSP_NAME = "listFaultyService.jsp";
 
     public static final String RUNNING_PORT = "RUNNING_PORT";
+    private String servicePath;
 
     public ListingAgent(ConfigurationContext aConfigContext) {
         super(aConfigContext);
+        servicePath = aConfigContext.getServicePath();
     }
 
     private void addTransportListner(String schema, int port) {
@@ -71,7 +73,7 @@ public class ListingAgent extends AbstractAgent {
         // httpServletRequest.getLocalPort() , giving me a build error so I had to use the followin
         String filePart = httpServletRequest.getRequestURL().toString();
         int ipindex = filePart.indexOf("//");
-        String ip = null;
+        String ip;
         if (ipindex >= 0) {
             ip = filePart.substring(ipindex + 2, filePart.length());
             int seperatorIndex = ip.indexOf(":");
@@ -93,15 +95,14 @@ public class ListingAgent extends AbstractAgent {
     }
 
     protected void processListFaultyServices(HttpServletRequest req, HttpServletResponse res)
-                throws IOException, ServletException {
-            String serviceName = req.getParameter("serviceName");
-            if (serviceName != null) {
-                AxisService service = configContext.getAxisConfiguration().getService(serviceName);
-                req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
-            }
-            renderView(LIST_FAULTY_SERVICES_JSP_NAME, req, res);
+            throws IOException, ServletException {
+        String serviceName = req.getParameter("serviceName");
+        if (serviceName != null) {
+            AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+            req.getSession().setAttribute(Constants.SINGLE_SERVICE, service);
         }
-
+        renderView(LIST_FAULTY_SERVICES_JSP_NAME, req, res);
+    }
 
 
     protected void processIndex(HttpServletRequest httpServletRequest,
@@ -141,7 +142,7 @@ public class ListingAgent extends AbstractAgent {
                             ip = ip.substring(0, seperatorIndex);
                         }
                     }
-                    ((AxisService) serviceObj).printWSDL(out, ip);
+                    ((AxisService) serviceObj).printWSDL(out, ip, servicePath);
                     out.flush();
                     out.close();
                     return;
@@ -217,6 +218,7 @@ public class ListingAgent extends AbstractAgent {
 
         private int port;
         private String schema;
+        private String conetxtPath;
 
         public HTTPSTListener(int port, String schema) {
             this.port = port;
@@ -225,6 +227,7 @@ public class ListingAgent extends AbstractAgent {
 
         public void init(ConfigurationContext axisConf,
                          TransportInDescription transprtIn) throws AxisFault {
+            conetxtPath = axisConf.getContextPath();
         }
 
         public void start() throws AxisFault {
@@ -234,7 +237,7 @@ public class ListingAgent extends AbstractAgent {
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-            return new EndpointReference(schema + "://" + ip + ":" + port + "/axis2/services/" + serviceName);
+            return new EndpointReference(schema + "://" + ip + ":" + port + conetxtPath +"/" +serviceName);
         }
     }
 

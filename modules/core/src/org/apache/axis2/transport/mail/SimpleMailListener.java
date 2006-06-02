@@ -50,7 +50,7 @@ import java.io.File;
  *
  */
 public class SimpleMailListener implements Runnable, TransportListener {
-	private static final Log log = LogFactory.getLog(SimpleMailListener.class);
+    private static final Log log = LogFactory.getLog(SimpleMailListener.class);
 
     // Are we doing threads?
     private static boolean doThreads = true;
@@ -64,6 +64,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
     private String port;
     private String replyTo;
     private String user;
+    private String servicePath;
 
     public SimpleMailListener() {
     }
@@ -102,6 +103,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             listenerManager.init(configurationContext);
         }
         listenerManager.addListener(trsIn, true);
+        servicePath = configurationContext.getServicePath();
     }
 
     /*
@@ -116,7 +118,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
         password = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
         port = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PORT));
         replyTo = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.RAPLY_TO));
-
+        servicePath = configurationContext.getServicePath();
         if ((user == null) || (host == null) || (password == null) || (port == null)) {
             if (this.user == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));
@@ -129,10 +131,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if (this.port == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull", "Port"));
             }
+            throw new AxisFault(Messages.getMessage("canNotBeNull", "Password"));
 
-            if (this.password == null) {
-                throw new AxisFault(Messages.getMessage("canNotBeNull", "Password"));
-            }
         }
     }
 
@@ -197,11 +197,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         MimeMessage msg = (MimeMessage) msgs[i];
                         if (msg != null) {
                             MailWorker worker = new MailWorker(msg, configurationContext);
-
                             worker.run();
+                            msg.setFlag(Flags.Flag.DELETED, true);
                         }
 
-                        msg.setFlag(Flags.Flag.DELETED, true);
                     }
                 }
 
@@ -282,7 +281,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference(replyTo + "/services/" + serviceName);
+        return new EndpointReference(replyTo + "/" + servicePath + "/" + serviceName);
     }
 
     public void setDoThreads(boolean value) {

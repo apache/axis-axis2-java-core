@@ -40,7 +40,7 @@ import java.util.*;
  */
 public class ConfigurationContext extends AbstractContext {
 
-	private static final Log log = LogFactory.getLog(ConfigurationContext.class);
+    private static final Log log = LogFactory.getLog(ConfigurationContext.class);
     /**
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
@@ -56,6 +56,11 @@ public class ConfigurationContext extends AbstractContext {
 
     // current time out interval is 30 secs. Need to make this configurable
     private long serviceGroupContextTimoutInterval = 30 * 1000;
+
+    //To specify url mapping for services
+    private String servicePath = "services";
+    //To have your own context path
+    private String contextPath = "/axis2";
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
@@ -361,5 +366,21 @@ public class ConfigurationContext extends AbstractContext {
                 cleanupServiceContextes(serviceGroupContext);
             }
         }
+    }
+
+    public String getServicePath() {
+        return servicePath;
+    }
+
+    public void setServicePath(String servicePath) {
+        this.servicePath = servicePath;
+    }
+
+    public String getContextPath() {
+        return contextPath + "/" + servicePath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 }

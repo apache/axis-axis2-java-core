@@ -6,6 +6,7 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
+<%@ page import="org.apache.axis2.transport.http.AxisServlet"%>
 <%--
     /*
  * Copyright 2002,2004 The Apache Software Foundation.
@@ -33,7 +34,7 @@
   <jsp:include page="include/header.inc"></jsp:include>
     <jsp:include page="include/link-footer.jsp"></jsp:include>
   <h1>Available services</h1>
-  <%    String prifix = request.getAttribute("frontendHostUrl") + "services/";
+  <%    String prifix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH +"/";
         String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
      <%

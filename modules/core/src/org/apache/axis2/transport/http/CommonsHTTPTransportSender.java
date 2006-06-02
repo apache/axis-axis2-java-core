@@ -46,7 +46,6 @@ import java.net.URL;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
 
-    private static final long serialVersionUID = 7929963795196215199L;
     protected static final String PROXY_HOST_NAME = "proxy_host";
     protected static final String PROXY_PORT = "proxy_port";
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;

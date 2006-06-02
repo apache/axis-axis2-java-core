@@ -5,6 +5,7 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
+<%@ page import="org.apache.axis2.transport.http.AxisServlet"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -18,7 +19,7 @@
 </jsp:include>
 <h1>Available services</h1>
 <%
-  String prifix = request.getAttribute("frontendHostUrl") + "services/";
+  String prifix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH +"/";
 %>
 <%
   HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);

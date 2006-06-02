@@ -20,9 +20,9 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
@@ -39,7 +39,6 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
@@ -54,7 +53,8 @@ public class HTTPTransportUtils {
 
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map,
                                                             ConfigurationContext configurationContext) throws AxisFault {
-        String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl);
+        String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl,
+                configurationContext.getServicePath());
 
         if (values == null) {
             return new SOAP11Factory().getDefaultEnvelope();

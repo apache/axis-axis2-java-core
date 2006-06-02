@@ -506,7 +506,7 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
-    public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
+    public void printWSDL(OutputStream out, String requestIP, String servicePath) throws AxisFault {
         ArrayList eprList = new ArrayList();
         AxisConfiguration axisConfig = getAxisConfiguration();
         if (enableAllTransport) {
@@ -553,7 +553,7 @@ public class AxisService extends AxisDescription {
             }
         }
         String eprArray [] = (String[]) eprList.toArray(new String[eprList.size()]);
-        getWSDL(out, eprArray);
+        getWSDL(out, eprArray, servicePath);
     }
 
     /**
@@ -565,13 +565,13 @@ public class AxisService extends AxisDescription {
     public void printWSDL(OutputStream out) throws AxisFault {
         setWsdlfound(true);
         //pick the endpoint and take it as the epr for the WSDL
-        getWSDL(out, new String[]{getEndpoint()});
+        getWSDL(out, new String[]{getEndpoint()}, "services");
     }
 
-    private void getWSDL(OutputStream out, String [] serviceURL) throws AxisFault {
+    private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
         if (isWsdlfound()) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
-                    serviceURL, "document", "literal");
+                    serviceURL, "document", "literal", servicePath);
             try {
                 OMElement wsdlElement = axisService2WOM.generateOM();
                 wsdlElement.serialize(out);

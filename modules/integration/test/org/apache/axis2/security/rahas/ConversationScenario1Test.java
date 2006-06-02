@@ -39,7 +39,7 @@ public class ConversationScenario1Test extends TestClient {
         config.setCryptoPropertiesFile("sec.properties");
         config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
-        config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/Service");
+        config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/SecureService");
 
         return config.getParameter();
     }

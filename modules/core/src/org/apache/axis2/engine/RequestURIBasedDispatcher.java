@@ -51,7 +51,8 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         EndpointReference toEPR = messageContext.getTo();
         if ((toEPR != null) && (operationName == null)) {
             String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
+                    messageContext.getConfigurationContext().getServicePath());
 
             if ((values.length >= 2) && (values[1] != null)) {
                 operationName = new QName(values[1]);
@@ -78,7 +79,8 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             log.debug("Checking for Service using target endpoint address : " + toEPR.getAddress());
 
             String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
+                    messageContext.getConfigurationContext().getServicePath());
 
             if (values[1] != null) {
                 operationName = new QName(values[1]);

@@ -27,7 +27,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,10 +44,11 @@ import java.net.SocketException;
 public class TCPServer implements Runnable, TransportListener {
     private int port = 8000;
     private boolean started = false;
-	private static final Log log = LogFactory.getLog(TCPServer.class);
+    private static final Log log = LogFactory.getLog(TCPServer.class);
     private ConfigurationContext configContext;
     private ServerSocket serversocket;
     private String hostAddress = null;
+    private String conetxtPath;
 
     public TCPServer() {
     }
@@ -67,7 +67,7 @@ public class TCPServer implements Runnable, TransportListener {
                 listenerManager.init(configContext);
             }
             listenerManager.addListener(trsIn, true);
-
+            conetxtPath = configContext.getContextPath();
 
         } catch (IOException e1) {
             throw new AxisFault(e1);
@@ -91,6 +91,7 @@ public class TCPServer implements Runnable, TransportListener {
         if (param != null) {
             hostAddress = ((String) param.getValue()).trim();
         }
+        conetxtPath = configContext.getContextPath();
     }
 
     public static void main(String[] args) throws AxisFault, NumberFormatException {
@@ -180,14 +181,14 @@ public class TCPServer implements Runnable, TransportListener {
      * created by taking the hostAddres into account
      * (non-Javadoc)
      *
-     * @see org.apache.axis2.transport.TransportListener#replyToEPR(String)
+     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String, String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         //if host address is present
         if (hostAddress != null) {
             if (serversocket != null) {
                 // todo this has to fix
-                return new EndpointReference(hostAddress + "/axis2/services/" + serviceName);
+                return new EndpointReference(hostAddress + conetxtPath + serviceName);
             } else {
                 log.debug("Unable to generate EPR for the transport tcp");
                 return null;
@@ -203,7 +204,7 @@ public class TCPServer implements Runnable, TransportListener {
         if (serversocket != null) {
             // todo this has to fix
             return new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
-                    + "/axis2/services/" + serviceName);
+                    + conetxtPath + "/" + serviceName);
         } else {
             log.debug("Unable to generate EPR for the transport tcp");
             return null;

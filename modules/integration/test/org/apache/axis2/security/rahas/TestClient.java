@@ -72,10 +72,10 @@ public abstract class TestClient extends TestCase {
                     null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
-            options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/Service"));
+            options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            
+
             OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
             if(clientOutflowConfiguration != null) {
                 options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, clientOutflowConfiguration.getProperty());
@@ -85,25 +85,25 @@ public abstract class TestClient extends TestCase {
                 options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
             }
             options.setProperty(ConversationConfiguration.RAHAS_CONFIG, getClientConversationConfiguration());
-            
+
             options.setAction("urn:echo");
-            
+
             serviceClient.engageModule(rahasModule);
 
             serviceClient.setOptions(options);
-            
+
             //Blocking invocation
             serviceClient.sendReceive(payload);
-            
+
             serviceClient.sendReceive(getEchoElement());
-            
+
             OMElement result = serviceClient.sendReceive(getEchoElement());
-            
+
             StringWriter writer = new StringWriter();
             result.serialize(StAXUtils
                     .createXMLStreamWriter(writer));
             writer.flush();
-            
+
             assertTrue(writer.toString().indexOf(AXIS2_ECHO_STRING) > 0);
             System.out.println("SecureService Invocation successful :-)");
         } catch (AxisFault axisFault) {

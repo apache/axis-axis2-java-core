@@ -175,18 +175,18 @@ public class Utils {
      * @return an array where element [0] always contains the service, and element 1, if not null, contains
      *         the path after the first element. all ? parameters are discarded.
      */
-    public static String[] parseRequestURLForServiceAndOperation(String path) {
+    public static String[] parseRequestURLForServiceAndOperation(String path, String servicePath) {
         if (path == null) {
             return null;
         }
         String[] values = new String[2];
 
         // TODO. This is kind of brittle. Any service with the name /services would cause fun.
-        int index = path.lastIndexOf(Constants.REQUEST_URL_PREFIX);
+        int index = path.lastIndexOf(servicePath);
         String service;
 
         if (-1 != index) {
-            int serviceStart = index + Constants.REQUEST_URL_PREFIX.length();
+            int serviceStart = index + servicePath.length();
 
             if (path.length() > serviceStart + 1) {
                 service = path.substring(serviceStart + 1);

@@ -1,22 +1,25 @@
 <html>
 <%@ page import="org.apache.axiom.om.OMAbstractFactory,
-				 org.apache.axiom.om.OMElement,
-				 org.apache.axiom.om.OMNamespace,
-				 org.apache.axiom.om.OMFactory,
+                 org.apache.axiom.om.OMElement,
+                 org.apache.axiom.om.OMFactory,
+                 org.apache.axiom.om.OMNamespace,
                  org.apache.axis2.AxisFault,
                  org.apache.axis2.Constants,
                  org.apache.axis2.addressing.EndpointReference,
                  org.apache.axis2.client.Options,
                  org.apache.axis2.client.ServiceClient,
+                 org.apache.axis2.context.ConfigurationContext,
+                 org.apache.axis2.context.ConfigurationContextFactory,
+                 org.apache.axis2.transport.http.AxisServlet,
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
                  javax.servlet.jsp.JspWriter,
-                 javax.xml.parsers.SAXParser,
-                 javax.xml.parsers.SAXParserFactory,
-                 javax.xml.stream.XMLOutputFactory,
-                 javax.xml.stream.XMLStreamException"
+                 javax.xml.parsers.SAXParser"
          session="false" %>
+<%@ page import="javax.xml.parsers.SAXParserFactory" %>
+<%@ page import="javax.xml.stream.XMLOutputFactory" %>
+<%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
 <%@ page import="java.io.StringWriter" %>
@@ -55,8 +58,8 @@
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0, lastindex);
     ///axis2/axis2-web/services/version
-    IP=  IP.replaceAll("axis2-web","");
-    targetEPR = new EndpointReference(IP + "services/version");
+    IP = IP.replaceAll("axis2-web", "");
+    targetEPR = new EndpointReference(IP + AxisServlet.SERVICE_PATH + "/version");
 %>
 <%!
     /*
@@ -345,7 +348,9 @@
     public boolean inVokeTheService() {
         try {
             OMElement payload = createEnvelope();
-            ServiceClient client = new ServiceClient();
+            ConfigurationContext configctx =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+            ServiceClient client = new ServiceClient(configctx, null);
             Options options = new Options();
             client.setOptions(options);
             options.setTo(targetEPR);
@@ -358,7 +363,7 @@
             value = writer.toString();
             return true;
         } catch (AxisFault axisFault) {
-            value = axisFault.getMessage();
+            System.out.println( value);
             return false;
         } catch (XMLStreamException e) {
             value = e.getMessage();
@@ -381,7 +386,7 @@
      * the essentials, without these Axis is not going to work
      */
     needed = needClass(out, "org.apache.axis2.transport.http.AxisServlet",
-            "axis2-0.93.jar",
+            "axis2-1.0.jar",
             "Apache-Axis",
             "Axis2 will not work",
             "http://xml.apache.org/axis2/");
@@ -390,12 +395,6 @@
             "Jakarta-Commons Logging",
             "Axis2 will not work",
             "http://jakarta.apache.org/commons/logging.html");
-
-    needed += needClass(out, "org.apache.log4j.Layout",
-            "log4j-1.2.8.jar",
-            "Log4j",
-            "Axis2 may not work",
-            "http://jakarta.apache.org/log4j");
     needed += needClass(out, "javax.xml.stream.XMLStreamReader",
             "stax-api-1.0.jar",
             "Streaming API for XML",
@@ -439,9 +438,11 @@
     out.write("</h3>");
 %>
 <p>
-    <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee
+    <B><I>Note:</I></B> Even if everything this page probes for is present,
+    there is no guarantee
     your
-    web axisService will work, because there are many configuration options that we do
+    web axisService will work, because there are many configuration options that
+    we do
     not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 
 <h2>Examining Version Service</h2>
@@ -451,7 +452,8 @@
 %>
 <p>
     <font color="blue">
-        Found the Axis2 default Version service and Axis2 is working properly.Now you can drop a service archive in axis2/WEB-INF/services.
+        Found the Axis2 default Version service and Axis2 is working
+        properly.Now you can drop a service archive in axis2/WEB-INF/services.
 
         Following output was produced while invoking the version axisService:
         <br>
@@ -462,8 +464,11 @@
 } else {
 %>
 <p>
-    <font color="brown"> There was a problem of examine Version service , may be the service not available or some thing has gone wrong. But this does not mean system does not working !
-           Try to upload a some other service and check to see whether it is working.
+    <font color="brown"> There was a problem of examine Version service , may be
+        the service not available or some thing has gone wrong. But this does
+        not mean system does not working !
+        Try to upload a some other service and check to see whether it is
+        working.
         <br>
     </font>
 </p>
@@ -474,7 +479,9 @@
 <h2>Examining Application Server</h2>
 <table>
     <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
-    <tr><td>Platform</td><td><%=getServletConfig().getServletContext().getServerInfo()%></td></tr>
+    <tr><td>Platform</td>
+        <td><%=getServletConfig().getServletContext().getServerInfo()%></td>
+    </tr>
 </table>
 
 <h2>Examining System Properties</h2>

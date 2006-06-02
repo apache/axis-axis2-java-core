@@ -159,7 +159,7 @@
 			<copy overwrite="yes" file="test-resources/security/rahas/s1-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
 
-		    <jar jarfile="target/test-resources/rahas_service_repo_1/services/Service.aar"
+		    <jar jarfile="target/test-resources/rahas_service_repo_1/services/SecureService.aar"
                  basedir="target/temp-rahas"/>
 
             <!-- Rahas Test - 1 :END -->
@@ -180,7 +180,7 @@
 			<copy overwrite="yes" file="test-resources/security/rahas/s2-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
 
-		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_2/services/Service.aar"
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_2/services/SecureService.aar"
                  basedir="target/temp-rahas"/>
 
             <!-- Rahas Test - 2 :END -->
@@ -201,7 +201,7 @@
 			<copy overwrite="yes" file="test-resources/security/rahas/s3-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
 
-		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_3/services/Service.aar"
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_3/services/SecureService.aar"
                  basedir="target/temp-rahas"/>
 
             <!-- Rahas Test - 3 :END -->
@@ -222,7 +222,7 @@
 			<copy overwrite="yes" file="test-resources/security/rahas/s4-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
 
-		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_4/services/Service.aar"
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_4/services/SecureService.aar"
                  basedir="target/temp-rahas"/>
 
             <!-- Rahas Test - 4 :END -->

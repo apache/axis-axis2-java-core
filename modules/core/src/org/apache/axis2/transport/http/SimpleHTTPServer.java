@@ -52,7 +52,7 @@ public class SimpleHTTPServer implements TransportListener {
     /**
      * Field log
      */
-	private static final Log log = LogFactory.getLog(SimpleHTTPServer.class);
+    private static final Log log = LogFactory.getLog(SimpleHTTPServer.class);
 
     /**
      * Embedded commons http client based server
@@ -63,6 +63,7 @@ public class SimpleHTTPServer implements TransportListener {
 
     public static int DEFAULT_PORT = 8080;
     private String hostAddress = null;
+    private String conetxtPath;
 
     /**
      * Field systemContext
@@ -105,6 +106,7 @@ public class SimpleHTTPServer implements TransportListener {
             listenerManager.init(configurationContext);
         }
         listenerManager.addListener(trsIn, true);
+        conetxtPath = configurationContext.getContextPath();
     }
 
     /**
@@ -128,6 +130,7 @@ public class SimpleHTTPServer implements TransportListener {
             if (param != null) {
                 hostAddress = ((String) param.getValue()).trim();
             }
+            conetxtPath = configurationContext.getContextPath();
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }
@@ -230,7 +233,7 @@ public class SimpleHTTPServer implements TransportListener {
         //if host address is present
         if (hostAddress != null) {
             if (embedded != null) {
-                return new EndpointReference(hostAddress + "/axis2/services/" + serviceName);
+                return new EndpointReference(hostAddress + conetxtPath + serviceName);
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -249,7 +252,7 @@ public class SimpleHTTPServer implements TransportListener {
         if (embedded != null) {
             return new EndpointReference("http://" + localAddress + ":" +
                     (embedded.getLocalPort())
-                    + "/axis2/services/" + serviceName);
+                    + conetxtPath + "/" + serviceName);
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }

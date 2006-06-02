@@ -37,7 +37,7 @@ public class ConversationScenario4Test extends TestClient {
         config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
         config.setProvideEntropy(true);
-        config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/Service");
+        config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/SecureService");
 
         return config.getParameter();
     }

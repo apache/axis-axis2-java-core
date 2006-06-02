@@ -80,7 +80,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                         "Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);
 
-                String[] values = Utils.parseRequestURLForServiceAndOperation(filePart);
+                String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
+                        messageContext.getConfigurationContext().getServicePath());
 
                 if (values[1] != null) {
                     operationName = new QName(values[1]);

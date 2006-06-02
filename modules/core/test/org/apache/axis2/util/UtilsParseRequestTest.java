@@ -70,7 +70,7 @@ public class UtilsParseRequestTest extends AbstractTestCase {
     }
 
     private void assertParsesTo(String path, String service, String operation) {
-        String[] strings = Utils.parseRequestURLForServiceAndOperation(path);
+        String[] strings = Utils.parseRequestURLForServiceAndOperation(path, "/axis2/services");
         assertEquals(service,strings[0]);
         assertEquals(operation, strings[1]);
     }
