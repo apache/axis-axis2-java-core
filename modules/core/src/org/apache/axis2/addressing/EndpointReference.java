@@ -133,7 +133,6 @@ public class EndpointReference implements Serializable {
 
 
     /**
-     *
      * @param omAttribute
      */
     public void addAttribute(OMAttribute omAttribute) {
@@ -199,11 +198,16 @@ public class EndpointReference implements Serializable {
 
     public void fromOM(OMElement eprOMElement) {
         setAddress(eprOMElement.getFirstChildWithName(new QName("Address")).getText());
-        Iterator refParams = eprOMElement.getChildrenWithName(new QName("ReferenceParameters"));
-        while (refParams.hasNext()) {
-            OMElement omElement = (OMElement) refParams.next();
-            addReferenceParameter(omElement);
+        OMElement refParamElement = eprOMElement.getFirstChildWithName(new QName(AddressingConstants.EPR_REFERENCE_PARAMETERS));
+
+        if (refParamElement != null) {
+            Iterator refParams = refParamElement.getChildElements();
+            while (refParams.hasNext()) {
+                OMElement omElement = (OMElement) refParams.next();
+                addReferenceParameter(omElement);
+            }
         }
+
 
         OMElement metaDataElement = eprOMElement.getFirstChildWithName(new QName("MetaData"));
         if (metaDataElement != null) {
@@ -227,33 +231,33 @@ public class EndpointReference implements Serializable {
         }
     }
 
-    public OMElement toOM(String nsurl,String localName,String prefix) throws AxisFault{
+    public OMElement toOM(String nsurl, String localName, String prefix) throws AxisFault {
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        if(prefix!=null){
-            OMNamespace wrapNs = fac.createOMNamespace(nsurl,prefix);
-            OMElement epr = fac.createOMElement(localName,wrapNs);
-            OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE,AddressingConstants.WSA_DEFAULT_PREFIX);
-            OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS,wsaNS,epr);
+        if (prefix != null) {
+            OMNamespace wrapNs = fac.createOMNamespace(nsurl, prefix);
+            OMElement epr = fac.createOMElement(localName, wrapNs);
+            OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_DEFAULT_PREFIX);
+            OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, epr);
             addressE.setText(address);
-            OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA,wsaNS,epr);
+            OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
 
-            if(this.metaData != null){
+            if (this.metaData != null) {
                 Iterator metadata = this.metaData.iterator();
-                while(metadata.hasNext()){
-                    metadataE.addChild((OMNode)metadata.next());
+                while (metadata.hasNext()) {
+                    metadataE.addChild((OMNode) metadata.next());
                 }
             }
 
-            if(this.referenceParameters != null){
-                OMElement refParameterElement = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
+            if (this.referenceParameters != null) {
+                OMElement refParameterElement = fac.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, epr);
                 Iterator refParms = referenceParameters.values().iterator();
-                while(refParms.hasNext()){
-                    refParameterElement.addChild((OMNode)refParms.next());
+                while (refParms.hasNext()) {
+                    refParameterElement.addChild((OMNode) refParms.next());
                 }
             }
             return epr;
-        }else{
-        	throw new AxisFault("prefix must ne specified");
+        } else {
+            throw new AxisFault("prefix must be specified");
         }
     }
 
