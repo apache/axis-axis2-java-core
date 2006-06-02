@@ -95,6 +95,7 @@ public class AddressingOutHandler extends AddressingHandler {
         addressingNamespaceObject = factory.createOMNamespace(
                 namespace, WSA_DEFAULT_PREFIX);
         anonymousURI = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
+        relationshipType = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
 
 
         Options messageContextOptions = msgContext.getOptions();
@@ -196,14 +197,16 @@ public class AddressingOutHandler extends AddressingHandler {
                                     WSA_RELATES_TO,
                                     envelope, addressingNamespaceObject);
 
+                    String relationshipType = relatesTo[i].getRelationshipType();
+
                     if (relatesToHeader != null) {
-                        if ("".equals(relatesTo[i].getRelationshipType())) {
+                        if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) || "".equals(relationshipType)) {
                             relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                                    Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
+                                    this.relationshipType,
                                     addressingNamespaceObject);
                         } else {
                             relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                                    relatesTo[i].getRelationshipType(),
+                                    relationshipType,
                                     addressingNamespaceObject);
                         }
                     }

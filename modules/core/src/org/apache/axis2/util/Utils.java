@@ -79,7 +79,7 @@ public class Utils {
         newmsgCtx.addRelatesTo(
                 new RelatesTo(
                         oldOptions.getMessageId(),
-                        AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+                        AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
         newmsgCtx.setWSAAction(oldOptions.getAction());
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
