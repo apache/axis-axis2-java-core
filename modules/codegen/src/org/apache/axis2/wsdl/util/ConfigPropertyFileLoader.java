@@ -23,6 +23,7 @@ public class ConfigPropertyFileLoader {
     private static Map dbSupporterTemplateNameMap;
     private static String testObjectTemplateName;
     private static String[] extensionClassNames;
+    private static String[] postExtensionClassNames;
     private static String[] thirdPartySchemaNames;
     private static String[] languageTypes;
     private static String[] databindingFrameworkNames;
@@ -35,6 +36,7 @@ public class ConfigPropertyFileLoader {
 
 
     private static final String CODE_GEN_KEY_PREFIX = "codegen.extension";
+    private static final String POST_CODE_GEN_KEY_PREFIX = "post.codegen.extension";
     private static final String THIRD_PARTY_SCHEMA_KEY_PREFIX = "codegen.thirdparty.schema";
     private static final String LANGUAGE_TYPE_KEY_PREFIX = "codegen.languages";
     private static final String DEFAULT_LANGUAGE_TYPE_KEY = "codegen.languages.default";
@@ -124,6 +126,12 @@ public class ConfigPropertyFileLoader {
 
             }
 
+            //load the post extension class names
+            tempString = props.getProperty(POST_CODE_GEN_KEY_PREFIX);
+            if (tempString != null) {
+                postExtensionClassNames = tempString.split(SEPARATOR_CHAR);
+
+            }
             //load the data binding framework names
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
@@ -251,13 +259,19 @@ public class ConfigPropertyFileLoader {
     }
     /**
      * Gets the extension class names.
-     *
      * @return Returns String[].
      */
     public static String[] getExtensionClassNames() {
         return extensionClassNames;
     }
 
+    /**
+     * get the post extension class names
+     * @return Returns String[].
+     */
+     public static String[] getPostExtensionClassNames() {
+        return postExtensionClassNames;
+    }
     /**
      * Gets the third party schema names list.
      *

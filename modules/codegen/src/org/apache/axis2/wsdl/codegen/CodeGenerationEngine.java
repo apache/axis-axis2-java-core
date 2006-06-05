@@ -48,7 +48,8 @@ import java.util.Map;
 public class CodeGenerationEngine {
 	private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
 
-    private List extensions = new ArrayList();
+    private List preExtensions = new ArrayList();
+    private List postExtensions = new ArrayList();
 
 
     private CodeGenConfiguration configuration;
@@ -105,16 +106,22 @@ public class CodeGenerationEngine {
     }
 
     /**
-     * Loads the relevant extensions
+     * Loads the relevant preExtensions
      *
      * @throws CodeGenerationException
      */
     private void loadExtensions() throws CodeGenerationException {
-
+        //load pre extensions
         String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
         for (int i = 0; i < extensions.length; i++) {
             //load the Extension class
-            addExtension((CodeGenExtension) getObjectFromClassName(extensions[i]));
+            addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i]));
+        }
+        //load post extensions
+        String[] postExtensions = ConfigPropertyFileLoader.getPostExtensionClassNames();
+        for (int i = 0; i < postExtensions.length; i++) {
+            //load the Extension class
+            addPostExtension((CodeGenExtension) getObjectFromClassName(postExtensions[i]));
         }
 
     }
@@ -123,20 +130,31 @@ public class CodeGenerationEngine {
      * Adds a given extension to the list
      * @param ext
      */
-    private void addExtension(CodeGenExtension ext) {
+    private void addPreExtension(CodeGenExtension ext) {
         if(ext != null) {
-           extensions.add(ext);
+           preExtensions.add(ext);
+        }
+    }
+
+     /**
+     * Adds a given extension to the list
+     * @param ext
+     */
+    private void addPostExtension(CodeGenExtension ext) {
+        if(ext != null) {
+           postExtensions.add(ext);
         }
     }
 
     /**
-     * Generate a WSDL
+     * Generate the code!!
      * @throws CodeGenerationException
      */
     public void generate() throws CodeGenerationException {
         try {
-            for (int i = 0; i < extensions.size(); i++) {
-                ((CodeGenExtension) extensions.get(i)).engage(configuration);
+            //engage the pre-extensions
+            for (int i = 0; i < preExtensions.size(); i++) {
+                ((CodeGenExtension) preExtensions.get(i)).engage(configuration);
             }
 
             Emitter emitter;
@@ -151,6 +169,7 @@ public class CodeGenerationEngine {
                 throw new CodeGenerationException(CodegenMessages.getMessage("engine.noProperDatabindingException"));
             }
 
+            //Find and invoke the emitter by reflection
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
             String className = (String)emitterMap.get(configuration.getOutputLanguage());
             if (className != null) {
@@ -162,12 +181,11 @@ public class CodeGenerationEngine {
             }
 
 
-
+            //invoke the necessary methods in the emitter
             if (configuration.isServerSide()) {
                 emitter.emitSkeleton();
                 // if the users want both client and server, it would be in the
                 // generate all option
-
                 if (configuration.isGenerateAll()) {
                     emitter.emitStub();
                 }
@@ -175,11 +193,13 @@ public class CodeGenerationEngine {
                 emitter.emitStub();
             }
 
-
+            //engage the post-extensions
+            for (int i = 0; i < postExtensions.size(); i++) {
+                ((CodeGenExtension) postExtensions.get(i)).engage(configuration);
+            }
 
         } catch (ClassCastException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wrongEmitter"), e);
-
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }

@@ -16,7 +16,6 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,6 +25,8 @@ import java.lang.reflect.Method;
 
 /**
  * Tidies up the java source code using Jalopy.
+ * This is used by both ADB and Codegen hence needs to be in the
+ * commons rather than a specific module
  */
 public class PrettyPrinter {
 	private static final Log log = LogFactory.getLog(PrettyPrinter.class);
