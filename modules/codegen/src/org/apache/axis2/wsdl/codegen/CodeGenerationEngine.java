@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeGenerationEngine {
-	private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
+    private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
 
     private List preExtensions = new ArrayList();
     private List postExtensions = new ArrayList();
@@ -113,15 +113,20 @@ public class CodeGenerationEngine {
     private void loadExtensions() throws CodeGenerationException {
         //load pre extensions
         String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
-        for (int i = 0; i < extensions.length; i++) {
-            //load the Extension class
-            addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i]));
+        if (extensions!=null){
+            for (int i = 0; i < extensions.length; i++) {
+                //load the Extension class
+                addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i]));
+            }
         }
+        
         //load post extensions
         String[] postExtensions = ConfigPropertyFileLoader.getPostExtensionClassNames();
-        for (int i = 0; i < postExtensions.length; i++) {
-            //load the Extension class
-            addPostExtension((CodeGenExtension) getObjectFromClassName(postExtensions[i]));
+        if (postExtensions!=null){
+            for (int i = 0; i < postExtensions.length; i++) {
+                //load the Extension class
+                addPostExtension((CodeGenExtension) getObjectFromClassName(postExtensions[i]));
+            }
         }
 
     }
@@ -132,17 +137,17 @@ public class CodeGenerationEngine {
      */
     private void addPreExtension(CodeGenExtension ext) {
         if(ext != null) {
-           preExtensions.add(ext);
+            preExtensions.add(ext);
         }
     }
 
-     /**
+    /**
      * Adds a given extension to the list
      * @param ext
      */
     private void addPostExtension(CodeGenExtension ext) {
         if(ext != null) {
-           postExtensions.add(ext);
+            postExtensions.add(ext);
         }
     }
 
@@ -227,7 +232,7 @@ public class CodeGenerationEngine {
             baseURI = uri;
         } else{
             if(file.getParentFile() == null){
-               try {
+                try {
                     baseURI = new File(".").getCanonicalFile().toURI().toString();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
