@@ -364,6 +364,13 @@ public class SchemaCompiler {
      */
     private void processElement(XmlSchemaElement xsElt, boolean isOuter,Map innerElementMap,List localNillableList, XmlSchema parentSchema) throws SchemaCompilationException {
 
+        //if the element is null, which usually happens when the qname is not
+        //proper, throw an exceptions
+        if (xsElt==null){
+            throw new SchemaCompilationException(
+                    SchemaCompilerMessages.getMessage("schema.elementNull"));
+        }
+
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
@@ -1100,7 +1107,7 @@ public class SchemaCompiler {
             }else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 //Todo - Handle unions here
                 throw new SchemaCompilationException(
-                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Uniont"));
+                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Union"));
 
             }else if (content instanceof XmlSchemaSimpleTypeList){
                 //todo - Handle lists here
