@@ -78,6 +78,8 @@ public class AxisConfiguration extends AxisDescription {
     protected PhasesInfo phasesinfo;
     private ClassLoader serviceClassLoader;
     private ClassLoader systemClassLoader;
+    //to keep track of need to manage transport session or not
+    private boolean manageTransportSession;
 
     /**
      * Constructor AxisConfigurationImpl.
@@ -694,5 +696,13 @@ public class AxisConfiguration extends AxisDescription {
         }
         service.setActive(true);
         notifyObservers(AxisEvent.SERVICE_START, service);
+    }
+
+    public boolean isManageTransportSession() {
+        return manageTransportSession;
+    }
+
+    public void setManageTransportSession(boolean manageTransportSession) {
+        this.manageTransportSession = manageTransportSession;
     }
 }

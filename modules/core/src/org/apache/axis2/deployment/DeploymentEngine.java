@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.WSInfo;
@@ -400,6 +401,14 @@ public class DeploymentEngine implements DeploymentConstants {
         while (services.hasNext()) {
             ArrayList contolops = new ArrayList();
             AxisService axisService = (AxisService) services.next();
+            String scope = axisService.getScope();
+            if(Constants.SCOPE_TRANSPORT_SESSION.equals(scope)){
+                if(!axisConfig.isManageTransportSession()){
+                    throw new DeploymentException("You can not deploy the service " +
+                            "in transport session , since transport session management" +
+                            " disabled in axis2.xml change manageTransportSession parameter value to true");
+                }
+            }
             axisService.setUseDefaultChains(false);
 
             axisService.setFileName(serviceLocation);

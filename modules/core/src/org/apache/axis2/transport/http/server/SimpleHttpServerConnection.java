@@ -82,12 +82,13 @@ public class SimpleHttpServerConnection {
                 socket = null;
             }
         } catch (IOException e) {
+
         }
     }
 
     public SimpleRequest readRequest() throws IOException {
         try {
-            String line = null;
+            String line ;
 
             do {
                 line = HttpParser.readLine(in, HTTP_ELEMENT_CHARSET);
@@ -99,11 +100,9 @@ public class SimpleHttpServerConnection {
                 return null;
             }
 
-            SimpleRequest request = new SimpleRequest(RequestLine.parseLine(line),
+            return new SimpleRequest(RequestLine.parseLine(line),
                     HttpParser.parseHeaders(this.in, HTTP_ELEMENT_CHARSET),
                     this.in);
-
-            return request;
         } catch (IOException e) {
             close();
 
@@ -113,7 +112,7 @@ public class SimpleHttpServerConnection {
 
     public SimpleResponse readResponse() throws IOException {
         try {
-            String line = null;
+            String line ;
 
             do {
                 line = HttpParser.readLine(in, HTTP_ELEMENT_CHARSET);
@@ -125,11 +124,9 @@ public class SimpleHttpServerConnection {
                 return null;
             }
 
-            SimpleResponse response = new SimpleResponse(new StatusLine(line),
+            return new SimpleResponse(new StatusLine(line),
                     HttpParser.parseHeaders(this.in, HTTP_ELEMENT_CHARSET),
                     this.in);
-
-            return response;
         } catch (IOException e) {
             close();
 
@@ -172,7 +169,7 @@ public class SimpleHttpServerConnection {
             }
 
             byte[] tmp = new byte[4096];
-            int i = 0;
+            int i ;
 
             while ((i = content.read(tmp)) >= 0) {
                 outsream.write(tmp, 0, i);
@@ -219,7 +216,7 @@ public class SimpleHttpServerConnection {
                     outsream = new ChunkedOutputStream(outsream);
 
                     byte[] tmp = new byte[1024];
-                    int i = 0;
+                    int i;
 
                     while ((i = content.read(tmp)) >= 0) {
                         outsream.write(tmp, 0, i);
@@ -235,7 +232,7 @@ public class SimpleHttpServerConnection {
                  * read the content when needed to embed content-length
                  */
                 byte[] tmp = new byte[1024];
-                int i = 0;
+                int i;
 
                 while ((i = content.read(tmp)) >= 0) {
                     outsream.write(tmp, 0, i);

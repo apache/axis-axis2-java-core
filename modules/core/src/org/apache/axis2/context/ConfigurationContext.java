@@ -152,8 +152,10 @@ public class ConfigurationContext extends AbstractContext {
             } else if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
                 registerServiceGroupContext(serviceGroupContext);
             } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
-                sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
-                sessionContext.addServiceContext(serviceContext);
+                if (sessionContext != null) {
+                    sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
+                    sessionContext.addServiceContext(serviceContext);
+                }
             }
             messageContext.setServiceContext(serviceContext);
             if (Constants.SCOPE_REQUEST.equals(maxScope)) {

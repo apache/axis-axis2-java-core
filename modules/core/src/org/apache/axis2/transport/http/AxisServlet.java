@@ -70,6 +70,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                                                                 HttpServletRequest httpServletRequest)
             throws AxisFault {
         msgContext = new MessageContext();
+        if (axisConfiguration.isManageTransportSession()) {
+            // We need to create this only if transport session is enabled.
+            Object sessionContext = getSessionContext(httpServletRequest);
+            msgContext.setSessionContext((SessionContext) sessionContext);
+        }
+
         msgContext.setConfigurationContext(configContext);
         msgContext.setTransportIn(axisConfiguration.getTransportIn(new QName(Constants
                 .TRANSPORT_HTTP)));

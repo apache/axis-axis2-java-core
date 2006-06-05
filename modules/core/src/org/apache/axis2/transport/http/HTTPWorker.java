@@ -77,12 +77,15 @@ public class HTTPWorker implements HttpRequestHandler {
                     configurationContext.getAxisConfiguration().getTransportOut(
                             new QName(Constants.TRANSPORT_HTTP));
             String cookieID = request.getCookieID();
-            SessionContext sessionContext = getSessionContext(cookieID);
+
 
             msgContext = new MessageContext();
             msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
             msgContext.setConfigurationContext(configurationContext);
-            msgContext.setSessionContext(sessionContext);
+            if (configurationContext.getAxisConfiguration().isManageTransportSession()) {
+                SessionContext sessionContext = getSessionContext(cookieID);
+                msgContext.setSessionContext(sessionContext);
+            }
             msgContext.setTransportIn(configurationContext.getAxisConfiguration().getTransportIn(
                     new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setTransportOut(transportOut);
@@ -173,7 +176,7 @@ public class HTTPWorker implements HttpRequestHandler {
                                 ip = ip.substring(0, seperatorIndex);
                             }
                         }
-                        service.printWSDL(baos, ip,servicePath);
+                        service.printWSDL(baos, ip, servicePath);
                         byte[] buf = baos.toByteArray();
                         response.setBody(new ByteArrayInputStream(buf));
                         conn.writeResponse(response);

@@ -19,6 +19,11 @@
     <parameter name="userName" locked="false">admin</parameter>
     <parameter name="password" locked="false">axis2</parameter>
 
+    <!--<parameter name="contextPath" locked="false">axis2</parameter>-->
+    <!--<parameter name="servicePath" locked="false">axis2</parameter>-->
+    <!--Set the flag to true if you want to enable transport level session mangment-->
+    <parameter name="manageTransportSession" locked="false">false</parameter>
+
     <!-- If you have a frontend host which exposes this webservice using a different public URL  -->
     <!-- use this parameter to override autodetected url -->
     <!--<parameter name="httpFrontendHostUrl" locked="false">https://someotherhost/context</parameter>-->

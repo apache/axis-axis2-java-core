@@ -41,10 +41,20 @@ public class ConfigurationContextFactory {
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
         //To override context path
         setContextPath(axisConfig, configContext);
+        //To check whether transport level session managment is require or not
+        configureTransportSessionManagement(axisConfig);
         init(configContext);
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
         return configContext;
+    }
+
+    private static void configureTransportSessionManagement(AxisConfiguration axisConfig) {
+        Parameter manageSession = axisConfig.getParameter(Constants.MANAGE_TRANSPORT_SESSION);
+        if (manageSession != null) {
+            String value = ((String) manageSession.getValue()).trim();
+            axisConfig.setManageTransportSession(Boolean.getBoolean(value));
+        }
     }
 
     private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext) {

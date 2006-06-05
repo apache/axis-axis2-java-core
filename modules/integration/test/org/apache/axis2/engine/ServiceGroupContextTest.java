@@ -75,6 +75,7 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
                 RequestCounter.class.getName(), operationName);
         service.setScope(Constants.SCOPE_TRANSPORT_SESSION);
         UtilServer.deployService(service);
+        UtilServer.getConfigurationContext().getAxisConfiguration().setManageTransportSession(true);
     }
 
     protected void tearDown() throws Exception {
