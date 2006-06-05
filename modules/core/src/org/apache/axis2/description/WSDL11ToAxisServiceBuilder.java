@@ -11,6 +11,8 @@ import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -75,6 +77,9 @@ import java.util.Vector;
 
 public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
+   protected static final Log log =
+           LogFactory.getLog(WSDL11ToAxisServiceBuilder.class);
+
     private String portName;
 
     private static final String BINDING = "Binding";
@@ -104,13 +109,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private WSDLLocator customWSLD4JResolver;
 
     public WSDL11ToAxisServiceBuilder(InputStream in, QName serviceName,
-            String portName) {
+                                      String portName) {
         super(in, serviceName);
         this.portName = portName;
     }
 
     public WSDL11ToAxisServiceBuilder(Definition def, QName serviceName,
-            String portName) {
+                                      String portName) {
         super(null, serviceName);
         this.wsdl4jDefinition = def;
         this.portName = portName;
@@ -198,6 +203,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
         } else {
             if (services.size() > 0) {
+                //pick the first service - we don't really have a choice here
                 service = (Service) services.values().toArray()[0];
             } else {
                 throw new AxisFault("No service element found in the WSDL");
@@ -214,16 +220,56 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         } else {
             Map ports = service.getPorts();
             if (ports != null && ports.size() > 0) {
-                port = (Port) ports.values().toArray()[0];
+                //pick the port with the SOAP address as the default port
+                port = findSOAPPort(ports);
+                if (port==null){
+                    //a SOAP port was not found - log a warning
+                    // and use the first port in the list
+                    log.info("A SOAP port was not found - " +
+                            "picking a random port!");
+                    port = (Port) ports.values().toArray()[0];
+                }
             }
         }
+
         axisService.setName(service.getQName().getLocalPart());
+
         if (port != null) {
             copyExtensibleElements(port.getExtensibilityElements(), dif,
                     axisService, PORT);
             binding = port.getBinding();
         }
         return binding;
+    }
+
+    /**
+     * Finds a SOAP port given the port map
+     * @param ports
+     * @return
+     */
+    private Port findSOAPPort(Map ports) {
+        Port port;
+        for (Iterator portsIterator = ports.values().iterator();
+             portsIterator.hasNext();) {
+            port = (Port)portsIterator.next();
+            List extensibilityElements =  port.getExtensibilityElements();
+            for (int i = 0; i < extensibilityElements.size(); i++) {
+                Object extElement =  extensibilityElements.get(i);
+                if (extElement instanceof SOAPAddress){
+                    //SOAP 1.1 address found - return that port and we are done
+                    return port;
+                }
+
+                if (extElement instanceof UnknownExtensibilityElement){
+                    //todo check for a SOAP 1.2 address
+                    // extensibility element here
+                }
+
+            }
+
+        }
+        //None found - just return null.
+        return null;
     }
 
     private void processBinding(Binding binding, Definition dif)
@@ -254,11 +300,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (bindingInput != null) {
                     if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP)
                             || WSDLConstants.MEP_URI_IN_OPTIONAL_OUT
-                                    .equals(MEP)
+                            .equals(MEP)
                             || WSDLConstants.MEP_URI_OUT_OPTIONAL_IN
-                                    .equals(MEP)
+                            .equals(MEP)
                             || WSDLConstants.MEP_URI_ROBUST_OUT_ONLY
-                                    .equals(MEP)
+                            .equals(MEP)
                             || WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
                             || WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
                         AxisMessage inMessage = operation
@@ -272,11 +318,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (bindingOutput != null) {
                     if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP)
                             || WSDLConstants.MEP_URI_OUT_OPTIONAL_IN
-                                    .equals(MEP)
+                            .equals(MEP)
                             || WSDLConstants.MEP_URI_IN_OPTIONAL_OUT
-                                    .equals(MEP)
+                            .equals(MEP)
                             || WSDLConstants.MEP_URI_ROBUST_OUT_ONLY
-                                    .equals(MEP)
+                            .equals(MEP)
                             || WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
                             || WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
                         AxisMessage outAxisMessage = operation
@@ -302,7 +348,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void processPortType(PortType wsdl4jPortType, Definition dif)
             throws Exception {
 
-        copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(), dif,
+        copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
                 axisService, PORT_TYPE);
 
         Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations()
@@ -318,7 +364,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /////////////////////////////////////////////////////////////////////////////
     //////////////////////////// Internal Component Copying ///////////////////
     private AxisOperation populateOperations(Operation wsdl4jOperation,
-            Definition dif) throws Exception {
+                                             Definition dif) throws Exception {
         QName opName = new QName(wsdl4jOperation.getName());
         //Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
@@ -346,7 +392,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         QName wrappedInputName = axisOperation.getName();
         QName wrappedOutputName = new QName(wrappedInputName.getNamespaceURI(),
                 wrappedInputName.getLocalPart() + "Response", wrappedInputName
-                        .getPrefix());
+                .getPrefix());
         if (isServerSide) {
             if (null != wsdl4jInputMessage) {
                 AxisMessage inMessage = axisOperation
@@ -445,7 +491,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param wsdl4jMessage
      */
     private QName generateReferenceQname(QName outerName,
-            Message wsdl4jMessage, boolean isWrappable) {
+                                         Message wsdl4jMessage, boolean isWrappable) {
         QName referenceQName = null;
         if (isWrappable) {
             //The schema for this should be already made ! Find the QName from
@@ -474,7 +520,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private Element[] generateWrapperSchema(Definition wsdl4jDefinition,
-            Binding binding) {
+                                            Binding binding) {
 
         List schemaElementList = new ArrayList();
         String targetNamespaceUri = wsdl4jDefinition.getTargetNamespace();
@@ -494,7 +540,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private Element createSchemaForPorttype(PortType porttype,
-            String targetNamespaceUri, boolean forceWrapping) {
+                                            String targetNamespaceUri, boolean forceWrapping) {
 
         //loop through the messages. We'll populate thins map with the relevant
         // messages
@@ -615,12 +661,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String name = wsdl4jMessage.getQName().getLocalPart();
                 Element newComplexType = document.createElementNS(
                         XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
+                        + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
                 newComplexType.setAttribute(XSD_NAME, name);
 
                 Element cmplxContentSequence = document.createElementNS(
                         XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
+                        + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
                 Element child;
                 Iterator iterator = parts.keySet().iterator();
                 while (iterator.hasNext()) {
@@ -654,7 +700,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             //create Element for namespace import
                             Element namespaceImport = document.createElementNS(
                                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                            + XML_SCHEMA_IMPORT_LOCAL_NAME);
+                                    + XML_SCHEMA_IMPORT_LOCAL_NAME);
                             namespaceImport.setAttribute("namespace", uri);
                             //add this to the map
                             namespaceImportsMap.put(uri, namespaceImport);
@@ -703,7 +749,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             String inputOpName = inputOperationtNames[j];
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, inputOpName);
 
             String typeValue = ((Message) inputOperationsMap.get(inputOpName))
@@ -724,7 +770,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             String outputOpName = baseoutputOpName + "Response";
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, outputOpName);
             String typeValue = ((Message) outputOperationsMap
                     .get(baseoutputOpName)).getQName().getLocalPart();
@@ -744,7 +790,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             String baseFaultOpName = faultyOperationtNames[j];
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                            + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, baseFaultOpName);
             String typeValue = ((Message) faultyOperationsMap
                     .get(baseFaultOpName)).getQName().getLocalPart();
@@ -764,7 +810,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         Element schemaElement = document.createElementNS(
                 XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                        + XML_SCHEMA_LOCAL_NAME);
+                + XML_SCHEMA_LOCAL_NAME);
 
         //loop through the namespace declarations first
         String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
@@ -919,8 +965,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *            from.
      */
     private void copyExtensibleElements(List wsdl4jExtensibleElements,
-            Definition wsdl4jDefinition, AxisDescription description,
-            String originOfExtensibilityElements) {
+                                        Definition wsdl4jDefinition, AxisDescription description,
+                                        String originOfExtensibilityElements) {
         Iterator iterator = wsdl4jExtensibleElements.iterator();
         while (iterator.hasNext()) {
             ExtensibilityElement wsdl4jElement = (ExtensibilityElement) iterator
@@ -978,7 +1024,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
                         .equals(unknown.getElementType())
                         || AddressingConstants.Submission.WSAW_USING_ADDRESSING
-                                .equals(unknown.getElementType())) {
+                        .equals(unknown.getElementType())) {
                     // Read the wsaw:UsingAddressing flag from the WSDL. It is
                     // only valid on the Port or Binding
                     // so only recognise it as en extensibility elemtn of one of
@@ -1052,7 +1098,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private void addPolicy(AxisDescription description,
-            String originOfExtensibilityElements, Policy policy) {
+                           String originOfExtensibilityElements, Policy policy) {
 
         if (description instanceof AxisService) {
             // wsdl:service
@@ -1116,8 +1162,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private void addPolicyRef(AxisDescription description,
-            String originOfExtensibilityElements,
-            PolicyReference policyRefElement) {
+                              String originOfExtensibilityElements,
+                              PolicyReference policyRefElement) {
 
         if (description instanceof AxisService) {
             // wsdl:service
@@ -1261,7 +1307,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private void copyExtensionAttributes(Map extAttributes,
-            Definition definition, AxisDescription description, String origin) {
+                                          AxisDescription description,
+                                          String origin) {
 
         QName key;
         QName value;

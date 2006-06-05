@@ -283,8 +283,7 @@
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    //Unknown style!! No code is generated
-                                    throw new java.lang.UnsupportedOperationException("Unknown Style");
+                                    //Unknown style detected !! No code is generated
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -292,14 +291,13 @@
                         <xsl:otherwise>
                             <xsl:choose>
                                 <xsl:when test="$style='rpc' or $style='document'">
-                                    //Style is Doc. No input parameters
+                                    //Style is taken to be "document". No input parameters
                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                     env = factory.getDefaultEnvelope();
                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    //Unknown style!! No code is generated
-                                    throw new UnsupportedOperationException("Unknown Style");
+                                     //Unknown style detected !! No code is generated
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
@@ -334,8 +332,7 @@
                            return (<xsl:value-of select="$outputtype"/>)object;
                     </xsl:when>
                     <xsl:otherwise>
-                        //Unsupported style!! No code is generated
-                        throw new java.lang.UnsupportedOperationException("Unsupported Style");
+                         //Unknown style detected !! No code is generated
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -449,8 +446,7 @@
                                     </xsl:for-each>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    //Unknown style!! No code is generated
-                                    throw new java.lang.UnsupportedOperationException("Unknown Style");
+                                    //Unknown style detected !! No code is generated
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -464,8 +460,7 @@
                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    //Unknown style!! No code is generated
-                                    throw new UnsupportedOperationException("Unknown Style");
+                                    //Unknown style detected !! No code is generated
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
@@ -542,8 +537,7 @@
                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
                             </xsl:when>
                             <xsl:otherwise>
-                                //Unknown style!! No code is generated
-                                throw new java.lang.UnsupportedOperationException("Unknown Style");
+                               //Unknown style detected !! No code is generated
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
@@ -557,8 +551,7 @@
                                 env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
                             </xsl:when>
                             <xsl:otherwise>
-                                //Unknown style!! No code is generated
-                                throw new UnsupportedOperationException("Unknown Style");
+                                 //Unknown style detected !! No code is generated
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
