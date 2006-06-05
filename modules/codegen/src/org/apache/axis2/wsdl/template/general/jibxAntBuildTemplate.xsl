@@ -5,7 +5,16 @@
             <xsl:value-of select="@package"/>
         </xsl:variable>
 
-        <project basedir="." default="jar.all">
+        <project basedir=".">
+             <xsl:choose>
+                <xsl:when test="@isserverside">
+                   <xsl:attribute name="default">jar.server</xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="default">jar.client</xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
+            
             <xsl:comment>Auto generated ant build file</xsl:comment>
             <property environment="env"/>
             <property name="axis2.home">

@@ -71,7 +71,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
     protected static final String FAULT_SUFFIX = "Exception";
     protected static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
-//    private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
 
     protected static Map MEPtoClassMap;
     protected static Map MEPtoSuffixMap;
@@ -306,11 +305,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("ant");
         String serviceName = makeJavaClassName(axisService.getName());
         String packageName = codeGenConfiguration.getPackageName();
-        String[]      dotSeparatedValues = packageName.split("\\.");
+        String[] dotSeparatedValues = packageName.split("\\.");
 
         addAttribute(doc, "package", dotSeparatedValues[0], rootElement);
         addAttribute(doc, "name", serviceName, rootElement);
         addAttribute(doc, "servicename", serviceName, rootElement);
+        if (codeGenConfiguration.isServerSide()){
+            addAttribute(doc,
+                "isserverside",
+                "yes",
+                rootElement);
+        }
+
         doc.appendChild(rootElement);
 
         return doc;
