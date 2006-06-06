@@ -15,23 +15,23 @@
  */
 package org.apache.axis2.util;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPBody;
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.HTTPConstants;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.axis2.context.MessageContext;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 
@@ -102,7 +102,7 @@ public class SchemaUtil {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
                             String name = innerElement.getName();
                             String[] parameterValuesArray = (String[]) parameterMap.get(name);
-                            if (parameterValuesArray.length > 0 &&
+                            if (parameterValuesArray != null &&
                                 !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
                             {
                                 soapFactory.createOMElement(name, null,
