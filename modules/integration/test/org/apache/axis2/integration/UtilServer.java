@@ -76,23 +76,26 @@ public class UtilServer {
                 receiver.start();
                 System.out.print("Server started on port "
                         + TESTING_PORT + ".....");
+            } catch (Exception e) {
+                e.printStackTrace();
             } finally {
-
-            }
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e1) {
-                throw new AxisFault("Thread interuptted", e1);
             }
 
         }
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            throw new AxisFault("Thread interuptted", e1);
+        }
+
+
         count++;
     }
 
-     public static synchronized void start(String repository , String axis2xml) throws Exception {
+    public static synchronized void start(String repository, String axis2xml) throws Exception {
         if (count == 0) {
-            ConfigurationContext er = getNewConfigurationContext(repository,axis2xml);
+            ConfigurationContext er = getNewConfigurationContext(repository, axis2xml);
 
             receiver = new SimpleHTTPServer(er, TESTING_PORT);
 
@@ -125,8 +128,8 @@ public class UtilServer {
                 file.getAbsolutePath() + "/conf/axis2.xml");
     }
 
-      public static ConfigurationContext getNewConfigurationContext(
-            String repository , String axis2xml) throws Exception {
+    public static ConfigurationContext getNewConfigurationContext(
+            String repository, String axis2xml) throws Exception {
         File file = new File(repository);
         if (!file.exists()) {
             throw new Exception("repository directory "
@@ -146,7 +149,7 @@ public class UtilServer {
                 }
             }
             count = 0;
-            // tp.doStop();
+// tp.doStop();
             System.out.print("Server stopped .....");
         } else {
             count--;
@@ -228,7 +231,7 @@ public class UtilServer {
                 configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
-        // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
+// sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         configContext.getAxisConfiguration().addService(service);
 

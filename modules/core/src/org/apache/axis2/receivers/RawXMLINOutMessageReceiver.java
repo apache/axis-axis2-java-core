@@ -96,11 +96,7 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 }
 
                 OMElement result;
-                try {
                     result = (OMElement) method.invoke(obj, args);
-                } catch (Exception e) {
-                    throw new AxisFault(e.getMessage());
-                }
 
                 AxisService service = msgContext.getAxisService();
                 service.getTargetNamespace();
