@@ -557,6 +557,16 @@ public class AxisService extends AxisDescription {
     }
 
     /**
+     * @param out
+     * @param requestIP
+     * @throws AxisFault
+     * @deprecated try to use the method whcih takes three aruments
+     */
+    public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
+        printWSDL(out, requestIP, "services");
+    }
+
+    /**
      * Print the WSDL with a default URL
      *
      * @param out

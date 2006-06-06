@@ -21,7 +21,7 @@
     <parameter name="password" locked="false">axis2</parameter>
 
     <!--<parameter name="contextPath" locked="false">axis2</parameter>-->
-    <!--<parameter name="servicePath" locked="false">axis2</parameter>-->
+    <!--<parameter name="servicePath" locked="false">services</parameter>-->
     <!--Set the flag to true if you want to enable transport level session mangment-->
     <parameter name="manageTransportSession" locked="false">false</parameter>
 

@@ -139,9 +139,7 @@ public class AxisMessage extends AxisDescription {
         return new ArrayList(0);
     }
 
-    public void addSopaHeader
-            (SOAPHeaderMessage
-                    soapHeaderMessage) {
+    public void addSoapHeader(SOAPHeaderMessage soapHeaderMessage) {
         soapHeaders.add(soapHeaderMessage);
     }
 

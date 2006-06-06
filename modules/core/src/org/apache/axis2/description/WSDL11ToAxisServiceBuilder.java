@@ -1085,7 +1085,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 headerMessage.setPart(soapHeader.getPart());
                 if (description instanceof AxisMessage) {
-                    ((AxisMessage) description).addSopaHeader(headerMessage);
+                    ((AxisMessage) description).addSoapHeader(headerMessage);
                 }
             } else if (SOAPConstants.Q_ELEM_SOAP_BINDING.equals(wsdl4jElement
                     .getElementType())) {
