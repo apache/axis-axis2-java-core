@@ -20,6 +20,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
@@ -33,7 +34,7 @@ public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
             if (mapper == null) {
                 //this shouldn't happen
-                throw new CodeGenerationException("extension.noProperDatabinding");
+                throw new CodeGenerationException(CodegenMessages.getMessage("extension.noProperDatabinding"));
             }
             return;
         }
