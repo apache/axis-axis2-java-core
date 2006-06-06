@@ -80,7 +80,7 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
             supporterTemplateStream = getClass().getResourceAsStream(templateName);
             return new StreamSource(supporterTemplateStream);
         } else{
-            throw new TransformerException(CodegenMessages.getMessage("reslover.templateNotFound",templateName));
+            throw new TransformerException(CodegenMessages.getMessage("resolver.templateNotFound",templateName));
         }
     }
 
