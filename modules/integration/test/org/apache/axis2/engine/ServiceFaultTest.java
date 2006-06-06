@@ -57,8 +57,8 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
                         operationName);
         UtilServer.deployService(service);
         targetEPR = new EndpointReference(
-//                "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
-                "http://127.0.0.1:5556"
+                "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
+//                "http://127.0.0.1:5556"
                         + "/axis2/services/" + serviceName.getLocalPart() + "/" + operationName.getLocalPart());
     }
 
