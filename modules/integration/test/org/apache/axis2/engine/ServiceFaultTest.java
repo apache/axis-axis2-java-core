@@ -62,9 +62,41 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
                         + "/axis2/services/" + serviceName.getLocalPart() + "/" + operationName.getLocalPart());
     }
 
-    public void testFaultThrownByService() {
+    /**
+     * Service throws a fault from the service impl, by just creating an AxisFault from all the fault
+     * information.
+     */
+    public void testFaultThrownByServiceUsingAxisFaultOnly() {
         try {
             OMElement payload = getOMElementWithText(FaultThrowingService.THROW_FAULT_AS_AXIS_FAULT);
+            Options options = new Options();
+            options.setTo(targetEPR);
+            options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+            options.setExceptionToBeThrownOnSOAPFault(false);
+
+            ConfigurationContext configContext =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+            ServiceClient sender = new ServiceClient(configContext, null);
+            sender.setOptions(options);
+
+            String result = sender.sendReceive(payload).toString();
+
+            assertTrue(result.indexOf("test:TestFault") > -1);
+            assertTrue(result.indexOf("FaultReason</soapenv:Text>") > -1);
+            assertTrue(result.indexOf("This is a test Exception") > -1);
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+            fail();
+        }
+    }
+
+    /**
+     * Service sends out a fault, filling all the information to the message context
+     */
+    public void testFaultThrownByServiceUsingMessageContext() {
+        try {
+            OMElement payload = getOMElementWithText(FaultThrowingService.THROW_FAULT_WITH_MSG_CTXT);
             Options options = new Options();
             options.setTo(targetEPR);
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
