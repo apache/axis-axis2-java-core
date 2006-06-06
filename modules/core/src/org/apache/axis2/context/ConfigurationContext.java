@@ -60,7 +60,7 @@ public class ConfigurationContext extends AbstractContext {
     //To specify url mapping for services
     private String servicePath = "services";
     //To have your own context path
-    private String contextPath = "/axis2";
+    private String contextPath = "axis2";
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
@@ -374,12 +374,19 @@ public class ConfigurationContext extends AbstractContext {
         return servicePath;
     }
 
-    public void setServicePath(String servicePath) {
+    public void setServicePath(String servicePath) throws AxisFault {
+        if (servicePath == null || "".equals(servicePath)) {
+            throw new AxisFault("service path can not be null");
+        }
         this.servicePath = servicePath;
     }
 
     public String getContextPath() {
-        return contextPath + "/" + servicePath;
+        if (contextPath != null && !"".equals(contextPath)) {
+            return "/" + contextPath + "/" + servicePath;
+        } else {
+            return "/" + servicePath;
+        }
     }
 
     public void setContextPath(String contextPath) {

@@ -57,7 +57,7 @@ public class ConfigurationContextFactory {
         }
     }
 
-    private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext) {
+    private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext)  throws AxisFault{
         // Checking for context path
         Parameter servicePath = axisConfig.getParameter(Constants.SERVICE_PATH);
         if (servicePath != null) {
