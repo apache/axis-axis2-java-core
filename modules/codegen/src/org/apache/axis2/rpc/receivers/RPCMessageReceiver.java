@@ -87,11 +87,17 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 messageNameSpace = elementQName.getNamespaceURI();
             }
 
+
             OMNamespace namespace = methodElement.getNamespace();
-            if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
-                throw new AxisFault("namespace mismatch require " +
-                        messageNameSpace +
-                        " found " + methodElement.getNamespace().getName());
+            if (messageNameSpace != null) {
+                if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
+                    throw new AxisFault("namespace mismatch require " +
+                            messageNameSpace +
+                            " found " + methodElement.getNamespace().getName());
+                }
+            } else if (namespace != null) {
+                throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
+                        "qualified element. But received a namespace qualified element");
             }
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
@@ -105,11 +111,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
             Object[] objectArray = RPCUtil.processRequest(methodElement, method);
             Object resObject;
-            try {
-                resObject = method.invoke(obj, objectArray);
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage());
-            }
+            resObject = method.invoke(obj, objectArray);
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response
@@ -139,7 +141,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             String msg = "Exception occurred while trying to invoke service method " +
                     inMessage.getAxisOperation().getName().getLocalPart();
             log.error(msg, e);
-            throw new AxisFault(msg, e);
+            throw AxisFault.makeFault(e);
         }
     }
 

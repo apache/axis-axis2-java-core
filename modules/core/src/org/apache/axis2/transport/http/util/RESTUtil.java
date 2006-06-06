@@ -16,8 +16,8 @@
 package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -37,7 +37,6 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 
@@ -96,6 +95,7 @@ public class RESTUtil {
             msgContext.setProperty(HTTPConstants.HTTP_METHOD, HTTPConstants.HTTP_METHOD_POST);
             msgContext.setProperty(HTTPConstants.CONTENT_TYPE, contentType);
             msgContext.setDoingREST(true);
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream()); 
 
             invokeAxisEngine(msgContext);
 
