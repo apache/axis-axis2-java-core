@@ -61,7 +61,6 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         return null;
     }
 
-    // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
 
