@@ -39,6 +39,8 @@ public class PrettyPrinter {
      */
     public static void prettify(File file) {
         try {
+            Loader.loadClass("org.apache.log4j.Priority");
+                    
             // Create an instance of the Jalopy bean
             Class clazz = Loader.loadClass("de.hunsicker.jalopy.Jalopy");
             Object prettifier = clazz.newInstance();
@@ -67,7 +69,7 @@ public class PrettyPrinter {
             format.invoke(prettifier, new Object[]{});
             log.debug("Pretty printed file : " + file);
         } catch (ClassNotFoundException e) {
-            log.info("Jalopy not found - unable to pretty print " + file);
+            log.info("Jalopy/Log4j not found - unable to pretty print " + file);
         } catch (Exception e) {
             log.warn("Exception occurred while trying to pretty print file " + file, e);
         } catch (Throwable t) {
