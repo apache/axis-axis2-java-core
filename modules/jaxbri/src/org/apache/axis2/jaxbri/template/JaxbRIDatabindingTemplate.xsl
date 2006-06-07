@@ -55,7 +55,8 @@
             try {
                 javax.xml.bind.JAXBContext context = javax.xml.bind.JAXBContext.newInstance( type );
                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
-                return unmarshaller.unmarshal(param.getXMLStreamReader());
+
+                return unmarshaller.unmarshal(param.getXMLStreamReader(), type).getValue();
             } catch (javax.xml.bind.JAXBException bex){
                 throw new RuntimeException(bex);
             }
