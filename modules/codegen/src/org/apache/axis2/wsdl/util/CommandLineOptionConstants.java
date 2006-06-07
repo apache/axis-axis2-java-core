@@ -39,7 +39,9 @@ public interface CommandLineOptionConstants {
         String NAME_SPACE_TO_PACKAGE_OPTION = "ns2p";
         String SERVER_SIDE_INTERFACE_OPTION = "ssi";
         String EXTERNAL_MAPPING_OPTION = "em";
+        String WSDL_VERSION_OPTION = "wv";
 
+        
         //long option constants
         String OUTPUT_LOCATION_OPTION_LONG = "output";
         String SERVER_SIDE_CODE_OPTION_LONG = "server-side";

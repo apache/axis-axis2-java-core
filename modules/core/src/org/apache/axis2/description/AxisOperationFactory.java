@@ -75,13 +75,14 @@ public class AxisOperationFactory implements WSDLConstants {
         return abOpdesc;
     }
 
+    //FIXME add in the latest MEP uris
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
         if (MEP_URI_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
         } else if (MEP_URI_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutOnlyAxisOperation();
-        } else if (MEP_URI_IN_OUT.equals(mepURI)) {
+        } else if (MEP_URI_IN_OUT.equals(mepURI) ||MEP_URI_IN_OUT_03.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
         } else if (MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();

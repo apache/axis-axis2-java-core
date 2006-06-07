@@ -199,6 +199,15 @@
                 <module>true</module>
             </properties>
         </dependency>
+	  <dependency>
+            <groupId>incubator-woden</groupId>
+            <artifactId>woden</artifactId>
+            <version>${woden.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
     </dependencies>
 
     <reports/>

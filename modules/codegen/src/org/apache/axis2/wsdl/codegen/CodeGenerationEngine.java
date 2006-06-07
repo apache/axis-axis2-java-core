@@ -16,8 +16,23 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
@@ -29,21 +44,9 @@ import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class CodeGenerationEngine {
     private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
@@ -79,18 +82,37 @@ public class CodeGenerationEngine {
                             get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
             wsdlUri = option.getOptionValue();
             configuration = new CodeGenConfiguration(allOptions);
-            Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
-            QName serviceQname = null;
-            if (configuration.getServiceName()!=null){
-                serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
-            }
+            
+            
+            CommandLineOption wsdlVersionOption =
+                (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION);
+            if(wsdlVersionOption != null &&("2.0".equals(wsdlVersionOption.getOptionValue()) ||
+                    "2".equals(wsdlVersionOption.getOptionValue()))){
+                //its WSDL 2.0
+                org.apache.woden.WSDLReader wsdlReader = org.apache.woden.WSDLFactory.newInstance().newWSDLReader();
+                //TODO Check whether this does the networ downloading
+                DescriptionElement description = wsdlReader.readWSDL(wsdlUri);
+                QName serviceQname = null;
+                if (configuration.getServiceName()!=null){
+                    serviceQname = new QName(description.getTargetNamespace().toString(), configuration.getServiceName());
+                }
+                configuration.setAxisService(new WSDL20ToAxisServiceBuilder(description, serviceQname, configuration.getPortName()).populateService());
+            }else{
+                //It ll be WSDL 1.1
+                Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
+                QName serviceQname = null;
+                if (configuration.getServiceName()!=null){
+                    serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
+                }
 
-            configuration.setAxisService(new WSDL11ToAxisServiceBuilder(
-                    wsdl4jDef,
-                    serviceQname,
-                    configuration.getPortName()).
-                    populateService()
-            );
+                configuration.setAxisService(new WSDL11ToAxisServiceBuilder(
+                        wsdl4jDef,
+                        serviceQname,
+                        configuration.getPortName()).
+                        populateService()
+                );
+            }
+            
         } catch (AxisFault axisFault) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
         } catch (WSDLException e) {

@@ -73,6 +73,7 @@ public interface WSDLConstants {
      * Field MEP_URI_IN_OUT
      */
     public static final String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
+    public static final String MEP_URI_IN_OUT_03 = "http://www.w3.org/2004/03/wsdl/in-out";
 
     public static final int MEP_CONSTANT_IN_OUT = 12;
 
