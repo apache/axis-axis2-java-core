@@ -508,6 +508,11 @@ public class AxisService extends AxisDescription {
 
     public void printWSDL(OutputStream out, String requestIP, String servicePath) throws AxisFault {
         ArrayList eprList = new ArrayList();
+        String[] eprArray = getServiceEprs(requestIP, eprList);
+        getWSDL(out, eprArray, servicePath);
+    }
+
+    private String[] getServiceEprs(String requestIP, ArrayList eprList) throws AxisFault {
         AxisConfiguration axisConfig = getAxisConfiguration();
         if (enableAllTransport) {
             Iterator transports = axisConfig.getTransportsIn().values().iterator();
@@ -552,8 +557,7 @@ public class AxisService extends AxisDescription {
                 }
             }
         }
-        String eprArray [] = (String[]) eprList.toArray(new String[eprList.size()]);
-        getWSDL(out, eprArray, servicePath);
+        return (String[]) eprList.toArray(new String[eprList.size()]);
     }
 
     /**
@@ -584,6 +588,47 @@ public class AxisService extends AxisDescription {
                     serviceURL, "document", "literal", servicePath);
             try {
                 OMElement wsdlElement = axisService2WOM.generateOM();
+                wsdlElement.serialize(out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
+        } else {
+            try {
+                String wsdlntfound = "<error>" +
+                        "<description>Unable to generate WSDL for this service</description>" +
+                        "<reason>Either user has not dropped the wsdl into META-INF or" +
+                        " operations use message receivers other than RPC.</reason>" +
+                        "</error>";
+                out.write(wsdlntfound.getBytes());
+                out.flush();
+                out.close();
+            } catch (IOException e) {
+                throw new AxisFault(e);
+            }
+        }
+
+    }
+
+    //WSDL 2.0
+    public void printWSDL2(OutputStream out) throws AxisFault {
+        setWsdlfound(true);
+        //pick the endpoint and take it as the epr for the WSDL
+        getWSDL2(out, new String[]{getEndpoint()}, "services");
+    }
+
+    public void printWSDL2(OutputStream out, String requestIP, String servicePath) throws AxisFault {
+        ArrayList eprList = new ArrayList();
+        String[] eprArray = getServiceEprs(requestIP, eprList);
+        getWSDL2(out, eprArray, servicePath);
+    }
+
+    private void getWSDL2(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
+        if (isWsdlfound()) {
+            AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
+            try {
+                OMElement wsdlElement = axisService2WSDL2.generateOM();
                 wsdlElement.serialize(out);
                 out.flush();
                 out.close();

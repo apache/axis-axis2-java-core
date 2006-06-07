@@ -120,6 +120,7 @@ public class ListingAgent extends AbstractAgent {
                 filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
         String wsdl = req.getParameter("wsdl");
+        String wsdl2 = req.getParameter("wsdl2");
         String xsd = req.getParameter("xsd");
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
@@ -143,6 +144,28 @@ public class ListingAgent extends AbstractAgent {
                         }
                     }
                     ((AxisService) serviceObj).printWSDL(out, ip, servicePath);
+                    out.flush();
+                    out.close();
+                    return;
+                } else if (wsdl2 != null) {
+                    OutputStream out = res.getOutputStream();
+                    res.setContentType("text/xml");
+                    int ipindex = filePart.indexOf("//");
+                    String ip = null;
+                    if (ipindex >= 0) {
+                        ip = filePart.substring(ipindex + 2, filePart.length());
+                        int seperatorIndex = ip.indexOf(":");
+                        int slashIndex = ip.indexOf("/");
+                        String port = ip.substring(seperatorIndex + 1,
+                                slashIndex);
+                        if ("http".equals(req.getScheme())) {
+                            configContext.setProperty(RUNNING_PORT, port);
+                        }
+                        if (seperatorIndex > 0) {
+                            ip = ip.substring(0, seperatorIndex);
+                        }
+                    }
+                    ((AxisService) serviceObj).printWSDL2(out, ip, servicePath);
                     out.flush();
                     out.close();
                     return;
@@ -237,7 +260,7 @@ public class ListingAgent extends AbstractAgent {
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-            return new EndpointReference(schema + "://" + ip + ":" + port + conetxtPath +"/" +serviceName);
+            return new EndpointReference(schema + "://" + ip + ":" + port + conetxtPath + "/" + serviceName);
         }
     }
 

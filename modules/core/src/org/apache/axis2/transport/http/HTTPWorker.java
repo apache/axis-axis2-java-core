@@ -158,6 +158,30 @@ public class HTTPWorker implements HttpRequestHandler {
                         }
                     }
                 }
+                if (uri.endsWith("?wsdl2")) {
+                    String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 6);
+                    HashMap services = configurationContext.getAxisConfiguration().getServices();
+                    AxisService service = (AxisService) services.get(serviceName);
+                    if (service != null) {
+                        response.addHeader(new Header("Content-Type", "text/xml"));
+//                        String url = conn.getURL(uri.substring(1, uri.length() - 5));
+                        String url = conn.getURL("");
+                        int ipindex = url.indexOf("//");
+                        String ip = null;
+                        if (ipindex >= 0) {
+                            ip = url.substring(ipindex + 2, url.length());
+                            int seperatorIndex = ip.indexOf(":");
+                            if (seperatorIndex > 0) {
+                                ip = ip.substring(0, seperatorIndex);
+                            }
+                        }
+                        service.printWSDL2(baos, ip, servicePath);
+                        byte[] buf = baos.toByteArray();
+                        response.setBody(new ByteArrayInputStream(buf));
+                        conn.writeResponse(response);
+                        return true;
+                    }
+                }
 
                 if (uri.endsWith("?wsdl")) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 5);
