@@ -96,7 +96,7 @@ public class BeanUtil {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
                             object.add(propDesc.getName());
-                            object.add(o == null ? null :o.toString());
+                            object.add(o == null ? null : o.toString());
                         }
                     } else {
                         for (int j = 0; j < value.length; j++) {
@@ -126,7 +126,7 @@ public class BeanUtil {
                         }
 
                     }
-                }else {
+                } else {
                     object.add(new QName(propDesc.getName()));
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
@@ -134,13 +134,13 @@ public class BeanUtil {
                 }
             }
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null);
-        } catch (java.io.IOException e){
+        } catch (java.io.IOException e) {
             throw new RuntimeException(e);
-        } catch (java.beans.IntrospectionException e){
+        } catch (java.beans.IntrospectionException e) {
             throw new RuntimeException(e);
-        } catch (java.lang.reflect.InvocationTargetException e){
+        } catch (java.lang.reflect.InvocationTargetException e) {
             throw new RuntimeException(e);
-        } catch (java.lang.IllegalAccessException e){
+        } catch (java.lang.IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -170,7 +170,10 @@ public class BeanUtil {
                     Object objValue = parts.next();
                     if (objValue instanceof OMElement) {
                         omElement = (OMElement) objValue;
-                        valueList.add(deserialize(arrayClassType, omElement));
+                        Object obj = deserialize(arrayClassType, omElement);
+                        if (obj != null) {
+                            valueList.add(obj);
+                        }
                     }
                 }
                 return ConverterUtil.convertToArray(arrayClassType,
@@ -188,6 +191,7 @@ public class BeanUtil {
                 }
 
                 beanObj = beanClass.newInstance();
+                boolean tuched = false;
                 Iterator elements = beanElement.getChildren();
                 while (elements.hasNext()) {
                     OMElement parts;
@@ -210,17 +214,22 @@ public class BeanUtil {
                         if (SimpleTypeMapper.isSimpleType(parameters)) {
                             partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
                         } else if (SimpleTypeMapper.isArrayList(parameters)) {
-                            //todo : Deepal , the array handling is completely wrong , this has to be
-                            // improved
                             partObj = SimpleTypeMapper.getArrayList((OMElement) parts.getParent(), prty.getName());
+                        } else if (parameters.isArray()) {
+                            partObj = deserialize(parameters, (OMElement) parts.getParent());
                         } else {
                             partObj = deserialize(parameters, parts);
                         }
                         Object [] parms = new Object[]{partObj};
                         prty.getWriteMethod().invoke(beanObj, parms);
+                        tuched = true;
                     }
                 }
-                return beanObj;
+                if (tuched) {
+                    return beanObj;
+                } else {
+                    return null;
+                }
             }
         } catch (InstantiationException e) {
             throw new AxisFault("InstantiationException : " + e);
@@ -420,7 +429,7 @@ public class BeanUtil {
                 if (elemnt == null) {
                     return helper.processOMElementRef(ref);
                 } else {
-                    return omElement;
+                    return elemnt;
                 }
             } else
                 return omElement;

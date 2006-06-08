@@ -87,6 +87,7 @@ public class ListingAgent extends AbstractAgent {
             }
         }
         if (httpServletRequest.getParameter("wsdl") != null ||
+             httpServletRequest.getParameter("wsdl2") != null ||
                 httpServletRequest.getParameter("xsd") != null) {
             processListService(httpServletRequest, httpServletResponse);
         } else {

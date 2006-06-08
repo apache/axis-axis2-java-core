@@ -35,35 +35,35 @@ public class MultirefHelper {
 
     private boolean filledTable;
 
-    private OMElement parent ;
+    private OMElement parent;
 
     private HashMap objectmap = new HashMap();
     private HashMap elementMap = new HashMap();
-    private  HashMap omElementMap = new HashMap();
+    private HashMap omElementMap = new HashMap();
 
     public MultirefHelper(OMElement parent) {
         this.parent = parent;
     }
 
-    public Object getObject(String id){
+    public Object getObject(String id) {
         return objectmap.get(id);
     }
 
-    public OMElement getOMElement(String id){
-        return (OMElement)omElementMap.get(id);
+    public OMElement getOMElement(String id) {
+        return (OMElement) omElementMap.get(id);
     }
 
     public OMElement processOMElementRef(String id) throws AxisFault {
-        if(!filledTable){
+        if (!filledTable) {
             readallChildElements();
         }
-        OMElement val = (OMElement)elementMap.get(id);
-        if(val == null){
+        OMElement val = (OMElement) elementMap.get(id);
+        if (val == null) {
             throw new AxisFault("Invalid reference :" + id);
         } else {
             OMElement ele = processElementforRefs(val);
             OMElement cloneele = elementClone(ele);
-            omElementMap.put(id,cloneele);
+            omElementMap.put(id, cloneele);
             return cloneele;
         }
     }
@@ -73,18 +73,18 @@ public class MultirefHelper {
         while (itr.hasNext()) {
             OMElement omElement = (OMElement) itr.next();
             OMAttribute attri = processRefAtt(omElement);
-            if(attri != null){
+            if (attri != null) {
                 String ref = getAttvalue(attri);
                 OMElement tempele = getOMElement(ref);
-                if(tempele == null){
+                if (tempele == null) {
                     tempele = processOMElementRef(ref);
                 }
                 OMElement ele2 = elementClone(tempele);
                 Iterator itrChild = ele2.getChildren();
                 while (itrChild.hasNext()) {
                     Object obj = itrChild.next();
-                    if(obj instanceof OMNode){
-                        omElement.addChild((OMNode)obj);
+                    if (obj instanceof OMNode) {
+                        omElement.addChild((OMNode) obj);
                     }
                 }
             }
@@ -92,19 +92,19 @@ public class MultirefHelper {
         return elemnts;
     }
 
-    private OMElement elementClone(OMElement ele){
-        return  new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
+    private OMElement elementClone(OMElement ele) {
+        return new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
     }
 
     public Object processRef(Class javatype, String id) throws AxisFault {
-        if(!filledTable){
+        if (!filledTable) {
             readallChildElements();
         }
-        OMElement val = (OMElement)elementMap.get(id);
-        if(val == null){
+        OMElement val = (OMElement) elementMap.get(id);
+        if (val == null) {
             throw new AxisFault("Invalid reference :" + id);
         } else {
-            if(SimpleTypeMapper.isSimpleType(javatype)){
+            if (SimpleTypeMapper.isSimpleType(javatype)) {
                 /**
                  * in this case OM element can not contains more child, that is no way to get
                  * the value as an exp ,
@@ -114,33 +114,32 @@ public class MultirefHelper {
                  * the above one is not valid , that should always be like below
                  * <refernce id="12">foo</refernce>
                  */
-                Object valObj =  SimpleTypeMapper.getSimpleTypeObject(javatype,val);
-                objectmap.put(id,valObj);
-                return  valObj;
-            } else if (SimpleTypeMapper.isArrayList(javatype)){
+                Object valObj = SimpleTypeMapper.getSimpleTypeObject(javatype, val);
+                objectmap.put(id, valObj);
+                return valObj;
+            } else if (SimpleTypeMapper.isArrayList(javatype)) {
                 Object valobj = SimpleTypeMapper.getArrayList(val);
-                objectmap.put(id,valobj);
-                return  valobj;
-            }
-            else {
-                Object obj = BeanUtil.deserialize(javatype,val,this);
-                objectmap.put(id,obj);
+                objectmap.put(id, valobj);
+                return valobj;
+            } else {
+                Object obj = BeanUtil.deserialize(javatype, val, this);
+                objectmap.put(id, obj);
                 return obj;
             }
         }
     }
 
-    private void readallChildElements(){
-        Iterator childs =  parent.getChildElements();
+    private void readallChildElements() {
+        Iterator childs = parent.getChildElements();
         while (childs.hasNext()) {
             OMElement omElement = (OMElement) childs.next();
-            OMAttribute id =  omElement.getAttribute(new QName("id"));
-            if(id !=null){
+            OMAttribute id = omElement.getAttribute(new QName("id"));
+            if (id != null) {
                 omElement.build();
-                elementMap.put(id.getAttributeValue(),omElement);
+                elementMap.put(id.getAttributeValue(), omElement.detach());
             }
         }
-        filledTable =true;
+        filledTable = true;
     }
 
     public static String getAttvalue(OMAttribute omatribute) {
@@ -155,14 +154,14 @@ public class MultirefHelper {
     }
 
     public static OMAttribute processRefAtt(OMElement omElement) {
-        OMAttribute omatribute =  omElement.getAttribute(new QName(SOAP11_REF_ATTR));
-        if(omatribute == null){
-            omatribute =  omElement.getAttribute(new QName(SOAP12_REF_ATTR));
+        OMAttribute omatribute = omElement.getAttribute(new QName(SOAP11_REF_ATTR));
+        if (omatribute == null) {
+            omatribute = omElement.getAttribute(new QName(SOAP12_REF_ATTR));
         }
         return omatribute;
     }
 
-    public void clean(){
+    public void clean() {
         elementMap.clear();
         objectmap.clear();
     }

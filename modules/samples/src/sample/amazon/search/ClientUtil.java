@@ -31,8 +31,6 @@ import org.apache.axis2.deployment.DeploymentException;
  * Builds the MessageContext as called by AsynchronousClient
  * First build the request soap envilope
  * then build a messageContext and soap envelope is attached to it
- *
- * @auther Gayan Asanka  (gayan@opensource.lk)
  */
 public class ClientUtil {
 
@@ -47,30 +45,28 @@ public class ClientUtil {
      * @return msgContext
      */
     public static MessageContext getMessageContext() throws AxisFault {
-        OMNamespace namespace, nulNS;
+        OMNamespace nulNS;
         OMElement operation, value1, value2;
         OMElement subValue1, subValue2, subValue3, subValue4, subValue5;
 
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omFactory.getDefaultEnvelope();
-        namespace = reqEnv.declareNamespace(
+        reqEnv.declareNamespace(
                 "http://schemas.xmlsoap.org/soap/envelope/",
                 "SOAP-ENV");
-        namespace = reqEnv.declareNamespace(
+        reqEnv.declareNamespace(
                 "http://schemas.xmlsoap.org/soap/encoding/",
                 "SOAP-ENC");
-        namespace =
-                reqEnv.declareNamespace(
-                        "http://www.w3.org/1999/XMLSchema-instance/", "xsi");
-        namespace =
-                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema",
-                        "xsd");
-        namespace = reqEnv.declareNamespace(
+        reqEnv.declareNamespace(
+                "http://www.w3.org/1999/XMLSchema-instance/", "xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema",
+                "xsd");
+        reqEnv.declareNamespace(
                 "http://schemas.xmlsoap.org/wsdl/soap/",
                 "soap");
-        namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/",
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/",
                 "wsdl");
-        namespace = reqEnv.declareNamespace(
+        reqEnv.declareNamespace(
                 "http://webservices.amazon.com/AWSAlexa/2005-02-01",
                 "tns");
 
@@ -117,7 +113,7 @@ public class ClientUtil {
 
         ConfigurationContext configContext = null;
         try {
-            configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("Search","Search/axis2.xml");
+            configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("Search", "Search/axis2.xml");
         } catch (DeploymentException e) {
             e.printStackTrace();
         }

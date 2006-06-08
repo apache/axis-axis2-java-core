@@ -61,7 +61,6 @@ public class ModuleBuilder extends DescriptionBuilder {
                 module.setModule((Module) moduleClass.newInstance());
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new DeploymentException(e.getMessage(), e);
         }
     }

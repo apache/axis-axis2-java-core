@@ -60,7 +60,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
-public class MultirefTest extends UtilServerBasedTestCase {
+public class MultirefTest extends TestCase {
 
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
@@ -80,16 +80,14 @@ public class MultirefTest extends UtilServerBasedTestCase {
     protected boolean finish = false;
     public static final String NAMESPACE = "http://rpc.axis2.apache.org/xsd";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MultirefTest.class));
-    }
-
     protected void setUp() throws Exception {
+         UtilServer.start();
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.unDeployClientService();
+         UtilServer.stop();
     }
 
     private void configureSystem(String opName) throws AxisFault {

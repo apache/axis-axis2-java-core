@@ -57,7 +57,7 @@ public class HTTPWorker implements HttpRequestHandler {
 
     public HTTPWorker(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        contextPath = configurationContext.getContextPath();
+        contextPath = configurationContext.getContextPath() + "/";
         servicePath = configurationContext.getServicePath();
     }
 
