@@ -82,16 +82,7 @@
 
             </target>
 
-            <target name="jar.xbeans">
-                <!-- jar the  XMLbeans stuff to the lib folder-->
-                <jar>
-                    <xsl:attribute name="basedir">${resources}</xsl:attribute>
-                    <xsl:attribute name="destfile">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    <xsl:attribute name="excludes">**/services.xml</xsl:attribute>
-                </jar>
-            </target>
-
-            <target name="pre.compile.test" depends="init, jar.xbeans">
+            <target name="pre.compile.test" depends="init">
                 <xsl:comment>Test the classpath for the availability of necesary classes</xsl:comment>
                 <available classname="com.sun.tools.xjc.api.XJC" property="jaxbri.available" classpathref="axis2.class.path"/>
                 <available classname="javax.xml.stream.XMLStreamReader" property="stax.available" classpathref="axis2.class.path"/>
@@ -212,11 +203,6 @@
                         <exclude><xsl:attribute name="name">**/*MessageReceiver.class</xsl:attribute></exclude>
                         <exclude><xsl:attribute name="name">**/*Skeleton.class</xsl:attribute></exclude>
 
-                    </fileset>
-                    <fileset>
-                        <xsl:attribute name="dir">${resources}</xsl:attribute>
-                        <exclude><xsl:attribute name="name">**/*.wsdl</xsl:attribute></exclude>
-                        <exclude><xsl:attribute name="name">**/*.xml</xsl:attribute></exclude>
                     </fileset>
                 </jar>
             </target>
