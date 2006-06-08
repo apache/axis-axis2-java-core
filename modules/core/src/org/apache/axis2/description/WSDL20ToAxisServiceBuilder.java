@@ -116,10 +116,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             // Setting wsdl4jdefintion to axisService , so if some one want
             // to play with it he can do that by getting the parameter
-            Parameter wsdldefintionParamter = new Parameter();
-            wsdldefintionParamter.setName(WSDLConstants.WSDL_20_DESCRIPTION);
-            wsdldefintionParamter.setValue(description);
-            axisService.addParameter(wsdldefintionParamter);
+            Parameter wsdlDescriptionParamter = new Parameter();
+            wsdlDescriptionParamter.setName(WSDLConstants.WSDL_20_DESCRIPTION);
+            wsdlDescriptionParamter.setValue(description);
+            axisService.addParameter(wsdlDescriptionParamter);
 
             if (description == null) {
                 return null;
