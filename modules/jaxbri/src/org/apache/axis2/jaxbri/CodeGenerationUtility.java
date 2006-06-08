@@ -16,34 +16,30 @@
 
 package org.apache.axis2.jaxbri;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
-
-import org.apache.ws.commons.schema.XmlSchema;
-
-import org.w3c.dom.Element;
-
-import org.xml.sax.InputSource;
-
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.writer.FileCodeWriter;
 import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
+import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class CodeGenerationUtility {
 
@@ -83,37 +79,44 @@ public class CodeGenerationUtility {
 
             File outputDir = new File(cgconfig.getOutputLocation(), "src");
             outputDir.mkdir();
+            
+            Map nsMap = cgconfig.getUri2PackageNameMap();
 
             for (int i = 0; i < xmlObjectsVector.size(); i++) {
             	
                 SchemaCompiler sc = XJC.createSchemaCompiler();
-                
-                // TODO: pull default pkg and entity resolver from configuration
-                // sc.setDefaultPackageName();
-                // sc.setEntityResolver();
-                
-            	sc.parseSchema((InputSource) xmlObjectsVector.elementAt(i));
-            	
-            	// Bind the XML
-            	S2JJAXBModel jaxbModel = sc.bind();
-            	
-            	// Emit the code artifacts
-            	JCodeModel codeModel = jaxbModel.generateCode(null, null);
-            	FileCodeWriter writer = new FileCodeWriter(outputDir);            	
-            	codeModel.build( writer );
-            	
-            	Collection mappings = jaxbModel.getMappings();
-            	
-            	Iterator iter = mappings.iterator();
-            	
-            	while ( iter.hasNext() )
-            	{
-            		Mapping mapping = (Mapping)iter.next();
-            		QName qn = mapping.getElement();
-            		String typeName = mapping.getType().getTypeClass().fullName();
-            		
-            		mapper.addTypeMappingName( qn, typeName );            		
-            	}            	
+                XmlSchema schema = (XmlSchema) schemas.get(i);
+                String pkg = null;
+                if(nsMap != null) {
+                    pkg = (String) nsMap.get(schema.getTargetNamespace());
+                }
+                if(pkg == null) {
+                    pkg = URLProcessor.makePackageName(schema.getTargetNamespace());
+                }
+                sc.setDefaultPackageName(pkg);
+
+                sc.parseSchema((InputSource) xmlObjectsVector.elementAt(i));
+
+                // Bind the XML
+                S2JJAXBModel jaxbModel = sc.bind();
+
+                // Emit the code artifacts
+                JCodeModel codeModel = jaxbModel.generateCode(null, null);
+                FileCodeWriter writer = new FileCodeWriter(outputDir);
+                codeModel.build(writer);
+
+                Collection mappings = jaxbModel.getMappings();
+
+                Iterator iter = mappings.iterator();
+
+                while ( iter.hasNext() )
+                {
+                    Mapping mapping = (Mapping)iter.next();
+                    QName qn = mapping.getElement();
+                    String typeName = mapping.getType().getTypeClass().fullName();
+
+                    mapper.addTypeMappingName( qn, typeName );
+                }
             }
 
             // Return the type mapper
