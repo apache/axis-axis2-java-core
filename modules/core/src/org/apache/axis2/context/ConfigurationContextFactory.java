@@ -105,10 +105,7 @@ public class ConfigurationContextFactory {
      * value of axis2xml , and the repositoy will be the value specified by the
      * path paramter and there will not be any assumptions.</li>
      * <li>If axis2xml is null , then the repository will be the value specfied by
-     * path parameter and , system will try to find axis2.xml from sub directory
-     * called "conf" inside the repository, so if system find
-     * repository/conf/axis2/xml then AxisConfiguration will be created using that
-     * else AxisConfiguration will be created using default_axis2.xml</li>
+     * path parameter and AxisConfiguration will be created using default_axis2.xml</li>
      * <li>If path parameter is null , then AxisConfiguration will be created using
      * that axis2.xml. And after creatig AxisConfiguration system will try to
      * find user has specified repository parameter in axis2.xml

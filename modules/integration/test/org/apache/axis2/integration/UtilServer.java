@@ -18,6 +18,7 @@ package org.apache.axis2.integration;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -26,6 +27,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
@@ -74,6 +76,15 @@ public class UtilServer {
 
             try {
                 receiver.start();
+                ListenerManager listenerManager = er.getListenerManager();
+                TransportInDescription trsIn = new TransportInDescription(
+                        new QName(Constants.TRANSPORT_HTTP));
+                trsIn.setReceiver(receiver);
+                if (listenerManager == null) {
+                    listenerManager = new ListenerManager();
+                    listenerManager.init(er);
+                }
+                listenerManager.addListener(trsIn, true);
                 System.out.print("Server started on port "
                         + TESTING_PORT + ".....");
             } catch (Exception e) {

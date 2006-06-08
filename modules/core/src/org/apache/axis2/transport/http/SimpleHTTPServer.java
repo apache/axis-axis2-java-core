@@ -97,15 +97,6 @@ public class SimpleHTTPServer implements TransportListener {
         }
         this.port = port;
         this.threadPool = pool;
-        ListenerManager listenerManager = configurationContext.getListenerManager();
-        TransportInDescription trsIn = new TransportInDescription(
-                new QName(Constants.TRANSPORT_HTTP));
-        trsIn.setReceiver(this);
-        if (listenerManager == null) {
-            listenerManager = new ListenerManager();
-            listenerManager.init(configurationContext);
-        }
-        listenerManager.addListener(trsIn, true);
         conetxtPath = configurationContext.getContextPath();
     }
 
@@ -163,11 +154,21 @@ public class SimpleHTTPServer implements TransportListener {
                 + new File(args[0]).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
+            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                    args[0], null);
             SimpleHTTPServer receiver = new SimpleHTTPServer(
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                            args[0], null), port, null);
+                    configctx, port, null);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
+            ListenerManager listenerManager =configctx .getListenerManager();
+            TransportInDescription trsIn = new TransportInDescription(
+                    new QName(Constants.TRANSPORT_HTTP));
+            trsIn.setReceiver(receiver);
+            if (listenerManager == null) {
+                listenerManager = new ListenerManager();
+                listenerManager.init(configctx);
+            }
+            listenerManager.addListener(trsIn, true);
             System.out.println("[SimpleHTTPServer] Started");
         } catch (Throwable t) {
             log.fatal("Error starting SimpleHTTPServer", t);
