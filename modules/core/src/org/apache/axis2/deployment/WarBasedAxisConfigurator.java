@@ -119,10 +119,12 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                 log.error(e, e);
                 log.warn("Using default configuration: " + DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
                 // not there, use default configuration from class path resource.
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                axis2Stream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             } // catch
 
+			if(axis2Stream == null) {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                axis2Stream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+			}
             axisConfig = deploymentEngine.populateAxisConfiguration(axis2Stream);
 
 
