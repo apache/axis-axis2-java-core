@@ -1,15 +1,5 @@
 package org.apache.axis2.description;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.WSDLException;
@@ -17,7 +7,6 @@ import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.Binding;
-import org.apache.woden.wsdl20.BindingOperation;
 import org.apache.woden.wsdl20.Description;
 import org.apache.woden.wsdl20.Endpoint;
 import org.apache.woden.wsdl20.Interface;
@@ -40,6 +29,15 @@ import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -99,12 +97,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         this.wsdlURI = wsdlUri;
     }
 
-    // public WSDL20ToAxisServiceBuilder(DescriptionElement descriptionElement,
-    // QName serviceName) {
-    // super(null, serviceName);
-    // this.descriptionElement = descriptionElement;
-    // }
-
     public WSDL20ToAxisServiceBuilder(String wsdlUri, AxisService service) {
         super(null, service);
         this.wsdlURI = wsdlUri;
@@ -136,10 +128,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setTargetNamespace(savedTargetNamespace);
 
             // adding ns in the original WSDL
-            // processPoliciesInDefintion(wsdl4jDefinition); TODO : Differing
+            // processPoliciesInDefintion(wsdl4jDefinition); TODO : Defering policy handling for now - Chinthaka
             // policy support
 
-            // scheam generation
+            // schema generation
 
             // Create the namespacemap
 
@@ -147,7 +139,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Iterator iterator = namespacemap.keySet().iterator();
             while (iterator.hasNext()) {
                 String key = (String) iterator.next();
-                stringBasedNamespaceMap.put(key, ((URI) namespacemap.get(key))
+                stringBasedNamespaceMap.put(key, (namespacemap.get(key))
                         .toString());
             }
             axisService.setNameSpacesMap(stringBasedNamespaceMap);
@@ -281,7 +273,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         InterfaceOperation[] interfaceOperations = serviceInterface
                 .getInterfaceOperations();
-        InterfaceOperation operation;
         for (int i = 0; i < interfaceOperations.length; i++) {
             axisService.addOperation(populateOperations(interfaceOperations[i],
                     description));

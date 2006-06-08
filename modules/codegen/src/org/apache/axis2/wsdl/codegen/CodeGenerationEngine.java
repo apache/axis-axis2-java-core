@@ -16,20 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
@@ -47,6 +33,19 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CodeGenerationEngine {
     private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
@@ -98,7 +97,7 @@ public class CodeGenerationEngine {
                 }
                 configuration.setAxisService(new WSDL20ToAxisServiceBuilder(description, serviceQname, configuration.getPortName()).populateService());
             }else{
-                //It ll be WSDL 1.1
+                //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
                 QName serviceQname = null;
                 if (configuration.getServiceName()!=null){
