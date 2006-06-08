@@ -40,7 +40,8 @@
         <attainGoal name="mtomSample"/>
         <attainGoal name="groovy"/>
         <attainGoal name="securitySample"/>
-      <attainGoal name="sgccalculator"/>
+        <attainGoal name="sgccalculator"/>
+        <attainGoal name="eventing"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -359,6 +360,76 @@
         <copy toDir="${samples.dir}/SGCCalculator"
             file="script/SGCCalculator/run.sh"/>
     </goal>
+    
+    <!-- ================================================================ -->
+    <!--- Eventing Sample -->
+    <!-- ================================================================ -->
+    <goal name="eventing">
+    
+        <property name="eventing.temp.dir" value="${samples.dir}/eventing/temp" />
+        <property name="listner1.temp.dir" value="${eventing.temp.dir}/listner1" />
+        <property name="listner2.temp.dir" value="${eventing.temp.dir}/listner2" />
+        <property name="publisher.temp.dir" value="${eventing.temp.dir}/publisher" />
+        
+        <mkdir dir="${listner1.temp.dir}" />
+        <mkdir dir="${listner1.temp.dir}/META-INF" />
+        <mkdir dir="${listner2.temp.dir}" />
+        <mkdir dir="${listner2.temp.dir}/META-INF" />
+        <mkdir dir="${publisher.temp.dir}" />
+        <mkdir dir="${publisher.temp.dir}/META-INF" />
+                
+        <copy toFile="${listner1.temp.dir}/META-INF/services.xml" file="resources/eventing/listner1.services.xml"/>
+        <copy toFile="${listner2.temp.dir}/META-INF/services.xml" file="resources/eventing/listner2.services.xml"/>
+        <copy toFile="${publisher.temp.dir}/META-INF/services.xml" file="resources/eventing/publisher.services.xml"/>
+        
+        <jar destfile="${samples.dir}/eventing/ListnerService1.aar">
+            <fileset dir="target/classes">
+                <include name="sample/eventing/**/**/*ListnerService1*" />
+            </fileset>
+            <fileset dir="${listner1.temp.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </jar>
+        
+        <jar destfile="${samples.dir}/eventing/ListnerService2.aar">
+            <fileset dir="target/classes">
+                <include name="sample/eventing/**/**/*ListnerService2*" />
+            </fileset>
+            <fileset dir="${listner2.temp.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </jar>
+        
+        <jar destfile="${samples.dir}/eventing/PublisherService.aar">
+            <fileset dir="target/classes">
+                <include name="sample/eventing/**/**/*PublisherService*" />
+            </fileset>
+            <fileset dir="${publisher.temp.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </jar>
+        
+        <jar destfile="${samples.dir}/eventing/ListnerService1.aar">
+            <fileset dir="target/classes">
+                <include name="sample/eventing/**/**/*ListnerService1*" />
+            </fileset>
+            <fileset dir="${listner1.temp.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </jar>
+        
+        <jar destfile="${samples.dir}/eventing/EventingSample.jar">
+            <fileset dir="target/classes">
+                <include name="sample/eventing/**"/>
+            </fileset>
+        </jar>
+        
+        <ant:copy todir="${samples.dir}/eventing">
+            <ant:fileset dir="script/eventing"/>
+        </ant:copy>
+
+    </goal>
+
 
     <preGoal name="itest:compile">
         <u:file var="file" name="${maven.itest.src}"/>
@@ -366,4 +437,5 @@
             <j:expr value="${context.setVariable('maven.itest.skip', 'true')}"/>
         </j:if>
     </preGoal>
+    
 </project>
