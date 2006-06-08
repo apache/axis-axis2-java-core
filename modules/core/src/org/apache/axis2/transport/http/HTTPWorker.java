@@ -14,44 +14,63 @@
 * limitations under the License.
 */
 
-
 package org.apache.axis2.transport.http;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.http.server.HttpRequestHandler;
-import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
-import org.apache.axis2.transport.http.server.SimpleRequest;
-import org.apache.axis2.transport.http.server.SimpleResponse;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPTransportReceiver;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.axis2.transport.http.server.OutputBuffer;
+import org.apache.axis2.transport.http.server.HttpUtils;
+import org.apache.axis2.transport.http.server.Worker;
 import org.apache.axis2.util.UUIDGenerator;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.MethodNotSupportedException;
+import org.apache.http.StatusLine;
+import org.apache.http.entity.ContentProducer;
+import org.apache.http.entity.EntityTemplate;
+import org.apache.http.entity.StringEntity;
 import org.apache.ws.commons.schema.XmlSchema;
 
-import javax.xml.namespace.QName;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
-import java.util.*;
-
-public class HTTPWorker implements HttpRequestHandler {
+public class HTTPWorker implements Worker {
 
     private static final Log log = LogFactory.getLog(HTTPWorker.class);
+    
     private ConfigurationContext configurationContext;
     // to store session object
-    private Hashtable sessionContextTable = new Hashtable();
+    private static Hashtable sessionContextTable = new Hashtable();
     private String contextPath = null;
     private String servicePath = null;
 
@@ -61,166 +80,147 @@ public class HTTPWorker implements HttpRequestHandler {
         servicePath = configurationContext.getServicePath();
     }
 
-    public boolean processRequest(final SimpleHttpServerConnection conn,
-                                  final SimpleRequest request)
-            throws IOException {
-        MessageContext msgContext = null;
-        SimpleResponse response = new SimpleResponse();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
+    public void service(final HttpRequest request, final HttpResponse response) 
+            throws HttpException, IOException {    
+        MessageContext msgContext = new MessageContext();
+        msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         try {
             if (configurationContext == null) {
                 throw new AxisFault(Messages.getMessage("cannotBeNullConfigurationContext"));
             }
-            InputStream inStream = request.getBody();
-            TransportOutDescription transportOut =
-                    configurationContext.getAxisConfiguration().getTransportOut(
-                            new QName(Constants.TRANSPORT_HTTP));
-            String cookieID = request.getCookieID();
+            // Get relevant request parameters
+            HttpVersion ver = request.getRequestLine().getHttpVersion();
+            String uri = request.getRequestLine().getUri();
+            String method = request.getRequestLine().getMethod();
 
+            String soapAction = HttpUtils.getSoapAction(request);
+            String cookieID = HttpUtils.getCookieID(request);
+            
+            boolean chunked = false;
 
-            msgContext = new MessageContext();
-            msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+            TransportOutDescription transportOut = configurationContext.getAxisConfiguration()
+                .getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+            TransportInDescription transportIn = configurationContext.getAxisConfiguration()
+                .getTransportIn(new QName(Constants.TRANSPORT_HTTP));            
+        
+            // Configure message context
             msgContext.setConfigurationContext(configurationContext);
             if (configurationContext.getAxisConfiguration().isManageTransportSession()) {
                 SessionContext sessionContext = getSessionContext(cookieID);
                 msgContext.setSessionContext(sessionContext);
             }
-            msgContext.setTransportIn(configurationContext.getAxisConfiguration().getTransportIn(
-                    new QName(Constants.TRANSPORT_HTTP)));
+            msgContext.setTransportIn(transportIn);
             msgContext.setTransportOut(transportOut);
+            msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
             msgContext.setServerSide(true);
-
-            HttpVersion ver = request.getRequestLine().getHttpVersion();
-
-            if (ver == null) {
-                throw new AxisFault("HTTP version can not be Null");
-            }
-
-
-            if (HttpVersion.HTTP_1_0.equals(ver)) {
-//                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
-            } else if (HttpVersion.HTTP_1_1.equals(ver)) {
-//                httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-
-                /**
-                 * Transport Sender configuration via axis2.xml
-                 */
-                this.transportOutConfiguration(configurationContext, response);
-            } else {
-                throw new AxisFault("Unknown supported protocol version " + ver);
-            }
-
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
+            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, uri);
 
             // set the transport Headers
-            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(request));
-            msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
+            HashMap headerMap = new HashMap();
+            Header[] headers = request.getAllHeaders();
+            for (int i = 0; i < headers.length; i++) {
+                headerMap.put(headers[i].getName(), headers[i].getValue());
+            }
+            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
 
-            // This is way to provide access to the transport information to the transport Sender
-            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                    new SimpleHTTPOutTransportInfo(response));
-            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, request.getRequestLine().getUri());
-
-
-            String soapAction = null;
-
-            if (request.getFirstHeader(HTTPConstants.HEADER_SOAP_ACTION) != null) {
-                soapAction = request.getFirstHeader(HTTPConstants.HEADER_SOAP_ACTION).getValue();
+            // Adjust version and content chunking based on the config
+            if (transportOut != null) {
+                Parameter p = transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
+                if (p != null) {
+                    if (HTTPConstants.HEADER_PROTOCOL_10.equals(p.getValue())) {
+                        ver = HttpVersion.HTTP_1_0;
+                    }
+                }
+                if (ver.greaterEquals(HttpVersion.HTTP_1_1)) {
+                    p = transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                    if (p != null) {
+                        if (HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(p.getValue())) {
+                            chunked = true;
+                        }
+                    }
+                }
             }
 
-            if (HTTPConstants.HEADER_GET.equals(request.getRequestLine().getMethod())) {
-                String uri = request.getRequestLine().getUri();
-                log.debug("HTTP GET:" + uri);
+            if (method.equals(HTTPConstants.HEADER_GET)) {
                 if (uri.equals("/favicon.ico")) {
-                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 301, "Redirect");
+                    response.setStatusLine(new StatusLine(ver, 301, "Redirect"));
                     response.addHeader(new Header("Location", "http://ws.apache.org/favicon.ico"));
-                    conn.writeResponse(response);
-                    return true;
+                    return;
                 }
                 if (!uri.startsWith(contextPath)) {
-                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 301, "Redirect");
+                    response.setStatusLine(new StatusLine(ver, 301, "Redirect"));
                     response.addHeader(new Header("Location", contextPath));
-                    conn.writeResponse(response);
-                    return true;
+                    return;
                 }
-
                 if (uri.indexOf("?") < 0) {
-                    if (!(uri.endsWith(contextPath))) {
-                        String serviceName = uri.replaceAll(contextPath, "");
+                    if (!(uri.endsWith(contextPath) || uri.endsWith(contextPath+"/"))) {
+                        String serviceName = uri.replaceAll(contextPath+"/", "");
                         if (serviceName.indexOf("/") < 0) {
-                            response.addHeader(new Header("Content-Type", "text/html"));
                             String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
-                            byte[] buf = res.getBytes();
-                            response.setBody(new ByteArrayInputStream(buf));
-                            conn.writeResponse(response);
-                            return true;
+                            StringEntity entity = new StringEntity(res);
+                            entity.setContentType("text/html");
+                            entity.setChunked(chunked);
+                            response.setEntity(entity);
+                            return;
                         }
                     }
                 }
                 if (uri.endsWith("?wsdl2")) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 6);
                     HashMap services = configurationContext.getAxisConfiguration().getServices();
-                    AxisService service = (AxisService) services.get(serviceName);
+                    final AxisService service = (AxisService) services.get(serviceName);
                     if (service != null) {
-                        response.addHeader(new Header("Content-Type", "text/xml"));
-//                        String url = conn.getURL(uri.substring(1, uri.length() - 5));
-                        String url = conn.getURL("");
-                        int ipindex = url.indexOf("//");
-                        String ip = null;
-                        if (ipindex >= 0) {
-                            ip = url.substring(ipindex + 2, url.length());
-                            int seperatorIndex = ip.indexOf(":");
-                            if (seperatorIndex > 0) {
-                                ip = ip.substring(0, seperatorIndex);
+                        final String ip = HttpUtils.getIpAddress();
+                        EntityTemplate entity = new EntityTemplate(new ContentProducer() {
+
+                            public void writeTo(final OutputStream outstream) throws IOException {
+                                service.printWSDL2(outstream, ip, servicePath);
                             }
-                        }
-                        service.printWSDL2(baos, ip, servicePath);
-                        byte[] buf = baos.toByteArray();
-                        response.setBody(new ByteArrayInputStream(buf));
-                        conn.writeResponse(response);
-                        return true;
+                            
+                        });
+                        entity.setContentType("text/xml");
+                        entity.setChunked(chunked);
+                        response.setEntity(entity);
+                        return;
                     }
                 }
-
                 if (uri.endsWith("?wsdl")) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 5);
                     HashMap services = configurationContext.getAxisConfiguration().getServices();
-                    AxisService service = (AxisService) services.get(serviceName);
+                    final AxisService service = (AxisService) services.get(serviceName);
                     if (service != null) {
-                        response.addHeader(new Header("Content-Type", "text/xml"));
-//                        String url = conn.getURL(uri.substring(1, uri.length() - 5));
-                        String url = conn.getURL("");
-                        int ipindex = url.indexOf("//");
-                        String ip = null;
-                        if (ipindex >= 0) {
-                            ip = url.substring(ipindex + 2, url.length());
-                            int seperatorIndex = ip.indexOf(":");
-                            if (seperatorIndex > 0) {
-                                ip = ip.substring(0, seperatorIndex);
+                        final String ip = HttpUtils.getIpAddress();
+                        EntityTemplate entity = new EntityTemplate(new ContentProducer() {
+
+                            public void writeTo(final OutputStream outstream) throws IOException {
+                                service.printWSDL(outstream, ip, servicePath);
                             }
-                        }
-                        service.printWSDL(baos, ip, servicePath);
-                        byte[] buf = baos.toByteArray();
-                        response.setBody(new ByteArrayInputStream(buf));
-                        conn.writeResponse(response);
-                        return true;
+                            
+                        });
+                        entity.setContentType("text/xml");
+                        entity.setChunked(chunked);
+                        response.setEntity(entity);
+                        return;
                     }
                 }
                 if (uri.endsWith("?xsd")) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 4);
                     HashMap services = configurationContext.getAxisConfiguration().getServices();
-                    AxisService service = (AxisService) services.get(serviceName);
+                    final AxisService service = (AxisService) services.get(serviceName);
                     if (service != null) {
-                        response.addHeader(new Header("Content-Type", "text/xml"));
-                        service.printSchema(baos);
-                        byte[] buf = baos.toByteArray();
-                        response.setBody(new ByteArrayInputStream(buf));
-                        conn.writeResponse(response);
-                        return true;
+                        EntityTemplate entity = new EntityTemplate(new ContentProducer() {
+
+                            public void writeTo(final OutputStream outstream) throws IOException {
+                                service.printSchema(outstream);
+                            }
+                            
+                        });
+                        entity.setContentType("text/xml");
+                        entity.setChunked(chunked);
+                        response.setEntity(entity);
+                        return;
                     }
                 }
-
                 //cater for named xsds - check for the xsd name
                 if (uri.indexOf("?xsd=") > 0) {
                     String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?xsd="));
@@ -233,203 +233,130 @@ public class HTTPWorker implements HttpRequestHandler {
                         service.populateSchemaMappings();
                         //write out the correct schema
                         Hashtable schemaTable = service.getSchemaMappingTable();
-                        XmlSchema schema = (XmlSchema) schemaTable.get(schemaName);
+                        final XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
                         //schema found - write it to the stream
                         if (schema != null) {
-                            response.addHeader(new Header("Content-Type", "text/xml"));
-                            schema.write(baos);
-                            byte[] buf = baos.toByteArray();
-                            response.setBody(new ByteArrayInputStream(buf));
-                            conn.writeResponse(response);
+                            EntityTemplate entity = new EntityTemplate(new ContentProducer() {
 
+                                public void writeTo(final OutputStream outstream) throws IOException {
+                                    schema.write(outstream);
+                                }
+                                
+                            });
+                            entity.setContentType("text/xml");
+                            entity.setChunked(chunked);
+                            response.setEntity(entity);
+                            return;
                         } else {
                             // no schema available by that name  - send 404
-                            response.setStatusLine(
-                                    request.getRequestLine().getHttpVersion(),
-                                    404, "Schema Not Found!");
+                            response.setStatusLine(new StatusLine(ver, 404, "Schema Not Found!"));
+                            return;
                         }
-
-                        return true;
-
                     }
                 }
-                // It is GET handle the Get request
+
+                OutputBuffer outbuffer = new OutputBuffer(); 
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
+                msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+
+                // deal with GET request
                 boolean processed = HTTPTransportUtils.processHTTPGetRequest(
-                        msgContext, baos,
-                        soapAction, request.getRequestLine().getUri(),
+                        msgContext, 
+                        outbuffer.getOutputStream(), 
+                        soapAction, 
+                        uri,
                         configurationContext,
-                        HTTPTransportReceiver.getGetRequestParameters(
-                                request.getRequestLine().getUri()));
-
-                if (!processed) {
-                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
-                    response.addHeader(new Header("Content-Type", "text/html"));
-                    response.setBodyString(
-                            HTTPTransportReceiver.getServicesHTML(configurationContext));
-                    setResponseHeaders(conn, request, response, 0, msgContext);
-                    conn.writeResponse(response);
-
-                    return true;
+                        HTTPTransportReceiver.getGetRequestParameters(uri));
+                
+                if (processed) {
+                    outbuffer.setChunked(chunked);
+                    response.setEntity(outbuffer);
+                } else {
+                    response.setStatusLine(new StatusLine(ver, 200, "OK"));
+                    String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
+                    StringEntity entity = new StringEntity(s);
+                    entity.setContentType("text/html");
+                    entity.setChunked(chunked);
+                    response.setEntity(entity);
                 }
+                
+            } else if (method.equals(HTTPConstants.HEADER_POST)) {
+                // deal with POST request
+
+                OutputBuffer outbuffer = new OutputBuffer(); 
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
+                msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+
+                HttpEntity inentity = ((HttpEntityEnclosingRequest) request).getEntity();
+                String contenttype = null;
+                if (inentity.getContentType() != null) {
+                    contenttype = inentity.getContentType().getValue();
+                }
+                HTTPTransportUtils.processHTTPPostRequest(
+                        msgContext, 
+                        inentity.getContent(), 
+                        outbuffer.getOutputStream(),
+                        contenttype, 
+                        soapAction, 
+                        uri);
+                
+                outbuffer.setChunked(chunked);
+                response.setEntity(outbuffer);
+                
             } else {
-                ByteArrayOutputStream baosIn = new ByteArrayOutputStream();
-                byte[]                bytes = new byte[8192];
-                int size;
-
-                while ((size = inStream.read(bytes)) > 0) {
-                    baosIn.write(bytes, 0, size);
-                }
-
-                inStream = new ByteArrayInputStream(baosIn.toByteArray());
-
-                // It is POST, handle it
-                HTTPTransportUtils.processHTTPPostRequest(msgContext, inStream, baos,
-                        request.getContentType(), soapAction, request.getRequestLine().getUri());
+                throw new MethodNotSupportedException(method + " method not supported");
             }
-
+            
+            // Finalize response
             OperationContext operationContext = msgContext.getOperationContext();
             Object contextWritten = null;
-
             if (operationContext != null) {
                 contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
             }
-
             if ((contextWritten != null) && Constants.VALUE_TRUE.equals(contextWritten)) {
-                response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
+                response.setStatusLine(new StatusLine(ver, 200, "OK"));
             } else {
-                response.setStatusLine(request.getRequestLine().getHttpVersion(), 202, "OK");
+                response.setStatusLine(new StatusLine(ver, 202, "OK"));
             }
-
-            byte[] buf = baos.toByteArray();
-            response.setBody(new ByteArrayInputStream(buf));
-            setResponseHeaders(conn, request, response, buf.length, msgContext);
-
-            conn.writeResponse(response);
+            setCookie(response, msgContext);
+            
+        } catch (SocketException ex) {
+            // Socket is unreliable. 
+            throw ex;
+        } catch (HttpException ex) {
+            // HTTP protocol violation. Transport is unrelaible
+            throw ex;
         } catch (Throwable e) {
-            if (!(e instanceof java.net.SocketException)) {
-                log.debug(e.getMessage(), e);
-            }
-
+            HttpVersion ver = request.getRequestLine().getHttpVersion();
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
+                
+                OutputBuffer outbuffer = new OutputBuffer(); 
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer.getOutputStream());
+                msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
-                if (msgContext != null) {
-                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
+                MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
 
-                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-
-                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 500,
-                            "Internal server error");
-                    engine.sendFault(faultContext);
-                    byte[] buf = baos.toByteArray();
-                    response.setBody(new ByteArrayInputStream(buf));
-                    setResponseHeaders(conn, request, response, buf.length, msgContext);
-                    conn.writeResponse(response);
-                }
-            } catch (SocketException e1) {
-                log.debug(e1.getMessage(), e1);
-            } catch (Exception e1) {
-                log.warn(e1.getMessage(), e1);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Simple Axis Transport Selection via deployment
-     *
-     * @param configContext
-     * @param response
-     */
-    private void transportOutConfiguration(ConfigurationContext configContext,
-                                           SimpleResponse response) {
-        AxisConfiguration axisConf = configContext.getAxisConfiguration();
-        HashMap transportOuts = axisConf.getTransportsOut();
-        Iterator values = transportOuts.values().iterator();
-
-        while (values.hasNext()) {
-            TransportOutDescription transportOut = (TransportOutDescription) values.next();
-
-            // reading axis2.xml for transport senders..
-            Parameter version = transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
-
-            if (version != null) {
-                if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
-
-                    Parameter transferEncoding =
-                            transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
-
-                    if (transferEncoding != null) {
-                        if (HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
-                                transferEncoding.getValue())) {
-                            response.setHeader(
-                                    new Header(
-                                            HTTPConstants.HEADER_TRANSFER_ENCODING,
-                                            HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED));
-                        }
-                    }
-                }
+                response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
+                engine.sendFault(faultContext);
+                response.setEntity(outbuffer);
+                setCookie(response, msgContext);
+            } catch (Exception ex) {
+                response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
+                StringEntity entity = new StringEntity(ex.getMessage());
+                entity.setContentType("text/plain");
+                response.setEntity(entity);
             }
         }
     }
 
-    private Map getHeaders(SimpleRequest request) {
-        HashMap headerMap = new HashMap();
-        Header[] headers = request.getHeaders();
-
-        for (int i = 0; i < headers.length; i++) {
-            headerMap.put(headers[i].getName(), headers[i].getValue());
-        }
-
-        return headerMap;
-    }
-
-    private void setResponseHeaders(final SimpleHttpServerConnection conn, SimpleRequest request,
-                                    SimpleResponse response, long contentLength, MessageContext msgContext) {
-        if (!response.containsHeader("Connection")) {
-
-            // See if the the client explicitly handles connection persistence
-            Header connheader = request.getFirstHeader("Connection");
-
-            if (connheader != null) {
-                if (connheader.getValue().equalsIgnoreCase("keep-alive")) {
-                    Header header = new Header("Connection", "keep-alive");
-
-                    response.addHeader(header);
-                    conn.setKeepAlive(true);
-                }
-
-                if (connheader.getValue().equalsIgnoreCase("close")) {
-                    Header header = new Header("Connection", "close");
-
-                    response.addHeader(header);
-                    conn.setKeepAlive(false);
-                }
-            } else {
-
-                // Use protocol default connection policy
-                if (response.getHttpVersion().greaterEquals(HttpVersion.HTTP_1_1)) {
-                    conn.setKeepAlive(true);
-                } else {
-                    conn.setKeepAlive(false);
-                }
-            }
-        }
+    private static void setCookie(final HttpResponse response, MessageContext msgContext) {
         //TODO : provide a way to enable and diable cookies
         //setting the coolie in the out path
         Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
         if (cookieString != null) {
             response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE, (String) cookieString));
             response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE2, (String) cookieString));
-        }
-
-        if (!response.containsHeader("Transfer-Encoding")) {
-            if (contentLength != 0) {
-                Header header = new Header("Content-Length", String.valueOf(contentLength));
-
-                response.addHeader(header);
-            }
         }
     }
 

@@ -202,10 +202,11 @@ public class AxisEngine {
         }
 
         EndpointReference faultTo = processingContext.getFaultTo();
+        SOAPEnvelope env = processingContext.getEnvelope();
         if (faultTo != null && !doNotSendFaultUsingFaultTo) {
             faultContext.setTo(processingContext.getFaultTo());
-        } else if (!doNotSendFaultUsingFaultTo && processingContext.isHeaderPresent() && processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
-            OMElement faultToElement = processingContext.getEnvelope().getHeader().getFirstChildWithName(new QName("FaultTo"));
+        } else if (env != null && !doNotSendFaultUsingFaultTo && processingContext.isHeaderPresent() && env.getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
+            OMElement faultToElement = env.getHeader().getFirstChildWithName(new QName("FaultTo"));
             faultTo = new EndpointReference("");
             faultTo.fromOM(faultToElement);
             faultContext.setTo(faultTo);
@@ -339,7 +340,7 @@ public class AxisEngine {
         }
 
         // defaulting to fault code Sender, if no message is available
-        if (faultCode == null) {
+        if (faultCode == null && context.getEnvelope() != null) {
             soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
                     ? getSenderFaultCode(context.getEnvelope().getNamespace())
                     : soapFaultCode;

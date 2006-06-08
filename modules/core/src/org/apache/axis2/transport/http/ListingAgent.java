@@ -242,7 +242,7 @@ public class ListingAgent extends AbstractAgent {
 
         private int port;
         private String schema;
-        private String conetxtPath;
+        private String contextPath;
 
         public HTTPSTListener(int port, String schema) {
             this.port = port;
@@ -251,7 +251,7 @@ public class ListingAgent extends AbstractAgent {
 
         public void init(ConfigurationContext axisConf,
                          TransportInDescription transprtIn) throws AxisFault {
-            conetxtPath = axisConf.getContextPath();
+            contextPath = axisConf.getContextPath();
         }
 
         public void start() throws AxisFault {
@@ -261,7 +261,7 @@ public class ListingAgent extends AbstractAgent {
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-            return new EndpointReference(schema + "://" + ip + ":" + port + conetxtPath + "/" + serviceName);
+            return new EndpointReference(schema + "://" + ip + ":" + port + contextPath + "/" + serviceName);
         }
     }
 

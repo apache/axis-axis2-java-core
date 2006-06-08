@@ -122,6 +122,14 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>httpcomponents-httpcore</groupId>
+            <artifactId>jakarta-httpcore</artifactId>
+            <version>${jakarta.httpcore.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency> 
+        <dependency>
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
             <version>${backport_util_concurrent.version}</version>

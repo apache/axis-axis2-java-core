@@ -63,7 +63,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     private transient ListingAgent agent;
     public static String SERVICE_PATH;
-    private String conetxtPath;
+    private String contextPath;
 
 
     protected MessageContext createAndSetInitialParamsToMsgCtxt(MessageContext msgContext, HttpServletResponse httpServletResponse,
@@ -296,20 +296,20 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (port == null) {
             port = "8080";
         }
-        if (conetxtPath == null) {
+        if (contextPath == null) {
             // HACK ALERT!!! - Is there a better way to get the webapp name?
             try {
                 String[] array = servletConfig.getServletContext().getResource("/").toString().split("/");
-                conetxtPath = array[array.length - 1];
-                configContext.setContextPath(conetxtPath);
+                contextPath = array[array.length - 1];
+                configContext.setContextPath(contextPath);
             } catch (Exception e) {
             }
-            if (conetxtPath == null) {
-                conetxtPath = "axis2";
+            if (contextPath == null) {
+                contextPath = "axis2";
             }
         }
         return new EndpointReference("http://" + ip + ":" + port + '/' +
-                conetxtPath + "/" + SERVICE_PATH + "/" + serviceName);
+                contextPath + "/" + SERVICE_PATH + "/" + serviceName);
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,

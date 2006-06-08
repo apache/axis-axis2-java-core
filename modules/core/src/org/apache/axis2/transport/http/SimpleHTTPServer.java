@@ -26,8 +26,9 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.server.HttpFactory;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
-import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
 import org.apache.axis2.util.OptionsParser;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.commons.logging.Log;
@@ -40,64 +41,45 @@ import java.net.SocketException;
 
 /**
  * This is a simple implementation of an HTTP server for processing
- * SOAP requests via Apache's xml-axis2.  This is not intended for production
- * use.  Its intended uses are for demos, debugging, and performance
- * profiling.
- * Note this classes uses static objects to provide a thread pool, so you should
- * not use multiple instances of this class in the same JVM/classloader unless
- * you want bad things to happen at shutdown.
+ * SOAP requests via Apache's xml-axis2.
+ * It can be used with no configuration other than the port to listen on, or it can
+ * be configured in detail with an HttpFactory.
  */
 public class SimpleHTTPServer implements TransportListener {
 
-    /**
-     * Field log
-     */
     private static final Log log = LogFactory.getLog(SimpleHTTPServer.class);
 
     /**
-     * Embedded commons http client based server
+     * Embedded commons http core based server
      */
     SimpleHttpServer embedded = null;
     int port = -1;
-    private ThreadFactory threadPool = null;
 
     public static int DEFAULT_PORT = 8080;
-    private String hostAddress = null;
-    private String conetxtPath;
 
-    /**
-     * Field systemContext
-     */
+    private String hostAddress = null;
+    private String contextPath;
+
     protected ConfigurationContext configurationContext;
+    protected HttpFactory httpFactory;
 
     public SimpleHTTPServer() {
     }
 
-    public SimpleHTTPServer(ConfigurationContext systemContext, int port) throws AxisFault {
-        this(systemContext, port, null);
+    /** Create a SimpleHTTPServer using default HttpFactory settings */
+    public SimpleHTTPServer(ConfigurationContext configurationContext, int port) throws AxisFault {
+        this(new HttpFactory(configurationContext, port));
     }
-
-    /**
-     * Constructor SimpleHTTPServer
-     *
-     * @param systemContext
-     * @param pool
-     */
-    public SimpleHTTPServer(ConfigurationContext systemContext, int port, ThreadFactory pool) throws AxisFault {
-        // If a threadPool is not passed-in the threadpool
-        // from the ConfigurationContext
-        // is used. This is a bit tricky, and might cause a
-        // thread lock. So use with
-        // caution
-        this.configurationContext = systemContext;
-        if (pool == null) {
-            pool = this.configurationContext.getThreadPool();
-        } else {
-            this.configurationContext.setThreadPool(pool);
-        }
-        this.port = port;
-        this.threadPool = pool;
-        conetxtPath = configurationContext.getContextPath();
+    
+    /** Create a configured SimpleHTTPServer */
+    public SimpleHTTPServer(HttpFactory httpFactory) throws AxisFault {
+        this.httpFactory = httpFactory;
+        this.configurationContext = httpFactory.getConfigurationContext();
+        this. port = httpFactory.getPort();
+        TransportInDescription httpDescription = new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
+        httpDescription.setReceiver(this);
+        httpFactory.getListenerManager().addListener(httpDescription, true);
+        contextPath = configurationContext.getContextPath();
     }
 
     /**
@@ -113,15 +95,19 @@ public class SimpleHTTPServer implements TransportListener {
             this.configurationContext = axisConf;
 
             Parameter param = transprtIn.getParameter(PARAM_PORT);
-
-            if (param != null) {
+            if (param != null)
                 this.port = Integer.parseInt((String) param.getValue());
-            }
+            
+            if (httpFactory==null)
+                httpFactory = new HttpFactory(configurationContext, port);
+            
             param = transprtIn.getParameter(HOST_ADDRESS);
-            if (param != null) {
+            if (param != null)
                 hostAddress = ((String) param.getValue()).trim();
-            }
-            conetxtPath = configurationContext.getContextPath();
+            else
+                hostAddress = httpFactory.getHostAddress();
+
+            contextPath = configurationContext.getContextPath();
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }
@@ -154,10 +140,8 @@ public class SimpleHTTPServer implements TransportListener {
                 + new File(args[0]).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
-            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                    args[0], null);
-            SimpleHTTPServer receiver = new SimpleHTTPServer(
-                    configctx, port, null);
+            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(args[0], null);
+            SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
             ListenerManager listenerManager =configctx .getListenerManager();
@@ -190,8 +174,9 @@ public class SimpleHTTPServer implements TransportListener {
      */
     public void start() throws AxisFault {
         try {
-            embedded = new SimpleHttpServer(port, this.threadPool);
-            embedded.setRequestHandler(new HTTPWorker(configurationContext));
+            embedded = new SimpleHttpServer(httpFactory, port);
+            embedded.init();
+            embedded.start();
         } catch (IOException e) {
             log.error(e);
             throw new AxisFault(e);
@@ -206,8 +191,17 @@ public class SimpleHTTPServer implements TransportListener {
     public void stop() {
         System.out.println("[SimpleHTTPServer] Stop called");
         if (embedded != null) {
-            embedded.destroy();
+            try {
+                embedded.destroy();
+            } catch (Exception e) {
+                log.error(e);
+            }
         }
+    }
+    
+    /** Getter for httpFactory */
+    public HttpFactory getHttpFactory() {
+        return httpFactory;
     }
 
     /**
@@ -234,7 +228,7 @@ public class SimpleHTTPServer implements TransportListener {
         //if host address is present
         if (hostAddress != null) {
             if (embedded != null) {
-                return new EndpointReference(hostAddress + conetxtPath + serviceName);
+                return new EndpointReference(hostAddress + contextPath + "/" + serviceName);
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -245,15 +239,15 @@ public class SimpleHTTPServer implements TransportListener {
             localAddress = ip;
         } else {
             try {
-                localAddress = SimpleHttpServerConnection.getIpAddress();
+                localAddress = HttpUtils.getIpAddress();
             } catch (SocketException e) {
                 throw AxisFault.makeFault(e);
             }
         }
         if (embedded != null) {
             return new EndpointReference("http://" + localAddress + ":" +
-                    (embedded.getLocalPort())
-                    + conetxtPath + "/" + serviceName);
+                    (embedded.getPort())
+                    + contextPath + "/" + serviceName);
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }

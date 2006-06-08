@@ -1,5 +1,5 @@
 /*
-* $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/test/org/apache/commons/httpclient/server/SimpleHttpServer.java,v 1.15 2004/12/11 22:35:26 olegk Exp $
+* $HeadURL$
 * $Revision: 155418 $
 * $Date: 2005-02-26 08:01:52 -0500 (Sat, 26 Feb 2005) $
 *
@@ -30,232 +30,100 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.axis2.util.threadpool.ThreadFactory;
-import org.apache.axis2.util.threadpool.ThreadPool;
+import java.io.IOException;
+import org.apache.axis2.context.ConfigurationContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.impl.DefaultHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 
 /**
- * A simple, but extensible HTTP server, mostly for testing purposes.
+ * A simple, but configurable and extensible HTTP server.
  */
-public class SimpleHttpServer implements Runnable {
-	private static final Log log = LogFactory.getLog(SimpleHttpServer.class);
-    private String testname = "Simple test";
-    private ServerSocket listener = null;
-    private long count = 0;
-    private ThreadFactory threadPool = null;
-    private boolean stopped = false;
-    private HttpRequestHandler requestHandler = null;
-    private SimpleConnSet connectionsPool = new SimpleConnSet();
-    private Thread t;
+public class SimpleHttpServer {
 
-    /**
-     * Creates a new HTTP server instance, using an arbitrary free TCP port
-     *
-     * @throws IOException if anything goes wrong during initialization
-     */
-    public SimpleHttpServer() throws IOException {
-        this(null, 0, null);
+    private static Log LOG = LogFactory.getLog(SimpleHttpServer.class);
+    
+    private static final String ORIGIN_SERVER = "Simple-Server/1.1";
+    private static final int SHUTDOWN_GRACE_PERIOD = 3000; // ms
+    
+    private HttpFactory httpFactory;
+    private final int port;
+    private final HttpParams params;
+    private final WorkerFactory workerFactory;
+    
+    private IOProcessor listener = null;
+    private ExecutorService listenerExecutor = null;
+    private ThreadGroup listenertg = null;
+    private HttpConnectionManager connmanager = null;
+    private ExecutorService requestExecutor = null;
+    private ThreadGroup conntg = null;
+
+    public SimpleHttpServer(ConfigurationContext configurationContext, WorkerFactory workerFactory, int port) throws IOException {
+        this(new HttpFactory(configurationContext, port, workerFactory), port);
+    }
+    
+    public SimpleHttpServer(HttpFactory httpFactory, int port) throws IOException {
+        this.httpFactory = httpFactory;
+        this.port = port;
+        this.workerFactory = httpFactory.newRequestWorkerFactory();
+        this.params = httpFactory.newRequestConnectionParams();
     }
 
-    /**
-     * Creates a new HTTP server instance, using the specified TCP port
-     *
-     * @param port Desired TCP port
-     * @throws IOException if anything goes wrong during initialization
-     */
-    public SimpleHttpServer(int port) throws IOException {
-        this(null, port, null);
+    public void init() throws IOException {
+        requestExecutor = httpFactory.newRequestExecutor(port);
+        connmanager = httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params);
+        listenerExecutor = httpFactory.newListenerExecutor(port);
+        listener = httpFactory.newRequestConnectionListener(httpFactory.newRequestConnectionFactory(params),
+                                                            httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params),
+                                                            port);
     }
-
-    /**
-     * Creates a new HTTP server instance, using the specified TCP port
-     *
-     * @param port       Desired TCP port
-     * @param threadPool ThreadPool to be used.
-     * @throws IOException if anything goes wrong during initialization
-     */
-    public SimpleHttpServer(int port, ThreadFactory threadPool) throws IOException {
-        this(null, port, threadPool);
-    }
-
-    /**
-     * Creates a new HTTP server instance, using the specified socket
-     * factory and the TCP port
-     *
-     * @param port Desired TCP port
-     * @throws IOException if anything goes wrong during initialization
-     */
-    public SimpleHttpServer(SimpleSocketFactory socketfactory, int port) throws IOException {
-        this(socketfactory, port, null);
-    }
-
-    /**
-     * Creates a new HTTP server instance, using the specified socket
-     * factory and the TCP port that uses the given ThreadPool. If a
-     * ThreadPool is not given then a new default axis2 ThreadPool will be
-     * used.
-     *
-     * @param port       Desired TCP port
-     * @param threadPool ThreadPool to be used inside the SimpleHttpServer. The
-     *                   threadPool object that is provided needs to implement
-     *                   tp.execute(Runnable r)
-     * @throws IOException if anything goes wrong during initialization
-     */
-    public SimpleHttpServer(SimpleSocketFactory socketfactory, int port, ThreadFactory threadPool)
-            throws IOException {
-        if (socketfactory == null) {
-            socketfactory = new SimplePlainSocketFactory();
+    
+    public void destroy() throws IOException, InterruptedException {
+        // Attempt to terminate the listener nicely
+        LOG.info("Shut down connection listener");
+        this.listenerExecutor.shutdownNow();
+        this.listener.destroy();
+        this.listenerExecutor.awaitTermination(SHUTDOWN_GRACE_PERIOD, TimeUnit.MILLISECONDS);
+        if (!this.listenerExecutor.isTerminated()) {
+            // Terminate the listener forcibly
+            LOG.info("Force shut down connection listener");
+            this.listener.destroy();
+            // Leave it up to the garbage collector to clean up the mess
+            this.listener = null;
         }
-
-        if (threadPool == null) {
-            threadPool = new ThreadPool();
+        // Attempt to terminate the active processors nicely
+        LOG.info("Shut down HTTP processors");
+        this.requestExecutor.shutdownNow();
+        this.requestExecutor.awaitTermination(SHUTDOWN_GRACE_PERIOD, TimeUnit.MILLISECONDS);
+        if (!this.requestExecutor.isTerminated()) {
+            // Terminate the active processors forcibly
+            LOG.info("Force shut down HTTP processors");
+            this.connmanager.shutdown();
+            // Leave it up to the garbage collector to clean up the mess
+            this.connmanager = null;
         }
-
-        this.threadPool = threadPool;
-        listener = socketfactory.createServerSocket(port);
-
-        if (log.isDebugEnabled()) {
-            log.debug("Starting test HTTP server on port " + getLocalPort());
-        }
-
-        t = new Thread(this);
-        t.start();
+        LOG.info("HTTP protocol handler shut down");
     }
-
-    /**
-     * Stops this HTTP server instance.
-     */
-    public synchronized void destroy() {
-        if (stopped) {
-            return;
-        }
-
-        this.stopped = true;
-
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping test HTTP server on port " + getLocalPort());
-        }
-
-        t.interrupt();
-
-        if (listener != null) {
-            try {
-                listener.close();
-            } catch (IOException e) {
-            }
-        }
-
-        this.connectionsPool.shutdown();
+    
+    public void start() {
+        this.listenerExecutor.execute(this.listener);
     }
-
-    public void run() {
-        try {
-            while (!this.stopped && !Thread.interrupted()) {
-                Socket socket = listener.accept();
-
-                try {
-                    if (this.requestHandler == null) {
-                        socket.close();
-
-                        break;
-                    }
-
-                    SimpleHttpServerConnection conn = new SimpleHttpServerConnection(socket);
-
-                    this.connectionsPool.addConnection(conn);
-                    this.threadPool.execute(new SimpleConnectionThread(this.testname + " thread "
-                            + this.count, conn, this.connectionsPool, this.requestHandler));
-                } catch (IOException e) {
-                    log.debug("I/O error: " + e.getMessage());
-                }
-
-                this.count++;
-                Thread.sleep(100);
-            }
-        } catch (InterruptedException accept) {
-        }
-        catch (IOException e) {
-            if (!stopped) {
-                log.debug("I/O error: " + e.getMessage());
-            }
-        } finally {
-            destroy();
-        }
-    }
-
-    /**
-     * Returns the IP address that this HTTP server instance is bound to.
-     *
-     * @return String representation of the IP address or <code>null</code> if not running
-     */
-    public String getLocalAddress() {
-        InetAddress address = listener.getInetAddress();
-
-        // Ugly work-around for older JDKs
-        byte[] octets = address.getAddress();
-
-        if ((octets[0] == 0) && (octets[1] == 0) && (octets[2] == 0) && (octets[3] == 0)) {
-            return "localhost";
-        } else {
-            return address.getHostAddress();
-        }
-    }
-
-    /**
-     * Returns the TCP port that this HTTP server instance is bound to.
-     *
-     * @return TCP port, or -1 if not running
-     */
-    public int getLocalPort() {
-        return listener.getLocalPort();
-    }
-
-    /**
-     * Returns the currently used HttpRequestHandler by this SimpleHttpServer
-     *
-     * @return The used HttpRequestHandler, or null.
-     */
-    public HttpRequestHandler getRequestHandler() {
-        return requestHandler;
-    }
-
-    public String getTestname() {
-        return this.testname;
-    }
-
-    /**
-     * Checks if this HTTP server instance is running.
-     *
-     * @return true/false
-     */
+    
     public boolean isRunning() {
-        if (t == null) {
-            return false;
-        }
-
-        return t.isAlive();
+        return this.listenerExecutor != null && !this.listenerExecutor.isShutdown();
     }
 
-    public void setHttpService(HttpService service) {
-        setRequestHandler(new HttpServiceHandler(service));
+    public int getPort() {
+        return this.port;
     }
-
-    /**
-     * Sets the HttpRequestHandler to be used for this SimpleHttpServer.
-     *
-     * @param rh Request handler to be used, or null to disable.
-     */
-    public void setRequestHandler(HttpRequestHandler rh) {
-        this.requestHandler = rh;
-    }
-
-    public void setTestname(final String testname) {
-        this.testname = testname;
-    }
+    
 }
