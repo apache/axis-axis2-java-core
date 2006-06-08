@@ -114,9 +114,6 @@
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
-                        <xsl:attribute name="location">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    </classpath>
-                    <classpath>
                         <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
                 </javac>
@@ -132,9 +129,6 @@
                         <xsl:attribute name="path">${test}</xsl:attribute>
                     </src>
 
-                    <classpath>
-                        <xsl:attribute name="location">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    </classpath>
                     <classpath>
                         <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </classpath>
@@ -166,10 +160,6 @@
                         <include><xsl:attribute name="name">*.wsdl</xsl:attribute></include>
                         <exclude><xsl:attribute name="name">**/schemaorg_apache_xmlbean/**</xsl:attribute></exclude>
                     </fileset>
-                </copy>
-                <copy>
-                    <xsl:attribute name="file">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
-                    <xsl:attribute name="toDir">${classes}/lib</xsl:attribute>
                 </copy>
                 <jar>
                     <xsl:attribute name="destfile">${lib}/${name}.aar</xsl:attribute>
