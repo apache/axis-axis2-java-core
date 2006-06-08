@@ -43,4 +43,5 @@ public interface SavanConstants {
 	}
 	
 	String SUBSCRIBER_TABLE = "SUBSCRIBER_TABLE";
+	
 }

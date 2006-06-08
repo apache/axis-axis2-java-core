@@ -17,7 +17,6 @@
 
 package org.apache.savan.publication;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,7 +35,7 @@ public abstract class PublicationProcessor {
 		
 		PublicationErrorReport report = new PublicationErrorReport ();
 		
-		updatePublication ();
+		updatePublication (messageToBeNotified);
 		
 		for (Iterator it=subscribers.keySet().iterator();it.hasNext();) {
 			Subscriber subscriber = (Subscriber) subscribers.get(it.next());
@@ -52,5 +51,5 @@ public abstract class PublicationProcessor {
 		return report;
 	}
 	
-	public abstract void updatePublication ();
+	public abstract void updatePublication (SavanMessageContext messageToBeNotified);
 }

@@ -23,8 +23,12 @@ import org.apache.savan.publication.PublicationProcessor;
 
 public class EventingPublicationProcessor extends PublicationProcessor {
 
-	public void updatePublication() {
-		//TODO update the publication as necessary.
+	public void updatePublication(SavanMessageContext messageToBeNotified) {
+		
+		//soap envelope has to be built before sending to multiple clients.
+		if (messageToBeNotified.getEnvelope()!=null)
+			messageToBeNotified.getEnvelope().build();
+		
 	}
 
 	
