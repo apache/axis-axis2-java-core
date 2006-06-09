@@ -28,6 +28,7 @@ import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
@@ -82,11 +83,10 @@ public class CodeGenerationEngine {
             wsdlUri = option.getOptionValue();
             configuration = new CodeGenConfiguration(allOptions);
             
-            
-            CommandLineOption wsdlVersionOption =
-                (CommandLineOption)allOptions.get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION);
-            if(wsdlVersionOption != null &&("2.0".equals(wsdlVersionOption.getOptionValue()) ||
-                    "2".equals(wsdlVersionOption.getOptionValue()))){
+
+            if(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
+                    equals(configuration.getWSDLVersion())){
+
                 //its WSDL 2.0
                 org.apache.woden.WSDLReader wsdlReader = org.apache.woden.WSDLFactory.newInstance().newWSDLReader();
                 //TODO Check whether this does the networ downloading
@@ -96,6 +96,7 @@ public class CodeGenerationEngine {
                     serviceQname = new QName(description.getTargetNamespace().toString(), configuration.getServiceName());
                 }
                 configuration.setAxisService(new WSDL20ToAxisServiceBuilder(description, serviceQname, configuration.getPortName()).populateService());
+
             }else{
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
@@ -120,7 +121,6 @@ public class CodeGenerationEngine {
             e.printStackTrace();
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
-        ///////////////////////////////////////////////////////////////////////
 
         configuration.setBaseURI(getBaseURI(wsdlUri));
         loadExtensions();

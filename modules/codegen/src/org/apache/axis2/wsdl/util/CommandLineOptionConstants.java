@@ -62,6 +62,12 @@ public interface CommandLineOptionConstants {
         String NAME_SPACE_TO_PACKAGE_OPTION_LONG = "namespace2package";
         String SERVER_SIDE_INTERFACE_OPTION_LONG = "serverside-interface";
         String EXTERNAL_MAPPING_OPTION_LONG = "external-mapping";
+        String WSDL_VERSION_OPTION_LONG = "wsdl-version";
+
+        String WSDL_VERSION_2 = "2.0";
+        String WSDL_VERSION_2_OPTIONAL = "2";
+        String WSDL_VERSION_1 = "1.1";
+
 
     }
 

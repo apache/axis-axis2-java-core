@@ -37,6 +37,17 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     /** Mapping file including the qname to type map */
     private File typeMappingFile;
 
+    /** keeps the WSDL version  - default is 1.1*/
+    private String WSDLVersion = WSDL2JavaConstants.WSDL_VERSION_1;
+
+    public String getWSDLVersion() {
+        return WSDLVersion;
+    }
+
+    public void setWSDLVersion(String WSDLVersion) {
+        this.WSDLVersion = WSDLVersion;
+    }
+
     public File getTypeMappingFile() {
         return typeMappingFile;
     }

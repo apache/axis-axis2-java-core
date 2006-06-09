@@ -181,6 +181,7 @@ public class SchemaCompiler {
      */
     public void compile(List schemalist) throws SchemaCompilationException {
         XmlSchema schema;
+        
         try {
             for (int i = 0; i < schemalist.size(); i++) {
                 schema = (XmlSchema) schemalist.get(i);

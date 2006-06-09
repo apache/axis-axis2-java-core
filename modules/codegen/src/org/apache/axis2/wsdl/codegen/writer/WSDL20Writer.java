@@ -21,29 +21,31 @@ import java.io.FileOutputStream;
  * limitations under the License.
  */
 
-public class WSDLWriter {
+public class WSDL20Writer {
     private File baseFolder = null;
 
-       public WSDLWriter(File baseFolder) {
-           this.baseFolder = baseFolder;
-       }
 
-       public void writeWSDL(AxisService axisService){
-           try {
-               if (axisService!= null){
-                   //create a output file
-                   File outputFile = FileWriter.createClassFile(baseFolder,
-                           "resources",
-                           axisService.getName(),
-                           ".wsdl");
-                   FileOutputStream fos = new FileOutputStream(outputFile);
-                   axisService.printWSDL(fos);
-                   fos.flush();
-                   fos.close();
-               }
-           } catch (Exception e) {
-               throw new RuntimeException("WSDL writing failed!", e);
-           }
-       }
+    public WSDL20Writer(File baseFolder) {
+        this.baseFolder = baseFolder;
+    }
+
+    public void writeWSDL(AxisService axisService){
+        try {
+            if (axisService!= null){
+                //create a output file
+                File outputFile = FileWriter.createClassFile(baseFolder,
+                        "resources",
+                        axisService.getName(),
+                        ".wsdl");
+                FileOutputStream fos = new FileOutputStream(outputFile);
+                axisService.printWSDL2(fos);
+                fos.flush();
+                fos.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("WSDL writing failed!", e);
+        }
+    }
+
 
 }

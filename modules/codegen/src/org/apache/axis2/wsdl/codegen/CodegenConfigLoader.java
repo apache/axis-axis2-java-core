@@ -161,6 +161,21 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             }
         }
 
+        CommandLineOption wsdlVersionOption =
+                loadOption(WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                           WSDL2JavaConstants.WSDL_VERSION_OPTION_LONG,
+                           optionMap);
+        if (wsdlVersionOption!=null){
+            String optionValue = wsdlVersionOption.getOptionValue();
+
+            if (WSDL2JavaConstants.WSDL_VERSION_2.equals(optionValue) ||
+                   WSDL2JavaConstants.WSDL_VERSION_2_OPTIONAL.equals(optionValue) ){
+                 //users can say either 2.0 or 2 - we  just set it to the constant
+                 config.setWSDLVersion(WSDL2JavaConstants.WSDL_VERSION_2);
+            } //ignore the other cases - they'll be taken as 1.1
+
+        }
+
         //loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();

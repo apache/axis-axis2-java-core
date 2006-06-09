@@ -23,10 +23,12 @@ import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.SkeletonInterfaceWriter;
 import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.WSDLWriter;
+import org.apache.axis2.wsdl.codegen.writer.WSDL11Writer;
+import org.apache.axis2.wsdl.codegen.writer.WSDL20Writer;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
+import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -141,7 +143,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     //~--- fields -------------------------------------------------------------
-	protected static final Log log = LogFactory.getLog(AxisServiceBasedMultiLanguageEmitter.class);
+    protected static final Log log = LogFactory.getLog(AxisServiceBasedMultiLanguageEmitter.class);
     protected URIResolver resolver;
 
     protected Map infoHolder;
@@ -329,9 +331,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "servicename", serviceName, rootElement);
         if (codeGenConfiguration.isServerSide()){
             addAttribute(doc,
-                "isserverside",
-                "yes",
-                rootElement);
+                    "isserverside",
+                    "yes",
+                    rootElement);
         }
 
         doc.appendChild(rootElement);
@@ -732,6 +734,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * the usual pattern of using the class writer
      */
     protected void writeWSDLFiles() {
+
         //first modify the schema names (and locations) so that
         //they have unique (flattened) names and the schema locations
         //are adjusted to suit it
@@ -754,10 +757,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             );
         }
 
+        //switch between the correct writer
+        if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
+                equals(codeGenConfiguration.getWSDLVersion())){
+            WSDL20Writer wsdl20Writer = new WSDL20Writer(
+                    codeGenConfiguration.getOutputLocation());
+            wsdl20Writer.writeWSDL(axisService);
+        }else{
 
-        WSDLWriter wsdlWriter = new WSDLWriter(
-                codeGenConfiguration.getOutputLocation());
-        wsdlWriter.writeWSDL(axisService);
+            WSDL11Writer wsdl11Writer = new WSDL11Writer(
+                    codeGenConfiguration.getOutputLocation());
+            wsdl11Writer.writeWSDL(axisService);
+
+        }
 
 
     }
@@ -847,7 +859,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
                     rootElement);
         }else{
-             addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX,
+            addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX,
                     rootElement);
         }
         addAttribute(doc, "basereceiver", (String) MEPtoClassMap.get(mep), rootElement);
@@ -1405,7 +1417,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param input
      */
     protected void addHeaderOperations(List soapHeaderParameterQNameList, AxisOperation axisOperation,
-                                     boolean input) {
+                                       boolean input) {
         ArrayList headerparamList = new ArrayList();
         String MEP = axisOperation.getMessageExchangePattern();
         if (input) {
