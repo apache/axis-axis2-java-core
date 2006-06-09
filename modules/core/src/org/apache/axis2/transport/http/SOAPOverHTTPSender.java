@@ -189,9 +189,16 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             this.soapActionString = soapActionString;
         }
 
-        private void handleOMOutput(OutputStream out, boolean doingMTOM) throws XMLStreamException {
+        private void handleOMOutput(OutputStream out, boolean doingMTOM)
+                throws XMLStreamException {
             format.setDoOptimize(doingMTOM);
-            element.serializeAndConsume(out, format);
+            // To support NTLM Authentication the following check has been done.
+            if (msgCtxt.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null)
+            {
+                element.serialize(out, format);
+            } else {
+                element.serializeAndConsume(out, format);
+            }
         }
 
         public byte[] writeBytes() throws AxisFault {

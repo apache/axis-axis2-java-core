@@ -371,6 +371,7 @@ public class HTTPConstants {
     public static final byte SENDER[] = "400".getBytes();
     public static final String PROXY = "PROXY";
     public static final String BASIC_AUTHENTICATION = "_BASIC_AUTHENTICATION_";
+    public static final String NTLM_AUTHENTICATION = "_NTLM_AUTHENTICATION_";
     public static final String MTOM_RECEIVED_CONTENT_TYPE = "MTOM_RECEIVED";
 
     /**

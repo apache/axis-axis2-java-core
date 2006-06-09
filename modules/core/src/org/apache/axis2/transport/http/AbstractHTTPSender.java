@@ -287,7 +287,7 @@ public abstract class AbstractHTTPSender {
             throws AxisFault {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
 
-        boolean basicAuthenticationEnabled = serverBasicPreemtiveAuthentication(msgCtx); // server authentication
+        boolean authenticationEnabled = serverPreemtiveAuthentication(msgCtx); // server authentication
         int port = targetURL.getPort();
 
         if (port == -1) {
@@ -297,19 +297,48 @@ public abstract class AbstractHTTPSender {
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
-        if (!isHostProxy && !basicAuthenticationEnabled) {
+        if (!isHostProxy && !authenticationEnabled) {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
-        }else if(basicAuthenticationEnabled){
-             // premtive authentication
+        }else if(authenticationEnabled){
+             // premtive authentication Basic or NTLM
             this.configServerPreemtiveAuthenticaiton(client,msgCtx,config,targetURL);
         } else {
 
-            // proxy and NTLM configuration
+            // proxy configuration
             this.configProxyAuthentication(client, proxyOutSetting, config,
                     msgCtx);
         }
 
         return config;
+    }
+
+    private boolean NTLMAuthentication(HttpClient agent,
+                                       MessageContext msgCtx) {
+        HttpTransportProperties.NTLMAuthentication ntlmAuthentication =
+                (HttpTransportProperties.NTLMAuthentication) msgCtx
+                        .getProperty(HTTPConstants.NTLM_AUTHENTICATION);
+        Credentials defaultCredentials;
+        if (ntlmAuthentication != null) {
+
+            if (ntlmAuthentication.getRealm() == null) {
+                defaultCredentials = new UsernamePasswordCredentials(
+                        ntlmAuthentication.getUsername(),
+                        ntlmAuthentication.getPassword());
+            } else {
+                defaultCredentials = new NTCredentials(
+                        ntlmAuthentication.getUsername(),
+                        ntlmAuthentication.getPassword(),
+                        ntlmAuthentication.getHost(),
+                        ntlmAuthentication.getRealm());
+            }
+            agent.getState().setCredentials(new AuthScope(
+                    ntlmAuthentication.getHost(),
+                    ntlmAuthentication.getPort(),
+                    null), defaultCredentials);
+            return true;
+        }
+        return false;
+
     }
 
     private void configServerPreemtiveAuthenticaiton(HttpClient agent,
@@ -321,42 +350,39 @@ public abstract class AbstractHTTPSender {
 
         agent.getParams().setAuthenticationPreemptive(true);
 
+
+        Credentials defaultCredentials = null;
+
+        // check for NTLM Authentication
+        boolean bntlm = NTLMAuthentication(agent, msgCtx);
+
         HttpTransportProperties.BasicAuthentication basicAuthentication =
                 (HttpTransportProperties.BasicAuthentication) msgCtx
                         .getProperty(HTTPConstants.BASIC_AUTHENTICATION);
-        Credentials defaultCredentials = null;
-        if (basicAuthentication.getRealm() == null) {
+
+        if (basicAuthentication != null && !bntlm) {
             defaultCredentials = new UsernamePasswordCredentials(
                     basicAuthentication.getUsername(),
                     basicAuthentication.getPassword());
-        } else {
-            defaultCredentials = new NTCredentials(
-                    basicAuthentication.getUsername(),
-                    basicAuthentication.getPassword(),
-                    basicAuthentication.getHost(),
-                    basicAuthentication.getRealm());
-            agent.getState().setCredentials(new AuthScope(
-                    basicAuthentication.getHost(),
-                    basicAuthentication.getPort(),
-                    null), defaultCredentials);
+            if (basicAuthentication.getPort() == -1 ||
+                basicAuthentication.getHost() == null) {
 
-            return;
-        }
-        if (basicAuthentication.getPort() == -1 ||
-            basicAuthentication.getHost() == null) {
-            agent.getState().setCredentials(AuthScope.ANY, defaultCredentials);
-        } else {
-            if (basicAuthentication.getRealm() == null) {
-                agent.getState().setCredentials(new AuthScope(
-                        basicAuthentication.getHost(),
-                        basicAuthentication.getPort(),
-                        AuthScope.ANY_REALM), defaultCredentials);
-
+                agent.getState()
+                        .setCredentials(AuthScope.ANY, defaultCredentials);
             } else {
-                agent.getState().setCredentials(new AuthScope(
-                        basicAuthentication.getHost(),
-                        basicAuthentication.getPort(),
-                        basicAuthentication.getRealm()), defaultCredentials);
+                if (basicAuthentication.getRealm() == null) {
+                    agent.getState().setCredentials(new AuthScope(
+                            basicAuthentication.getHost(),
+                            basicAuthentication.getPort(),
+                            AuthScope.ANY_REALM), defaultCredentials);
+
+                } else {
+                    agent.getState().setCredentials(new AuthScope(
+                            basicAuthentication.getHost(),
+                            basicAuthentication.getPort(),
+                            basicAuthentication.getRealm()),
+                                                    defaultCredentials);
+                }
             }
         }
 
@@ -397,10 +423,10 @@ public abstract class AbstractHTTPSender {
 
     //Server Preemptive Authentication RUNTIME
 
-    private boolean serverBasicPreemtiveAuthentication(MessageContext msgContext) {
+    private boolean serverPreemtiveAuthentication(MessageContext msgContext) {
 
-        return msgContext.getProperty(HTTPConstants.BASIC_AUTHENTICATION) !=
-               null;
+        return (msgContext.getProperty(HTTPConstants.BASIC_AUTHENTICATION) !=
+               null || msgContext.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null);
     }
 
     private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
