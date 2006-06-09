@@ -12,7 +12,18 @@ import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.writer.*;
+import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
+import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
+import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.InterfaceImplementationWriter;
+import org.apache.axis2.wsdl.codegen.writer.InterfaceWriter;
+import org.apache.axis2.wsdl.codegen.writer.MessageReceiverWriter;
+import org.apache.axis2.wsdl.codegen.writer.SchemaWriter;
+import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
+import org.apache.axis2.wsdl.codegen.writer.SkeletonInterfaceWriter;
+import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
+import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.WSDLWriter;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
@@ -38,7 +49,13 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

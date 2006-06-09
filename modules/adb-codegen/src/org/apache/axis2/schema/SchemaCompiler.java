@@ -1,9 +1,11 @@
 package org.apache.axis2.schema;
 
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
-
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -18,6 +20,7 @@ import org.apache.ws.commons.schema.XmlSchemaContent;
 import org.apache.ws.commons.schema.XmlSchemaContentModel;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaObjectTable;
@@ -32,18 +35,15 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
 import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.LinkedHashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -200,12 +200,18 @@ public class SchemaCompiler {
      */
     public void compile(XmlSchema schema) throws SchemaCompilationException {
 
+        // some documents explicitly imports the schema of built in types. We don't actually need to compile
+        // the built-in types. So check the target namespace here and ignore it.
+        if (Constants.URI_2001_SCHEMA_XSD.equals(schema.getTargetNamespace())) {
+            return;
+        }
+
         //First look for the schemas that are imported and process them
         //Note that these are processed recursively!
 
         //add the schema to the loaded schema list
         if (!loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
-            loadedSchemaMap.put(schema.getTargetNamespace(),schema) ;
+            loadedSchemaMap.put(schema.getTargetNamespace(), schema);
         }
 
         XmlSchemaObjectCollection includes = schema.getIncludes();
@@ -223,7 +229,6 @@ public class SchemaCompiler {
                 }
             }
         }
-
 
         //select all the elements. We generate the code for types
         //only if the elements refer them!!! regardless of the fact that
