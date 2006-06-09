@@ -31,11 +31,20 @@ public class SchemaPropertyLoader {
     private static TypeMap typeMapperInstance = null;
     private static Properties propertyMap;
 
+    private static final String ADB_PROPERTY_FILE_KEY = "org.apache.adb.properties";
+
     static {
         try {
             //load the properties
             Properties props = new Properties();
-            props.load(SchemaCompiler.class.getResourceAsStream(SchemaConstants.SchemaPropertyNames.SCHEMA_COMPILER_PROPERTIES));
+            String schemaPropFilename = System.getProperty(ADB_PROPERTY_FILE_KEY);
+            if (schemaPropFilename==null){
+                 // there was no system property .load the default
+                  props.load(SchemaCompiler.class.getResourceAsStream(SchemaConstants.SchemaPropertyNames.SCHEMA_COMPILER_PROPERTIES));
+            }else{
+                props.load(SchemaCompiler.class.getResourceAsStream(schemaPropFilename));
+            }
+
 
             String beanWriterClassName = props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_KEY);
             if (beanWriterClassName != null) {
