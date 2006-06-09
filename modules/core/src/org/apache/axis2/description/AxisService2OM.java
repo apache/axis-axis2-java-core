@@ -14,17 +14,21 @@ import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.apache.ws.policy.util.PolicyRegistry;
+import org.apache.ws.policy.util.PolicyWriter;
 import org.apache.ws.policy.util.StAXPolicyWriter;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -70,12 +74,15 @@ public class AxisService2OM implements Java2WSDLConstants {
     private String style;
 
     private String use;
-    private String servicePath ;
+
+    private String servicePath;
 
     private boolean generateHttp = false;
 
+    private HashMap policiesInDefinitions;
+
     public AxisService2OM(AxisService service, String[] serviceURL,
-                          String style, String use , String servicePath) {
+            String style, String use, String servicePath) {
         this.axisService = service;
         url = serviceURL;
         if (style == null) {
@@ -98,6 +105,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                 DEFAULT_WSDL_NAMESPACE_PREFIX);
         OMElement ele = fac.createOMElement("definitions", wsdl);
         setDefinitionElement(ele);
+        
+        policiesInDefinitions = new HashMap();
 
         Map nameSpaceMap = axisService.getNameSpacesMap();
         Iterator keys = nameSpaceMap.keySet().iterator();
@@ -133,7 +142,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         for (int i = 0; i < schemas.size(); i++) {
             StringWriter writer = new StringWriter();
 
-            //            XmlSchema schema = (XmlSchema) schemas.get(i);
+            // XmlSchema schema = (XmlSchema) schemas.get(i);
             XmlSchema schema = axisService.getSchema(i);
             schema.write(writer);
             if (!"".equals(writer.toString())) {
@@ -150,7 +159,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         generatePortType(fac, ele);
         generateSOAP11Binding(fac, ele);
         generateSOAP12Binding(fac, ele);
-        //generateHttp
+        // generateHttp
         if (axisService.getParent() != null) {
             AxisDescription axisdesc = axisService.getParent().getParent();
             Parameter parameter = axisdesc.getParameter("enableHTTP");
@@ -163,6 +172,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             }
         }
         generateService(fac, ele);
+        addPoliciesToDefinitionElement(policiesInDefinitions.values().iterator(), definition, fac);
 
         return ele;
     }
@@ -222,7 +232,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void generateHeaderMessages(AxisMessage axismessage, OMFactory fac,
-                                        OMElement defintions) {
+            OMElement defintions) {
         ArrayList extList = axismessage.getSoapHeaders();
         for (int i = 0; i < extList.size(); i++) {
             SOAPHeaderMessage header = (SOAPHeaderMessage) extList.get(i);
@@ -242,7 +252,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void writeMessage(AxisMessage axismessage, OMFactory fac,
-                              OMElement defintions) {
+            OMElement defintions) {
         QName schemaElementName = axismessage.getElementQName();
         OMElement messageElement = fac
                 .createOMElement(MESSAGE_LOCAL_NAME, wsdl);
@@ -443,7 +453,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         addPolicyAsExtElement(PolicyInclude.BINDING_POLICY, axisService
                 .getPolicyInclude(), binding, fac);
 
-        //Adding ext elements
+        // Adding ext elements
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME, TRANSPORT,
                 TRANSPORT_URI, STYLE, style, soap);
 
@@ -570,7 +580,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         addPolicyAsExtElement(PolicyInclude.BINDING_POLICY, axisService
                 .getPolicyInclude(), binding, fac);
 
-        //Adding ext elements
+        // Adding ext elements
         addExtensionElemnet(fac, binding, BINDING_LOCAL_NAME, TRANSPORT,
                 TRANSPORT_URI, STYLE, style, soap12);
 
@@ -688,7 +698,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         binding.addAttribute("type", tns.getPrefix() + ":"
                 + axisService.getName() + PORT_TYPE_SUFFIX, null);
 
-        //Adding ext elements
+        // Adding ext elements
         OMElement httpBinding = fac.createOMElement("binding", http);
         binding.addChild(httpBinding);
         httpBinding.addAttribute("verb", "POST", null);
@@ -753,7 +763,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void writeSoapHeaders(AxisMessage inaxisMessage, OMFactory fac,
-                                  OMElement input, OMNamespace soapNameSpace) throws Exception {
+            OMElement input, OMNamespace soapNameSpace) throws Exception {
         ArrayList extElementList;
         extElementList = inaxisMessage.getSoapHeaders();
         if (extElementList != null) {
@@ -767,8 +777,8 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addExtensionElemnet(OMFactory fac, OMElement element,
-                                     String name, String att1Name, String att1Value, String att2Name,
-                                     String att2Value, OMNamespace soapNameSpace) {
+            String name, String att1Name, String att1Value, String att2Name,
+            String att2Value, OMNamespace soapNameSpace) {
         OMElement soapbinding = fac.createOMElement(name, soapNameSpace);
         element.addChild(soapbinding);
         soapbinding.addAttribute(att1Name, att1Value, null);
@@ -778,8 +788,8 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addExtensionElement(OMFactory fac, OMElement element,
-                                     String name, String att1Name, String att1Value,
-                                     OMNamespace soapNameSpace) {
+            String name, String att1Name, String att1Value,
+            OMNamespace soapNameSpace) {
         OMElement extElement = fac.createOMElement(name, soapNameSpace);
         element.addChild(extElement);
         extElement.addAttribute(att1Name, att1Value, null);
@@ -794,7 +804,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addSOAPHeader(OMFactory fac, OMElement element,
-                               SOAPHeaderMessage header, OMNamespace soapNameSpace) {
+            SOAPHeaderMessage header, OMNamespace soapNameSpace) {
         OMElement extElement = fac.createOMElement("header", soapNameSpace);
         element.addChild(extElement);
         String use = header.getUse();
@@ -823,7 +833,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addPolicyAsExtElement(int type, PolicyInclude policyInclude,
-                                       OMElement element, OMFactory factory) throws Exception {
+            OMElement element, OMFactory factory) throws Exception {
         ArrayList elementList = policyInclude.getPolicyElements(type);
         StAXPolicyWriter pwrt = (StAXPolicyWriter) PolicyFactory
                 .getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
@@ -871,18 +881,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                     throw new Exception("Policy not found for uri : "
                             + policyURIString);
                 }
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                pwrt.writePolicy(p, baos);
-
-                ByteArrayInputStream bais = new ByteArrayInputStream(baos
-                        .toByteArray());
-                getDefinitionElement().addChild(
-                        OMXMLBuilderFactory.createStAXOMBuilder(factory,
-                                StAXUtils.createXMLStreamReader(bais))
-                                .getDocumentElement());
-
-                // TODO refactor this ..
+                
+                addPolicyToDefinitionElement(key, p);
 
             }
 
@@ -890,7 +890,7 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     private void addPolicyAsExtAttribute(int type, PolicyInclude policyInclude,
-                                         OMElement element, OMFactory factory) throws Exception {
+            OMElement element, OMFactory factory) throws Exception {
 
         ArrayList elementList = policyInclude.getPolicyElements(type);
         StAXPolicyWriter pwrt = (StAXPolicyWriter) PolicyFactory
@@ -903,60 +903,42 @@ public class AxisService2OM implements Java2WSDLConstants {
         for (Iterator iterator = elementList.iterator(); iterator.hasNext();) {
             Object policyElement = iterator.next();
 
-            if (policyElement instanceof Policy) {
+            String id;
 
+            if (policyElement instanceof Policy) {
                 Policy p = (Policy) policyElement;
 
                 if (p.getId() != null) {
-                    policyURIs.add("#" + p.getId());
-
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    pwrt.writePolicy(p, baos);
-
-                    ByteArrayInputStream bais = new ByteArrayInputStream(baos
-                            .toByteArray());
-                    getDefinitionElement().addChild(
-                            OMXMLBuilderFactory.createStAXOMBuilder(factory,
-                                    StAXUtils.createXMLStreamReader(bais))
-                                    .getDocumentElement());
-
+                    id = "#" + p.getId();        
                 } else if (p.getName() != null) {
-                    policyURIs.add(p.getName());
+                    id = p.getName();
+                } else {
+                    throw new RuntimeException(
+                            "Can't add the Policy as an extensibility attribute since it doesn't have a id or a name attribute");
                 }
+                
+                policyURIs.add(id);
+                addPolicyToDefinitionElement(id, p);
+                
             } else {
-
                 String policyURIString = ((PolicyReference) policyElement)
                         .getPolicyURIString();
-                policyURIs.add(policyURIString);
-
-                PolicyRegistry reg = policyInclude.getPolicyRegistry();
-
-                String key = policyURIString;
-
+                PolicyRegistry registry = policyInclude.getPolicyRegistry();
+                
+                String key;
                 if (policyURIString.startsWith("#")) {
-                    key = policyURIString.substring(policyURIString
-                            .indexOf("#") + 1);
+                    key = policyURIString.substring(policyURIString.indexOf('#') + 1);
+                } else {
+                    key = policyURIString;
                 }
-
-                Policy p = reg.lookup(key);
-
+                
+                Policy p = registry.lookup(key);
+                
                 if (p == null) {
-                    throw new Exception("Policy not found for uri : "
-                            + policyURIString);
+                    throw new RuntimeException("Cannot resolve " + policyURIString + " to a Policy");
                 }
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                pwrt.writePolicy(p, baos);
-
-                ByteArrayInputStream bais = new ByteArrayInputStream(baos
-                        .toByteArray());
-                getDefinitionElement().addChild(
-                        OMXMLBuilderFactory.createStAXOMBuilder(factory,
-                                StAXUtils.createXMLStreamReader(bais))
-                                .getDocumentElement());
-
+                addPolicyToDefinitionElement(key, p);
             }
-
         }
 
         if (!policyURIs.isEmpty()) {
@@ -971,10 +953,50 @@ public class AxisService2OM implements Java2WSDLConstants {
                     PolicyConstants.POLICY_NAMESPACE_URI,
                     PolicyConstants.POLICY_PREFIX);
             OMAttribute URIs = factory.createOMAttribute("PolicyURIs", ns,
-                    value);
+                    value); 
             element.addAttribute(URIs);
 
         }
 
+    }
+
+    private void addPoliciesToDefinitionElement(Iterator iterator,
+            OMElement definitionElement, OMFactory factory) throws Exception {
+        Policy policy;
+        ByteArrayInputStream bais;
+        ByteArrayOutputStream baos;
+        OMElement policyElement;
+        OMNode firstChild;
+
+        for (;iterator.hasNext();) {
+            policy = (Policy) iterator.next();
+            baos = new ByteArrayOutputStream();
+            getPolicyWriter().writePolicy(policy, baos);
+
+            bais = new ByteArrayInputStream(baos.toByteArray());
+            policyElement = OMXMLBuilderFactory.createStAXOMBuilder(
+                    OMAbstractFactory.getOMFactory(),
+                    XMLInputFactory.newInstance().createXMLStreamReader(bais))
+                    .getDocumentElement();
+
+            firstChild = definition.getFirstOMChild();
+
+            if (firstChild != null) {
+                firstChild.insertSiblingBefore(policyElement);
+            } else {
+                definitionElement.addChild(policyElement);
+            }
+        }
+    }
+
+    private void addPolicyToDefinitionElement(String key, Policy policy) {
+        policiesInDefinitions.put(key, policy);
+    }
+
+    /**
+     * Returns a StAX based PolicyWriter.
+     */
+    private PolicyWriter getPolicyWriter() {
+        return PolicyFactory.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
     }
 }
