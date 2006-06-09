@@ -26,6 +26,7 @@ import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,8 +72,18 @@ public class AntCodegenTask extends Task {
     public Path createClasspath() {
         if (classpath == null) {
             classpath = new Path(getProject());
+            classpath = classpath.concatSystemClasspath();
         }
         return classpath.createPath();
+    }
+
+    /**
+     * Set the reference to an optional classpath 
+     *
+     * @param r the id of the Ant path instance to act as the classpath
+     */
+    public void setClasspathRef(Reference r) {
+        createClasspath().setRefid(r);
     }
 
     /**
@@ -250,9 +261,9 @@ public class AntCodegenTask extends Task {
 
 
             AntClassLoader cl = new AntClassLoader(
-                    null,
+                    getClass().getClassLoader(),
                     getProject(),
-                    classpath,
+					classpath == null ? createClasspath() : classpath,
                     false);
 
             Thread.currentThread().setContextClassLoader(cl);
