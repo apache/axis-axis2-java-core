@@ -42,7 +42,6 @@ import org.apache.http.HttpVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.UnsupportedHttpVersionException;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpService;
 
 public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
 

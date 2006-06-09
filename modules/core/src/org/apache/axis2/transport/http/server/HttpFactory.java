@@ -42,7 +42,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.transport.http.HTTPWorker;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.http.HttpServerConnection;
 import org.apache.http.impl.DefaultHttpParams;

@@ -31,18 +31,13 @@
 package org.apache.axis2.transport.http.server;
 
 import java.io.IOException;
-import org.apache.axis2.context.ConfigurationContext;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.impl.DefaultHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 
 /**
@@ -52,7 +47,6 @@ public class SimpleHttpServer {
 
     private static Log LOG = LogFactory.getLog(SimpleHttpServer.class);
     
-    private static final String ORIGIN_SERVER = "Simple-Server/1.1";
     private static final int SHUTDOWN_GRACE_PERIOD = 3000; // ms
     
     private HttpFactory httpFactory;
@@ -62,10 +56,8 @@ public class SimpleHttpServer {
     
     private IOProcessor listener = null;
     private ExecutorService listenerExecutor = null;
-    private ThreadGroup listenertg = null;
     private HttpConnectionManager connmanager = null;
     private ExecutorService requestExecutor = null;
-    private ThreadGroup conntg = null;
 
     public SimpleHttpServer(ConfigurationContext configurationContext, WorkerFactory workerFactory, int port) throws IOException {
         this(new HttpFactory(configurationContext, port, workerFactory), port);

@@ -27,7 +27,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -196,7 +196,7 @@ public class TCPServer implements Runnable, TransportListener {
         }
         if (ip == null) {
             try {
-                ip = SimpleHttpServerConnection.getIpAddress();
+                ip = HttpUtils.getIpAddress();
             } catch (SocketException e) {
                 throw AxisFault.makeFault(e);
             }
