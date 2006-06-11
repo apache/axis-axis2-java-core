@@ -104,7 +104,7 @@ public class HttpFactory {
     public HttpFactory(ConfigurationContext configurationContext) throws AxisFault {
         this.configurationContext = configurationContext;
         httpConfiguration = configurationContext.getAxisConfiguration().getTransportIn(HTTP_NAME);
-        port = getIntParam(PARAMETER_PORT, 8080);
+        port = getIntParam(PARAMETER_PORT, 6060);
         hostAddress = getStringParam(PARAMETER_HOST_ADDRESS, null);
         originServer = getStringParam(PARAMETER_ORIGIN_SERVER, "Simple-Server/1.1");
         requestSocketTimeout = getIntParam(PARAMETER_REQUEST_SOCKET_TIMEOUT, 20000);
@@ -261,7 +261,7 @@ public class HttpFactory {
     }
 
     /** Getter for port
-      * return the port on which to listen for http connections (default = 8080)
+      * return the port on which to listen for http connections (default = 6060)
      */
     public int getPort() {
         return port;
