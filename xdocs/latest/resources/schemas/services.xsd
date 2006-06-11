@@ -1,39 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created by Eran Chinthaka -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xs:element name="operation">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="messageReceiver" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="class"/>
-					</xs:complexType>
-				</xs:element>
-				<xs:element ref="parameter" minOccurs="0"/>
-				<xs:element name="module" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="ref"/>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-			<xs:attribute name="name" type="xs:string" use="required"/>
-			<xs:attribute name="mep" type="xs:anyURI" use="required"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="parameter">
-		<xs:complexType>
-			<xs:attribute name="name" type="xs:string" use="required"/>
-			<xs:attribute name="locked" type="xs:boolean" use="optional"/>
-		</xs:complexType>
-	</xs:element>
+	<xs:complexType name="operationType">
+		<xs:sequence>
+			<xs:element name="actionMapping" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="messageReceiver" minOccurs="0">
+				<xs:complexType>
+					<xs:attribute name="class" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="parameter" type="parameterType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="module" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="ref" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="mep" type="xs:anyURI" use="required"/>
+		<xs:attribute name="scope" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="parameterType">
+		<xs:annotation>
+			<xs:documentation>Type describing a parameter. This element contains two attributes
+         and may contain any element or simply a string</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="xs:anyType">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+				<xs:attribute name="locked" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 	<xs:element name="service">
+		<xs:annotation>
+			<xs:documentation>
+			Service element description. This has a number of
+             parameter and operation elements nested
+     </xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Description" minOccurs="0"/>
-				<xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="operation" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="description" minOccurs="0" type="xs:string"/>
+				<xs:element name="parameter" type="parameterType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="operation" type="operationType" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="services">
+	<xs:annotation>
+			<xs:documentation>
+			 holder for multiple service elements. 
+     </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+                <xs:element ref="service" minOccurs="1" maxOccurs="unbounded" />		
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
