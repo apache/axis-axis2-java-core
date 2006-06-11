@@ -181,8 +181,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // }
             processBinding(binding, description);
             return axisService;
-        } catch (WSDLException e) {
-            throw new AxisFault(e);
         } catch (Exception e) {
             throw new AxisFault(e);
         }
@@ -542,7 +540,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // FIXME @author Chathura copy in the policy stuff
             // copyExtensibleElements(port.getExtensibilityElements(), dif,
             // axisService, PORT);
-
+            axisService.setEndpoint(endpoint.getAddress().toString());
             binding = endpoint.getBinding();
         }
         return binding;
