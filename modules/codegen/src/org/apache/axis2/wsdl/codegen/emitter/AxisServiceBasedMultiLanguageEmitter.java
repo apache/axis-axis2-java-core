@@ -10,6 +10,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.WSDL20Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
@@ -976,13 +977,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return rootElement;
     }
 
-    protected boolean isInputPresentForMEP(String MEP) {
-        return WSDLConstants.MEP_URI_IN_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OUT.equals(MEP);
+    protected boolean isInputPresentForMEP(String mep) {
+        return WSDLConstants.MEP_URI_IN_ONLY.equals(mep) ||
+                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
+                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(mep) ||
+                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(mep) ||
+                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(mep) ||
+                WSDLConstants.MEP_URI_IN_OUT.equals(mep) ||
+                WSDL20Constants.MEP_URI_IN__OPTIONAL_OUT.equals(mep)||
+                WSDL20Constants.MEP_URI_IN_ONLY.equals(mep)||
+                WSDL20Constants.MEP_URI_IN_OUT.equals(mep)||
+                WSDL20Constants.MEP_URI_OUT_IN.equals(mep)||
+                WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep)||
+                WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(mep);
     }
 
     /**
@@ -1454,7 +1461,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
                 WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
                 WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OUT.equals(MEP);
+                WSDLConstants.MEP_URI_IN_OUT.equals(MEP) ||
+                WSDL20Constants.MEP_URI_IN__OPTIONAL_OUT.equals(MEP) ||
+                WSDL20Constants.MEP_URI_IN_OUT.equals(MEP) ||
+                WSDL20Constants.MEP_URI_OUT_IN.equals(MEP) ||
+                WSDL20Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP);
     }
 
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
