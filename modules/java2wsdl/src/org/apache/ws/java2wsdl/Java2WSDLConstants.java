@@ -74,7 +74,7 @@ public interface Java2WSDLConstants {
     String SOAP_ACTION = "soapAction";
     String SOAP_BODY = "body";
     String SOAP_USE = "use";
-    String DOCUMNT = "document";
+    String DOCUMENT = "document";
     String LITERAL = "literal";
     //
     // Schema XSD Namespaces

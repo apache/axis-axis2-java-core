@@ -8,7 +8,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -86,7 +85,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         this.schemaCollection = schemaCollection;
         this.typeTable = typeTab;
         if (style == null) {
-            this.style = DOCUMNT;
+            this.style = DOCUMENT;
         } else {
             this.style = style;
         }

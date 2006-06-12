@@ -24,11 +24,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -53,7 +53,7 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private AxisService axisService;
 
-    private String[] url;
+    private String[] urls;
 
     private String targetNamespace;
 
@@ -84,9 +84,9 @@ public class AxisService2OM implements Java2WSDLConstants {
     public AxisService2OM(AxisService service, String[] serviceURL,
             String style, String use, String servicePath) {
         this.axisService = service;
-        url = serviceURL;
+        urls = serviceURL;
         if (style == null) {
-            this.style = DOCUMNT;
+            this.style = DOCUMENT;
         } else {
             this.style = style;
         }
@@ -380,13 +380,16 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private void generateSOAP11Port(OMFactory fac, OMElement service)
             throws Exception {
-        for (int i = 0; i < url.length; i++) {
-            String urlString = url[i];
-            URL url = new URL(urlString);
+        for (int i = 0; i < urls.length; i++) {
+            String urlString = urls[i];
+            String protocol = urlString == null ? null : new URI(urlString).getScheme();
+            if(urlString == null) {
+                urlString = "REPLACE_WITH_ACTUAL_URL";
+            }
             OMElement port = fac.createOMElement(PORT, wsdl);
             service.addChild(port);
             port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                    + SOAP11PORT + "_" + url.getProtocol(), null);
+                    + SOAP11PORT + ((protocol == null) ? "" : "_" + protocol), null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
@@ -400,9 +403,9 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private void generateHTTPPort(OMFactory fac, OMElement service)
             throws Exception {
-        for (int i = 0; i < url.length; i++) {
-            String urlString = url[i];
-            if (urlString.startsWith("http")) {
+        for (int i = 0; i < urls.length; i++) {
+            String urlString = urls[i];
+            if (urlString != null && urlString.startsWith("http")) {
                 OMElement port = fac.createOMElement(PORT, wsdl);
                 service.addChild(port);
                 port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
@@ -419,13 +422,16 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private void generateSOAP12Port(OMFactory fac, OMElement service)
             throws Exception {
-        for (int i = 0; i < url.length; i++) {
-            String urlString = url[i];
-            URL url = new URL(urlString);
+        for (int i = 0; i < urls.length; i++) {
+            String urlString = urls[i];
+            String protocol = urlString == null ? null : new URI(urlString).getScheme();
+            if(urlString == null) {
+                urlString = "REPLACE_WITH_ACTUAL_URL";
+            }
             OMElement port = fac.createOMElement(PORT, wsdl);
             service.addChild(port);
             port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                    + SOAP12PORT + "_" + url.getProtocol(), null);
+                    + SOAP12PORT + ((protocol == null) ? "" : "_" + protocol), null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + SOAP12BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,

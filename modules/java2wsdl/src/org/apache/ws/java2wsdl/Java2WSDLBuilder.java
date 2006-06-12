@@ -38,7 +38,7 @@ public class Java2WSDLBuilder {
 
     private String schemaTargetNamespace = null;
     private String schemaTargetNamespacePrefix = null;
-    private String style = Java2WSDLConstants.DOCUMNT;
+    private String style = Java2WSDLConstants.DOCUMENT;
     private String use = Java2WSDLConstants.LITERAL;
     private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
 
