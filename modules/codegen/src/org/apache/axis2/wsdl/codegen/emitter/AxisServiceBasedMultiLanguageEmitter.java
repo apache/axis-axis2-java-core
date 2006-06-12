@@ -984,7 +984,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(mep) ||
                 WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(mep) ||
                 WSDLConstants.MEP_URI_IN_OUT.equals(mep) ||
-                WSDL20Constants.MEP_URI_IN__OPTIONAL_OUT.equals(mep)||
+                WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep)||
                 WSDL20Constants.MEP_URI_IN_ONLY.equals(mep)||
                 WSDL20Constants.MEP_URI_IN_OUT.equals(mep)||
                 WSDL20Constants.MEP_URI_OUT_IN.equals(mep)||
@@ -1462,7 +1462,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
                 WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
                 WSDLConstants.MEP_URI_IN_OUT.equals(MEP) ||
-                WSDL20Constants.MEP_URI_IN__OPTIONAL_OUT.equals(MEP) ||
+                WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
                 WSDL20Constants.MEP_URI_IN_OUT.equals(MEP) ||
                 WSDL20Constants.MEP_URI_OUT_IN.equals(MEP) ||
                 WSDL20Constants.MEP_URI_OUT_ONLY.equals(MEP) ||

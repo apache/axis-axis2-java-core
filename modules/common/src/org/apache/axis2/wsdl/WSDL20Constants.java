@@ -26,7 +26,7 @@ public interface WSDL20Constants {
     public static final String MEP_URI_IN_OUT = "http://www.w3.org/2006/01/wsdl/in-out";
 
     // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-opt-out
-    public static final String MEP_URI_IN__OPTIONAL_OUT = "http://www.w3.org/2006/01/wsdl/in-opt-out";
+    public static final String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2006/01/wsdl/in-opt-out";
 
     // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-only
     public static final String MEP_URI_OUT_ONLY = "http://www.w3.org/2006/01/wsdl/out-only";

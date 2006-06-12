@@ -1,8 +1,9 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.wsdl.WSDL20Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -78,21 +79,21 @@ public class AxisOperationFactory implements WSDLConstants {
     //FIXME add in the latest MEP uris
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
-        if (MEP_URI_IN_ONLY.equals(mepURI)) {
+        if (MEP_URI_IN_ONLY.equals(mepURI) || WSDL20Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
-        } else if (MEP_URI_OUT_ONLY.equals(mepURI)) {
+        } else if (MEP_URI_OUT_ONLY.equals(mepURI) || WSDL20Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutOnlyAxisOperation();
-        } else if (MEP_URI_IN_OUT.equals(mepURI) ||MEP_URI_IN_OUT_03.equals(mepURI)) {
+        } else if (MEP_URI_IN_OUT.equals(mepURI) ||MEP_URI_IN_OUT_03.equals(mepURI) || WSDL20Constants.MEP_URI_IN_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
+        } else if (MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) || WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (MEP_URI_OUT_IN.equals(mepURI)) {
+        } else if (MEP_URI_OUT_IN.equals(mepURI) || WSDL20Constants.MEP_URI_OUT_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
+        } else if (MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) || WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
+        } else if (MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
+        } else if (MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
         }else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
