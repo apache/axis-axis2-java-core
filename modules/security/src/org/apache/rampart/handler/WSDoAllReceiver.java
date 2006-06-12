@@ -93,12 +93,13 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             
             //Figureout if the handler should run
             Object inFlowSecurity = null;
-            if((inFlowSecurity = getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
-                inFlowSecurity = getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY);
-            }
             
-            
-            if(inFlowSecurity == null) {
+            if((inFlowSecurity = getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null &&
+                    (inFlowSecurity = getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY)) == null &&
+                    (inFlowSecurity = getOption(WSSHandlerConstants.INFLOW_SECURITY_CLIENT)) == null &&
+                    (inFlowSecurity = getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY_CLIENT)) == null &&
+                    (inFlowSecurity = getOption(WSSHandlerConstants.INFLOW_SECURITY_SERVER)) == null &&
+                    (inFlowSecurity = getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY_SERVER)) == null) {
                 return;
             }
             

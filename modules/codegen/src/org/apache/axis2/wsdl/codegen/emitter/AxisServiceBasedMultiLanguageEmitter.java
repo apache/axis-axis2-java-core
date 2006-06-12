@@ -454,12 +454,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc));
 
-        Object stubMethods;
+        Object moduleCodegenPolicyExtensionElement;
 
         //if some extension has added the stub methods property, add them to the
         //main document
-        if ((stubMethods = codeGenConfiguration.getProperty("stubMethods")) != null) {
-            rootElement.appendChild(doc.importNode((Element) stubMethods, true));
+        if ((moduleCodegenPolicyExtensionElement = codeGenConfiguration.getProperty("module-codegen-policy-extensions")) != null) {
+            rootElement.appendChild(doc.importNode((Element) moduleCodegenPolicyExtensionElement, true));
         }
 
         //add another element to have the unique list of faults

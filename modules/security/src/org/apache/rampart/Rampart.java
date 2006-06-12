@@ -21,8 +21,11 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.modules.ModulePolicyExtension;
+import org.apache.axis2.modules.PolicyExtension;
 import org.apache.rampart.util.HandlerParameterDecoder;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
@@ -30,9 +33,10 @@ import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.security.policy.WSS4JConfig;
 import org.apache.ws.security.policy.WSS4JConfigBuilder;
+import org.apache.ws.security.policy.extension.WSSCodegenPolicyExtension;
 import org.apache.ws.security.policy.parser.WSSPolicyProcessor;
 
-public class Rampart implements Module {
+public class Rampart implements Module, ModulePolicyExtension  {
     private AxisModule module;
 
     public void init(ConfigurationContext configContext, AxisModule module)
@@ -73,7 +77,7 @@ public class Rampart implements Module {
                 
                 WSS4JConfig clientConfig = WSS4JConfigBuilder
                 .build(wssPolicyProcessor.getRootPED()
-                        .getTopLevelPEDs(),false);
+                        .getTopLevelPEDs(), isServerSide(axisDescription));
 
                 policyInflowConfig = clientConfig.getInflowConfiguration();
 
@@ -93,6 +97,10 @@ public class Rampart implements Module {
 
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
         // Do nothing
+    }
+
+    public PolicyExtension getPolicyExtension() {
+        return new WSSCodegenPolicyExtension();
     }
 
     private InflowConfiguration calcuateCurrentInflowConfiguration(
@@ -183,4 +191,20 @@ public class Rampart implements Module {
         }
         return secondryConf;
     }
+    
+    private boolean isServerSide(AxisDescription axisDescription) {
+        
+        if (axisDescription instanceof AxisService) {
+            return !((AxisService) axisDescription).isClientSide();
+            
+        } else if (axisDescription instanceof AxisOperation) {
+            return !((AxisService) axisDescription.getParent()).isClientSide();
+            
+        } else {
+            // we assume that the default is the client-side
+            return false;            
+        }
+    }
+    
+    
 }

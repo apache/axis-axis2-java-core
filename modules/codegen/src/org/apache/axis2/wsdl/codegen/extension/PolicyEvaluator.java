@@ -107,7 +107,7 @@ public class PolicyEvaluator implements CodeGenExtension {
         init(configuration);
 
         Document document = getEmptyDocument();
-		Element rootElement = document.createElement("stubMethods");
+		Element rootElement = document.createElement("module-codegen-policy-extensions");
         
         AxisOperation axisOperation;
         QName opName;
@@ -127,7 +127,7 @@ public class PolicyEvaluator implements CodeGenExtension {
             }
         }
         
-        configuration.putProperty("stubMethods", rootElement);
+        configuration.putProperty("module-codegen-policy-extensions", rootElement);
 	}
 
 	private void processPolicies(Document document, Element rootElement,

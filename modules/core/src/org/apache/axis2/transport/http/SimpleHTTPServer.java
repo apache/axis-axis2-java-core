@@ -17,6 +17,12 @@
 
 package org.apache.axis2.transport.http;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.SocketException;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -30,14 +36,8 @@ import org.apache.axis2.transport.http.server.HttpFactory;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.util.OptionsParser;
-import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * This is a simple implementation of an HTTP server for processing

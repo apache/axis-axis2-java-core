@@ -99,14 +99,16 @@ public class WSDoAllSender extends WSDoAllHandler {
             
             //Figureout if the handler should run
             Object outFlowSecurity;
-            if((outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
-                outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
-            }
-            
-            if(outFlowSecurity == null) {
-                return;
-            }
-            
+            if((outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null &&  
+                (outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY)) == null &&
+                (outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT)) == null &&
+                (outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT)) == null &&
+                (outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER)) == null &&
+                (outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY_SERVER)) == null) 
+                
+                 {
+                    return;
+                }            
 
             Vector actions = new Vector();
             String action = null;
