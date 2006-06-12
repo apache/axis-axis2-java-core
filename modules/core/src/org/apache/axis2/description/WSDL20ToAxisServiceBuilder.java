@@ -297,9 +297,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             pi.setPolicyRegistry(registry);
         }
 
-        if (style != null) {
-            axisOperation.setStyle(style);
-        }
+        // assuming the style of the operations of WSDL 2.0 is always document.
+        axisOperation.setStyle("document");
+        
         // copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(),
         // dif,
         // axisOperation, PORT_TYPE_OPERATION);
@@ -359,7 +359,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         InterfaceFaultReference[] faults = operation.getInterfaceFaultReferences();
         for(int i=0; i<faults.length; i++){
             AxisMessage faultMessage = new AxisMessage();
-            faultMessage.setElementQName(faults[i].toElement().getRef());
+
+            faultMessage.setElementQName(faults[i].toElement().getInterfaceFaultElement().getElementName());
             faultMessage.setName(faults[i].toElement().getRef().getLocalPart());
             axisOperation.setFaultMessages(faultMessage);
         }

@@ -1,5 +1,6 @@
 package org.apache.axis2.wsdl.codegen.emitter;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -725,7 +726,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //for the server side codegen
         //we need to serialize the WSDL's
-        writeWSDLFiles();
+//        writeWSDLFiles();
     }
 
     /**
@@ -1153,6 +1154,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //attach a list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
+
+        System.out.println(DOM2Writer.nodeToString(rootElement));
 
         doc.appendChild(rootElement);
         return doc;
