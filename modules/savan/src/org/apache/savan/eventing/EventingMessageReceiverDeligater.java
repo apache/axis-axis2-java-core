@@ -17,6 +17,8 @@
 
 package org.apache.savan.eventing;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
@@ -29,6 +31,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
@@ -119,7 +122,26 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 			
 		//sending the Renew Response message.
 		OMElement renewResponseElement = factory.createOMElement(EventingConstants.ElementNames.RenewResponse,ens);
-		String expiresValue = (String) renewMessage.getProperty(EventingConstants.TransferedProperties.EXPIRES_VALUE);
+		String subscriberID = (String) renewMessage.getProperty(EventingConstants.TransferedProperties.SUBSCRIBER_UUID);
+		if (subscriberID==null) {
+			String message = "SubscriberID TransferedProperty is not set";
+			throw new SavanException (message);
+		}
+		
+		ConfigurationContext configurationContext = renewMessage.getConfigurationContext();
+		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
+		EventingSubscriber eventingSubscriber = (EventingSubscriber) subscribers.get(subscriberID);
+		if (eventingSubscriber==null) {
+			String message = "Cannot find the Subscriber with the given ID";
+			throw new SavanException (message);
+		}
+		
+		Date expiration = eventingSubscriber.getSubscriptionEndingTime();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(expiration);
+		
+		String expiresValue = ConverterUtil.convertToString(calendar);
+		
 		if (expiresValue!=null) {
 			OMElement expiresElement = factory.createOMElement(EventingConstants.ElementNames.Expires,ens);
 			renewResponseElement.addChild(expiresElement);
@@ -201,10 +223,15 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 
 		OMElement getStatusResponseElement = factory.createOMElement(EventingConstants.ElementNames.GetStatusResponse,ens);
 		
-		long expires = subscriber.getSubscriptionEndingTime();
-		if (expires>0) {
+		Date expires = subscriber.getSubscriptionEndingTime();
+		if (expires!=null) {
 			OMElement expiresElement = factory.createOMElement(EventingConstants.ElementNames.Expires,ens);
-			expiresElement.setText(new Long (expires).toString());
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(expires);
+			String expirationString = ConverterUtil.convertToString(calendar);
+			
+			expiresElement.setText(expirationString.toString());
 			
 			getStatusResponseElement.addChild(expiresElement);
 		}

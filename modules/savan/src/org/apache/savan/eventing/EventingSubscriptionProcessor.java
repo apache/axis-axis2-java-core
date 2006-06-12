@@ -17,6 +17,10 @@
 
 package org.apache.savan.eventing;
 
+
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAttribute;
@@ -26,12 +30,15 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.databinding.types.Duration;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.subscribers.Subscriber;
-import org.apache.savan.subscription.RenewBean;
+import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.subscription.SubscriptionProcessor;
+import org.apache.savan.util.CommonUtil;
 
 public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 
@@ -55,8 +62,7 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		
 		String id = UUIDGenerator.getUUID();
 		smc.setProperty(EventingConstants.TransferedProperties.SUBSCRIBER_UUID,id);
-		
-		String replyTo = smc.getMessageContext().getOptions().getReplyTo().getAddress();
+	
 		subscriber.setId(id);
 		
 		SOAPBody body = envelope.getBody();
@@ -83,10 +89,10 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		EndpointReference notifyToEPr = new EndpointReference ("");
 		notifyToEPr.fromOM(notifyToElement);
 		
-		OMAttribute deliveryModeAttr = deliveryElement.getAttribute(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Mode));
+		OMAttribute deliveryModeAttr = deliveryElement.getAttribute(new QName (EventingConstants.ElementNames.Mode));
 		String deliveryMode = null;
 		if (deliveryModeAttr!=null) {
-			deliveryMode = deliveryModeAttr.getAttributeValue();
+			deliveryMode = deliveryModeAttr.getAttributeValue().trim();
 		} else {
 			deliveryMode = EventingConstants.DEFAULT_DELIVERY_MODE;
 		}
@@ -100,11 +106,30 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		OMElement expiresElement = subscribeElement.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Expires));
 		if (expiresElement!=null) {
 			String expiresText = expiresElement.getText();
-			//assuming that the expires value is in milliseconds
-			//TODO do proper date/time conversion
+
+			if (expiresText==null){
+				String message = "Expires Text is null";
+				throw new SavanException (message);
+			}
 			
-			long expiresValue = Long.parseLong(expiresText);
-			subscriber.renewSubscription(expiresValue);
+			expiresText = expiresText.trim();
+			
+			ExpirationBean expirationBean = getExpirationBeanFromString(expiresText);
+			Date expiration = null;
+			if (expirationBean.isDuration()) {
+				Calendar calendar = Calendar.getInstance();
+				CommonUtil.addDurationToCalendar(calendar,expirationBean.getDurationValue());
+				expiration = calendar.getTime();
+			} else
+				expiration = expirationBean.getDateValue();
+			
+			
+			if (expiration==null) {
+				String message = "Cannot understand the given date-time value for the Expiration";
+				throw new SavanException (message);
+			}
+			
+			subscriber.setSubscriptionEndingTime(expiration);
 		}
 		
 		OMElement filterElement = subscribeElement.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Filter));
@@ -114,12 +139,15 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			OMNode filterNode = filterElement.getFirstOMChild();
 			filter.setFilter(filterNode);
 			
-			OMAttribute dialectAttr = filterElement.getAttribute(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Dialect));
+			OMAttribute dialectAttr = filterElement.getAttribute(new QName (EventingConstants.ElementNames.Dialect));
 			
-			if (dialectAttr!=null)
-				filter.setFilterType(dialectAttr.getAttributeValue());
-			else
-				throw new SavanException ("Filter Dialect is not set"); //TODO set the default value
+			if (dialectAttr!=null) {
+				String dilect = dialectAttr.getAttributeValue().trim();
+				filter.setFilterType(dilect);
+			} else {
+				//setting the default finter dialect.
+				filter.setFilterType(EventingConstants.DEFAULT_FILTER_DIALECT);
+			}
 			
 			subscriber.setFilter(filter);
 		}
@@ -135,12 +163,12 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		throw new UnsupportedOperationException ("Eventing specification does not support this type of messages");
 	}
 
-	public RenewBean getRenewBean(SavanMessageContext renewMessage) throws SavanException {
+	public ExpirationBean getExpirationBean(SavanMessageContext renewMessage) throws SavanException {
 
 		SOAPEnvelope envelope = renewMessage.getEnvelope();
 		SOAPBody body = envelope.getBody();
 		
-		RenewBean renewBean = new RenewBean ();
+		ExpirationBean expirationBean = null;
 		
 		OMElement renewElement = body.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Renew));
 		if (renewElement==null) {
@@ -150,12 +178,9 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		
 		OMElement expiresElement = renewElement.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Expires));
 		if (expiresElement!=null) {
-			String expiresText = expiresElement.getText();
-			long expiresValue = Long.parseLong(expiresText);
-			renewBean.setRenewMount(expiresValue);
+			String expiresText = expiresElement.getText().trim();
+			expirationBean = getExpirationBeanFromString(expiresText);
 		}
-		
-		renewMessage.setProperty(EventingConstants.TransferedProperties.EXPIRES_VALUE,new Long(renewBean.getRenewMount()).toString());
 		
 		String subscriberID = getSubscriberID(renewMessage);
 		if (subscriberID==null) {
@@ -163,8 +188,10 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			throw new SavanException (message);
 		}
 		
-		renewBean.setSubscriberID(subscriberID);
-		return renewBean;
+		renewMessage.setProperty(EventingConstants.TransferedProperties.SUBSCRIBER_UUID,subscriberID);
+		
+		expirationBean.setSubscriberID(subscriberID);
+		return expirationBean;
 	}
 
 	public String getSubscriberID(SavanMessageContext smc) throws SavanException {
@@ -183,7 +210,38 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		return identifier;
 	}
 	
-	
+	private ExpirationBean getExpirationBeanFromString (String expiresStr) throws SavanException {
+
+		ExpirationBean bean = new ExpirationBean ();
+		
+		//expires can be a duration or a date time.
+		//Doing the conversion using the ConverUtil helper class.
+		
+		Date date = null;
+		boolean isDuration = CommonUtil.isDuration(expiresStr);
+		
+		if (isDuration) {
+			try {
+				bean.setDuration(true);
+				Duration duration = ConverterUtil.convertToDuration(expiresStr);
+				bean.setDurationValue(duration);
+			} catch (IllegalArgumentException e) {
+				String message = "Cannot convert the Expiration value to a valid duration";
+				throw new SavanException (message,e);
+			}
+		} else {
+			try {
+			    Calendar calendar = ConverterUtil.convertTodateTime(expiresStr);
+			    date = calendar.getTime();
+			    bean.setDateValue(date);
+			} catch (Exception e) {
+				String message = "Cannot convert the Expiration value to a valid DATE/TIME";
+				throw new SavanException (message,e);
+			}
+		}
+		
+		return bean;
+	}
 	
 	
 

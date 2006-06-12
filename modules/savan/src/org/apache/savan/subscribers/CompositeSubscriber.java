@@ -18,11 +18,13 @@
 package org.apache.savan.subscribers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.subscribers.Subscriber;
+import org.apache.savan.subscription.ExpirationBean;
 
 
 public class CompositeSubscriber extends Subscriber {
@@ -44,11 +46,20 @@ public class CompositeSubscriber extends Subscriber {
 		}
 	}
 
-	public void renewSubscription(long renewAmount) {
+	public void renewSubscription(ExpirationBean bean) {
 		for (Iterator it = subscribers.iterator();it.hasNext();) {
 			Subscriber subscriber = (Subscriber) it.next();
-			subscriber.renewSubscription(renewAmount);
+			subscriber.renewSubscription(bean);
 		}
 	}
+
+	public void setSubscriptionEndingTime(Date subscriptionEndingTime) {
+		for (Iterator it = subscribers.iterator();it.hasNext();) {
+			Subscriber subscriber = (Subscriber) it.next();
+			subscriber.setSubscriptionEndingTime(subscriptionEndingTime);
+		}
+	}
+	
+	
 
 }

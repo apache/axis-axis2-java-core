@@ -17,8 +17,11 @@
 
 package org.apache.savan.subscribers;
 
+import java.util.Date;
+
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.subscription.ExpirationBean;
 
 public abstract class Subscriber {
 
@@ -31,7 +34,8 @@ public abstract class Subscriber {
 		this.id = id;
 	}
 	
-	public abstract void renewSubscription (long renewAmount);
+	public abstract void setSubscriptionEndingTime (Date subscriptionEndingTime);
+	public abstract void renewSubscription (ExpirationBean bean);
 	public abstract void sendNotification (SavanMessageContext notificationMessage) throws SavanException;
 
 }

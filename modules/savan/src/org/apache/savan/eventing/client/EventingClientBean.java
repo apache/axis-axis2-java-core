@@ -17,7 +17,9 @@
 
 package org.apache.savan.eventing.client;
 
+import java.util.Date;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.databinding.types.Duration;
 
 public class EventingClientBean {
 
@@ -25,8 +27,17 @@ public class EventingClientBean {
 	EndpointReference endToEPR;
 	String filterDialect;
 	String filter;
-	long expirationTime;
+	Date expirationTime;
+	Duration expirationDuration;
 	
+	public Duration getExpirationDuration() {
+		return expirationDuration;
+	}
+
+	public void setExpirationDuration(Duration expirationDuration) {
+		this.expirationDuration = expirationDuration;
+	}
+
 	public EndpointReference getDeliveryEPR() {
 		return deliveryEPR;
 	}
@@ -34,7 +45,8 @@ public class EventingClientBean {
 	public EndpointReference getEndToEPR() {
 		return endToEPR;
 	}
-	public long getExpirationTime() {
+	
+	public Date getExpirationTime() {
 		return expirationTime;
 	}
 	
@@ -54,7 +66,7 @@ public class EventingClientBean {
 		this.endToEPR = endToEPR;
 	}
 	
-	public void setExpirationTime(long expirationTime) {
+	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = expirationTime;
 	}
 	

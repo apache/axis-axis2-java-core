@@ -17,35 +17,63 @@
 
 package org.apache.savan.subscribers;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.subscription.ExpirationBean;
+import org.apache.savan.util.CommonUtil;
 
 
 public abstract class LeafSubscriber extends Subscriber {
 	
-	private long subscriptionEndingTime = -1;
+	private Date subscriptionEndingTime = null;
 	
-	public void renewSubscription (long renewAmount) {
-		if (subscriptionEndingTime<0)
-			subscriptionEndingTime = 0;
-		
-		subscriptionEndingTime = subscriptionEndingTime + renewAmount;
+	public void renewSubscription (ExpirationBean bean) {
+		if (bean.isDuration()) {
+			if (subscriptionEndingTime==null) {
+				Calendar calendar = Calendar.getInstance();
+				CommonUtil.addDurationToCalendar(calendar,bean.getDurationValue());
+				subscriptionEndingTime = calendar.getTime();
+			} else {
+				Calendar expiration = Calendar.getInstance();
+				expiration.setTime(subscriptionEndingTime);
+				CommonUtil.addDurationToCalendar(expiration,bean.getDurationValue());
+				subscriptionEndingTime = expiration.getTime();
+			}
+		} else
+			subscriptionEndingTime = bean.getDateValue();
 	}
 	
-	public long getSubscriptionEndingTime () {
+	public Date getSubscriptionEndingTime () {
 		return subscriptionEndingTime;
 	}
 	
-	public void sendNotification(SavanMessageContext notificationMessage) throws SavanException {
-		long timeNow = System.currentTimeMillis();
+	public void setSubscriptionEndingTime () {
 		
-		if (subscriptionEndingTime>0 && subscriptionEndingTime<=timeNow) {
-			String message = "Cant notify the listner since the subscription ending time has been passed";
+	}
+	
+	public void sendNotification(SavanMessageContext notificationMessage) throws SavanException {
+		Date date = new Date ();
+		
+		boolean expired = false;
+		if (subscriptionEndingTime!=null && date.after(subscriptionEndingTime))
+			expired = true;
+		
+		if (expired) {
+			String message = "Cant notify the listner since the subscription has been expired";
 			throw new SavanException (message);
 		}
 		
 		doProtocolSpecificNotification (notificationMessage);
 	}
 	
+	
+	
+	public void setSubscriptionEndingTime(Date subscriptionEndingTime) {
+		this.subscriptionEndingTime = subscriptionEndingTime;
+	}
+
 	public abstract void doProtocolSpecificNotification (SavanMessageContext notificationMessage) throws SavanException;
 }

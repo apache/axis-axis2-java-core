@@ -24,7 +24,6 @@ import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.subscribers.Subscriber;
 
-
 public abstract class SubscriptionProcessor {
 	
 	public abstract void init (SavanMessageContext smc) throws SavanException;
@@ -54,13 +53,13 @@ public abstract class SubscriptionProcessor {
 			throw new SavanException ("Given subscriber is not present");
 		}
 			
-		RenewBean renewBean = getRenewBean(renewMessage);
-		Subscriber subscriber = (Subscriber) subscribers.get(renewBean.getSubscriberID());
+		ExpirationBean bean = getExpirationBean(renewMessage);
+		Subscriber subscriber = (Subscriber) subscribers.get(bean.getSubscriberID());
 		if (subscriber==null) {
 			throw new SavanException ("Given subscriber is not present");
 		}
 		
-		subscriber.renewSubscription(renewBean.getRenewMount());
+		subscriber.renewSubscription(bean);
 	}
 
 	public void subscribe(SavanMessageContext subscriptionMessage) throws SavanException {
@@ -81,7 +80,7 @@ public abstract class SubscriptionProcessor {
 	
 	public abstract Subscriber getSubscriberFromMessage (SavanMessageContext smc) throws SavanException;
 	
-	public abstract RenewBean getRenewBean (SavanMessageContext renewMessage) throws SavanException;
+	public abstract ExpirationBean getExpirationBean (SavanMessageContext renewMessage) throws SavanException;
 	
 	public abstract String getSubscriberID (SavanMessageContext smc) throws SavanException;
 

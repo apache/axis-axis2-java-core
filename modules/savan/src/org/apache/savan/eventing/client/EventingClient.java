@@ -17,11 +17,14 @@
 
 package org.apache.savan.eventing.client;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -32,7 +35,11 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.databinding.types.Duration;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.savan.eventing.EventingConstants;
+import org.apache.savan.subscription.ExpirationBean;
+import org.apache.savan.util.CommonUtil;
 
 public class EventingClient {
 
@@ -69,7 +76,17 @@ public class EventingClient {
 		options.setAction(oldAction);
 	}
 	
-	public void renewSubscription (long renewAmount, String subscriptionID) throws Exception {
+	public void renewSubscription (Date newExpirationTime, String subscriptionID) throws Exception {
+		String expirationString = ConverterUtil.convertToString(newExpirationTime);
+		renewSubscription(expirationString,subscriptionID);
+	}
+	
+	public void renewSubscription (Duration duration, String subscriptionID) throws Exception {
+		String expirationString = ConverterUtil.convertToString(duration);
+		renewSubscription(expirationString,subscriptionID);
+	}
+	
+	public void renewSubscription (String expirationString, String subscriptionID) throws Exception {
 		SubscriptionResponseData data = (SubscriptionResponseData) subscriptionDataMap.get(subscriptionID);
 		EndpointReference managerEPR = data.getSubscriptionManager();
 		if (managerEPR==null)
@@ -85,7 +102,7 @@ public class EventingClient {
 		if (SOAPVersion==null) 
 			SOAPVersion = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 		
-		SOAPEnvelope envelope = createRenewSubscriptionEnvelope(renewAmount,SOAPVersion);
+		SOAPEnvelope envelope = createRenewSubscriptionEnvelope(expirationString,SOAPVersion);
 		
 		String oldAction = options.getAction();
 		String action = EventingConstants.Actions.Renew;
@@ -165,7 +182,7 @@ public class EventingClient {
 		return subscriptionStatus;
 	}
 	
-	private SubscriptionResponseData getSubscriptionResponseData (OMElement responseMessagePayload) {
+	private SubscriptionResponseData getSubscriptionResponseData (OMElement responseMessagePayload) throws Exception {
 		SubscriptionResponseData data = new SubscriptionResponseData ();
 		
 		OMElement subscriberManagerElement = responseMessagePayload.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.SubscriptionManager));
@@ -175,9 +192,20 @@ public class EventingClient {
 		
 		OMElement expiresElement = responseMessagePayload.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Expires));
 		if (expiresElement!=null) {
-			String text = expiresElement.getText();
-			long expiresValue = Long.parseLong(text);
-			data.setExpires(expiresValue);
+			String text = expiresElement.getText().trim();
+
+			ExpirationBean expirationBean = new ExpirationBean ();
+			if (CommonUtil.isDuration(text)) {
+				expirationBean.setDuration(true);
+				Duration duration = ConverterUtil.convertToDuration(text);
+				expirationBean.setDurationValue(duration);
+			} else {
+				expirationBean.setDuration(false);
+				Date date = ConverterUtil.convertTodateTime(text).getTime();
+				expirationBean.setDateValue(date);
+			}
+			
+			data.setExpiration(expirationBean);
 		}
 		
 		return data;
@@ -229,13 +257,43 @@ public class EventingClient {
 		deliveryElement.addChild(notifyToElement);
 		subscriptionElement.addChild(deliveryElement);
 		
-		//TODO add Expires,Filter elements.
+		if (bean.getExpirationTime()!=null || bean.getExpirationDuration()!=null) {
+			String timeString = null;
+			
+			//if time is set it will be taken. Otherwise duration will be taken.
+			if (bean.getExpirationTime()!=null) {
+				Date date = bean.getExpirationTime();
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				timeString = ConverterUtil.convertToString(calendar);
+			} else if (bean.getExpirationDuration()!=null) {
+				Duration duration = bean.getExpirationDuration();
+				timeString = ConverterUtil.convertToString(duration);
+			}
+			
+			OMElement expiresElement = factory.createOMElement(EventingConstants.ElementNames.Expires,ens);
+			expiresElement.setText(timeString);
+			subscriptionElement.addChild(expiresElement);
+		}
+		
+		if (bean.getFilter()!=null) {
+			String filter = bean.getFilter();
+			String dialect = bean.getFilterDialect();
+			
+			OMElement filterElement = factory.createOMElement(EventingConstants.ElementNames.Filter,ens);
+			OMAttribute dialectAttr = factory.createOMAttribute(EventingConstants.ElementNames.Dialect,null,dialect);
+			filterElement.addAttribute(dialectAttr);
+			filterElement.setText(filter);
+			
+			subscriptionElement.addChild(filterElement);
+		}
+		
 		body.addChild(subscriptionElement);
 		
 		return envelope;
 	}
 	
-	private SOAPEnvelope createRenewSubscriptionEnvelope (long renewAmount, String SOAPVersion) throws Exception{
+	private SOAPEnvelope createRenewSubscriptionEnvelope (String expiresString, String SOAPVersion) throws Exception{
 		SOAPFactory factory = null;
 		
 		if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(SOAPVersion))
@@ -250,7 +308,7 @@ public class EventingClient {
 		OMNamespace ens = factory.createOMNamespace(EventingConstants.EVENTING_NAMESPACE,EventingConstants.EVENTING_PREFIX);
 		OMElement renewElement = factory.createOMElement(EventingConstants.ElementNames.Renew,ens);
 		OMElement expiresElement = factory.createOMElement(EventingConstants.ElementNames.Expires,ens);
-		expiresElement.setText(new Long (renewAmount).toString());
+		expiresElement.setText(expiresString);
 		renewElement.addChild(expiresElement);
 		
 		body.addChild(renewElement);
@@ -294,31 +352,6 @@ public class EventingClient {
 		body.addChild(getStatusElement);
 		
 		return envelope;
-	}
-	
-	private class SubscriptionResponseData {
-
-		EndpointReference subscriptionManager = null;
-		
-		long expires = -1;
-
-		public long getExpires() {
-			return expires;
-		}
-
-		public EndpointReference getSubscriptionManager() {
-			return subscriptionManager;
-		}
-
-		public void setExpires(long expires) {
-			this.expires = expires;
-		}
-
-		public void setSubscriptionManager(EndpointReference subscriptionManager) {
-			this.subscriptionManager = subscriptionManager;
-		}
-		
-		
 	}
 	
 }
