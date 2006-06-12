@@ -69,11 +69,11 @@ public class ConfigurationContextFactory {
         Parameter manageSession = axisConfig.getParameter(Constants.MANAGE_TRANSPORT_SESSION);
         if (manageSession != null) {
             String value = ((String) manageSession.getValue()).trim();
-            axisConfig.setManageTransportSession(Boolean.getBoolean(value));
+            axisConfig.setManageTransportSession(Boolean.valueOf(value).booleanValue());
         }
     }
 
-    private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext)  throws AxisFault{
+    private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext) throws AxisFault {
         // Checking for context path
         Parameter servicePath = axisConfig.getParameter(Constants.SERVICE_PATH);
         if (servicePath != null) {
