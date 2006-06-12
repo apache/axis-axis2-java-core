@@ -12,4 +12,27 @@
         </handler>
     </outflow>
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
+    
+    <operation name="RequestSecurityToken" mep="http://www.w3.org/2004/08/wsdl/in-out">
+        <messageReceiver class="org.apache.axis2.security.trust.STSMessageReceiver"/>
+
+		<!-- Action mapping to accept SCT requests -->        
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT</actionMapping>
+
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Renew</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate</actionMapping>
+
+		<parameter name="token-dispatcher-configuration">
+			<token-dispatcher-configuration>
+				<issuer class="org.apache.axis2.security.trust.impl.SCTIssuer" default="true">
+					<configuration-param>sct-issuer-config</configuration-param>
+					<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
+				</issuer>
+			</token-dispatcher-configuration>
+		</parameter>
+
+     </operation>
+     
 </module>

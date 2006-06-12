@@ -19,8 +19,11 @@ package org.apache.rampart.handler;
 /**
  * Constants specific to the Axis2 security module
  */
-public interface WSSHandlerConstants {
+public class WSSHandlerConstants {
 
+    private WSSHandlerConstants() {
+    }
+    
     /**
      * Name of the .mar file
      */
@@ -93,4 +96,43 @@ public interface WSSHandlerConstants {
      * Key to be used to set a flag in msg ctx to enable/disable using doom
      */
     public final static String DISABLE_DOOM = "useDoom";
+    
+    
+    ///
+    /// WS-SecureConversation constants
+    ///
+    
+    
+    /**
+     * Key to hod the map of security context identifiers against the 
+     * service epr addresses (service scope) or wsa:Action values (operation 
+     * scope).
+     */
+    public final static String CONTEXT_MAP_KEY = "contextMap";
+    
+    /**
+     * The <code>java.util.Properties</code> object holding the properties 
+     * of a <code>org.apache.ws.security.components.crypto.Crypto</code> impl.
+     * 
+     * This should ONLY be used when the CRYPTO_CLASS_KEY is specified.
+     * 
+     * @see org.apache.ws.security.components.crypto.Crypto
+     */
+    public final static String CRYPTO_PROPERTIES_KEY = "cryptoPropertiesRef";
+    
+    /**
+     * The class that implements 
+     * <code>org.apache.ws.security.components.crypto.Crypto</code>.
+     */
+    public final static String CRYPTO_CLASS_KEY = "cryptoClass";
+    
+    //TODO: Get these constants from the WS-Trust impl's constants
+    public final static String RST_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT";
+    public final static String RSTR_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/SCT";
+    
+    public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
+    
+    public final static String WST_NS = "http://schemas.xmlsoap.org/ws/2005/02/trust";
+    public static final String REQUEST_SECURITY_TOKEN_RESPONSE_LN = "RequestSecurityTokenResponse";
+    
 }

@@ -44,7 +44,6 @@ public abstract class TestClient extends TestCase {
     
     private static final String AXIS2_ECHO_STRING = "Axis2 Echo String";
     protected int port = UtilServer.TESTING_PORT;
-    private QName rahasModule = new QName("rahas");
     
     public TestClient(String name) {
         super(name);
@@ -88,7 +87,7 @@ public abstract class TestClient extends TestCase {
 
             options.setAction("urn:echo");
 
-            serviceClient.engageModule(rahasModule);
+            serviceClient.engageModule(new QName("rampart"));
 
             serviceClient.setOptions(options);
 
