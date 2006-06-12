@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpServerConnection;
@@ -48,6 +49,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
 
     private static Log LOG = LogFactory.getLog(DefaultHttpConnectionManager.class);
     
+    private final ConfigurationContext configurationContext;
     private final Executor executor;
     private final WorkerFactory workerfactory;
     private final HttpParams params;
@@ -56,10 +58,14 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     private HttpFactory httpFactory = null;
     
     public DefaultHttpConnectionManager(
+            final ConfigurationContext configurationContext,
     		final Executor executor,
             final WorkerFactory workerfactory,
     		final HttpParams params) {
         super();
+        if (configurationContext == null) {
+            throw new IllegalArgumentException("Configuration context may not be null");
+        }
         if (executor == null) {
             throw new IllegalArgumentException("Executor may not be null");
         }
@@ -69,14 +75,20 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         if (params == null) {
             throw new IllegalArgumentException("HTTP parameters may not be null");
         }
+        this.configurationContext = configurationContext;
         this.executor = executor;
         this.workerfactory = workerfactory;
         this.params = params;
         this.processors = new LinkedList();
     }
     
-    public DefaultHttpConnectionManager(final Executor executor, final WorkerFactory workerfactory, final HttpParams params, final HttpFactory httpFactory) {
-        this(executor, workerfactory, params);
+    public DefaultHttpConnectionManager(
+            final ConfigurationContext configurationContext,
+            final Executor executor,
+            final WorkerFactory workerfactory,
+            final HttpParams params, 
+            final HttpFactory httpFactory) {
+        this(configurationContext, executor, workerfactory, params);
         this.httpFactory = httpFactory;
     }
 
@@ -125,7 +137,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         if (httpFactory!=null)
             processor = httpFactory.newRequestServiceProcessor(conn, workerfactory.newWorker(), callback);
         else
-            processor = new DefaultHttpServiceProcessor(conn, workerfactory.newWorker(), callback);
+            processor = new DefaultHttpServiceProcessor(conn, configurationContext, workerfactory.newWorker(), callback);
 
         processor.setParams(this.params);
         // Add required protocol interceptors

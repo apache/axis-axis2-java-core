@@ -210,13 +210,15 @@ public class HttpFactory {
         params
             .setIntParameter(HttpConnectionParams.SO_TIMEOUT, requestSocketTimeout)
             .setBooleanParameter(HttpConnectionParams.TCP_NODELAY, requestTcpNoDelay) 
+            .setIntParameter(HttpConnectionParams.MAX_LINE_LENGTH, 4000)
+            .setIntParameter(HttpConnectionParams.MAX_HEADER_COUNT, 500)
             .setParameter(HttpProtocolParams.ORIGIN_SERVER, originServer);
         return params;
     }
     
     /** Create the connection manager used to launch request threads */
     public HttpConnectionManager newRequestConnectionManager(ExecutorService requestExecutor, WorkerFactory workerFactory, HttpParams params) {
-        return new DefaultHttpConnectionManager(requestExecutor, workerFactory, params);
+        return new DefaultHttpConnectionManager(configurationContext, requestExecutor, workerFactory, params);
     }
     
     /** Create the executor use the manage request processing threads */
@@ -238,12 +240,12 @@ public class HttpFactory {
         if (requestWorkerFactory!=null)
             return requestWorkerFactory;
         else
-            return new HTTPWorkerFactory(configurationContext);
+            return new HTTPWorkerFactory();
     }
 
     /** Create a request service processor to populate the response */
     public HttpServiceProcessor newRequestServiceProcessor(HttpServerConnection connection, Worker worker, IOProcessorCallback callback) {
-        return new DefaultHttpServiceProcessor(connection, worker, callback);
+        return new DefaultHttpServiceProcessor(connection, configurationContext, worker, callback);
     }
     
     // *****

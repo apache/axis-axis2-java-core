@@ -29,24 +29,17 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.http.server.Worker;
 import org.apache.axis2.transport.http.server.WorkerFactory;
 
 public class HTTPWorkerFactory implements WorkerFactory {
 
-    final ConfigurationContext configurationContext;
-    
-    public HTTPWorkerFactory(final ConfigurationContext configurationContext) {
+    public HTTPWorkerFactory() {
         super();
-        if (configurationContext == null) {
-            throw new IllegalArgumentException("Configuration context may not be null");
-        }
-        this.configurationContext = configurationContext;
     }
     
     public Worker newWorker() {
-        return new HTTPWorker(this.configurationContext);
+        return new HTTPWorker();
     }
     
 }

@@ -57,6 +57,7 @@ public class SimpleHttpServer {
     private IOProcessor listener = null;
     private ExecutorService listenerExecutor = null;
     private HttpConnectionManager connmanager = null;
+    private HttpConnectionFactory connfactory = null;
     private ExecutorService requestExecutor = null;
 
     public SimpleHttpServer(ConfigurationContext configurationContext, WorkerFactory workerFactory, int port) throws IOException {
@@ -74,9 +75,8 @@ public class SimpleHttpServer {
         requestExecutor = httpFactory.newRequestExecutor(port);
         connmanager = httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params);
         listenerExecutor = httpFactory.newListenerExecutor(port);
-        listener = httpFactory.newRequestConnectionListener(httpFactory.newRequestConnectionFactory(params),
-                                                            httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params),
-                                                            port);
+        connfactory = httpFactory.newRequestConnectionFactory(params);
+        listener = httpFactory.newRequestConnectionListener(connfactory, connmanager, port);
     }
     
     public void destroy() throws IOException, InterruptedException {
