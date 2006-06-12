@@ -17,8 +17,10 @@
 package sample.eventing;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 
 import javax.xml.namespace.QName;
 
@@ -32,6 +34,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.databinding.types.Duration;
 import org.apache.savan.eventing.client.EventingClient;
 import org.apache.savan.eventing.client.EventingClientBean;
 
@@ -49,17 +52,73 @@ public class Client {
     private Options options = null;
     private EventingClient eventingClient = null;
     
-    private String toAddress = "http://localhost:8080/axis2/services/PublisherService";
-    private String listner1Address = "http://localhost:8080/axis2/services/ListnerService1";
-    private String listner2Address = "http://localhost:8080/axis2/services/ListnerService2";
+    private String toAddressPart = "/axis2/services/PublisherService";
+    private String listner1AddressPart = "/axis2/services/ListnerService1";
+    private String listner2AddressPart = "/axis2/services/ListnerService2";
     
 	private final String applicationNamespaceName = "http://tempuri.org/"; 
 	private final String dummyMethod = "dummyMethod";
     
+	private static String repo = null;
+	private static int port = 8080;
+	private static String serverIP = "127.0.0.1";
+	
+	private static final String portParam = "-p";
+	private static final String repoParam = "-r";
+	private static final String helpParam = "-h";
+	
 	public static void main (String[] args) throws Exception {
+		
+		for (int i=0;i<args.length;i++) {
+			if (helpParam.equalsIgnoreCase(args[i])) {
+				displayHelp ();
+				System.exit(0);
+			}
+		}
+		
+		String portStr = getParam(portParam,args);
+		if (portStr!=null) {
+			port = Integer.parseInt(portStr);
+			System.out.println("Server Port was set to:" + port);
+		}
+		
+		String repoStr = getParam(repoParam,args);
+		if (repoStr!=null) {
+			repo = repoStr;
+			System.out.println("Client Repository was set to:" + repo);
+		}
+		
 		Client c = new Client ();
 		c.run ();
 	}
+	
+	private static void displayHelp () {
+		System.out.println("Help page for the Eventing Client");
+		System.out.println("---------------------------------");
+		System.out.println("Set the client reposiory using the parameter -r");
+		System.out.println("Set the server port using the parameter -p");
+	}
+	
+    /**
+     * This will check the given parameter in the array and will return, if available
+     *
+     * @param param
+     * @param args
+     * @return
+     */
+    private static String getParam(String param, String[] args) {
+        if (param == null || "".equals(param)) {
+            return null;
+        }
+
+        for (int i = 0; i < args.length; i = i + 2) {
+            String arg = args[i];
+            if (param.equalsIgnoreCase(arg) && (args.length >= (i + 1))) {
+                return args[i + 1];
+            }
+        }
+        return null;
+    }
 	
 	public void run () throws Exception {
 		
@@ -130,10 +189,18 @@ public class Client {
 	}
 	
 	private void initClient () throws AxisFault {
-		String CLIENT_REPO_PATH = "E:\\temp\\REPO";
-		String AXIS2_XML = "E:\\temp\\REPO\\axis2.xml";
+
+		String CLIENT_REPO = null;
+		String AXIS2_XML = null;
 		
-		ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_REPO_PATH,AXIS2_XML);
+		if (repo!=null) {
+			CLIENT_REPO = repo;
+			AXIS2_XML = repo + File.separator + "axis2.xml";
+		} else {
+			throw new AxisFault ("Please specify the client repository as a program argument.Use '-h' for help.");
+		}
+		
+		ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_REPO,AXIS2_XML);
 		serviceClient = new ServiceClient (configContext,null); //TODO give a repo
 		
 		options = new Options ();
@@ -141,6 +208,8 @@ public class Client {
 		serviceClient.engageModule(new QName ("addressing"));
 		
 		eventingClient = new EventingClient (serviceClient);
+		
+		String toAddress = "http://" + serverIP + ":" + port + toAddressPart;
 		options.setTo(new EndpointReference (toAddress));
 	}
 	
@@ -179,13 +248,19 @@ public class Client {
 		EventingClientBean bean = new EventingClientBean ();
 		
 		String subscribingAddress = null;
-		if (SUBSCRIBER_1_ID.equals(ID))
+		if (SUBSCRIBER_1_ID.equals(ID)) {
+			String listner1Address = "http://" + serverIP + ":" + port + listner1AddressPart;
 			subscribingAddress = listner1Address;
-		else if (SUBSCRIBER_2_ID.equals(ID))
+		} else if (SUBSCRIBER_2_ID.equals(ID)) {
+			String listner2Address = "http://" + serverIP + ":" + port + listner2AddressPart;
 			subscribingAddress = listner2Address;
+		}
 	
 		bean.setDeliveryEPR(new EndpointReference (subscribingAddress));
 		
+		Date date = new Date ();
+		date.setMinutes(date.getMinutes()+1);
+		bean.setExpirationTime(date);
 		eventingClient.subscribe(bean,ID);
 		Thread.sleep(1000);   //TODO remove if not sequired
 	}
