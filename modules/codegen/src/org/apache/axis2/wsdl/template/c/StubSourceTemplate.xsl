@@ -74,7 +74,7 @@
                                           NULL);
             op = axis2_op_create_with_qname(env, op_qname);
             <xsl:choose>
-              <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
+              <xsl:when test="@mep='12'">
                 AXIS2_OP_SET_MSG_EXCHANGE_PATTERN(op, env, AXIS2_MEP_URI_IN_ONLY);
               </xsl:when>
               <xsl:otherwise>
@@ -121,7 +121,7 @@
       <!-- MTOM -->
 
       <!-- Code generation for the in-out mep -->
-      <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-out'">
+      <xsl:if test="$mep='12'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
         <xsl:if test="$isSync='1'">
           /**
            * Auto generated method signature
@@ -234,7 +234,7 @@
                 <!-- End of in-out mep -->
          </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out' -->
 
-         <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-only'">
+         <xsl:if test="$mep='10'">  <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
           /**
            * Auto generated method signature
            */

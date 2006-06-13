@@ -27,7 +27,7 @@
     public class <xsl:value-of select="@name"/> extends junit.framework.TestCase{
 
      <xsl:for-each select="method">
-         <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-out'">
+         <xsl:if test="@mep='12'">
           <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
           <xsl:if test="$isSync='1'">
         /**
@@ -130,7 +130,7 @@
       <!-- end of in-out mep -->
       </xsl:if>
       <!-- start of in-only mep-->
-      <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
+      <xsl:if test="@mep='10'">
           /**
           * Auto generated test method
           */

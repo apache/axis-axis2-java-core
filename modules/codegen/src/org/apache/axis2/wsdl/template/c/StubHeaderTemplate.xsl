@@ -75,7 +75,7 @@
         <xsl:if test="$isAsync='1'">
         <xsl:for-each select="method">
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
-        <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-out'">
+        <xsl:if test="$mep='12'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
         void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, axis2_env_t** env, <xsl:for-each select="input/param[@type!='']">
                                                     axis2_om_node_t*<xsl:text> </xsl:text>payload<!--<xsl:value-of select="@name"></xsl:value-of>--> ,
                                                     </xsl:for-each>

@@ -72,7 +72,7 @@
         _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
             <xsl:choose>
-                <xsl:when test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
+                <xsl:when test="@mep='10'">
                     __operation = new org.apache.axis2.description.OutOnlyAxisOperation();
                 </xsl:when>
                 <xsl:otherwise>
@@ -217,7 +217,7 @@
 	    <!-- MTOM -->
 
             <!-- Code generation for the in-out mep -->
-            <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-out'">
+            <xsl:if test="$mep='12'">  <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
                 <xsl:if test="$isSync='1'">
                     /**
                     * Auto generated method signature
@@ -512,7 +512,7 @@
                 <!-- End of in-out mep -->
             </xsl:if>
             <!-- Start of in only mep-->
-            <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-only'">
+            <xsl:if test="$mep='10'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
                 <!-- for the in only mep there is no notion of sync or async. And there is no return type also -->
                 public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
                 <xsl:for-each select="input/param[@type!='']">

@@ -18,7 +18,7 @@
                 <xsl:for-each select="messagereceiver">
                     <xsl:if test=".">
                         <messageReceiver>
-                            <xsl:attribute name="mep"><xsl:value-of select="@mep"/></xsl:attribute>
+                            <xsl:attribute name="mep"><xsl:value-of select="@mepURI"/></xsl:attribute>
                             <xsl:choose>
                                 <xsl:when test="$package=''">
                                     <xsl:attribute name="class"><xsl:value-of select="."/></xsl:attribute>
@@ -45,7 +45,7 @@
 			<xsl:for-each select="method">
 				<operation>
 					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
-					<xsl:attribute name="mep"><xsl:value-of select="@mep"/></xsl:attribute>
+					<xsl:attribute name="mep"><xsl:value-of select="@mepURI"/></xsl:attribute>
 					<actionMapping>
 						<xsl:value-of select="@soapaction"/>
 					</actionMapping>

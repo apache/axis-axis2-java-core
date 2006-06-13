@@ -31,7 +31,7 @@
     public interface <xsl:value-of select="@name"></xsl:value-of> {
  		 <xsl:for-each select="method">
 		    <!-- Code for in-out mep -->
-         <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-out'">
+         <xsl:if test="@mep='12'">
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
 
         <!-- start of the sync block -->                                          
@@ -65,7 +65,7 @@
 
      </xsl:if>
         <!-- Code for in-only mep -->
-       <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-only'">
+       <xsl:if test="@mep='10'">
 
        <!-- For in-only meps there would not be any asynchronous methods since there is no output -->
          /**

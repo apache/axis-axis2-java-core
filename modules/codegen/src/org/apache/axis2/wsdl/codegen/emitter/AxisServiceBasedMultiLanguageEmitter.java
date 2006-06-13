@@ -8,6 +8,7 @@ import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDL20Constants;
@@ -93,8 +94,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final String FAULT_SUFFIX = "Exception";
     protected static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
 
-    protected static Map MEPtoClassMap;
-    protected static Map MEPtoSuffixMap;
+    protected static Map mepToClassMap;
+    protected static Map mepToSuffixMap;
 
     protected int uniqueFaultNameCounter = 0;
     /**
@@ -133,14 +134,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 "new javax.xml.namespace.QName(\"http://foo\", \"bar\")");
 
         //populate the MEP -> class map
-        MEPtoClassMap = new HashMap();
-        MEPtoClassMap.put(WSDLConstants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
-        MEPtoClassMap.put(WSDLConstants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+        mepToClassMap = new HashMap();
+        mepToClassMap.put(WSDLConstants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
+        mepToClassMap.put(WSDL20Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+        mepToClassMap.put(WSDL20Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
 
         //populate the MEP -> suffix map
-        MEPtoSuffixMap = new HashMap();
-        MEPtoSuffixMap.put(WSDLConstants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        MEPtoSuffixMap.put(WSDLConstants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
+        mepToSuffixMap = new HashMap();
+        mepToSuffixMap.put(WSDLConstants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDL20Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
+        mepToSuffixMap.put(WSDL20Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
     }
 
@@ -467,7 +472,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         /////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         /////////////////////////////////////////////////////
 
 
@@ -727,7 +732,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //for the server side codegen
         //we need to serialize the WSDL's
-//        writeWSDLFiles();
+        writeWSDLFiles();
     }
 
     /**
@@ -827,7 +832,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (codeGenConfiguration.isWriteMessageReceiver()) {
             //loop through the meps and generate code for each mep
-            Iterator it = MEPtoClassMap.keySet().iterator();
+            Iterator it = mepToClassMap.keySet().iterator();
             while (it.hasNext()) {
                 String mep = (String) it.next();
                 Document classModel = createDocumentForMessageReceiver(
@@ -855,7 +860,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         String localPart = makeJavaClassName(axisService.getName());
 
-        addAttribute(doc, "name", localPart + MEPtoSuffixMap.get(mep), rootElement);
+        addAttribute(doc, "name", localPart + mepToSuffixMap.get(mep), rootElement);
         addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX, rootElement);
         if (isServerSideInterface){
             addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
@@ -864,7 +869,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX,
                     rootElement);
         }
-        addAttribute(doc, "basereceiver", (String) MEPtoClassMap.get(mep), rootElement);
+        addAttribute(doc, "basereceiver", (String) mepToClassMap.get(mep), rootElement);
+
         fillSyncAttributes(doc, rootElement);
 
         // ###########################################################################################
@@ -891,7 +897,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         doc.appendChild(rootElement);
 
         //////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////
         return doc;
     }
@@ -1103,18 +1109,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
         addAttribute(doc, "servicename", serviceName, rootElement);
 
-        Iterator it = MEPtoClassMap.keySet().iterator();
+        Iterator it = mepToClassMap.keySet().iterator();
         while (it.hasNext()) {
             Object key = it.next();
 
             if (Boolean.TRUE.equals(infoHolder.get(key))) {
-                Element elt = addElement(doc, "messagereceiver", className + MEPtoSuffixMap.get(key), rootElement);
-                addAttribute(doc, "mep", key.toString(), elt);
+                Element elt = addElement(doc, "messagereceiver", className + mepToSuffixMap.get(key), rootElement);
+                addAttribute(doc, "mepURI", key.toString(), elt);
             }
 
         }
 
         loadOperations(doc, rootElement, null);
+
+        System.out.println(DOM2Writer.nodeToString(rootElement));
 
         return rootElement;
     }
@@ -1162,7 +1170,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //attach a list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
 
-        System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
 
         doc.appendChild(rootElement);
         return doc;
@@ -1225,7 +1233,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                         methodElement);
 
-                addAttribute(doc, "mep", axisOperation.getMessageExchangePattern(), methodElement);
+
+                addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "" , methodElement);
+                addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+
 
                 addSOAPAction(doc, methodElement, axisOperation);
                 //add header ops for input
@@ -1261,7 +1272,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                             methodElement);
 
-                    addAttribute(doc, "mep", axisOperation.getMessageExchangePattern(), methodElement);
+                    addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
+                    addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
                     addSOAPAction(doc, methodElement, axisOperation);

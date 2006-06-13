@@ -29,6 +29,7 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.wsdl.WSDL20Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -373,21 +374,22 @@ public abstract class AxisOperation extends AxisDescription
 
         int temp = MEP_CONSTANT_INVALID;
 
-        if (MEP_URI_IN_OUT.equals(getMessageExchangePattern())) {
+        String messageExchangePattern = getMessageExchangePattern();
+        if (MEP_URI_IN_OUT.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_IN_OUT;
-        } else if (MEP_URI_IN_ONLY.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_IN_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_IN_ONLY;
-        } else if (MEP_URI_IN_OPTIONAL_OUT.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_IN_OPTIONAL_OUT;
-        } else if (MEP_URI_OUT_IN.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_OUT_IN.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_OUT_IN.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_OUT_IN;
-        } else if (MEP_URI_OUT_ONLY.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_OUT_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_OUT_ONLY;
-        } else if (MEP_URI_OUT_OPTIONAL_IN.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_OUT_OPTIONAL_IN;
-        } else if (MEP_URI_ROBUST_IN_ONLY.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_ROBUST_IN_ONLY;
-        } else if (MEP_URI_ROBUST_OUT_ONLY.equals(getMessageExchangePattern())) {
+        } else if (MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern)) {
             temp = MEP_CONSTANT_ROBUST_OUT_ONLY;
         }
 

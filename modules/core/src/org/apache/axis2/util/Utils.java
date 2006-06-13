@@ -18,20 +18,40 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultSubCode;
+import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.*;
-import org.apache.axis2.description.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.wsdl.WSDL20Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -362,4 +382,41 @@ public class Utils {
         }
         return false;
     }
+
+    /**
+         * Maps the String URI of the Message exchange pattern to a integer.
+         * Further, in the first lookup, it will cache the looked
+         * up value so that the subsequent method calls are extremely efficient.
+         */
+        public static int getAxisSpecifMEPConstant(String messageExchangePattern) {
+
+
+            int mepConstant = WSDLConstants.MEP_CONSTANT_INVALID;
+
+            if (WSDLConstants.MEP_URI_IN_OUT.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_IN_OUT;
+            } else if (WSDLConstants.MEP_URI_IN_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_IN_ONLY;
+            } else if (WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT;
+            } else if (WSDLConstants.MEP_URI_OUT_IN.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_OUT_IN.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_OUT_IN;
+            } else if (WSDLConstants.MEP_URI_OUT_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_OUT_ONLY;
+            } else if (WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN;
+            } else if (WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY;
+            } else if (WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) || WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern)) {
+                mepConstant = WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY;
+            }
+
+            if (mepConstant == WSDLConstants.MEP_CONSTANT_INVALID) {
+                throw new AxisError(Messages.getMessage("mepmappingerror"));
+            }
+
+
+            return mepConstant;
+        }
+
 }

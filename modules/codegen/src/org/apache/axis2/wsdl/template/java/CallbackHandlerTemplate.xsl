@@ -45,7 +45,7 @@
             <xsl:choose>
                 <!-- Code generation for in-out only. Need to consider the other meps also
                     They should be parts of this xsl:choose loop -->
-                <xsl:when test="$mep='http://www.w3.org/2004/08/wsdl/in-out'">
+                <xsl:when test="$mep='12'">
            /**
             * auto generated Axis2 call back method for <xsl:value-of select="@name"/> method
             *
