@@ -34,12 +34,22 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
     public XSLTIncludeResolver() {
     }
 
+    /**
+     * 
+     * @param config
+     */
     public XSLTIncludeResolver(CodeGenConfiguration config) {
         this.configuration = config;
     }
 
 
-
+    /**
+     * Resolves a given href and base combination
+     * @param href
+     * @param base
+     * @return
+     * @throws TransformerException
+     */
     public Source resolve(String href, String base) throws TransformerException {
         String templateName;
         Map externalPropertyMap = configuration.getProperties();
@@ -74,6 +84,12 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
         return getEmptySource();
     }
 
+    /**
+     * load the template from a given resource path
+     * @param templateName
+     * @return  the loaded transform source
+     * @throws TransformerException
+     */
     private Source getSourceFromTemplateName(String templateName) throws TransformerException {
         InputStream supporterTemplateStream;
         if(templateName!=null){
@@ -84,6 +100,10 @@ public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
         }
     }
 
+    /**
+     * returns an empty source
+     * @return
+     */
     private Source getEmptySource(){
         return new StreamSource(new ByteArrayInputStream("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>".getBytes()));
     }

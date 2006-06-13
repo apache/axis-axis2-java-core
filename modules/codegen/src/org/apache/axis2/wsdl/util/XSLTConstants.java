@@ -19,8 +19,8 @@ package org.apache.axis2.wsdl.util;
 //todo rename this
 public interface XSLTConstants {
 
-     String BASE_64_PROPERTY_KEY = "base64map";
-     String PLAIN_BASE_64_PROPERTY_KEY = "plainbase64map";
+    String BASE_64_PROPERTY_KEY = "base64map";
+    String PLAIN_BASE_64_PROPERTY_KEY = "plainbase64map";
 
     String EXTERNAL_TEMPLATE_PROPERTY_KEY = "externalTemplate";
     String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY = "databindsupporter";
@@ -28,9 +28,9 @@ public interface XSLTConstants {
 
 
     public interface CodegenStyle {
-        public static final int AUTOMATIC = 0;
-        public static final int INTERFACE = 1;
-        public static final int BINDING = 2;
+        final int AUTOMATIC = 0;
+        final int INTERFACE = 1;
+        static final int BINDING = 2;
     }
 
 

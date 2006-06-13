@@ -28,7 +28,6 @@ import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
@@ -118,7 +117,6 @@ public class CodeGenerationEngine {
         } catch (WSDLException e) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
 

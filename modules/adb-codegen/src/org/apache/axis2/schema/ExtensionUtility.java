@@ -144,7 +144,10 @@ public class ExtensionUtility {
      */
     private static void populateDefaultOptions(CompilerOptions options,CodeGenConfiguration configuration) {
         //create the output directory
-        File outputDir = new File(configuration.getOutputLocation(), "src");
+        File outputDir =  configuration.isFlattenFiles()?
+                          configuration.getOutputLocation():
+                          new File(configuration.getOutputLocation(),"src");
+        
         if(!outputDir.exists()) {
             outputDir.mkdirs();
         }

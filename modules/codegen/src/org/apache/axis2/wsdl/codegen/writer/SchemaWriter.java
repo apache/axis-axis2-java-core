@@ -38,7 +38,7 @@ public class SchemaWriter {
             if (schema!= null){
                 //create a output file
                 File outputFile = FileWriter.createClassFile(baseFolder,
-                        "resources",
+                        null,
                         schemaFileName.substring(0,schemaFileName.lastIndexOf(".")),
                         ".xsd");
                 FileOutputStream fos = new FileOutputStream(outputFile);

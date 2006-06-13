@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.wsdl.codegen.emitter;
 
 import org.apache.axis2.wsdl.codegen.emitter.AxisServiceBasedMultiLanguageEmitter;
@@ -51,7 +51,10 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
 
         CHeaderWriter writerH =
-                new CHeaderWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                new CHeaderWriter(
+                        codeGenConfiguration.isFlattenFiles()?
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerH);
@@ -68,7 +71,9 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
 
         CSourceWriter writerC =
-                new CSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                new CSourceWriter(codeGenConfiguration.isFlattenFiles()?
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerC);

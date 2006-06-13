@@ -1,6 +1,5 @@
 package org.apache.axis2.wsdl.codegen.emitter;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -167,9 +166,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Map faultClassNameMap = new HashMap();
 
     protected Map instantiatableMessageClassNames = new HashMap();
-    ;
+
+    protected static final String SRC_DIR_NAME = "src";
+    protected static final String TEST_SRC_DIR_NAME = "test";
+    protected static final String RESOURCE_SRC_DIR_NAME = "resources";
 
 
+    /**
+     * default constructor - builds
+     */
     public AxisServiceBasedMultiLanguageEmitter() {
         infoHolder = new HashMap();
     }
@@ -297,11 +302,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         writeTestClasses();
 
         // write an ant build file
-        //Note that ant build is generated only once
-        //and that has to happen here only if the
-        //client side code is required
+        // Note that ant build is generated only once
+        // and that has to happen here only if the
+        // client side code is required
         if (!codeGenConfiguration.isGenerateAll()) {
-            writeAntBuild();
+            //our logic for the build xml is that it will
+            //only be written when not flattened
+            if (!codeGenConfiguration.isFlattenFiles()){
+                writeAntBuild();
+            }
         }
 
     }
@@ -356,7 +365,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Document classModel = createDOMDocumentForTestCase();
             debugLogDocument("Document for test case:", classModel);
             TestClassWriter callbackWriter =
-                    new TestClassWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "test"),
+                    new TestClassWriter(
+                            codeGenConfiguration.isFlattenFiles()?
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), TEST_SRC_DIR_NAME),
                             codeGenConfiguration.getOutputLanguage());
 
             writeClass(classModel, callbackWriter);
@@ -398,7 +410,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
         debugLogDocument("Document for interface implementation:", interfaceImplModel);
         InterfaceImplementationWriter writer =
-                new InterfaceImplementationWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                new InterfaceImplementationWriter(
+                        codeGenConfiguration.isFlattenFiles()?
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writer);
@@ -471,9 +486,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //add another element to have the unique list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
 
-        /////////////////////////////////////////////////////
-//        System.out.println(DOM2Writer.nodeToString(rootElement));
-        /////////////////////////////////////////////////////
 
 
         doc.appendChild(rootElement);
@@ -583,7 +595,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Document interfaceModel = createDOMDocumentForCallbackHandler();
             debugLogDocument("Document for callback handler:", interfaceModel);
             CallbackHandlerWriter callbackWriter =
-                    new CallbackHandlerWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                    new CallbackHandlerWriter(
+                            codeGenConfiguration.isFlattenFiles()?
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                             codeGenConfiguration.getOutputLanguage());
 
             writeClass(interfaceModel, callbackWriter);
@@ -616,7 +631,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Document interfaceModel = createDOMDocumentForInterface(writeDatabinders);
         debugLogDocument("Document for interface:", interfaceModel);
         InterfaceWriter interfaceWriter =
-                new InterfaceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                new InterfaceWriter(
+                        codeGenConfiguration.isFlattenFiles()?
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                         this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceModel, interfaceWriter);
@@ -728,7 +746,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         writeServiceXml();
 
         //write the ant build
-        writeAntBuild();
+        //we skip this for the flattened case
+        if (!codeGenConfiguration.isFlattenFiles()) {
+             writeAntBuild();
+        }
+
 
         //for the server side codegen
         //we need to serialize the WSDL's
@@ -753,7 +775,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //now get the schema list and write it out
         SchemaWriter schemaWriter = new SchemaWriter(
-                codeGenConfiguration.getOutputLocation());
+                codeGenConfiguration.isFlattenFiles()?
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME));
+
+
         Hashtable schemaMappings = axisService.getSchemaMappingTable();
         Iterator keys = schemaMappings.keySet().iterator();
         while (keys.hasNext()) {
@@ -767,13 +793,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //switch between the correct writer
         if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                 equals(codeGenConfiguration.getWSDLVersion())){
+
             WSDL20Writer wsdl20Writer = new WSDL20Writer(
-                    codeGenConfiguration.getOutputLocation());
+                    codeGenConfiguration.isFlattenFiles()?
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME)
+            );
             wsdl20Writer.writeWSDL(axisService);
         }else{
 
             WSDL11Writer wsdl11Writer = new WSDL11Writer(
-                    codeGenConfiguration.getOutputLocation());
+                    codeGenConfiguration.isFlattenFiles()?
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME));
             wsdl11Writer.writeWSDL(axisService);
 
         }
@@ -842,7 +874,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 //write the class only if any methods are found
                 if (Boolean.TRUE.equals(infoHolder.get(mep))) {
                     MessageReceiverWriter writer =
-                            new MessageReceiverWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                            new MessageReceiverWriter(
+                                    codeGenConfiguration.isFlattenFiles()?
+                                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                                     codeGenConfiguration.getOutputLanguage());
 
                     writeClass(classModel, writer);
@@ -896,9 +931,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         doc.appendChild(rootElement);
 
-        //////////////////////////////////
-//        System.out.println(DOM2Writer.nodeToString(rootElement));
-        ////////////////////////////////
         return doc;
     }
 
@@ -1053,7 +1085,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * expect the fully qulified class names to be present in the class names list due to the simple
      * reason that they've not been written yet! Hence the mappers class name list needs to be updated
      * to suit the expected package to be written
-     * in this case we modify the package name to have make the class a inner class of the stub,
+     * in this case we modify the package name to have the class a inner class of the stub,
      * interface or the message receiver depending on the style
      */
     protected void updateMapperClassnames(String fullyQulifiedIncludingClassNamePrefix) {
@@ -1081,7 +1113,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Document serviceXMLModel = createDOMDocumentForServiceXML();
             debugLogDocument("Document for service XML:", serviceXMLModel);
             ClassWriter serviceXmlWriter =
-                    new ServiceXMLWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(), "resources"),
+                    new ServiceXMLWriter(
+                            codeGenConfiguration.isFlattenFiles()?
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME),
                             this.codeGenConfiguration.getOutputLanguage());
 
             writeClass(serviceXMLModel, serviceXmlWriter);
@@ -1122,16 +1157,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         loadOperations(doc, rootElement, null);
 
-        System.out.println(DOM2Writer.nodeToString(rootElement));
-
         return rootElement;
     }
 
     protected void writeSkeleton() throws Exception {
         Document skeletonModel = createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
         debugLogDocument("Document for skeleton:", skeletonModel);
-        ClassWriter skeletonWriter = new SkeletonWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                "src"), this.codeGenConfiguration.getOutputLanguage());
+        ClassWriter skeletonWriter = new SkeletonWriter(
+                codeGenConfiguration.isFlattenFiles()?
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME)
+                , this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriter);
     }
@@ -1144,8 +1180,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected void writeSkeletonInterface() throws Exception {
         Document skeletonModel = createDOMDocumentForSkeletonInterface();
         debugLogDocument("Document for skeleton Interface:", skeletonModel);
-        ClassWriter skeletonInterfaceWriter = new SkeletonInterfaceWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                "src"), this.codeGenConfiguration.getOutputLanguage());
+        ClassWriter skeletonInterfaceWriter = new SkeletonInterfaceWriter(
+                codeGenConfiguration.isFlattenFiles()?
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), null):
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME)
+                , this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonInterfaceWriter);
     }
@@ -1169,8 +1208,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //attach a list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
-
-//        System.out.println(DOM2Writer.nodeToString(rootElement));
 
         doc.appendChild(rootElement);
         return doc;
@@ -1391,11 +1428,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return Returns File.
      */
     protected File getOutputDirectory(File outputDir, String dir2) {
-        outputDir = new File(outputDir, dir2);
+        if (dir2!=null && !"".equals(dir2)){
+            outputDir = new File(outputDir, dir2);
+        }
 
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
+
 
         return outputDir;
     }

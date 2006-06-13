@@ -34,7 +34,7 @@ public class WSDL20Writer {
             if (axisService!= null){
                 //create a output file
                 File outputFile = FileWriter.createClassFile(baseFolder,
-                        "resources",
+                        null,
                         axisService.getName(),
                         ".wsdl");
                 FileOutputStream fos = new FileOutputStream(outputFile);

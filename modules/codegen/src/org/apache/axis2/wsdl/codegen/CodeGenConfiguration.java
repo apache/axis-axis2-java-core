@@ -70,6 +70,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.uri2PackageNameMap = uri2PackageNameMap;
     }
 
+    /**
+     * Says whether to flatten the files or put them in specific folders
+     */
+    private boolean flattenFiles = false;
+
+    public boolean isFlattenFiles() {
+        return flattenFiles;
+    }
+
+    public void setFlattenFiles(boolean flattenFiles) {
+        this.flattenFiles = flattenFiles;
+    }
 
 
     /**

@@ -28,7 +28,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
     private static final String ADB_INVOKE_CLASS_NAME =
             "org.apache.axis2.schema.ExtensionUtility";
-    private static final String INVOKE_METHOD_NAME = "invoke";
+    private static final String INVOKE_METHOD_NAME =
+            "invoke";
 
     /**
      * 
@@ -39,7 +40,6 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             return;
         }
         try {
-
             //invoke the adb codegen by reflection
             Class adbGeneratorClass = Class.
                     forName(ADB_INVOKE_CLASS_NAME);

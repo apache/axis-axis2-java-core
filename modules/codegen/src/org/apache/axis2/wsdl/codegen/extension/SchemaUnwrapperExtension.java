@@ -2,6 +2,14 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaObjectTable;
+
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -27,9 +35,36 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
-          if (!configuration.isParametersWrapped()){
-//              //unwrap the schema since we are told to do so
-//             SchemaUnwrapper.unwrap(configuration.getWom());
-          }
+        if (!configuration.isParametersWrapped()){
+            //walk the schema and find the top level elements
+            AxisService axisService = configuration.getAxisService();
+            List schemaList = axisService.getSchema();
+            for (int i = 0; i < schemaList.size(); i++) {
+                walkSchema((XmlSchema)schemaList.get(i));
+            }
+
+
+
+
+
+
+
+
+
+        }
+    }
+
+    //walk the given schema
+    public void walkSchema(XmlSchema schema){
+        //get the schema and find the elements
+        XmlSchemaObjectTable elementTable = schema.getElements();
+        for (Iterator it = elementTable.getValues();
+             it.hasNext();){
+            //take the type of the schema element
+
+        }
+
+
+
     }
 }

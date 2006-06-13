@@ -31,10 +31,10 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
 
     public static void loadConfig(CodeGenConfiguration config, Map optionMap) {
         String outputLocation = "."; //default output directory is the current working directory
-        CommandLineOption outputLocationOption = loadOption(WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG, optionMap);
+        CommandLineOption commandLineOption = loadOption(WSDL2JavaConstants.OUTPUT_LOCATION_OPTION, WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG, optionMap);
 
-        if (outputLocationOption != null) {
-            outputLocation = outputLocationOption.getOptionValue();
+        if (commandLineOption != null) {
+            outputLocation = commandLineOption.getOptionValue();
         }
         File outputLocationFile = new File(outputLocation);
         config.setOutputLocation(outputLocationFile);
@@ -68,54 +68,48 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setSyncOn(true);
         }
 
-        CommandLineOption packageOption = loadOption(WSDL2JavaConstants.PACKAGE_OPTION, WSDL2JavaConstants.PACKAGE_OPTION_LONG, optionMap);
-        if (packageOption != null) {
-            config.setPackageName(packageOption.getOptionValue());
+        commandLineOption = loadOption(WSDL2JavaConstants.PACKAGE_OPTION, WSDL2JavaConstants.PACKAGE_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
+            config.setPackageName(commandLineOption.getOptionValue());
         }
 
-        CommandLineOption langOption = loadOption(WSDL2JavaConstants.STUB_LANGUAGE_OPTION, WSDL2JavaConstants.STUB_LANGUAGE_OPTION_LONG, optionMap);
+        commandLineOption = loadOption(WSDL2JavaConstants.STUB_LANGUAGE_OPTION, WSDL2JavaConstants.STUB_LANGUAGE_OPTION_LONG, optionMap);
         //The language here
-        if (langOption != null) {
-            config.setOutputLanguage(langOption.getOptionValue());
+        if (commandLineOption != null) {
+            config.setOutputLanguage(commandLineOption.getOptionValue());
         }
 
-        CommandLineOption dataBindingOption = loadOption(WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION_LONG, optionMap);
-        if (dataBindingOption != null) {
-            config.setDatabindingType(dataBindingOption.getOptionValue());
+        commandLineOption = loadOption(WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION, WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
+            config.setDatabindingType(commandLineOption.getOptionValue());
         }
 
-        CommandLineOption unwrapClassesOption = loadOption(WSDL2JavaConstants.UNPACK_CLASSES_OPTION, WSDL2JavaConstants.UNPACK_CLASSES_OPTION_LONG, optionMap);
-        if (unwrapClassesOption != null) {
+        commandLineOption = loadOption(WSDL2JavaConstants.UNPACK_CLASSES_OPTION, WSDL2JavaConstants.UNPACK_CLASSES_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
             config.setPackClasses(false);
         }
 
-        CommandLineOption portNameOption = loadOption(WSDL2JavaConstants.PORT_NAME_OPTION, WSDL2JavaConstants.PORT_NAME_OPTION_LONG, optionMap);
-        config.setPortName(portNameOption != null ? portNameOption.getOptionValue() : null);
+        commandLineOption = loadOption(WSDL2JavaConstants.PORT_NAME_OPTION, WSDL2JavaConstants.PORT_NAME_OPTION_LONG, optionMap);
+        config.setPortName(commandLineOption != null ? commandLineOption.getOptionValue() : null);
 
-        CommandLineOption serviceNameOption = loadOption(WSDL2JavaConstants.SERVICE_NAME_OPTION, WSDL2JavaConstants.SERVICE_NAME_OPTION_LONG, optionMap);
-        config.setServiceName(serviceNameOption != null ? serviceNameOption.getOptionValue() : null);
+        commandLineOption = loadOption(WSDL2JavaConstants.SERVICE_NAME_OPTION, WSDL2JavaConstants.SERVICE_NAME_OPTION_LONG, optionMap);
+        config.setServiceName(commandLineOption != null ? commandLineOption.getOptionValue() : null);
 
-        CommandLineOption repositoryPathOption = loadOption(WSDL2JavaConstants.REPOSITORY_PATH_OPTION, WSDL2JavaConstants.REPOSITORY_PATH_OPTION_LONG, optionMap);
-        config.setRepositoryPath(repositoryPathOption != null ? repositoryPathOption.getOptionValue() : null);
+        commandLineOption = loadOption(WSDL2JavaConstants.REPOSITORY_PATH_OPTION, WSDL2JavaConstants.REPOSITORY_PATH_OPTION_LONG, optionMap);
+        config.setRepositoryPath(commandLineOption != null ? commandLineOption.getOptionValue() : null);
 
-        CommandLineOption serverSideInterfaceOption = loadOption(WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION_LONG, optionMap);
-        if (serverSideInterfaceOption != null){
-            config.setServerSideInterface(true);
-        }
+        config.setServerSideInterface(loadOption(WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION_LONG, optionMap)!=null);
 
-        CommandLineOption generateAllOption = loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION, WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG, optionMap);
-        if (generateAllOption != null) {
-            config.setGenerateAll(true);
-        }
+        config.setGenerateAll(loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION, WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG, optionMap)!=null);
 
         //populate the external mapping
-        CommandLineOption externalMapping = loadOption(
+        commandLineOption = loadOption(
                 WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
                 WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION_LONG,
                 optionMap);
-        if (externalMapping!=null){
+        if (commandLineOption!=null){
             try {
-                config.setTypeMappingFile(new File(externalMapping.getOptionValue()));
+                config.setTypeMappingFile(new File(commandLineOption.getOptionValue()));
             } catch (Exception e) {
                 throw new RuntimeException(
                         CodegenMessages.getMessage("options.nomappingFile"), e);
@@ -123,14 +117,14 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         }
 
         // load the namespace to package list
-        CommandLineOption ns2packageOption = loadOption(
+        commandLineOption = loadOption(
                 WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
                 WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION_LONG,
                 optionMap);
-        if (ns2packageOption != null) {
+        if (commandLineOption != null) {
             //the syntax for the value of the namespaces and packages is
             //to be a comma seperated list with uri=packagename,uri=packagename...
-            String value = ns2packageOption.getOptionValue();
+            String value = commandLineOption.getOptionValue();
             if (value != null) {
                 // Try treating the values as a name=value pair separated by comma's
                 if (value.indexOf('=') != -1) {
@@ -161,20 +155,25 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             }
         }
 
-        CommandLineOption wsdlVersionOption =
+        commandLineOption =
                 loadOption(WSDL2JavaConstants.WSDL_VERSION_OPTION,
-                           WSDL2JavaConstants.WSDL_VERSION_OPTION_LONG,
-                           optionMap);
-        if (wsdlVersionOption!=null){
-            String optionValue = wsdlVersionOption.getOptionValue();
+                        WSDL2JavaConstants.WSDL_VERSION_OPTION_LONG,
+                        optionMap);
+        if (commandLineOption!=null){
+            String optionValue = commandLineOption.getOptionValue();
 
             if (WSDL2JavaConstants.WSDL_VERSION_2.equals(optionValue) ||
-                   WSDL2JavaConstants.WSDL_VERSION_2_OPTIONAL.equals(optionValue) ){
-                 //users can say either 2.0 or 2 - we  just set it to the constant
-                 config.setWSDLVersion(WSDL2JavaConstants.WSDL_VERSION_2);
+                    WSDL2JavaConstants.WSDL_VERSION_2_OPTIONAL.equals(optionValue) ){
+                //users can say either 2.0 or 2 - we  just set it to the constant
+                config.setWSDLVersion(WSDL2JavaConstants.WSDL_VERSION_2);
             } //ignore the other cases - they'll be taken as 1.1
 
         }
+
+        config.setFlattenFiles(loadOption(WSDL2JavaConstants.FLATTEN_FILES_OPTION,
+                        WSDL2JavaConstants.FLATTEN_FILES_OPTION_LONG,
+                        optionMap)!=null);
+       
 
         //loop through the map and find parameters having the extra prefix.
         //put them in the property map

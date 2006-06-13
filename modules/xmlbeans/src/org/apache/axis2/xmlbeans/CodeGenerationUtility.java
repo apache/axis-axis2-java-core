@@ -166,7 +166,7 @@ public class CodeGenerationUtility {
                     convertToSchemaArray(topLevelSchemaList),
                     new Axis2BindingConfig(cgconfig.getUri2PackageNameMap()),
                     XmlBeans.getContextTypeLoader(),
-                    new Axis2Filer(cgconfig.getOutputLocation()),
+                    new Axis2Filer(cgconfig),
                     new XmlOptions().setEntityResolver(er));
 
             // prune the generated schema type system and add the list of base64 types
@@ -209,6 +209,7 @@ public class CodeGenerationUtility {
         //add the document types and global types
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
+
         for (int i = 0; i < allSeenTypes.size(); i++) {
             SchemaType sType = (SchemaType) allSeenTypes.get(i);
 
@@ -220,7 +221,10 @@ public class CodeGenerationUtility {
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
                         if (Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
-                            base64ElementQNamesList.add(outerType.getDocumentElementName());
+                            //add this only if it is a document type ??
+                            if (outerType.isDocumentType()){
+                                base64ElementQNamesList.add(outerType.getDocumentElementName());
+                            }
                             break;
                         }
                     }
@@ -291,14 +295,23 @@ public class CodeGenerationUtility {
     private static class Axis2Filer implements Filer {
 
         private File location;
+        private boolean flatten = false;
+        private static final String RESOURCE_DIR_NAME = "resources";
+        private static final String SOURCE_DIR_NAME = "src";
+        private static final String JAVA_FILE_EXTENSION = ".java";
 
-        private Axis2Filer(File loc) {
-            location = loc;
+        private Axis2Filer(CodeGenConfiguration config) {
+            location = config.getOutputLocation();
+            flatten = config.isFlattenFiles();
         }
 
         public OutputStream createBinaryFile(String typename)
                 throws IOException {
-            File resourcesDirectory = new File(location, "resources");
+            File resourcesDirectory =
+                    flatten?
+                    location:
+                    new File(location, RESOURCE_DIR_NAME);
+
             if (!resourcesDirectory.exists()) {
                 resourcesDirectory.mkdirs();
             }
@@ -312,12 +325,17 @@ public class CodeGenerationUtility {
                 throws IOException {
             typename =
                     typename.replace('.', File.separatorChar);
-            File outputDir = new File(location, "src");
+
+            File outputDir =
+                    flatten?
+                    location:
+                    new File(location, SOURCE_DIR_NAME);
+
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
             }
             File file = new File(outputDir,
-                    typename + ".java");
+                    typename + JAVA_FILE_EXTENSION);
             file.getParentFile().mkdirs();
             file.createNewFile();
             return new FileWriter(file);
