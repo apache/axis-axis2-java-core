@@ -70,7 +70,7 @@ public class Test extends TestCase
     private static final String COMPILE_TARGET_NAME = "compile";
     private static final String BIND_TARGET_NAME = "bind";
     private static final String STUB_CLASS =
-        "org.apache.axis2.EchoCustomerServiceStub";
+        "org.apache.ws.axis2.jibx.customer.wsdl.EchoCustomerServiceStub";
 
     public static final QName serviceName = new QName("EchoCustomerService");
     public static final QName operationName = new QName("echo");

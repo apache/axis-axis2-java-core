@@ -419,5 +419,11 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
+        if (packageName == null || packageName.length() == 0 || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
+            //use the target namespace from the axis service to form a package name
+            packageName = URLProcessor.makePackageName(
+                    axisService.getTargetNamespace()
+            );
+        }
     }
 }
