@@ -59,11 +59,6 @@ public class WSDoAllSender extends WSDoAllHandler {
     
     private static final Log log = LogFactory.getLog(WSDoAllSender.class);
     
-    /**
-     * TODO: This is not handled right now since converting to DOOM does not preserve
-     * the optimization information of the text nodes
-     */
-    private boolean preserveOriginalEnvelope = false;
     
     public WSDoAllSender() {
         super();
@@ -92,28 +87,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                 //If the msgs are msgs to an STS then use basic WS-Sec
                 processBasic(msgContext, disableDoom);
             } else {
-                //Parse the Conversation configuration
-                ConversationConfiguration config = ConversationConfiguration.load(msgContext, true);
-                if(config != null)
-                msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
-                        .getDocumentElement());
-                
-                if(!config.getMsgCtx().isServerSide()) {
-                    if(config.getContextIdentifier() == null && !config.getMsgCtx().isServerSide()) {
-        
-                        String sts = config.getStsEPRAddress();
-                        if(sts != null) {
-                          //Use a security token service
-                          STSRequester.issueRequest(config);
-                        } else {
-                            //Create an an SCT, include it in an RSTR 
-                            // and add the RSTR to the header
-                            this.createRSTR(config);
-                        }
-                        
-                    }
-                }
-                this.constructMessage(config);
+                processSecConv(msgContext);
             }
             
         } catch (Exception e) {
@@ -132,6 +106,36 @@ public class WSDoAllSender extends WSDoAllHandler {
             //Reset the document builder factory
             DocumentBuilderFactoryImpl.setDOOMRequired(false);
         }     
+    }
+
+    /**
+     * Use WS-SecureConversation to secure the messages
+     * @param msgContext
+     * @throws Exception
+     */
+    private void processSecConv(MessageContext msgContext) throws Exception {
+        //Parse the Conversation configuration
+        ConversationConfiguration config = ConversationConfiguration.load(msgContext, true);
+        if(config != null)
+        msgContext.setEnvelope((SOAPEnvelope) config.getDocument()
+                .getDocumentElement());
+        
+        if(!config.getMsgCtx().isServerSide()) {
+            if(config.getContextIdentifier() == null && !config.getMsgCtx().isServerSide()) {
+      
+                String sts = config.getStsEPRAddress();
+                if(sts != null) {
+                  //Use a security token service
+                  STSRequester.issueRequest(config);
+                } else {
+                    //Create an an SCT, include it in an RSTR 
+                    // and add the RSTR to the header
+                    this.createRSTR(config);
+                }
+                
+            }
+        }
+        this.constructMessage(config);
     }
     
     /**
@@ -311,10 +315,6 @@ public class WSDoAllSender extends WSDoAllHandler {
             repetition++;
             msgContext.setProperty(WSSHandlerConstants.CURRENT_REPETITON,
                     new Integer(repetition));
-            /**
-             * Preserving the OM stuff doesn't work for the repeting case
-             */
-            this.preserveOriginalEnvelope = false;
             
             this.invoke(msgContext);
         }
