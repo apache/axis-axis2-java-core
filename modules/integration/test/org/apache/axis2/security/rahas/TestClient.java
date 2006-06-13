@@ -29,6 +29,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.rampart.conversation.ConversationConfiguration;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
@@ -98,19 +99,11 @@ public abstract class TestClient extends TestCase {
 
             OMElement result = serviceClient.sendReceive(getEchoElement());
 
-            StringWriter writer = new StringWriter();
-            result.serialize(StAXUtils
-                    .createXMLStreamWriter(writer));
-            writer.flush();
-
-            assertTrue(writer.toString().indexOf(AXIS2_ECHO_STRING) > 0);
+            assertTrue(result.toString().indexOf(AXIS2_ECHO_STRING) > 0);
             System.out.println("SecureService Invocation successful :-)");
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
             fail(axisFault.getMessage());
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         }
     }
 

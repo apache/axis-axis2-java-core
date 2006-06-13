@@ -66,27 +66,9 @@
 
 
         </j:if>
-        
-
-		<copy file="src/META-INF/rahas-module.xml"
+		
+        <copy file="src/META-INF/module.xml"
             tofile="target/temp-mar/META-INF/module.xml" overwrite="true"/>
-
-        <jar jarfile="target/rahas-${rahas_version}.mar" basedir="target/temp-mar/">
-            <include name="**/*"/>
-        </jar>
-
-        <copy file="target/rahas-${rahas_version}.mar" tofile="target/modules/rahas-${rahas_version}.mar"/>
-        <copy file="target/rahas-${rahas_version}.mar" tofile="${maven.repo.local}/axis2/mars/rahas-${rahas_version}.mar"/>
-
-		<!-- Replace the maven.xml remove unwanted classes and create the security module -->
-
-		<copy file="src/META-INF/module.xml"
-            tofile="target/temp-mar/META-INF/module.xml" overwrite="true"/>
-        
-		<!-- <delete includeEmptyDirs="true">
-            <fileset dir="target/temp-mar/org/apache/axis2/security/rahas"/>
-			<fileset dir="target/temp-mar/org/apache/axis2/security/trust"/>
-        </delete> -->
 
         <jar jarfile="target/rampart-${rampart_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
