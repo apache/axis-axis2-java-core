@@ -42,6 +42,10 @@ public interface SavanConstants {
 		int GET_STATUS_RESPONSE_MESSAGE = 8;
 	}
 	
+	interface FilterDialects {
+		String XPath = "http://www.w3.org/TR/1999/REC-xpath-19991116";
+	}
+	
 	String SUBSCRIBER_TABLE = "SUBSCRIBER_TABLE";
 	
 }

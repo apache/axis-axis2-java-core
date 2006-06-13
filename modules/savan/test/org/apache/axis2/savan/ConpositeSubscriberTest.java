@@ -33,7 +33,7 @@ public class ConpositeSubscriberTest extends TestCase {
 		compositeSubscriber.addSubscriber(leafSubscriber1);
 		compositeSubscriber.addSubscriber(leafSubscriber2);
 		
-		compositeSubscriber.sendNotification(null);
+		compositeSubscriber.sendPublication(null,null);
 		assertTrue(leafSubscriber1.isNotified());
 		assertTrue(leafSubscriber2.isNotified());
 	}
@@ -42,7 +42,7 @@ public class ConpositeSubscriberTest extends TestCase {
 		
 		boolean notified = false;
 		
-		public void doProtocolSpecificNotification(SavanMessageContext notificationMessage) {
+		public void doProtocolSpecificPublication(SavanMessageContext notificationMessage) {
 			notified = true;
 		}
 		

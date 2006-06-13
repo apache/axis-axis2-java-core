@@ -22,9 +22,7 @@
  		</wse:Delivery> 
  		<wse:Expires>2004-06-26T21:07:00.000-08:00</wse:Expires> 
  		<wse:Filter xmlns:ow='http://www.example.org/oceanwatch' 
- 		Dialect='http://www.example.org/topicFilter' > 
- 			weather.storms 
- 		</wse:Filter> 
+ 		Dialect='http://www.w3.org/TR/1999/REC-xpath-19991116'>/</wse:Filter> 
  	</wse:Subscribe> 
  </s12:Body> 
  </s12:Envelope>

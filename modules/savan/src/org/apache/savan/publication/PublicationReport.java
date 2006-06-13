@@ -17,20 +17,37 @@
 
 package org.apache.savan.publication;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.apache.savan.SavanException;
 
 
-public class PublicationErrorReport {
+public class PublicationReport {
 
-	private Hashtable report = null;
+	private Hashtable errors = null;
+	private ArrayList notifiedSubscribers;
 	
-	public PublicationErrorReport () {
-		report = new Hashtable ();
+	public PublicationReport () {
+		errors = new Hashtable ();
+		notifiedSubscribers = new ArrayList ();
 	}
 	
-	public void addReportEntry (String id, SavanException reason) {
-		report.put(id,reason);
+	public void addErrorReportEntry (String id, SavanException reason) {
+		errors.put(id,reason);
 	}
+	
+	public void addNotifiedSubscriber (String subscriberID) {
+		notifiedSubscribers.add(subscriberID);
+	}
+
+	public Hashtable getErrors() {
+		return errors;
+	}
+
+	public ArrayList getNotifiedSubscribers() {
+		return notifiedSubscribers;
+	}
+	
+	
 }

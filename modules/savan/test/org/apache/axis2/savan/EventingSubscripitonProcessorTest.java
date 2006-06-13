@@ -3,12 +3,8 @@ package org.apache.axis2.savan;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-
 import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -40,9 +36,6 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 		
 		assertEquals(eventingSubscriber.getDelivery().getDeliveryEPR().getAddress() ,"http://www.other.example.com/OnStormWarning");
 		assertEquals(eventingSubscriber.getEndToEPr().getAddress(),"http://www.example.com/MyEventSink");
-		assertEquals(eventingSubscriber.getFilter().getFilterType(),"http://www.example.org/topicFilter");
-		assertEquals(((OMText) eventingSubscriber.getFilter().getFilter()).getText().trim(),"weather.storms");
-		
 		Date date = ConverterUtil.convertTodateTime("2004-06-26T21:07:00.000-08:00").getTime();
 		assertEquals(eventingSubscriber.getSubscriptionEndingTime(),date);
 	}

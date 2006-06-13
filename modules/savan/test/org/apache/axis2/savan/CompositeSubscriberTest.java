@@ -1,12 +1,13 @@
 package org.apache.axis2.savan;
 
+import junit.framework.TestCase;
+
 import org.apache.axis2.context.MessageContext;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscribers.CompositeSubscriber;
 import org.apache.savan.subscribers.LeafSubscriber;
-
-import junit.framework.TestCase;
 
 public class CompositeSubscriberTest extends TestCase {
 
@@ -22,7 +23,8 @@ public class CompositeSubscriberTest extends TestCase {
 		compositeSubscriber.addSubscriber(leafSubscriber1);
 		compositeSubscriber.addSubscriber(leafSubscriber2);
 		
-		compositeSubscriber.sendNotification(smc);
+		PublicationReport report = new PublicationReport ();
+		compositeSubscriber.sendPublication(smc,report);
 		assertTrue(leafSubscriber1.isNotified());
 		assertTrue(leafSubscriber2.isNotified());
 	}
@@ -31,7 +33,7 @@ public class CompositeSubscriberTest extends TestCase {
 		
 		boolean notified = false;
 		
-		public void doProtocolSpecificNotification(SavanMessageContext notificationMessage) {
+		public void doProtocolSpecificPublication(SavanMessageContext notificationMessage) {
 			notified = true;
 		}
 		

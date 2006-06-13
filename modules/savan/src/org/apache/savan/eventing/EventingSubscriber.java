@@ -33,18 +33,12 @@ public class EventingSubscriber extends LeafSubscriber {
 	
 	private Delivery delivery;
 	
-	private Filter filter;
-	
 	public Delivery getDelivery() {
 		return delivery;
 	}
 
 	public EndpointReference getEndToEPr() {
 		return endToEPr;
-	}
-
-	public Filter getFilter() {
-		return filter;
 	}
 
 	public void setDelivery(Delivery delivery) {
@@ -54,33 +48,26 @@ public class EventingSubscriber extends LeafSubscriber {
 	public void setEndToEPr(EndpointReference errorReportingEPR) {
 		this.endToEPr = errorReportingEPR;
 	}
-
-	public void setFilter(Filter filter) {
-		this.filter = filter;
-	}
 	
-	public void doProtocolSpecificNotification(SavanMessageContext notificationMessage) throws SavanException {
+	public void doProtocolSpecificPublication(SavanMessageContext publication) throws SavanException {
 		
 		EndpointReference deliveryEPR  = delivery.getDeliveryEPR();
 		
 		try {
 			ServiceClient sc = new ServiceClient (null,null);
 			
-			Options options = notificationMessage.getMessageContext().getOptions();
+			Options options = publication.getMessageContext().getOptions();
 			if (options==null) {
 				options = new Options ();
 			}
 			
 			sc.setOptions(options);
-			
 			options.setTo(deliveryEPR);
-			
 			MessageContext mc = new MessageContext ();
-			mc.setEnvelope(notificationMessage.getEnvelope());
+			mc.setEnvelope(publication.getEnvelope());
 			OperationClient client = sc.createClient(ServiceClient.ANON_OUT_ONLY_OP);
 			client.addMessageContext(mc);
 			client.execute(true);
-			
 		} catch (AxisFault e) {
 			throw new SavanException (e);
 		}

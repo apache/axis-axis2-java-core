@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.util.CommonUtil;
 
@@ -54,7 +55,7 @@ public abstract class LeafSubscriber extends Subscriber {
 		
 	}
 	
-	public void sendNotification(SavanMessageContext notificationMessage) throws SavanException {
+	public void sendPublication(SavanMessageContext publication,PublicationReport report) throws SavanException {
 		Date date = new Date ();
 		
 		boolean expired = false;
@@ -66,7 +67,7 @@ public abstract class LeafSubscriber extends Subscriber {
 			throw new SavanException (message);
 		}
 		
-		doProtocolSpecificNotification (notificationMessage);
+		doProtocolSpecificPublication (publication);
 	}
 	
 	
@@ -75,5 +76,5 @@ public abstract class LeafSubscriber extends Subscriber {
 		this.subscriptionEndingTime = subscriptionEndingTime;
 	}
 
-	public abstract void doProtocolSpecificNotification (SavanMessageContext notificationMessage) throws SavanException;
+	public abstract void doProtocolSpecificPublication (SavanMessageContext publication) throws SavanException;
 }

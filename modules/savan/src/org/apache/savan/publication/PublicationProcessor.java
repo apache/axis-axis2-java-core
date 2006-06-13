@@ -29,22 +29,21 @@ import org.apache.savan.subscribers.Subscriber;
 
 public abstract class PublicationProcessor {
 
-	public PublicationErrorReport notifyListners (SavanMessageContext messageToBeNotified) {
+	public PublicationReport notifyListners (SavanMessageContext messageToBeNotified) {
 		ConfigurationContext configurationContext = messageToBeNotified.getConfigurationContext();
 		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
 		
-		PublicationErrorReport report = new PublicationErrorReport ();
+		PublicationReport report = new PublicationReport ();
 		
 		updatePublication (messageToBeNotified);
 		
 		for (Iterator it=subscribers.keySet().iterator();it.hasNext();) {
 			Subscriber subscriber = (Subscriber) subscribers.get(it.next());
 			
-			//TODO check weather the this subscriber is within the given filter
 			try {
-				subscriber.sendNotification(messageToBeNotified);
+				subscriber.processPublication(messageToBeNotified,report);
 			} catch (SavanException e) {
-				report.addReportEntry(subscriber.getId(),e);
+				report.addErrorReportEntry (subscriber.getId(),e);
 			}
 		}
 		

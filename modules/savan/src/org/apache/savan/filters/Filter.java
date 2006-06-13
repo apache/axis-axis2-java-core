@@ -15,31 +15,13 @@
  *
  */
 
-package org.apache.savan.eventing;
+package org.apache.savan.filters;
 
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.savan.SavanException;
 
-public class Filter {
-
-	OMNode filter;
-	String filterType;
-	
-	public OMNode getFilter() {
-		return filter;
-	}
-	
-	public String getFilterType() {
-		return filterType;
-	}
-	
-	public void setFilter(OMNode filter) {
-		this.filter = filter;
-	}
-	
-	public void setFilterType(String filterType) {
-		this.filterType = filterType;
-	}
-
-
-	
+public abstract class Filter {
+	public abstract boolean checkEnvelopeCompliance (SOAPEnvelope envelope) throws SavanException;
+	public abstract void setUp (OMNode element);
 }

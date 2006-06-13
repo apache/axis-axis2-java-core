@@ -19,23 +19,68 @@ package org.apache.savan.subscribers;
 
 import java.util.Date;
 
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.filters.Filter;
+import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 
 public abstract class Subscriber {
 
 	String id;
+	Filter filter = null;
 	
+	public Filter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Filter filter) {
+		this.filter = filter;
+	}
+
 	public String getId() {
 		return id;
 	}
+	
 	public void setId(String id) {
 		this.id = id;
 	}
 	
+	public boolean doesMessageBelongToTheFilter(SavanMessageContext smc) throws SavanException {
+		if (filter!=null) {
+			SOAPEnvelope envelope = smc.getEnvelope();
+			return filter.checkEnvelopeCompliance(envelope);
+		} else 
+			return true;
+	}
+	
+	/**
+	 * This method first checks weather the passed message complies with the current filter.
+	 * If so message is sent, and the subscriberID is added to the PublicationReport.
+	 * Else message is ignored.
+	 * 
+	 * @param smc
+	 * @param report
+	 * @throws SavanException
+	 */
+	public void processPublication (SavanMessageContext publication,PublicationReport report) throws SavanException {
+		if (doesMessageBelongToTheFilter(publication)) {
+			sendPublication(publication,report);
+			if (getId()!=null)
+				report.addNotifiedSubscriber(getId());
+		}
+	}
+	
 	public abstract void setSubscriptionEndingTime (Date subscriptionEndingTime);
 	public abstract void renewSubscription (ExpirationBean bean);
-	public abstract void sendNotification (SavanMessageContext notificationMessage) throws SavanException;
-
+	
+	/**
+	 * This should be used by based classes to sendThe publication in its own manner
+	 * 
+	 * @param publication
+	 * @param report
+	 * @throws SavanException
+	 */
+	public abstract void sendPublication (SavanMessageContext publication,PublicationReport report) throws SavanException;
 }

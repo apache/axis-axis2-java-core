@@ -21,7 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanMessageContext;
-import org.apache.savan.publication.PublicationErrorReport;
+import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.publication.PublicationProcessor;
 import org.apache.savan.util.AbstractSavanUtilFactory;
 import org.apache.savan.util.ProtocolManager;
@@ -47,7 +47,7 @@ public class SavanOutHandler extends AbstractHandler {
 		int messagetype = smc.getMessageType();		
 		
 		if (messagetype==SavanConstants.MessageTypes.UNKNOWN) {
-			PublicationErrorReport report = processor.notifyListners (smc);
+			PublicationReport report = processor.notifyListners (smc);
 			
 			//TODO use the report to inform abt the errors.
 			

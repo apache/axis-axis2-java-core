@@ -49,6 +49,16 @@
                 <module>true</module>
             </properties>
         </dependency>
+        
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>${jaxen.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
+        </dependency>
 
         <dependency>
             <groupId>axis2</groupId>

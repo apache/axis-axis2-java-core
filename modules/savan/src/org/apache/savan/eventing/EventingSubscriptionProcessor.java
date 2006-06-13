@@ -35,6 +35,8 @@ import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.filters.Filter;
+import org.apache.savan.filters.FilterFactory;
 import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.subscription.SubscriptionProcessor;
@@ -134,20 +136,18 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		
 		OMElement filterElement = subscribeElement.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Filter));
 		if (filterElement!=null) {
-			Filter filter = new Filter ();
-			
 			OMNode filterNode = filterElement.getFirstOMChild();
-			filter.setFilter(filterNode);
-			
 			OMAttribute dialectAttr = filterElement.getAttribute(new QName (EventingConstants.ElementNames.Dialect));
-			
-			if (dialectAttr!=null) {
-				String dilect = dialectAttr.getAttributeValue().trim();
-				filter.setFilterType(dilect);
+			Filter filter = null;
+			if (dialectAttr==null) {
+				filter = FilterFactory.getFilter(EventingConstants.DEFAULT_FILTER_DIALECT);
 			} else {
-				//setting the default finter dialect.
-				filter.setFilterType(EventingConstants.DEFAULT_FILTER_DIALECT);
+				filter = FilterFactory.getFilter(dialectAttr.getAttributeValue());
 			}
+			if (filter==null)
+				throw new SavanException ("Cant find a suitable message filter");
+			
+			filter.setUp (filterNode);
 			
 			subscriber.setFilter(filter);
 		}

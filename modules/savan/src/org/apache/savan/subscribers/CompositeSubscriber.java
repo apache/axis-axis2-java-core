@@ -20,10 +20,9 @@ package org.apache.savan.subscribers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
-import org.apache.savan.subscribers.Subscriber;
+import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 
 
@@ -39,10 +38,10 @@ public class CompositeSubscriber extends Subscriber {
 		subscribers.add(subscriber);
 	}
 	
-	public void sendNotification(SavanMessageContext notificationMessage)  throws SavanException {
+	public void sendPublication(SavanMessageContext publication, PublicationReport report)  throws SavanException {
 		for (Iterator it = subscribers.iterator();it.hasNext();) {
 			Subscriber subscriber = (Subscriber) it.next();
-			subscriber.sendNotification(notificationMessage);
+			subscriber.processPublication(publication,report);
 		}
 	}
 
@@ -59,7 +58,5 @@ public class CompositeSubscriber extends Subscriber {
 			subscriber.setSubscriptionEndingTime(subscriptionEndingTime);
 		}
 	}
-	
-	
 
 }
