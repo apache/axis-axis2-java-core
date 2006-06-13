@@ -41,6 +41,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.jms.BytesMessage;
+import javax.jms.Message;
+import javax.jms.TextMessage;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -59,10 +61,10 @@ public class SimpleJMSWorker implements Runnable {
 	private static final Log log = LogFactory.getLog(SimpleJMSWorker.class);
     private ConfigurationContext configurationContext;
     SimpleJMSListener listener;
-    BytesMessage message;
+    Message message;
 
     public SimpleJMSWorker(ConfigurationContext configurationContext, SimpleJMSListener listener,
-                           BytesMessage message) {
+                           Message message) {
         this.listener = listener;
         this.message = message;
         this.configurationContext = configurationContext;
@@ -179,20 +181,38 @@ public class SimpleJMSWorker implements Runnable {
      * This is where the incoming message is processed.
      */
     public void run() {
-        InputStream in ;
+        InputStream in = null;
 
         try {
-
             // get the incoming msg content into a byte array
-            byte[]                buffer = new byte[8 * 1024];
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            if (message instanceof BytesMessage) {
+                byte[]                buffer = new byte[8 * 1024];
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            for (int bytesRead = message.readBytes(buffer); bytesRead != -1;
-                 bytesRead = message.readBytes(buffer)) {
-                out.write(buffer, 0, bytesRead);
+                BytesMessage byteMsg = (BytesMessage) message;
+                for (int bytesRead = byteMsg.readBytes(buffer); bytesRead != -1;
+                     bytesRead = byteMsg.readBytes(buffer)) {
+                    out.write(buffer, 0, bytesRead);
+                }
+                in = new ByteArrayInputStream(out.toByteArray());
+
+            } else if (message instanceof TextMessage) {
+                TextMessage txtMsg = (TextMessage) message;
+                String contentType = message.getStringProperty("contentType");
+                if (contentType != null) {
+                    String charSetEnc  =
+                        TransportUtils.getCharSetEncoding(contentType);
+                    in = new ByteArrayInputStream(txtMsg.getText().getBytes(charSetEnc));
+                } else {
+                    in = new ByteArrayInputStream(txtMsg.getText().getBytes());
+                }
+
+            } else {
+                log.error("Unsupported JMS Message type : " + message);
+                log.error(Messages.getMessage("exception00"));
             }
 
-            in = new ByteArrayInputStream(out.toByteArray());
+
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
             e.printStackTrace();

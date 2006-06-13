@@ -184,8 +184,8 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
     public void onMessage(javax.jms.Message message) {
         try {
             // pass off the message to a worker as a BytesMessage
-            SimpleJMSWorker worker = new SimpleJMSWorker(configurationContext, this,
-                    (BytesMessage) message);
+            SimpleJMSWorker worker = new SimpleJMSWorker
+                (configurationContext, this, message);
 
             // do we allow multi-threaded workers?
             if (doThreads) {

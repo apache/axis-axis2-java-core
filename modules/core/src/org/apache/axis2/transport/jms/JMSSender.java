@@ -22,10 +22,12 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -199,7 +201,16 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             }
         }
 
-        String endpointAddress = msgContext.getTo() != null ? msgContext.getTo().getAddress() : null;
+        String endpointAddress = (String) msgContext
+                        .getProperty(MessageContextConstants.TRANSPORT_URL);
+        if (endpointAddress == null &&
+            msgContext.getTo() != null &&
+            !AddressingConstants.Submission.WSA_ANONYMOUS_URL
+                .equals(msgContext.getTo().getAddress()) &&
+            !AddressingConstants.Final.WSA_ANONYMOUS_URL
+                .equals(msgContext.getTo().getAddress())) {
+            endpointAddress = msgContext.getTo().getAddress();
+        }
         boolean waitForResponse = false;
 
         if (dest == null) {
