@@ -8,8 +8,8 @@
          URI resolver during the xslt transformations
      -->
     <xsl:include href="externalTemplate"/>
-    
-    
+
+
     <xsl:include href="policyExtensionTemplate"/>
 
     <xsl:template match="/class">
@@ -25,7 +25,6 @@
         * This file was auto-generated from WSDL for Axis2/C - stub code
         * by the Apache Axis2/Java version: #axisVersion# #today#
         */
-
         #include "<xsl:value-of select="@name"/>.h"
 
        /**
@@ -33,17 +32,20 @@
         */
 
         axis2_stub_t*
-        axis2_create_<xsl:value-of select="$interfaceName"/>_stub (axis2_env_t **env,
+        axis2_<xsl:value-of select="$interfaceName"/>_stub_create (const axis2_env_t *env,
                                         axis2_char_t *client_home,
-                                        axis2_endpoint_ref_t *endpoint_ref)
+                                        axis2_char_t *endpoint_uri)
         {
            axis2_stub_t* stub = NULL;
+           axis2_endpoint_ref_t* endpoint_ref = NULL;
            AXIS2_FUNC_PARAM_CHECK ( client_home, env, NULL)
-           
-           if (NULL == endpoint_ref )
+
+           if (NULL == endpoint_uri )
            {
-              endpoint_ref = axis2_get_endpoint_ref_from_wsdl( env );
+              endpoint_uri = axis2_get_endpoint_uri_from_wsdl( env );
            }
+
+           endpoint_ref = axis2_endpoint_ref_create(env, endpoint_uri);
 
            stub = axis2_stub_create_with_endpoint_ref_and_client_home ( env, endpoint_ref, client_home );
            axis2_populate_axis_service( stub, env );
@@ -51,7 +53,7 @@
         }
 
 
-        void axis2_populate_axis_service( axis2_stub_t* stub, axis2_env_t** env)
+        void axis2_populate_axis_service( axis2_stub_t* stub, const axis2_env_t* env)
         {
           axis2_svc_client_t* svc_client = NULL;
           axis2_qname_t *svc_qname =  NULL;
@@ -74,7 +76,7 @@
                                           NULL);
             op = axis2_op_create_with_qname(env, op_qname);
             <xsl:choose>
-              <xsl:when test="@mep='12'">
+              <xsl:when test="@mep='10'">
                 AXIS2_OP_SET_MSG_EXCHANGE_PATTERN(op, env, AXIS2_MEP_URI_IN_ONLY);
               </xsl:when>
               <xsl:otherwise>
@@ -82,74 +84,155 @@
               </xsl:otherwise>
             </xsl:choose>
             AXIS2_SVC_ADD_OP(svc, env, op);
-            
+
           </xsl:for-each>
         }
 
         /**
          * return end point picked from wsdl
          */
-        axis2_endpoint_ref_t* axis2_get_endpoint_ref_from_wsdl ( axis2_env_t** env )
+        axis2_char_t* axis2_get_endpoint_uri_from_wsdl ( const axis2_env_t* env )
         {
-          axis2_endpoint_ref_t* endpoint_ref = NULL;
-          axis2_char_t* address = NULL;
+          axis2_char_t* endpoint_uri = NULL;
           /*set the address from here*/
         <xsl:for-each select="endpoint">
           <xsl:choose>
             <xsl:when test="position()=1">
-              address = "<xsl:value-of select="."/>";
+              endpoint_uri = "<xsl:value-of select="."/>";
             </xsl:when>
             <xsl:otherwise>
               /* mulitiple address defined*/
             </xsl:otherwise>
            </xsl:choose>
         </xsl:for-each>
-          endpoint_ref = axis2_endpoint_ref_create(env, address);
-          return endpoint_ref;
+          return endpoint_uri;
         }
-     
+
 
     <xsl:for-each select="method">
-      <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+      <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
+      <xsl:variable name="outputtype"><xsl:if test="$outputours">axis2_</xsl:if><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="$outputours">_t*</xsl:if></xsl:variable>
+      <xsl:variable name="capsoutputtype"><xsl:if test="$outputours">AXIS2_</xsl:if><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="output/param/@caps-type"></xsl:value-of></xsl:otherwise></xsl:choose></xsl:variable>
       <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
       <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
       <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
-	    
-      <!-- MTOM -->
+
       <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
       <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
-      <!-- MTOM -->
 
       <!-- Code generation for the in-out mep -->
-      <xsl:if test="$mep='12'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
+      <xsl:if test="not($mep='10')">
         <xsl:if test="$isSync='1'">
           /**
            * Auto generated method signature
            */
-           
+
            <xsl:choose>
            <xsl:when test="$outputtype=''">axis2_status_t</xsl:when>
+           <xsl:when test="$outputtype='axis2__t*'">void</xsl:when>
            <xsl:otherwise>
-           axis2_om_node_t*
+           <xsl:value-of select="$outputtype"/>
            </xsl:otherwise>
            </xsl:choose>
-           axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, axis2_env_t** env <xsl:for-each select="input/param[@type!='']"> ,
-                                          axis2_om_node_t*<xsl:text> </xsl:text>payload<!--<xsl:value-of select="@name"/>-->
-                                          </xsl:for-each> )
+           axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env <xsl:for-each select="input/param[@type!='']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                                </xsl:for-each>)
            {
               axis2_svc_client_t* svc_client = NULL;
               axis2_options_t *options = NULL;
-              axis2_om_node_t* ret_node = NULL;
+              axiom_node_t* ret_node = NULL;
 
               axis2_char_t* soap_action = NULL;
               axis2_qname_t *op_qname =  NULL;
+              axiom_node_t* payload = NULL;
+              <xsl:if test="$outputours">
+              	<!-- this means data binding is enable -->
+                <xsl:value-of select="$outputtype"/> ret_val = NULL;
+              </xsl:if>
+
+
+             <xsl:for-each select="input/param[@type!='' and @ours]">
+                <xsl:if test="position()=1"> <!--declare only once-->
+                  /* declarations for temp nodes to build input message */
+                  axiom_element_t* payload_ele = NULL;
+                   axiom_namespace_t* payload_ns = NULL;
+                  <xsl:if test="$style='rpc'">
+                   axiom_attribute_t* attri1 = NULL;
+                   axiom_namespace_t* ns1 = NULL;
+                   axiom_namespace_t* xsi = NULL;
+                   axiom_namespace_t* xsd = NULL;
+                  </xsl:if>
+                </xsl:if>
+                <xsl:if test="$style='rpc'">
+                 axiom_node_t* input_param_om<xsl:value-of select="position()"/> = NULL;
+                </xsl:if>
+              </xsl:for-each>
+
+              <xsl:for-each select="input/param[@type!='']">
+              <xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+              <xsl:variable name="capsparamtype"><xsl:if test="@ours">AXIS2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@caps-type"></xsl:value-of></xsl:otherwise></xsl:choose></xsl:variable>
+                 <xsl:choose>
+                     <xsl:when test="not(@ours)">
+                        <xsl:if test="position()=1">
+                          payload = <xsl:value-of select="@name"/>;
+                        </xsl:if>
+                     </xsl:when>
+                     <xsl:otherwise>
+                       payload_ns = axiom_namespace_create (env,
+                                                "<xsl:value-of select="$method-ns"/>",
+                                                "ns0");
+                       payload_ele = axiom_element_create(env, NULL, "<xsl:value-of select="$method-name"/>" , payload_ns, &amp;payload);
+                       <xsl:choose>
+                       <xsl:when test="$style='rpc'">
+                       <xsl:if test="position()=1">
+
+                           xsi =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">"http://www.w3.org/2001/XMLSchema-instance"</xsl:when><xsl:when test="$soapVersion='1.1'">"http://www.w3.org/1999/XMLSchema-instance"</xsl:when></xsl:choose>,
+                                                       "xsi");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, xsi);
+                           xsd =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">"http://www.w3.org/2001/XMLSchema"</xsl:when><xsl:when test="$soapVersion='1.1'">"http://www.w3.org/1999/XMLSchema"</xsl:when></xsl:choose>,
+                                                       "xsd");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, xsd);
+                           ns1 =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">AXIOM_SOAP12_SOAP_ENVELOPE_NAMESPACE_URI</xsl:when><xsl:when test="$soapVersion='1.1'">AXIOM_SOAP11_SOAP_ENVELOPE_NAMESPACE_URI</xsl:when></xsl:choose>,
+                                                       "soapenv");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, ns1);
+                           attri1 =
+                            axiom_attribute_create (env, "encodingStyle",
+                                                       "http://schemas.xmlsoap.org/soap/encoding/",
+                                                       ns1);
+                           AXIOM_ELEMENT_ADD_ATTRIBUTE (payload_ele, env,
+                                                      attri1, payload );
+                           </xsl:if>
+
+                           input_param_om<xsl:value-of select="position()"/> = <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, payload, xsi, xsd );
+                       </xsl:when>
+                       <xsl:otherwise>
+                           <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, payload, NULL, NULL );
+                           <!--payload = <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, NULL, NULL, NULL );
+                           payload_ele =  AXIOM_NODE_GET_DATA_ELEMENT ( payload, env ); -->
+                       </xsl:otherwise>
+                       </xsl:choose>
+                     </xsl:otherwise>
+                 </xsl:choose>
+              </xsl:for-each>
+
+
+
 
               options = AXIS2_STUB_GET_OPTIONS( stub, env);
               if ( NULL == options )
               {
-                AXIS2_LOG_ERROR((*env)->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
-                     " %d :: %s", (*env)->error->error_number,
-                AXIS2_ERROR_GET_MESSAGE((*env)->error));
+                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
+                     " %d :: %s", env->error->error_number,
+                AXIS2_ERROR_GET_MESSAGE(env->error));
                 return NULL;
               }
               svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
@@ -161,10 +244,10 @@
               }
               <xsl:choose>
                <xsl:when test="$soapVersion='1.2'">
-              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIS2_SOAP12 );
+              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP12 );
                </xsl:when>
                <xsl:otherwise>
-              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIS2_SOAP11 );
+              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP11 );
                </xsl:otherwise>
               </xsl:choose>
               op_qname = axis2_qname_create(env,
@@ -172,8 +255,31 @@
                                           "<xsl:value-of select="@namespace"/>",
                                           NULL);
               ret_node =  AXIS2_SVC_CLIENT_SEND_RECEIVE_WITH_OP_QNAME( svc_client, env, op_qname, payload);
-              return ret_node;
-        
+
+
+              <xsl:choose>
+                  <xsl:when test="$outputours">
+                    if ( NULL == ret_node )
+                      return NULL;
+                    ret_val = axis2_<xsl:value-of select="output/param/@type"/>_create(env);
+                    <xsl:choose>
+                     <xsl:when test="$style='rpc'">
+                       ret_node  = AXIOM_NODE_GET_FIRST_CHILD ( ret_node, env );
+                     </xsl:when>
+                      <xsl:when test="$style='document'">
+                       /* document style just parse ret_node to build the db */
+                      </xsl:when>
+                    </xsl:choose>
+                       <xsl:value-of select="$capsoutputtype"/>_PARSE_OM(ret_val, env, ret_node );
+                   return ret_val;
+                  </xsl:when>
+                  <xsl:otherwise>
+                   return ret_node;
+                  </xsl:otherwise>
+                  <xsl:when test="$outputtype='axis2__t*'">
+                       return;
+                  </xsl:when>
+              </xsl:choose>
           }
           </xsl:if>  <!--close for  test="$isSync='1'-->
           <!-- Async method generation -->
@@ -183,25 +289,100 @@
            */
            <xsl:variable name="callbackoncomplete"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_complete</xsl:text></xsl:variable>
            <xsl:variable name="callbackonerror"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_error</xsl:text></xsl:variable>
-           void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, axis2_env_t** env, <xsl:for-each select="input/param[@type!='']">
-                                                    axis2_om_node_t*<xsl:text> </xsl:text>payload<!--<xsl:value-of select="@name"></xsl:value-of>--> ,
-                                                    </xsl:for-each>
-                                                    axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, axis2_env_t** ) ,
-                                                    axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, axis2_env_t**, int ) )
+           void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t *env, <xsl:for-each select="input/param[@type!='']"><xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                                    </xsl:for-each>,
+                                                    axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axis2_env_t* ) ,
+                                                    axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axis2_env_t*, int ) )
            {
 
               axis2_callback_t *callback = NULL;
+
               axis2_svc_client_t* svc_client = NULL;
               axis2_options_t *options = NULL;
 
               axis2_char_t* soap_action = NULL;
+              axiom_node_t* payload = NULL;
+
+             <xsl:for-each select="input/param[@type!='' and @ours]">
+                <xsl:if test="position()=1"> <!--declare only once-->
+                  /* declarations for temp nodes to build input message */
+                  axiom_element_t* payload_ele = NULL;
+                  axiom_namespace_t* payload_ns = NULL;
+                  <xsl:if test="$style='rpc'">
+                   axiom_attribute_t* attri1 = NULL;
+                   axiom_namespace_t* ns1 = NULL;
+                   axiom_namespace_t* xsi = NULL;
+                   axiom_namespace_t* xsd = NULL;
+                  </xsl:if>
+                </xsl:if>
+                <xsl:if test="$style='rpc'">
+                 axiom_node_t* input_param_om<xsl:value-of select="position()"/> = NULL;
+                </xsl:if>
+              </xsl:for-each>
+
+              <xsl:for-each select="input/param[@type!='']">
+              <xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+              <xsl:variable name="capsparamtype"><xsl:if test="@ours">AXIS2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@caps-type"></xsl:value-of></xsl:otherwise></xsl:choose></xsl:variable>
+                 <xsl:choose>
+                     <xsl:when test="not(@ours)">
+                        <xsl:if test="position()=1">
+                          payload = <xsl:value-of select="@name"/>;
+                        </xsl:if>
+                     </xsl:when>
+                     <xsl:otherwise>
+                       payload_ns = axiom_namespace_create (env,
+                                                "<xsl:value-of select="$soapAction"/>",
+                                                "ns0");
+                       payload_ele = axiom_element_create(env, NULL, "<xsl:value-of select="$method-name"/>" , payload_ns, &amp;payload);
+                       <xsl:choose>
+                       <xsl:when test="$style='rpc'">
+                       <xsl:if test="position()=1">
+
+                           xsi =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">"http://www.w3.org/2001/XMLSchema-instance"</xsl:when><xsl:when test="$soapVersion='1.1'">"http://www.w3.org/1999/XMLSchema-instance"</xsl:when></xsl:choose>,
+                                                       "xsi");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, xsi);
+                           xsd =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">"http://www.w3.org/2001/XMLSchema"</xsl:when><xsl:when test="$soapVersion='1.1'">"http://www.w3.org/1999/XMLSchema"</xsl:when></xsl:choose>,
+                                                       "xsd");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, xsd);
+                           ns1 =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">AXIOM_SOAP12_SOAP_ENVELOPE_NAMESPACE_URI</xsl:when><xsl:when test="$soapVersion='1.1'">AXIOM_SOAP11_SOAP_ENVELOPE_NAMESPACE_URI</xsl:when></xsl:choose>,
+                                                       "soapenv");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, ns1);
+                           attri1 =
+                            axiom_attribute_create (env, "encodingStyle",
+                                                       "http://schemas.xmlsoap.org/soap/encoding/",
+                                                       ns1);
+                           AXIOM_ELEMENT_ADD_ATTRIBUTE (payload_ele, env,
+                                                      attri1, payload );
+                           </xsl:if>
+
+                           input_param_om<xsl:value-of select="position()"/> = <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, payload, xsi, xsd );
+                       </xsl:when>
+                       <xsl:otherwise>
+                           <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, payload, NULL, NULL );
+                           <!--payload = <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, NULL, NULL, NULL );
+                           payload_ele =  AXIOM_NODE_GET_DATA_ELEMENT ( payload, env ); -->
+                       </xsl:otherwise>
+                       </xsl:choose>
+                     </xsl:otherwise>
+                 </xsl:choose>
+              </xsl:for-each>
 
               options = AXIS2_STUB_GET_OPTIONS( stub, env);
               if ( NULL == options )
               {
-                AXIS2_LOG_ERROR((*env)->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
-                     " %d :: %s", (*env)->error->error_number,
-                AXIS2_ERROR_GET_MESSAGE((*env)->error));
+                AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
+                        " %d :: %s", env->error->error_number,
+                        AXIS2_ERROR_GET_MESSAGE(env->error));
                 return;
               }
               svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
@@ -213,10 +394,10 @@
               }
               <xsl:choose>
                <xsl:when test="$soapVersion='1.2'">
-              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIS2_SOAP12 );
+              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP12 );
                </xsl:when>
                <xsl:otherwise>
-              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIS2_SOAP11 );
+              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP11 );
                </xsl:otherwise>
               </xsl:choose>
 
@@ -234,34 +415,104 @@
                 <!-- End of in-out mep -->
          </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out' -->
 
-         <xsl:if test="$mep='10'">  <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
+         <xsl:if test="$mep='10'">
           /**
            * Auto generated method signature
            */
-           
-           <xsl:choose>
-           <xsl:when test="$outputtype=''">axis2_status_t </xsl:when>
-           <xsl:otherwise>
-           axis2_om_node_t*
-           </xsl:otherwise>
-           </xsl:choose>
-           axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, axis2_env_t** env <xsl:for-each select="input/param[@type!='']"> ,
-                                          axis2_om_node_t*<xsl:text> </xsl:text>payload<!--<xsl:value-of select="@name"/>-->
-                                          </xsl:for-each> )
+
+           axis2_status_t
+           axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env <xsl:for-each select="input/param[@type!='']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                                </xsl:for-each>)
            {
+              axis2_status_t status;
+
               axis2_svc_client_t* svc_client = NULL;
               axis2_options_t *options = NULL;
-              int status;
 
               axis2_char_t* soap_action = NULL;
               axis2_qname_t *op_qname =  NULL;
+              axiom_node_t* payload = NULL;
+
+             <xsl:for-each select="input/param[@type!='' and @ours]">
+                <xsl:if test="position()=1"> <!--declare only once-->
+                  /* declarations for temp nodes to build input message */
+                  axiom_element_t* payload_ele = NULL;
+                  axiom_namespace_t* payload_ns = NULL;
+                  <xsl:if test="$style='rpc'">
+                   axiom_attribute_t* attri1 = NULL;
+                   axiom_namespace_t* ns1 = NULL;
+                   axiom_namespace_t* xsi = NULL;
+                   axiom_namespace_t* xsd = NULL;
+                  </xsl:if>
+                </xsl:if>
+                <xsl:if test="$style='rpc'">
+                 axiom_node_t* input_param_om<xsl:value-of select="position()"/> = NULL;
+                </xsl:if>
+              </xsl:for-each>
+
+              <xsl:for-each select="input/param[@type!='']">
+              <xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+              <xsl:variable name="capsparamtype"><xsl:if test="@ours">AXIS2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@caps-type"></xsl:value-of></xsl:otherwise></xsl:choose></xsl:variable>
+                 <xsl:choose>
+                     <xsl:when test="not(@ours)">
+                        <xsl:if test="position()=1">
+                          payload = <xsl:value-of select="@name"/>;
+                        </xsl:if>
+                     </xsl:when>
+                     <xsl:otherwise>
+                       payload_ns = axiom_namespace_create (env,
+                                                "<xsl:value-of select="$soapAction"/>",
+                                                "ns0");
+                       payload_ele = axiom_element_create(env, NULL, "<xsl:value-of select="$method-name"/>" , payload_ns, &amp;payload);
+                       <xsl:choose>
+                       <xsl:when test="$style='rpc'">
+                       <xsl:if test="position()=1">
+
+                           xsi =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">"http://www.w3.org/2001/XMLSchema-instance"</xsl:when><xsl:when test="$soapVersion='1.1'">"http://www.w3.org/1999/XMLSchema-instance"</xsl:when></xsl:choose>,
+                                                       "xsi");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, xsi);
+                           xsd =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">"http://www.w3.org/2001/XMLSchema"</xsl:when><xsl:when test="$soapVersion='1.1'">"http://www.w3.org/1999/XMLSchema"</xsl:when></xsl:choose>,
+                                                       "xsd");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, xsd);
+                           ns1 =
+                            axiom_namespace_create (env,
+                                                       <xsl:choose><xsl:when test="$soapVersion='1.2'">AXIOM_SOAP12_SOAP_ENVELOPE_NAMESPACE_URI</xsl:when><xsl:when test="$soapVersion='1.1'">AXIOM_SOAP11_SOAP_ENVELOPE_NAMESPACE_URI</xsl:when></xsl:choose>,
+                                                       "soapenv");
+                           AXIOM_ELEMENT_DECLARE_NAMESPACE (payload_ele, env,
+                                                      payload, ns1);
+                           attri1 =
+                            axiom_attribute_create (env, "encodingStyle",
+                                                       "http://schemas.xmlsoap.org/soap/encoding/",
+                                                       ns1);
+                           AXIOM_ELEMENT_ADD_ATTRIBUTE (payload_ele, env,
+                                                      attri1, payload );
+                           </xsl:if>
+
+                           input_param_om<xsl:value-of select="position()"/> = <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, payload, xsi, xsd );
+                       </xsl:when>
+                       <xsl:otherwise>
+                           <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, payload, NULL, NULL );
+                           <!--payload = <xsl:value-of select="$capsparamtype"/>_BUILD_OM(<xsl:value-of select="@name"/>, env, NULL, NULL, NULL );
+                           payload_ele =  AXIOM_NODE_GET_DATA_ELEMENT ( payload, env ); -->
+                       </xsl:otherwise>
+                       </xsl:choose>
+                     </xsl:otherwise>
+                 </xsl:choose>
+              </xsl:for-each>
 
               options = AXIS2_STUB_GET_OPTIONS( stub, env);
               if ( NULL == options )
               {
-                AXIS2_LOG_ERROR((*env)->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
-                     " %d :: %s", (*env)->error->error_number,
-                AXIS2_ERROR_GET_MESSAGE((*env)->error));
+                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
+                     " %d :: %s", env->error->error_number,
+                        AXIS2_ERROR_GET_MESSAGE(env->error));
                 return AXIS2_FAILURE;
               }
               svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
@@ -273,10 +524,10 @@
               }
               <xsl:choose>
                <xsl:when test="$soapVersion='1.2'">
-              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIS2_SOAP12 );
+              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP12 );
                </xsl:when>
                <xsl:otherwise>
-              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIS2_SOAP11 );
+              AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP11 );
                </xsl:otherwise>
               </xsl:choose>
               op_qname = axis2_qname_create(env,
@@ -285,10 +536,9 @@
                                           NULL);
               status =  AXIS2_SVC_CLIENT_SEND_ROBUST_WITH_OP_QNAME( svc_client, env, op_qname, payload);
               return status;
-        
-          }         
+
+          }
          </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-only' -->
     </xsl:for-each>   <!-- close of for-each select = "method" -->
-
    </xsl:template>
 </xsl:stylesheet>

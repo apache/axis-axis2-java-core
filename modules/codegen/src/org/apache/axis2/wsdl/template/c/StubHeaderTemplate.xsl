@@ -27,47 +27,60 @@
         */
 
         #include &lt;stdio.h&gt;
-        #include &lt;axis2_om.h&gt;
+        #include &lt;axiom.h&gt;
         #include &lt;axis2_util.h&gt;
-        #include &lt;axis2_soap.h&gt;
+        #include &lt;axiom_soap.h&gt;
         #include &lt;axis2_client.h&gt;
         #include &lt;axis2_stub.h&gt;
 
+       <xsl:for-each select="method">
+        <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
+        <xsl:if test="$outputours and output/param/@type!='' and output/param/@type!='org.apache.axiom.om.OMElement'">
+         <xsl:variable name="outputtype">axis2_<xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+         #include  "<xsl:value-of select="$outputtype"/>.h"
+        </xsl:if>
+        <xsl:for-each select="input/param[@type!='' and @ours and @type!='org.apache.axiom.om.OMElement']">
+         <xsl:variable name="inputtype">axis2_<xsl:value-of select="@type"></xsl:value-of></xsl:variable>
+         #include "<xsl:value-of select="$inputtype"/>.h"
+        </xsl:for-each>
+       </xsl:for-each>
         /* function prototypes - for header file*/
         /**
-         * axis2_create_<xsl:value-of select="$interfaceName"/>_stub 
+         * axis2_<xsl:value-of select="$interfaceName"/>_stub_create
          * create and return the stub with services populated
          * params - env : environment ( mandatory)
          *        - client_home : Axis2/C home ( mandatory )
-         *        - endpoint_ref : service endpoint ( optional ) - if NULL default picked from wsdl used
+         *        - endpoint_uri : service endpoint uri( optional ) - if NULL default picked from wsdl used
          */
         axis2_stub_t*
-        axis2_create_<xsl:value-of select="$interfaceName"/>_stub (axis2_env_t **env,
+        axis2_<xsl:value-of select="$interfaceName"/>_stub_create (const axis2_env_t *env,
                                         axis2_char_t *client_home,
-                                        axis2_endpoint_ref_t *endpoint_ref);
+                                        axis2_char_t *endpoint_uri);
         /**
          * axis2_populate_axis_service
          * populate the svc in stub with the service and operations
          */
-        void axis2_populate_axis_service( axis2_stub_t* stub, axis2_env_t** env);
+        void axis2_populate_axis_service( axis2_stub_t* stub, const axis2_env_t* env);
         /**
-         * axis2_get_endpoint_ref_from_wsdl
-         * return the endpoint reference picked from wsdl
+         * axis2_get_endpoint_uri_from_wsdl
+         * return the endpoint URI picked from wsdl
          */
-        axis2_endpoint_ref_t* axis2_get_endpoint_ref_from_wsdl ( axis2_env_t** env );
+        axis2_char_t* axis2_get_endpoint_uri_from_wsdl ( const axis2_env_t* env );
 
         <xsl:if test="$isSync='1'">
         <xsl:for-each select="method">
-        <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+        <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
+        <xsl:variable name="outputtype"><xsl:if test="$outputours">axis2_</xsl:if><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="$outputours">_t*</xsl:if></xsl:variable>
         <xsl:choose>
-        <xsl:when test="$outputtype=''">axis2_status_t </xsl:when>
+        <xsl:when test="not($outputtype) or $outputtype=''">axis2_status_t </xsl:when>
+        <xsl:when test="$outputtype='axis2__t*'">void</xsl:when>
         <xsl:otherwise>
-        axis2_om_node_t*
+        <xsl:value-of select="$outputtype"/>
         </xsl:otherwise>
         </xsl:choose>
-        axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, axis2_env_t** env <xsl:for-each select="input/param[@type!='']"> ,
-                                          axis2_om_node_t*<xsl:text> </xsl:text>payload<!--<xsl:value-of select="@name"/>-->
-                                          </xsl:for-each> );
+        axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env <xsl:for-each select="input/param[@type!='']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                                </xsl:for-each>);
         </xsl:for-each>
         </xsl:if>  <!--close for  test="$isSync='1'-->
 
@@ -75,12 +88,12 @@
         <xsl:if test="$isAsync='1'">
         <xsl:for-each select="method">
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
-        <xsl:if test="$mep='12'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
-        void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, axis2_env_t** env, <xsl:for-each select="input/param[@type!='']">
-                                                    axis2_om_node_t*<xsl:text> </xsl:text>payload<!--<xsl:value-of select="@name"></xsl:value-of>--> ,
-                                                    </xsl:for-each>
-                                                    axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, axis2_env_t** ) ,
-                                                    axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, axis2_env_t**, int ) );
+        <xsl:if test="not($mep='10')">
+        void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env, <xsl:for-each select="input/param[@type!='']"><xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                                    </xsl:for-each>,
+                                                    axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axis2_env_t* ) ,
+                                                    axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axis2_env_t*, int ) );
 
         </xsl:if>  <!--close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out'"-->
         </xsl:for-each>
