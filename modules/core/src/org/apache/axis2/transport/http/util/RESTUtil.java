@@ -137,8 +137,6 @@ public class RESTUtil {
 
             invokeAxisEngine(msgContext);
 
-        } catch (AxisFault axisFault) {
-            throw new AxisFault(axisFault);
         } catch (IOException e) {
             throw  new AxisFault(e);
         }
