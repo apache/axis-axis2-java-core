@@ -13,8 +13,8 @@
 	<!-- Using the config file -->
 	<parameter name="token-dispatcher-configuration-file">token-dispatcher-configuration.xml</parameter>
 	
-	<parameter name="InflowSecurity">
-		<action>
+    <parameter name="InflowSecurity">
+	<action>
             <items>Timestamp Signature</items>
             <signaturePropFile>sctIssuer.properties</signaturePropFile>
         </action>
