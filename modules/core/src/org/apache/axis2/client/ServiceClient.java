@@ -308,7 +308,10 @@ public class ServiceClient {
      * @param headerName
      * @param headerText
      */
-    public void addStringHeader(QName headerName, String headerText) {
+    public void addStringHeader(QName headerName, String headerText) throws AxisFault {
+        if (headerName.getNamespaceURI() == null || "".equals(headerName.getNamespaceURI())) {
+            throw new AxisFault("Failed to add string header , you have to have namespceURI for the QName");
+        }
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(
                 headerName, null);
         omElement.setText(headerText);
