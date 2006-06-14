@@ -17,7 +17,7 @@ package org.apache.axis2.tool.codegen;
 
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2AxisServiceBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
@@ -187,9 +187,16 @@ public class WSDL2JavaGenerator {
 				url = new URL(wsdlURI);	
 			}
 
+			//FIXME @author soi - 
+		    // This quick fix assume that the wsdlURI points to a wsdl 1.1 version.
+			// A better fix should be to determine which builder to use based on the wsdl version. 
+			// The current implementation of the wsdl builder classes did not allow for this. I will suggest
+			// that the determination of which builder to use should be done in the builder classes, preferably
+			// in the parent builder class. 
+			// Accessable through a static reference to a method like getBuilderInstance(String wsdlURI) in
+			// the parent builder class or through a builder Abstract Factor or Abstract factory methods.
 			
-			WSDL2AxisServiceBuilder builder = 
-				new WSDL2AxisServiceBuilder(url.openConnection().getInputStream());
+			WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(url.openConnection().getInputStream());
 					
 			builder.setBaseUri(getBaseUri(wsdlURI));
 			return builder.populateService();

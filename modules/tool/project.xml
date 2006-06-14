@@ -41,6 +41,11 @@
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-core</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
@@ -66,7 +71,7 @@
             <sourceModification>
                 <className>fakeClass</className>
                 <excludes>
-                    <exclude>**/codegen/**/*.java</exclude>
+                    <exclude>**/eclipse/**/*.java</exclude>
                     <exclude>**/core/**/*.java</exclude>
                     <exclude>**/service/**/*.java</exclude>
                 </excludes>
