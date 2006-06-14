@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.rahas;
+package org.apache.axis2.security.sc;
 
 import org.apache.axis2.description.Parameter;
 import org.apache.rampart.conversation.ConversationConfiguration;
@@ -22,15 +22,15 @@ import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 
 /**
- * This tests security context establishment when there's no STS involved.
- * Note that we are not setting the STS endpoint address in the rahas config.
- * 
- * The client side rahas outflow handler will create the RSTR with the SCT
- * and RPT with a secret in a EncryptedKey and will send it over to the service.
+ * The RequestedProofToken is an EncryptedKey
+ * which holds the secret of security context.
  */
-public class ConversationScenario3Test extends TestClient {
+public class ConversationScenario1Test extends TestClient {
 
-    public ConversationScenario3Test(String name) {
+    /**
+     * @param name
+     */
+    public ConversationScenario1Test(String name) {
         super(name);
     }
 
@@ -40,21 +40,33 @@ public class ConversationScenario3Test extends TestClient {
         config.setCryptoPropertiesFile("sec.properties");
         config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
-        config.setEncryptionUser("sts");
+        config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/SecureService");
 
         return config.getParameter();
     }
 
     public OutflowConfiguration getClientOutflowConfiguration() {
-        return null;
+        OutflowConfiguration ofc = new OutflowConfiguration();
+
+        ofc.setActionItems("Timestamp Signature");
+        ofc.setUser("alice");
+        ofc.setSignaturePropFile("sec.properties");
+        ofc.setPasswordCallbackClass(PWCallback.class.getName());
+        return ofc;
     }
 
     public InflowConfiguration getClientInflowConfiguration() {
-        return null;
+        InflowConfiguration ifc = new InflowConfiguration();
+
+        ifc.setActionItems("Timestamp Signature Encrypt");
+        ifc.setPasswordCallbackClass(PWCallback.class.getName());
+        ifc.setSignaturePropFile("sec.properties");
+        
+        return ifc;
     }
 
     public String getServiceRepo() {
-        return "rahas_service_repo_3";
+        return "sc_service_repo_1";
     }
 
 }

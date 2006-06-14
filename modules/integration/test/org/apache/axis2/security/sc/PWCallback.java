@@ -1,4 +1,4 @@
-package org.apache.axis2.security.rahas;
+package org.apache.axis2.security.sc;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

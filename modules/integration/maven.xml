@@ -115,119 +115,120 @@
     <postGoal name="test:compile">
         <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 
-			<!-- Service classes for the Rahas tests -->
-			<mkdir dir="target/temp-rahas"/>
-			<mkdir dir="target/temp-rahas/META-INF"/>
+			<!-- Service classes for the SecConv tests -->
+			<mkdir dir="target/temp-sc"/>
+			<mkdir dir="target/temp-sc/META-INF"/>
 			
-			<copy overwrite="yes" file="target/test-classes/org/apache/axis2/security/rahas/Service.class"
-                  tofile="target/temp-rahas/org/apache/axis2/security/rahas/Service.class"/>
-			<copy overwrite="yes" file="target/test-classes/org/apache/axis2/security/rahas/PWCallback.class"
-                  tofile="target/temp-rahas/org/apache/axis2/security/rahas/PWCallback.class"/>
+			<copy overwrite="yes" file="target/test-classes/org/apache/axis2/security/sc/Service.class"
+                  tofile="target/temp-sc/org/apache/axis2/security/sc/Service.class"/>
+			<copy overwrite="yes" file="target/test-classes/org/apache/axis2/security/sc/PWCallback.class"
+                  tofile="target/temp-sc/org/apache/axis2/security/sc/PWCallback.class"/>
 				  
-			<copy overwrite="yes" todir="target/temp-rahas">
-            	<fileset dir="test-resources/security/rahas">
+			<copy overwrite="yes" todir="target/temp-sc">
+            	<fileset dir="test-resources/security">
 					<include name="sctIssuer.properties"/>
 					<include name="sts.jks"/>
 				</fileset>
 			</copy>
 
-			<ant:path id="rahas.client.props" location="test-resources/security/rahas"/>
-            <maven:addPath id="maven.dependency.classpath" refid="rahas.client.props"/>
+			<ant:path id="sc.client.props" location="test-resources/security/sc"/>
+            <maven:addPath id="maven.dependency.classpath" refid="sc.client.props"/>
 			
-			<mkdir dir="target/test-resources/rahas_client_repo"/>
-            <mkdir dir="target/test-resources/rahas_client_repo/conf"/>
-            <mkdir dir="target/test-resources/rahas_client_repo/modules"/>
+			<mkdir dir="target/test-resources/sc_client_repo"/>
+            <mkdir dir="target/test-resources/sc_client_repo/conf"/>
+            <mkdir dir="target/test-resources/sc_client_repo/modules"/>
 			
 			<copy file="../addressing/target/addressing-${addressing_version}.mar"
-                  tofile="target/test-resources/rahas_client_repo/modules/addressing-${addressing_version}.mar"/>
+                  tofile="target/test-resources/sc_client_repo/modules/addressing-${addressing_version}.mar"/>
 			<copy file="../security/target/rampart-${rampart_version}.mar"
-                  tofile="target/test-resources/rahas_client_repo/modules/rampart-${rampart_version}.mar"/>
+                  tofile="target/test-resources/sc_client_repo/modules/rampart-${rampart_version}.mar"/>
 
-            <!-- Rahas Test - 1  -->
+            <!-- SecConv Test - 1  -->
 
-            <mkdir dir="target/test-resources/rahas_service_repo_1"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_1/conf"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_1/services"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_1/modules"/>
+            <mkdir dir="target/test-resources/sc/_service_repo_1"/>
+            <mkdir dir="target/test-resources/sc_service_repo_1/conf"/>
+            <mkdir dir="target/test-resources/sc_service_repo_1/services"/>
+            <mkdir dir="target/test-resources/sc_service_repo_1/modules"/>
 
+	    
             <copy file="../security/target/rampart-${rampart_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_1/modules/rampart-${rampart_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_1/modules/rampart-${rampart_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_1/modules/addressing-${addressing_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_1/modules/addressing-${addressing_version}.mar"/>
 				  
 			<!-- copy the services.xml and create the aar -->
-			<copy overwrite="yes" file="test-resources/security/rahas/s1-services.xml"
-                  tofile="target/temp-rahas/META-INF/services.xml"/>
+			<copy overwrite="yes" file="test-resources/security/sc/s1-services.xml"
+                  tofile="target/temp-sc/META-INF/services.xml"/>
 
-		    <jar jarfile="target/test-resources/rahas_service_repo_1/services/SecureService.aar"
-                 basedir="target/temp-rahas"/>
+		    <jar jarfile="target/test-resources/sc_service_repo_1/services/SecureService.aar"
+                 basedir="target/temp-sc"/>
 
             <!-- Rahas Test - 1 :END -->
 
             <!-- Rahas Test - 2  -->
 
-            <mkdir dir="target/test-resources/rahas_service_repo_2"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_2/conf"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_2/services"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_2/modules"/>
+            <mkdir dir="target/test-resources/sc_service_repo_2"/>
+            <mkdir dir="target/test-resources/sc_service_repo_2/conf"/>
+            <mkdir dir="target/test-resources/sc_service_repo_2/services"/>
+            <mkdir dir="target/test-resources/sc_service_repo_2/modules"/>
 
             <copy file="../security/target/rampart-${rampart_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_2/modules/rampart-${rampart_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_2/modules/rampart-${rampart_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_2/modules/addressing-${addressing_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_2/modules/addressing-${addressing_version}.mar"/>
 
 			<!-- copy the services.xml and create the aar -->
-			<copy overwrite="yes" file="test-resources/security/rahas/s2-services.xml"
-                  tofile="target/temp-rahas/META-INF/services.xml"/>
+			<copy overwrite="yes" file="test-resources/security/sc/s2-services.xml"
+                  tofile="target/temp-sc/META-INF/services.xml"/>
 
-		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_2/services/SecureService.aar"
-                 basedir="target/temp-rahas"/>
+		    <jar  overwrite="yes" jarfile="target/test-resources/sc_service_repo_2/services/SecureService.aar"
+                 basedir="target/temp-sc"/>
 
             <!-- Rahas Test - 2 :END -->
 
 			<!-- Rahas Test - 3  -->
 
-            <mkdir dir="target/test-resources/rahas_service_repo_3"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_3/conf"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_3/services"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_3/modules"/>
+            <mkdir dir="target/test-resources/sc_service_repo_3"/>
+            <mkdir dir="target/test-resources/sc_service_repo_3/conf"/>
+            <mkdir dir="target/test-resources/sc_service_repo_3/services"/>
+            <mkdir dir="target/test-resources/sc_service_repo_3/modules"/>
 
             <copy file="../security/target/rampart-${rampart_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_3/modules/rampart-${rampart_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_3/modules/rampart-${rampart_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_3/modules/addressing-${addressing_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_3/modules/addressing-${addressing_version}.mar"/>
 			<!-- copy the services.xml and create the aar -->
-			<copy overwrite="yes" file="test-resources/security/rahas/s3-services.xml"
-                  tofile="target/temp-rahas/META-INF/services.xml"/>
+			<copy overwrite="yes" file="test-resources/security/sc/s3-services.xml"
+                  tofile="target/temp-sc/META-INF/services.xml"/>
 
-		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_3/services/SecureService.aar"
-                 basedir="target/temp-rahas"/>
+		    <jar  overwrite="yes" jarfile="target/test-resources/sc_service_repo_3/services/SecureService.aar"
+                 basedir="target/temp-sc"/>
 
             <!-- Rahas Test - 3 :END -->
 
 			<!-- Rahas Test - 4  -->
 
-            <mkdir dir="target/test-resources/rahas_service_repo_4"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_4/conf"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_4/services"/>
-            <mkdir dir="target/test-resources/rahas_service_repo_4/modules"/>
+            <mkdir dir="target/test-resources/sc_service_repo_4"/>
+            <mkdir dir="target/test-resources/sc_service_repo_4/conf"/>
+            <mkdir dir="target/test-resources/sc_service_repo_4/services"/>
+            <mkdir dir="target/test-resources/sc_service_repo_4/modules"/>
 
             <copy file="../security/target/rampart-${rampart_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_4/modules/rampart-${rampart_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_4/modules/rampart-${rampart_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
-                  tofile="target/test-resources/rahas_service_repo_4/modules/addressing-${addressing_version}.mar"/>
+                  tofile="target/test-resources/sc_service_repo_4/modules/addressing-${addressing_version}.mar"/>
 
 			<!-- copy the services.xml and create the aar -->
-			<copy overwrite="yes" file="test-resources/security/rahas/s4-services.xml"
-                  tofile="target/temp-rahas/META-INF/services.xml"/>
+			<copy overwrite="yes" file="test-resources/security/sc/s4-services.xml"
+                  tofile="target/temp-sc/META-INF/services.xml"/>
 
-		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_4/services/SecureService.aar"
-                 basedir="target/temp-rahas"/>
+		    <jar  overwrite="yes" jarfile="target/test-resources/sc_service_repo_4/services/SecureService.aar"
+                 basedir="target/temp-sc"/>
 
             <!-- Rahas Test - 4 :END -->
 			
-			<!-- clean up temp rahas stuff -->
-			<delete dir="target/temp-rahas"/>
+			<!-- clean up temp sc stuff -->
+			<delete dir="target/temp-sc"/>
 
 		
 			<mkdir dir="target/test-resources/samples/modules"/>

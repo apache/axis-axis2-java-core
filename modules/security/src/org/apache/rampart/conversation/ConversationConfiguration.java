@@ -45,7 +45,7 @@ import java.util.Properties;
  */
 public class ConversationConfiguration {
     
-    public final static String RAHAS_CONFIG = "rahas-configuration";
+    public final static String SC_CONFIG = "sc-configuration";
     
     public final static String SCOPE_SERVICE = "service";
     
@@ -101,7 +101,7 @@ public class ConversationConfiguration {
      * This is the <code>Crypto</code> impl class name.
      * 
      * This will ONLY be set via the message context as a property using 
-     * <code>org.apache.axis2.security.rahas.WSSHandlerConstants#CRYPTO_PROPERTIES_KEY<code>. 
+     * <code>org.apache.rampart.WSSHandlerConstants#CRYPTO_PROPERTIES_KEY<code>. 
      * 
      * @see org.apache.ws.security.components.crypto.Crypto
      * @see org.apache.ws.security.components.crypto.Merlin
@@ -159,14 +159,14 @@ public class ConversationConfiguration {
             if (elem != null
                     && elem.getFirstElement() != null
                     && elem.getFirstElement().getLocalName().equals(
-                            RAHAS_CONFIG)) {
+                            SC_CONFIG)) {
                 
                 OMElement confElem = elem.getFirstElement();
                 
                 ConversationConfiguration config = new ConversationConfiguration();
                 
                 config.msgCtx = msgCtx;
-                msgCtx.setProperty(RAHAS_CONFIG, config);
+                msgCtx.setProperty(SC_CONFIG, config);
                 
                 config.scope = getStringValue(confElem.getFirstChildWithName(SCOPE));
                 
@@ -229,7 +229,7 @@ public class ConversationConfiguration {
                         MessageContext inMsgCtx;
                         ConversationConfiguration inConfig = null;
                         if(opCtx != null && (inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
-                            inConfig = (ConversationConfiguration)inMsgCtx.getProperty(RAHAS_CONFIG);
+                            inConfig = (ConversationConfiguration)inMsgCtx.getProperty(SC_CONFIG);
                         }
                         if(inConfig != null && inConfig.contextIdentifier != null) {
                             config.contextIdentifier = inConfig.contextIdentifier;
@@ -259,7 +259,7 @@ public class ConversationConfiguration {
                 return config;
             } else {
                 throw new RampartException("missingConfiguration",
-                        new String[] { RAHAS_CONFIG });
+                        new String[] { SC_CONFIG });
             }
         } else {
             //If there's no configuration return null
@@ -273,9 +273,9 @@ public class ConversationConfiguration {
      * @return
      */
     public static Parameter getParameter(MessageContext msgCtx) {
-        Parameter param = msgCtx.getParameter(RAHAS_CONFIG);
+        Parameter param = msgCtx.getParameter(SC_CONFIG);
         if(param == null) {
-            param = (Parameter)msgCtx.getProperty(RAHAS_CONFIG);
+            param = (Parameter)msgCtx.getProperty(SC_CONFIG);
         }
         return param;
     }
@@ -300,7 +300,7 @@ public class ConversationConfiguration {
         Parameter param = new Parameter();
         OMElement element = this.getOMElement();
         OMElement paramElem = element.getOMFactory().createOMElement("parameter", null);
-        paramElem.addAttribute("name", ConversationConfiguration.RAHAS_CONFIG, null);
+        paramElem.addAttribute("name", ConversationConfiguration.SC_CONFIG, null);
         paramElem.addChild(element);
         param.setParameterElement(paramElem);
         return param;
@@ -308,7 +308,7 @@ public class ConversationConfiguration {
     
     private OMElement getOMElement() {
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        OMElement elem = factory.createOMElement(RAHAS_CONFIG, null);
+        OMElement elem = factory.createOMElement(SC_CONFIG, null);
         if (this.scope != null) {
             OMElement tempElem = factory.createOMElement(SCOPE, elem);
             tempElem.setText(this.scope);

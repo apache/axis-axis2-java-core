@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.rahas;
+package org.apache.axis2.security.sc;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -61,7 +61,7 @@ public abstract class TestClient extends TestCase {
         try {
 
             // Get the repository location from the args
-            String repo = Constants.TESTING_PATH + "rahas_client_repo";
+            String repo = Constants.TESTING_PATH + "sc_client_repo";
 
             OMElement payload = getEchoElement();
             ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
@@ -80,7 +80,7 @@ public abstract class TestClient extends TestCase {
             if(clientInflowConfiguration != null) {
                 options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
             }
-            options.setProperty(ConversationConfiguration.RAHAS_CONFIG, getClientConversationConfiguration());
+            options.setProperty(ConversationConfiguration.SC_CONFIG, getClientConversationConfiguration());
 
             options.setAction("urn:echo");
 

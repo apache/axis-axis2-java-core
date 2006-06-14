@@ -2,7 +2,7 @@
 
 	<module ref="rampart"/>
 
-	<parameter locked="false" name="ServiceClass">org.apache.axis2.security.rahas.Service</parameter>
+	<parameter locked="false" name="ServiceClass">org.apache.axis2.security.sc.Service</parameter>
 
 	<operation name="echo">
 		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
@@ -17,12 +17,12 @@
 		</sct-issuer-config>
     </parameter>
     
-    <parameter xmlns="" name="rahas-configuration">
-		<rahas-configuration xmlns="">
+    <parameter xmlns="" name="sc-configuration">
+		<sc-configuration xmlns="">
 			<scope xmlns="">service</scope>
-			<passwordCallbackClass xmlns="">org.apache.axis2.security.rahas.PWCallback</passwordCallbackClass>
+			<passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
 			<cryptoProperties xmlns="">sctIssuer.properties</cryptoProperties>
-		</rahas-configuration>
+		</sc-configuration>
     </parameter>
 
     <parameter name="InflowSecurity">
@@ -38,7 +38,7 @@
         <encryptionUser>useReqSigCert</encryptionUser>
         <user>sts</user>
         <signaturePropFile xmlns="">sctIssuer.properties</signaturePropFile>
-	<passwordCallbackClass xmlns="">org.apache.axis2.security.rahas.PWCallback</passwordCallbackClass>
+	<passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
       </action>
     </parameter>
     

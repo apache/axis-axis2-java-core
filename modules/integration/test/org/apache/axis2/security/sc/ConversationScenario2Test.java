@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.rahas;
-import org.apache.axiom.om.OMElement;
+package org.apache.axis2.security.sc;
 
-public class Service {
+/**
+ * The RSTR will hold a  RequestedProofToken with a base64 encoded 
+ * secret held in a BinarySecret element.
+ */
+public class ConversationScenario2Test extends ConversationScenario1Test {
 
-	public OMElement echo(OMElement elem) {
-		elem.build();
-		elem.detach();
-        System.out.println("Service invoked");
-		return elem;
-	}
-	
+    public ConversationScenario2Test(String name) {
+        super(name);
+    }
+
+    public String getServiceRepo() {
+        return "sc_service_repo_2";
+    }
+
+    
 }

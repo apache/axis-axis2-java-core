@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.rahas;
+package org.apache.axis2.security.sc;
 
 import org.apache.axis2.description.Parameter;
 import org.apache.rampart.conversation.ConversationConfiguration;
@@ -22,16 +22,13 @@ import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 
 /**
- * The RequestedProofToken is an EncryptedKey
- * which holds the secret of security context.
+ * This tests the use computed keys when the requester provides entropy
  */
-public class ConversationScenario1Test extends TestClient {
+public class ConversationScenario4Test extends TestClient {
 
-    /**
-     * @param name
-     */
-    public ConversationScenario1Test(String name) {
+    public ConversationScenario4Test(String name) {
         super(name);
+        // TODO Auto-generated constructor stub
     }
 
     public Parameter getClientConversationConfiguration() {
@@ -40,6 +37,7 @@ public class ConversationScenario1Test extends TestClient {
         config.setCryptoPropertiesFile("sec.properties");
         config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
+        config.setProvideEntropy(true);
         config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/SecureService");
 
         return config.getParameter();
@@ -66,7 +64,8 @@ public class ConversationScenario1Test extends TestClient {
     }
 
     public String getServiceRepo() {
-        return "rahas_service_repo_1";
+        return "sc_service_repo_4";
     }
+
 
 }

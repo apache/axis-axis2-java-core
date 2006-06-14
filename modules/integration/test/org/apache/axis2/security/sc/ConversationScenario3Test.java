@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.security.rahas;
+package org.apache.axis2.security.sc;
 
 import org.apache.axis2.description.Parameter;
 import org.apache.rampart.conversation.ConversationConfiguration;
@@ -22,13 +22,16 @@ import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 
 /**
- * This tests the use computed keys when the requester provides entropy
+ * This tests security context establishment when there's no STS involved.
+ * Note that we are not setting the STS endpoint address in the rahas config.
+ * 
+ * The client side rahas outflow handler will create the RSTR with the SCT
+ * and RPT with a secret in a EncryptedKey and will send it over to the service.
  */
-public class ConversationScenario4Test extends TestClient {
+public class ConversationScenario3Test extends TestClient {
 
-    public ConversationScenario4Test(String name) {
+    public ConversationScenario3Test(String name) {
         super(name);
-        // TODO Auto-generated constructor stub
     }
 
     public Parameter getClientConversationConfiguration() {
@@ -37,35 +40,21 @@ public class ConversationScenario4Test extends TestClient {
         config.setCryptoPropertiesFile("sec.properties");
         config.setScope(ConversationConfiguration.SCOPE_SERVICE);
         config.setPasswordCallbackClass(PWCallback.class.getName());
-        config.setProvideEntropy(true);
-        config.setStsEPRAddress("http://localhost:" + port + "/axis2/services/SecureService");
+        config.setEncryptionUser("sts");
 
         return config.getParameter();
     }
 
     public OutflowConfiguration getClientOutflowConfiguration() {
-        OutflowConfiguration ofc = new OutflowConfiguration();
-
-        ofc.setActionItems("Timestamp Signature");
-        ofc.setUser("alice");
-        ofc.setSignaturePropFile("sec.properties");
-        ofc.setPasswordCallbackClass(PWCallback.class.getName());
-        return ofc;
+        return null;
     }
 
     public InflowConfiguration getClientInflowConfiguration() {
-        InflowConfiguration ifc = new InflowConfiguration();
-
-        ifc.setActionItems("Timestamp Signature Encrypt");
-        ifc.setPasswordCallbackClass(PWCallback.class.getName());
-        ifc.setSignaturePropFile("sec.properties");
-        
-        return ifc;
+        return null;
     }
 
     public String getServiceRepo() {
-        return "rahas_service_repo_4";
+        return "sc_service_repo_3";
     }
-
 
 }
