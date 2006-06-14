@@ -80,48 +80,6 @@
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
         </delete>
-
-        <!-- Create the sts.aar : STATRT -->
-
-        <mkdir dir="target/sts"/>
-        <mkdir dir="target/METS-INF"/>
-        <mkdir dir="target/sts/lib"/>
-        <!-- Copy classes -->
-        <copy todir="target/sts">
-            <fileset dir="target/classes">
-                <include name="**/org/apache/axis2/security/trust/*/**/*.class"/>
-                <include name="**/org/apache/axis2/security/trust/*.class"/>
-            </fileset>
-        </copy>
-        <!-- copy jars -->
-        <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
-			<copy file="${dependencies.dir}/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
-			<copy file="${dependencies.dir}/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
-			<copy file="${dependencies.dir}/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>
-			<copy file="${dependencies.dir}/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
-        </j:if>
-        <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
-			<copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/sts/lib"/>
-			<copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/sts/lib"/>
-			<copy file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar" todir="target/sts/lib"/>
-			<copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/sts/lib"/>        
-        </j:if>
-        
-        <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
-		<copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/META-INF/sct-issuer-config.xml"/>
-		<copy file="test-resources/trust/impl/token-dispatcher-configuration.xml" toFile="target/sts/token-dispatcher-configuration.xml"/>
-        <copy file="test-resources/trust/impl/sctIssuer.properties" toFile="target/sts/sctIssuer.properties"/>
-        <copy file="test-resources/trust/impl/sts.jks" toFile="target/sts/sts.jks"/>
-        
-        <jar jarfile="target/SecurityTokenService.aar" basedir="target/sts/">
-            <include name="**/*"/>
-        </jar>
-
-		<delete includeEmptyDirs="true">
-            <fileset dir="target/sts"/>
-        </delete>
-        <!-- Create the sts.aar : END -->
-        
     </postGoal>
 
     <preGoal name="java:compile">

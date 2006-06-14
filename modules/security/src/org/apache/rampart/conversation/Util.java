@@ -17,9 +17,9 @@
 package org.apache.rampart.conversation;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.security.trust.Constants;
-import org.apache.axis2.security.trust.Token;
-import org.apache.axis2.security.trust.TrustException;
+import org.apache.rahas.Constants;
+import org.apache.rahas.Token;
+import org.apache.rahas.TrustException;
 import org.apache.axis2.util.Base64;
 import org.apache.axis2.util.Loader;
 import org.apache.rampart.RampartException;

@@ -100,6 +100,11 @@
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-rahas</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 
         <!-- external JARs -->
         <dependency>

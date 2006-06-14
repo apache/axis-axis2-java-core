@@ -16,7 +16,7 @@
 
 package org.apache.rampart.conversation;
 
-import org.apache.axis2.security.trust.Token;
+import org.apache.rahas.Token;
 import org.apache.ws.security.WSPasswordCallback;
 
 import javax.security.auth.callback.Callback;

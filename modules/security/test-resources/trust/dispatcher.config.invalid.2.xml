@@ -1,6 +1,0 @@
-<token-dispatcher-configuration>
-	<issuer class="org.apache.axis2.security.trust.TempIssuer" default="true">
-		<tokenType></tokenType>
-		<tokenType>http://example.org/mySpecialToken2</tokenType>
-	</issuer>
-</token-dispatcher-configuration>
