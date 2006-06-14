@@ -6,6 +6,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 
@@ -89,14 +90,19 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         for (int i = 0; i < schemas.size(); i++) {
             StringWriter writer = new StringWriter();
             XmlSchema schema = axisService.getSchema(i);
-            schema.write(writer);
-            if (!"".equals(writer.toString())) {
-                XMLStreamReader xmlReader = StAXUtils
-                        .createXMLStreamReader(new ByteArrayInputStream(writer
-                                .toString().getBytes()));
 
-                StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-                wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+            if (!Constants.URI_2001_SCHEMA_XSD.equals(schema.getTargetNamespace())) {
+                schema.write(writer);
+                String schemaString = writer.toString();
+
+                if (!"".equals(schemaString)) {
+                    System.out.println("schemaString = " + schemaString);
+                    XMLStreamReader xmlReader = StAXUtils
+                            .createXMLStreamReader(new ByteArrayInputStream(schemaString.getBytes()));
+
+                    StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
+                    wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+                }
             }
         }
         //generating interface

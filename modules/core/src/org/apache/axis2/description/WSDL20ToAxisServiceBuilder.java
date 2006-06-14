@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
@@ -24,6 +25,7 @@ import org.apache.woden.wsdl20.xml.InterfaceFaultReferenceElement;
 import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
 import org.apache.woden.wsdl20.xml.InterfaceOperationElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
@@ -72,7 +74,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Map namespacemap;
 
     public WSDL20ToAxisServiceBuilder(InputStream in, QName serviceName,
-            String interfaceName) {
+                                      String interfaceName) {
         this.in = in;
         this.serviceName = serviceName;
         this.interfaceName = interfaceName;
@@ -81,7 +83,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     public WSDL20ToAxisServiceBuilder(DescriptionElement descriptionElement,
-            QName serviceName, String interfaceName) {
+                                      QName serviceName, String interfaceName) {
         savedTargetNamespace = descriptionElement.getTargetNamespace()
                 .toString();
         namespacemap = descriptionElement.getNamespaces();
@@ -127,6 +129,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // setting target name space
             axisService.setTargetNamespace(savedTargetNamespace);
 
+            // if there are documentation elements in the root. Lets add them as the service description
+            // but since there can be multiple documentation elements, lets only add the first one
+//            DocumentationElement[] documentationElements = description.toElement().getDocumentationElements();
+//            if (documentationElements != null && documentationElements.length > 0) {
+//                axisService.setServiceDescription(documentationElements[0].getContent().toString());
+//            }
+
+
             // adding ns in the original WSDL
             // processPoliciesInDefintion(wsdl4jDefinition); TODO : Defering policy handling for now - Chinthaka
             // policy support
@@ -161,7 +171,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (typesElement != null) {
                 Schema[] schemas = typesElement.getSchemas();
                 for (int i = 0; i < schemas.length; i++) {
-                    axisService.addSchema(schemas[i].getSchemaDefinition());
+                    XmlSchema schemaDefinition = schemas[i].getSchemaDefinition();
+
+
+                    // WSDL 2.0 spec requires that even the built-in schema should be returned
+                    // once asked for schema definitions. But for data binding purposes we can ignore that
+                    if (schemaDefinition != null && !Constants.URI_2001_SCHEMA_XSD.equals(schemaDefinition.getTargetNamespace())) {
+                        axisService.addSchema(schemaDefinition);
+                    }
                 }
             }
 
@@ -197,7 +214,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Interface serviceInterface = binding.getInterface();
 
             processInterface(serviceInterface, description);
-            
+
 //            BindingOperation[] bindingOperations = binding.getBindingOperations();
 //            for(int i=0; i<bindingOperations.length; i++){
 //                BindingOperation bindingOperation = bindingOperations[i];
@@ -279,7 +296,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private AxisOperation populateOperations(InterfaceOperation operation,
-            Description description) throws Exception {
+                                             Description description) throws Exception {
         QName opName = operation.getName();
         // Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
@@ -299,7 +316,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // assuming the style of the operations of WSDL 2.0 is always document.
         axisOperation.setStyle("document");
-        
+
         // copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(),
         // dif,
         // axisOperation, PORT_TYPE_OPERATION);
@@ -333,22 +350,22 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
             }
             if (messageReference.getMessageLabel().equals(
-                    messageReference.getMessageLabel().OUT)){
-                if(isServerSide){
+                    messageReference.getMessageLabel().OUT)) {
+                if (isServerSide) {
                     AxisMessage outMessage = axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                            .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
                     outMessage.setElementQName(messageReference
-                    .getElementDeclaration().getName());
+                            .getElementDeclaration().getName());
                     outMessage.setName(messageReference
                             .getElementDeclaration().getName().getLocalPart());
 //                  TODO copy policy elements
-                }else{
+                } else {
                     AxisMessage outMessage = axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                            .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
                     outMessage.setElementQName(messageReference
-                    .getElementDeclaration().getName());
+                            .getElementDeclaration().getName());
                     outMessage.setName(messageReference
                             .getElementDeclaration().getName().getLocalPart());
 //                  TODO copy policy elements
@@ -357,21 +374,21 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         }
         InterfaceFaultReference[] faults = operation.getInterfaceFaultReferences();
-        for(int i=0; i<faults.length; i++){
+        for (int i = 0; i < faults.length; i++) {
             AxisMessage faultMessage = new AxisMessage();
 
             faultMessage.setElementQName(faults[i].toElement().getInterfaceFaultElement().getElementName());
             faultMessage.setName(faults[i].toElement().getRef().getLocalPart());
             axisOperation.setFaultMessages(faultMessage);
         }
-        
-       
+
+
         return axisOperation;
     }
 
     private void copyExtensibleElements(ExtensionElement[] extensionElement,
-            DescriptionElement descriptionElement, AxisDescription description,
-            String originOfExtensibilityElements) {
+                                        DescriptionElement descriptionElement, AxisDescription description,
+                                        String originOfExtensibilityElements) {
         for (int i = 0; i < extensionElement.length; i++) {
             ExtensionElement element = extensionElement[i];
 
@@ -572,7 +589,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private Element createSchemaForInterface(InterfaceElement interfaceElement,
-            String targetNamespaceUri, boolean forceWrapping) {
+                                             String targetNamespaceUri, boolean forceWrapping) {
 
         // loop through the messages. We'll populate things map with the
         // relevant
