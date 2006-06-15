@@ -258,7 +258,10 @@
 
 
               <xsl:choose>
-                  <xsl:when test="$outputours">
+                  <xsl:when test="$outputtype='axis2__t*'">
+                   return;
+                  </xsl:when>
+                  <xsl:when test="$outputtype!='axis2_om_node_t*'">
                     if ( NULL == ret_node )
                       return NULL;
                     ret_val = axis2_<xsl:value-of select="output/param/@type"/>_create(env);
@@ -276,9 +279,6 @@
                   <xsl:otherwise>
                    return ret_node;
                   </xsl:otherwise>
-                  <xsl:when test="$outputtype='axis2__t*'">
-                       return;
-                  </xsl:when>
               </xsl:choose>
           }
           </xsl:if>  <!--close for  test="$isSync='1'-->
