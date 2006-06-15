@@ -38,17 +38,19 @@
         
 		<copy file="src/META-INF/module.xml" toFile="target/sts/META-INF/module.xml"/>
 		
-		<jar jarfile="target/sts.mar" basedir="target/sts/">
+		<jar jarfile="target/rahas-${rahas_version}.mar" basedir="target/sts/">
             <include name="**/*"/>
         </jar>
 		
-        <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml" overwrite="yes"/>
+		<delete file="target/sts/META-INF/module.xml"/>
+        <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
+		
         <copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/sct-issuer-config.xml"/>
         <copy file="test-resources/trust/impl/token-dispatcher-configuration.xml" toFile="target/sts/token-dispatcher-configuration.xml"/>
         <copy file="test-resources/trust/impl/sctIssuer.properties" toFile="target/sts/sctIssuer.properties"/>
         <copy file="test-resources/trust/impl/sts.jks" toFile="target/sts/sts.jks"/>
         
-        <jar jarfile="target/SecurityTokenService.aar" basedir="target/sts/">
+        <jar jarfile="target/rahas-${rahas_version}.aar" basedir="target/sts/">
             <include name="**/*"/>
         </jar>
 

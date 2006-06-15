@@ -153,6 +153,8 @@
 	    
             <copy file="../security/target/rampart-${rampart_version}.mar"
                   tofile="target/test-resources/sc_service_repo_1/modules/rampart-${rampart_version}.mar"/>
+		    <copy file="../rahas/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/sc_service_repo_1/modules/rahas-${rahas_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/sc_service_repo_1/modules/addressing-${addressing_version}.mar"/>
 				  
@@ -174,7 +176,9 @@
 
             <copy file="../security/target/rampart-${rampart_version}.mar"
                   tofile="target/test-resources/sc_service_repo_2/modules/rampart-${rampart_version}.mar"/>
-            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+		    <copy file="../rahas/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/sc_service_repo_2/modules/rahas-${rahas_version}.mar"/>
+		    <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/sc_service_repo_2/modules/addressing-${addressing_version}.mar"/>
 
 			<!-- copy the services.xml and create the aar -->
@@ -215,6 +219,8 @@
 
             <copy file="../security/target/rampart-${rampart_version}.mar"
                   tofile="target/test-resources/sc_service_repo_4/modules/rampart-${rampart_version}.mar"/>
+		    <copy file="../rahas/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/sc_service_repo_4/modules/rahas-${rahas_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/sc_service_repo_4/modules/addressing-${addressing_version}.mar"/>
 
