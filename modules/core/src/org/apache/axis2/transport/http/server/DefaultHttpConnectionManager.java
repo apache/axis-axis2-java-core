@@ -38,10 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpServerConnection;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.ResponseConnControl;
-import org.apache.http.protocol.ResponseContent;
-import org.apache.http.protocol.ResponseDate;
-import org.apache.http.protocol.ResponseServer;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 
@@ -54,6 +50,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     private final WorkerFactory workerfactory;
     private final HttpParams params;
     private final List processors;
+    private final SessionManager sessionManager;
     
     private HttpFactory httpFactory = null;
     
@@ -76,6 +73,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             throw new IllegalArgumentException("HTTP parameters may not be null");
         }
         this.configurationContext = configurationContext;
+        this.sessionManager = new SessionManager();
         this.executor = executor;
         this.workerfactory = workerfactory;
         this.params = params;
@@ -134,18 +132,15 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             
         };
         HttpServiceProcessor processor;
-        if (httpFactory!=null)
-            processor = httpFactory.newRequestServiceProcessor(conn, workerfactory.newWorker(), callback);
-        else
-            processor = new DefaultHttpServiceProcessor(conn, configurationContext, workerfactory.newWorker(), callback);
+        if (httpFactory != null) {
+            processor = httpFactory.newRequestServiceProcessor(
+                    conn, sessionManager, workerfactory.newWorker(), callback);
+        } else {
+            processor = new DefaultHttpServiceProcessor(
+                    conn, configurationContext, sessionManager, workerfactory.newWorker(), callback);
+        }
 
         processor.setParams(this.params);
-        // Add required protocol interceptors
-        processor.addInterceptor(new ResponseDate());
-        processor.addInterceptor(new ResponseServer());                    
-        processor.addInterceptor(new ResponseContent());
-        processor.addInterceptor(new ResponseConnControl());
-        
         addProcessor(processor);
         this.executor.execute(processor);
     }

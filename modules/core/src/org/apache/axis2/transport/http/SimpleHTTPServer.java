@@ -75,7 +75,7 @@ public class SimpleHTTPServer implements TransportListener {
     public SimpleHTTPServer(HttpFactory httpFactory) throws AxisFault {
         this.httpFactory = httpFactory;
         this.configurationContext = httpFactory.getConfigurationContext();
-        this. port = httpFactory.getPort();
+        this.port = httpFactory.getPort();
         TransportInDescription httpDescription = new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
         httpDescription.setReceiver(this);
         httpFactory.getListenerManager().addListener(httpDescription, true);

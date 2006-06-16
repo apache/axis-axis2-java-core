@@ -244,8 +244,12 @@ public class HttpFactory {
     }
 
     /** Create a request service processor to populate the response */
-    public HttpServiceProcessor newRequestServiceProcessor(HttpServerConnection connection, Worker worker, IOProcessorCallback callback) {
-        return new DefaultHttpServiceProcessor(connection, configurationContext, worker, callback);
+    public HttpServiceProcessor newRequestServiceProcessor(
+            final HttpServerConnection connection, 
+            final SessionManager sessionManager, 
+            final Worker worker, 
+            final IOProcessorCallback callback) {
+        return new DefaultHttpServiceProcessor(connection, configurationContext, sessionManager, worker, callback);
     }
     
     // *****

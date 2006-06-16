@@ -69,6 +69,7 @@ public class SimpleHttpServer {
         this.port = port;
         this.workerFactory = httpFactory.newRequestWorkerFactory();
         this.params = httpFactory.newRequestConnectionParams();
+        this.params.setIntParameter(AxisParams.LISTENER_PORT, port);
     }
 
     public void init() throws IOException {

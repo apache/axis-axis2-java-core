@@ -41,21 +41,6 @@ public class HttpUtils {
     private HttpUtils() {
     }
 
-    public static String getCookieID(final HttpRequest request) {
-        if (request == null) {
-            return null;
-        }
-        Header header = request.getFirstHeader(HTTPConstants.HEADER_COOKIE);
-        if (header == null) {
-            header = request.getFirstHeader(HTTPConstants.HEADER_COOKIE2);
-        }
-        if (header == null) {
-            return null;
-        } else {
-            return header.getValue();
-        }
-    }
-    
     public static String getSoapAction(final HttpRequest request) {
         if (request == null) {
             return null;

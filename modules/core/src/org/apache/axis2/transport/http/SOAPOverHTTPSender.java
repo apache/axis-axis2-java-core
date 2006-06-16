@@ -38,7 +38,6 @@ import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
@@ -92,7 +91,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                 cookie = cookie.substring(0,index);
             }
             postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE,cookie);
-            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE2, cookie);
         }
 
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());

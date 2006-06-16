@@ -31,23 +31,17 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,22 +56,27 @@ import org.apache.http.StatusLine;
 import org.apache.http.UnsupportedHttpVersionException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.ResponseConnControl;
+import org.apache.http.protocol.ResponseContent;
+import org.apache.http.protocol.ResponseDate;
+import org.apache.http.protocol.ResponseServer;
 
 public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
 
     private static final Log LOG = LogFactory.getLog(DefaultHttpServiceProcessor.class);
     private static final Log HEADERLOG = LogFactory.getLog("org.apache.axis2.transport.http.server.wire");
     
-    // to store session object
-    private static Hashtable sessionContextTable = new Hashtable();
-    
     private final ConfigurationContext configurationContext;
+    private final SessionManager sessionManager;
     private final Worker worker;
     private final IOProcessorCallback callback;
+    
+    private HttpContext httpcontext = null;
     
     public DefaultHttpServiceProcessor(
             final HttpServerConnection conn,
             final ConfigurationContext configurationContext,
+            final SessionManager sessionManager,
             final Worker worker,
             final IOProcessorCallback callback) {
         super(conn);
@@ -87,9 +86,21 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
         if (configurationContext == null) {
             throw new IllegalArgumentException("Configuration context may not be null");
         }
+        if (sessionManager == null) {
+            throw new IllegalArgumentException("Session manager may not be null");
+        }
         this.configurationContext = configurationContext;
+        this.sessionManager = sessionManager;
         this.worker = worker;
         this.callback = callback;
+        
+        // Add required protocol interceptors
+        addInterceptor(new RequestSessionCookie());
+        addInterceptor(new ResponseDate());
+        addInterceptor(new ResponseServer());                    
+        addInterceptor(new ResponseContent());
+        addInterceptor(new ResponseConnControl());
+        addInterceptor(new ResponseSessionCookie());
     }
     
     protected void postprocessResponse(final HttpResponse response, final HttpContext context) 
@@ -106,6 +117,9 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
 
     protected void preprocessRequest(final HttpRequest request, final HttpContext context) 
             throws IOException, HttpException {
+        // As of next version of HttpCore the HTTP execution context can be retrieved 
+        // by calling #getContext()
+        this.httpcontext = context;
         super.preprocessRequest(request, context);
         if (HEADERLOG.isDebugEnabled()) {
             HEADERLOG.debug(">> " + request.getRequestLine().toString());
@@ -137,29 +151,30 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
             TransportInDescription transportIn = this.configurationContext.getAxisConfiguration()
                 .getTransportIn(new QName(Constants.TRANSPORT_HTTP));            
         
-            String cookieID = HttpUtils.getCookieID(request);
             msgContext.setConfigurationContext(this.configurationContext);
+
+            String sessionKey = (String) this.httpcontext.getAttribute(Constants.COOKIE_STRING);
             if (this.configurationContext.getAxisConfiguration().isManageTransportSession()) {
-                SessionContext sessionContext = getSessionContext(cookieID);
+                SessionContext sessionContext = this.sessionManager.getSessionContext(sessionKey);
                 msgContext.setSessionContext(sessionContext);
             }
             msgContext.setTransportIn(transportIn);
             msgContext.setTransportOut(transportOut);
             msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
             msgContext.setServerSide(true);
-            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, 
-                    request.getRequestLine().getUri());
+            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
 
             // set the transport Headers
             HashMap headerMap = new HashMap();
-            Header[] headers = request.getAllHeaders();
-            for (int i = 0; i < headers.length; i++) {
-                headerMap.put(headers[i].getName(), headers[i].getValue());
+            for (Iterator it = request.headerIterator(); it.hasNext(); ) {
+                Header header = (Header) it.next();
+                headerMap.put(header.getName(), header.getValue());
             }
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
 
+            this.httpcontext.setAttribute(AxisParams.MESSAGE_CONTEXT, msgContext);
+            
             this.worker.service(request, response, msgContext);
-            setCookie(response, msgContext);
         } catch (SocketException ex) {
             // Socket is unreliable. 
             throw ex;
@@ -179,7 +194,6 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
                 response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
                 engine.sendFault(faultContext);
                 response.setEntity(outbuffer);
-                setCookie(response, msgContext);
             } catch (Exception ex) {
                 response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
                 StringEntity entity = new StringEntity(ex.getMessage());
@@ -190,73 +204,6 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
         
     }
 
-    private static void setCookie(final HttpResponse response, MessageContext msgContext) {
-        //TODO : provide a way to enable and diable cookies
-        //setting the coolie in the out path
-        Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
-        if (cookieString != null) {
-            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE, (String) cookieString));
-            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE2, (String) cookieString));
-        }
-    }
-
-    /**
-     * To get the sessioncontext , if its not there in the hashtable , new one will be created and
-     * added to the list.
-     *
-     * @param cookieID
-     * @return <code>SessionContext</code>
-     */
-    private synchronized SessionContext getSessionContext(String cookieID) {
-        SessionContext sessionContext = null;
-        if (!(cookieID == null || cookieID.trim().equals(""))) {
-            sessionContext = (SessionContext) sessionContextTable.get(cookieID);
-        }
-        if (sessionContext == null) {
-            String cookieString = UUIDGenerator.getUUID();
-            sessionContext = new SessionContext(null);
-            sessionContext.setCookieID(cookieString);
-            sessionContextTable.put(cookieString, sessionContext);
-        }
-        sessionContext.touch();
-        cleanupServiceGroupContexts();
-        return sessionContext;
-    }
-
-    private void cleanupServiceGroupContexts() {
-        synchronized (sessionContextTable) {
-            long currentTime = System.currentTimeMillis();
-            Iterator sgCtxtMapKeyIter = sessionContextTable.keySet().iterator();
-            while (sgCtxtMapKeyIter.hasNext()) {
-                String cookieID = (String) sgCtxtMapKeyIter.next();
-                SessionContext sessionContext = (SessionContext) sessionContextTable.get(cookieID);
-                if ((currentTime - sessionContext.getLastTouchedTime()) >
-                        sessionContext.sessionContextTimeoutInterval) {
-                    sgCtxtMapKeyIter.remove();
-                    Iterator serviceGroupContext = sessionContext.getServiceGroupContext();
-                    if (serviceGroupContext != null) {
-                        while (serviceGroupContext.hasNext()) {
-                            ServiceGroupContext groupContext = (ServiceGroupContext) serviceGroupContext.next();
-                            cleanupServiceContextes(groupContext);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void cleanupServiceContextes(ServiceGroupContext serviceGroupContext) {
-        Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
-        while (serviceContecxtes.hasNext()) {
-            ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
-            try {
-                DependencyManager.destroyServiceClass(serviceContext);
-            } catch (AxisFault axisFault) {
-                LOG.info(axisFault.getMessage());
-            }
-        }
-    }
-    
     protected void logIOException(final IOException ex) {
         if (ex instanceof SocketTimeoutException) {
             LOG.debug(ex.getMessage());
