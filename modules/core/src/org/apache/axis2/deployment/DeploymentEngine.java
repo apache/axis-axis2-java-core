@@ -647,7 +647,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         sericeGroup, explodedDir, wsdlservice,
                                         axisConfig);
                                 addServiceGroup(sericeGroup, serviceList, currentArchiveFile.getFile().toURL());
-                                log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
