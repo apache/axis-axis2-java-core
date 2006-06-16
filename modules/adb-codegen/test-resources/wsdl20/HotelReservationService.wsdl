@@ -4,7 +4,7 @@
     targetNamespace= "http://greath.example.com/2004/wsdl/resSvc"
     xmlns:tns= "http://greath.example.com/2004/wsdl/resSvc"
     xmlns:ghns = "http://greath.example.com/2004/schemas/resSvc"
-    xmlns:wsoap= "http://www.w3.org/2004/08/wsdl/soap12"
+    xmlns:wsoap= "http://www.w3.org/2006/01/wsdl/soap"
     xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
 
   <documentation>

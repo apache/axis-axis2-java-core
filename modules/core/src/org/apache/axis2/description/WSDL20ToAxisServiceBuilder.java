@@ -136,7 +136,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //                axisService.setServiceDescription(documentationElements[0].getContent().toString());
 //            }
 
-
             // adding ns in the original WSDL
             // processPoliciesInDefintion(wsdl4jDefinition); TODO : Defering policy handling for now - Chinthaka
             // policy support
@@ -214,67 +213,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Interface serviceInterface = binding.getInterface();
 
             processInterface(serviceInterface, description);
-
-//            BindingOperation[] bindingOperations = binding.getBindingOperations();
-//            for(int i=0; i<bindingOperations.length; i++){
-//                BindingOperation bindingOperation = bindingOperations[i];
-//                
-//                bindingOperation.get
-//            }
-
-            // List list = binding.getBindingOperations();
-            //
-            // for (int i = 0; i < list.size(); i++) {
-            // BindingOperation wsdl4jBindingOperation = (BindingOperation) list
-            // .get(i);
-            // AxisOperation operation = axisService.getOperation(new QName(
-            // wsdl4jBindingOperation.getName()));
-            // copyExtensibleElements(wsdl4jBindingOperation
-            // .getExtensibilityElements(), dif, operation,
-            // BINDING_OPERATION);
-            //
-            // BindingInput bindingInput = wsdl4jBindingOperation
-            // .getBindingInput();
-            // BindingOutput bindingOutput = wsdl4jBindingOperation
-            // .getBindingOutput();
-            // String MEP = operation.getMessageExchangePattern();
-            // if (bindingInput != null) {
-            // if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP)
-            // || WSDLConstants.MEP_URI_IN_OPTIONAL_OUT
-            // .equals(MEP)
-            // || WSDLConstants.MEP_URI_OUT_OPTIONAL_IN
-            // .equals(MEP)
-            // || WSDLConstants.MEP_URI_ROBUST_OUT_ONLY
-            // .equals(MEP)
-            // || WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
-            // || WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
-            // AxisMessage inMessage = operation
-            // .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            // copyExtensibleElements(bindingInput
-            // .getExtensibilityElements(), dif, inMessage,
-            // BINDING_OPERATION_INPUT);
-            //
-            // }
-            // }
-            // if (bindingOutput != null) {
-            // if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP)
-            // || WSDLConstants.MEP_URI_OUT_OPTIONAL_IN
-            // .equals(MEP)
-            // || WSDLConstants.MEP_URI_IN_OPTIONAL_OUT
-            // .equals(MEP)
-            // || WSDLConstants.MEP_URI_ROBUST_OUT_ONLY
-            // .equals(MEP)
-            // || WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
-            // || WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
-            // AxisMessage outAxisMessage = operation
-            // .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            // copyExtensibleElements(bindingOutput
-            // .getExtensibilityElements(), dif,
-            // outAxisMessage, BINDING_OPERATION_OUTPUT);
-            //
-            // }
-            // }
-            // }
 
         }
     }
