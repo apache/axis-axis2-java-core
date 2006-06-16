@@ -303,11 +303,13 @@ class OutInAxisOperationClient implements OperationClient {
             EndpointReference tepr = sc.getTargetEPR();
             if (tepr != null) {
                 Map map = tepr.getAllReferenceParameters();
-                Iterator valuse = map.values().iterator();
-                while (valuse.hasNext()) {
-                    Object refparaelement = valuse.next();
-                    if (refparaelement instanceof OMElement) {
-                        to.addReferenceParameter((OMElement) refparaelement);
+                if (map != null) {
+                    Iterator valuse = map.values().iterator();
+                    while (valuse.hasNext()) {
+                        Object refparaelement = valuse.next();
+                        if (refparaelement instanceof OMElement) {
+                            to.addReferenceParameter((OMElement) refparaelement);
+                        }
                     }
                 }
             }

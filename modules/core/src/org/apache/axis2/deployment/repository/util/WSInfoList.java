@@ -31,7 +31,6 @@ public class WSInfoList implements DeploymentConstants {
      * This is to store all the jar files in a specified folder (WEB_INF)
      */
     private List jarList = new ArrayList();
-    private boolean check = false;
 
     /**
      * All the curently updated jars
@@ -42,6 +41,8 @@ public class WSInfoList implements DeploymentConstants {
      * Reference to DeploymentEngine to make update
      */
     private DeploymentEngine deployer;
+
+    private boolean check;
 
     public WSInfoList(DeploymentEngine deploy_engine) {
         deployer = deploy_engine;
@@ -61,7 +62,7 @@ public class WSInfoList implements DeploymentConstants {
      * @param file actual jar files for either Module or service
      * @param type indicate either Service or Module
      */
-    public void addWSInfoItem(File file, int type) {
+    public synchronized void addWSInfoItem(File file, int type) {
         switch (type) {
             case TYPE_SERVICE : {
                 if (!isFileExist(file.getName())) {    // checking whether the file is already deployed
@@ -106,6 +107,10 @@ public class WSInfoList implements DeploymentConstants {
 
                 break;
             }
+            default : {
+                check = true;
+                return;
+            }
         }
 
         String jarname = file.getName();
@@ -120,7 +125,7 @@ public class WSInfoList implements DeploymentConstants {
      * list then it is assumed that the jar file has been removed
      * and that is hot undeployment.
      */
-    private void checkForUndeployedServices() {
+    private synchronized void checkForUndeployedServices() {
         if (!check) {
             return;
         } else {
@@ -275,4 +280,6 @@ public class WSInfoList implements DeploymentConstants {
         }
         return false;
     }
+
+
 }

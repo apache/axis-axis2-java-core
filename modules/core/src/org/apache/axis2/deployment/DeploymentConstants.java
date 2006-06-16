@@ -30,6 +30,7 @@ public interface DeploymentConstants {
     public static String MODULE_PATH = "modules";
 
     int TYPE_SERVICE = 0;                // is it a service
+    int TYPE_DEFAULT= -1;                // is it a service
     int TYPE_MODULE = 1;                // is it a module
 
     String TAG_PHASE_ORDER = "phaseOrder";

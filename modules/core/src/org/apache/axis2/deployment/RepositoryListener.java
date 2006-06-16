@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 
 public class RepositoryListener implements DeploymentConstants {
-	private static final Log log = LogFactory.getLog(RepositoryListener.class);
+    private static final Log log = LogFactory.getLog(RepositoryListener.class);
     private DeploymentEngine deploymentEngine;
     private File rootDir;
 
@@ -173,7 +173,7 @@ public class RepositoryListener implements DeploymentConstants {
         File root = new File(rootDir, SERVICE_PATH);
         File[] files = root.listFiles();
 
-        if (files != null) {
+        if (files != null && files.length > 0) {
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
                 if (isSourceControlDir(file)) {
@@ -189,6 +189,8 @@ public class RepositoryListener implements DeploymentConstants {
                     }
                 }
             }
+        } else {
+            wsInfoList.addWSInfoItem(null, TYPE_DEFAULT);
         }
     }
 
