@@ -57,7 +57,7 @@ public class SchedulerTask implements Runnable {
         }
     }
 
-    private void checkRepositary() {
+    private void checkRepository() {
         wsListener.startListener();
     }
 
@@ -65,6 +65,6 @@ public class SchedulerTask implements Runnable {
      * The action to be performed by this scheduler task.
      */
     public void run() {
-        checkRepositary();
+        checkRepository();
     }
 }

@@ -20,6 +20,9 @@ import org.codehaus.jam.JMethod;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -88,11 +91,21 @@ public class Utils {
         }
     }
 
-    public static URL[] getURLsForAllJars(URL url) {
+    public static URL[] getURLsForAllJars(URL url, boolean antiJARLocking) {
         try {
             ArrayList array = new ArrayList();
-            array.add(url);
-            ZipInputStream zin = new ZipInputStream(url.openStream());
+            String urlString = url.toString();
+            InputStream in = url.openStream();
+            ZipInputStream zin = null;
+            if(antiJARLocking) {
+                File inputFile = createTempFile(urlString.substring(urlString.length() - 4), in);
+                in.close();
+                array.add(inputFile.toURL());
+                zin = new ZipInputStream(new FileInputStream(inputFile));
+            } else {
+                array.add(url);
+                zin = new ZipInputStream(in);
+            }
             ZipEntry entry;
             String entryName;
             while ((entry = zin.getNextEntry()) != null) {
@@ -103,15 +116,8 @@ public class Utils {
                  */
                 if ((entryName != null) && entryName.toLowerCase().startsWith("lib/")
                         && entryName.toLowerCase().endsWith(".jar")) {
-                    byte data[] = new byte[2048];
-                    int count;
-                    File f = File.createTempFile("axis2", entryName.substring(4));
-                    f.deleteOnExit();
-                    FileOutputStream out = new FileOutputStream(f);
-                    while ((count = zin.read(data, 0, 2048)) != -1) {
-                        out.write(data, 0, count);
-                    }
-                    out.close();
+                    String suffix = entryName.substring(4);
+                    File f = createTempFile(suffix, zin);
                     array.add(f.toURL());
                 }
             }
@@ -120,6 +126,19 @@ public class Utils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static File createTempFile(String suffix, InputStream in) throws IOException {
+        byte data[] = new byte[2048];
+        int count;
+        File f = File.createTempFile("axis2", suffix);
+        f.deleteOnExit();
+        FileOutputStream out = new FileOutputStream(f);
+        while ((count = in.read(data, 0, 2048)) != -1) {
+            out.write(data, 0, count);
+        }
+        out.close();
+        return f;
     }
 
     public static ClassLoader getClassLoader(ClassLoader parent, String path)
@@ -146,16 +165,17 @@ public class Utils {
                             urls.add(jarfile.toURL());
                         }
                     }
-                }
-                // upper case directory name
-                libfiles = new File(file, "Lib");
-                if (libfiles.exists()) {
-                    urls.add(libfiles.toURL());
-                    File jarfiles[] = libfiles.listFiles();
-                    for (int i = 0; i < jarfiles.length; i++) {
-                        File jarfile = jarfiles[i];
-                        if (jarfile.getName().endsWith(".jar")) {
-                            urls.add(jarfile.toURL());
+                } else {
+                    // upper case directory name
+                    libfiles = new File(file, "Lib");
+                    if (libfiles.exists()) {
+                        urls.add(libfiles.toURL());
+                        File jarfiles[] = libfiles.listFiles();
+                        for (int i = 0; i < jarfiles.length; i++) {
+                            File jarfile = jarfiles[i];
+                            if (jarfile.getName().endsWith(".jar")) {
+                                urls.add(jarfile.toURL());
+                            }
                         }
                     }
                 }

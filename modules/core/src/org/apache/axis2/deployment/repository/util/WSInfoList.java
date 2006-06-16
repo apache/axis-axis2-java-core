@@ -69,7 +69,7 @@ public class WSInfoList implements DeploymentConstants {
 
                     jarList.add(wsInfo);
 
-                    ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_SERVICE);
+                    ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_SERVICE, deployer.isAntiJARLocking());
 
                     deployer.addWSToDeploy(archiveFileData);    // inform that new web service is deployed
                 } else {
@@ -83,7 +83,7 @@ public class WSInfoList implements DeploymentConstants {
 
                             deployer.addWSToUndeploy(wsInfo);           // add entry to undeploy list
 
-                            ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_SERVICE);
+                            ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_SERVICE, deployer.isAntiJARLocking());
 
                             deployer.addWSToDeploy(archiveFileData);    // add entry to deploylist
                         }
@@ -99,7 +99,7 @@ public class WSInfoList implements DeploymentConstants {
 
                     jarList.add(wsInfo);
 
-                    ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_MODULE);
+                    ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_MODULE, false);
 
                     deployer.addWSToDeploy(archiveFileData);    // inform that new web service is deployed
                 }

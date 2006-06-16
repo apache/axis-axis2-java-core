@@ -24,6 +24,8 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -35,18 +37,21 @@ public class ArchiveFileData {
     private ArrayList deployableServices = new ArrayList();
     private ClassLoader classLoader;
     private String messageReceiver;
+    private boolean lock;
 
     private String name;
     private int type;
 
-    public ArchiveFileData(File file, int type) {
+    public ArchiveFileData(File file, int type, boolean lock) {
         this.file = file;
         this.type = type;
+        this.lock = lock;
     }
 
-    public ArchiveFileData(int type, String name) {
+    public ArchiveFileData(int type, String name, boolean lock) {
         this.type = type;
         this.name = name;
+        this.lock = lock;
     }
 
     public String getAbsolutePath() {
@@ -103,8 +108,8 @@ public class ArchiveFileData {
         this.classLoader = classLoader;
     }
 
-    public void setClassLoader(boolean extractArichive, ClassLoader parent) throws AxisFault {
-        if (!extractArichive) {
+    public void setClassLoader(boolean extractArchive, ClassLoader parent) throws AxisFault {
+        if (!extractArchive) {
 
             if (file != null) {
                 URL[] urlsToLoadFrom;
@@ -114,7 +119,7 @@ public class ArchiveFileData {
                                 file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{file.toURL()};
-                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent);
+                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent, lock);
                 } catch (Exception e) {
                     throw new AxisFault(e);
                 }

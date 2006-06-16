@@ -65,6 +65,7 @@ public interface DeploymentConstants {
     String TAG_FLOW_IN_FAULT = "INfaultflow";    // faultflow start tag
     String TAG_FLOW_IN = "inflow";         // inflow start tag
     String TAG_HOT_UPDATE = "hotupdate";
+    String TAG_ANTI_JAR_LOCKING = "antiJARLocking";
     String TAG_HOT_DEPLOYMENT = "hotdeployment";
     String TAG_EXTRACT_SERVICE_ARCHIVE = "extractServiceArchive";
     String TAG_DISPATCH_ORDER = "dispatchOrder";
