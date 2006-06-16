@@ -152,23 +152,18 @@ public class DeploymentEngine implements DeploymentConstants {
     public void loadServicesFromUrl(URL repoURL) {
         try {
             URL servicesDir = new URL(repoURL, DeploymentConstants.SERVICE_PATH);
-            InputStream serviceStream = servicesDir.openStream();
-            if (serviceStream == null) {
-                log.info("No services dir found");
-            } else {
-                URL filelisturl = new URL(servicesDir, "services/services.list");
-                ArrayList files = getFileList(filelisturl);
-                Iterator fileIterator = files.iterator();
-                while (fileIterator.hasNext()) {
-                    String fileUrl = (String) fileIterator.next();
-                    if (fileUrl.endsWith(".aar")) {
-                        AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                        URL servicesURL = new URL(servicesDir, "services/" + fileUrl);
-                        ArrayList servicelist = populateService(serviceGroup,
-                                servicesURL,
-                                fileUrl.substring(0, fileUrl.indexOf(".aar")));
-                        addServiceGroup(serviceGroup, servicelist, servicesURL);
-                    }
+            URL filelisturl = new URL(servicesDir, "services/services.list");
+            ArrayList files = getFileList(filelisturl);
+            Iterator fileIterator = files.iterator();
+            while (fileIterator.hasNext()) {
+                String fileUrl = (String) fileIterator.next();
+                if (fileUrl.endsWith(".aar")) {
+                    AxisServiceGroup serviceGroup = new AxisServiceGroup();
+                    URL servicesURL = new URL(servicesDir, "services/" + fileUrl);
+                    ArrayList servicelist = populateService(serviceGroup,
+                            servicesURL,
+                            fileUrl.substring(0, fileUrl.indexOf(".aar")));
+                    addServiceGroup(serviceGroup, servicelist, servicesURL);
                 }
             }
         } catch (MalformedURLException e) {
@@ -181,34 +176,28 @@ public class DeploymentEngine implements DeploymentConstants {
     public void loadRepositoryFromURL(URL repoURL) throws DeploymentException {
         try {
             URL moduleDir = new URL(repoURL, DeploymentConstants.MODULE_PATH);
-            InputStream moduleStream = moduleDir.openStream();
-            if (moduleStream == null) {
-                log.info("No module dir found");
-            } else {
-                URL filelisturl = new URL(moduleDir, "modules/modules.list");
-                ArrayList files = getFileList(filelisturl);
-                Iterator fileIterator = files.iterator();
-                while (fileIterator.hasNext()) {
-                    String fileUrl = (String) fileIterator.next();
-                    if (fileUrl.endsWith(".mar")) {
-                        URL moduleurl = new URL(moduleDir, "modules/" + fileUrl);
-                        DeploymentClassLoader deploymentClassLoader =
-                                new DeploymentClassLoader(
-                                        new URL[]{moduleurl},
-                                        axisConfig.getModuleClassLoader(),
-                                        antiJARLocking);
-                        AxisModule module = new AxisModule();
-                        module.setModuleClassLoader(deploymentClassLoader);
-                        module.setParent(axisConfig);
-                        String moduleName = fileUrl.substring(0, fileUrl.indexOf(".mar"));
-                        module.setName(new QName(moduleName));
-                        populateModule(module, moduleurl);
-                        module.setFileName(moduleurl);
-                        addNewModule(module);
-                    }
+            URL filelisturl = new URL(moduleDir, "modules/modules.list");
+            ArrayList files = getFileList(filelisturl);
+            Iterator fileIterator = files.iterator();
+            while (fileIterator.hasNext()) {
+                String fileUrl = (String) fileIterator.next();
+                if (fileUrl.endsWith(".mar")) {
+                    URL moduleurl = new URL(moduleDir, "modules/" + fileUrl);
+                    DeploymentClassLoader deploymentClassLoader =
+                            new DeploymentClassLoader(
+                                    new URL[]{moduleurl},
+                                    axisConfig.getModuleClassLoader(),
+                                    antiJARLocking);
+                    AxisModule module = new AxisModule();
+                    module.setModuleClassLoader(deploymentClassLoader);
+                    module.setParent(axisConfig);
+                    String moduleName = fileUrl.substring(0, fileUrl.indexOf(".mar"));
+                    module.setName(new QName(moduleName));
+                    populateModule(module, moduleurl);
+                    module.setFileName(moduleurl);
+                    addNewModule(module);
                 }
             }
-
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         } catch (IOException e) {

@@ -204,6 +204,15 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
             }
 
             if (repository == null) {
+                URL url = config.getServletContext().getResource("/WEB-INF/");
+                if (url != null) {
+                    repository = url.toString();
+                    deploymentEngine.loadRepositoryFromURL(url);
+                    log.debug("loaded repository from /WEB-INF/ folder (URL)");
+                }
+            }
+
+            if (repository == null) {
                 deploymentEngine.loadFromClassPath();
                 log.debug("loaded repository from classpath");
             }
@@ -250,6 +259,14 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                     log.debug("loaded services from webapp");
                 }
             } // else
+
+            if (repository == null) {
+                URL url = config.getServletContext().getResource("/WEB-INF/");
+                if (url != null) {
+                    deploymentEngine.loadServicesFromUrl(url);
+                    log.debug("loaded services from /WEB-INF/ folder (URL)");
+                }
+            }
         } catch (MalformedURLException e) {
             log.info(e.getMessage());
         }

@@ -451,10 +451,17 @@
             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
+		<echo file="target/temp/war/toWEB-INF/modules/modules.list" append="false">addressing-${addressing_version}.mar
+		soapmonitor-${soapmonitor_version}.mar
+		</echo>
+
         <!-- copy the sample services -->
         <ant:copy toDir="target/temp/war/toWEB-INF/services">
             <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
         </ant:copy>
+
+		<echo file="target/temp/war/toWEB-INF/services/services.list" append="false">version.aar
+		</echo>
 
         <!-- copy the axis2.xml into conf directoy -->
         <ant:copy toDir="target/temp/war/toWEB-INF/conf">
