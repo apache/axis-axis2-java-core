@@ -324,7 +324,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         InterfaceMessageReference[] interfaceMessageReferences = operation
                 .getInterfaceMessageReferences();
         for (int i = 0; i < interfaceMessageReferences.length; i++) {
-            InterfaceMessageReference messageReference = interfaceMessageReferences[i];
+            InterfaceMessageReferenceElement messageReference = interfaceMessageReferences[i].toElement();
             if (messageReference.getMessageLabel().equals(
                     messageReference.getMessageLabel().IN)) {
                 // Its an input message
@@ -333,19 +333,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     AxisMessage inMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
-                    inMessage.setElementQName(messageReference
-                            .getElementDeclaration().getName());
-                    inMessage.setName(messageReference
-                            .getElementDeclaration().getName().getLocalPart());
+                    inMessage.setElementQName(messageReference.getElementName());
+                    inMessage.setName(messageReference.getElementName().getLocalPart());
                     // TODO copy policy elements
                 } else {
                     AxisMessage inMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-                    inMessage.setElementQName(messageReference
-                            .getElementDeclaration().getName());
-                    inMessage.setName(messageReference
-                            .getElementDeclaration().getName().getLocalPart());
+                    inMessage.setElementQName(messageReference.getElementName());
+                    inMessage.setName(messageReference.getElementName().getLocalPart());
                     // TODO copy policy elements
                 }
             }
@@ -355,19 +351,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     AxisMessage outMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-                    outMessage.setElementQName(messageReference
-                            .getElementDeclaration().getName());
-                    outMessage.setName(messageReference
-                            .getElementDeclaration().getName().getLocalPart());
+                    outMessage.setElementQName(messageReference.getElementName());
+                    outMessage.setName(messageReference.getElementName().getLocalPart());
 //                  TODO copy policy elements
                 } else {
                     AxisMessage outMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
-                    outMessage.setElementQName(messageReference
-                            .getElementDeclaration().getName());
-                    outMessage.setName(messageReference
-                            .getElementDeclaration().getName().getLocalPart());
+                    outMessage.setElementQName(messageReference.getElementName());
+                    outMessage.setName(messageReference.getElementName().getLocalPart());
 //                  TODO copy policy elements
                 }
             }
