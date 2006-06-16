@@ -302,13 +302,17 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
         }
+
+
+        // add operation level faults
         InterfaceFaultReference[] faults = operation.getInterfaceFaultReferences();
         for (int i = 0; i < faults.length; i++) {
             AxisMessage faultMessage = new AxisMessage();
 
             InterfaceFaultReferenceElement interfaceFaultReferenceElement = faults[i].toElement();
             faultMessage.setDirection(interfaceFaultReferenceElement.getDirection().toString());
-            faultMessage.setElementQName(interfaceFaultReferenceElement.getRef());
+
+            faultMessage.setElementQName(interfaceFaultReferenceElement.getInterfaceFaultElement().getElementName());
             faultMessage.setName(interfaceFaultReferenceElement.getRef().getLocalPart());
             axisOperation.setFaultMessages(faultMessage);
         }
