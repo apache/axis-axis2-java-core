@@ -98,7 +98,6 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 String schemaString = writer.toString();
 
                 if (!"".equals(schemaString)) {
-                    System.out.println("schemaString = " + schemaString);
                     XMLStreamReader xmlReader = StAXUtils
                             .createXMLStreamReader(new ByteArrayInputStream(schemaString.getBytes()));
 
