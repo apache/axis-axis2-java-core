@@ -33,8 +33,11 @@ public interface WSDL2Constants {
     String INTERFACE_PREFIX = "Interface";
     String OPERATION_LOCAL_NAME = "operation";
     String ATTRIBUTE_NAME = "name";
+    String ATTRIBUTE_REF = "ref";
     String IN_PUT_LOCAL_NAME = "input";
     String OUT_PUT_LOCAL_NAME = "output";
+    String OUT_FAULT = "outfault";
+    String IN_FAULT = "infault";
     String ATTRIBUTE_NAME_PATTERN = "pattern";
     String MESSAGE_LABEL = "messageLabel";
     String ATTRIBUTE_ELEMENT = "element";

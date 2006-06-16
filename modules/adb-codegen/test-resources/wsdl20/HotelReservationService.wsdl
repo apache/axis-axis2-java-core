@@ -58,7 +58,7 @@
 	  wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP">
 
     <operation ref="tns:opCheckAvailability"
-      wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response"/>
+      wsoap:mep="http://www.w3.org/2006/01/wsdl/in-out"/>
 
     <fault ref="tns:invalidDataFault"
       wsoap:code="soap:Sender"/>

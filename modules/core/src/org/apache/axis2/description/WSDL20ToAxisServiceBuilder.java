@@ -282,8 +282,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     inMessage.setName(messageReference.getElementName().getLocalPart());
                     // TODO copy policy elements
                 }
-            }
-            if (messageReference.getMessageLabel().equals(
+            } else if (messageReference.getMessageLabel().equals(
                     messageReference.getMessageLabel().OUT)) {
                 if (isServerSide) {
                     AxisMessage outMessage = axisOperation
@@ -307,8 +306,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (int i = 0; i < faults.length; i++) {
             AxisMessage faultMessage = new AxisMessage();
 
-            faultMessage.setElementQName(faults[i].toElement().getInterfaceFaultElement().getElementName());
-            faultMessage.setName(faults[i].toElement().getRef().getLocalPart());
+            InterfaceFaultReferenceElement interfaceFaultReferenceElement = faults[i].toElement();
+            faultMessage.setDirection(interfaceFaultReferenceElement.getDirection().toString());
+            faultMessage.setElementQName(interfaceFaultReferenceElement.getRef());
+            faultMessage.setName(interfaceFaultReferenceElement.getRef().getLocalPart());
             axisOperation.setFaultMessages(faultMessage);
         }
 

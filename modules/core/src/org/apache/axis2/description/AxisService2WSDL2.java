@@ -9,6 +9,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDL20Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.QName;
@@ -81,7 +82,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 null);
         //adding service document
         if (axisService.getServiceDescription() != null) {
-            addDocumentTation(description, fac, axisService.getServiceDescription());
+            addDocumentation(description, fac, axisService.getServiceDescription());
         }
         OMElement wsdlTypes = fac.createOMElement("types", null);
         description.addChild(wsdlTypes);
@@ -125,9 +126,9 @@ public class AxisService2WSDL2 implements WSDL2Constants {
      * @param factory
      * @param docmentString
      */
-    private void addDocumentTation(OMElement element,
-                                   OMFactory factory,
-                                   String docmentString) {
+    private void addDocumentation(OMElement element,
+                                  OMFactory factory,
+                                  String docmentString) {
         OMElement documentation = factory.createOMElement(DOCUMENTATION, wsoap);
         documentation.setText(docmentString);
         element.addChild(documentation);
@@ -201,15 +202,36 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         messageElement.addAttribute(ATTRIBUTE_ELEMENT, attValue, null);
     }
 
-    private void addInterfaceOperationFault(OMElement opElment, OMFactory fac,
+    private void addInterfaceOperationFault(OMElement operationElement, OMFactory fac,
                                             AxisOperation operation) {
 
-        //TODO : I am not complete yet
+        ArrayList faultMessages = operation.getFaultMessages();
+        for (Iterator iterator = faultMessages.iterator(); iterator.hasNext();) {
+            AxisMessage faultMessage = (AxisMessage) iterator.next();
+            if (faultMessage != null) {
+                QName elementQName = faultMessage.getElementQName();
+
+                String direction = faultMessage.getDirection();
+                OMElement faultElement = null;
+                if (MessageLabel.OUT.toString().equalsIgnoreCase(direction)) {
+                  faultElement = fac.createOMElement(OUT_FAULT, null, operationElement);
+                }else if (MessageLabel.IN.toString().equalsIgnoreCase(direction)) {
+                  faultElement = fac.createOMElement(IN_FAULT, null, operationElement);
+                } else {
+                    return;
+                }
+
+                faultElement.addAttribute(MESSAGE_LABEL, direction, null);
+                faultElement.addAttribute(ATTRIBUTE_REF, elementQName.getPrefix() + ":" + elementQName.getLocalPart(), null);
+
+            }
+        }
+
 
     }
 
     private void generateInterfaceFaultElement(OMElement interfaceElement, OMFactory fac) {
-        //TODO : Not yet implemented
+//          axisService.get
     }
 
     private void generateSOAPBinding(OMElement description, OMFactory fac) {
