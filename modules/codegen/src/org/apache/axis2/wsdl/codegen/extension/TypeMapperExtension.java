@@ -4,6 +4,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -80,10 +81,20 @@ public class TypeMapperExtension implements CodeGenExtension {
             //if present. If a user wants to mix types then it must be
             //from the same databinding framework!
 
+            //first do a sanity check to see whether the user is trying to
+            //mix databinding types!
+
+            String databindingName = rootMappingsElement.
+                    getAttribute(DB_FRAMEWORK_ATTRIBUTE_NAME);
+            if (!databindingName.equals(configuration.getDatabindingType())){
+                throw new CodeGenerationException(
+                        CodegenMessages.
+                                getMessage("extension.databindingMismatch")
+                );
+            }
             configuration.
                     setDatabindingType(
-                            rootMappingsElement.
-                                    getAttribute(DB_FRAMEWORK_ATTRIBUTE_NAME));
+                            databindingName);
 
 
             NodeList mappingList = rootMappingsElement.

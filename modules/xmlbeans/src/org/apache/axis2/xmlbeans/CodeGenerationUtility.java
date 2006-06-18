@@ -106,7 +106,16 @@ public class CodeGenerationUtility {
             List topLevelSchemaList = new ArrayList();
 
             //create the type mapper
-            JavaTypeMapper mapper = new JavaTypeMapper();
+            //First try to take the one that is already there
+            TypeMapper mapper = cgconfig.getTypeMapper();
+            if (mapper==null){
+                mapper =new JavaTypeMapper();
+            }
+
+            //change the  default class name of the mapper to
+            //xmlbeans specific XMLObject
+            mapper.setDefaultMappingName(XmlObject.class.getName());
+
             Map nameSpacesMap = cgconfig.getAxisService().getNameSpacesMap();
 
             // process all the schemas and make a list of all of them for
@@ -309,8 +318,8 @@ public class CodeGenerationUtility {
                 throws IOException {
             File resourcesDirectory =
                     flatten?
-                    location:
-                    new File(location, RESOURCE_DIR_NAME);
+                            location:
+                            new File(location, RESOURCE_DIR_NAME);
 
             if (!resourcesDirectory.exists()) {
                 resourcesDirectory.mkdirs();
@@ -328,8 +337,8 @@ public class CodeGenerationUtility {
 
             File outputDir =
                     flatten?
-                    location:
-                    new File(location, SOURCE_DIR_NAME);
+                            location:
+                            new File(location, SOURCE_DIR_NAME);
 
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
@@ -453,7 +462,7 @@ public class CodeGenerationUtility {
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
             //System.out.println("Lookup:" + "[ " + publicId + "]" + "[" + systemId + "]");
             try {
-               for (int i = 0; i < schemas.length; i++){
+                for (int i = 0; i < schemas.length; i++){
                     SchemaDocument.Schema schema = schemas[i].getSchema();
                     if (schema.getTargetNamespace() != null &&
                             publicId != null &&

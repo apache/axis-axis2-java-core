@@ -19,6 +19,7 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -82,8 +83,12 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
 
 
             Vector xmlObjectsVector = new Vector();
-            //create the type mapper
-            JavaTypeMapper mapper = new JavaTypeMapper();
+             //create the type mapper
+        //First try to take the one that is already there
+        TypeMapper mapper = configuration.getTypeMapper();
+        if (mapper==null){
+            mapper =new JavaTypeMapper();
+        }
 
             for (int i = 0; i < typesList.size(); i++) {
                 XmlSchema schema = (XmlSchema) typesList.get(i);

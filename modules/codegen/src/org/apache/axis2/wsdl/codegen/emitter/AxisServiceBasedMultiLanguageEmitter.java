@@ -528,7 +528,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             // add an extra attribute to say whether the type mapping is
             // the default
-            if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)) {
+            if (mapper.getDefaultMappingName().equals(typeMapping)) {
                 addAttribute(doc, "default", "yes", faultElement);
             }
             addAttribute(doc, "value", getParamInitializer(typeMapping),
@@ -1633,7 +1633,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 // add an extra attribute to say whether the type mapping is
                 // the default
-                if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)) {
+                if (mapper.getDefaultMappingName().equals(typeMapping)) {
                     addAttribute(doc, "default", "yes", paramElement);
                 }
                 addAttribute(doc, "value", getParamInitializer(typeMapping),
@@ -1676,7 +1676,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     : typeMapping, param);
 
             // add an extra attribute to say whether the type mapping is the default
-            if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)) {
+            if (mapper.getDefaultMappingName().equals(typeMapping)) {
                 addAttribute(doc, "default", "yes", param);
             }
 
@@ -1725,7 +1725,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "type", typeMappingStr, param);
 
         // add an extra attribute to say whether the type mapping is the default
-        if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMappingStr)) {
+        if (mapper.getDefaultMappingName().equals(typeMappingStr)) {
             addAttribute(doc, "default", "yes", param);
         }
 

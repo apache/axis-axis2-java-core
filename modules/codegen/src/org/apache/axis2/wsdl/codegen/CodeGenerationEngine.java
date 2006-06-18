@@ -48,12 +48,15 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeGenerationEngine {
+
     private static final Log log = LogFactory.getLog(CodeGenerationEngine.class);
 
+    /** Array List for pre-extensions. Extensions that run before the emitter */
     private List preExtensions = new ArrayList();
+    /** Array List for post-extensions. Extensions that run after the codegens*/
     private List postExtensions = new ArrayList();
 
-
+    /** Codegen configuration  reference */
     private CodeGenConfiguration configuration;
 
     /**
@@ -94,7 +97,11 @@ public class CodeGenerationEngine {
                 if (configuration.getServiceName()!=null){
                     serviceQname = new QName(description.getTargetNamespace().toString(), configuration.getServiceName());
                 }
-                configuration.setAxisService(new WSDL20ToAxisServiceBuilder(description, serviceQname, configuration.getPortName()).populateService());
+                configuration.setAxisService(
+                        new WSDL20ToAxisServiceBuilder(description,
+                                serviceQname,
+                                configuration.getPortName()).
+                                populateService());
 
             }else{
                 //It'll be WSDL 1.1
@@ -135,7 +142,7 @@ public class CodeGenerationEngine {
         if (extensions!=null){
             for (int i = 0; i < extensions.length; i++) {
                 //load the Extension class
-                addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i]));
+                addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i].trim()));
             }
         }
         
@@ -144,7 +151,7 @@ public class CodeGenerationEngine {
         if (postExtensions!=null){
             for (int i = 0; i < postExtensions.length; i++) {
                 //load the Extension class
-                addPostExtension((CodeGenExtension) getObjectFromClassName(postExtensions[i]));
+                addPostExtension((CodeGenExtension) getObjectFromClassName(postExtensions[i].trim()));
             }
         }
 

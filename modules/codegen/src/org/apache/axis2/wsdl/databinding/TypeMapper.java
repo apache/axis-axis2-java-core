@@ -23,10 +23,7 @@ import java.util.Map;
 
 public interface TypeMapper {
 
-    /**
-     * Default class name is the OMElement ?
-     */
-    public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+   
 
     /**
      * Returns whether the mapping is the object type or the normal class name type
@@ -90,4 +87,18 @@ public interface TypeMapper {
      * i.e. Qname to model objects
      */
     public Map getAllMappedObjects();
+
+    /**
+     *
+     * @return the default mapping name for this type mapper
+     */
+    public String getDefaultMappingName();
+
+    /**
+     * Sets the default type mapping - the databinders may
+     * change the default mapping to suit their default
+     * mapping
+     * @param defaultMapping
+     */
+    public void setDefaultMappingName(String defaultMapping);
 }

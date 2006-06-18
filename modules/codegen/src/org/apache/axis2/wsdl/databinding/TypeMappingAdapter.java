@@ -17,12 +17,20 @@
 package org.apache.axis2.wsdl.databinding;
 
 import org.apache.axis2.namespace.Constants;
+import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class TypeMappingAdapter implements TypeMapper {
+
+    /**
+     * Default class name is the OMElement or the default case
+     * However the extensions can override the default class
+     * to suit the databinding framework!
+     */
+    protected String defaultClassName = OMElement.class.getName();
 
     //todo get this from a constant
     protected static final String XSD_SCHEMA_URL = Constants.URI_2001_SCHEMA_XSD;
@@ -44,7 +52,8 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
 
     /**
-     * Gets the type mapping name. If type mapping is not found, returns default. 
+     * Gets the type mapping name.
+     * If type mapping is not found, returns default.
      *
      * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
@@ -55,7 +64,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
             if (o != null) {
                 return (String) o;
             } else {
-                return DEFAULT_CLASS_NAME;
+                return defaultClassName;
             }
         }
 
@@ -118,5 +127,20 @@ public abstract class TypeMappingAdapter implements TypeMapper {
      */
     public Map getAllMappedObjects() {
         return qName2ObjectMap;
+    }
+
+    /**
+     * @see org.apache.axis2.wsdl.databinding.TypeMapper#getDefaultMappingName()
+     */
+    public String getDefaultMappingName() {
+        return defaultClassName;
+    }
+
+    /**
+     * @see TypeMapper#setDefaultMappingName(String) 
+     * @param defaultMapping
+     */
+    public void setDefaultMappingName(String defaultMapping) {
+        this.defaultClassName = defaultMapping;
     }
 }

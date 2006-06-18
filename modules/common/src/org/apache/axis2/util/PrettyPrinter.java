@@ -69,7 +69,7 @@ public class PrettyPrinter {
             format.invoke(prettifier, new Object[]{});
             log.debug("Pretty printed file : " + file);
         } catch (ClassNotFoundException e) {
-            log.info("Jalopy/Log4j not found - unable to pretty print " + file);
+            log.debug("Jalopy/Log4j not found - unable to pretty print " + file);
         } catch (Exception e) {
             log.warn("Exception occurred while trying to pretty print file " + file, e);
         } catch (Throwable t) {

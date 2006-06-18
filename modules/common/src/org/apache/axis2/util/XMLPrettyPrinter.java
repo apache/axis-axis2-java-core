@@ -93,7 +93,7 @@ public class XMLPrettyPrinter {
             }
             log.debug("Pretty printed file : " + file);
         } catch (ClassNotFoundException e) {
-            log.info("Tidy not found - unable to pretty print " + file);
+            log.debug("Tidy not found - unable to pretty print " + file);
         } catch (Exception e) {
             log.warn("Exception occurred while trying to pretty print file " + file, e);
         } catch (Throwable t) {

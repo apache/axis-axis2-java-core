@@ -21,6 +21,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -58,7 +59,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JiBX framework jars not in classpath");
             }
-            
+
             // load the actual utility class
             Class clazz;
             try {
@@ -66,7 +67,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JiBX binding extension not in classpath");
             }
-            
+
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(BINDING_MAP_METHOD,
                     new Class[] { String.class });
@@ -84,8 +85,13 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             }
 
 
-            // build type mapping from JiBX mappings for elements
-            JavaTypeMapper mapper = new JavaTypeMapper();
+            //create the type mapper
+            //First try to take the one that is already there
+            TypeMapper mapper = configuration.getTypeMapper();
+            if (mapper==null){
+                mapper =new JavaTypeMapper();
+            }
+
             for (Iterator iter = elements.iterator(); iter.hasNext();) {
                 QName qname = (QName)iter.next();
                 if (qname != null) {

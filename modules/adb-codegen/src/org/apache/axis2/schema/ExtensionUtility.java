@@ -3,6 +3,7 @@ package org.apache.axis2.schema;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.XSLTConstants;
 
 import javax.xml.namespace.QName;
@@ -57,8 +58,12 @@ public class ExtensionUtility {
         schemaCompiler.compile(schemaList);
 
         //create the type mapper
-        JavaTypeMapper mapper = new JavaTypeMapper();
-
+        //First try to take the one that is already there
+        TypeMapper mapper = configuration.getTypeMapper();
+        if (mapper==null){
+            mapper =new JavaTypeMapper();
+        }
+        
         if (options.isWriteOutput()){
             //get the processed element map and transfer it to the type mapper
             Map processedMap = schemaCompiler.getProcessedElementMap();
