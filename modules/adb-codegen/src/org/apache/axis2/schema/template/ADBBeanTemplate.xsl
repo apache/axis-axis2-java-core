@@ -249,38 +249,240 @@
      * @return
      */
     public org.apache.axiom.om.OMElement getOMElement(
-            javax.xml.namespace.QName parentQName,
+            final javax.xml.namespace.QName parentQName,
             final org.apache.axiom.om.OMFactory factory){
-       <xsl:choose>
-            <xsl:when test="@type">
-               org.apache.axiom.om.OMDataSource dataSource =
-               new org.apache.axis2.databinding.ADBDataSource(this){
-                   public void serialize(
-                          javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
 
-                         //yet to be generated!!
+        org.apache.axiom.om.OMDataSource dataSource =
+                       new org.apache.axis2.databinding.ADBDataSource(this){
+                           public void serialize(
+                                  javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+            <xsl:choose>
+            <xsl:when test="@type or @anon">
+                <!-- For a type write the passed in QName first-->
+                xmlWriter.writeStartElement(parentQName.getNamespaceURI(),
+                                            parentQName.getLocalPart());
 
-                   }
+                <!--First serialize the attributes!-->
+                <xsl:for-each select="property[@attribute]">
+                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+                    <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
+                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+                    <xsl:choose>
+                        <xsl:when test="@any and not(@array)">
+                            xmlWriter.writeAttribute("<xsl:value-of select="$namespace"/>",
+                                                     "<xsl:value-of select="$propertyName"/>",
+                                                     <xsl:value-of select="$varName"/>);
+                            <!-- todo change this to use the OMAttribute-->
 
-               };
+                        </xsl:when>
+                         <xsl:when test="@any and @array">
+                             for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+                              xmlWriter.writeAttribute("<xsl:value-of select="$namespace"/>",
+                                                     "<xsl:value-of select="$propertyName"/>",
+                                                     <xsl:value-of select="$varName"/>[i]);
+                              <!-- todo change this to use the OMAttribute-->
+                             }
+                         </xsl:when>
+                        <!-- there can never be attribute arrays in the normal case-->
+                        <xsl:otherwise>
+                             xmlWriter.writeAttribute("<xsl:value-of select="$namespace"/>",
+                                                     "<xsl:value-of select="$propertyName"/>",
+                                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
 
-       return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-               parentQName,factory,dataSource);
+                <!-- Now serialize the elements-->
+                <xsl:for-each select="property[not(@attribute)]">
+                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+                    <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
+                    <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
+                    <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+                    <xsl:variable name="settingTracker">local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
+
+
+                    <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="@ours and not(@array) and not(@default)">
+                            <xsl:choose>
+                                <xsl:when test="@nillable">
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                       xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
+                                       // write the nil attribute
+                                       xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                                     "nil",
+                                                     "true");
+                                       xmlWriter.writeEndElement();
+                                    }else{
+                                     <xsl:value-of select="$varName"/>.getOMElement(
+                                       new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                        factory).serialize(xmlWriter);
+                                    }
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                   <xsl:value-of select="$varName"/>.getOMElement(
+                                       new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                       factory).serialize(xmlWriter);
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:when test="@ours and @array and not(@default)">
+                             <xsl:choose>
+                                <xsl:when test="@nillable">
+                                    // this property is nillable
+                                    if (<xsl:value-of select="$varName"/>!=null){
+                                    <!--this barcket needs to be closed!-->
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                             <xsl:value-of select="$varName"/>[i].getOMElement(
+                                       new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                       factory).serialize(xmlWriter);
+                            }
+                            <!--we've opened a bracket for the nulls - fix it here-->
+                            <xsl:if test="@nillable">}</xsl:if>
+                        </xsl:when>
+
+                        <xsl:when test="@default">
+
+                            // do something for the default!!!
+
+                        </xsl:when>
+                        <!-- handle non ADB arrays - Not any however -->
+                        <xsl:when test="@array and not(@any)">
+                             <xsl:choose>
+                                <xsl:when test="@nillable">
+                                    // this property is nillable
+                                    if (<xsl:value-of select="$varName"/>!=null){
+                                    <!--this bracket needs to be closed!-->
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                              xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
+                              if (<xsl:value-of select="$varName"/>[i]==null){
+                                  xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                                     "nil",
+                                                     "true");
+                              }else{
+                                 xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                              }
+                              xmlWriter.writeEndElement();
+                            }
+                            <!--we've opened a bracket for the nulls - fix it here-->
+                            <xsl:if test="@nillable">}</xsl:if>
+                        </xsl:when>
+
+                         <!-- handle non ADB arrays  - Any case  - any may not be
+                         nillable -->
+                        <xsl:when test="@array and @any">
+                            for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                              // how to handle this!!!
+                            }
+                            <!--we've opened a bracket for the nulls - fix it here-->
+                        </xsl:when>
+                        <!-- handle any - non array case-->
+                         <xsl:when test="@any">
+                           <!--  How do you handle the any???? probably the OMElement ?-->
+                        </xsl:when>
+
+                        <!-- handle all other cases including the binary case -->
+                         <xsl:otherwise>
+                            xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
+                            xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                            xmlWriter.writeEndElement();
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="$min=0 or $choice">}</xsl:if>
+
+                    <!-- write the end element for the type-->
+                    xmlWriter.writeEndElement();
+
+                </xsl:for-each>
+            <!-- end of when for type & anon -->
             </xsl:when>
 
+
+            <!-- Not a type and not anon. So it better be only one inclusion-->
             <xsl:otherwise>
-               org.apache.axiom.om.OMDataSource dataSource =
-               new org.apache.axis2.databinding.ADBDataSource(this){
-                   public void serialize(
-                         javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                <!-- if the element is associated with a type, then its gonna be only one -->
+                //We can safely assume an element has only one type associated with it
+                <xsl:variable name="varName">local<xsl:value-of select="property/@javaname"/></xsl:variable>
+                <xsl:variable name="nillable"><xsl:value-of select="property/@nillable"/></xsl:variable>
+                <xsl:variable name="primitive"><xsl:value-of select="property/@primitive"/></xsl:variable>
 
-                         //yet to be generated!
-                    }
-               };
+                <xsl:choose>
+                    <!-- This better be only one!!-->
+                    <xsl:when test="property/@ours">
+                        <xsl:choose>
+                            <xsl:when test="$nillable">
+                                      if (<xsl:value-of select="$varName"/>==null){
+                                          xmlWriter.writeStartElement("<xsl:value-of select="property/@namespace"/>","<xsl:value-of select="property/@name"/>");
+                                          // write the nil attribute
+                                          xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                                     "nil",
+                                                     "true");
+                                          xmlWriter.writeEndElement();
+                                       }else{
+                                         <xsl:value-of select="$varName"/>.getOMElement(
+                                         MY_QNAME,
+                                         factory).serialize(xmlWriter);
+                                       }
+                            </xsl:when>
+                            <xsl:otherwise>
+                                 if (<xsl:value-of select="$varName"/>==null){
+                                   throw new RuntimeException("Property cannot be null!");
+                                 }
+                                 <xsl:value-of select="$varName"/>.getOMElement(
+                                         MY_QNAME,
+                                         factory).serialize(xmlWriter);
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <!-- end of ours block-->
+                    <xsl:otherwise>
+                       xmlWriter.writeStartElement(
+                       "<xsl:value-of select="property/@namespace"/>","<xsl:value-of select="property/@name"/>");
+                       xmlWriter.writeCharacters(
+                        org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                       xmlWriter.writeEndElement();
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
 
-       return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+        }
+
+        };
+
+
+
+
+
+
+
+
+        <xsl:choose>
+            <xsl:when test="@type">
+               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+               parentQName,factory,dataSource);
+            </xsl:when>
+            <xsl:otherwise>
+               //ignore the QName passed in - we send only OUR QNames
+               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
-
             </xsl:otherwise>
        </xsl:choose>
 

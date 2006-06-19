@@ -98,6 +98,10 @@ public class SchemaCompiler {
     //the key is the targetnamespace and the value is the schema object
     private Map loadedSchemaMap = new HashMap();
 
+    // A map keeping the available schemas
+    private Map availableSchemaMap = new HashMap();
+
+
 
     // a list of externally identified QNames to be processed. This becomes
     // useful when  only a list of external elements need to be processed
@@ -183,10 +187,20 @@ public class SchemaCompiler {
         XmlSchema schema;
         
         try {
+            // first round - populate the map
             for (int i = 0; i < schemalist.size(); i++) {
                 schema = (XmlSchema) schemalist.get(i);
-                compile(schema);
+                availableSchemaMap.put(
+                        schema.getTargetNamespace(),
+                        schema
+                );
             }
+
+            // second round - call the schema
+            for (int i = 0; i < schemalist.size(); i++) {
+                compile((XmlSchema) schemalist.get(i));
+            }
+
         } catch (SchemaCompilationException e) {
             throw e;
         } catch (Exception e) {
@@ -512,11 +526,17 @@ public class SchemaCompiler {
      * @param currentSchema
      * @return
      */
-    private XmlSchema resolveParentSchema(QName schemaTypeName,XmlSchema currentSchema) {
+    private XmlSchema resolveParentSchema(QName schemaTypeName,XmlSchema currentSchema)
+      throws SchemaCompilationException{
         String targetNamespace = schemaTypeName.getNamespaceURI();
         Object loadedSchema = loadedSchemaMap.get(targetNamespace);
         if (loadedSchema!=null){
             return  (XmlSchema)loadedSchema;
+        }else if (availableSchemaMap.containsKey(targetNamespace)) {
+            //compile the referenced Schema first and then pass it
+            XmlSchema schema = (XmlSchema) availableSchemaMap.get(targetNamespace);
+            compile(schema);
+            return schema;
         }else{
             return currentSchema;
         }
