@@ -40,5 +40,7 @@ public interface WSDL20Constants {
     // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-opt-in
     public static final String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2006/01/wsdl/out-opt-in";
 
+    public static final String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2006/01/wsdl";
+
 
 }
