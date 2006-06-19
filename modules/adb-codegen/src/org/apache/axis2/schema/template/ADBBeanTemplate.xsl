@@ -241,6 +241,55 @@
 
         </xsl:for-each>
 
+     <!-- get OMElement methods that allows direct writing -->
+     /**
+     *
+     * @param parentQName
+     * @param factory
+     * @return
+     */
+    public org.apache.axiom.om.OMElement getOMElement(
+            javax.xml.namespace.QName parentQName,
+            final org.apache.axiom.om.OMFactory factory){
+       <xsl:choose>
+            <xsl:when test="@type">
+               org.apache.axiom.om.OMDataSource dataSource =
+               new org.apache.axis2.databinding.ADBDataSource(this){
+                   public void serialize(
+                          javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+
+                         //yet to be generated!!
+
+                   }
+
+               };
+
+       return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+               parentQName,factory,dataSource);
+            </xsl:when>
+
+            <xsl:otherwise>
+               org.apache.axiom.om.OMDataSource dataSource =
+               new org.apache.axis2.databinding.ADBDataSource(this){
+                   public void serialize(
+                         javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+
+                         //yet to be generated!
+                    }
+               };
+
+       return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+               MY_QNAME,factory,dataSource);
+
+            </xsl:otherwise>
+       </xsl:choose>
+
+
+
+
+
+    }
+
         /**
         * databinding method to get an XML representation of this object
         *
