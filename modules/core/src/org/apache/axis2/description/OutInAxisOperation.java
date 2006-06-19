@@ -327,42 +327,44 @@ class OutInAxisOperationClient implements OperationClient {
 
         AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
-        engine.send(msgctx);
-
         // create the responseMessageContext
         MessageContext responseMessageContext = new MessageContext();
-        responseMessageContext.setTransportIn(msgctx.getTransportIn());
-        responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
         // This is a hack - Needs to change
         responseMessageContext.setOptions(options);
 
 
-        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
-                .getProperty(MessageContext.TRANSPORT_IN));
         responseMessageContext.setServerSide(false);
         responseMessageContext.setDoingREST(msgctx.isDoingREST());
         addMessageContext(responseMessageContext);
 
-        // If request is REST we assume the responseMessageContext is REST, so
-        // set the variable
+        //sending the message
+        engine.send(msgctx);
 
+        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
+                .getProperty(MessageContext.TRANSPORT_IN));
+        responseMessageContext.setTransportIn(msgctx.getTransportIn());
+        responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
-        SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
-                responseMessageContext, msgctx.getEnvelope().getNamespace()
-                .getName());
-        if (resenvelope != null) {
-            responseMessageContext.setEnvelope(resenvelope);
-            engine = new AxisEngine(msgctx.getConfigurationContext());
-            engine.receive(responseMessageContext);
-            if (responseMessageContext.getReplyTo() != null) {
-                sc.setTargetEPR(responseMessageContext.getReplyTo());
+        if (responseMessageContext.getEnvelope() == null) {
+            // If request is REST we assume the responseMessageContext is REST, so
+            // set the variable
+
+            SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
+                    responseMessageContext, msgctx.getEnvelope().getNamespace()
+                    .getName());
+            if (resenvelope != null) {
+                responseMessageContext.setEnvelope(resenvelope);
+                engine = new AxisEngine(msgctx.getConfigurationContext());
+                engine.receive(responseMessageContext);
+                if (responseMessageContext.getReplyTo() != null) {
+                    sc.setTargetEPR(responseMessageContext.getReplyTo());
+                }
+            } else {
+                throw new AxisFault(Messages
+                        .getMessage("blockingInvocationExpectsResponse"));
             }
-        } else {
-            throw new AxisFault(Messages
-                    .getMessage("blockingInvocationExpectsResponse"));
         }
-
         return responseMessageContext;
     }
 

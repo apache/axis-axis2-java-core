@@ -53,7 +53,7 @@ public class AxisEngine {
     /**
      * Field log
      */
-	private static final Log log = LogFactory.getLog(AxisEngine.class);
+    private static final Log log = LogFactory.getLog(AxisEngine.class);
     private ConfigurationContext engineContext;
 
     /**
@@ -64,7 +64,7 @@ public class AxisEngine {
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-        if(!msgContext.isHeaderPresent()) {
+        if (!msgContext.isHeaderPresent()) {
             return;
         }
         SOAPEnvelope se = msgContext.getEnvelope();
@@ -126,24 +126,24 @@ public class AxisEngine {
      * WSDL that WS-Addressing headers were found on the inbound message
      */
     private void checkUsingAddressing(MessageContext msgContext)
-			throws AxisFault {
-		String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
-		if(log.isTraceEnabled())
-			log.trace("checkUsingAddressing: WSAddressingFlag="+ addressingFlag);
-		if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
-			Object flag = msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-			if(log.isTraceEnabled())
-				log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
-			if (flag == null) {
-				String message = Messages.getMessage("wsaddressingrequirednotpresent");
-				AxisFault af = new AxisFault(message);
-				af.printStackTrace();
-				log.debug(message, af);
-				throw af;
-			}
-		}
+            throws AxisFault {
+        String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
+        if (log.isTraceEnabled())
+            log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
+        if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
+            Object flag = msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+            if (log.isTraceEnabled())
+                log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
+            if (flag == null) {
+                String message = Messages.getMessage("wsaddressingrequirednotpresent");
+                AxisFault af = new AxisFault(message);
+                af.printStackTrace();
+                log.debug(message, af);
+                throw af;
+            }
+        }
     }
-    
+
     /**
      * This method is called to handle any error that occurs at inflow or outflow. But if the
      * method is called twice, it implies that sending the error handling has failed, in which case
@@ -473,7 +473,7 @@ public class AxisEngine {
 
             // invoke the Message Receivers
             checkMustUnderstand(msgContext);
-            
+
             checkUsingAddressing(msgContext);
 
             MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
@@ -490,7 +490,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void invoke(MessageContext   msgContext) throws AxisFault {
+    public void invoke(MessageContext msgContext) throws AxisFault {
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
@@ -531,7 +531,7 @@ public class AxisEngine {
      *
      * @param msgContext
      */
-    public void resumeSend(MessageContext   msgContext) throws AxisFault {
+    public void resumeSend(MessageContext msgContext) throws AxisFault {
         //invoke the phases
         invoke(msgContext);
         //Invoking Tarnsport Sender
@@ -584,7 +584,7 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public void send(MessageContext  msgContext) throws AxisFault {
+    public void send(MessageContext msgContext) throws AxisFault {
 
         // find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
@@ -624,7 +624,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void sendFault(MessageContext  msgContext) throws AxisFault {
+    public void sendFault(MessageContext msgContext) throws AxisFault {
         OperationContext opContext = msgContext.getOperationContext();
 
         // find and execute the Fault Out Flow Handlers
@@ -651,7 +651,7 @@ public class AxisEngine {
         }
     }
 
-    private String getSenderFaultCode(OMNamespace  soapNamespace) {
+    private String getSenderFaultCode(OMNamespace soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getName())
                 ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
                 + SOAP12Constants.FAULT_CODE_SENDER
@@ -666,6 +666,7 @@ public class AxisEngine {
     private class TransportNonBlockingInvocationWorker implements Runnable {
         private MessageContext msgctx;
         private TransportSender sender;
+        private boolean done;
 
         public TransportNonBlockingInvocationWorker(MessageContext msgctx,
                                                     TransportSender sender) {
@@ -675,7 +676,10 @@ public class AxisEngine {
 
         public void run() {
             try {
-                sender.invoke(msgctx);
+                while (!done) {
+                    sender.invoke(msgctx);
+                    done = true;
+                }
             } catch (Exception e) {
                 log.info(e.getMessage());
             }
