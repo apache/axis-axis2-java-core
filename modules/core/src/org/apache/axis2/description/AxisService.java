@@ -365,7 +365,7 @@ public class AxisService extends AxisDescription {
     private MessageReceiver loadDefaultMessageReceiver(String mepURL, AxisService service) {
         MessageReceiver messageReceiver;
         if (mepURL == null) {
-            mepURL = WSDLConstants.MEP_URI_IN_OUT;
+            mepURL = WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);

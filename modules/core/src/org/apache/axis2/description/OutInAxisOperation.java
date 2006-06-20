@@ -44,12 +44,12 @@ import java.util.Map;
 public class OutInAxisOperation extends InOutAxisOperation {
     public OutInAxisOperation() {
         super();
-        setMessageExchangePattern(WSDLConstants.MEP_URI_OUT_IN);
+        setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_IN);
     }
 
     public OutInAxisOperation(QName name) {
         super(name);
-        setMessageExchangePattern(WSDLConstants.MEP_URI_OUT_IN);
+        setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_IN);
     }
 
     public void addMessageContext(MessageContext msgContext,

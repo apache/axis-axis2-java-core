@@ -10,8 +10,8 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.wsdl.WSDL20Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
@@ -134,17 +134,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //populate the MEP -> class map
         mepToClassMap = new HashMap();
-        mepToClassMap.put(WSDLConstants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
-        mepToClassMap.put(WSDL20Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
-        mepToClassMap.put(WSDL20Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
 
         //populate the MEP -> suffix map
         mepToSuffixMap = new HashMap();
-        mepToSuffixMap.put(WSDLConstants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDL20Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDLConstants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
-        mepToSuffixMap.put(WSDL20Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
     }
 
@@ -952,14 +952,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             // process the input parameters
             String MEP = axisOperation.getMessageExchangePattern();
-            if (isInputPresentForMEP(MEP)) {
+            if (WSDLUtil.isInputPresentForMEP(MEP)) {
                 Element inputParamElement = getInputParamElement(doc, axisOperation);
                 if (inputParamElement != null) {
                     parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
                 }
             }
             // process output parameters
-            if (isOutputPresentForMEP(MEP)) {
+            if (WSDLUtil.isOutputPresentForMEP(MEP)) {
                 Element outputParamElement = getOutputParamElement(doc, axisOperation);
                 if (outputParamElement != null) {
                     parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
@@ -1015,20 +1015,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return rootElement;
     }
 
-    protected boolean isInputPresentForMEP(String mep) {
-        return WSDLConstants.MEP_URI_IN_ONLY.equals(mep) ||
-                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
-                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(mep) ||
-                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(mep) ||
-                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(mep) ||
-                WSDLConstants.MEP_URI_IN_OUT.equals(mep) ||
-                WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep)||
-                WSDL20Constants.MEP_URI_IN_ONLY.equals(mep)||
-                WSDL20Constants.MEP_URI_IN_OUT.equals(mep)||
-                WSDL20Constants.MEP_URI_OUT_IN.equals(mep)||
-                WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep)||
-                WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(mep);
-    }
+
 
     /**
      * Gets the base64 types. If not available this will be empty!!!
@@ -1483,7 +1470,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         ArrayList headerparamList = new ArrayList();
         String MEP = axisOperation.getMessageExchangePattern();
         if (input) {
-            if (isInputPresentForMEP(MEP)) {
+            if (WSDLUtil.isInputPresentForMEP(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (inaxisMessage != null) {
@@ -1492,7 +1479,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
             }
         } else {
-            if (isOutputPresentForMEP(MEP)) {
+            if (WSDLUtil.isOutputPresentForMEP(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 if (outAxisMessage != null) {
@@ -1507,25 +1494,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-    protected boolean isOutputPresentForMEP(String MEP) {
-        return WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                WSDLConstants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                WSDLConstants.MEP_URI_IN_OUT.equals(MEP) ||
-                WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                WSDL20Constants.MEP_URI_IN_OUT.equals(MEP) ||
-                WSDL20Constants.MEP_URI_OUT_IN.equals(MEP) ||
-                WSDL20Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP);
-    }
+
 
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
         String MEP = operation.getMessageExchangePattern();
-        if (isInputPresentForMEP(MEP)) {
+        if (WSDLUtil.isInputPresentForMEP(MEP)) {
             Element param = getInputParamElement(doc, operation);
 
             if (param != null) {
@@ -1568,7 +1542,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element getOutputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element outputElt = doc.createElement("output");
         String MEP = operation.getMessageExchangePattern();
-        if (isOutputPresentForMEP(MEP)) {
+        if (WSDLUtil.isOutputPresentForMEP(MEP)) {
             Element param = getOutputParamElement(doc, operation);
 
             if (param != null) {

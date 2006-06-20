@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.WSDL20Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
@@ -250,7 +250,7 @@ public class ArchiveReader implements DeploymentConstants {
                         OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDL20Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getName()))
+                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getName()))
                             {
                                 // we have a WSDL 2.0 document here.
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new FileInputStream(file1), null, null);
@@ -309,7 +309,7 @@ public class ArchiveReader implements DeploymentConstants {
                         OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDL20Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getName()))
+                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getName()))
                             {
                                 // we have a WSDL 2.0 document here.
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);

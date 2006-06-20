@@ -298,15 +298,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         .getBindingOutput();
                 String MEP = operation.getMessageExchangePattern();
                 if (bindingInput != null) {
-                    if (WSDLConstants.MEP_URI_IN_ONLY.equals(MEP)
-                            || WSDLConstants.MEP_URI_IN_OPTIONAL_OUT
+                    if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP)
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
                             .equals(MEP)
-                            || WSDLConstants.MEP_URI_OUT_OPTIONAL_IN
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
                             .equals(MEP)
-                            || WSDLConstants.MEP_URI_ROBUST_OUT_ONLY
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
                             .equals(MEP)
-                            || WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
-                            || WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                         AxisMessage inMessage = operation
                                 .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                         copyExtensibleElements(bindingInput
@@ -316,15 +316,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                 }
                 if (bindingOutput != null) {
-                    if (WSDLConstants.MEP_URI_OUT_ONLY.equals(MEP)
-                            || WSDLConstants.MEP_URI_OUT_OPTIONAL_IN
+                    if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
                             .equals(MEP)
-                            || WSDLConstants.MEP_URI_IN_OPTIONAL_OUT
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
                             .equals(MEP)
-                            || WSDLConstants.MEP_URI_ROBUST_OUT_ONLY
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
                             .equals(MEP)
-                            || WSDLConstants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
-                            || WSDLConstants.MEP_URI_IN_OUT.equals(MEP)) {
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
+                            || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                         AxisMessage outAxisMessage = operation
                                 .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                         copyExtensibleElements(bindingOutput
@@ -977,7 +977,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 //look for the SOAP 1.2 stuff here. WSDL4j does not understand
                 // SOAP 1.2 things
-                if (WSDLConstants.SOAP_12_OPERATION.equals(unknown
+                if (WSDLConstants.WSDL11Constants.SOAP_12_OPERATION.equals(unknown
                         .getElementType())) {
                     Element element = unknown.getElement();
                     if (description instanceof AxisOperation) {
@@ -989,19 +989,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.setSoapAction(element
                                 .getAttribute("soapAction"));
                     }
-                } else if (WSDLConstants.SOAP_12_HEADER.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER.equals(unknown
                         .getElementType())) {
                     //TODO : implement thid
-                } else if (WSDLConstants.SOAP_12_BINDING.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.SOAP_12_BINDING.equals(unknown
                         .getElementType())) {
                     style = unknown.getElement().getAttribute("style");
                     axisService.setSoapNsUri(wsdl4jElement.getElementType()
                             .getNamespaceURI());
-                } else if (WSDLConstants.SOAP_12_ADDRESS.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.SOAP_12_ADDRESS.equals(unknown
                         .getElementType())) {
                     axisService.setEndpoint(unknown.getElement().getAttribute(
                             "location"));
-                } else if (WSDLConstants.POLICY
+                } else if (WSDLConstants.WSDL11Constants.POLICY
                         .equals(unknown.getElementType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
@@ -1012,7 +1012,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     addPolicy(description, originOfExtensibilityElements,
                             policy);
 
-                } else if (WSDLConstants.POLICY_REFERENCE.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
                         .getElementType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
@@ -1275,31 +1275,31 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (isServerSide) {
             if (null != operationType) {
                 if (operationType.equals(OperationType.REQUEST_RESPONSE))
-                    return WSDLConstants.MEP_URI_IN_OUT;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
 
                 if (operationType.equals(OperationType.ONE_WAY))
-                    return WSDLConstants.MEP_URI_IN_ONLY;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY;
 
                 if (operationType.equals(OperationType.NOTIFICATION))
-                    return WSDLConstants.MEP_URI_OUT_ONLY;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY;
 
                 if (operationType.equals(OperationType.SOLICIT_RESPONSE))
-                    return WSDLConstants.MEP_URI_OUT_IN;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_IN;
                 throw new Exception("Cannot Determine the MEP");
             }
         } else {
             if (null != operationType) {
                 if (operationType.equals(OperationType.REQUEST_RESPONSE))
-                    return WSDLConstants.MEP_URI_OUT_IN;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_IN;
 
                 if (operationType.equals(OperationType.ONE_WAY))
-                    return WSDLConstants.MEP_URI_OUT_ONLY;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY;
 
                 if (operationType.equals(OperationType.NOTIFICATION))
-                    return WSDLConstants.MEP_URI_IN_ONLY;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY;
 
                 if (operationType.equals(OperationType.SOLICIT_RESPONSE))
-                    return WSDLConstants.MEP_URI_IN_OUT;
+                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
                 throw new Exception("Cannot Determine the MEP");
             }
         }
@@ -1351,7 +1351,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (extElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) extElement;
-                if (WSDLConstants.POLICY.equals(unknown.getElementType())) {
+                if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown.getElementType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
                             .getPolicyReader(PolicyFactory.DOM_POLICY_READER);

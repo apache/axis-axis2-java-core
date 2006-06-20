@@ -333,7 +333,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // look for the SOAP 1.2 stuff here. WSDL4j does not understand
                 // SOAP 1.2 things
                 // TODO this is wrong. Compare this with WSDL 2.0 QName
-                if (WSDLConstants.SOAP_12_OPERATION.equals(unknown
+                if (WSDLConstants.WSDL11Constants.SOAP_12_OPERATION.equals(unknown
                         .getExtensionType())) {
                     Element unknownElement = unknown.getElement();
                     if (description instanceof AxisOperation) {
@@ -345,19 +345,19 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.setSoapAction(unknownElement
                                 .getAttribute("soapAction"));
                     }
-                } else if (WSDLConstants.SOAP_12_HEADER.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER.equals(unknown
                         .getExtensionType())) {
                     // TODO : implement thid
-                } else if (WSDLConstants.SOAP_12_BINDING.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.SOAP_12_BINDING.equals(unknown
                         .getExtensionType())) {
                     style = unknown.getElement().getAttribute("style");
                     axisService.setSoapNsUri(element.getExtensionType()
                             .getNamespaceURI());
-                } else if (WSDLConstants.SOAP_12_ADDRESS.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.SOAP_12_ADDRESS.equals(unknown
                         .getExtensionType())) {
                     axisService.setEndpoint(unknown.getElement().getAttribute(
                             "location"));
-                } else if (WSDLConstants.POLICY.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
                         .getExtensionType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
@@ -368,7 +368,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // addPolicy(description, originOfExtensibilityElements,
                     // policy);
 
-                } else if (WSDLConstants.POLICY_REFERENCE.equals(unknown
+                } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
                         .getExtensionType())) {
 
                     DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory

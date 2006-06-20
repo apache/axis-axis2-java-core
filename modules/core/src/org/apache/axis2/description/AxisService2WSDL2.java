@@ -7,7 +7,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.WSDL20Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -157,12 +156,12 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 operation.addAttribute(ATTRIBUTE_NAME_PATTERN, getUpdatedMEP(MEP), null);
                 //TODO need to add : style="http://www.w3.org/2006/01/wsdl/style/iri"
                 //TODO need to add : swsdlx:safe = "true"
-                if (WSDL20Constants.MEP_URI_IN_ONLY.equals(MEP)
-                        || WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
-                        || WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
-                        || WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-                        || WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
-                        || WSDL20Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage inaxisMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     if (inaxisMessage != null) {
@@ -174,12 +173,12 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                     }
                 }
 
-                if (WSDL20Constants.MEP_URI_OUT_ONLY.equals(MEP)
-                        || WSDL20Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
-                        || WSDL20Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
-                        || WSDL20Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-                        || WSDL20Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
-                        || WSDL20Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage outAxisMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if (outAxisMessage != null) {
