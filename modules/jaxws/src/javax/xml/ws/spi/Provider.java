@@ -36,5 +36,5 @@ public abstract class Provider {
     public abstract Endpoint createAndPublishEndpoint(String s, Object obj);
 
     public static final String JAXWSPROVIDER_PROPERTY = "javax.xml.ws.spi.Provider";
-    private static final String DEFAULT_JAXWSPROVIDER = "org.apache.ws.spi.ProviderImpl";
+    private static final String DEFAULT_JAXWSPROVIDER = "org.apache.axis2.jaxws.spi.Provider";
 }

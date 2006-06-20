@@ -33,7 +33,7 @@ public abstract class ServiceDelegate {
 
     public abstract <T> T getPort(Class<T> class1);
 
-    public abstract void addPort(QName qname, URI uri, String s);
+    public abstract void addPort(QName qname, String bindingId, String s);
 
     public abstract <T>Dispatch<T> createDispatch(QName qname, Class<T> class1, javax.xml.ws.Service.Mode mode);
 

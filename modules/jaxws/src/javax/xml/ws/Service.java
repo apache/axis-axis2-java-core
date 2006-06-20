@@ -41,7 +41,7 @@ public class Service {
         return (T) _delegate.getPort(serviceEndpointInterface);
     }
 
-    public void addPort(QName portName, URI bindingId, String endpointAddress) {
+    public void addPort(QName portName, String bindingId, String endpointAddress) {
         _delegate.addPort(portName, bindingId, endpointAddress);
     }
 

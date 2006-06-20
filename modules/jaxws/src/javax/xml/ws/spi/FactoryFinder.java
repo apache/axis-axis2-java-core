@@ -60,7 +60,7 @@ class FactoryFinder {
 
         try {
 
-            m = Thread.class.getMethod("getContextClassLoader", null);
+            m = Thread.class.getMethod("getContextClassLoader", (Class []) null);
         } catch (NoSuchMethodException e) {
             // Assume that we are running JDK 1.1, use the current ClassLoader
             debugPrintln("assuming JDK 1.1");
@@ -68,7 +68,7 @@ class FactoryFinder {
         }
 
         try {
-            return (ClassLoader) m.invoke(Thread.currentThread(), null);
+            return (ClassLoader) m.invoke(Thread.currentThread(), (Object []) null);
         } catch (IllegalAccessException e) {
             // assert(false)
             throw new ConfigurationError("Unexpected IllegalAccessException",
