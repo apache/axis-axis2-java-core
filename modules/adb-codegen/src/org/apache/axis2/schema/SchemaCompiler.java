@@ -99,6 +99,9 @@ public class SchemaCompiler {
     private Map loadedSchemaMap = new HashMap();
 
     // A map keeping the available schemas
+    //the key is the targetnamespace and the value is the schema object
+    //this map will be populated when multiple schemas
+    //are fed to the schema compiler!
     private Map availableSchemaMap = new HashMap();
 
 
@@ -184,10 +187,15 @@ public class SchemaCompiler {
      * @see #compile(org.apache.ws.commons.schema.XmlSchema)
      */
     public void compile(List schemalist) throws SchemaCompilationException {
-        XmlSchema schema;
+
         
         try {
-            // first round - populate the map
+             //clear the loaded and available maps
+            loadedSchemaMap.clear();
+            availableSchemaMap.clear();
+
+             XmlSchema schema;
+            // first round - populate the avaialble map
             for (int i = 0; i < schemalist.size(); i++) {
                 schema = (XmlSchema) schemalist.get(i);
                 availableSchemaMap.put(
@@ -196,7 +204,7 @@ public class SchemaCompiler {
                 );
             }
 
-            // second round - call the schema
+            // second round - call the schema compiler one by one
             for (int i = 0; i < schemalist.size(); i++) {
                 compile((XmlSchema) schemalist.get(i));
             }

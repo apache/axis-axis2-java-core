@@ -241,6 +241,7 @@
 
         </xsl:for-each>
 
+     <!-- ######################################################################################### -->
      <!-- get OMElement methods that allows direct writing -->
      /**
      *
@@ -268,19 +269,17 @@
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:choose>
+                        <!-- Note - It is assumed that any attributes are OMAttributes-->
                         <xsl:when test="@any and not(@array)">
-                            xmlWriter.writeAttribute("<xsl:value-of select="$namespace"/>",
-                                                     "<xsl:value-of select="$propertyName"/>",
-                                                     <xsl:value-of select="$varName"/>);
-                            <!-- todo change this to use the OMAttribute-->
-
+                            xmlWriter.writeAttribute(<xsl:value-of select="$varName"/>.getNamespace().getName(),
+                                                     <xsl:value-of select="$varName"/>.getLocalName(),
+                                                     <xsl:value-of select="$varName"/>.getAttributeValue());
                         </xsl:when>
                          <xsl:when test="@any and @array">
                              for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
-                              xmlWriter.writeAttribute("<xsl:value-of select="$namespace"/>",
-                                                     "<xsl:value-of select="$propertyName"/>",
-                                                     <xsl:value-of select="$varName"/>[i]);
-                              <!-- todo change this to use the OMAttribute-->
+                              xmlWriter.writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
+                                                     <xsl:value-of select="$varName"/>[i].getLocalName(),
+                                                     <xsl:value-of select="$varName"/>[i].getAttributeValue());
                              }
                          </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
@@ -334,7 +333,7 @@
                                 <xsl:when test="@nillable">
                                     // this property is nillable
                                     if (<xsl:value-of select="$varName"/>!=null){
-                                    <!--this barcket needs to be closed!-->
+                                    <!--this bracket needs to be closed!-->
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
@@ -352,9 +351,8 @@
                         </xsl:when>
 
                         <xsl:when test="@default">
-
-                            // do something for the default!!!
-
+                            <!-- Note - Assumed to be OMElement-->
+                            <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                         </xsl:when>
                         <!-- handle non ADB arrays - Not any however -->
                         <xsl:when test="@array and not(@any)">
@@ -388,14 +386,15 @@
                          <!-- handle non ADB arrays  - Any case  - any may not be
                          nillable -->
                         <xsl:when test="@array and @any">
+                            <!-- Note - Assumed to be OMElement-->
                             for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-                              // how to handle this!!!
+                              <xsl:value-of select="$varName"/>[i].serialize(xmlWriter);
                             }
-                            <!--we've opened a bracket for the nulls - fix it here-->
                         </xsl:when>
                         <!-- handle any - non array case-->
                          <xsl:when test="@any">
-                           <!--  How do you handle the any???? probably the OMElement ?-->
+                            <!-- Note - Assumed to be OMElement-->
+                            <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                         </xsl:when>
 
                         <!-- handle all other cases including the binary case -->
@@ -407,10 +406,9 @@
                     </xsl:choose>
                     <xsl:if test="$min=0 or $choice">}</xsl:if>
 
-                    <!-- write the end element for the type-->
-                    xmlWriter.writeEndElement();
-
                 </xsl:for-each>
+                   <!-- write the end element for the type-->
+               xmlWriter.writeEndElement();
             <!-- end of when for type & anon -->
             </xsl:when>
 
@@ -467,31 +465,20 @@
 
         };
 
-
-
-
-
-
-
-
         <xsl:choose>
             <xsl:when test="@type">
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                parentQName,factory,dataSource);
             </xsl:when>
             <xsl:otherwise>
-               //ignore the QName passed in - we send only OUR QNames
+               //ignore the QName passed in - we send only OUR QName!
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
             </xsl:otherwise>
        </xsl:choose>
-
-
-
-
-
     }
 
+  <!-- ######################################################################################### -->
         /**
         * databinding method to get an XML representation of this object
         *
@@ -696,7 +683,7 @@
 
         }
 
-
+  <!-- ######################################################################################### -->
 
      /**
       *  Factory class that keeps the parse method

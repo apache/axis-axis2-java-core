@@ -17,13 +17,8 @@
                 <xsl:if test="@type!=''">
                     private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder
-                                       = new org.apache.axiom.om.impl.builder.StAXOMBuilder
-                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
-                               new org.apache.axis2.util.StreamWrapper(param.getPullParser(<xsl:value-of select="@type"/>.MY_QNAME)));
-                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
-                            ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
-                            return documentElement;
+                     return param.getOMElement(param.MY_QNAME,
+                                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         }else{
                            <!-- treat this as a plain bean. use the reflective bean converter -->
                            //todo finish this onece the bean serializer has the necessary methods
