@@ -6,6 +6,8 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
+import org.apache.woden.WSDLSource;
+import org.apache.woden.internal.DOMWSDLSource;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.Binding;
 import org.apache.woden.wsdl20.Description;
@@ -30,9 +32,12 @@ import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -108,7 +113,24 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         try {
             if (description == null) {
-                DescriptionElement descriptionElement = readInTheWSDLFile(wsdlURI);
+
+                DescriptionElement descriptionElement = null;
+                if (wsdlURI != null && !"".equals(wsdlURI)) {
+                    descriptionElement = readInTheWSDLFile(wsdlURI);
+                } else if (in != null) {
+
+                    DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                    Document document = documentBuilder.parse(in);
+
+                    WSDLSource wsdlSource = new DOMWSDLSource(null);
+                    wsdlSource.setSource(document.getDocumentElement());
+
+                    WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+                    descriptionElement = reader.readWSDL(wsdlSource);
+                } else {
+                    throw new AxisFault("No resources found to read the wsdl");
+                }
+
                 savedTargetNamespace = descriptionElement.getTargetNamespace()
                         .toString();
                 namespacemap = descriptionElement.getNamespaces();
@@ -890,7 +912,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // TODO : I can not find a constant for this feature in WSDLReader
         // reader.setFeature("javax.wsdl.importDocuments", false);
 
-        reader.setFeature(WSDLReader.FEATURE_VERBOSE, false);
+//        reader.setFeature(WSDLReader.FEATURE_VERBOSE, false);
         return reader.readWSDL(wsdlURI);
     }
 
