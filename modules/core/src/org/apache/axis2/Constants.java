@@ -210,6 +210,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String CONTENT_TYPE = "ContentType";
         public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";
 
+        public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
+
         // this property once set to Boolean.TRUE will make the messages to skip Addressing Handler.
         // So you will not see Addressing Headers in the OUT path.
         public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";

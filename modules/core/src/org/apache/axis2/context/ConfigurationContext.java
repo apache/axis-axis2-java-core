@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
@@ -33,7 +34,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -65,6 +70,17 @@ public class ConfigurationContext extends AbstractContext {
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
+        initConfigContextTimeout(axisConfiguration);
+    }
+
+    private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
+        Parameter parameter = axisConfiguration.getParameter(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);
+        if (parameter != null) {
+            Object value = parameter.getValue();
+            if (value != null && value instanceof String) {
+                serviceGroupContextTimoutInterval = Integer.parseInt((String) value);
+            }
+        }
     }
 
     protected void finalize() throws Throwable {
@@ -324,7 +340,7 @@ public class ConfigurationContext extends AbstractContext {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
                 if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
-                        serviceGroupContextTimoutInterval) {
+                        getServiceGroupContextTimoutInterval()) {
                     sgCtxtMapKeyIter.remove();
                     cleanupServiceContextes(serviceGroupContext);
                 }
@@ -391,5 +407,16 @@ public class ConfigurationContext extends AbstractContext {
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    /**
+     * This will be used to fetch the serviceGroupContextTimoutInterval from any place available.
+     */
+    public long getServiceGroupContextTimoutInterval() {
+        Integer serviceGroupContextTimoutIntervalParam = (Integer) getProperty(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);
+        if (serviceGroupContextTimoutIntervalParam != null) {
+            serviceGroupContextTimoutInterval = serviceGroupContextTimoutIntervalParam.intValue();
+        }
+        return serviceGroupContextTimoutInterval;
     }
 }

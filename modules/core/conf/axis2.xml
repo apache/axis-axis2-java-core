@@ -6,6 +6,9 @@
     <parameter name="hotupdate" locked="false">false</parameter>
     <parameter name="enableMTOM" locked="false">false</parameter>
 
+    <!--This will give out the timout of the configuration contexts, in seconds-->
+    <parameter name="ConfigContextTimeoutInterval" locked="false">30</parameter>
+
     <!--During a fault, stacktrace can be sent with the fault message. The following flag will control -->
     <!--that behaviour.-->
     <parameter name="sendStacktraceDetailsWithFaults" locked="false">true</parameter>
