@@ -364,7 +364,8 @@ public class AdminAgent extends AbstractAgent {
 
         if ((serviceName != null) && (moduleName != null)) {
             configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
-                    configContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                    configContext.getAxisConfiguration().getModule(new QName(moduleName)),
+                    configContext.getAxisConfiguration());
             req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                     moduleName
                             + " module engaged to the serviceGroup Successfully");

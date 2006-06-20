@@ -224,7 +224,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator enModule = engagedModules.iterator();
         while (enModule.hasNext()) {
             QName moduleName = (QName) enModule.next();
-            axisServiceGroup.engageModule(getModule(moduleName));
+            axisServiceGroup.engageModule(getModule(moduleName), this);
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -320,6 +320,10 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
+    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
+        engageModule(axisModule);
+    }
+
     private void engageModule(AxisModule module) throws AxisFault {
         boolean isEngagable;
         if (module != null) {
@@ -338,7 +342,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
-            serviceGroup.engageModule(module);
+            serviceGroup.engageModule(module, this);
         }
         engagedModules.add(module.getName());
     }

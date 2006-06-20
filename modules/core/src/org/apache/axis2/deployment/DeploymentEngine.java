@@ -28,13 +28,7 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -44,15 +38,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -64,7 +50,7 @@ import java.util.zip.ZipInputStream;
 
 public class DeploymentEngine implements DeploymentConstants {
 
-	private static final Log log = LogFactory.getLog(DeploymentEngine.class);
+    private static final Log log = LogFactory.getLog(DeploymentEngine.class);
     private boolean hotUpdate = true;    // to do hot update or not
     private boolean hotDeployment = true;    // to do hot deployment or not
     private boolean antiJARLocking = false;    // to do hot deployment or not
@@ -378,7 +364,7 @@ public class DeploymentEngine implements DeploymentConstants {
             AxisModule module = axisConfig.getModule(moduleName);
 
             if (module != null) {
-                serviceGroup.engageModule(axisConfig.getModule(moduleName));
+                serviceGroup.engageModule(axisConfig.getModule(moduleName), axisConfig);
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
@@ -393,8 +379,8 @@ public class DeploymentEngine implements DeploymentConstants {
             ArrayList contolops = new ArrayList();
             AxisService axisService = (AxisService) services.next();
             String scope = axisService.getScope();
-            if(Constants.SCOPE_TRANSPORT_SESSION.equals(scope)){
-                if(!axisConfig.isManageTransportSession()){
+            if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
+                if (!axisConfig.isManageTransportSession()) {
                     throw new DeploymentException("You can not deploy the service " +
                             "in transport session , since transport session management" +
                             " disabled in axis2.xml change manageTransportSession parameter value to true");
@@ -430,11 +416,12 @@ public class DeploymentEngine implements DeploymentConstants {
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
-                        ArrayList controlops = opDesc.engageModule(module, axisConfig);
-                        for (int j = 0; j < controlops.size(); j++) {
-                            AxisOperation axisOperation = (AxisOperation) controlops.get(j);
-                            contolops.add(axisOperation);
-                        }
+//                        ArrayList controlops = opDesc.engageModule(module, axisConfig);
+                        opDesc.engageModule(module, axisConfig);
+//                        for (int j = 0; j < controlops.size(); j++) {
+//                            AxisOperation axisOperation = (AxisOperation) controlops.get(j);
+//                            contolops.add(axisOperation);
+//                        }
                     } else {
                         throw new DeploymentException(
                                 Messages.getMessage(
@@ -443,10 +430,10 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 }
             }
-            for (int i = 0; i < contolops.size(); i++) {
-                AxisOperation axisOperation = (AxisOperation) contolops.get(i);
-                axisService.addOperation(axisOperation);
-            }
+//            for (int i = 0; i < contolops.size(); i++) {
+//                AxisOperation axisOperation = (AxisOperation) contolops.get(i);
+//                axisService.addOperation(axisOperation);
+//            }
             contolops.clear();
         }
         axisConfig.addServiceGroup(serviceGroup);
@@ -883,6 +870,7 @@ public class DeploymentEngine implements DeploymentConstants {
     public boolean isAntiJARLocking() {
         return antiJARLocking;
     }
+
     /**
      * To set the all the classLoader hierarchy this method can be used , the top most parenet is
      * CCL then SCL(system Class Loader)
@@ -935,7 +923,7 @@ public class DeploymentEngine implements DeploymentConstants {
         String value;
         Parameter parahotdeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
         Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
-        Parameter paraantiJARLocking  = axisConfig.getParameter(TAG_ANTI_JAR_LOCKING);
+        Parameter paraantiJARLocking = axisConfig.getParameter(TAG_ANTI_JAR_LOCKING);
 
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();

@@ -118,7 +118,7 @@ public class AxisServiceGroup extends AxisDescription {
         engagedModules.remove(moduleName);
     }
 
-    public void engageModule(AxisModule module) throws AxisFault {
+    public void engageModule(AxisModule module, AxisConfiguration axisConfig) throws AxisFault {
         QName moduleName = module.getName();
         boolean isEngagable;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
@@ -132,7 +132,7 @@ public class AxisServiceGroup extends AxisDescription {
         while (srevice.hasNext()) {
             // engaging each service
             AxisService axisService = (AxisService) srevice.next();
-            axisService.engageModule(module, (AxisConfiguration) getParent());
+            axisService.engageModule(module, axisConfig);
         }
         addToengagedModules(moduleName);
     }

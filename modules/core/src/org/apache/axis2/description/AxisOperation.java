@@ -125,8 +125,19 @@ public abstract class AxisOperation extends AxisDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public final ArrayList engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
+    public final void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
             throws AxisFault {
+        ArrayList moduleOperations = engageModuleToOperation(moduleref, axisConfig);
+        AxisService service = (AxisService) getParent();
+        if (service != null) {
+            for (int i = 0; i < moduleOperations.size(); i++) {
+                AxisOperation axisOperation = (AxisOperation) moduleOperations.get(i);
+                service.addOperation(axisOperation);
+            }
+        }
+    }
+
+    private ArrayList engageModuleToOperation(AxisModule moduleref, AxisConfiguration axisConfig) throws AxisFault {
         if (moduleref == null) {
             return null;
         }

@@ -18,6 +18,7 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
@@ -102,7 +103,7 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public PolicyInclude getPolicyInclude() {
-        if(policyInclude == null) {
+        if (policyInclude == null) {
             policyInclude = new PolicyInclude(this);
         }
         return policyInclude;
@@ -129,6 +130,15 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public abstract Object getKey();
+
+    /**
+     * Engagaging a module to diferrent level
+     *
+     * @param axisModule
+     * @param axisConfig
+     */
+    public abstract void engageModule(AxisModule axisModule,
+                                      AxisConfiguration axisConfig) throws AxisFault;
 
     /**
      * To check whether a given module has engaged to parenet
