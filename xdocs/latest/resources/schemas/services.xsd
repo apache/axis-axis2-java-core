@@ -40,22 +40,22 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="description" minOccurs="0" type="xs:string"/>
+				<xs:element name="description" type="xs:string" minOccurs="0"/>
 				<xs:element name="parameter" type="parameterType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="operation" type="operationType" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="services">
-	<xs:annotation>
+	<xs:element name="serviceGroup">
+		<xs:annotation>
 			<xs:documentation>
 			 holder for multiple service elements. 
      </xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-                <xs:element ref="service" minOccurs="1" maxOccurs="unbounded" />		
+				<xs:element ref="service" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
