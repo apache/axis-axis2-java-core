@@ -933,7 +933,7 @@ public class MessageContext extends AbstractContext {
                 }
             }
             if (axisOperation != null) {
-                enegage = axisOperation.isEngaged(module);
+                enegage = axisOperation.isEngaged(module.getName());
                 if (enegage) {
                     return true;
                 }

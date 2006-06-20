@@ -153,4 +153,9 @@ public class AxisMessage extends AxisDescription {
     public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
+    
+    public boolean isEngaged(QName moduleName) {
+        throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
+        
+    }
 }

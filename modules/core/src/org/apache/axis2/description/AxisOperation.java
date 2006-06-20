@@ -546,11 +546,11 @@ public abstract class AxisOperation extends AxisDescription
         this.soapAction = soapAction;
     }
 
-    public boolean isEngaged(AxisModule module) {
+    public boolean isEngaged(QName moduleName) {
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {
             AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().getLocalPart().equals(module.getName().getLocalPart())) {
+            if (axisModule.getName().getLocalPart().equals(moduleName.getLocalPart())) {
                 return true;
             }
         }

@@ -20,10 +20,18 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
+import org.apache.ws.policy.All;
+import org.apache.ws.policy.ExactlyOne;
+import org.apache.ws.policy.Policy;
+import org.apache.ws.policy.PrimitiveAssertion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 public abstract class AxisDescription implements ParameterInclude,
         DescriptionConstants {
@@ -128,6 +136,137 @@ public abstract class AxisDescription implements ParameterInclude,
     public void removeChild(Object key) {
         children.remove(key);
     }
+    
+
+    /**
+     * This method sets the policy as the default of this AxisDescription
+     * instance. Further more this method does the followings.
+     *
+     *  (1) Engage whatever modules necessary to execute new the effective
+     *  policy of this AxisDescription instance.
+     *  (2) Disengage whatever modules that are not necessary to excute the
+     *  new effective policy of this AxisDescription instance.
+     *  (3) Check whether each module can execute the new effective policy
+     *  of this AxisDescription instance.
+     *  (4) If not throw an AxisFault to notify the user.
+     *  (5) Else notify each module about the new effective policy.
+     *
+     * @param policy the new policy of this AxisDescription instance. The
+     *        effective policy is the merge of this argument with effective
+     *        policy of parent of this AxisDescription.
+     * @throws AxisFault if any module is unable to execute the effective policy
+     *         of this AxisDescription instance sucessfully or no module to
+     *         execute some portion (one or more PrimtiveAssertions ) of that
+     *         effective policy.
+     */
+    public void applyPolicy(Policy policy) throws AxisFault {
+        AxisConfiguration configuration = getAxisConfiguration();
+
+        this.policyInclude.setPolicy(policy);
+
+        Policy effPolicy = this.policyInclude.getEffectivePolicy();
+        ExactlyOne exactlyOne = (ExactlyOne) effPolicy.getTerms().get(0);
+
+        ArrayList list = new ArrayList();
+
+        for (Iterator iterator = exactlyOne.getTerms().iterator(); iterator.hasNext();) {
+            All all = (All) iterator.next();
+            if (!checkAllternative(all.getTerms(), configuration)) {
+                list.add(all);
+            }
+        }
+
+        exactlyOne.getTerms().removeAll(list);
+
+        if (exactlyOne.isEmpty()) {
+            throw new AxisFault("can't find any Alternative with known Policy assertions");
+        }
+
+        Map modules = configuration.getModules();
+
+        for (Iterator iterator = modules.values().iterator(); iterator.hasNext();) {
+            AxisModule module = (AxisModule) iterator.next();
+            // TODO needs to implement this method
+//            module.validate(effPolicy);
+        }
+
+        if (exactlyOne.isEmpty()) {
+            throw new AxisFault("can't find any compaitible Alternative");
+        }
+
+        // pick an arbitary Alternative
+        All target = (All) exactlyOne.getTerms().get(0);
+        exactlyOne.getTerms().removeAll(exactlyOne.getTerms());
+        exactlyOne.addTerm(target);
+
+        List requiredModules =  getModulesForAlternative(target.getTerms(), configuration);
+
+        for (Iterator iterator = requiredModules.iterator(); iterator.hasNext();) {
+            AxisModule module = (AxisModule) iterator.next();
+            if (! isEngaged(module.getName())) {
+                engageModule(module, configuration);
+            } else {
+                // TODO needs to implement this method
+//                module.applyPolicy(effPolicy);
+            }
+        }
+
+    }
+
+    private List getModulesForAlternative(List primitiveTerms, AxisConfiguration configuration) {
+
+        ArrayList namespaceURIs = new ArrayList();
+        ArrayList modulesList = new ArrayList();
+
+        PrimitiveAssertion primitive;
+        String namespaceURI;
+
+        for (Iterator iterator = primitiveTerms.iterator(); iterator.hasNext();) {
+            primitive = (PrimitiveAssertion) iterator.next();
+            namespaceURI = primitive.getName().getNamespaceURI();
+
+            if (! namespaceURIs.contains(namespaceURI)) {
+                namespaceURIs.add(namespaceURI);
+            }
+        }
+
+        for (Iterator iterator = namespaceURIs.iterator(); iterator.hasNext();) {
+            modulesList.addAll(configuration.getModulesForPolicyNamesapce((String) iterator.next()));
+        }
+
+        return modulesList;
+    }
+    
+    private boolean checkAllternative(List terms, AxisConfiguration configuration) {
+
+        PrimitiveAssertion assertion;
+
+        for (Iterator iterator = terms.iterator(); iterator.hasNext();) {
+            assertion = (PrimitiveAssertion) iterator.next();
+
+            String namespace = assertion.getName().getNamespaceURI();
+            List modulesList = configuration.getModulesForPolicyNamesapce(namespace);
+            if (modulesList != null) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    
+    public AxisConfiguration getAxisConfiguration() {
+        
+        if (this instanceof AxisConfiguration) {
+            return (AxisConfiguration) this;
+        }
+        
+        if (getParent() != null) {
+            return getParent().getAxisConfiguration();
+        }
+        
+        return null;
+    }
 
     public abstract Object getKey();
 
@@ -139,10 +278,6 @@ public abstract class AxisDescription implements ParameterInclude,
      */
     public abstract void engageModule(AxisModule axisModule,
                                       AxisConfiguration axisConfig) throws AxisFault;
-
-    /**
-     * To check whether a given module has engaged to parenet
-     * @param moduleName
-     * @return
-     */
+    
+    public abstract boolean isEngaged(QName axisModule);
 }

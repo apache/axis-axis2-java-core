@@ -1,19 +1,18 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.axis2.engine;
 
@@ -37,48 +36,65 @@ import java.util.*;
 public class AxisConfiguration extends AxisDescription {
 
     private static final Log log = LogFactory.getLog(AxisConfiguration.class);
+
     /**
      * Field modules
      */
-//    private final HashMap defaultModules = new HashMap();
-//
-    //to store all the availble modules (including version)
+    // private final HashMap defaultModules = new HashMap();
+    //
+    // to store all the availble modules (including version)
     private final HashMap allModules = new HashMap();
 
-    //to store mapping between default version to module name
+    // to store mapping between default version to module name
     private final HashMap nameToverionMap = new HashMap();
 
-//    private final HashMap serviceGroups = new HashMap();
+    // private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
+
     private final HashMap transportsOut = new HashMap();
+
+    private final HashMap policySupportedModules = new HashMap();
 
     // to store AxisObserver Objects
     private ArrayList observersList = null;
+
     private URL axis2Repository = null;
+
     private HashMap allservices = new HashMap();
 
     /**
      * Field engagedModules
      */
     private final List engagedModules;
+
     private Hashtable faultyModules;
+
     /**
      * To store faulty services
      */
     private Hashtable faultyServices;
 
     private ArrayList inFaultPhases;
+
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
+
     private HashMap messageReceivers;
 
     private ClassLoader moduleClassLoader;
+
     private HashMap moduleConfigmap;
+
     private ArrayList outFaultPhases;
+
     private ArrayList outPhases;
+
     protected PhasesInfo phasesinfo;
+
     private ClassLoader serviceClassLoader;
+
     private ClassLoader systemClassLoader;
-    //to keep track of need to manage transport session or not
+
+    // to keep track of need to manage transport session or not
     private boolean manageTransportSession;
 
     /**
@@ -101,13 +117,14 @@ public class AxisConfiguration extends AxisDescription {
         this.phasesinfo = new PhasesInfo();
     }
 
-    public void addMessageReceiver(String mepURL, MessageReceiver messageReceiver) {
+    public void addMessageReceiver(String mepURL,
+            MessageReceiver messageReceiver) {
         messageReceivers.put(mepURL, messageReceiver);
     }
 
     /**
      * Method addModule.
-     *
+     * 
      * @param module
      * @throws AxisFault
      */
@@ -117,31 +134,34 @@ public class AxisConfiguration extends AxisDescription {
 
         String moduleName = module.getName().getLocalPart();
         if (moduleName.endsWith("SNAPSHOT")) {
-            QName moduleQName = new QName(moduleName.substring(0, moduleName.indexOf("SNAPSHOT") - 1));
+            QName moduleQName = new QName(moduleName.substring(0, moduleName
+                    .indexOf("SNAPSHOT") - 1));
             module.setName(moduleQName);
             allModules.put(moduleQName, module);
         } else {
             allModules.put(module.getName(), module);
         }
+        registerModulePolicySupport(module);
     }
 
     /**
      * To remove a given module from the system
-     *
+     * 
      * @param module
      */
     public void removeModule(QName module) {
         allModules.remove(module);
-        //TODO dis-engage has to be done here
+        // TODO dis-engage has to be done here
     }
 
     /**
      * Adds module configuration, if there is moduleConfig tag in service.
-     *
+     * 
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
-        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
+        moduleConfigmap.put(moduleConfiguration.getModuleName(),
+                moduleConfiguration);
     }
 
     public void addObservers(AxisObserver axisObserver) {
@@ -150,7 +170,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method addService.
-     *
+     * 
      * @param service
      * @throws AxisFault
      */
@@ -163,10 +183,10 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * This method will check whethere for a given service , can we ganerate valid
-     * wsdl or not. So if user derop a wsdl we print that out , else if all the operation
-     * uses RPC message recivers we will generate wsdl
-     *
+     * This method will check whethere for a given service , can we ganerate
+     * valid wsdl or not. So if user derop a wsdl we print that out , else if
+     * all the operation uses RPC message recivers we will generate wsdl
+     * 
      * @param axisService
      */
     private void isWSDLEnable(AxisService axisService) {
@@ -174,15 +194,19 @@ public class AxisConfiguration extends AxisDescription {
             Iterator operatins = axisService.getOperations();
             if (operatins.hasNext()) {
                 while (operatins.hasNext()) {
-                    AxisOperation axisOperation = (AxisOperation) operatins.next();
+                    AxisOperation axisOperation = (AxisOperation) operatins
+                            .next();
                     if (axisOperation.getMessageReceiver() == null) {
                         axisService.setWsdlfound(false);
                         return;
                     }
-                    String messageReceiverClass = axisOperation.getMessageReceiver().getClass().getName();
-                    if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver".equals(messageReceiverClass) ||
-                            "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver".equals(messageReceiverClass) ||
-                            "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver".equals(messageReceiverClass))) {
+                    String messageReceiverClass = axisOperation
+                            .getMessageReceiver().getClass().getName();
+                    if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
+                            .equals(messageReceiverClass)
+                            || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                                    .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                            .equals(messageReceiverClass))) {
                         axisService.setWsdlfound(false);
                         return;
                     }
@@ -194,7 +218,8 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
+    public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
+            throws AxisFault {
         Iterator services = axisServiceGroup.getServices();
         axisServiceGroup.setParent(this);
         AxisService description;
@@ -202,11 +227,11 @@ public class AxisConfiguration extends AxisDescription {
             description = (AxisService) services.next();
             if (allservices.get(description.getName()) != null) {
                 throw new AxisFault(Messages.getMessage(
-                        "twoservicecannothavesamename",
-                        description.getName()));
+                        "twoservicecannothavesamename", description.getName()));
             }
             if (description.getSchematargetNamespace() == null) {
-                description.setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+                description
+                        .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
             isWSDLEnable(description);
         }
@@ -234,7 +259,8 @@ public class AxisConfiguration extends AxisDescription {
                 notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
             }
         }
-//        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
+        // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
+        // axisServiceGroup);
         addChild(axisServiceGroup);
     }
 
@@ -257,39 +283,42 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method addTransportIn.
-     *
+     * 
      * @param transport
      * @throws AxisFault
      */
-    public void addTransportIn(TransportInDescription transport) throws AxisFault {
+    public void addTransportIn(TransportInDescription transport)
+            throws AxisFault {
         if (transport.getReceiver() == null) {
-            throw new AxisFault("Transport Receiver can not be null for the transport "
-                    + transport.getName().getLocalPart());
+            throw new AxisFault(
+                    "Transport Receiver can not be null for the transport "
+                            + transport.getName().getLocalPart());
         }
         transportsIn.put(transport.getName(), transport);
     }
 
     /**
      * Method addTransportOut.
-     *
+     * 
      * @param transport
      * @throws AxisFault
      */
-    public void addTransportOut(TransportOutDescription transport) throws AxisFault {
+    public void addTransportOut(TransportOutDescription transport)
+            throws AxisFault {
         if (transport.getSender() == null) {
-            throw new AxisFault("Transport sender can not be null for the transport "
-                    + transport.getName().getLocalPart());
+            throw new AxisFault(
+                    "Transport sender can not be null for the transport "
+                            + transport.getName().getLocalPart());
         }
         transportsOut.put(transport.getName(), transport);
     }
 
     /**
-     * Engages the default module version corresponding to given module name , or if the module
-     * name contains version number in it then it will engage the correct module.
-     * Both of the below two cases are valid
-     * 1. engageModule("addressing");
-     * 2. engageModule("addressing-1.23");
-     *
+     * Engages the default module version corresponding to given module name ,
+     * or if the module name contains version number in it then it will engage
+     * the correct module. Both of the below two cases are valid 1.
+     * engageModule("addressing"); 2. engageModule("addressing-1.23");
+     * 
      * @param moduleref
      * @throws AxisFault
      */
@@ -305,12 +334,13 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Engages a module using give name and its version ID.
-     *
+     * 
      * @param moduleName
      * @param versionID
      * @throws AxisFault
      */
-    public void engageModule(String moduleName, String versionID) throws AxisFault {
+    public void engageModule(String moduleName, String versionID)
+            throws AxisFault {
         QName moduleQName = Utils.getModuleName(moduleName, versionID);
         AxisModule module = getModule(moduleQName);
         if (module != null) {
@@ -320,7 +350,8 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig)
+            throws AxisFault {
         engageModule(axisModule);
     }
 
@@ -328,7 +359,8 @@ public class AxisConfiguration extends AxisDescription {
         boolean isEngagable;
         if (module != null) {
             QName moduleQName = module.getName();
-            for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = engagedModules.iterator(); iterator
+                    .hasNext();) {
                 QName qName = (QName) iterator.next();
 
                 isEngagable = Utils.checkVersion(moduleQName, qName);
@@ -341,17 +373,17 @@ public class AxisConfiguration extends AxisDescription {
         }
         Iterator servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
-            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
+            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups
+                    .next();
             serviceGroup.engageModule(module, this);
         }
         engagedModules.add(module.getName());
     }
 
     /**
-     * To dis-engage module from the system,
-     * this will remove all the handlers belongs to this module
-     * from all the handler chains
-     *
+     * To dis-engage module from the system, this will remove all the handlers
+     * belongs to this module from all the handler chains
+     * 
      * @param module
      */
     public void disEngageModule(AxisModule module) {
@@ -365,7 +397,8 @@ public class AxisConfiguration extends AxisDescription {
             }
             Iterator serviceGroups = getServiceGroups();
             while (serviceGroups.hasNext()) {
-                AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
+                AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups
+                        .next();
                 axisServiceGroup.removeFromEngageList(module.getName());
             }
             engagedModules.remove(module.getName());
@@ -383,7 +416,7 @@ public class AxisConfiguration extends AxisDescription {
                     axisObserver.serviceUpdate(event, service);
                 }
             } catch (Throwable e) {
-                //No need to stop the system due to this , So log and ignore
+                // No need to stop the system due to this , So log and ignore
                 log.debug(e);
             }
         }
@@ -398,7 +431,7 @@ public class AxisConfiguration extends AxisDescription {
             try {
                 axisObserver.moduleUpdate(event, moule);
             } catch (Throwable e) {
-                //No need to stop the system due to this , So log and ignore
+                // No need to stop the system due to this , So log and ignore
                 log.debug(e);
             }
         }
@@ -406,7 +439,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method removeService.
-     *
+     * 
      * @param name
      * @throws AxisFault
      */
@@ -420,7 +453,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method getEngagedModules.
-     *
+     * 
      * @return Collection
      */
     public Collection getEngagedModules() {
@@ -456,13 +489,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method getModule.
-     * first it will check whether the given module is there in the hashMap , if so just return that
-     * and the name can be either with version string or without vresion string
-     * <p/>
-     * if it not found and , the nane does not have version string in it  then try to check
-     * whether default vresion of module available in the sytem for the give name , if so return that
-     *
+     * Method getModule. first it will check whether the given module is there
+     * in the hashMap , if so just return that and the name can be either with
+     * version string or without vresion string <p/> if it not found and , the
+     * nane does not have version string in it then try to check whether default
+     * vresion of module available in the sytem for the give name , if so return
+     * that
+     * 
      * @param name
      * @return Returns ModuleDescription.
      */
@@ -471,12 +504,13 @@ public class AxisConfiguration extends AxisDescription {
         if (module != null) {
             return module;
         }
-        // checking whether the version string seperator is not there in the module name
+        // checking whether the version string seperator is not there in the
+        // module name
         String moduleName = name.getLocalPart();
         String defaultModuleVersion = getDefaultModuleVersion(moduleName);
         if (defaultModuleVersion != null) {
-            module = (AxisModule) allModules.get(
-                    Utils.getModuleName(moduleName, defaultModuleVersion));
+            module = (AxisModule) allModules.get(Utils.getModuleName(
+                    moduleName, defaultModuleVersion));
             if (module != null) {
                 return module;
             }
@@ -517,7 +551,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method getService.
-     *
+     * 
      * @param name
      * @return Returns AxisService.
      */
@@ -527,7 +561,8 @@ public class AxisConfiguration extends AxisDescription {
             if (axisService.isActive()) {
                 return axisService;
             } else {
-                throw new AxisFault(Messages.getMessage("serviceinactive", name));
+                throw new AxisFault(Messages
+                        .getMessage("serviceinactive", name));
             }
         } else {
             return null;
@@ -535,9 +570,9 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Service can start and stop , if once stop we can not acess that ,
-     * so we need a way to get the service even if service is not active
-     *
+     * Service can start and stop , if once stop we can not acess that , so we
+     * need a way to get the service even if service is not active
+     * 
      * @return AxisService
      */
     public AxisService getServiceForActivation(String serviceName) {
@@ -555,12 +590,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString) {
-//        return (AxisServiceGroup) serviceGroups.get(serviceNameAndGroupString);
+        // return (AxisServiceGroup)
+        // serviceGroups.get(serviceNameAndGroupString);
         return (AxisServiceGroup) getChild(serviceNameAndGroupString);
     }
 
     public Iterator getServiceGroups() {
-//        return serviceGroups.values().iterator();
+        // return serviceGroups.values().iterator();
         return getChildren();
     }
 
@@ -582,7 +618,8 @@ public class AxisConfiguration extends AxisDescription {
         return allservices;
     }
 
-    // the class loder which become the top most parent of all the modules and services
+    // the class loder which become the top most parent of all the modules and
+    // services
     public ClassLoader getSystemClassLoader() {
         return this.systemClassLoader;
     }
@@ -605,7 +642,8 @@ public class AxisConfiguration extends AxisDescription {
 
     public boolean isEngaged(QName moduleName) {
         boolean b = engagedModules.contains(moduleName);
-        return b ? b : engagedModules.contains(this.getDefaultModule(moduleName.getLocalPart()).getName());
+        return b ? b : engagedModules.contains(this.getDefaultModule(
+                moduleName.getLocalPart()).getName());
     }
 
     public void setGlobalOutPhase(ArrayList outPhases) {
@@ -652,10 +690,11 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Adds a dafault module version , which can be done either programatically or by using
-     * axis2.xml . The default module version is important if user asks to engage
-     * a module without given version ID, in which case, we will engage the default version.
-     *
+     * Adds a dafault module version , which can be done either programatically
+     * or by using axis2.xml . The default module version is important if user
+     * asks to engage a module without given version ID, in which case, we will
+     * engage the default version.
+     * 
      * @param moduleName
      * @param moduleVersion
      */
@@ -674,7 +713,8 @@ public class AxisConfiguration extends AxisDescription {
         if (defualtModuleVersion == null) {
             return (AxisModule) allModules.get(new QName(moduleName));
         } else {
-            return (AxisModule) allModules.get(new QName(moduleName + "-" + defualtModuleVersion));
+            return (AxisModule) allModules.get(new QName(moduleName + "-"
+                    + defualtModuleVersion));
         }
     }
 
@@ -708,5 +748,31 @@ public class AxisConfiguration extends AxisDescription {
 
     public void setManageTransportSession(boolean manageTransportSession) {
         this.manageTransportSession = manageTransportSession;
+    }
+
+    public List getModulesForPolicyNamesapce(String namesapce) {
+        return (List) policySupportedModules.get(namesapce);
+    }
+
+    public void registerModulePolicySupport(AxisModule axisModule) {
+        String[] namespaces = axisModule.getSupportedPolicyNamespaces();
+
+        if (namespaces == null) {
+            return;
+        }
+
+        List modulesList;
+
+        for (int i = 0; i < namespaces.length; i++) {
+            modulesList = (List) policySupportedModules.get(namespaces[i]);
+
+            if (modulesList != null) {
+                modulesList.add(axisModule);
+            } else {
+                modulesList = new ArrayList();
+                modulesList.add(axisModule);
+                policySupportedModules.put(namespaces[i], modulesList);
+            }
+        }
     }
 }
