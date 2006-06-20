@@ -40,6 +40,11 @@ public class InflowConfiguration {
 	 * @return Returns Parameter.
 	 */
 	public Parameter getProperty() {
+        
+        if (! action.containsKey("items")) {
+            return null;
+        }
+                
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace ns = fac.createOMNamespace("", null);
         //TODO: Find the constants for "Parameter" and "name"

@@ -61,13 +61,20 @@ public class Rampart implements Module, ModulePolicyExtension  {
                         .getInflowConfiguration();
 
                 Parameter infp = calcuateCurrentInflowConfiguration(policyInflowConfig,axisDescription).getProperty();
-                infp.setName(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
-                axisDescription.addParameter(infp);
                 
+                if (infp != null) {
+                    infp.setName(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
+                    axisDescription.addParameter(infp);                    
+                }
+                                
                 OutflowConfiguration policyOutflowConfig = serverConfig.getOutflowConfiguration();
                 Parameter outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig,axisDescription).getProperty();
-                outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
-                axisDescription.addParameter(outfp);
+                
+                if (outfp != null) {
+                    outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
+                    axisDescription.addParameter(outfp);                    
+                }
+                
                 
                 
                 //create client side config
@@ -82,13 +89,20 @@ public class Rampart implements Module, ModulePolicyExtension  {
                 policyInflowConfig = clientConfig.getInflowConfiguration();
 
                 infp = calcuateCurrentInflowConfiguration(policyInflowConfig,axisDescription).getProperty();
-                infp.setName(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
-                axisDescription.addParameter(infp);
+                
+                if (infp != null) {
+                    infp.setName(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
+                    axisDescription.addParameter(infp);
+                }
         
                  policyOutflowConfig = clientConfig.getOutflowConfiguration();
-                 outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig,axisDescription).getProperty();
-                 outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
-                 axisDescription.addParameter(outfp);
+                 outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig, axisDescription).getProperty();
+                 
+                 if (outfp != null) {
+                     outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
+                     axisDescription.addParameter(outfp);
+                 }
+                 
             } catch (Exception e) {
                 throw new AxisFault(e.getMessage(), e);
             }

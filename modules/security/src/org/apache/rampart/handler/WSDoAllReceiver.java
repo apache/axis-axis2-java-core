@@ -179,17 +179,21 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 
         reqData.setMsgContext(msgContext);
 
-        // Figureout if the handler should run
-        Object inFlowSecurity = null;
-        if ((inFlowSecurity = getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
-            inFlowSecurity = getProperty(msgContext,
-                    WSSHandlerConstants.INFLOW_SECURITY);
+        if (((getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) &&
+            ((getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY)) == null)) {
+            
+            if (msgContext.isServerSide() && 
+                ((getOption(WSSHandlerConstants.INFLOW_SECURITY_SERVER)) == null) &&
+                ((getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY_SERVER)) == null)) {
+            
+                return;
+            } else if (((getOption(WSSHandlerConstants.INFLOW_SECURITY_CLIENT)) == null) &&
+                    ((getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY_CLIENT)) == null))  {
+                
+                return;
+            }
         }
-
-        if (inFlowSecurity == null) {
-            return;
-        }
-
+        
         Vector actions = new Vector();
         String action = null;
         if ((action = (String) getOption(WSSHandlerConstants.ACTION_ITEMS)) == null) {

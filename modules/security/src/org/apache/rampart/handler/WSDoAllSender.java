@@ -176,17 +176,21 @@ public class WSDoAllSender extends WSDoAllHandler {
         reqData.setNoSerialization(false);
         reqData.setMsgContext(msgContext);
         
-        //Figureout if the handler should run
-        Object outFlowSecurity;
-        if((outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
-            outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
-        }
+        if (((getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) &&
+                ((getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY)) == null)) {
+                
+                if (msgContext.isServerSide() && 
+                    ((getOption(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER)) == null) &&
+                    ((getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY_SERVER)) == null)) {
+                
+                    return;
+                } else if (((getOption(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT)) == null) &&
+                        ((getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT)) == null))  {
+                    
+                    return;
+                }
+            }
         
-        if(outFlowSecurity == null) {
-            return;
-        }
-        
-
         Vector actions = new Vector();
         String action = null;
         if ((action = (String) getOption(WSSHandlerConstants.ACTION_ITEMS)) == null) {

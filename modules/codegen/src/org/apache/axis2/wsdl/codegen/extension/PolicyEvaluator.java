@@ -141,8 +141,10 @@ public class PolicyEvaluator implements CodeGenExtension {
 
 		ExactlyOne XOR = (ExactlyOne) policy.getTerms()
 				.get(0);
-		All AND = (All) XOR.getTerms().get(
+		All iAND = (All) XOR.getTerms().get(
 				0);
+        All AND = new All();
+        AND.addTerms(iAND.getTerms());
 
 		for (Iterator iterator = AND.getTerms().iterator(); iterator.hasNext();) {
 

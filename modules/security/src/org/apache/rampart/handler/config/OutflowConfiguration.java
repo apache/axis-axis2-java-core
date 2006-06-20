@@ -65,6 +65,15 @@ public class OutflowConfiguration {
 	 */
 	public Parameter getProperty() {
 		
+
+        for (int i = 0; i < actionList.length; i++) {
+            HashMap action = actionList[i];
+            
+            if (! action.keySet().contains("items")) {
+                return null;
+            }
+        }
+                
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace ns = fac.createOMNamespace("", null);
         //TODO: Find the constants for "Parameter" and "name"
