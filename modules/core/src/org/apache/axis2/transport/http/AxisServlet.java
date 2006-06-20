@@ -333,7 +333,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setServerSide(true);
 
         String requestURI = req.getRequestURI();
-        requestURI = requestURI.replaceFirst("rest", SERVICE_PATH);
+        if (requestURI.indexOf("rest") != -1) {
+            requestURI = requestURI.replaceFirst("rest", SERVICE_PATH);
+        }
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(resp));
