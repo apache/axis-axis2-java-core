@@ -371,7 +371,6 @@
                                   <xsl:value-of select="$varName"/>[i].serialize(xmlWriter);
                               }
 
-                            }
                             <!--we've opened a bracket for the nulls - fix it here-->
                             <xsl:if test="@nillable">}</xsl:if>
 
