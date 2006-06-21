@@ -341,18 +341,58 @@
                                     }
                                 </xsl:otherwise>
                             </xsl:choose>
+
                             for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                              <xsl:value-of select="$varName"/>[i].getOMElement(
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                        factory).serialize(xmlWriter);
+
                             }
                             <!--we've opened a bracket for the nulls - fix it here-->
                             <xsl:if test="@nillable">}</xsl:if>
                         </xsl:when>
 
-                        <xsl:when test="@default">
+                         <xsl:when test="@default and @array">
                             <!-- Note - Assumed to be OMElement-->
-                            <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                            <xsl:choose>
+                               <xsl:when test="@nillable">
+                                    // this property is nillable
+                                    if (<xsl:value-of select="$varName"/>!=null){
+                                    <!--this bracket needs to be closed!-->
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                </xsl:otherwise>
+                            </xsl:choose>
+
+                              for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                                  <xsl:value-of select="$varName"/>[i].serialize(xmlWriter);
+                              }
+
+                            }
+                            <!--we've opened a bracket for the nulls - fix it here-->
+                            <xsl:if test="@nillable">}</xsl:if>
+
+                        </xsl:when>
+
+                        <xsl:when test="@default and not(@array)">
+                            <!-- Note - Assumed to be OMElement-->
+                            <xsl:choose>
+                             <xsl:when test="@nillable">
+                                    // this property is nillable
+                                    if (<xsl:value-of select="$varName"/>!=null){
+                                    <!--this bracket needs to be closed!-->
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                </xsl:otherwise>
+                             </xsl:choose>
+                             <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                             <xsl:if test="@nillable">}</xsl:if>
                         </xsl:when>
                         <!-- handle non ADB arrays - Not any however -->
                         <xsl:when test="@array and not(@any)">
