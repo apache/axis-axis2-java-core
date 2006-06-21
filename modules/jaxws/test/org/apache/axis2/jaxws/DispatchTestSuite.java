@@ -1,10 +1,6 @@
 package org.apache.axis2.jaxws;
 
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-
 import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 
 public class DispatchTestSuite {
 
@@ -20,9 +16,9 @@ public class DispatchTestSuite {
         suite.addTestSuite(DOMSourceDispatch.class);
         suite.addTestSuite(SAXSourceDispatch.class);
         // FIXME: Add this test in
-        /*
+        
         suite.addTestSuite(JAXBDispatch.class);
-        */
+        
         return suite;
     }
 

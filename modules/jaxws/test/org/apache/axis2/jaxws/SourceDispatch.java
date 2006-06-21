@@ -2,7 +2,6 @@ package org.apache.axis2.jaxws;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -15,8 +14,6 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axis2.jaxws.CallbackHandler;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
 
 import junit.framework.TestCase;
 
@@ -29,20 +26,6 @@ public class SourceDispatch extends TestCase {
 	private String xmlString = "<ns1:echoString xmlns:ns1=\"http://test\"><ns1:input xmlns=\"http://test\">HELLO THERE!!!</ns1:input></ns1:echoString>";
 	private QName serviceQname = new QName("http://ws.apache.org/axis2", "EchoService");
 	private QName portQname = new QName("http://ws.apache.org/axis2", "EchoServiceSOAP11port0");
-
-  // FIXME: The server should not be restarted each time
-  protected void setUp() throws Exception {
-    super.setUp();
-    StartServer startServer = new StartServer("server1");
-    startServer.testStartServer();
-  }
-
-  // FIXME: The server should not be restarted each time
-  protected void tearDown() throws Exception {
-    super.tearDown();
-    StopServer stopServer = new StopServer("server1");
-    stopServer.testStopServer();
-  }
 
   public void testSync() {
 		try {
