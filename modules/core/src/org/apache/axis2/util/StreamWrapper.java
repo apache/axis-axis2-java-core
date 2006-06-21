@@ -338,7 +338,7 @@ public class StreamWrapper implements XMLStreamReader {
 
     public int getTextLength() {
         if (prevState != STATE_INIT) {
-            return realReader.getTextStart();
+            return realReader.getTextLength();
         } else {
             return 0;
         }
