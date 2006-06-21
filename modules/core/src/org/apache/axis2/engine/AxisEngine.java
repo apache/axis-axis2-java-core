@@ -40,6 +40,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -603,6 +605,29 @@ public class AxisEngine {
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
             TransportSender sender = transportOut.getSender();
+            //there may be instance where you want to send the response to replyTo
+            if (msgContext.isServerSide() && msgContext.getTo() != null) {
+                try {
+                    String replyToAddress = msgContext.getTo().getAddress();
+                    if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)
+                            || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress))) {
+                        URI uri = new URI(replyToAddress);
+                        String scheme = uri.getScheme();
+                        if (!transportOut.getName().getLocalPart().equals(scheme)) {
+                            ConfigurationContext configurationContext = msgContext.getConfigurationContext();
+                            transportOut = configurationContext.getAxisConfiguration()
+                                    .getTransportOut(new QName(scheme));
+                            if (transportOut == null) {
+                                throw new AxisFault("Can not find the transport sender : " + scheme);
+                            }
+                            sender = transportOut.getSender();
+                        }
+                    }
+                    //
+                } catch (URISyntaxException e) {
+                    log.info("error in infer transport from replyTo address");
+                }
+            }
 
             // This boolean property only used in client side fireAndForget invocation
             //It will set a property into message context and if some one has set the
