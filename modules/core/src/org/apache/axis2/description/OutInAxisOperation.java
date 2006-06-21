@@ -335,11 +335,11 @@ class OutInAxisOperationClient implements OperationClient {
 
 
         responseMessageContext.setServerSide(false);
-        responseMessageContext.setDoingREST(msgctx.isDoingREST());
         addMessageContext(responseMessageContext);
 
         //sending the message
         engine.send(msgctx);
+        responseMessageContext.setDoingREST(msgctx.isDoingREST());
 
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
                 .getProperty(MessageContext.TRANSPORT_IN));
