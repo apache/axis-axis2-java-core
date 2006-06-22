@@ -487,7 +487,6 @@ public class CStructWriter implements BeanWriter {
                 {
                     String arrayEle = attrName.substring(0, arrayTokenStart);
                     XSLTUtils.addAttribute(model, "arrayele", arrayEle, property);
-                    System.out.println(arrayEle);
                 }
                 XSLTUtils.addAttribute(model, "isarray", "yes", property);
                 XSLTUtils.addAttribute(
