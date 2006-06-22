@@ -27,7 +27,7 @@ import java.util.Iterator;
  * limitations under the License.
  */
 
-public class XSLTIncludeResolver implements URIResolver,XSLTConstants {
+public class XSLTIncludeResolver implements URIResolver,Constants {
 
     private CodeGenConfiguration configuration;
 

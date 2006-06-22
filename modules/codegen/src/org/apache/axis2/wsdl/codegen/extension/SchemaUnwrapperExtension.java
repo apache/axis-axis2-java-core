@@ -3,9 +3,14 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
+import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.AxisFault;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
@@ -58,8 +63,12 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 //todo check whether we need to unwrap this message depending on
                 //the binding state.
 
-               // walkSchema(op.getMessage(
-               //         WSDLConstants.MESSAGE_LABEL_IN_VALUE),configuration);
+                if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())){
+                    walkSchema(op.getMessage(
+                            WSDLConstants.MESSAGE_LABEL_IN_VALUE),
+                            configuration);
+                }
+
             }
         }
     }
@@ -68,7 +77,12 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
      * walk the given schema element
      */
 
-    public void walkSchema(AxisMessage message,CodeGenConfiguration config){
+    public void walkSchema(AxisMessage message,CodeGenConfiguration config)
+            throws CodeGenerationException{
+        //nothing to unwrap
+        if (message.getSchemaElement()==null){
+            return;
+        }
 
         XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
         //create a type mapper
@@ -90,29 +104,63 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     // traverse through them
                     if (item instanceof XmlSchemaElement){
                         //add the element name to the part name list
-                        partNameList.add(((XmlSchemaElement)item).getName());
+                        partNameList.add(((XmlSchemaElement)item).getQName());
                     }else{
                         // if the particle contains anything other than
                         // a XMLSchemaElement then we are not in a position
                         // to unwrap it
-                        //todo throw an Exception ??
+                        //in this case just do nothing and return breaking
+                        //the whole thing
+                        return;
                     }
                 }
 
-                //attach the opName and the parts name list into the
-                //codegen configuration
-                // config.getConfigurationProperties()
+                try {
+                    //set in the axis message that the unwrapping was success
+                    message.addParameter(getParameter(
+                            Constants.UNWRAPPED_KEY,
+                            Boolean.TRUE));
+
+                    // attach the opName and the parts name list into the
+                    // axis message by using the holder
+                    MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
+                    infoHolder.setOperationName(opName);
+                    infoHolder.setPartsList(partNameList);
+
+                    //attach it to the parameters
+                     message.addParameter(
+                             getParameter(Constants.UNWRAPPED_DETAILS,
+                             infoHolder));
+
+                } catch (AxisFault axisFault) {
+                    throw new CodeGenerationException(axisFault);
+                }
 
 
             }else{
                 //we do not know how to deal with other particles
-                //such as xs:all or xs:choice
-                //todo throw an Exception ??
+                //such as xs:all or xs:choice. Usually occurs when
+                //passed with the user built WSDL where the style
+                //is document. We'll just return here doing nothing
+
             }
         }else{
-            //we've no idea how to unwrap a non complex type!!!!!!
-            //todo throw an Exception ??
+            //we've no idea how to unwrap a non complexYype!!!!!!
         }
 
+    }
+
+    /**
+     * Generate a parametes object
+     * @param key
+     * @param value
+     * @return
+     */
+    private Parameter getParameter(String key,Object value){
+        Parameter myParameter = new Parameter();
+        myParameter.setName(key);
+        myParameter.setValue(value);
+
+        return myParameter;
     }
 }

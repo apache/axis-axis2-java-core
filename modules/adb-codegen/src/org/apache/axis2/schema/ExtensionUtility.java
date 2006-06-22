@@ -4,7 +4,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.XSLTConstants;
+import org.apache.axis2.wsdl.util.Constants;
 
 import javax.xml.namespace.QName;
 import java.util.Map;
@@ -95,7 +95,7 @@ public class ExtensionUtility {
 
             //get the ADB template from the schema compilers property bag and set the
             //template
-            configuration.putProperty(XSLTConstants.EXTERNAL_TEMPLATE_PROPERTY_KEY,
+            configuration.putProperty(Constants.EXTERNAL_TEMPLATE_PROPERTY_KEY,
                     schemaCompiler.getCompilerProperties().getProperty(
                             SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY));
 

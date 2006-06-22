@@ -23,8 +23,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,18 +31,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.HashMap;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.XSLTConstants;
+import org.apache.axis2.wsdl.util.Constants;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
@@ -62,8 +57,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed
@@ -179,9 +172,9 @@ public class CodeGenerationUtility {
                     new XmlOptions().setEntityResolver(er));
 
             // prune the generated schema type system and add the list of base64 types
-            cgconfig.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY,
+            cgconfig.putProperty(Constants.BASE_64_PROPERTY_KEY,
                     findBase64Types(sts));
-            cgconfig.putProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY,
+            cgconfig.putProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY,
                     findPlainBase64Types(sts));
 
             //get the schematypes and add the document types to the type mapper
@@ -223,13 +216,13 @@ public class CodeGenerationUtility {
             SchemaType sType = (SchemaType) allSeenTypes.get(i);
 
             if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
-                if (Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
+                if (org.apache.axis2.namespace.Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
                     outerType = sType.getOuterType();
                     //check the outer type further to see whether it has the contenttype attribute from
                     //XMime namespace
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
-                        if (Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
+                        if (org.apache.axis2.namespace.Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
                             //add this only if it is a document type ??
                             if (outerType.isDocumentType()){
                                 base64ElementQNamesList.add(outerType.getDocumentElementName());
@@ -284,7 +277,7 @@ public class CodeGenerationUtility {
                 processedTypes.add(stype.getName());
                 if (schemaType.isPrimitiveType()) {
                     SchemaType primitiveType = schemaType.getPrimitiveType();
-                    if (Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
+                    if (org.apache.axis2.namespace.Constants.BASE_64_CONTENT_QNAME.equals(primitiveType.getName())) {
                         base64Types.add(name);
                     }
 

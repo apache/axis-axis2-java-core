@@ -27,7 +27,7 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.util.XSLTConstants;
+import org.apache.axis2.wsdl.util.Constants;
 import org.apache.ws.policy.All;
 import org.apache.ws.policy.ExactlyOne;
 import org.apache.ws.policy.Policy;
@@ -210,8 +210,8 @@ public class PolicyEvaluator implements CodeGenExtension {
 		public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
             
             if (!setOnce) {
-                 Object plainBase64PropertyMap = configuration.getProperty(XSLTConstants.PLAIN_BASE_64_PROPERTY_KEY);
-                 configuration.putProperty(XSLTConstants.BASE_64_PROPERTY_KEY, plainBase64PropertyMap);
+                 Object plainBase64PropertyMap = configuration.getProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY);
+                 configuration.putProperty(Constants.BASE_64_PROPERTY_KEY, plainBase64PropertyMap);
                 
                  setOnce = true;
             }

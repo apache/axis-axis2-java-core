@@ -238,6 +238,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         //add another element to have the unique list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
 
+        /////////////////////////////////////////////////////
+        //System.out.println(DOM2Writer.nodeToString(rootElement));
+        /////////////////////////////////////////////////////
+
+
         doc.appendChild(rootElement);
         return doc;
     }
@@ -333,6 +338,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         if ( isOurs && !paramType.equals("") && !paramType.equals("void") &&
                 !paramType.equals("org.apache.axiom.om.OMElement") ){
             addAttribute(doc, "ours", "yes", param);
+            System.out.println(paramType);
         }
     }
 
@@ -341,10 +347,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      * @param operation
      * @return Returns the parameter element.
      */
-    protected Element getInputParamElement(Document doc, AxisOperation operation) {
-        Element param = super.getInputParamElement( doc, operation);
-        addOursAttri ( doc, operation, param);
-
+    protected Element[] getInputParamElement(Document doc, AxisOperation operation) {
+        Element[] param = super.getInputParamElement( doc, operation);
+        for (int i = 0; i < param.length; i++) {
+           addOursAttri ( doc, operation, param[i]);
+        }
         return param;
     }
 
