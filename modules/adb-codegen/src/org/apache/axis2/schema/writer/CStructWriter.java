@@ -599,6 +599,8 @@ public class CStructWriter implements BeanWriter {
         XSLTTemplateProcessor.parse(outStream,
                 doc,
                 this.sourceTemplateCache.newTransformer());
+        outStream.write('\n');
+        outStream.write('\n');
         outStream.flush();
         outStream.close();
 
@@ -616,6 +618,8 @@ public class CStructWriter implements BeanWriter {
         XSLTTemplateProcessor.parse(outStream,
                 doc,
                 this.headerTemplateCache.newTransformer());
+        outStream.write('\n');
+        outStream.write('\n');
         outStream.flush();
         outStream.close();
 

@@ -20,6 +20,9 @@ import org.apache.axis2.util.FileWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import javax.xml.transform.URIResolver;
+import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.w3c.dom.Document;
 
 public class CStubHeaderWriter extends ClassWriter {
 
@@ -41,6 +44,25 @@ public class CStubHeaderWriter extends ClassWriter {
         fileExists = outputFile.exists();
         if (!fileExists) {
             this.stream = new FileOutputStream(outputFile);
+        }
+    }
+    
+    /**
+     * Writes the output file.
+     *
+     * @param doc
+     * @throws Exception
+     */
+    public void parse(Document doc, URIResolver resolver) throws Exception {
+        if (!fileExists) {
+            XSLTTemplateProcessor.parse(this.stream,
+                    doc,
+                    this.xsltStream,
+                    resolver);
+            this.stream.write('\n');
+            this.stream.write('\n');
+            this.stream.flush();
+            this.stream.close();
         }
     }
 }
