@@ -83,7 +83,8 @@ public class WSDoAllSender extends WSDoAllHandler {
             Parameter param = ConversationConfiguration.getParameter(msgContext);
             
             if(param == null || WSSHandlerConstants.RST_ACTON_SCT.equals(msgContext.getWSAAction()) ||
-                    WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) {
+                    WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction()) ||
+                    WSSHandlerConstants.RSTR_ACTON_ISSUE.equals(msgContext.getWSAAction())) {
                 //If the msgs are msgs to an STS then use basic WS-Sec
                 processBasic(msgContext, disableDoom);
             } else {

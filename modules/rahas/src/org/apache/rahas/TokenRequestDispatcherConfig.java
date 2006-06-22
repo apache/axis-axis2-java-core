@@ -73,8 +73,10 @@ public class TokenRequestDispatcherConfig {
                 //Use the first default issuer as the default isser
                 if(conf.defaultIssuerClassName == null) {
                     conf.defaultIssuerClassName = issuerClass;
+                } else {
+                    throw new TrustException("badDispatcherConfigMultipleDefaultIssuers");
                 }
-            }
+            } 
             
             //Process configuration file information
             OMElement issuerConfigFileElement = element.getFirstChildWithName(CONFIGURATION_FILE);
@@ -110,7 +112,7 @@ public class TokenRequestDispatcherConfig {
                 }
                 //If the token type is not aleady declared then add it to the 
                 //table with the issuer classname
-                if(conf.issuers.keySet().size() > 0 && !conf.issuers.keySet().contains(value)) {
+                if(!conf.issuers.keySet().contains(value)) {
                     conf.issuers.put(value, issuerClass);
                 }
             }

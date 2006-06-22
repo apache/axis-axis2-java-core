@@ -1,0 +1,30 @@
+<service name="SecureService">
+
+	<module ref="rampart"/>
+	<module ref="rahas"/>
+
+	<parameter locked="false" name="ServiceClass">org.apache.axis2.security.sc.Service</parameter>
+
+	<operation name="echo">
+		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+		<actionMapping>urn:echo</actionMapping>
+	</operation>    
+
+    <parameter name="sct-issuer-config">
+		<sct-issuer-config>
+			<proofToken>EncryptedKey</proofToken>
+			<cryptoProperties>sctIssuer.properties</cryptoProperties>
+			<addRequestedAttachedRef />
+		</sct-issuer-config>
+    </parameter>
+    
+    <parameter xmlns="" name="sc-configuration">
+		<sc-configuration xmlns="">
+			<scope xmlns="">service</scope>
+			<passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
+			<cryptoProperties xmlns="">sctIssuer.properties</cryptoProperties>
+		</sc-configuration>
+    </parameter>
+
+    
+</service>

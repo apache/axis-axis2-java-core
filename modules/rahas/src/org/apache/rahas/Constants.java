@@ -41,6 +41,8 @@ public interface Constants {
 
     //Token types
     public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
+    public final static String TOK_TYPE_SAML_10="urn:oasis:names:tc:SAML:1.0:assertion";
+    
     
     //RST actions
     public final static String RST_ACTON_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue";

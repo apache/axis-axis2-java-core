@@ -76,6 +76,7 @@
         </java>
 
         <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
+		<j:if test="${context.getVariable('skip.enterprise.tests') != 'true'}">
 			<!-- codegen for the enterprise wsdl -->
 			<ant:echo>Running codegen for Enterprise WSDL - take 1</ant:echo>
 				<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
@@ -109,6 +110,7 @@
 				</java>
 			 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 						 target="jar.server"/>
+		</j:if>
         </j:if>
     </preGoal>
 
@@ -145,7 +147,7 @@
 
             <!-- SecConv Test - 1  -->
 
-            <mkdir dir="target/test-resources/sc/_service_repo_1"/>
+            <mkdir dir="target/test-resources/sc_service_repo_1"/>
             <mkdir dir="target/test-resources/sc_service_repo_1/conf"/>
             <mkdir dir="target/test-resources/sc_service_repo_1/services"/>
             <mkdir dir="target/test-resources/sc_service_repo_1/modules"/>
@@ -165,9 +167,9 @@
 		    <jar jarfile="target/test-resources/sc_service_repo_1/services/SecureService.aar"
                  basedir="target/temp-sc"/>
 
-            <!-- Rahas Test - 1 :END -->
+            <!-- SecConv Test - 1 :END -->
 
-            <!-- Rahas Test - 2  -->
+            <!-- SecConv Test - 2  -->
 
             <mkdir dir="target/test-resources/sc_service_repo_2"/>
             <mkdir dir="target/test-resources/sc_service_repo_2/conf"/>
@@ -188,9 +190,9 @@
 		    <jar  overwrite="yes" jarfile="target/test-resources/sc_service_repo_2/services/SecureService.aar"
                  basedir="target/temp-sc"/>
 
-            <!-- Rahas Test - 2 :END -->
+            <!-- SecConv Test - 2 :END -->
 
-			<!-- Rahas Test - 3  -->
+			<!-- SecConv Test - 3  -->
 
             <mkdir dir="target/test-resources/sc_service_repo_3"/>
             <mkdir dir="target/test-resources/sc_service_repo_3/conf"/>
@@ -208,9 +210,9 @@
 		    <jar  overwrite="yes" jarfile="target/test-resources/sc_service_repo_3/services/SecureService.aar"
                  basedir="target/temp-sc"/>
 
-            <!-- Rahas Test - 3 :END -->
+            <!-- SecConv Test - 3 :END -->
 
-			<!-- Rahas Test - 4  -->
+			<!-- SecConv Test - 4  -->
 
             <mkdir dir="target/test-resources/sc_service_repo_4"/>
             <mkdir dir="target/test-resources/sc_service_repo_4/conf"/>
@@ -231,10 +233,77 @@
 		    <jar  overwrite="yes" jarfile="target/test-resources/sc_service_repo_4/services/SecureService.aar"
                  basedir="target/temp-sc"/>
 
-            <!-- Rahas Test - 4 :END -->
+            <!-- SecConv Test - 4 :END -->
 			
 			<!-- clean up temp sc stuff -->
 			<delete dir="target/temp-sc"/>
+			
+			<!-- Set up the infra for rahas tests and the rahas client repo -->
+			
+			<mkdir dir="target/temp-rahas"/>
+			<mkdir dir="target/temp-rahas/META-INF"/>
+			
+			<copy overwrite="yes" file="target/test-classes/org/apache/rahas/Service.class"
+                  tofile="target/temp-rahas/org/apache/rahas/Service.class"/>
+			<copy overwrite="yes" file="target/test-classes/org/apache/rahas/PWCallback.class"
+                  tofile="target/temp-sc/org/apache/rahas/PWCallback.class"/>
+				  
+			<copy overwrite="yes" todir="target/temp-rahas">
+            	<fileset dir="test-resources/rahas">
+					<include name="sctIssuer.properties"/>
+					<include name="sts.jks"/>
+				</fileset>
+			</copy>
+
+			<ant:path id="rahas.client.props" location="test-resources/rahas"/>
+            <maven:addPath id="maven.dependency.classpath" refid="rahas.client.props"/>
+			
+			<mkdir dir="target/test-resources/rahas_client_repo"/>
+            <mkdir dir="target/test-resources/rahas_client_repo/conf"/>
+            <mkdir dir="target/test-resources/rahas_client_repo/modules"/>
+			
+			<copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_client_repo/modules/addressing-${addressing_version}.mar"/>
+			<copy file="../security/target/rampart-${rampart_version}.mar"
+                  tofile="target/test-resources/rahas_client_repo/modules/rampart-${rampart_version}.mar"/>
+
+            <!-- Copying the DOM3 stuff to the endorsed dir -->
+            <mkdir dir="target/test-resources/endorsed"/>
+            <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
+				<copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar"
+					  todir="target/test-resources/endorsed"/>
+				<copy file="${dependencies.dir}/xml-apis-${xml_apis.version}.jar"
+					  todir="target/test-resources/endorsed"/>
+            </j:if>
+            <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
+				<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar"
+					  todir="target/test-resources/endorsed"/>
+				<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar"
+					  todir="target/test-resources/endorsed"/>
+            </j:if>
+			
+			<!-- Rahas Test1: SAML Token test -->
+            <mkdir dir="target/test-resources/rahas_service_repo_1"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_1/conf"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_1/services"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_1/modules"/>
+
+            <copy file="../security/target/rampart-${rampart_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_1/modules/rampart-${rampart_version}.mar"/>
+		    <copy file="../rahas/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_1/modules/rahas-${rahas_version}.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_1/modules/addressing-${addressing_version}.mar"/>
+				  
+				  
+			<!-- copy the services.xml and create the aar -->
+			<copy overwrite="yes" file="test-resources/rahas/s1-services.xml"
+                  tofile="target/temp-rahas/META-INF/services.xml"/>
+
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_1/services/SecureService.aar"
+                 basedir="target/temp-rahas"/>
+
+			<!-- Rahas Test1: SAML Token test : END -->
 
 		
 			<mkdir dir="target/test-resources/samples/modules"/>
@@ -609,23 +678,6 @@
             <!-- Create the .aar file -->
             <jar jarfile="target/test-resources/scenario7_service_repo/services/PingPort.aar"
                  basedir="../security/target/interop/classes"/>
-
-
-            <!-- Copying the DOM3 stuff to the endorsed dir -->
-            <mkdir dir="target/test-resources/endorsed"/>
-            <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
-				<copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar"
-					  todir="target/test-resources/endorsed"/>
-				<copy file="${dependencies.dir}/xml-apis-${xml_apis.version}.jar"
-					  todir="target/test-resources/endorsed"/>
-            </j:if>
-            <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
-				<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar"
-					  todir="target/test-resources/endorsed"/>
-				<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar"
-					  todir="target/test-resources/endorsed"/>
-            </j:if>
-
 
             <!-- Scenario ST1 -->
             <mkdir dir="target/test-resources/scenarioST1_client_repo"/>
