@@ -70,7 +70,7 @@
         <xsl:if test="$isSync='1'">
         <xsl:for-each select="method">
         <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
-        <xsl:variable name="outputtype"><xsl:if test="$outputours">axis2_</xsl:if><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="$outputours">_t*</xsl:if></xsl:variable>
+        <xsl:variable name="outputtype"><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:if test="output/param/@ours">axis2_</xsl:if><xsl:value-of select="output/param/@type"></xsl:value-of><xsl:if test="output/param/@ours">_t*</xsl:if></xsl:otherwise></xsl:choose></xsl:variable>
         <xsl:choose>
         <xsl:when test="not($outputtype) or $outputtype=''">axis2_status_t </xsl:when>
         <xsl:when test="$outputtype='axis2__t*'">void</xsl:when>
@@ -78,7 +78,7 @@
         <xsl:value-of select="$outputtype"/>
         </xsl:otherwise>
         </xsl:choose>
-        axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env <xsl:for-each select="input/param[@type!='']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+        axis2_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env <xsl:for-each select="input/param[@type!='']"> ,<xsl:variable name="paramtype"><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"></xsl:value-of><xsl:if test="@ours">_t*</xsl:if></xsl:otherwise></xsl:choose></xsl:variable>
                                                 <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                                 </xsl:for-each>);
         </xsl:for-each>
@@ -89,7 +89,7 @@
         <xsl:for-each select="method">
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
         <xsl:if test="not($mep='10')">
-        void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env, <xsl:for-each select="input/param[@type!='']"><xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+        void axis2_start_<xsl:value-of select="@name"/>( axis2_stub_t* stub, const axis2_env_t* env, <xsl:for-each select="input/param[@type!='']"><xsl:variable name="paramtype"><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"></xsl:value-of><xsl:if test="@ours">_t*</xsl:if></xsl:otherwise></xsl:choose></xsl:variable>
                                                     <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                                     </xsl:for-each>,
                                                     axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axis2_env_t* ) ,

@@ -338,7 +338,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         if ( isOurs && !paramType.equals("") && !paramType.equals("void") &&
                 !paramType.equals("org.apache.axiom.om.OMElement") ){
             addAttribute(doc, "ours", "yes", param);
-            System.out.println(paramType);
         }
     }
 

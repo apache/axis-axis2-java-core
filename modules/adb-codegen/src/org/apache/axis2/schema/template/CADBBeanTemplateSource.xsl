@@ -341,10 +341,11 @@
                 axiom_node_t* <xsl:value-of select="$name"/>_om_node)
         {
             <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
-            axiom_node_t* current_node = NULL;
+
 
             <xsl:for-each select="property">
              <xsl:if test="position()=1">
+               axiom_node_t* current_node = NULL;
               <xsl:if test="not(@ours)">
                axiom_element_t* text_element = NULL;
                axis2_char_t* text_result = NULL;
@@ -411,7 +412,7 @@
                     text_result = AXIOM_ELEMENT_GET_TEXT(text_element, env, current_node );
                     <xsl:choose>
                       <xsl:when test="$singlepropertyType='axis2_char_t*'">
-                        <xsl:value-of select="$name"/>_impl-> attr_<xsl:value-of select="$javaName"/><xsl:if test="@isarray">[ index]</xsl:if> =strdup(text_result);
+                        <xsl:value-of select="$name"/>_impl-> attr_<xsl:value-of select="$javaName"/><xsl:if test="@isarray">[ index]</xsl:if> =AXIS2_STRDUP(text_result,env);
                       </xsl:when>
                       <xsl:when test="$singlepropertyType='int'">
                         <xsl:value-of select="$name"/>_impl-> attr_<xsl:value-of select="$javaName"/><xsl:if test="@isarray">[ index]</xsl:if> =atoi (text_result);
@@ -462,7 +463,7 @@
 
            return AXIS2_SUCCESS;
         }
-        
+
         axiom_node_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_build_om (
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
@@ -471,12 +472,12 @@
         {
             <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
             axiom_node_t* om_node = NULL;
-            axiom_node_t* current_node = NULL;
-            axiom_element_t* current_element = NULL;
-            axiom_attribute_t* text_attri = NULL;
-            axiom_namespace_t* ns1 = NULL;
             <xsl:for-each select="property">
              <xsl:if test="position()=1">
+              axiom_attribute_t* text_attri = NULL;
+              axiom_namespace_t* ns1 = NULL;
+              axiom_node_t* current_node = NULL;
+              axiom_element_t* current_element = NULL;
                <xsl:choose>
                 <xsl:when test="@ours">
 
@@ -493,7 +494,8 @@
             </xsl:for-each>
             AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
             <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
-            <xsl:for-each select="property">
+            <xsl:variable name="propCount"><xsl:value-of select="count(property)"/></xsl:variable>
+        <xsl:for-each select="property">
               <xsl:variable name="propertyType"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if><xsl:if test="@isarray">*</xsl:if> </xsl:variable>
               <xsl:variable name="singlepropertyType"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if> </xsl:variable>
               <xsl:variable name="capspropertyType"><xsl:if test="@ours">AXIS2_</xsl:if><xsl:value-of select="@caps-type"></xsl:value-of></xsl:variable>
@@ -503,64 +505,62 @@
               <xsl:variable name="arrayele"><xsl:value-of select="@arrayele"></xsl:value-of></xsl:variable>
 
 
-
               <xsl:if test="@isarray">
                <xsl:if test="position()=1">
 
-                 if ( NULL == xsi &amp;&amp; xsd != NULL)
-                 {
-                    ns1 = axiom_namespace_create (env,
+                ns1 = axiom_namespace_create (env,
                                                   "<xsl:value-of select="$nsuri"/>",
                                                   "<xsl:value-of select="$nsprefix"/>");
-                    current_element = axiom_element_create (env, parent, "<xsl:value-of select="$propertyName"/>", ns1 , &amp;array_node);
-                 }
-                 else
-                 {
-                    current_element = axiom_element_create (env, parent, "<xsl:value-of select="$propertyName"/>", NULL , &amp;array_node);
-                 }
-                 parent= array_node;
+                current_element = axiom_element_create (env, parent, "<xsl:value-of select="$name"/>", ns1 , &amp;array_node);
+                AXIOM_ELEMENT_SET_NAMESPACE ( current_element, env, ns1, array_node );
+                parent= array_node;
               </xsl:if>
-              for ( index = 0; index &lt; <xsl:value-of select="$name"/>_impl->attr_<xsl:value-of select="$javaName"/>_length ; index ++ )
+              for ( index = 0; index &lt; <xsl:value-of select="$name"/>_impl->attr_<xsl:value-of select="$propertyName"/>_length ; index ++ )
               {
               </xsl:if>
 
               <xsl:choose>
                 <xsl:when test="@ours">
-                 current_element = axiom_element_create (env, parent, "<xsl:if test="not(@isarray)"><xsl:value-of select="$name"/></xsl:if><xsl:if test="@isarray"><xsl:value-of select="$arrayele"/>element</xsl:if>", NULL , &amp;current_node);
+                 current_element = axiom_element_create (env, parent, "<xsl:if test="not(@isarray)"><xsl:value-of select="$name"/></xsl:if><xsl:if test="@isarray"><xsl:value-of select="$propertyName"/></xsl:if>", ns1 , &amp;current_node);
+                 AXIOM_ELEMENT_SET_NAMESPACE ( current_element, env, ns1, current_node );
                 </xsl:when>
                 <xsl:otherwise>
-                 if ( NULL == xsi &amp;&amp; xsd != NULL)
-                 {
+                 <!-- if only 1 property found use the name of the file to wrap otherwise use spcial name for the property -->
+                 <xsl:variable name="curele_name">
+                     <xsl:if test="$propCount=1">
+                         <xsl:value-of select="$name"/>
+                     </xsl:if>
+                     <xsl:if test="not($propCount=1)">
+                         <xsl:value-of select="$propertyName"/>
+                     </xsl:if>
+                  </xsl:variable>
                     ns1 = axiom_namespace_create (env,
                                                   "<xsl:value-of select="$nsuri"/>",
                                                   "<xsl:value-of select="$nsprefix"/>");
-                    current_element = axiom_element_create (env, parent, "<xsl:value-of select="$propertyName"/>", ns1 , &amp;current_node);
-                 }
-                 else
-                 {
-                    current_element = axiom_element_create (env, parent, "<xsl:value-of select="$propertyName"/>", NULL , &amp;current_node);
-                  }
+                    current_element = axiom_element_create (env, parent, "<xsl:value-of select="$curele_name"/>", ns1 , &amp;current_node);
+                    AXIOM_ELEMENT_SET_NAMESPACE ( current_element, env, ns1, current_node );
                 </xsl:otherwise>
               </xsl:choose>
+
 
               <xsl:choose>
                 <xsl:when test="@ours">
                   <xsl:value-of select="$capspropertyType"/>_BUILD_OM ( <xsl:value-of select="$name"/>_impl-> attr_<xsl:value-of select="$javaName"/><xsl:if test="@isarray">[index ]</xsl:if>, env, current_node, xsi, xsd );
                   text_attri = axiom_attribute_create (env, "type", "<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="@type"/>", xsi);
                   AXIOM_ELEMENT_ADD_ATTRIBUTE (current_element, env, text_attri, current_node);
-                  <xsl:if test="not(@isarray)">
+
                   ns1 = axiom_namespace_create (env,
                                                   "<xsl:value-of select="$nsuri"/>",
                                                   "<xsl:value-of select="$nsprefix"/>");
                   AXIOM_ELEMENT_DECLARE_NAMESPACE (current_element, env,
                                                       current_node, ns1);
-                  </xsl:if>
+                  
                 </xsl:when>
                 <xsl:otherwise>
 
                     <xsl:choose>
                       <xsl:when test="$singlepropertyType='axis2_char_t*'">
-                        text_value = strdup (<xsl:value-of select="$name"/>_impl-> attr_<xsl:value-of select="$javaName"/><xsl:if test="@isarray">[index ]</xsl:if>) ;
+                        text_value = AXIS2_STRDUP (<xsl:value-of select="$name"/>_impl-> attr_<xsl:value-of select="$javaName"/><xsl:if test="@isarray">[index ]</xsl:if>, env) ;
 
                         if ( xsi != NULL &amp;&amp; xsd != NULL)
                         {
@@ -639,6 +639,8 @@
                         AXIOM_ELEMENT_SET_TEXT(current_element, env, text_value, current_node);
                       </xsl:when>
                       <xsl:otherwise>
+                         text_attri = NULL;
+                         text_value = NULL;
                         /** imposible to handle the request type - so please do it manually*/
                       </xsl:otherwise>
                     </xsl:choose>

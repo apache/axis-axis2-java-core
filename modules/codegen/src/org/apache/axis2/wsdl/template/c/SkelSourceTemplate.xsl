@@ -15,7 +15,7 @@
      <xsl:for-each select="method">
          <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
-         <xsl:variable name="outputtype"><xsl:if test="$outputours">axis2_</xsl:if><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">om_node</xsl:when><xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="$outputours">_t*</xsl:if></xsl:variable>
+         <xsl:variable name="outputtype"><xsl:choose><xsl:when test="output/param/@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:if test="output/param/@ours">axis2_</xsl:if><xsl:value-of select="output/param/@type"></xsl:value-of><xsl:if test="output/param/@ours">_t*</xsl:if></xsl:otherwise></xsl:choose></xsl:variable>
 
 		 <!-- regardless of the sync or async status, the generated method signature would be just a usual
 	           c function-->
@@ -34,7 +34,7 @@
         <xsl:value-of select="$outputtype"/>
         </xsl:otherwise>
         </xsl:choose>
-        <xsl:value-of select="$svc_name"/>_<xsl:value-of select="@name"/> (const axis2_env_t* env <xsl:for-each select="input/param[@location='body']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+        <xsl:value-of select="$svc_name"/>_<xsl:value-of select="@name"/> (const axis2_env_t* env <xsl:for-each select="input/param[@location='body']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                           <xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                           </xsl:for-each> )
 
