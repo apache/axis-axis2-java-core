@@ -147,7 +147,6 @@ public class SMTPWorker extends Thread {
 
             if (start <= 0) {
                 start = input.indexOf("TO:") + 3;
-
                 /*
                  * if(!input.endsWith(domain)){ System.out.println("ERROR: wrong
                  * donmain name"); return MailSrvConstants.RCPT_ERROR; }

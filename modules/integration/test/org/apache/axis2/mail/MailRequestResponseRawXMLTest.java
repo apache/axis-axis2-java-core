@@ -119,9 +119,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             }
         });
         service.addOperation(axisOperation);
-        configContext.getAxisConfiguration().addService(service);
-        ServiceContext serviceContext = new ServiceGroupContext(configContext,
-        		(AxisServiceGroup) service.getParent()).getServiceContext(service);
+ //       configContext.getAxisConfiguration().addService(service);
 
         Options options = new Options();
         options.setTo(targetEPR);

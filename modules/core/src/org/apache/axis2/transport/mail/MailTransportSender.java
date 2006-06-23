@@ -26,6 +26,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
@@ -41,7 +42,13 @@ public class MailTransportSender extends AbstractTransportSender {
     private String host;
     private String password;
     private String user;
+    private TransportOutDescription transportOut;
 
+    public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
+    throws AxisFault {
+    		this.transportOut = transportOut;
+    }
+    
     public MailTransportSender() {
     }
 
@@ -56,7 +63,7 @@ public class MailTransportSender extends AbstractTransportSender {
     public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
             throws AxisFault {
         try {
-            TransportOutDescription transportOut = msgContext.getTransportOut();
+           // TransportOutDescription transportOut = msgContext.getTransportOut();
 
             user =
                     Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_USER));
@@ -71,7 +78,6 @@ public class MailTransportSender extends AbstractTransportSender {
 
             	   EMailSender sender = new EMailSender(user, host, smtpPort, password);
 
-                // TODO this is just a temporary hack, fix this to use input streams
                 String eprAddress = msgContext.getTo().getAddress();
 
                 // In mail char set is what is being used. Charset encoding is not what is expected here.
@@ -81,6 +87,10 @@ public class MailTransportSender extends AbstractTransportSender {
                     charSet = MailSrvConstants.DEFAULT_CHAR_SET;
                 }
 
+                int mailNameIndex = eprAddress.indexOf("mail:");
+                if (mailNameIndex > -1){
+                		eprAddress = eprAddress.substring(mailNameIndex + 5);
+                }
                 int index = eprAddress.indexOf('/');
                 String subject = "";
                 String email = null;

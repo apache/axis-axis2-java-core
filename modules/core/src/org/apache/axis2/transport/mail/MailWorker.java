@@ -94,7 +94,7 @@ public class MailWorker implements Runnable {
                 // TODO add the transport Headers to the Message Context
                 // Create Mail EPR, EPR is constructed using the format, foo@bar/axis2/services/echo and is constructed
                 // using the <to-email-address>/<email-subject>
-                InternetAddress[] recepainets = (InternetAddress[]) mimeMessage.getAllRecipients();
+/*                InternetAddress[] recepainets = (InternetAddress[]) mimeMessage.getAllRecipients();
 
                 if ((recepainets != null) && (recepainets.length > 0)) {
                 } else {
@@ -110,7 +110,7 @@ public class MailWorker implements Runnable {
                     if (replyTo != null) {
                         msgContext.setReplyTo(new EndpointReference(replyTo));
                     }
-                }
+                }*/
 
                 // Create the SOAP Message
                 // TODO This can we written better way, to use the streams better
