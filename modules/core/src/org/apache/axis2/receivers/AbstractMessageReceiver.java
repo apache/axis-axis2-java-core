@@ -30,8 +30,11 @@ import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 
+import java.lang.reflect.Method;
+
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
+    public static final String SERVICE_OBJECT = "ServiceObject";
     public static final String SCOPE = "scope";
 
     /**
@@ -46,6 +49,15 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             AxisService service =
                     msgContext.getOperationContext().getServiceContext().getAxisService();
             ClassLoader classLoader = service.getClassLoader();
+            // allow alternative definition of makeNewServiceObject
+            if (service.getParameter(SERVICE_OBJECT) != null) {
+               Parameter serviceObjectParam = service.getParameter(SERVICE_OBJECT);
+               Class serviceObjectMaker = Class.forName(((String) 
+                        serviceObjectParam.getValue()).trim(), true, classLoader);
+               Method method = serviceObjectMaker.getMethod("makeNewServiceObject",
+                        new Class[] { MessageContext.class });
+               return method.invoke(serviceObjectMaker.newInstance(), new Object[] { msgContext });
+            }
             Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
 
             if (implInfoParam != null) {
