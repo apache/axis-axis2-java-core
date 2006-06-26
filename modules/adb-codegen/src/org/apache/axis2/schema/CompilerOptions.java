@@ -42,6 +42,20 @@ public class CompilerOptions {
     private String packageName = null;
 
     /**
+     * The flag keeping whether seperate helpers
+     * need to be generated or not
+     */
+    private boolean helperMode = false;
+    
+    public boolean isHelperMode() {
+        return helperMode;
+    }
+
+    public void setHelperMode(boolean helperMode) {
+        this.helperMode = helperMode;
+    }
+    
+    /**
      * Keep track of the namespace and packages mapping
      */
     private Map ns2PackageMap = new HashMap();
@@ -111,4 +125,6 @@ public class CompilerOptions {
         Matcher m = pat.matcher(wordToMatch);
         return m.matches();
     }
+
+    
 }

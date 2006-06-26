@@ -1,5 +1,21 @@
 package org.apache.axis2.wsdl.codegen.emitter;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.URIResolver;
+
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -40,27 +56,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -1392,17 +1387,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected void debugLogDocument(String description, Document doc) {
         if (log.isDebugEnabled()) {
             try {
-                DOMSource source = new DOMSource(doc);
-                StringWriter swrite = new StringWriter();
-                swrite.write(description);
-                swrite.write("\n");
-                Transformer transformer =
-                        TransformerFactory.newInstance().newTransformer();
-                transformer.setOutputProperty("omit-xml-declaration", "yes");
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.transform(source, new StreamResult(swrite));
-                log.debug(swrite.toString());
+//                System.err.println(DOM2Writer.nodeToString(doc.getDocumentElement()));
+//                DOMSource source = new DOMSource(doc);
+//                StringWriter swrite = new StringWriter();
+//                swrite.write(description);
+//                swrite.write("\n");
+//                Transformer transformer =
+//                        TransformerFactory.newInstance().newTransformer();
+//                transformer.setOutputProperty("omit-xml-declaration", "yes");
+//                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//                transformer.transform(source, new StreamResult(swrite));
+//                
+//                log.debug(swrite.toString());
+                
             } catch (Exception e) {
+                
                 e.printStackTrace();
             }
         }
