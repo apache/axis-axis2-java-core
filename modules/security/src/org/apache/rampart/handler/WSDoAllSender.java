@@ -359,7 +359,7 @@ public class WSDoAllSender extends WSDoAllHandler {
         } catch (WSSecurityException e) {
             throw new TrustException(
                     "errorInBuildingTheEncryptedKeyForPrincipal",
-                    new String[] { cert.getSubjectDN().getName()});
+                    new String[] { cert.getSubjectDN().getName()}, e);
         }
         
         SecurityContextToken sct = new SecurityContextToken(config.getDocument());

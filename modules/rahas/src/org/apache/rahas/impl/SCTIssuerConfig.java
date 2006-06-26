@@ -48,7 +48,7 @@ public class SCTIssuerConfig {
     
     protected int keySize;
     
-    public SCTIssuerConfig(OMElement elem) throws TrustException {
+    private SCTIssuerConfig(OMElement elem) throws TrustException {
         OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
                 new QName("proofToken"));
         if (proofTokenElem != null) {
