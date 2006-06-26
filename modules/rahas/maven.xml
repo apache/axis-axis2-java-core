@@ -58,5 +58,5 @@
             <fileset dir="target/sts"/>
         </delete>
         <!-- Create the sts.aar : END -->
-    </postGoal>        
+    </postGoal>     
 </project>

@@ -196,5 +196,35 @@
         </jar>
      </j:if>
     </postGoal>
+	
+	<postGoal name="jar:jar">
+        <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: Rampart Source Distribution</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
+
+        <ant:mkdir dir="target/dist"/>
+        <ant:mkdir dir="target/temp/src"/>
+
+        <ant:copy toDir="target/temp/src">
+            <ant:fileset dir=".">
+                <ant:include name="src/**"/>
+                <ant:exclude name="**/target/**"/>
+                <ant:exclude name="**/*class*/**"/>
+                <ant:exclude name="**/.svn/**"/>
+                <ant:exclude name="**/bin/**"/>
+                <ant:exclude name="**/*.log"/>
+                <ant:exclude name=".*"/>
+                <ant:exclude name="**/*.license"/>
+                <ant:exclude name="**/*.iml"/>
+            </ant:fileset>
+        </ant:copy>
+
+		<!-- TODO: Create and copy release documents :release-notes.html, README.txt, LICENCE.txt -->
+
+        <ant:zip file="target/rampart-${rampart_version}-src.zip">
+            <ant:fileset dir="target/temp/src"/>
+        </ant:zip>
+        <ant:delete dir="target/temp"/>
+    </postGoal>
 
 </project>
