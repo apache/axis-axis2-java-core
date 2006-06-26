@@ -187,6 +187,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
     //to set and get the property from service context
     public static final String COOKIE_STRING = "Cookie";
+    public static final String SESSION_COOKIE = "axis_session";
 
     /**
      * Addressing Constants

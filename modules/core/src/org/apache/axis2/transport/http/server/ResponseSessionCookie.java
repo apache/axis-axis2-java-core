@@ -61,9 +61,11 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
           sessionCookie = (String) context.getAttribute(Constants.COOKIE_STRING);
         }
         if (sessionCookie != null) {
-            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE, sessionCookie));
-            CharArrayBuffer buffer = new CharArrayBuffer(sessionCookie.length() + 40); 
+            CharArrayBuffer buffer = new CharArrayBuffer(sessionCookie.length() + 40);
+            buffer.append(Constants.SESSION_COOKIE);
+            buffer.append("=");
             buffer.append(sessionCookie);
+            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE, buffer.toString()));
             buffer.append("; ");
             int port = response.getParams().getIntParameter(AxisParams.LISTENER_PORT, 0);
             if (port > 0) {

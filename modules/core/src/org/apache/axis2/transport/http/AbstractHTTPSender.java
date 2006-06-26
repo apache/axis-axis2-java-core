@@ -228,16 +228,34 @@ public abstract class AbstractHTTPSender {
                 }
             }
         }
-        Header cookieHeader =
-                method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE);
-        if (cookieHeader == null) {
-            cookieHeader =
-                    method.getResponseHeader(HTTPConstants.HEADER_SET_COOKIE2);
+        
+        String sessionCookie = null;
+        // Process old style headers first
+        Header[] cookieHeaders = method.getResponseHeaders(HTTPConstants.HEADER_SET_COOKIE);
+        for (int i = 0; i < cookieHeaders.length; i++) {
+            HeaderElement[] elements = cookieHeaders[i].getElements();
+            for (int e = 0; e < elements.length; e++) {
+                HeaderElement element = elements[e];
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())) {
+                    sessionCookie = element.getValue();
+                }
+            }
         }
-        if (cookieHeader != null) {
-            msgContext.getServiceContext().setProperty(Constants.COOKIE_STRING,
-                    cookieHeader.getValue());
+        // Overwrite old style cookies with new style ones if present
+        cookieHeaders = method.getResponseHeaders(HTTPConstants.HEADER_SET_COOKIE2);
+        for (int i = 0; i < cookieHeaders.length; i++) {
+            HeaderElement[] elements = cookieHeaders[i].getElements();
+            for (int e = 0; e < elements.length; e++) {
+                HeaderElement element = elements[e];
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())) {
+                    sessionCookie = element.getValue();
+                }
+            }
         }
+
+        if (sessionCookie != null) {
+            msgContext.getServiceContext().setProperty(Constants.COOKIE_STRING, sessionCookie);
+        }        
     }
 
     protected void processResponse(HttpMethodBase httpMethod,

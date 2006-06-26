@@ -52,11 +52,14 @@ public class RequestSessionCookie implements HttpRequestInterceptor {
         }
         
         String sessionCookie = null;
-        Header header = request.getFirstHeader(HTTPConstants.HEADER_COOKIE);
-        if (header != null) {
-            HeaderElement[] elements = header.getElements();
-            if (elements.length > 0) {
-                sessionCookie = elements[0].getName(); 
+        Header[] headers = request.getHeaders(HTTPConstants.HEADER_COOKIE);
+        for (int i = 0; i < headers.length; i++) {
+            HeaderElement[] elements = headers[i].getElements();
+            for (int e = 0; e < elements.length; e++) {
+                HeaderElement element = elements[e];
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())) {
+                    sessionCookie = element.getValue();
+                }
             }
         }
         context.setAttribute(Constants.COOKIE_STRING, sessionCookie);

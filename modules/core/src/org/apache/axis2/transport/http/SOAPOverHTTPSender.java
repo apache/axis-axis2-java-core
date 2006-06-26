@@ -85,12 +85,11 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         //setting the coolie in the out path
         Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
         if (cookieString != null) {
-            String cookie =(String) cookieString;
-            int index = cookie.indexOf(";");
-            if(index >0){
-                cookie = cookie.substring(0,index);
-            }
-            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE,cookie);
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(Constants.SESSION_COOKIE);
+            buffer.append("=");
+            buffer.append(cookieString);
+            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
         }
 
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());

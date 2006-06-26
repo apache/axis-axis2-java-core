@@ -73,7 +73,8 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, new RequestCounterMessageReceiver(),
                 RequestCounter.class.getName(), operationName);
-        service.setScope(Constants.SCOPE_TRANSPORT_SESSION);
+//        service.setScope(Constants.SCOPE_TRANSPORT_SESSION);
+        service.setScope(Constants.SCOPE_SOAP_SESSION);
         UtilServer.deployService(service);
         UtilServer.getConfigurationContext().getAxisConfiguration().setManageTransportSession(true);
     }
@@ -96,6 +97,7 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+        configContext.getAxisConfiguration().engageModule(new QName("addressing"));
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
