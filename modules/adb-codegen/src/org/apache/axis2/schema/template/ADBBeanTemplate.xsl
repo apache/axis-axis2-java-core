@@ -176,11 +176,13 @@
                   this.<xsl:value-of select="$varName"/>=param;
                   }
 
-                   <!-- we special case the 'array' scenario and generate a convenience
-                       method for adding elements one by one to the array. The
-                       current implementation is somewhat inefficient but
-                       gets the job done.Since a primitive cannot be
-                       treated as an object it has to be ignored!
+                   <!--
+
+                       we special case the 'array' scenario and generate a
+                       convenience method for adding elements one by one to
+                       the array. The current implementation is somewhat
+                       inefficient but gets the job done.Since a primitive
+                       cannot be treated as an object it has to be ignored!
 
                  -->
                  <xsl:if test="not(@primitive)">
@@ -260,11 +262,11 @@
             <xsl:when test="@type or @anon">
                 <!-- For a type write the passed in QName first-->
 		
-		String prefix = parentQName.getPrefix();
-                String namespace = parentQName.getNamespaceURI();
+		        java.lang.String prefix = parentQName.getPrefix();
+                java.lang.String namespace = parentQName.getNamespaceURI();
                 
                 if (namespace != null) {
-                    String writerPrefix = xmlWriter.getPrefix(namespace);
+                    java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
                     if (writerPrefix != null) {
                         xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
                     } else {
@@ -324,10 +326,10 @@
                                 <xsl:when test="@nillable">
                                     if (<xsl:value-of select="$varName"/>==null){
 				    
-				        String namespace = "<xsl:value-of select="$namespace"/>";
+				        java.lang.String namespace = "<xsl:value-of select="$namespace"/>";
 			
 					if (! namespace.equals("")) {
-						String prefix = xmlWriter.getPrefix(namespace);
+						java.lang.String prefix = xmlWriter.getPrefix(namespace);
 				    
 						if (prefix == null) {
 							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
@@ -548,10 +550,10 @@
                         <xsl:choose>
                             <xsl:when test="$nillable">
                                       if (<xsl:value-of select="$varName"/>==null){
-				          String namespace = "<xsl:value-of select="property/@nsuri"/>";
+				        java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
 			
 						if (! namespace.equals("")) {
-							String prefix = xmlWriter.getPrefix(namespace);
+							java.lang.String prefix = xmlWriter.getPrefix(namespace);
 					    
 							if (prefix == null) {
 								prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
@@ -592,10 +594,10 @@
                     </xsl:when>
                     <!-- end of ours block-->
                     <xsl:otherwise>
-		        String namespace = "<xsl:value-of select="property/@nsuri"/>";
+		        java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
 			
 			if (! namespace.equals("")) {
-				String prefix = xmlWriter.getPrefix(namespace);
+				java.lang.String prefix = xmlWriter.getPrefix(namespace);
                     
 				if (prefix == null) {
 					prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
