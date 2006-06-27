@@ -632,9 +632,9 @@ public class AxisEngine {
             // This boolean property only used in client side fireAndForget invocation
             //It will set a property into message context and if some one has set the
             //property then transport sender will invoke in a diffrent thread
-            Object isTransportBlocking = msgContext.getProperty(
+            Object isTransportNonBlocking = msgContext.getProperty(
                     MessageContext.TRANSPORT_NON_BLOCKING);
-            if (isTransportBlocking != null && ((Boolean) isTransportBlocking).booleanValue()) {
+            if (isTransportNonBlocking != null && ((Boolean) isTransportNonBlocking).booleanValue()) {
                 msgContext.getConfigurationContext().getThreadPool().execute(
                         new TransportNonBlockingInvocationWorker(msgContext, sender));
             } else {
