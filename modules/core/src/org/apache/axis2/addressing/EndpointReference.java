@@ -24,6 +24,9 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
@@ -42,6 +45,8 @@ public class EndpointReference implements Serializable {
 
     private static final long serialVersionUID = 5278892171162372439L;
 
+    private static final Log log = LogFactory.getLog(EndpointReference.class);
+    
     /**
      * <EndpointReference>
      * <Address>xs:anyURI</Address>
@@ -209,7 +214,7 @@ public class EndpointReference implements Serializable {
         }
 
 
-        OMElement metaDataElement = eprOMElement.getFirstChildWithName(new QName("MetaData"));
+        OMElement metaDataElement = eprOMElement.getFirstChildWithName(new QName(AddressingConstants.Final.WSA_METADATA));
         if (metaDataElement != null) {
             Iterator children = metaDataElement.getChildren();
             while (children.hasNext()) {
@@ -228,6 +233,17 @@ public class EndpointReference implements Serializable {
         while (allAttributes.hasNext()) {
             OMAttribute attribute = (OMAttribute) allAttributes.next();
             attributes.add(attribute);
+        }
+        
+        Iterator childElements = eprOMElement.getChildElements();
+        while (childElements.hasNext()) {
+            OMElement eprChildElement = (OMElement) childElements.next();
+            String localName = eprChildElement.getLocalName();
+            if(!localName.equals("Address") &&
+               !localName.equals(AddressingConstants.EPR_REFERENCE_PARAMETERS) &&
+               !localName.equals(AddressingConstants.Final.WSA_METADATA)){
+                addExtensibleElement(eprChildElement);
+            }
         }
     }
 
@@ -255,6 +271,23 @@ public class EndpointReference implements Serializable {
                     refParameterElement.addChild((OMNode) refParms.next());
                 }
             }
+            
+            if (attributes != null) {
+                Iterator attrIter = attributes.iterator();
+                while (attrIter.hasNext()) {
+                    OMAttribute omAttributes = (OMAttribute) attrIter.next();
+                    epr.addAttribute(omAttributes);
+                }
+            }
+            
+            // add xs:any
+            ArrayList omElements = extensibleElements;
+            if (omElements != null) {
+                for (int i = 0; i < omElements.size(); i++) {
+                    epr.addChild((OMElement) omElements.get(i));
+                }
+            }
+            
             return epr;
         } else {
             throw new AxisFault("prefix must be specified");
