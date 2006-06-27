@@ -10,21 +10,12 @@
 		<actionMapping>urn:echo</actionMapping>
 	</operation>    
 
-    <parameter name="sct-issuer-config">
-		<sct-issuer-config>
-			<proofToken>EncryptedKey</proofToken>
+    <parameter name="saml-issuer-config">
+		<saml-issuer-config>
+			<samlPropFile>saml.s1.properties</samlPropFile>
+			<user>sts</user>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
-			<addRequestedAttachedRef />
-		</sct-issuer-config>
+		</saml-issuer-config>
     </parameter>
-    
-    <parameter xmlns="" name="sc-configuration">
-		<sc-configuration xmlns="">
-			<scope xmlns="">service</scope>
-			<passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
-			<cryptoProperties xmlns="">sctIssuer.properties</cryptoProperties>
-		</sc-configuration>
-    </parameter>
-
     
 </service>

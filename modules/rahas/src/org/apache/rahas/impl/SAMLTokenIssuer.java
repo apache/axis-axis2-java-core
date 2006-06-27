@@ -23,6 +23,7 @@ import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.rahas.Constants;
 import org.apache.rahas.TokenIssuer;
 import org.apache.rahas.TrustException;
@@ -40,9 +41,13 @@ import org.w3c.dom.Node;
 import java.util.Properties;
 
 /**
- * 
+ * Issuer to issue SAMl tokens
  */
 public class SAMLTokenIssuer implements TokenIssuer {
+    
+    private String configParamName;
+    private OMElement configElement;
+    private String configFile;
     
     /*
      * (non-Javadoc)
@@ -57,25 +62,39 @@ public class SAMLTokenIssuer implements TokenIssuer {
         // Get the document
         Document doc = ((Element) env).getOwnerDocument();
 
-        Crypto crypto = CryptoFactory.getInstance("samlIssuer.properties",
+        
+        SAMLTokenIssuerConfig config = null;
+        if(this.configElement != null) {
+            config = SAMLTokenIssuerConfig
+                    .load(configElement
+                            .getFirstChildWithName(SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG));
+        } 
+
+        //Look for the file
+        if(config == null && this.configFile != null) {
+            config = SAMLTokenIssuerConfig.load(this.configFile);
+        }
+        
+        //Look for the param
+        if(config == null && this.configParamName != null) {
+            Parameter param = inMsgCtx.getParameter(this.configParamName);
+            if(param != null && param.getParameterElement() != null) {
+                config = SAMLTokenIssuerConfig.load(param.getParameterElement()
+                        .getFirstChildWithName(
+                                SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG));
+            } else {
+                throw new TrustException("expectedParameterMissing",
+                        new String[] { this.configParamName });
+            }
+        }
+
+        
+        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropFile,
                 inMsgCtx.getAxisService().getClassLoader());
 
-        Properties prop = new Properties();
-        prop.setProperty("org.apache.ws.security.saml.issuer.cryptoProp.fil",
-                "sctIssuer.properties");
-        prop.setProperty("org.apache.ws.security.saml.issuer.key.name", "bob");
-        prop.setProperty("org.apache.ws.security.saml.issuer.key.password",
-                "security");
-        prop.setProperty("org.apache.ws.security.saml.issuer", "www.example.com");
-        prop.setProperty("org.apache.ws.security.saml.subjectNameId.name", "uid=joe,ou=people,ou=saml-demo,o=example.com");
-        prop.setProperty("org.apache.ws.security.saml.subjectNameId.qualifier","www.example.com");
-        prop.setProperty("org.apache.ws.security.saml.authenticationMethod", "password");
-        prop.setProperty("org.apache.ws.security.saml.confirmationMethod", "senderVouches");
-
-        SAMLIssuer saml = SAMLIssuerFactory.getInstance(
-                "org.apache.ws.security.saml.SAMLIssuerImpl", prop);
-        saml.setUsername("");
-        saml.setUserCrypto(crypto);
+        SAMLIssuer saml = SAMLIssuerFactory.getInstance(config.samlPropFile);
+        saml.setUsername(config.user); 
+        saml.setUserCrypto(crypto); 
         saml.setInstanceDoc(doc);
 
         // Set the DOM impl to DOOM
@@ -133,7 +152,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
      * @see org.apache.rahas.TokenIssuer#setConfigurationParamName(java.lang.String)
      */
     public void setConfigurationParamName(String configParamName) {
-        // TODO TODO SAMLTokenIssuer setConfigurationParamName
+        this.configParamName = configParamName;
     }
 
     /**

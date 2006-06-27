@@ -299,6 +299,8 @@
 			<!-- copy the services.xml and create the aar -->
 			<copy overwrite="yes" file="test-resources/rahas/s1-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
+			<copy overwrite="yes" file="test-resources/rahas/saml.s1.properties"
+                  tofile="target/temp-rahas/saml.s1.properties"/>
 
 		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_1/services/SecureService.aar"
                  basedir="target/temp-rahas"/>

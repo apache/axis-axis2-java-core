@@ -114,7 +114,7 @@ public class SCTIssuer implements TokenIssuer {
                 config = SCTIssuerConfig.load(this.configFile);
             }
             
-            //Look for the file
+            //Look for the param
             if(config == null && this.configParamName != null) {
                 Parameter param = inMsgCtx.getParameter(this.configParamName);
                 if(param != null && param.getParameterElement() != null) {

@@ -16,7 +16,6 @@
 
 package org.apache.rahas;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -24,14 +23,10 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.util.StreamWrapper;
-import org.apache.rahas.types.RequestSecurityTokenType;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
-import org.apache.rampart.util.Axis2Util;
 
 import javax.xml.namespace.QName;
 

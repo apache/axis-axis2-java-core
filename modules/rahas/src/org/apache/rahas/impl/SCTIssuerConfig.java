@@ -33,8 +33,6 @@ public class SCTIssuerConfig {
     public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
     public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     
-    public final static String SCT_ISSUER_CONFIG_PARAM = 
-                                            "sct-issuer-config-param";
     
     protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
 
@@ -52,7 +50,7 @@ public class SCTIssuerConfig {
         OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
                 new QName("proofToken"));
         if (proofTokenElem != null) {
-            this.proofTokenType = proofTokenElem.getText();
+            this.proofTokenType = proofTokenElem.getText().trim();
         }
 
         OMElement cryptoPropertiesElem = (OMElement) elem
@@ -68,7 +66,7 @@ public class SCTIssuerConfig {
         this.addRequestedAttachedRef = elem
                 .getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
         
-        this.cryptoPropertiesFile = cryptoPropertiesElem.getText();
+        this.cryptoPropertiesFile = cryptoPropertiesElem.getText().trim();
     }
     
     public static SCTIssuerConfig load(OMElement elem) throws TrustException {
