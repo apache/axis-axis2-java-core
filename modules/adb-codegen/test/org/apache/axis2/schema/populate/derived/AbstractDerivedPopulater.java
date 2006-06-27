@@ -4,10 +4,14 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
 
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -67,24 +71,24 @@ public abstract class AbstractDerivedPopulater extends XMLTestCase {
             }
         }
         
-//        OMElement element = getOMElement(o);
-//        
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(baos);
-//        element.serialize(writer);
-//        writer.flush();
-//        
-//        assertXMLEqual(baos.toString(),xmlToSet);
+        OMElement element = getOMElement(o);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(baos);
+        element.serialize(writer);
+        writer.flush();
+        
+        assertXMLEqual(baos.toString(),xmlToSet);
   }
     
     protected OMElement getOMElement(Object bean) throws Exception {
-//        Method method = bean.getClass().getMethod("getOMElement", new Class[]{
-//                Class.forName("javax.xml.namespace.QName"), 
-//                Class.forName("org.apache.axiom.om.OMFactory")});
-//        
-//        OMElement result = (OMElement) method.invoke(bean, new Object[]{null, OMAbstractFactory.getOMFactory()});
-//        return result;
-        throw new UnsupportedOperationException();
+        Method method = bean.getClass().getMethod("getOMElement", new Class[]{
+                Class.forName("javax.xml.namespace.QName"), 
+                Class.forName("org.apache.axiom.om.OMFactory")});
+        
+        OMElement result = (OMElement) method.invoke(bean, new Object[]{null, OMAbstractFactory.getOMFactory()});
+        return result;
+//        throw new UnsupportedOperationException();
         
     }
 

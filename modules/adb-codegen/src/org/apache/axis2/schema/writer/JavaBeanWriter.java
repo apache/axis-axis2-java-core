@@ -369,7 +369,7 @@ public class JavaBeanWriter implements BeanWriter {
                 // create the file
                 File out = createOutFile(basePackageName, className);
                 // parse with the template and create the files
-
+   
                 if (isHelperMode) {
 
                     XSLTUtils.addAttribute(model, "helperMode", "yes", model.getDocumentElement());

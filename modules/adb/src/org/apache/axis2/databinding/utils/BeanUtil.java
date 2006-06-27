@@ -40,6 +40,8 @@ import java.util.*;
 
 
 public class BeanUtil {
+    
+    private static int nsCount = 1;
 
     /**
      * To Serilize Bean object this method is used, this will create an object array using given
@@ -530,6 +532,10 @@ public class BeanUtil {
                         OMAbstractFactory.getSOAP11Factory(), parser);
         stAXOMBuilder.setDoDebug(true);
         return stAXOMBuilder.getDocumentElement();
+    }
+    
+    public static String getUniquePrifix() {
+        return "ns" + nsCount++;
     }
 
     /**
