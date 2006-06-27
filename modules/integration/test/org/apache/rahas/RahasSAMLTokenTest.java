@@ -24,22 +24,17 @@ import org.apache.rahas.types.RequestSecurityTokenType;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.rampart.util.Axis2Util;
-import org.opensaml.SAMLAssertion;
 import org.opensaml.XML;
 
 import javax.xml.namespace.QName;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
-public class RahsSAMLTokenTest extends TestClient {
+public class RahasSAMLTokenTest extends TestClient {
 
 
     /**
      * @param name
      */
-    public RahsSAMLTokenTest(String name) {
+    public RahasSAMLTokenTest(String name) {
         super(name);
     }
 

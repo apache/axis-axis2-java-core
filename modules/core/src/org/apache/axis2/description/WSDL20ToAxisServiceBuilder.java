@@ -7,7 +7,7 @@ import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
-import org.apache.woden.internal.DOMWSDLSource;
+import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.Binding;
 import org.apache.woden.wsdl20.Description;
@@ -122,10 +122,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                     Document document = documentBuilder.parse(in);
 
-                    WSDLSource wsdlSource = new DOMWSDLSource(null);
+                    WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
+                    WSDLSource wsdlSource = reader.createWSDLSource();
                     wsdlSource.setSource(document.getDocumentElement());
-
-                    WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+//                    wsdlSource.setBaseURI(getBaseUri());
                     descriptionElement = reader.readWSDL(wsdlSource);
                 } else {
                     throw new AxisFault("No resources found to read the wsdl");

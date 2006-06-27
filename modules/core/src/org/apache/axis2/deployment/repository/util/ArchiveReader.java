@@ -21,8 +21,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
@@ -37,10 +35,12 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -287,7 +287,7 @@ public class ArchiveReader implements DeploymentConstants {
                 zin = new ZipInputStream(new FileInputStream(serviceFile));
 
                 ZipEntry entry;
-                byte[]                buf = new byte[1024];
+                byte[] buf = new byte[1024];
                 int read;
                 ByteArrayOutputStream out;
                 while ((entry = zin.getNextEntry()) != null) {
@@ -313,7 +313,7 @@ public class ArchiveReader implements DeploymentConstants {
                             {
                                 // we have a WSDL 2.0 document here.
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
-
+                                wsdlToAxisServiceBuilder.setBaseUri(entryName);
                             } else if (Constants.NS_URI_WSDL11.
                                     equals(documentElementNS.getName())) {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);

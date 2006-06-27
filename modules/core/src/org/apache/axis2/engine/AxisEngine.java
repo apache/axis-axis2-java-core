@@ -20,7 +20,18 @@ package org.apache.axis2.engine;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPConstants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultNode;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultRole;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -69,16 +80,16 @@ public class AxisEngine {
         if (!msgContext.isHeaderPresent()) {
             return;
         }
-        SOAPEnvelope se = msgContext.getEnvelope();
-        if (se.getHeader() == null) {
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+        if (envelope.getHeader() == null) {
             return;
         }
-        Iterator hbs = se.getHeader().examineAllHeaderBlocks();
-        while (hbs.hasNext()) {
-            SOAPHeaderBlock hb = (SOAPHeaderBlock) hbs.next();
+        Iterator headerBlocks = envelope.getHeader().examineAllHeaderBlocks();
+        while (headerBlocks.hasNext()) {
+            SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
             // if this header block has been processed or mustUnderstand isn't
             // turned on then its cool
-            if (hb.isProcessed() || !hb.getMustUnderstand()) {
+            if (headerBlock.isProcessed() || !headerBlock.getMustUnderstand()) {
                 continue;
             }
             // if this header block is not targetted to me then its not my
@@ -87,26 +98,26 @@ public class AxisEngine {
             // additional roles and then to check that any headers targetted for
             // that role too have been dealt with.
 
-            String role = hb.getRole();
+            String role = headerBlock.getRole();
 
-            String prefix = se.getNamespace().getPrefix();
+            String prefix = envelope.getNamespace().getPrefix();
 
             if (!msgContext.isSOAP11()) {
 
-                // if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
+                // if must understand and soap 1.2 the Role should be NEXT , if it is null we consider
                 // it to be NEXT
                 if (prefix == null || "".equals(prefix)) {
-                    prefix = SOAPConstants.SOAPFAULT_NAMESPACE_PREFIX;
+                    prefix = SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX;
                 }
                 if (role != null) {
                     if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
                         throw new AxisFault(Messages.getMessage(
-                                "mustunderstandfaild",
+                                "mustunderstandfailed",
                                 prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                     }
                 } else {
                     throw new AxisFault(Messages.getMessage(
-                            "mustunderstandfaild",
+                            "mustunderstandfailed",
                             prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                 }
             } else {
@@ -115,7 +126,7 @@ public class AxisEngine {
                 // it to be NEXT
                 if ((role != null) && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
                     throw new AxisFault(Messages.getMessage(
-                            "mustunderstandfaild",
+                            "mustunderstandfailed",
                             prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                 }
             }
@@ -496,6 +507,7 @@ public class AxisEngine {
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
+
         while (msgContext.getCurrentHandlerIndex() < msgContext.getExecutionChain().size()) {
             Handler currentHandler = (Handler) msgContext.getExecutionChain().
                     get(msgContext.getCurrentHandlerIndex());
