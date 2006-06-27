@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
@@ -285,6 +286,13 @@ public class ServiceClient {
      * @param header The header to be added for interactions. Must not be null.
      */
     public void addHeader(OMElement header) {
+        if (headers == null) {
+            headers = new ArrayList();
+        }
+        headers.add(header);
+    }
+
+    public void addHeader(SOAPHeaderBlock header) {
         if (headers == null) {
             headers = new ArrayList();
         }

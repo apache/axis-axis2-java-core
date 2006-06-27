@@ -93,7 +93,7 @@ public class Java2WSDLUtils {
         return namespaceFromPackageName(name);
     }
 
-    public static String getPacakgeName(String className, ClassLoader classLoader) throws Exception {
+    public static String getPackageName(String className, ClassLoader classLoader) throws Exception {
         Class clazz = Class.forName(className, true, classLoader);
         Package pkg = clazz.getPackage();
         String name;

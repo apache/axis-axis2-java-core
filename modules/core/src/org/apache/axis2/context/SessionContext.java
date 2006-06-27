@@ -121,7 +121,7 @@ public class SessionContext extends AbstractContext {
         while (serviceContecxtes.hasNext()) {
             ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
             try {
-                DependencyManager.destroyServiceClass(serviceContext);
+                DependencyManager.destroyServiceObject(serviceContext);
             } catch (AxisFault axisFault) {
                 log.info(axisFault.getMessage());
             }

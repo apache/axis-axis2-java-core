@@ -70,11 +70,6 @@ public interface DescriptionConstants {
     public static final String SERVICE_CLASS_NAME = "SERVICE_CLASS_NAME";
 
     /**
-     * Field SERVICE_CLASS
-     */
-    public static final String SERVICE_CLASS = "SERVICE_CLASS";
-
-    /**
      * Field PHASES_KEY
      */
     public static final String PHASES_KEY = "PHASES_KEY";

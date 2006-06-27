@@ -90,9 +90,9 @@ public class DependencyManager {
         }
     }
 
-    public static void destroyServiceClass(ServiceContext serviceContext) throws AxisFault {
+    public static void destroyServiceObject(ServiceContext serviceContext) throws AxisFault {
         try {
-            Object obj = serviceContext.getProperty(ServiceContext.SERVICE_CLASS);
+            Object obj = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
             if (obj != null) {
                 Class classToLoad = obj.getClass();
                  // We can not call classToLoad.getDeclaredMethed() , since there

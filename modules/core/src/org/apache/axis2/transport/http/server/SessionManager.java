@@ -92,7 +92,7 @@ public class SessionManager {
         for (Iterator it = serviceGroupContext.getServiceContexts(); it.hasNext(); ) {
             ServiceContext serviceContext = (ServiceContext) it.next();
             try {
-                DependencyManager.destroyServiceClass(serviceContext);
+                DependencyManager.destroyServiceObject(serviceContext);
             } catch (AxisFault axisFault) {
                 LOG.info(axisFault.getMessage());
             }

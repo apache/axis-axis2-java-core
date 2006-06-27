@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
-    public static final String SERVICE_OBJECT = "ServiceObject";
+    public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
     public static final String SCOPE = "scope";
 
     /**
@@ -49,24 +49,30 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             AxisService service =
                     msgContext.getOperationContext().getServiceContext().getAxisService();
             ClassLoader classLoader = service.getClassLoader();
-            // allow alternative definition of makeNewServiceObject
-            if (service.getParameter(SERVICE_OBJECT) != null) {
-               Parameter serviceObjectParam = service.getParameter(SERVICE_OBJECT);
-               Class serviceObjectMaker = Class.forName(((String) 
-                        serviceObjectParam.getValue()).trim(), true, classLoader);
-               Method method = serviceObjectMaker.getMethod("makeNewServiceObject",
-                        new Class[] { MessageContext.class });
-               return method.invoke(serviceObjectMaker.newInstance(), new Object[] { msgContext });
-            }
-            Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
 
+            // allow alternative definition of makeNewServiceObject
+            if (service.getParameter(SERVICE_OBJECT_SUPPLIER) != null) {
+                Parameter serviceObjectParam =
+                        service.getParameter(SERVICE_OBJECT_SUPPLIER);
+                Class serviceObjectMaker = Class.forName(((String)
+                        serviceObjectParam.getValue()).trim(), true, classLoader);
+
+                // Find static getServiceObject() method, call it if there   
+                Method method = serviceObjectMaker.
+                        getMethod("getServiceObject",
+                                  new Class[] { MessageContext.class });
+                if (method != null)
+                    return method.invoke(null, new Object[] { msgContext });
+            }
+
+            Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
             if (implInfoParam != null) {
                 Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
                         classLoader);
 
                 return implClass.newInstance();
             } else {
-                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_CLASS"));
+                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
@@ -93,7 +99,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
         ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();
-        Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_CLASS);
+        Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
         if (serviceimpl != null) {
             // since service impl is there in service context , take that from there
             return serviceimpl;
@@ -103,7 +109,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             //Service initialization
             DependencyManager.initServiceClass(serviceimpl,
                     msgContext.getServiceContext());
-            serviceContext.setProperty(ServiceContext.SERVICE_CLASS, serviceimpl);
+            serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
         }
     }

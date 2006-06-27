@@ -1139,11 +1139,11 @@ public class AxisService extends AxisDescription {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
                     implClass, axisService.getSchematargetNamespace(),
                     axisService.getSchematargetNamespacePrefix());
-            ArrayList excludeOpeartion = new ArrayList();
-            excludeOpeartion.add("init");
-            excludeOpeartion.add("setOperationContext");
-            excludeOpeartion.add("destroy");
-            schemaGenerator.setExcludeMethods(excludeOpeartion);
+            ArrayList excludedMethods = new ArrayList();
+            excludedMethods.add("init");
+            excludedMethods.add("setOperationContext");
+            excludedMethods.add("destroy");
+            schemaGenerator.setExcludeMethods(excludedMethods);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
         } catch (Exception e) {

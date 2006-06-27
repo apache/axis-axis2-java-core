@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
  */
 public class ServiceContext extends AbstractContext {
 
-    public static final String SERVICE_CLASS = "serviceClass";
+    public static final String SERVICE_OBJECT = "serviceObject";
     private EndpointReference targetEPR;
     private EndpointReference myEPR;
 
