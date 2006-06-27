@@ -1,26 +1,23 @@
 package org.apache.ws.java2wsdl;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.codehaus.jam.JMethod;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.codehaus.jam.JMethod;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -57,7 +54,6 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
     private String targetNamespacePrefix;
 
-    private OMNamespace ns1;
 
     private OMNamespace soap;
 
@@ -66,10 +62,6 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     private OMNamespace tns;
 
     private OMNamespace wsdl;
-
-    private OMNamespace mime;
-
-    private OMNamespace http;
 
     private String style;
 
@@ -123,7 +115,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         OMElement ele = fac.createOMElement("definitions", wsdl);
 
         ele.addAttribute("targetNamespace", targetNamespace, null);
-        generateNamespaces(fac, ele);
+        generateNamespaces(ele);
         generateTypes(fac, ele);
         generateMessages(fac, ele);
         generatePortType(fac, ele);
@@ -132,13 +124,13 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         return ele;
     }
 
-    private void generateNamespaces(OMFactory fac, OMElement defintions) {
+    private void generateNamespaces(OMElement defintions) {
         soap = defintions.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
         tns = defintions.declareNamespace(targetNamespace,
                 targetNamespacePrefix);
         soap12 = defintions.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
-        http = defintions.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
-        mime = defintions.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
+        defintions.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
+        defintions.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
     }
 
     private void generateTypes(OMFactory fac, OMElement defintions)
@@ -149,44 +141,28 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         // wrap the Schema elements with this start and end tags to create a
         // document root
         // under which the schemas can fall into
-        writer.write("<xmlSchemas>");
-        writeSchemas(writer);
-        writer.write("</xmlSchemas>");
-        XMLStreamReader xmlReader = StAXUtils
-                .createXMLStreamReader(
-                        new ByteArrayInputStream(writer.toString().getBytes()));
 
-        StAXOMBuilder staxOMBuilders = new StAXOMBuilder(fac, xmlReader);
-        Iterator iterator = staxOMBuilders.getDocumentElement()
-                .getChildElements();
-        while (iterator.hasNext()) {
-            wsdlTypes.addChild((OMNode) iterator.next());
+        for (Iterator iterator = schemaCollection.iterator(); iterator.hasNext();) {
+            XmlSchema xmlSchema = (XmlSchema) iterator.next();
+            xmlSchema.write(writer);
+            String schemaString = writer.toString();
+            if (!"".equals(schemaString)) {
+                XMLStreamReader xmlReader = StAXUtils
+                        .createXMLStreamReader(new ByteArrayInputStream(schemaString.getBytes()));
+
+                StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
+                wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+            }
         }
         defintions.addChild(wsdlTypes);
     }
 
-    private void writeSchemas(StringWriter writer) {
-        Iterator iterator = schemaCollection.iterator();
-        Iterator typeIterator = null;
-        Iterator elementIterator = null;
-        XmlSchema xmlSchema = null;
-
-        while (iterator.hasNext()) {
-            xmlSchema = (XmlSchema) iterator.next();
-            typeIterator = xmlSchema.getSchemaTypes().getValues();
-            while (typeIterator.hasNext()) {
-                xmlSchema.getItems().add((XmlSchemaObject) typeIterator.next());
-            }
-
-            xmlSchema.write(writer);
-        }
-    }
 
     private void generateMessages(OMFactory fac, OMElement definitions) {
         Hashtable namespaceMap = new Hashtable();
-        String namespacePrefix = null;
-        String namespaceURI = null;
-        QName messagePartType = null;
+        String namespacePrefix;
+        String namespaceURI;
+        QName messagePartType;
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
 
@@ -200,7 +176,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
 
-            //Request Message
+                //Request Message
                 OMElement requestMessge = fac.createOMElement(
                         MESSAGE_LOCAL_NAME, wsdl);
                 requestMessge.addAttribute(ATTRIBUTE_NAME, jmethod
@@ -209,10 +185,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 definitions.addChild(requestMessge);
                 OMElement requestPart = fac.createOMElement(
                         PART_ATTRIBUTE_NAME, wsdl);
-            requestMessge.addChild(requestPart);
-            requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                requestMessge.addChild(requestPart);
+                requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
 
-            requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                         namespacePrefix + COLON_SEPARATOR
                                 + jmethod.getSimpleName(), null);
             }
@@ -226,7 +202,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
-            //Response Message
+                //Response Message
                 OMElement responseMessge = fac.createOMElement(
                         MESSAGE_LOCAL_NAME, wsdl);
                 responseMessge.addAttribute(ATTRIBUTE_NAME, jmethod
@@ -235,10 +211,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 definitions.addChild(responseMessge);
                 OMElement responsePart = fac.createOMElement(
                         PART_ATTRIBUTE_NAME, wsdl);
-            responseMessge.addChild(responsePart);
-            responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                responseMessge.addChild(responsePart);
+                responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
 
-            responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                         namespacePrefix + COLON_SEPARATOR
                                 + jmethod.getSimpleName() + RESPONSE, null);
             }
@@ -257,9 +233,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
      * Generate the porttypes
      */
     private void generatePortType(OMFactory fac, OMElement defintions) {
-        JMethod jmethod = null;
-        OMElement operation = null;
-        OMElement message = null;
+        JMethod jmethod;
+        OMElement operation;
+        OMElement message;
         OMElement portType = fac.createOMElement(PORT_TYPE_LOCAL_NAME, wsdl);
         defintions.addChild(portType);
         portType.addAttribute(ATTRIBUTE_NAME, serviceName + PORT_TYPE_SUFFIX,
@@ -388,23 +364,11 @@ public class Java2OMBuilder implements Java2WSDLConstants {
             operation.addChild(input);
 
             if (!jmethod.getReturnType().isVoidType()) {
-            OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
+                OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
                 addExtensionElement(fac, output, soap12, SOAP_BODY, SOAP_USE, use,
                         "namespace", targetNamespace);
-            operation.addChild(output);
-        }
-    }
-    }
-
-    private void addExtensionElement(OMFactory fac, OMElement element, String name, OMNamespace namespace,
-                                     Hashtable attrs) {
-        OMElement soapbinding = fac.createOMElement(name, namespace);
-        element.addChild(soapbinding);
-        Enumeration enumeration = attrs.keys();
-        String attrName = null;
-        while (enumeration.hasMoreElements()) {
-            attrName = (String) enumeration.nextElement();
-            soapbinding.addAttribute(attrName, (String) attrs.get(attrName), null);
+                operation.addChild(output);
+            }
         }
     }
 
