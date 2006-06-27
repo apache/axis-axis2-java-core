@@ -28,6 +28,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
@@ -154,10 +155,9 @@ public class AxisService2OM implements Java2WSDLConstants {
             if (!Constants.NS_URI_XML.equals(targetNamespace)) {
                 schema.write(writer);
                 String schemaString = writer.toString();
-                if (!"".equals(schemaString)) {
-                    XMLStreamReader xmlReader = StAXUtils
-                            .createXMLStreamReader(new ByteArrayInputStream(schemaString.getBytes()));
-
+                if (!"".equals(schemaString)) {                	
+                    XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new StringReader(schemaString));
+                    
                     StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
                     wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
                 }
