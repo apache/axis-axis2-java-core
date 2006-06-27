@@ -8,8 +8,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 /*
@@ -31,57 +33,57 @@ import java.net.URL;
 */
 
 /**
-* Processes the init parameters for the AxisServlet.
-This allows the location of the axis2.xml and the module repository to be different from the default locations.
-The init parameters support alternate file, or URL values for both of these.
-*/
+ * Processes the init parameters for the AxisServlet.
+ * This allows the location of the axis2.xml and the module repository to be different from the default locations.
+ * The init parameters support alternate file, or URL values for both of these.
+ */
 public class WarBasedAxisConfigurator implements AxisConfigurator {
 
     private AxisConfiguration axisConfig;
-	private static final Log log = LogFactory.getLog(WarBasedAxisConfigurator.class);
+    private static final Log log = LogFactory.getLog(WarBasedAxisConfigurator.class);
     private ServletConfig config;
     private DeploymentEngine deploymentEngine;
 
 
     /**
-    * The name of the init parameter (axis2.xml.path) that can be used to override the default location for the axis2.xml file. When both this init parameter, and the axis2.xml.url init parameters are not specified in the axis servlet init-parameter, the default location of ${app}/WEB-INF/conf/axis2.xml is used.
-    * The value of this path is interpreted as a file system absolute path.
-    * This parameter takes precidence over the axis2.xml.url init parameter.
-    */
+     * The name of the init parameter (axis2.xml.path) that can be used to override the default location for the axis2.xml file. When both this init parameter, and the axis2.xml.url init parameters are not specified in the axis servlet init-parameter, the default location of ${app}/WEB-INF/conf/axis2.xml is used.
+     * The value of this path is interpreted as a file system absolute path.
+     * This parameter takes precidence over the axis2.xml.url init parameter.
+     */
     public static final String PARAM_AXIS2_XML_PATH = "axis2.xml.path";
 
 
     /**
-    * The name of the init parameter (axis2.xml.url) that when specified indicates the axis2.xml should be loaded using the URL specified as the value of this init parameter. If the axis2.xml.path init parameter is present, this init parameter has no effect.
-    */
+     * The name of the init parameter (axis2.xml.url) that when specified indicates the axis2.xml should be loaded using the URL specified as the value of this init parameter. If the axis2.xml.path init parameter is present, this init parameter has no effect.
+     */
     public static final String PARAM_AXIS2_XML_URL = "axis2.xml.url";
 
 
     /**
-    * The name of the init parameter (axis2.repository.path) that when specified indicates the path to the
-    */
+     * The name of the init parameter (axis2.repository.path) that when specified indicates the path to the
+     */
     public static final String PARAM_AXIS2_REPOSITORY_PATH = "axis2.repository.path";
 
 
     /**
-    * The name of the init parameter (axis2.repository.url) that when specified indicates the url to be used
-    */
+     * The name of the init parameter (axis2.repository.url) that when specified indicates the url to be used
+     */
     public static final String PARAM_AXIS2_REPOSITORY_URL = "axis2.repository.url";
 
 
     /**
-    * Default constructor for configurator.
-    * This determines the axis2.xml file to be used from the init parametes for the AxisServlet in the web.xml.
-    * The order of initialization is according the the following precidence:
-    * <ul>
-    * <li>If the parameter axis2.xml.path is present, the value is webapp relative path to be used as the location to the axis2.xml file.
-    * <li>Otherwise, if the parameter axis2.xml.url is present, the URL is used as the location to the axis2.xml file.
-    * <li>Otherwise, when both of the above init parameters are not present, file is attempted to be loaded from &lt;repo&gt;/WEB-INF/axis2.xml.
-    * <li> When none of the above could be found, the axis2.xml is loaded from the classpath resource, the value of DeploymenConstants.AXIS2_CONFIGURATION_RESOURCE.
-    * </ul>
-    *
-    * @param svconfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
-    */
+     * Default constructor for configurator.
+     * This determines the axis2.xml file to be used from the init parametes for the AxisServlet in the web.xml.
+     * The order of initialization is according the the following precidence:
+     * <ul>
+     * <li>If the parameter axis2.xml.path is present, the value is webapp relative path to be used as the location to the axis2.xml file.
+     * <li>Otherwise, if the parameter axis2.xml.url is present, the URL is used as the location to the axis2.xml file.
+     * <li>Otherwise, when both of the above init parameters are not present, file is attempted to be loaded from &lt;repo&gt;/WEB-INF/axis2.xml.
+     * <li> When none of the above could be found, the axis2.xml is loaded from the classpath resource, the value of DeploymenConstants.AXIS2_CONFIGURATION_RESOURCE.
+     * </ul>
+     *
+     * @param svconfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
+     */
     public WarBasedAxisConfigurator(ServletConfig svconfig) {
         try {
             this.config = svconfig;
@@ -121,12 +123,11 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                 // not there, use default configuration from class path resource.
             } // catch
 
-			if(axis2Stream == null) {
+            if (axis2Stream == null) {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 axis2Stream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
-			}
+            }
             axisConfig = deploymentEngine.populateAxisConfiguration(axis2Stream);
-
 
             // when the module is an unpacked war file,
             // we can set the web location path in the deployment engine.
@@ -148,8 +149,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                 Parameter enableHttp = new Parameter("enableHTTP", "true");
                 if (axisConfig != null) {
                     axisConfig.addParameter(enableHttp);
-                }
-                else {
+                } else {
                     log.error("axisConfig was null after initialization");
                 }
             } catch (AxisFault axisFault) {
@@ -159,19 +159,18 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
     }
 
 
-
     /**
-    * Gets the axis configuration object by loading the repository.
-    * The order of initialization is according the the following precidence:
-    * <ul>
-    * <li>If the parameter axis2.repository.path is present, this folder is used as the location to the repository.
-    * <li>Otherwise, if the parameter axis2.repository.url is present, the URL is used as the location to the repository.
-    * <li>Otherwise, when both of the above init parameters are not present, the web applications WEB-INF folder is used as the folder for the repository.
-    * </ul>
-    *
-    * @return the instance of the AxisConfiguration object that reflects the repository according to the rules above.
-    * @throws AxisFault when an error occured in the initialization of the AxisConfiguration.
-    */
+     * Gets the axis configuration object by loading the repository.
+     * The order of initialization is according the the following precidence:
+     * <ul>
+     * <li>If the parameter axis2.repository.path is present, this folder is used as the location to the repository.
+     * <li>Otherwise, if the parameter axis2.repository.url is present, the URL is used as the location to the repository.
+     * <li>Otherwise, when both of the above init parameters are not present, the web applications WEB-INF folder is used as the folder for the repository.
+     * </ul>
+     *
+     * @return the instance of the AxisConfiguration object that reflects the repository according to the rules above.
+     * @throws AxisFault when an error occured in the initialization of the AxisConfiguration.
+     */
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
         try {
             String repository = null;
@@ -224,30 +223,27 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
         return axisConfig;
     }
 
-
     //to load services
+
     /**
-    * Loads the services within the repository.
-    * When the axis2.repository.path init parameter was present, we just call loadServices() in the deployment engine.<br/>
-    * When the axis2.repository.url init parameter was present we load services from the respective URL value of the init parameter.<br/>
-    * Otherwise, try to load the services from the /WEB-INF folder within the web application.
-    */
+     * Loads the services within the repository.
+     * When the axis2.repository.path init parameter was present, we just call loadServices() in the deployment engine.<br/>
+     * When the axis2.repository.url init parameter was present we load services from the respective URL value of the init parameter.<br/>
+     * Otherwise, try to load the services from the /WEB-INF folder within the web application.
+     */
     public void loadServices() {
         try {
-            String repository = null;
+            String repository ;
 
-
-            if (repository == null) {
-                repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
-                if (repository != null) {
-                    deploymentEngine.loadServices();
-                    log.debug("loaded services from path: " + repository);
-                }
+            repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
+            if (repository != null) {
+                deploymentEngine.loadServices();
+                log.debug("loaded services from path: " + repository);
             }
 
             if (repository == null) {
                 repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_URL);
-                if (repository!= null) {
+                if (repository != null) {
                     deploymentEngine.loadServicesFromUrl(new URL(repository));
                     log.debug("loaded services from URL: " + repository);
                 }

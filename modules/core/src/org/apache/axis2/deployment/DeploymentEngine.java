@@ -602,8 +602,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             archiveReader = new ArchiveReader();
                             String serviceStatus = "";
                             try {
-                                HashMap wsdlservice = archiveReader.processWSDLs(currentArchiveFile,
-                                        this);
+                                HashMap wsdlservice = archiveReader.processWSDLs(currentArchiveFile);
                                 if (wsdlservice != null && wsdlservice.size() > 0) {
                                     Iterator services = wsdlservice.values().iterator();
                                     while (services.hasNext()) {
@@ -619,7 +618,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 sericeGroup.setServiceGroupClassLoader(
                                         currentArchiveFile.getClassLoader());
                                 ArrayList serviceList = archiveReader.processServiceGroup(
-                                        currentArchiveFile.getAbsolutePath(), this,
+                                        currentArchiveFile.getAbsolutePath(), currentArchiveFile,
                                         sericeGroup, explodedDir, wsdlservice,
                                         axisConfig);
                                 addServiceGroup(sericeGroup, serviceList, currentArchiveFile.getFile().toURL());

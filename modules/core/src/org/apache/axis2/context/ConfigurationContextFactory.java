@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.deployment.URLBasedAxisConfigurator;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
@@ -62,7 +63,19 @@ public class ConfigurationContextFactory {
         init(configContext);
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
+        addModuleService(axisConfig);
         return configContext;
+    }
+
+    public static void addModuleService(AxisConfiguration axisConfig) throws AxisFault {
+        HashMap modules = axisConfig.getModules();
+        if (modules != null && modules.size() > 0) {
+            Iterator mpduleItr = modules.values().iterator();
+            while (mpduleItr.hasNext()) {
+                AxisModule axisModule = (AxisModule) mpduleItr.next();
+                Utils.deployModuelServics(axisModule, axisConfig);
+            }
+        }
     }
 
     private static void configureTransportSessionManagement(AxisConfiguration axisConfig) {

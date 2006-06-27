@@ -5,7 +5,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.repository.util.ArchiveFileData;
+import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
@@ -18,18 +21,11 @@ import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -97,7 +93,7 @@ public class Utils {
             String urlString = url.toString();
             InputStream in = url.openStream();
             ZipInputStream zin = null;
-            if(antiJARLocking) {
+            if (antiJARLocking) {
                 File inputFile = createTempFile(urlString.substring(urlString.length() - 4), in);
                 in.close();
                 array.add(inputFile.toURL());
@@ -316,5 +312,83 @@ public class Utils {
         parameter.addAttribute("locked", Boolean.toString(locked), null);
         parameter.setText(value);
         return parameter;
+    }
+
+    /**
+     * This method is to get the list of services there in a module
+     * if module want to add services then the way of doing that is
+     * 1. Add a foldere called services inside the module (both in mar case and expanded case)
+     * 2. Then add a services.list file into that directory adding all the modules
+     * you want to add
+     * 3. Then put all the services into services directory in the module
+     * 4. All the class is module can be access via a the module services.
+     */
+
+    public static void deployModuelServics(AxisModule module,
+                                           AxisConfiguration axisConfig) throws AxisFault {
+        try {
+            ArchiveReader archiveReader = new ArchiveReader();
+            PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
+            ClassLoader moduleClassLoader = module.getModuleClassLoader();
+            ArrayList services = new ArrayList();
+            InputStream in = moduleClassLoader.getResourceAsStream("services/services.list");
+            if (in != null) {
+                BufferedReader input;
+                try {
+                    input = new BufferedReader(new InputStreamReader(in));
+                    String line;
+                    while ((line = input.readLine()) != null) {
+                        services.add(line);
+                    }
+                    input.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            if (services.size() > 0) {
+                for (int i = 0; i < services.size(); i++) {
+                    String servicename = (String) services.get(i);
+                    if (servicename == null || "".equals(servicename)) {
+                        continue;
+                    }
+                    InputStream fin = moduleClassLoader.getResourceAsStream("services/" + servicename);
+                    if (fin == null) {
+                        throw new AxisFault("No service archiev found : " + servicename);
+                    }
+                    File inputFile = Utils.createTempFile(servicename, fin);
+                    ArchiveFileData filedata = new ArchiveFileData(inputFile, DeploymentConstants.TYPE_SERVICE, false);
+
+                    filedata.setClassLoader(false,
+                            moduleClassLoader);
+                    HashMap wsdlservice = archiveReader.processWSDLs(filedata);
+                    if (wsdlservice != null && wsdlservice.size() > 0) {
+                        Iterator servicesitr = wsdlservice.values().iterator();
+                        while (servicesitr.hasNext()) {
+                            AxisService service = (AxisService) servicesitr.next();
+                            Iterator operations = service.getOperations();
+                            while (operations.hasNext()) {
+                                AxisOperation axisOperation = (AxisOperation) operations.next();
+                                phasesInfo.setOperationPhases(axisOperation);
+                            }
+                        }
+                    }
+                    AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
+                    serviceGroup.setServiceGroupClassLoader(
+                            filedata.getClassLoader());
+                    ArrayList serviceList = archiveReader.processServiceGroup(
+                            filedata.getAbsolutePath(), filedata,
+                            serviceGroup, false, wsdlservice,
+                            axisConfig);
+                    for (int j = 0; j < serviceList.size(); j++) {
+                        AxisService axisService = (AxisService) serviceList.get(j);
+                        serviceGroup.addService(axisService);
+                    }
+                    axisConfig.addServiceGroup(serviceGroup);
+                    fin.close();
+                }
+            }
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 }
