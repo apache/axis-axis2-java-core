@@ -18,32 +18,15 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPFaultCode;
-import org.apache.axiom.soap.SOAPFaultSubCode;
-import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
@@ -51,10 +34,13 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -69,7 +55,7 @@ public class Utils {
         flow.addHandler(handlerDesc);
     }
 
-    public static MessageContext createOutMessageContext(MessageContext inMessageContext) {
+    public static MessageContext createOutMessageContext(MessageContext inMessageContext) throws AxisFault {
         MessageContext newmsgCtx = new MessageContext();
 
         newmsgCtx.setConfigurationContext(inMessageContext.getConfigurationContext());
@@ -115,6 +101,34 @@ public class Utils {
         newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
 
+        // write the Message to the Wire
+        TransportOutDescription transportOut = newmsgCtx.getTransportOut();
+        TransportSender sender = transportOut.getSender();
+
+        //there may be instance where you want to send the response to replyTo
+        //and this default behaviour should happen if somebody (e.g. a module) has not already provided
+        //a Sender.
+        try {
+            if (newmsgCtx.isServerSide() && newmsgCtx.getTo() != null) {
+                String replyToAddress = newmsgCtx.getTo().getAddress();
+                if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)
+                        || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress))) {
+                    URI uri = new URI(replyToAddress);
+                    String scheme = uri.getScheme();
+                    if (!transportOut.getName().getLocalPart().equals(scheme)) {
+                        ConfigurationContext configurationContext = newmsgCtx.getConfigurationContext();
+                        transportOut = configurationContext.getAxisConfiguration()
+                                .getTransportOut(new QName(scheme));
+                        if (transportOut == null) {
+                            throw new AxisFault("Can not find the transport sender : " + scheme);
+                        }
+                        newmsgCtx.setTransportOut(transportOut);
+                    }
+                }
+            }
+        } catch (URISyntaxException e) {
+            throw new AxisFault(e);
+        }
         return newmsgCtx;
     }
 
@@ -383,39 +397,39 @@ public class Utils {
     }
 
     /**
-         * Maps the String URI of the Message exchange pattern to a integer.
-         * Further, in the first lookup, it will cache the looked
-         * up value so that the subsequent method calls are extremely efficient.
-         */
-        public static int getAxisSpecifMEPConstant(String messageExchangePattern) {
+     * Maps the String URI of the Message exchange pattern to a integer.
+     * Further, in the first lookup, it will cache the looked
+     * up value so that the subsequent method calls are extremely efficient.
+     */
+    public static int getAxisSpecifMEPConstant(String messageExchangePattern) {
 
 
-            int mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_INVALID;
+        int mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_INVALID;
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OUT;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_OUT_IN;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY;
-            } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern)) {
-                mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY;
-            }
-
-            if (mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_INVALID) {
-                throw new AxisError(Messages.getMessage("mepmappingerror"));
-            }
-
-
-            return mepConstant;
+        if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OUT;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_OUT_IN;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY;
+        } else if (WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern)) {
+            mepConstant = WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY;
         }
+
+        if (mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_INVALID) {
+            throw new AxisError(Messages.getMessage("mepmappingerror"));
+        }
+
+
+        return mepConstant;
+    }
 
 }
