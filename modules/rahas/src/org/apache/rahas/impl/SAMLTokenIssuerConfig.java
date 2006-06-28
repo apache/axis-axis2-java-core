@@ -54,10 +54,17 @@ public class SAMLTokenIssuerConfig {
      * information used securing the response
      */
     private final static QName CRYPTO_PROPERTIES = new QName("cryptoProperties");
+
+    public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
+    public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     
     protected String samlPropFile;
     protected String cryptoPropFile;
     protected String user;
+
+    protected boolean addRequestedAttachedRef;
+
+    protected boolean addRequestedUnattachedRef;
     
     private SAMLTokenIssuerConfig(OMElement elem) throws TrustException {
         
@@ -82,6 +89,11 @@ public class SAMLTokenIssuerConfig {
         if(cryptoPropElem != null) {
             this.cryptoPropFile = cryptoPropElem.getText().trim();
         }
+        
+        this.addRequestedAttachedRef = elem
+                .getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
+        this.addRequestedUnattachedRef = elem
+                .getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
     }
     
     public static SAMLTokenIssuerConfig load(OMElement elem) throws TrustException {

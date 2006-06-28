@@ -67,13 +67,18 @@ public class TrustUtil {
     
     public static OMElement createEntropyElement(OMElement parent) {
         return createOMElement(parent, Constants.WST_NS,
-                Constants.ENTROPY, Constants.WST_PREFIX);
+                Constants.ENTROPY_LN, Constants.WST_PREFIX);
+    }
+    
+    public static OMElement createtTokenTypeElement(OMElement parent) {
+        return createOMElement(parent, Constants.WST_NS,
+                Constants.TOKEN_TYPE_LN, Constants.WST_PREFIX);
     }
     
     public static OMElement createBinarySecretElement(OMElement parent,
             String type) {
         OMElement elem = createOMElement(parent, Constants.WST_NS,
-                Constants.BINARY_SECRET, Constants.WST_PREFIX);
+                Constants.BINARY_SECRET_LN, Constants.WST_PREFIX);
         if(type != null) {
             elem.addAttribute(elem.getOMFactory().createOMAttribute(
                     Constants.ATTR_TYPE, null, type));
@@ -84,7 +89,7 @@ public class TrustUtil {
     public static OMElement createRequestedUnattachedRef(OMElement parent,
             String refUri, String refValueType) {
         OMElement elem = createOMElement(parent, Constants.WST_NS,
-                            Constants.REQUESTED_UNATTACHED_REFERENCE,
+                            Constants.REQUESTED_UNATTACHED_REFERENCE_LN,
                             Constants.WST_PREFIX);
         elem.addChild((OMElement) createSecurityTokenReference(
                 ((Element) parent).getOwnerDocument(), refUri, refValueType));
@@ -94,7 +99,7 @@ public class TrustUtil {
     public static OMElement createRequestedAttachedRef(OMElement parent,
             String refUri, String refValueType) {
         OMElement elem = createOMElement(parent, Constants.WST_NS,
-                            Constants.REQUESTED_ATTACHED_REFERENCE,
+                            Constants.REQUESTED_ATTACHED_REFERENCE_LN,
                             Constants.WST_PREFIX);
         elem.addChild((OMElement) createSecurityTokenReference(
                 ((Element) parent).getOwnerDocument(), refUri, refValueType));
@@ -103,7 +108,7 @@ public class TrustUtil {
     
     public static OMElement createKeySizeElement(OMElement parent) {
         return createOMElement(parent, Constants.WST_NS,
-                Constants.KEY_SIZE,
+                Constants.KEY_SIZE_LN,
                 Constants.WST_PREFIX);
     }
     

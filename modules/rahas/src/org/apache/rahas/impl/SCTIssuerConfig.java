@@ -63,7 +63,7 @@ public class SCTIssuerConfig {
 
         this.addRequestedAttachedRef = elem
                 .getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
-        this.addRequestedAttachedRef = elem
+        this.addRequestedUnattachedRef = elem
                 .getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
         
         this.cryptoPropertiesFile = cryptoPropertiesElem.getText().trim();

@@ -38,8 +38,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.util.Properties;
-
 /**
  * Issuer to issue SAMl tokens
  */
@@ -58,6 +56,9 @@ public class SAMLTokenIssuer implements TokenIssuer {
     public SOAPEnvelope issue(OMElement request, MessageContext inMsgCtx)
             throws TrustException {
 
+        
+        
+        
         SOAPEnvelope env = this.getSOAPEnvelope(inMsgCtx);
         // Get the document
         Document doc = ((Element) env).getOwnerDocument();
@@ -103,13 +104,26 @@ public class SAMLTokenIssuer implements TokenIssuer {
         SAMLAssertion assertion = saml.newAssertion();
         
         OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(env.getBody());
+        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(rstrElem);
+
+        
+        if (config.addRequestedAttachedRef) {
+            TrustUtil.createRequestedAttachedRef(rstrElem, "#" + assertion.getId(),
+                    Constants.TOK_TYPE_SAML_10);
+        }
+
+        if (config.addRequestedUnattachedRef) {
+            TrustUtil.createRequestedUnattachedRef(
+                    rstrElem, assertion.getId(), Constants.TOK_TYPE_SAML_10);
+        }
         
         try {
             Node tempNode = assertion.toDOM();
-            rstrElem.addChild((OMNode)((Element)rstrElem).getOwnerDocument().importNode(tempNode, true));
+            rstElem.addChild((OMNode)((Element)rstrElem).getOwnerDocument().importNode(tempNode, true));
         } catch (SAMLException e) {
             throw new TrustException("samlConverstionError", e);
         }
+
         
         // Set the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(false);

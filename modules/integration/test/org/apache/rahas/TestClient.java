@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 
 public abstract class TestClient extends TestCase {
     
-    protected int port = UtilServer.TESTING_PORT;
+    protected int port = 5556; //UtilServer.TESTING_PORT;
     
     public TestClient(String name) {
         super(name);
@@ -82,9 +82,6 @@ public abstract class TestClient extends TestCase {
             serviceClient.setOptions(options);
 
             //Blocking invocation
-            serviceClient.sendReceive(payload);
-
-            serviceClient.sendReceive(getRequest());
 
             OMElement result = serviceClient.sendReceive(getRequest());
 

@@ -23,15 +23,16 @@ public interface Constants {
     
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";
+    public final static String TOKEN_TYPE_LN = "TokenType";
     public final static String REQUEST_SECURITY_TOKEN_LN = "RequestSecurityToken";
     public static final String REQUESTED_PROOF_TOKEN_LN = "RequestedProofToken";
     public static final String REQUEST_SECURITY_TOKEN_RESPONSE_LN = "RequestSecurityTokenResponse";
     public static final String REQUESTED_SECURITY_TOKEN_LN = "RequestedSecurityToken";
-    public final static String BINARY_SECRET = "BinarySecret";
-    public final static String REQUESTED_ATTACHED_REFERENCE = "RequestedAttachedReference";
-    public final static String REQUESTED_UNATTACHED_REFERENCE = "RequestedUnattachedReference";
-    public final static String KEY_SIZE = "KeySize";
-    public final static String ENTROPY = "Entropy";
+    public final static String BINARY_SECRET_LN = "BinarySecret";
+    public final static String REQUESTED_ATTACHED_REFERENCE_LN = "RequestedAttachedReference";
+    public final static String REQUESTED_UNATTACHED_REFERENCE_LN = "RequestedUnattachedReference";
+    public final static String KEY_SIZE_LN = "KeySize";
+    public final static String ENTROPY_LN = "Entropy";
     
     //RequestTypes
     public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";
@@ -41,7 +42,7 @@ public interface Constants {
 
     //Token types
     public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
-    public final static String TOK_TYPE_SAML_10="urn:oasis:names:tc:SAML:1.0:assertion";
+    public final static String TOK_TYPE_SAML_10="http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
     
     
     //RST actions

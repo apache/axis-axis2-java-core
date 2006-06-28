@@ -111,7 +111,7 @@ public class Util {
                         getCallbackHandlerInstance(config), null, new Vector(),
                         null);
                 secret = processor.getDecryptedBytes();
-            } else if (Constants.BINARY_SECRET.equals(elem.getLocalName())
+            } else if (Constants.BINARY_SECRET_LN.equals(elem.getLocalName())
                     && Constants.WST_NS.equals(elem.getNamespace().getName())) {
                 // Handle the wst:BinarySecret case
                 secret = Base64.decode(elem.getText());
@@ -126,12 +126,12 @@ public class Util {
 
         // Check for attached ref
         OMElement reqAttElem = rstr.getFirstChildWithName(new QName(
-                Constants.WST_NS, Constants.REQUESTED_ATTACHED_REFERENCE));
+                Constants.WST_NS, Constants.REQUESTED_ATTACHED_REFERENCE_LN));
         OMElement reqAttRef = reqAttElem == null ? null : reqAttElem
                 .getFirstElement();
 
         OMElement reqUnattElem = rstr.getFirstChildWithName(new QName(
-                Constants.WST_NS, Constants.REQUESTED_UNATTACHED_REFERENCE));
+                Constants.WST_NS, Constants.REQUESTED_UNATTACHED_REFERENCE_LN));
         OMElement reqUnattRef = reqUnattElem == null ? null : reqUnattElem
                 .getFirstElement();
 
