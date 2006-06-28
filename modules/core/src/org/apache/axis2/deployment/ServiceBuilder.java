@@ -90,11 +90,11 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             // Process WS-Addressing flag attribute
             OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
-            if(addressingRequiredatt!=null){
-            	String addressingRequiredString = addressingRequiredatt.getAttributeValue();
-            	service.setWSAddressingFlag(addressingRequiredString);
+            if (addressingRequiredatt != null) {
+                String addressingRequiredString = addressingRequiredatt.getAttributeValue();
+                service.setWSAddressingFlag(addressingRequiredString);
             }
-            
+
             //Setting service tratget namespace if any
             OMAttribute targetNameSpace = service_element.
                     getAttribute(new QName(TARGET_NAME_SPACE));
@@ -217,7 +217,9 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (!service.isWsdlfound()) {
                 //trying to generate WSDL for the service using JAM  and Java refelection
                 try {
-                    Utils.fillAxisService(service, axisConfig, excludeops);
+                    if (generateWsdl(service)) {
+                        Utils.fillAxisService(service, axisConfig, excludeops);
+                    }
                 } catch (Exception e) {
                     /**
                      * I have log here if some error occours , since service impl
@@ -255,6 +257,30 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()));
         }
         return service;
+    }
+
+
+    private boolean generateWsdl(AxisService axisService) {
+        Iterator operatins = axisService.getOperations();
+        if (operatins.hasNext()) {
+            while (operatins.hasNext()) {
+                AxisOperation axisOperation = (AxisOperation) operatins
+                        .next();
+                if (axisOperation.getMessageReceiver() == null) {
+                    continue;
+                }
+                String messageReceiverClass = axisOperation
+                        .getMessageReceiver().getClass().getName();
+                if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
+                        .equals(messageReceiverClass)
+                        || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                        .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        .equals(messageReceiverClass))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
