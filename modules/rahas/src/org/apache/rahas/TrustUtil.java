@@ -17,6 +17,9 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.w3c.dom.Document;
@@ -111,6 +114,28 @@ public class TrustUtil {
                 Constants.KEY_SIZE_LN,
                 Constants.WST_PREFIX);
     }
+
+    public static OMElement createAppliesToElement(OMElement parent) {
+        return createOMElement(parent, Constants.WSP_NS,
+                Constants.APPLIES_TO_LN,
+                Constants.WSP_PREFIX);
+    }
+    
+    /**
+     * Create a new <code>SOAPEnvelope</code> of the same version as the 
+     * SOAPEnvelope in the given <code>MessageContext</code> 
+     * @param msgCtx
+     * @return
+     */
+    public static SOAPEnvelope createSOAPEnvelope(String nsUri) {
+        if (nsUri != null
+                && SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsUri)) {
+            return DOOMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        } else {
+            return DOOMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
+        }
+    }
+
     
     private static OMElement createOMElement(OMElement parent, String ns,
             String ln, String prefix) {

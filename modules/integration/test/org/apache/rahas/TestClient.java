@@ -57,7 +57,6 @@ public abstract class TestClient extends TestCase {
             // Get the repository location from the args
             String repo = Constants.TESTING_PATH + "rahas_client_repo";
 
-            OMElement payload = getRequest();
             ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
                     null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);

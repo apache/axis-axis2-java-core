@@ -16,6 +16,7 @@
 
 package org.apache.rahas.impl;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.rahas.TrustException;
@@ -24,6 +25,8 @@ import javax.xml.namespace.QName;
 
 
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Configuration manager for the <code>SAMLTokenIssuer</code>
@@ -54,6 +57,12 @@ public class SAMLTokenIssuerConfig {
      * information used securing the response
      */
     private final static QName CRYPTO_PROPERTIES = new QName("cryptoProperties");
+    
+    private final static QName TRUSTED_SERVICES = new QName("trusted-services");
+    private final static QName TRUST_STORE_CRYPTO_PROPERTIES = new QName("cryptoProperties");
+    
+    private final static QName SERVICE = new QName("service");
+    private final static QName ALIAS = new QName("alias");
 
     public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
     public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
@@ -61,6 +70,9 @@ public class SAMLTokenIssuerConfig {
     protected String samlPropFile;
     protected String cryptoPropFile;
     protected String user;
+
+    protected HashMap trustedServices;
+    protected String trustStorePropFile;
 
     protected boolean addRequestedAttachedRef;
 
@@ -94,6 +106,50 @@ public class SAMLTokenIssuerConfig {
                 .getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
         this.addRequestedUnattachedRef = elem
                 .getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
+        
+        //Process trusted services
+        OMElement trustedServices = elem.getFirstChildWithName(TRUSTED_SERVICES);
+        
+        if(trustedServices != null) {
+            //Extract the trust store properties
+            OMAttribute trustStorePropertiesAttr = 
+                trustedServices.getAttribute(TRUST_STORE_CRYPTO_PROPERTIES);
+            if(trustStorePropertiesAttr != null) {
+                this.trustStorePropFile = trustStorePropertiesAttr.getAttributeValue();
+            } else {
+                throw new TrustException("samlMissingTustStore");
+            }
+            
+            //Now process the trusted services
+            Iterator servicesIter = trustedServices.getChildrenWithName(SERVICE);
+            while (servicesIter.hasNext()) {
+                OMElement service = (OMElement) servicesIter.next();
+                OMAttribute aliasAttr = service.getAttribute(ALIAS);
+                if(aliasAttr == null) {
+                    //The certificate alias is a must
+                    throw new TrustException("aliasMissingForService", new String[]{service.getText().trim()});
+                }
+                if(this.trustedServices == null) {
+                    this.trustedServices = new HashMap();
+                }
+                
+                //Add the trusted service and the alias to the map of services
+                this.trustedServices.put(service.getText().trim(), aliasAttr.getAttributeValue());
+            }
+            
+            //There maybe no trusted services as well, Therefore do not 
+            //throw an exception when there are no trusted in the list at the 
+            //moment
+            
+        } else {
+            /*
+             * Only trusts myself to issue tokens to :
+             * In this case the STS is embedded in the service as well and 
+             * the issued token can only be used with that particular service
+             * since the response secret is encrypted by the service's public key
+             */
+            
+        }
     }
     
     public static SAMLTokenIssuerConfig load(OMElement elem) throws TrustException {

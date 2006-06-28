@@ -19,6 +19,7 @@ package org.apache.rahas;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.security.sc.PWCallback;
 import org.apache.axis2.util.StreamWrapper;
 import org.apache.rahas.types.RequestSecurityTokenType;
 import org.apache.rampart.handler.config.InflowConfiguration;
@@ -38,18 +39,25 @@ public class RahasSAMLTokenTest extends TestClient {
         super(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.rahas.TestClient#getClientOutflowConfiguration()
-     */
+
     public OutflowConfiguration getClientOutflowConfiguration() {
-        return null;
+        OutflowConfiguration ofc = new OutflowConfiguration();
+
+        ofc.setActionItems("Timestamp Signature");
+        ofc.setUser("alice");
+        ofc.setSignaturePropFile("sec.properties");
+        ofc.setPasswordCallbackClass(PWCallback.class.getName());
+        return ofc;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.rahas.TestClient#getClientInflowConfiguration()
-     */
     public InflowConfiguration getClientInflowConfiguration() {
-        return null;
+        InflowConfiguration ifc = new InflowConfiguration();
+
+        ifc.setActionItems("Timestamp Signature");
+        ifc.setPasswordCallbackClass(PWCallback.class.getName());
+        ifc.setSignaturePropFile("sec.properties");
+        
+        return ifc;
     }
 
     /* (non-Javadoc)
@@ -73,8 +81,12 @@ public class RahasSAMLTokenTest extends TestClient {
                             org.apache.rahas.Constants.REQUEST_SECURITY_TOKEN_LN))));
 
             OMElement rstElem = builder.getDocumentElement();
-            
+
             rstElem.build();
+            
+            OMElement appliesToElem = TrustUtil.createAppliesToElement(rstElem);
+            appliesToElem.setText("http://localhost:5555/axis2/services/SecureService");
+            
             rstElem = (OMElement)rstElem.detach();
             return rstElem;
             

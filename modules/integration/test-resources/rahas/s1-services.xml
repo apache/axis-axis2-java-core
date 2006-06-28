@@ -17,7 +17,30 @@
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 			<addRequestedAttachedRef />
 			<addRequestedUnattachedRef />
+			
+			<trusted-services cryptoProperties="sctIssuer.properties">
+				<service alias="bob">http://localhost:5555/axis2/services/SecureService</service>
+				<service alias="bob1">http://localhost:5555/axis2/services/SecureService</service>
+				<service alias="bob2">http://localhost:5555/axis2/services/SecureService</service>
+				<service alias="bob3">http://localhost:5555/axis2/services/SecureService</service>
+			</trusted-services>
 		</saml-issuer-config>
+    </parameter>
+	
+	<parameter name="InflowSecurity">
+      <action>
+        <items>Timestamp Signature</items>
+        <signaturePropFile>sctIssuer.properties</signaturePropFile>
+      </action>
+    </parameter>
+
+    <parameter name="OutflowSecurity">
+      <action>
+        <items>Timestamp Signature</items>
+        <user>sts</user>
+        <signaturePropFile xmlns="">sctIssuer.properties</signaturePropFile>
+	    <passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
+      </action>
     </parameter>
     
 </service>

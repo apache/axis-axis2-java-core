@@ -21,6 +21,9 @@ public interface Constants {
     public final static String WST_NS = "http://schemas.xmlsoap.org/ws/2005/02/trust";
     public final static String WST_PREFIX = "wst";
     
+    public final static String WSP_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    public final static String WSP_PREFIX = "wsp";
+    
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";
     public final static String TOKEN_TYPE_LN = "TokenType";
@@ -33,6 +36,7 @@ public interface Constants {
     public final static String REQUESTED_UNATTACHED_REFERENCE_LN = "RequestedUnattachedReference";
     public final static String KEY_SIZE_LN = "KeySize";
     public final static String ENTROPY_LN = "Entropy";
+    public final static String APPLIES_TO_LN = "AppliesTo";
     
     //RequestTypes
     public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";

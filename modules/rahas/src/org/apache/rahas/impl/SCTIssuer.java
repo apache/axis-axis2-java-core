@@ -174,7 +174,8 @@ public class SCTIssuer implements TokenIssuer {
      */
     private SOAPEnvelope doBinarySecret(SCTIssuerConfig config, MessageContext msgCtx) throws TrustException {
         
-        SOAPEnvelope env = this.getSOAPEnvelope(msgCtx);
+        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(msgCtx.getEnvelope()
+                .getNamespace().getName());
         //Get the document
         Document doc = ((Element)env).getOwnerDocument();
         
@@ -214,7 +215,8 @@ public class SCTIssuer implements TokenIssuer {
     private SOAPEnvelope doEncryptedKey(SCTIssuerConfig config,
             MessageContext msgCtx, X509Certificate cert) throws TrustException {
         
-        SOAPEnvelope env = this.getSOAPEnvelope(msgCtx);
+        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(msgCtx.getEnvelope()
+                .getNamespace().getName());
         //Get the document
         Document doc = ((Element)env).getOwnerDocument();
         
@@ -272,17 +274,6 @@ public class SCTIssuer implements TokenIssuer {
         
         return env;
     }
-
-    
-    private SOAPEnvelope getSOAPEnvelope(MessageContext msgCtx) {
-        if(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(msgCtx.getEnvelope().getNamespace().getName())) {
-            return DOOMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
-        } else {
-            return DOOMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
-        }
-    }
-    
-    
 
     public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
         return Constants.RSTR_ACTON_SCT;
