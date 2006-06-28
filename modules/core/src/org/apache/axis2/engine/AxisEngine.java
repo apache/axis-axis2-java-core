@@ -621,7 +621,7 @@ public class AxisEngine {
             //there may be instance where you want to send the response to replyTo
             //and this default behaviour should happen if somebody (e.g. a module) has not already provided
             //a Sender.
-            if (sender==null && msgContext.isServerSide() && msgContext.getTo() != null) {
+            if (msgContext.isServerSide() && msgContext.getTo() != null) {
                 try {
                     String replyToAddress = msgContext.getTo().getAddress();
                     if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)

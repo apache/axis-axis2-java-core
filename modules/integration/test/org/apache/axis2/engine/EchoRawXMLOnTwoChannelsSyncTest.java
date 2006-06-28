@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -92,5 +93,37 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase imp
         sender.finalizeInvoke();
 
     }
+
+    public void testEchoXMLCompleteSyncwithTwoTransport() throws Exception {
+          AxisService service =
+                  Utils.createSimpleServiceforClient(serviceName,
+                          Echo.class.getName(),
+                          operationName);
+
+          ConfigurationContext configConetxt = UtilServer.createClientConfigurationContext();
+
+          OMFactory fac = OMAbstractFactory.getOMFactory();
+
+          OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+          OMElement method = fac.createOMElement("echoOMElement", omNs);
+          OMElement value = fac.createOMElement("myValue", omNs);
+          value.setText("Isaac Asimov, The Foundation Trilogy");
+          method.addChild(value);
+          Options options = new Options();
+          options.setTo(targetEPR);
+          options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+          options.setUseSeparateListener(true);
+          options.setAction(operationName.getLocalPart());
+
+          ServiceClient sender = new ServiceClient(configConetxt, service);
+          sender.setOptions(options);
+
+          OMElement result = sender.sendReceive(operationName, method);
+
+          TestingUtils.campareWithCreatedOMElement(result);
+          sender.finalizeInvoke();
+
+      }
+
 
 }

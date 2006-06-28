@@ -331,7 +331,7 @@ public class Utils {
             PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
             ClassLoader moduleClassLoader = module.getModuleClassLoader();
             ArrayList services = new ArrayList();
-            InputStream in = moduleClassLoader.getResourceAsStream("services/services.list");
+            InputStream in = moduleClassLoader.getResourceAsStream("aars/aars.list");
             if (in != null) {
                 BufferedReader input;
                 try {
@@ -351,7 +351,7 @@ public class Utils {
                     if (servicename == null || "".equals(servicename)) {
                         continue;
                     }
-                    InputStream fin = moduleClassLoader.getResourceAsStream("services/" + servicename);
+                    InputStream fin = moduleClassLoader.getResourceAsStream("aars/" + servicename);
                     if (fin == null) {
                         throw new AxisFault("No service archiev found : " + servicename);
                     }
