@@ -85,7 +85,14 @@ public class Utils {
                 new RelatesTo(
                         oldOptions.getMessageId(),
                         AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        newmsgCtx.setWSAAction(oldOptions.getAction());
+                
+        AxisOperation ao = inMessageContext.getAxisOperation();
+        if(ao!=null && ao.getOutputAction()!=null){
+           newmsgCtx.setWSAAction(ao.getOutputAction());
+        }else{
+           newmsgCtx.setWSAAction(oldOptions.getAction());
+        }
+        
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,

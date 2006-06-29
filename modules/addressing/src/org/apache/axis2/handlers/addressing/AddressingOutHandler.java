@@ -147,9 +147,6 @@ public class AddressingOutHandler extends AddressingHandler {
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
                                   MessageContext msgCtxt, OMNamespace addressingNamespaceObject) {
-        if (msgCtxt.isProcessingFault()) {
-            processStringInfo(Final.WSA_FAULT_ACTION, WSA_ACTION, envelope, addressingNamespaceObject);
-        }
         String action = messageContextOptions.getAction();
         if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
                 addressingNamespaceObject)) {

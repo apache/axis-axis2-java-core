@@ -407,6 +407,12 @@ public class AxisService extends AxisDescription {
         operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
         operation.setPhasesOutFlow(axisOperation.getPhasesOutFlow());
 
+        operation.setOutputAction(axisOperation.getOutputAction());
+        String[] faultActionNames = axisOperation.getFaultActionNames();
+        for(int i=0;i<faultActionNames.length;i++){
+           operation.addFaultAction(faultActionNames[i],axisOperation.getFaultAction(faultActionNames[i]));
+        }
+        
         return operation;
     }
 

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -70,6 +71,8 @@ public abstract class AxisOperation extends AxisDescription
     private QName name;
 
     private ArrayList wsamappingList;
+    private String outputAction;
+    private HashMap faultActions = new HashMap();
 
     private String soapAction;
 
@@ -266,6 +269,11 @@ public abstract class AxisOperation extends AxisDescription
         }
 
         operation.setWsamappingList(axisOperation.getWsamappingList());
+        operation.setOutputAction(axisOperation.getOutputAction());
+        String[] faultActionNames = axisOperation.getFaultActionNames();
+        for(int i=0;i<faultActionNames.length;i++){
+            operation.addFaultAction(faultActionNames[i],axisOperation.getFaultAction(faultActionNames[i]));
+        }
         operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
         operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
@@ -544,6 +552,42 @@ public abstract class AxisOperation extends AxisDescription
         this.soapAction = soapAction;
     }
 
+    public String getOutputAction() {
+        return outputAction;
+    }
+
+    public void setOutputAction(String act) {
+        outputAction = act;
+    }
+
+    public void addFaultAction(String faultName, String action) {
+        faultActions.put(faultName, action);
+    }
+
+    public void removeFaultAction(String faultName) {
+        faultActions.remove(faultName);
+    }
+
+    public String getFaultAction(String faultName) {
+        return (String) faultActions.get(faultName);
+    }
+
+    public String[] getFaultActionNames() {
+        Set keys = faultActions.keySet();
+        String[] faultActionNames = new String[keys.size()];
+        faultActionNames = (String[]) keys.toArray(faultActionNames);
+        return faultActionNames;
+    }
+
+    public String getFaultAction() {
+        String result = null;
+        Iterator iter = faultActions.values().iterator();
+        if (iter.hasNext()) {
+            result = (String) iter.next();
+        }
+        return result;
+    }
+    
     public boolean isEngaged(QName moduleName) {
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {

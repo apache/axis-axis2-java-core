@@ -37,6 +37,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -199,11 +200,20 @@ public class AxisEngine {
         }
 
         faultContext.setProcessingFault(true);
-
+        // Add correct Action
+        AxisOperation op = processingContext.getAxisOperation();
+        if(op != null && op.getFaultAction()!=null){
+            faultContext.setWSAAction(processingContext.getAxisOperation().getFaultAction());
+        }else{ //If, for some reason there is no value set, should use a sensible action.
+            faultContext.setWSAAction(Final.WSA_FAULT_ACTION);
+        }
+                
         // there are some information  that the fault thrower wants to pass to the fault path.
+        // Means that the fault is a ws-addressing one hence use the ws-addressing fault action.
         Object faultInfoForHeaders = processingContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInfoForHeaders != null) {
             faultContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInfoForHeaders);
+            faultContext.setWSAAction(Final.WSA_FAULT_ACTION);
         }
 
         // if the exception is due to a problem in the faultTo header itself, we can not use those
