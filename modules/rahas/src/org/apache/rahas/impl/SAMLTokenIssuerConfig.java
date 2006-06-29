@@ -43,7 +43,13 @@ public class SAMLTokenIssuerConfig {
      * Element name to include the alias of the private key to sign the response or
      * the issued token
      */
-    private final static QName USER = new QName("user");
+    private final static QName ISSUER_KEY_ALIAS = new QName("issuerKeyAlias");
+    
+    /**
+     * Element name to include the password of the private key to sign the 
+     * response or the issued token
+     */
+    private final static QName ISSUER_KEY_PASSWD = new QName("issuerKeyPassword");
 
     /**
      * Element name to include the crypto properties used to load the 
@@ -59,27 +65,56 @@ public class SAMLTokenIssuerConfig {
     public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
     public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     
+    public final static QName ISSUER_NAME = new QName("issuerName");
+    
     protected String cryptoPropFile;
-    protected String user;
-
+    protected String issuerKeyAlias;
+    protected String issuerKeyPassword;
+    protected String issuerName;
     protected HashMap trustedServices;
     protected String trustStorePropFile;
 
     protected boolean addRequestedAttachedRef;
 
     protected boolean addRequestedUnattachedRef;
-    
+
     private SAMLTokenIssuerConfig(OMElement elem) throws TrustException {
         
         //The alias of the private key 
-        OMElement userElem = elem.getFirstChildWithName(USER);
+        OMElement userElem = elem.getFirstChildWithName(ISSUER_KEY_ALIAS);
         if(userElem != null) {
-            this.user = userElem.getText().trim();
+            this.issuerKeyAlias = userElem.getText().trim();
         }
 
+        if(this.issuerKeyAlias == null || "".equals(this.issuerKeyAlias)) {
+            throw new TrustException("samlIssuerKeyAliasMissing");
+        }
+        
+        OMElement issuerKeyPasswdElem = elem.getFirstChildWithName(ISSUER_KEY_PASSWD);
+        if(issuerKeyPasswdElem != null) {
+            this.issuerKeyPassword = issuerKeyPasswdElem.getText().trim();
+        }
+
+        if(this.issuerKeyPassword == null || "".equals(this.issuerKeyPassword)) {
+            throw new TrustException("samlIssuerKeyPasswdMissing");
+        }
+        
+        OMElement issuerNameElem = elem.getFirstChildWithName(ISSUER_NAME);
+        if(issuerNameElem != null) {
+            this.issuerName = issuerNameElem.getText().trim();
+        }
+
+        if(this.issuerName == null || "".equals(this.issuerName)) {
+            throw new TrustException("samlIssuerNameMissing");
+        }
+        
         OMElement cryptoPropElem = elem.getFirstChildWithName(CRYPTO_PROPERTIES);
         if(cryptoPropElem != null) {
             this.cryptoPropFile = cryptoPropElem.getText().trim();
+        }
+        
+        if(this.cryptoPropFile == null || "".equals(this.cryptoPropFile)) {
+            throw new TrustException("samlPropFileMissing");
         }
         
         this.addRequestedAttachedRef = elem

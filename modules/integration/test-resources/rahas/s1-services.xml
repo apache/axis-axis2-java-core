@@ -12,7 +12,9 @@
 
     <parameter name="saml-issuer-config">
 		<saml-issuer-config>
-			<user>sts</user>
+			<issuerName>Test_STS</issuerName>
+			<issuerKeyAlias>sts</issuerKeyAlias>
+			<issuerKeyPassword>password</issuerKeyPassword>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 			<addRequestedAttachedRef />
 			<addRequestedUnattachedRef />

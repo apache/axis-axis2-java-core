@@ -35,6 +35,7 @@ import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
+import org.apache.xml.security.signature.XMLSignature;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
@@ -174,7 +175,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
         //Set the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(true);
 
-        SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, config);
+        SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, config, crypto);
         
         OMElement rstrElem = TrustUtil
                 .createRequestSecurityTokenResponseElement(env.getBody());
@@ -236,7 +237,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
             }
         } else {
             //Return the STS cert
-            return (X509Certificate)crypto.getCertificates(config.user)[0];
+            return (X509Certificate)crypto.getCertificates(config.issuerKeyAlias)[0];
         }
         
     }
@@ -246,7 +247,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
      * @param secret
      * @return
      */
-    private SAMLAssertion createAssertion(Document doc, Element encryptedKeyElem, SAMLTokenIssuerConfig config) throws TrustException {
+    private SAMLAssertion createAssertion(Document doc, Element encryptedKeyElem, SAMLTokenIssuerConfig config, Crypto crypto) throws  TrustException {
         try {
             String[] confirmationMethods = new String[]{SAMLSubject.CONF_HOLDER_KEY};
             
@@ -262,7 +263,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
                     keyInfoElem);
             
             SAMLAttribute attribute = new SAMLAttribute("Name", 
-                    "https://rahas.apache.org", 
+                    "https://rahas.apache.org/saml/attrns", 
                     null, -1, Arrays.asList(new String[]{"Colombo/Rahas"}));
             SAMLAttributeStatement attrStmt = new SAMLAttributeStatement(
                     subject, Arrays.asList(new SAMLAttribute[] { attribute }));
@@ -271,9 +272,29 @@ public class SAMLTokenIssuer implements TokenIssuer {
             
             Date notBefore = new Date();
             Date notAfter = new Date();
-            return new SAMLAssertion("apache_sts", notAfter,
-                    notBefore, null, null, Arrays.asList(statements));
-        } catch (SAMLException e) {
+            notAfter.setTime(notAfter.getTime() + (12*60*60*1000));
+            
+            SAMLAssertion assertion = new SAMLAssertion(config.issuerName, notBefore,
+                    notAfter, null, null, Arrays.asList(statements));
+            
+            //sign the assertion
+            X509Certificate[] issuerCerts =
+                crypto.getCertificates(config.issuerKeyAlias);
+
+            String sigAlgo = XMLSignature.ALGO_ID_SIGNATURE_RSA;
+            String pubKeyAlgo =
+                    issuerCerts[0].getPublicKey().getAlgorithm();
+            if (pubKeyAlgo.equalsIgnoreCase("DSA")) {
+                sigAlgo = XMLSignature.ALGO_ID_SIGNATURE_DSA;
+            }
+            java.security.Key issuerPK =
+                    crypto.getPrivateKey(config.issuerKeyAlias,
+                            config.issuerKeyPassword);
+            assertion.sign(sigAlgo, issuerPK, Arrays.asList(issuerCerts));
+            
+            
+            return assertion;
+        } catch (Exception e) {
             throw new TrustException("samlAssertionCreationError", e);
         }
     }
