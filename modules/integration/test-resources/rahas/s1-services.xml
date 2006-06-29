@@ -12,17 +12,15 @@
 
     <parameter name="saml-issuer-config">
 		<saml-issuer-config>
-			<samlPropFile>saml.s1.properties</samlPropFile>
 			<user>sts</user>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 			<addRequestedAttachedRef />
 			<addRequestedUnattachedRef />
-			
-			<trusted-services cryptoProperties="sctIssuer.properties">
+			<trusted-services>
 				<service alias="bob">http://localhost:5555/axis2/services/SecureService</service>
-				<service alias="bob1">http://localhost:5555/axis2/services/SecureService</service>
-				<service alias="bob2">http://localhost:5555/axis2/services/SecureService</service>
-				<service alias="bob3">http://localhost:5555/axis2/services/SecureService</service>
+				<service alias="bob1">http://localhost:5555/axis2/services/SecureService1</service>
+				<service alias="bob2">http://localhost:5555/axis2/services/SecureService2</service>
+				<service alias="bob3">http://localhost:5555/axis2/services/SecureService3</service>
 			</trusted-services>
 		</saml-issuer-config>
     </parameter>

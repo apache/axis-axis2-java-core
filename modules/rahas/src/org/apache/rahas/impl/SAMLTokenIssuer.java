@@ -18,35 +18,39 @@ package org.apache.rahas.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.rahas.Constants;
+import org.apache.rahas.Token;
 import org.apache.rahas.TokenIssuer;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
+import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
-import org.apache.ws.security.saml.SAMLIssuer;
-import org.apache.ws.security.saml.SAMLIssuerFactory;
 import org.opensaml.SAMLAssertion;
+import org.opensaml.SAMLAttribute;
+import org.opensaml.SAMLAttributeStatement;
 import org.opensaml.SAMLException;
+import org.opensaml.SAMLStatement;
 import org.opensaml.SAMLSubject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.namespace.QName;
+
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -79,7 +83,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
         
         //Flag to identify whether we found a cert or not
         Principal principal = null;
-        X509Certificate cert = null;
+        X509Certificate clientCert = null;
         
         Vector results = null;
         if ((results = (Vector) inMsgCtx
@@ -96,7 +100,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
                         (WSSecurityEngineResult) wsSecEngineResults.get(j);
                     if (wser.getAction() == WSConstants.SIGN
                             && wser.getPrincipal() != null) {
-                        cert = wser.getCertificate();
+                        clientCert = wser.getCertificate();
                         principal = wser.getPrincipal();
                     } else if(wser.getAction() == WSConstants.UT
                             && wser.getPrincipal() != null){
@@ -109,15 +113,6 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 throw new TrustException(TrustException.REQUEST_FAILED);
             }
         }
-        
-        //Get ApliesTo to figureout which service to issue the token for
-        
-        
-        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(inMsgCtx.getEnvelope()
-                .getNamespace().getName());
-        // Get the document
-        Document doc = ((Element) env).getOwnerDocument();
-
         
         SAMLTokenIssuerConfig config = null;
         if(this.configElement != null) {
@@ -144,20 +139,43 @@ public class SAMLTokenIssuer implements TokenIssuer {
             }
         }
 
-        
         Crypto crypto = CryptoFactory.getInstance(config.cryptoPropFile,
                 inMsgCtx.getAxisService().getClassLoader());
+        
+        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(inMsgCtx.getEnvelope()
+                .getNamespace().getName());
+        // Get the document
+        Document doc = ((Element) env).getOwnerDocument();
+        
+        byte[] secret = null;
+        
+        Element encryptedKeyElem = null;
+        try {
+            
+            //Get ApliesTo to figureout which service to issue the token for
+            X509Certificate serviceCert = getServiceCert(request, config, crypto);
 
-        SAMLIssuer saml = SAMLIssuerFactory.getInstance(config.samlPropFile);
-        saml.setUsername(config.user);
-        saml.setUserCrypto(crypto);
-        saml.setInstanceDoc(doc);
+            //Ceate the encrypted key
+            WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
+    
+            encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
 
-        // Set the DOM impl to DOOM
+            encrKeyBuilder.setUseThisCert(serviceCert);
+            encrKeyBuilder.prepare(doc, crypto);
+            
+            secret = encrKeyBuilder.getEphemeralKey();
+            encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
+        } catch (WSSecurityException e) {
+            throw new TrustException(
+                    "errorInBuildingTheEncryptedKeyForPrincipal",
+                    new String[] { clientCert.getSubjectDN().getName()});
+        }
+        
+        //Set the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(true);
 
-        SAMLAssertion assertion = saml.newAssertion();
-
+        SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, config);
+        
         OMElement rstrElem = TrustUtil
                 .createRequestSecurityTokenResponseElement(env.getBody());
         OMElement reqSecTokenElem = TrustUtil
@@ -172,43 +190,95 @@ public class SAMLTokenIssuer implements TokenIssuer {
             TrustUtil.createRequestedUnattachedRef(rstrElem, assertion.getId(),
                     Constants.TOK_TYPE_SAML_10);
         }
-
+        
         try {
             Node tempNode = assertion.toDOM();
             reqSecTokenElem.addChild((OMNode) ((Element) rstrElem).getOwnerDocument()
                     .importNode(tempNode, true));
+            
+            //Store the token
+            Token sctToken = new Token(assertion.getId(), (OMElement)assertion.toDOM());
+            //At this point we definitely have the secret
+            //Otherwise it should fail with an exception earlier
+            sctToken.setSecret(secret); 
+            TrustUtil.getTokenStore(inMsgCtx).add(sctToken);
+            
         } catch (SAMLException e) {
             throw new TrustException("samlConverstionError", e);
         }
 
+        
         // Set the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(false);
         return env;
     }
     
     /**
+     * Uses the <code>wst:AppliesTo</code> to figure out the certificate to encrypt the
+     * secret in the SAML token 
+     * @param request
+     * @param config
+     * @param crypto
+     * @throws WSSecurityException
+     * @return
+     */
+    private X509Certificate getServiceCert(OMElement request, SAMLTokenIssuerConfig config, Crypto crypto) throws WSSecurityException, TrustException {
+        OMElement appliesToElem = request.getFirstChildWithName(new QName(Constants.WSP_NS, Constants.APPLIES_TO_LN));
+        if(appliesToElem != null) {
+            //Right now we only expect the service epr address to be here
+            String address = appliesToElem.getText().trim();
+            if(address != null && !"".equals(address)) {
+                //figure out the alias from the config
+                String alias = (String)config.trustedServices.get(address);;
+                return (X509Certificate)crypto.getCertificates(alias)[0];
+            } else {
+                throw new TrustException("samlInvalidAppliesToValue");
+            }
+        } else {
+            //Return the STS cert
+            return (X509Certificate)crypto.getCertificates(config.user)[0];
+        }
+        
+    }
+
+    /**
      * 
      * @param secret
      * @return
      */
-    private SAMLAssertion createAssertion(String secret, Document doc, SAMLTokenIssuerConfig config) throws TrustException {
-
-        //Create the EncryptedKey
-        WSSecEncryptedKey encryptedKeyBuiler = new WSSecEncryptedKey();
-//        encryptedKeyBuiler.prepare(doc, )
-        
+    private SAMLAssertion createAssertion(Document doc, Element encryptedKeyElem, SAMLTokenIssuerConfig config) throws TrustException {
         try {
-        
-        String[] confirmationMethods = new String[]{SAMLSubject.CONF_HOLDER_KEY};
-        
-        SAMLSubject subject = new SAMLSubject(null, Arrays.asList(confirmationMethods),
-                null,
-                null);
+            String[] confirmationMethods = new String[]{SAMLSubject.CONF_HOLDER_KEY};
+            
+            Element keyInfoElem = doc.createElementNS(WSConstants.SIG_NS, "KeyInfo");
+            ((OMElement)encryptedKeyElem).declareNamespace(WSConstants.SIG_NS, WSConstants.SIG_PREFIX);
+            ((OMElement)encryptedKeyElem).declareNamespace(WSConstants.ENC_NS, WSConstants.ENC_PREFIX);
+            
+            keyInfoElem.appendChild(encryptedKeyElem);
+            
+            SAMLSubject subject = new SAMLSubject(null, 
+                    Arrays.asList(confirmationMethods),
+                    null,
+                    keyInfoElem);
+            
+            SAMLAttribute attribute = new SAMLAttribute("Name", 
+                    "https://rahas.apache.org", 
+                    null, -1, Arrays.asList(new String[]{"Colombo/Rahas"}));
+            SAMLAttributeStatement attrStmt = new SAMLAttributeStatement(
+                    subject, Arrays.asList(new SAMLAttribute[] { attribute }));
+            
+            SAMLStatement[] statements = {attrStmt};
+            
+            Date notBefore = new Date();
+            Date notAfter = new Date();
+            return new SAMLAssertion("apache_sts", notAfter,
+                    notBefore, null, null, Arrays.asList(statements));
         } catch (SAMLException e) {
             throw new TrustException("samlAssertionCreationError", e);
         }
-        return null;
     }
+    
+    
 
     /*
      * (non-Javadoc)

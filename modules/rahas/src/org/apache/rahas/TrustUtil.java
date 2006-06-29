@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.context.MessageContext;
 import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.w3c.dom.Document;
@@ -141,5 +142,25 @@ public class TrustUtil {
             String ln, String prefix) {
         return parent.getOMFactory().createOMElement(new QName(ns, ln, prefix),
                 parent);
+    }
+    
+    
+    /**
+     * Returns the token store.
+     * If the token store is aleady available in the service context then
+     * fetch it and return it. If not create a new one, hook it up in the 
+     * service context and return it
+     * @param msgCtx
+     * @return
+     */
+    public static TokenStorage getTokenStore(MessageContext msgCtx) {
+        String tempKey = TokenStorage.TOKEN_STORAGE_KEY
+                                + msgCtx.getAxisService().getName();
+        TokenStorage storage = (TokenStorage) msgCtx.getProperty(tempKey);
+        if (storage == null) {
+            storage = new SimpleTokenStore();
+            msgCtx.getConfigurationContext().setProperty(tempKey, storage);
+        }
+        return storage;
     }
 }

@@ -207,7 +207,7 @@ public class SCTIssuer implements TokenIssuer {
         //Store the tokens
         Token sctToken = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
         sctToken.setSecret(secret);
-        this.getTokenStore(msgCtx).add(sctToken);
+        TrustUtil.getTokenStore(msgCtx).add(sctToken);
         
         return env;
     }
@@ -270,7 +270,7 @@ public class SCTIssuer implements TokenIssuer {
         Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
                 .getElement());
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
-        this.getTokenStore(msgCtx).add(sctToken);
+        TrustUtil.getTokenStore(msgCtx).add(sctToken);
         
         return env;
     }
@@ -291,25 +291,6 @@ public class SCTIssuer implements TokenIssuer {
      */
     public void setConfigurationElement(OMElement configElement) {
         this.configElement = configElement;
-    }
-    
-    /**
-     * Returns the token store.
-     * If the token store is aleady available in the service context then
-     * fetch it and return it. If not create a new one, hook it up in the 
-     * service context and return it
-     * @param msgCtx
-     * @return
-     */
-    private TokenStorage getTokenStore(MessageContext msgCtx) {
-        String tempKey = TokenStorage.TOKEN_STORAGE_KEY
-                                + msgCtx.getAxisService().getName();
-        TokenStorage storage = (TokenStorage) msgCtx.getProperty(tempKey);
-        if (storage == null) {
-            storage = new SimpleTokenStore();
-            msgCtx.getConfigurationContext().setProperty(tempKey, storage);
-        }
-        return storage;
     }
 
     /**

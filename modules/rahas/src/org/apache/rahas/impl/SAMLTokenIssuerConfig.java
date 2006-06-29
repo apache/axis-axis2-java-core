@@ -23,7 +23,6 @@ import org.apache.rahas.TrustException;
 
 import javax.xml.namespace.QName;
 
-
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,13 +38,7 @@ public class SAMLTokenIssuerConfig {
      * The QName of the configuration element of the SAMLTokenIssuer
      */
     public final static QName SAML_ISSUER_CONFIG = new QName("saml-issuer-config");
-    
-    /**
-     * Element name to include the .properties file to be used to 
-     * load the SAMLIssuer using WSS4J
-     */
-    private final static QName SAML_PROP_FILE = new QName("samlPropFile");
-    
+        
     /**
      * Element name to include the alias of the private key to sign the response or
      * the issued token
@@ -59,7 +52,6 @@ public class SAMLTokenIssuerConfig {
     private final static QName CRYPTO_PROPERTIES = new QName("cryptoProperties");
     
     private final static QName TRUSTED_SERVICES = new QName("trusted-services");
-    private final static QName TRUST_STORE_CRYPTO_PROPERTIES = new QName("cryptoProperties");
     
     private final static QName SERVICE = new QName("service");
     private final static QName ALIAS = new QName("alias");
@@ -67,7 +59,6 @@ public class SAMLTokenIssuerConfig {
     public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
     public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     
-    protected String samlPropFile;
     protected String cryptoPropFile;
     protected String user;
 
@@ -80,23 +71,12 @@ public class SAMLTokenIssuerConfig {
     
     private SAMLTokenIssuerConfig(OMElement elem) throws TrustException {
         
-        //Get the SAML_PROP_FILE
-        OMElement samlPropFileElem = elem.getFirstChildWithName(SAML_PROP_FILE);
-        if(samlPropFileElem != null) {
-            this.samlPropFile = samlPropFileElem.getText().trim();
-        }
-        
-        //If the SAML_PROP_FILE is missing then throw an exception
-        //Without this SAMLtokenIssuer cannot create a SAML token
-        if(this.samlPropFile == null || "".equals(this.samlPropFile)) {
-            throw new TrustException("samlPropFileMissing");
-        }
-        
+        //The alias of the private key 
         OMElement userElem = elem.getFirstChildWithName(USER);
         if(userElem != null) {
             this.user = userElem.getText().trim();
         }
-        
+
         OMElement cryptoPropElem = elem.getFirstChildWithName(CRYPTO_PROPERTIES);
         if(cryptoPropElem != null) {
             this.cryptoPropFile = cryptoPropElem.getText().trim();
@@ -110,16 +90,14 @@ public class SAMLTokenIssuerConfig {
         //Process trusted services
         OMElement trustedServices = elem.getFirstChildWithName(TRUSTED_SERVICES);
         
+        /*
+         * If there are trusted services add them to a list
+         * Only trusts myself to issue tokens to :
+         * In this case the STS is embedded in the service as well and 
+         * the issued token can only be used with that particular service
+         * since the response secret is encrypted by the service's public key
+         */
         if(trustedServices != null) {
-            //Extract the trust store properties
-            OMAttribute trustStorePropertiesAttr = 
-                trustedServices.getAttribute(TRUST_STORE_CRYPTO_PROPERTIES);
-            if(trustStorePropertiesAttr != null) {
-                this.trustStorePropFile = trustStorePropertiesAttr.getAttributeValue();
-            } else {
-                throw new TrustException("samlMissingTustStore");
-            }
-            
             //Now process the trusted services
             Iterator servicesIter = trustedServices.getChildrenWithName(SERVICE);
             while (servicesIter.hasNext()) {
@@ -141,15 +119,8 @@ public class SAMLTokenIssuerConfig {
             //throw an exception when there are no trusted in the list at the 
             //moment
             
-        } else {
-            /*
-             * Only trusts myself to issue tokens to :
-             * In this case the STS is embedded in the service as well and 
-             * the issued token can only be used with that particular service
-             * since the response secret is encrypted by the service's public key
-             */
-            
         }
+            
     }
     
     public static SAMLTokenIssuerConfig load(OMElement elem) throws TrustException {
