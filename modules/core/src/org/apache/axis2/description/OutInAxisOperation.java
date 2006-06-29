@@ -94,15 +94,15 @@ public class OutInAxisOperation extends InOutAxisOperation {
  */
 class OutInAxisOperationClient implements OperationClient {
 
-    private OutInAxisOperation axisOp;
+    private AxisOperation axisOp;
 
-    private ServiceContext sc;
+    protected ServiceContext sc;
 
-    private Options options;
+    protected Options options;
 
-    private OperationContext oc;
+    protected OperationContext oc;
 
-    private Callback callback;
+    protected Callback callback;
 
     /*
      * indicates whether the MEP execution has completed (and hence ready for
@@ -278,15 +278,17 @@ class OutInAxisOperationClient implements OperationClient {
                 // Send the SOAP Message and receive a response
                 MessageContext response = send(mc);
                 // check for a fault and return the result
-                SOAPEnvelope resEnvelope = response.getEnvelope();
-                if (resEnvelope.getBody().hasFault()) {
-                    SOAPFault soapFault = resEnvelope.getBody().getFault();
-                    if (options.isExceptionToBeThrownOnSOAPFault()) {
-                        // does the SOAPFault has a detail element for Excpetion
+                if (response!=null) {
+                    SOAPEnvelope resEnvelope = response.getEnvelope();
+                    if (resEnvelope.getBody().hasFault()) {
+                        SOAPFault soapFault = resEnvelope.getBody().getFault();
+                        if (options.isExceptionToBeThrownOnSOAPFault()) {
+                            // does the SOAPFault has a detail element for Excpetion
 
-                        throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
-                                soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+                            throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
+                                    soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
 
+                        }
                     }
                 }
                 completed = true;
@@ -323,7 +325,7 @@ class OutInAxisOperationClient implements OperationClient {
      * @return Returns MessageContext.
      * @throws AxisFault
      */
-    private MessageContext send(MessageContext msgctx) throws AxisFault {
+    protected MessageContext send(MessageContext msgctx) throws AxisFault {
 
         AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
@@ -415,21 +417,23 @@ class OutInAxisOperationClient implements OperationClient {
                 // send the request and wait for reponse
                 MessageContext response = send(msgctx);
                 // call the callback
-                SOAPEnvelope resenvelope = response.getEnvelope();
-                SOAPBody body = resenvelope.getBody();
-                if (body.hasFault()) {
-                    Exception ex = body.getFault().getException();
+                if (response!=null) {
+                    SOAPEnvelope resenvelope = response.getEnvelope();
+                    SOAPBody body = resenvelope.getBody();
+                    if (body.hasFault()) {
+                        Exception ex = body.getFault().getException();
 
-                    if (ex != null) {
-                        callback.onError(ex);
+                        if (ex != null) {
+                            callback.onError(ex);
+                        } else {
+                            callback.onError(new Exception(body.getFault()
+                                    .getReason().getText()));
+                        }
                     } else {
-                        callback.onError(new Exception(body.getFault()
-                                .getReason().getText()));
-                    }
-                } else {
-                    AsyncResult asyncResult = new AsyncResult(response);
+                        AsyncResult asyncResult = new AsyncResult(response);
 
-                    callback.onComplete(asyncResult);
+                        callback.onComplete(asyncResult);
+                    }
                 }
 
                 callback.setComplete(true);

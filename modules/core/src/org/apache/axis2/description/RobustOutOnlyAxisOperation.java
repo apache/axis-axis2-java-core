@@ -16,7 +16,18 @@
 
 package org.apache.axis2.description;
 
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.TransportUtils;
+
 import javax.xml.namespace.QName;
+import java.io.InputStream;
 
 public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
     public RobustOutOnlyAxisOperation() {
@@ -27,5 +38,60 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
     public RobustOutOnlyAxisOperation(QName name) {
         super(name);
         setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY);
+    }
+
+    public OperationClient createClient(ServiceContext sc, Options options) {
+        return new RobustOperationClient(this, sc, options);
+    }
+
+    class RobustOperationClient extends OutInAxisOperationClient {
+
+        public RobustOperationClient(OutInAxisOperation axisOp, ServiceContext sc, Options options) {
+            super(axisOp, sc, options);
+        }
+
+        protected MessageContext send(MessageContext msgctx) throws AxisFault {
+            AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
+
+            // create the responseMessageContext
+            MessageContext responseMessageContext = new MessageContext();
+
+            // This is a hack - Needs to change
+            responseMessageContext.setOptions(options);
+
+
+            responseMessageContext.setServerSide(false);
+            addMessageContext(responseMessageContext);
+
+            //sending the message
+            engine.send(msgctx);
+            responseMessageContext.setDoingREST(msgctx.isDoingREST());
+
+            responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
+                    .getProperty(MessageContext.TRANSPORT_IN));
+            responseMessageContext.setTransportIn(msgctx.getTransportIn());
+            responseMessageContext.setTransportOut(msgctx.getTransportOut());
+
+            SOAPEnvelope envelope = responseMessageContext.getEnvelope();
+            if (envelope == null) {
+                // If request is REST we assume the responseMessageContext is REST, so
+                // set the variable
+                InputStream inStream = (InputStream) responseMessageContext.
+                        getProperty(MessageContext.TRANSPORT_IN);
+                if (inStream != null) {
+                    envelope = TransportUtils.createSOAPMessage(
+                            responseMessageContext, msgctx.getEnvelope().getNamespace()
+                            .getName());
+                }
+            }
+            if (envelope != null) {
+                if (envelope.getBody().hasFault()) {
+                    SOAPFault soapFault = envelope.getBody().getFault();
+                    throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
+                            soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+                }
+            }
+            return null;
+        }
     }
 }
