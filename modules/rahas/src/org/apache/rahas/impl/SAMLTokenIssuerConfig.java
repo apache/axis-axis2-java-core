@@ -57,7 +57,18 @@ public class SAMLTokenIssuerConfig {
      */
     private final static QName CRYPTO_PROPERTIES = new QName("cryptoProperties");
     
+    /**
+     * Element to specify the lifetime of the SAMLToken
+     * Dafaults to 300000 milliseconds (5 mins)
+     */
+    private final static QName TTL = new QName("timeToLive");
+    
+    /**
+     * Element to list the trusted services
+     */
     private final static QName TRUSTED_SERVICES = new QName("trusted-services");
+    
+    private final static QName KEY_SIZE = new QName("keySize");
     
     private final static QName SERVICE = new QName("service");
     private final static QName ALIAS = new QName("alias");
@@ -73,9 +84,9 @@ public class SAMLTokenIssuerConfig {
     protected String issuerName;
     protected HashMap trustedServices;
     protected String trustStorePropFile;
-
+    protected int keySize = 128;
+    protected long ttl = 300000;
     protected boolean addRequestedAttachedRef;
-
     protected boolean addRequestedUnattachedRef;
 
     private SAMLTokenIssuerConfig(OMElement elem) throws TrustException {
@@ -115,6 +126,25 @@ public class SAMLTokenIssuerConfig {
         
         if(this.cryptoPropFile == null || "".equals(this.cryptoPropFile)) {
             throw new TrustException("samlPropFileMissing");
+        }
+        
+        //time to live
+        OMElement ttlElem = elem.getFirstChildWithName(TTL);
+        if(ttlElem != null) {
+            try {
+                this.ttl = Long.parseLong(ttlElem.getText().trim());
+            } catch (NumberFormatException e) {
+                throw new TrustException("invlidTTL");
+            }
+        }
+        
+        OMElement keySizeElem = elem.getFirstChildWithName(KEY_SIZE);
+        if(keySizeElem != null) {
+            try {
+                this.keySize = Integer.parseInt(keySizeElem.getText().trim());
+            } catch (NumberFormatException e) {
+                throw new TrustException("invalidKeysize");
+            }
         }
         
         this.addRequestedAttachedRef = elem

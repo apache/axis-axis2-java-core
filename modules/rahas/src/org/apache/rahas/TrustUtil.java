@@ -21,6 +21,7 @@ import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.w3c.dom.Document;
@@ -114,6 +115,25 @@ public class TrustUtil {
         return createOMElement(parent, Constants.WST_NS,
                 Constants.KEY_SIZE_LN,
                 Constants.WST_PREFIX);
+    }
+    
+    public static OMElement createLifetimeElement(OMElement parent,
+            String created, String expires) {
+        OMElement ltElem = createOMElement(parent, Constants.WST_NS,
+                Constants.LIFETIME_LN,
+                Constants.WST_PREFIX);
+        
+        OMElement createdElem = createOMElement(ltElem, WSConstants.WSU_NS,
+                WSConstants.CREATED_LN,
+                WSConstants.WSU_PREFIX);
+        createdElem.setText(created);
+        
+        OMElement expiresElem = createOMElement(ltElem, WSConstants.WSU_NS,
+                WSConstants.EXPIRES_LN,
+                WSConstants.WSU_PREFIX);
+        expiresElem.setText(expires);
+        
+        return ltElem;
     }
 
     public static OMElement createAppliesToElement(OMElement parent) {

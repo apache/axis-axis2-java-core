@@ -54,15 +54,17 @@ public class TokenRequestDispatcher {
         
         RequestSecurityTokenType request = null;
         OMElement rstElem = inMsgCtx.getEnvelope().getBody()
-                            .getFirstChildWithName(
-                                    new QName(Constants.WST_NS,
-                                            "RequestSecurityToken"));
+                .getFirstChildWithName(
+                        new QName(Constants.WST_NS,
+                                Constants.REQUEST_SECURITY_TOKEN_LN));
         try {
             request = RequestSecurityTokenType.Factory.parse(rstElem
                     .getXMLStreamReader());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new TrustException(TrustException.INVALID_REQUEST, e);
+            throw new TrustException(TrustException.INVALID_REQUEST, 
+                    new String[] { "missing " + Constants.WST_PREFIX + ":"
+                            + Constants.REQUEST_SECURITY_TOKEN_LN }, e);
         }
         
         URI reqType = request.getRequestType();

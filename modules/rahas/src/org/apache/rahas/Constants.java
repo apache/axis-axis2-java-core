@@ -37,6 +37,7 @@ public interface Constants {
     public final static String KEY_SIZE_LN = "KeySize";
     public final static String ENTROPY_LN = "Entropy";
     public final static String APPLIES_TO_LN = "AppliesTo";
+    public final static String LIFETIME_LN = "Lifetime";
     
     //RequestTypes
     public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";

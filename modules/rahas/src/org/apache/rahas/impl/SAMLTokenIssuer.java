@@ -35,7 +35,12 @@ import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
+import org.apache.ws.security.util.Base64;
+import org.apache.ws.security.util.XmlSchemaDateFormat;
+import org.apache.xml.security.encryption.XMLCipher;
+import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.signature.XMLSignature;
+import org.apache.xml.security.utils.EncryptionConstants;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
@@ -50,6 +55,7 @@ import javax.xml.namespace.QName;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
@@ -159,29 +165,52 @@ public class SAMLTokenIssuer implements TokenIssuer {
             //Ceate the encrypted key
             WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
     
+            //Use thumbprint id
             encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
 
+            //SEt the encryption cert
             encrKeyBuilder.setUseThisCert(serviceCert);
+            
+            //set keysize
+            encrKeyBuilder.setKeySize(256);
+            
+            //Set key encryption algo
+            encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
+            
+            //Build
             encrKeyBuilder.prepare(doc, crypto);
             
+            //Extract the base64 encoded secret value
             secret = encrKeyBuilder.getEphemeralKey();
+            
+            //Extract the Encryptedkey DOM element 
             encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         } catch (WSSecurityException e) {
             throw new TrustException(
                     "errorInBuildingTheEncryptedKeyForPrincipal",
-                    new String[] { clientCert.getSubjectDN().getName()});
+                    new String[] { clientCert.getSubjectDN().getName()}, e);
         }
+        
+        //Creation and expiration times
+        Date creationTime = new Date();
+        Date expirationTime = new Date();
+        expirationTime.setTime(creationTime.getTime() + config.ttl);
         
         //Set the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(true);
 
-        SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, config, crypto);
+        SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, 
+                config, crypto, creationTime, expirationTime);
         
         OMElement rstrElem = TrustUtil
                 .createRequestSecurityTokenResponseElement(env.getBody());
-        OMElement reqSecTokenElem = TrustUtil
-                .createRequestedSecurityTokenElement(rstrElem);
 
+        TrustUtil.createtTokenTypeElement(rstrElem).setText(
+                Constants.TOK_TYPE_SAML_10);
+
+        TrustUtil.createKeySizeElement(rstrElem).setText(
+                Integer.toString(getKeySize(request, config)));
+        
         if (config.addRequestedAttachedRef) {
             TrustUtil.createRequestedAttachedRef(rstrElem, "#"
                     + assertion.getId(), Constants.TOK_TYPE_SAML_10);
@@ -192,39 +221,84 @@ public class SAMLTokenIssuer implements TokenIssuer {
                     Constants.TOK_TYPE_SAML_10);
         }
         
+        //Use GMT time in milliseconds
+        DateFormat zulu = new XmlSchemaDateFormat();
+        
+        //Add the Lifetime element
+        TrustUtil.createLifetimeElement(rstrElem, zulu.format(creationTime),
+                zulu.format(expirationTime));
+        
+        //Create the RequestedSecurityToken element and add the SAML token to it
+        OMElement reqSecTokenElem = TrustUtil
+                .createRequestedSecurityTokenElement(rstrElem);
         try {
             Node tempNode = assertion.toDOM();
-            reqSecTokenElem.addChild((OMNode) ((Element) rstrElem).getOwnerDocument()
-                    .importNode(tempNode, true));
-            
-            //Store the token
-            Token sctToken = new Token(assertion.getId(), (OMElement)assertion.toDOM());
-            //At this point we definitely have the secret
-            //Otherwise it should fail with an exception earlier
-            sctToken.setSecret(secret); 
+            reqSecTokenElem.addChild((OMNode) ((Element) rstrElem)
+                    .getOwnerDocument().importNode(tempNode, true));
+
+            // Store the token
+            Token sctToken = new Token(assertion.getId(), (OMElement) assertion
+                    .toDOM());
+            // At this point we definitely have the secret
+            // Otherwise it should fail with an exception earlier
+            sctToken.setSecret(secret);
             TrustUtil.getTokenStore(inMsgCtx).add(sctToken);
             
         } catch (SAMLException e) {
             throw new TrustException("samlConverstionError", e);
         }
 
+        //Add the RequestedProofToken
+        OMElement reqProofTokElem = TrustUtil
+                .createRequestedProofTokenElement(rstrElem);
+        OMElement binSecElem = TrustUtil.createBinarySecretElement(
+                reqProofTokElem, null);
+        binSecElem.setText(Base64.encode(secret));
         
-        // Set the DOM impl to DOOM
+        // Unet the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(false);
         return env;
     }
     
     /**
-     * Uses the <code>wst:AppliesTo</code> to figure out the certificate to encrypt the
-     * secret in the SAML token 
+     * Get the keysize of the encrypted key
+     * If the request contains a <code>wst:KeySize</code> element and if it is a
+     * a valid value then return that value. If not, then use the value 
+     * available in the config. 
+     * @return
+     */
+    private int getKeySize(OMElement request, SAMLTokenIssuerConfig config)
+            throws TrustException {
+        OMElement keySizeElem = request.getFirstChildWithName(
+                    new QName(Constants.WST_NS, Constants.KEY_SIZE_LN));
+        if (keySizeElem != null) {
+            // Try to get the wst:KeySize value
+            try {
+                return Integer.parseInt(keySizeElem.getText().trim());
+            } catch (NumberFormatException e) {
+                throw new TrustException(TrustException.INVALID_REQUEST,
+                        new String[] { "invalid wst:Keysize value" });
+            }
+        } else {
+            return config.keySize;
+        }
+    }
+
+    /**
+     * Uses the <code>wst:AppliesTo</code> to figure out the certificate to 
+     * encrypt the secret in the SAML token 
      * @param request
      * @param config
      * @param crypto
      * @throws WSSecurityException
      * @return
      */
-    private X509Certificate getServiceCert(OMElement request, SAMLTokenIssuerConfig config, Crypto crypto) throws WSSecurityException, TrustException {
-        OMElement appliesToElem = request.getFirstChildWithName(new QName(Constants.WSP_NS, Constants.APPLIES_TO_LN));
+    private X509Certificate getServiceCert(OMElement request,
+            SAMLTokenIssuerConfig config, Crypto crypto)
+            throws WSSecurityException, TrustException {
+        
+        OMElement appliesToElem = request.getFirstChildWithName(
+                new QName(Constants.WSP_NS, Constants.APPLIES_TO_LN));
         if(appliesToElem != null) {
             //Right now we only expect the service epr address to be here
             String address = appliesToElem.getText().trim();
@@ -243,11 +317,23 @@ public class SAMLTokenIssuer implements TokenIssuer {
     }
 
     /**
-     * 
-     * @param secret
+     * Create the SAML assertion with the secret held in an 
+     * <code>xenc:EncryptedKey</code>
+     * @param doc
+     * @param encryptedKeyElem
+     * @param config
+     * @param crypto
+     * @param notBefore
+     * @param notAfter
      * @return
+     * @throws TrustException
      */
-    private SAMLAssertion createAssertion(Document doc, Element encryptedKeyElem, SAMLTokenIssuerConfig config, Crypto crypto) throws  TrustException {
+    private SAMLAssertion createAssertion(Document doc, 
+                Element encryptedKeyElem, 
+                SAMLTokenIssuerConfig config, 
+                Crypto crypto,
+                Date notBefore,
+                Date notAfter) throws  TrustException {
         try {
             String[] confirmationMethods = new String[]{SAMLSubject.CONF_HOLDER_KEY};
             
@@ -269,10 +355,6 @@ public class SAMLTokenIssuer implements TokenIssuer {
                     subject, Arrays.asList(new SAMLAttribute[] { attribute }));
             
             SAMLStatement[] statements = {attrStmt};
-            
-            Date notBefore = new Date();
-            Date notAfter = new Date();
-            notAfter.setTime(notAfter.getTime() + (12*60*60*1000));
             
             SAMLAssertion assertion = new SAMLAssertion(config.issuerName, notBefore,
                     notAfter, null, null, Arrays.asList(statements));

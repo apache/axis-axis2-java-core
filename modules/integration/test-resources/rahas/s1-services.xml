@@ -16,6 +16,8 @@
 			<issuerKeyAlias>sts</issuerKeyAlias>
 			<issuerKeyPassword>password</issuerKeyPassword>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
+			<timeToLive>300000</timeToLive>
+			<keySize>256</keySize>
 			<addRequestedAttachedRef />
 			<addRequestedUnattachedRef />
 			<trusted-services>
