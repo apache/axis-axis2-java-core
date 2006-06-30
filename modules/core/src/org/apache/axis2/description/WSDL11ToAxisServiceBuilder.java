@@ -3,6 +3,7 @@ package org.apache.axis2.description;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -384,18 +385,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         Operation wsdl4jOperation;
         while (wsdl4JOperationsIterator.hasNext()) {
             wsdl4jOperation = (Operation) wsdl4JOperationsIterator.next();
-
             axisService.addOperation(
                     populateOperations(
                             wsdl4jOperation,
+                            wsdl4jPortType,
                             dif,
                     wrappableOperations.contains(wsdl4jOperation)));
         }
     }
-
-    /////////////////////////////////////////////////////////////////////////////
-    //////////////////////////// Internal Component Copying ///////////////////
-
     /**
      * Copy the component from the operation
      * @param wsdl4jOperation
@@ -403,7 +400,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @return
      * @throws Exception
      */
-    private AxisOperation populateOperations(Operation wsdl4jOperation,
+    private AxisOperation populateOperations(Operation wsdl4jOperation, PortType wsdl4jPortType,
                                              Definition dif,
                                              boolean isWrappable) throws Exception {
         QName opName = new QName(wsdl4jOperation.getName());
@@ -449,6 +446,20 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             dif, inMessage, PORT_TYPE_OPERATION_INPUT);
 
                 }
+                // Check if the action is already set as we don't want to override it
+                // with the Default Action Pattern
+                ArrayList inputActions = axisOperation.getWsamappingList();
+                String action = null;
+                if(inputActions == null || inputActions.size()==0){
+                    action = WSDL11ActionHelper.getActionFromInputElement(dif,wsdl4jPortType, wsdl4jOperation,wsdl4jInputMessage);
+                }
+                if(action!=null){
+                    if(inputActions == null){
+                        inputActions = new ArrayList();
+                        axisOperation.setWsamappingList(inputActions);
+                    }
+                    inputActions.add(action);
+                }
             }
             //Create an output message and add
             Output wsdl4jOutputMessage = wsdl4jOperation.getOutput();
@@ -467,6 +478,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
                 }
+                // Check if the action is already set as we don't want to override it
+                // with the Default Action Pattern
+                String action = axisOperation.getOutputAction();
+                if(action == null){
+                    action = WSDL11ActionHelper.getActionFromOutputElement(dif,wsdl4jPortType, wsdl4jOperation,wsdl4jOutputMessage);
+                }
+                if(action!=null){
+                    axisOperation.setOutputAction(action);
+                }
             }
         } else {
             if (null != wsdl4jInputMessage) {
@@ -482,6 +502,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     copyExtensibleElements(message.getExtensibilityElements(),
                             dif, inMessage, PORT_TYPE_OPERATION_OUTPUT);
 
+                }
+                // Check if the action is already set as we don't want to override it
+                // with the Default Action Pattern
+                String action = axisOperation.getOutputAction();
+                if(action == null){
+                    action = WSDL11ActionHelper.getActionFromInputElement(dif,wsdl4jPortType, wsdl4jOperation,wsdl4jInputMessage);
+                }
+                if(action!=null){
+                    axisOperation.setOutputAction(action);
                 }
             }
             //Create an output message and add
@@ -500,6 +529,20 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             dif, outMessage, PORT_TYPE_OPERATION_INPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
+                }
+                // Check if the action is already set as we don't want to override it
+                // with the Default Action Pattern
+                ArrayList inputActions = axisOperation.getWsamappingList();
+                String action = null;
+                if(inputActions == null || inputActions.size()==0){
+                    action = WSDL11ActionHelper.getActionFromOutputElement(dif,wsdl4jPortType, wsdl4jOperation,wsdl4jOutputMessage);
+                }
+                if(action!=null){
+                    if(inputActions == null){
+                        inputActions = new ArrayList();
+                        axisOperation.setWsamappingList(inputActions);
+                    }
+                    inputActions.add(action);
                 }
             }
         }
@@ -520,7 +563,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 faultyMessge.setName(faultMessage.getQName().getLocalPart());
 
             }
-
+            
+            // Check if the action is already set as we don't want to override it
+            // with the Default Action Pattern
+            String action = axisOperation.getFaultAction(fault.getName());
+            if(action == null){
+                action = WSDL11ActionHelper.getActionFromFaultElement(dif,wsdl4jPortType, wsdl4jOperation,fault);
+            }
+            if(action!=null){
+                axisOperation.addFaultAction(fault.getName(), action);
+            }
             axisOperation.setFaultMessages(faultyMessge);
         }
         return axisOperation;
