@@ -17,12 +17,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.SocketException;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -38,6 +32,11 @@ import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.IOException;
+import java.net.SocketException;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -66,12 +65,16 @@ public class SimpleHTTPServer implements TransportListener {
     public SimpleHTTPServer() {
     }
 
-    /** Create a SimpleHTTPServer using default HttpFactory settings */
+    /**
+     * Create a SimpleHTTPServer using default HttpFactory settings
+     */
     public SimpleHTTPServer(ConfigurationContext configurationContext, int port) throws AxisFault {
         this(new HttpFactory(configurationContext, port));
     }
-    
-    /** Create a configured SimpleHTTPServer */
+
+    /**
+     * Create a configured SimpleHTTPServer
+     */
     public SimpleHTTPServer(HttpFactory httpFactory) throws AxisFault {
         this.httpFactory = httpFactory;
         this.configurationContext = httpFactory.getConfigurationContext();
@@ -97,10 +100,10 @@ public class SimpleHTTPServer implements TransportListener {
             Parameter param = transprtIn.getParameter(PARAM_PORT);
             if (param != null)
                 this.port = Integer.parseInt((String) param.getValue());
-            
-            if (httpFactory==null)
+
+            if (httpFactory == null)
                 httpFactory = new HttpFactory(configurationContext, port);
-            
+
             param = transprtIn.getParameter(HOST_ADDRESS);
             if (param != null)
                 hostAddress = ((String) param.getValue()).trim();
@@ -144,7 +147,7 @@ public class SimpleHTTPServer implements TransportListener {
             SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
-            ListenerManager listenerManager =configctx .getListenerManager();
+            ListenerManager listenerManager = configctx .getListenerManager();
             TransportInDescription trsIn = new TransportInDescription(
                     new QName(Constants.TRANSPORT_HTTP));
             trsIn.setReceiver(receiver);
@@ -198,8 +201,10 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
     }
-    
-    /** Getter for httpFactory */
+
+    /**
+     * Getter for httpFactory
+     */
     public HttpFactory getHttpFactory() {
         return httpFactory;
     }
@@ -240,6 +245,9 @@ public class SimpleHTTPServer implements TransportListener {
         } else {
             try {
                 localAddress = HttpUtils.getIpAddress();
+                if (localAddress == null) {
+                    localAddress = "127.0.0.1";
+                }
             } catch (SocketException e) {
                 throw AxisFault.makeFault(e);
             }
