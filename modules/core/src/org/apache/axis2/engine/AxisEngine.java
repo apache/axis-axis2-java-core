@@ -575,7 +575,8 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-        log.info(Messages.getMessage("receivederrormessage",
+
+    	log.info(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
@@ -586,6 +587,18 @@ public class AxisEngine {
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
         msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
         invoke(msgContext);
+        
+        if (msgContext.isServerSide() && !msgContext.isPaused()) {
+
+            // invoke the Message Receivers
+            checkMustUnderstand(msgContext);
+
+            checkUsingAddressing(msgContext);
+
+            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+
+            receiver.receive(msgContext);
+        }
     }
 
     public void resume(MessageContext msgctx) throws AxisFault {
@@ -655,7 +668,14 @@ public class AxisEngine {
             AxisOperation axisOperation = opContext.getAxisOperation();
             ArrayList faultExecutionChain = axisOperation.getPhasesOutFaultFlow();
 
-            msgContext.setExecutionChain((ArrayList) faultExecutionChain.clone());
+            //adding both operation specific and global out fault flows.
+            
+            ArrayList outFaultPhases = new ArrayList();
+            outFaultPhases.addAll((ArrayList) faultExecutionChain.clone());
+            outFaultPhases.addAll((ArrayList) msgContext.getConfigurationContext()
+                    .getAxisConfiguration().getOutFaultFlow().clone());
+            
+            msgContext.setExecutionChain((ArrayList) outFaultPhases.clone());
             msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
             invoke(msgContext);
         }
