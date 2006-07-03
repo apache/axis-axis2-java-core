@@ -16,33 +16,51 @@
 
 package sample.yahooservices.RESTSearch;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.client.RESTCall;
+import org.apache.axis2.client.ServiceClient;
 
 public class RESTSearchClient {
     public static void main(String[] args) {
         try {
 
-            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch?appid=ApacheRestDemo&query=finances&format=pdf";
+//            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch?appid=ApacheRestDemo&query=finances&format=pdf";
+            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
 
-            RESTCall call = new RESTCall();
+            ServiceClient client = new ServiceClient();
             Options options = new Options();
-            call.setOptions(options);
+            client.setOptions(options);
             options.setTo(new EndpointReference(epr));
-            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
-            options.setProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET, Constants.VALUE_TRUE);
+            options.setProperty(Constants.Configuration.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_GET);
 
             //if post is through GET of HTTP
-            OMElement response = call.sendReceive();
-            response.serialize(System.out);
+            OMElement response = client.sendReceive(getPayloadForYahooSearchCall());
+            System.out.println("response = " + response);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static OMElement getPayloadForYahooSearchCall() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMElement rootElement = fac.createOMElement("webSearch", null);
+
+        OMElement appId = fac.createOMElement("appid", null, rootElement);
+        appId.setText("ApacheRestDemo");
+
+        OMElement query = fac.createOMElement("query", null, rootElement);
+        query.setText("Axis2");
+
+        OMElement format = fac.createOMElement("format", null, rootElement);
+        format.setText("pdf");
+
+        return rootElement;
     }
 
 

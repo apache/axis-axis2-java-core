@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,9 +48,9 @@ public class EndpointReference implements Serializable {
     
     /**
      * <EndpointReference>
-     * <Address>xs:anyURI</Address>
-     * <ReferenceParameters>xs:any*</ReferenceParameters>
-     * <MetaData>xs:any*</MetaData>
+     *    <Address>xs:anyURI</Address>
+     *    <ReferenceParameters>xs:any*</ReferenceParameters>
+     *    <MetaData>xs:any*</MetaData>
      * <!-- In addition to this, EPR can contain any number of OMElements -->
      * </EndpointReference>
      */

@@ -31,11 +31,16 @@ public class AsyncResult {
      */
     private MessageContext result;
 
+    /**
+     *
+     * @param result - resulting message context
+     */
     public AsyncResult(MessageContext result) {
         this.result = result;
     }
 
     /**
+     * This will return the message context of the resulting message context
      * @return SOAPEnvelope
      */
     public SOAPEnvelope getResponseEnvelope() {
