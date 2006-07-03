@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.URIResolver;
 
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -1258,6 +1259,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
 
                 addSOAPAction(doc, methodElement, axisOperation);
+                addOutputAndFaultActions(doc, methodElement, axisOperation);
                 //add header ops for input
                 addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                 //add header ops for output
@@ -1296,6 +1298,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
 
                     addSOAPAction(doc, methodElement, axisOperation);
+                    addOutputAndFaultActions(doc, methodElement, axisOperation);
                     addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                     addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
@@ -1457,6 +1460,31 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
     }
 
+    /**
+     * Adds the output and fault actions
+     * @param doc
+     * @param methodElement
+     * @param operation
+     */
+    private void addOutputAndFaultActions(Document doc, Element methodElement, AxisOperation operation){
+        String outputAction = operation.getOutputAction(); 
+        if(outputAction != null){
+            Element outputActionElt = doc.createElement(org.apache.axis2.Constants.OUTPUT_ACTION_MAPPING);
+            outputActionElt.setAttribute(AddressingConstants.WSA_ACTION, outputAction);
+            methodElement.appendChild(outputActionElt);
+        }
+        
+        String[] faultActionNames = operation.getFaultActionNames();
+        if(faultActionNames != null){
+            for(int i=0;i<faultActionNames.length; i++){
+                Element faultActionElt = doc.createElement(org.apache.axis2.Constants.FAULT_ACTION_MAPPING);
+                faultActionElt.setAttribute(org.apache.axis2.Constants.FAULT_ACTION_NAME, faultActionNames[i]);
+                faultActionElt.setAttribute(AddressingConstants.WSA_ACTION, operation.getFaultAction(faultActionNames[i]));
+                methodElement.appendChild(faultActionElt);
+            }
+        }
+    }
+    
     /**
      * populate the header parameters
      *

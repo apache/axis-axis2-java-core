@@ -17,10 +17,18 @@
 
 package org.apache.axis2.deployment;
 
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
@@ -31,14 +39,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Builds a service description from OM
@@ -469,11 +469,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(parameters, op_descrip, service);
             //To process wsamapping;
-            Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.ACTION_MAPPING));
-            if (mappingIterator != null) {
-                ArrayList wsamappings = processWsaMapping(mappingIterator);
-                op_descrip.setWsamappingList(wsamappings);
-            }
+            processActionMappings(operation, op_descrip);
 
             // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));

@@ -49,6 +49,17 @@
 					<actionMapping>
 						<xsl:value-of select="@soapaction"/>
 					</actionMapping>
+					<xsl:for-each select="outputActionMapping">
+					<outputActionMapping>
+						<xsl:value-of select="@Action"/>
+					</outputActionMapping>
+					</xsl:for-each>
+					<xsl:for-each select="faultActionMapping">
+					<faultActionMapping>
+						<xsl:attribute name="faultName"><xsl:value-of select="@faultName"/></xsl:attribute>
+						<xsl:value-of select="@Action"/>
+					</faultActionMapping>
+					</xsl:for-each>
 				</operation>
 			</xsl:for-each>
         </service>

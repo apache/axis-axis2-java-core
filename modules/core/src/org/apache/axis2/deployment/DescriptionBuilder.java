@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -386,21 +387,47 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     /**
-     * To process <wsamapping>Value</wsamapping> elements which can be there inside operation tag
-     * either in services.xml or module.xml
-     *
-     * @param mappingIterator
-     * @return ArrayList
+     * Populate the AxisOperation with details from the actionMapping, outputActionMapping
+     * and faultActionMapping elements from the operation element.
+     * @param operation
+     * @param op_descrip
      */
-    protected ArrayList processWsaMapping(Iterator mappingIterator) {
+    protected void processActionMappings(OMElement operation, AxisOperation op_descrip){
+        Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.ACTION_MAPPING));
         ArrayList mappingList = new ArrayList();
         while (mappingIterator.hasNext()) {
             OMElement mappingElement = (OMElement) mappingIterator.next();
-            mappingList.add(mappingElement.getText().trim());
+            String inputActionString = mappingElement.getText().trim();
+            if(log.isTraceEnabled()){
+                log.trace("Input Action Mapping found: "+inputActionString);
+            }
+            mappingList.add(inputActionString);
         }
-        return mappingList;
+        op_descrip.setWsamappingList(mappingList);
+        
+        OMElement outputAction = operation.getFirstChildWithName(new QName(Constants.OUTPUT_ACTION_MAPPING));
+        if((outputAction != null) && (outputAction.getText() != null)){
+            String outputActionString = outputAction.getText().trim();
+            if(log.isTraceEnabled()){
+                log.trace("Output Action Mapping found: "+outputActionString);
+            }
+            op_descrip.setOutputAction(outputActionString);
+        }
+        Iterator faultActionsIterator = operation.getChildrenWithName(new QName(Constants.FAULT_ACTION_MAPPING));
+        while (faultActionsIterator.hasNext()) {
+            OMElement faultMappingElement = (OMElement) faultActionsIterator.next();
+            String faultActionString = faultMappingElement.getText().trim();
+            String faultActionName = faultMappingElement.getAttributeValue(new QName(Constants.FAULT_ACTION_NAME));
+            if(faultActionName != null && faultActionString!=null){
+                if(log.isTraceEnabled()){
+                    log.trace("Fault Action Mapping found: "+faultActionName+", "+faultActionString);
+                }
+                op_descrip.addFaultAction(faultActionName, faultActionString);
+            }
+        }
     }
-
+    
+    
     protected void processPolicyElements(int type, Iterator policyElements,
                                          PolicyInclude policyInclude) {
         OMPolicyReader reader = (OMPolicyReader) PolicyFactory

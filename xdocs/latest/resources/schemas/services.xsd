@@ -3,6 +3,12 @@
 	<xs:complexType name="operationType">
 		<xs:sequence>
 			<xs:element name="actionMapping" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="outputActionMapping" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="faultActionMapping" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="faultName" use="required"/>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="messageReceiver" minOccurs="0">
 				<xs:complexType>
 					<xs:attribute name="class" use="required"/>
@@ -45,6 +51,7 @@
 				<xs:element name="operation" type="operationType" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="wsaddressing" type="xs:string" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="serviceGroup">

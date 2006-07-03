@@ -324,6 +324,10 @@ public class AxisService2OM implements Java2WSDLConstants {
                             + ":" + inaxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.INPUT_POLICY,
                             inaxisMessage.getPolicyInclude(), input, fac);
+                    if(axisOperation.getWsamappingList()!=null && axisOperation.getWsamappingList().size()>0){
+                        String action = axisOperation.getWsamappingList().get(0).toString();
+                        addWSAWActionAttribute(fac,input,action);
+                    }
                     operation.addChild(input);
                 }
             }
@@ -343,6 +347,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                             + ":" + outAxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.OUTPUT_POLICY,
                             outAxisMessage.getPolicyInclude(), output, fac);
+                    addWSAWActionAttribute(fac,output,axisOperation.getOutputAction());
                     operation.addChild(output);
                 }
             }
@@ -359,6 +364,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                             + ":" + faultyMessge.getName(), null);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessge.getName(),
                             null);
+                    addWSAWActionAttribute(fac,fault,axisOperation.getFaultAction(faultyMessge.getName()));
                     // TODO add policies for fault messages
                     operation.addChild(fault);
                 }
@@ -847,6 +853,14 @@ public class AxisService2OM implements Java2WSDLConstants {
         return null;
     }
 
+    private void addWSAWActionAttribute(OMFactory fac, OMElement element, String action){
+        if(action==null || action.length()==0){
+            return;
+        }
+        OMNamespace namespace = element.declareNamespace(AddressingConstants.Final.WSAW_NAMESPACE,"wsaw");
+        element.addAttribute("Action", action, namespace);
+    }
+    
     private void addPolicyAsExtElement(int type, PolicyInclude policyInclude,
                                        OMElement element, OMFactory factory) throws Exception {
         ArrayList elementList = policyInclude.getPolicyElements(type);

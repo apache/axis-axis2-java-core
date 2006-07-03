@@ -17,10 +17,17 @@
 
 package org.apache.axis2.deployment;
 
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -31,13 +38,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Builds a module description from OM
@@ -216,12 +216,8 @@ public class ModuleBuilder extends DescriptionBuilder {
             processParameters(parameters, op_descrip, module);
 
             //To process wsamapping;
-            Iterator mappingIterator = operation.getChildrenWithName(new QName(Constants.ACTION_MAPPING));
-            if (mappingIterator != null) {
-                ArrayList wsamappings = processWsaMapping(mappingIterator);
-                op_descrip.setWsamappingList(wsamappings);
-            }
-
+            processActionMappings(operation, op_descrip);
+            
             // setting the mep of the operation
             // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));

@@ -163,6 +163,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String CONFIG_CONTEXT = "config_context";
     public static final String WSDL_CONTENT = "wsdl";
     public static final String ACTION_MAPPING = "actionMapping";
+    public static final String OUTPUT_ACTION_MAPPING = "outputActionMapping";
+    public static final String FAULT_ACTION_MAPPING = "faultActionMapping";
+    public static final String FAULT_ACTION_NAME = "faultName";
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
     public static final String TESTING_PATH = "target/test-resources/";
