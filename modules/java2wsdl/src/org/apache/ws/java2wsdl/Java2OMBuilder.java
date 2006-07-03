@@ -1,4 +1,14 @@
-package org.apache.ws.java2wsdl;
+package org.apache.ws.java2wsdl; 
+
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -9,15 +19,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -160,37 +161,40 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
     private void generateMessages(OMFactory fac, OMElement definitions) {
         Hashtable namespaceMap = new Hashtable();
-        String namespacePrefix;
-        String namespaceURI;
-        QName messagePartType;
+        String namespacePrefix = null;
+        String namespaceURI = null;
+        QName messagePartType = null;
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
 
+            //Request Message
+            OMElement requestMessge = fac.createOMElement(
+                    MESSAGE_LOCAL_NAME, wsdl);
+            requestMessge.addAttribute(ATTRIBUTE_NAME, jmethod
+                    .getSimpleName()
+                    + MESSAGE_SUFFIX, null);
+            definitions.addChild(requestMessge);
+            
             // only if a type for the message part has already been defined
             if ((messagePartType = typeTable.getComplexSchemaType(jmethod
-                    .getSimpleName())) != null) {
+                    .getSimpleName())) != null) 
+            {
                 namespaceURI = messagePartType.getNamespaceURI();
                 // avoid duplicate namespaces
-                if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
+                if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) 
+                {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
 
-                //Request Message
-                OMElement requestMessge = fac.createOMElement(
-                        MESSAGE_LOCAL_NAME, wsdl);
-                requestMessge.addAttribute(ATTRIBUTE_NAME, jmethod
-                        .getSimpleName()
-                        + MESSAGE_SUFFIX, null);
-                definitions.addChild(requestMessge);
                 OMElement requestPart = fac.createOMElement(
                         PART_ATTRIBUTE_NAME, wsdl);
                 requestMessge.addChild(requestPart);
                 requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
-
+    
                 requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                        namespacePrefix + COLON_SEPARATOR
-                                + jmethod.getSimpleName(), null);
+                            namespacePrefix + COLON_SEPARATOR
+                                    + jmethod.getSimpleName(), null);
             }
 
             // only if a type for the message part has already been defined
@@ -202,7 +206,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
-                //Response Message
+            //Response Message
                 OMElement responseMessge = fac.createOMElement(
                         MESSAGE_LOCAL_NAME, wsdl);
                 responseMessge.addAttribute(ATTRIBUTE_NAME, jmethod
@@ -211,10 +215,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 definitions.addChild(responseMessge);
                 OMElement responsePart = fac.createOMElement(
                         PART_ATTRIBUTE_NAME, wsdl);
-                responseMessge.addChild(responsePart);
-                responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+            responseMessge.addChild(responsePart);
+            responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
 
-                responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+            responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                         namespacePrefix + COLON_SEPARATOR
                                 + jmethod.getSimpleName() + RESPONSE, null);
             }
@@ -228,6 +232,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     .get(namespaceURI));
         }
     }
+
 
     /**
      * Generate the porttypes

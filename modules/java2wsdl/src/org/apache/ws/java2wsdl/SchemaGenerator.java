@@ -27,7 +27,8 @@ import java.util.*;
 *
 */
 
-public class SchemaGenerator implements Java2WSDLConstants {
+public class SchemaGenerator implements Java2WSDLConstants 
+{
 
     public static final String NAME_SPACE_PREFIX = "stn_";
 
@@ -56,6 +57,10 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private String schemaTargetNameSpace;
 
     private String schema_namespace_prefix;
+    
+    private String attrFormDefault = null;
+    
+    private String elementFormDefault = null;
 
     private Class clazz;
 
@@ -83,9 +88,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
         } else {
             this.schema_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
         }
-        XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.getPackageName(className,loader), schemaTargetNameSpace, schema_namespace_prefix);
-        xmlSchema.getPrefixToNamespaceMap().put(DEFAULT_SCHEMA_NAMESPACE_PREFIX,
-                URI_2001_SCHEMA_XSD);
+        //initializeSchemaMap(this.schemaTargetNameSpace, this.schema_namespace_prefix);
     }
 
     /**
@@ -128,9 +131,13 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
             // since we do not support overload
             HashMap uniqueMethods = new HashMap();
+            XmlSchemaComplexType methodSchemaType = null;
+            XmlSchemaSequence sequence = null;
+            QName methodPartSchemaTypeName = null;
 
             for (int i = 0; i < methods.length; i++) {
                 JMethod jMethod = methods[i];
+                String methodName = methods[i].getSimpleName();
                 // no need to think abt this method , since that is system
                 // config method
                 if (excludeMethods.contains(jMethod.getSimpleName())) {
@@ -147,219 +154,40 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     continue;
                 }
                 uniqueMethods.put(jMethod.getSimpleName(), jMethod);
-
-                //it can easily get the annotations
-//                jMethod.getAnnotations();
+                //create the schema type for the method wrapper
+                
+                uniqueMethods.put(jMethod.getSimpleName(), jMethod);
                 JParameter [] paras = jMethod.getParameters();
-                for (int j = 0; j < paras.length; j++) {
+                String parameterNames [] = null;
+                if (paras.length > 0) 
+                {
+                    parameterNames = methodTable.getParameterNames(methodName);
+                    sequence = new XmlSchemaSequence();
+                    
+                    methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName());
+                    methodSchemaType.setParticle(sequence);
+                }
+                
+                for (int j = 0; j < paras.length; j++) 
+                {
                     JParameter methodParameter = paras[j];
                     JClass paraType = methodParameter.getType();
-                    String classTypeName = paraType.getQualifiedName();
-                    if (paraType.isArrayType()) {
-                        classTypeName = paraType.getArrayComponentType()
-                                .getQualifiedName();
-                        if (!typeTable.isSimpleType(classTypeName)) {
-                            generateSchema(paraType.getArrayComponentType());
-                        }
-                    } else {
-                        if (!typeTable.isSimpleType(classTypeName)) {
-                            generateSchema(methodParameter.getType());
-                        }
-                    }
-                    /**
-                     * 1. have to check whethet its a simple type 2. then to
-                     * check whther its a simple type array 3. OM elemney 4.
-                     * Bean
-                     */
-
+                    generateSchemaForType(sequence, paraType, 
+                            ( parameterNames != null && parameterNames[j] != null )? parameterNames[j] : methodParameter.getSimpleName());
                 }
                 // for its return type
-                JClass retuenType = jMethod.getReturnType();
-                if (!retuenType.isVoidType()) {
-                    if (retuenType.isArrayType()) {
-                        String returnTypeName = retuenType
-                                .getArrayComponentType().getQualifiedName();
-                        if (!typeTable.isSimpleType(returnTypeName)) {
-                            generateSchema(retuenType.getArrayComponentType());
-                        }
-                    } else {
-                        if (!typeTable.isSimpleType(retuenType
-                                .getQualifiedName())) {
-                            generateSchema(retuenType);
-                        }
-                    }
+                JClass returnType = jMethod.getReturnType();
+                
+                if (!returnType.isVoidType()) 
+                {
+                    methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName() + RESPONSE);
+                    sequence = new XmlSchemaSequence();
+                    methodSchemaType.setParticle(sequence);
+                    generateSchemaForType(sequence, returnType, "return");
                 }
-
             }
-            generateWrapperElements(methods);
         }
         return schemaMap.values();
-    }
-
-    /**
-     * Generates wrapper element. If a method takes more than one parameter e.g.
-     * foo(Type1 para1, Type2 para2){} creates a Wrapper element like <element
-     * name="fooInParameter type="tns:fooInParameterElement""> <complexType
-     * name="fooInParameterElement"> <sequnce> <element name="para1"
-     * type="tns:Type1"> <element name="para2" type="tns:Type2"> </sequnce>
-     * </complexType> </element>
-     */
-    private void generateWrapperElements(JMethod methods[]) throws Exception {
-        for (int i = 0; i < methods.length; i++) {
-            JMethod method = methods[i];
-            if (excludeMethods.contains(method.getSimpleName())) {
-                continue;
-            }
-//            if (method.getSimpleName().equals("init")
-//                    || method.getSimpleName().equals("setOperationContext")
-//                    || method.getSimpleName().equals("destroy"))
-//                continue;
-            if (!method.isPublic())
-                continue;
-            generateWrapperElementforMethod(method);
-        }
-    }
-
-    private void generateWrapperElementforMethod(JMethod method) throws Exception {
-        //since the wrapper elements are generated for the methods of the service interface
-        //we get the schema that corresponds to the package of the service interface classname
-        XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.getPackageName(className,classLoader),
-                schemaTargetNameSpace,
-                schema_namespace_prefix);
-        String methodName = method.getSimpleName();
-        XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
-        XmlSchemaSequence sequence = new XmlSchemaSequence();
-
-        XmlSchemaElement eltOuter = new XmlSchemaElement();
-        eltOuter.setName(methodName);
-        eltOuter.setSchemaType(complexType);
-        // adding this type to the table
-        QName elementName = new QName(this.schemaTargetNameSpace, eltOuter
-                .getName(), this.schema_namespace_prefix);
-        eltOuter.setQName(elementName);
-        typeTable.addComplexSchema(methodName, elementName);
-        xmlSchema.getItems().add(eltOuter);
-        xmlSchema.getElements().add(elementName, eltOuter);
-
-        JParameter [] paras = method.getParameters();
-        if (paras.length > 0) {
-            complexType.setParticle(sequence);
-        }
-        String parameterNames [] = null;
-        if (paras.length > 0) {
-            parameterNames = methodTable.getParameterNames(methodName);
-        }
-        for (int j = 0; j < paras.length; j++) {
-            JParameter methodParameter = paras[j];
-            String paraName = methodParameter.getSimpleName();
-            String classTypeName = methodParameter.getType().getQualifiedName();
-            boolean isArryType = methodParameter.getType().isArrayType();
-            if (isArryType) {
-                classTypeName = methodParameter.getType()
-                        .getArrayComponentType().getQualifiedName();
-            }
-
-            if (parameterNames != null) {
-                paraName = parameterNames[j];
-            }
-
-            if (typeTable.isSimpleType(classTypeName)) {
-                XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(paraName);
-                elt1.setSchemaTypeName(typeTable
-                        .getSimpleSchemaTypeName(classTypeName));
-                sequence.getItems().add(elt1);
-                if (isArryType) {
-                    elt1.setMaxOccurs(Long.MAX_VALUE);
-                    elt1.setMinOccurs(0);
-                }
-            } else {
-                XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(paraName);
-                elt1.setSchemaTypeName(typeTable
-                        .getComplexSchemaType(classTypeName));
-                sequence.getItems().add(elt1);
-                if (isArryType) {
-                    elt1.setMaxOccurs(Long.MAX_VALUE);
-                    elt1.setMinOccurs(0);
-                }
-
-                if (!xmlSchema.getPrefixToNamespaceMap().values().
-                        contains(typeTable.getComplexSchemaType(classTypeName).getNamespaceURI())) {
-                    XmlSchemaImport importElement = new XmlSchemaImport();
-                    importElement.setNamespace(typeTable.getComplexSchemaType(classTypeName).getNamespaceURI());
-                    xmlSchema.getItems().add(importElement);
-                    xmlSchema.getPrefixToNamespaceMap().
-                            put(generatePrefix(), typeTable.getComplexSchemaType(classTypeName).getNamespaceURI());
-                }
-            }
-        }
-
-        //generating wrapper element for retuen element
-        JClass methodReturnType = method.getReturnType();
-        generateWrapperforReturnType(methodReturnType, methodName);
-
-    }
-
-    private void generateWrapperforReturnType(JClass retuenType,
-                                              String methodName) throws Exception {
-        //since the wrapper elements are generated for the methods of the service interface
-        //we get the schema that corresponds to the package of the service interface classname
-        XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.getPackageName(className,classLoader),
-                schemaTargetNameSpace,
-                schema_namespace_prefix);
-        if (!retuenType.isVoidType()) {
-            XmlSchemaComplexType retuen_com_type = new XmlSchemaComplexType(
-                    xmlSchema);
-            XmlSchemaElement ret_eltOuter = new XmlSchemaElement();
-            ret_eltOuter.setName(methodName + RESPONSE);
-
-            ret_eltOuter.setSchemaType(retuen_com_type);
-            QName ret_comTypeName = new QName(this.schemaTargetNameSpace,
-                    ret_eltOuter.getName(), this.schema_namespace_prefix);
-            xmlSchema.getItems().add(ret_eltOuter);
-            xmlSchema.getElements().add(ret_comTypeName, ret_eltOuter);
-
-            typeTable.addComplexSchema(
-                    methodName + RESPONSE, ret_comTypeName);
-            String classTypeName = retuenType.getQualifiedName();
-            boolean isArryType = retuenType.isArrayType();
-            XmlSchemaSequence sequence = new XmlSchemaSequence();
-            retuen_com_type.setParticle(sequence);
-            if (isArryType) {
-                classTypeName = retuenType.getArrayComponentType()
-                        .getQualifiedName();
-            }
-            if (typeTable.isSimpleType(classTypeName)) {
-                XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName("return");
-                elt1.setSchemaTypeName(typeTable
-                        .getSimpleSchemaTypeName(classTypeName));
-                sequence.getItems().add(elt1);
-                if (isArryType) {
-                    elt1.setMaxOccurs(Long.MAX_VALUE);
-                    elt1.setMinOccurs(0);
-                }
-            } else {
-                XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName("return");
-                elt1.setSchemaTypeName(typeTable
-                        .getComplexSchemaType(classTypeName));
-                sequence.getItems().add(elt1);
-                if (isArryType) {
-                    elt1.setMaxOccurs(Long.MAX_VALUE);
-                    elt1.setMinOccurs(0);
-                }
-                if (!xmlSchema.getPrefixToNamespaceMap().values().
-                        contains(typeTable.getComplexSchemaType(classTypeName).getNamespaceURI())) {
-                    XmlSchemaImport importElement = new XmlSchemaImport();
-                    importElement.setNamespace(typeTable.getComplexSchemaType(classTypeName).getNamespaceURI());
-                    xmlSchema.getItems().add(importElement);
-                    xmlSchema.getPrefixToNamespaceMap().
-                            put(generatePrefix(), typeTable.getComplexSchemaType(classTypeName).getNamespaceURI());
-                }
-            }
-        }
     }
 
     /**
@@ -382,33 +210,35 @@ public class SchemaGenerator implements Java2WSDLConstants {
     /**
      * @param javaType
      */
-    private void generateSchema(JClass javaType) {
+    private QName generateSchema(JClass javaType) 
+    {
         String name = javaType.getQualifiedName();
-        if (typeTable.getComplexSchemaType(name) == null) {
+        QName schemaTypeName = typeTable.getComplexSchemaType(name);
+        if ( schemaTypeName == null) {
             String simpleName = javaType.getSimpleName();
 
             String packageName = javaType.getContainingPackage().getQualifiedName();
             String targetNameSpace = Java2WSDLUtils.schemaNamespaceFromPackageName(packageName).toString();
 
-            XmlSchema xmlSchema = getXmlSchema(packageName, targetNameSpace, generatePrefix());
-            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(packageName);
+            XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.schemaNamespaceFromPackageName(packageName).toString());
+            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
 
             XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
             XmlSchemaSequence sequence = new XmlSchemaSequence();
 
             XmlSchemaElement eltOuter = new XmlSchemaElement();
-            QName elemntName = new QName(targetNameSpace, simpleName, targetNamespacePrefix);
+            schemaTypeName = new QName(targetNameSpace, simpleName, targetNamespacePrefix);
             eltOuter.setName(simpleName);
-            eltOuter.setQName(elemntName);
+            eltOuter.setQName(schemaTypeName);
             complexType.setParticle(sequence);
             complexType.setName(simpleName);
 
             xmlSchema.getItems().add(eltOuter);
-            xmlSchema.getElements().add(elemntName, eltOuter);
+            xmlSchema.getElements().add(schemaTypeName, eltOuter);
             eltOuter.setSchemaTypeName(complexType.getQName());
 
             xmlSchema.getItems().add(complexType);
-            xmlSchema.getSchemaTypes().add(elemntName, complexType);
+            xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
 
             // adding this type to the table
             typeTable.addComplexSchema(name, eltOuter.getQName());
@@ -457,26 +287,112 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 }
             }
         }
+        return schemaTypeName;
     }
 
-    private XmlSchema getXmlSchema(String packageName, String targetNamespace, String targetNamespacePrefix) {
-        XmlSchema xmlSchema;
-        // schema element that will hold this type i.e. schema element whose
-        // targetnamespace
-        // corresponds to this type's package
-        if ((xmlSchema = (XmlSchema) schemaMap.get(packageName)) == null) {
+    private QName generateSchemaForType(XmlSchemaSequence sequence, JClass type, String partName) throws Exception
+    {
+        boolean isArrayType = type.isArrayType();
+        if ( isArrayType ) 
+        {
+            type = type.getArrayComponentType();
+        } 
+        
+        String classTypeName = type.getQualifiedName();
+        
+        QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
+        if ( schemaTypeName == null ) 
+        {
+            schemaTypeName = generateSchema(type);
+            addContentToMethodSchemaType(sequence, 
+                                            schemaTypeName, 
+                                            partName,
+                                            type.isArrayType());
+            //addImport((XmlSchema)schemaMap.get(schemaTargetNameSpace), schemaTypeName);
+            String schemaNamespace = Java2WSDLUtils.schemaNamespaceFromPackageName(type.getContainingPackage().
+                                        getQualifiedName()).toString();
+            addImport(getXmlSchema(schemaNamespace),schemaTypeName);
+                    
+        }
+        else
+        {
+            addContentToMethodSchemaType(sequence, 
+                                            schemaTypeName, 
+                                            partName,
+                                            type.isArrayType());
+        }
+        
+        return schemaTypeName;
+    }
+    
+    private void addContentToMethodSchemaType(XmlSchemaSequence sequence, 
+                                                QName schemaTypeName, 
+                                                String paraName,
+                                                boolean isArray )
+    {
+        XmlSchemaElement elt1 = new XmlSchemaElement();
+        elt1.setName(paraName);
+        elt1.setSchemaTypeName(schemaTypeName);
+        sequence.getItems().add(elt1);
+        
+        if ( isArray ) 
+        {
+            elt1.setMaxOccurs(Long.MAX_VALUE);
+            elt1.setMinOccurs(0);
+        }
+    }
+    
+    private XmlSchemaComplexType createSchemaTypeForMethodPart(String localPartName)
+    {
+        //XmlSchema xmlSchema = (XmlSchema)schemaMap.get(schemaTargetNameSpace);
+        XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+        QName elementName = new QName(this.schemaTargetNameSpace, localPartName, this.schema_namespace_prefix);
+        XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+        
+        XmlSchemaElement globalElement = new XmlSchemaElement();
+        globalElement.setSchemaType(complexType);
+        globalElement.setName(formGlobalElementName(localPartName));
+        globalElement.setQName(elementName);
+        
+        xmlSchema.getItems().add(globalElement);
+        xmlSchema.getElements().add(elementName, globalElement);
+        
+        typeTable.addComplexSchema(localPartName, elementName);
+        
+        return complexType;
+    }
+    
+    
+    private String formGlobalElementName(String typeName)
+    {
+        String firstChar = typeName.substring(0,1);
+        return typeName.replaceFirst(firstChar, firstChar.toLowerCase());
+    }
+    
+    private XmlSchema getXmlSchema(String targetNamespace) 
+    {
+        XmlSchema xmlSchema; 
+        
+        if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) 
+        {
+            String targetNamespacePrefix = generatePrefix();
+            
             xmlSchema = new XmlSchema(targetNamespace, xmlSchemaCollection);
-            targetNamespacePrefixMap.put(packageName, targetNamespacePrefix);
-            schemaMap.put(packageName, xmlSchema);
-
+            xmlSchema.setAttributeFormDefault(getAttrFormDefaultSetting());
+            xmlSchema.setElementFormDefault(getElementFormDefaultSetting());
+            
+            
+            targetNamespacePrefixMap.put(targetNamespace, targetNamespacePrefix);
+            schemaMap.put(targetNamespace, xmlSchema);
+            
             Hashtable prefixmap = new Hashtable();
             prefixmap.put(DEFAULT_SCHEMA_NAMESPACE_PREFIX, URI_2001_SCHEMA_XSD);
             prefixmap.put(targetNamespacePrefix, targetNamespace);
             xmlSchema.setPrefixToNamespaceMap(prefixmap);
         }
-
         return xmlSchema;
     }
+
 
     public TypeTable getTypeTable() {
         return typeTable;
@@ -497,4 +413,70 @@ public class SchemaGenerator implements Java2WSDLConstants {
     public String getSchemaTargetNameSpace() {
         return schemaTargetNameSpace;
     }
+    
+    private void initializeSchemaMap(String targetNamespace, String targetNamespacePrefix)
+    {
+        XmlSchema xmlSchema = new XmlSchema(targetNamespace, xmlSchemaCollection);
+        targetNamespacePrefixMap.put(targetNamespace, targetNamespacePrefix);
+        schemaMap.put(targetNamespace, xmlSchema);
+                
+        Hashtable prefixmap = new Hashtable();
+        prefixmap.put(DEFAULT_SCHEMA_NAMESPACE_PREFIX, URI_2001_SCHEMA_XSD);
+        prefixmap.put(targetNamespacePrefix, targetNamespace);
+        xmlSchema.setPrefixToNamespaceMap(prefixmap);
+    }
+    
+    private void addImport(XmlSchema xmlSchema, QName schemaTypeName)
+    {
+        if (!xmlSchema.getPrefixToNamespaceMap().values().
+                contains(schemaTypeName.getNamespaceURI())) 
+        {
+            XmlSchemaImport importElement = new XmlSchemaImport();
+            importElement.setNamespace(schemaTypeName.getNamespaceURI());
+            xmlSchema.getItems().add(importElement);
+            xmlSchema.getPrefixToNamespaceMap().
+                    put(generatePrefix(), schemaTypeName.getNamespaceURI());
+        }
+    }
+
+    public String getAttrFormDefault() {
+        return attrFormDefault;
+    }
+
+    public void setAttrFormDefault(String attrFormDefault) {
+        this.attrFormDefault = attrFormDefault;
+    }
+
+    public String getElementFormDefault() {
+        return elementFormDefault;
+    }
+
+    public void setElementFormDefault(String elementFormDefault) {
+        this.elementFormDefault = elementFormDefault;
+    }
+    
+    private XmlSchemaForm getAttrFormDefaultSetting()
+    {
+        if ( FORM_DEFAULT_UNQUALIFIED.equals(getAttrFormDefault()) )
+        {
+            return new XmlSchemaForm(XmlSchemaForm.UNQUALIFIED);
+        }
+        else
+        {
+            return new XmlSchemaForm(XmlSchemaForm.QUALIFIED);
+        }
+    }
+    
+    private XmlSchemaForm getElementFormDefaultSetting()
+    {
+        if ( FORM_DEFAULT_UNQUALIFIED.equals(getElementFormDefault()) )
+        {
+            return new XmlSchemaForm(XmlSchemaForm.UNQUALIFIED);
+        }
+        else
+        {
+            return new XmlSchemaForm(XmlSchemaForm.QUALIFIED);
+        }
+    }
+
 }

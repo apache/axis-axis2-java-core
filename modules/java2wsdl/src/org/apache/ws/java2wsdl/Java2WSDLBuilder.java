@@ -36,6 +36,8 @@ public class Java2WSDLBuilder {
     private String targetNamespace = null;
     private String targetNamespacePrefix = null;
 
+    private String attrFormDefault = null;
+    private String elementFormDefault = null;
     private String schemaTargetNamespace = null;
     private String schemaTargetNamespacePrefix = null;
     private String style = Java2WSDLConstants.DOCUMENT;
@@ -133,13 +135,17 @@ public class Java2WSDLBuilder {
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
-        SchemaGenerator sg = new SchemaGenerator(classLoader, className,
-                schemaTargetNamespace, schemaTargetNamespacePrefix);
+        SchemaGenerator sg = new SchemaGenerator(classLoader, 
+                                                    className,
+                                                    schemaTargetNamespace, 
+                                                    schemaTargetNamespacePrefix);
         ArrayList excludeOpeartion = new ArrayList();
         excludeOpeartion.add("init");
         excludeOpeartion.add("setOperationContext");
         excludeOpeartion.add("destroy");
         sg.setExcludeMethods(excludeOpeartion);
+        sg.setAttrFormDefault(getAttrFormDefault());
+        sg.setElementFormDefault(getElementFormDefault());
         Collection schemaCollection = sg.generateSchema();
         Java2OMBuilder java2OMBuilder = new Java2OMBuilder(sg.getMethods(),
                 schemaCollection,
@@ -154,6 +160,22 @@ public class Java2WSDLBuilder {
         wsdlElement.serialize(out);
         out.flush();
         out.close();
+    }
+
+    public String getAttrFormDefault() {
+        return attrFormDefault;
+    }
+
+    public void setAttrFormDefault(String attrFormDefault) {
+        this.attrFormDefault = attrFormDefault;
+    }
+
+    public String getElementFormDefault() {
+        return elementFormDefault;
+    }
+
+    public void setElementFormDefault(String elementFormDefault) {
+        this.elementFormDefault = elementFormDefault;
     }
 }
 

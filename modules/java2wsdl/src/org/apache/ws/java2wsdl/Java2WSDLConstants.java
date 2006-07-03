@@ -25,6 +25,9 @@ public interface Java2WSDLConstants {
     String DEFAULT_TARGET_NAMESPACE_PREFIX = "axis2";
     String TARGETNAMESPACE_PREFIX = "tns";
     String SCHEMA_NAMESPACE_PRFIX = "ns";
+    String FORM_DEFAULT_QUALIFIED = "qualified";
+    String FORM_DEFAULT_UNQUALIFIED = "unqualified";
+    
 
     String DEFAULT_TARGET_NAMESPACE = "http://ws.apache.org/axis2";
     String WSDL_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
@@ -94,6 +97,8 @@ public interface Java2WSDLConstants {
     String STYLE_OPTION = "st";
     String USE_OPTION = "u";
     String LOCATION_OPTION = "l";
+    String ATTR_FORM_DEFAULT_OPTION = "afd";
+    String ELEMENT_FORM_DEFAULT_OPTION = "efd";
 
     //long option constants
     String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -109,6 +114,8 @@ public interface Java2WSDLConstants {
     String USE_OPTION_LONG = "use";
     String LOCATION_OPTION_LONG = "location";
     String AXIS2_NAMESPACE_PREFIX = "ns1";
+    String ATTR_FORM_DEFAULT_OPTION_LONG = "attributeFormDefault";
+    String ELEMENT_FORM_DEFAULT_OPTION_LONG = "elementFormDefault";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
 

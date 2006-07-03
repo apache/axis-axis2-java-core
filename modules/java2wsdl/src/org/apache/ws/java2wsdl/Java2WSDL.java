@@ -45,6 +45,8 @@ public class Java2WSDL {
         System.out.println("-st <binding style> : style for the WSDL");
         System.out.println("-u <binding use> : use for the WSDL");
         System.out.println("-l <soap address> : address of the port for the WSDL");
+        System.out.println("-efd <unqualified> : Setting for elementFormDefault (defaults to qualified)");
+        System.out.println("-afd <unqualified> : Setting for attributeFormDefault (defaults to qualified)");
         System.exit(0);
     }
 

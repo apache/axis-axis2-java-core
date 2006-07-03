@@ -149,6 +149,15 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) {
             java2WsdlBuilder.setUse(option.getOptionValue());
         }
+        
+        option = loadOption(Java2WSDLConstants.ATTR_FORM_DEFAULT_OPTION,
+                Java2WSDLConstants.ATTR_FORM_DEFAULT_OPTION_LONG, optionsMap);
+        java2WsdlBuilder.setAttrFormDefault(option == null ? null : option.getOptionValue());
+        
+        option = loadOption(Java2WSDLConstants.ELEMENT_FORM_DEFAULT_OPTION,
+                Java2WSDLConstants.ELEMENT_FORM_DEFAULT_OPTION_LONG, optionsMap);
+        java2WsdlBuilder.setElementFormDefault(option == null ? null : option.getOptionValue());
+        
 
 
     }
