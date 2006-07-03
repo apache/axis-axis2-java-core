@@ -163,12 +163,8 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
         return messageContextOptions;
     }
-
-    private void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
-        if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
-            throwFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
-        } 
-    }
+    
+    protected abstract void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault;
 
     private boolean checkDuplicateHeaders(String addressingHeaderName, ArrayList checkedHeaderNames, ArrayList duplicateHeaderNames) {//throws AxisFault {
     	// If the header name has been seen before then we should return true and add it to the list
@@ -183,7 +179,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     	return shouldIgnore;
     }
 
-    private void throwFault(MessageContext messageContext, String addressingHeaderName, String faultCode, String faultSubCode) throws AxisFault {
+    protected void throwFault(MessageContext messageContext, String addressingHeaderName, String faultCode, String faultSubCode) throws AxisFault {
         Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInformation == null) {
             faultInformation = new HashMap();

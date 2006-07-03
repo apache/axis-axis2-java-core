@@ -4,10 +4,14 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.MessageContext;
 
 import javax.xml.namespace.QName;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /*
@@ -83,6 +87,24 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
         while (allAttributes.hasNext()) {
             OMAttribute attribute = (OMAttribute) allAttributes.next();
             epr.addAttribute(attribute);
+        }
+    }
+    
+    protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
+        if (!alreadyFoundAddrHeader.contains(WSA_TO)) {
+            throwFault(messageContext, WSA_TO, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
+        }
+        
+        if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
+            throwFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
+        }
+        
+        if (alreadyFoundAddrHeader.contains(WSA_REPLY_TO) ||
+            alreadyFoundAddrHeader.contains(WSA_FAULT_TO)) {
+            
+            if (!alreadyFoundAddrHeader.contains(WSA_MESSAGE_ID)) {
+                throwFault(messageContext, WSA_MESSAGE_ID, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
+            }
         }
     }
 }

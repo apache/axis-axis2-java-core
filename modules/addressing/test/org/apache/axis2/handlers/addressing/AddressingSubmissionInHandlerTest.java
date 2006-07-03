@@ -16,6 +16,7 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.Options;
 import org.apache.commons.logging.Log;
@@ -49,6 +50,115 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
             e.printStackTrace();
             log.error(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
+        }
+    }
+    
+    public void testMessageWithOmittedAction() {
+        try {
+            testMessageWithOmittedHeaders("noAction");
+            fail("An AxisFault should have been thrown due to a missing Action header.");
+        }
+        catch (AxisFault af) {
+            //test passed
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
+        }
+    }
+    
+    public void testMessageWithOmittedFaultTo() {
+        try {
+            testMessageWithOmittedHeaders("noFaultTo");
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown due to a missing FaultTo header.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
+        }
+    }
+    
+    public void testMessageWithOmittedFrom() {
+        try {
+            testMessageWithOmittedHeaders("noFrom");
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown due to a missing From header.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
+        }
+    }
+    
+    public void testMessageWithOmittedMessageID() {
+        try {
+            testMessageWithOmittedHeaders("noMessageID");
+            fail("An AxisFault should have been thrown due to a missing MessageID header.");
+        }
+        catch (AxisFault af) {
+            //test passed
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
+        }
+    }
+    
+    public void testMessageWithOmittedMessageIDReplyToAndFaultTo() {
+        try {
+            testMessageWithOmittedHeaders("noMessageIDNoReplyToNoFaultTo");
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown due to missing MessageID, ReplyTo, and FaultTo headers.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
+        }
+    }
+    
+    public void testMessageWithOmittedReplyTo() {
+        try {
+            testMessageWithOmittedHeaders("noReplyTo");
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown due to a missing ReplyTo header.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
+        }
+    }
+    
+    public void testMessageWithOmittedTo() {
+        try {
+            testMessageWithOmittedHeaders("noTo");
+            fail("An AxisFault should have been thrown due to a missing To header.");
+        }
+        catch (AxisFault af) {
+            //test passed
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());            
         }
     }
 }
