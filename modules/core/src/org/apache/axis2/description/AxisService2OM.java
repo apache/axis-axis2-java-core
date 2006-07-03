@@ -1,11 +1,6 @@
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.StAXUtils;
@@ -31,11 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -136,6 +127,15 @@ public class AxisService2OM implements Java2WSDLConstants {
                 axisService.getTargetNamespace());
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
+        // adding documentation element
+        //<documentation>&lt;b&gt;NEW!&lt;/b&gt; This method accepts an ISBN string and returns &lt;b&gt;Amazon.co.uk&lt;/b&gt; Sales Rank for that book.</documentation>
+        String servicedescription = axisService.getServiceDescription();
+        if (servicedescription != null && !"".equals(servicedescription)) {
+            OMElement documenentattion = fac.createOMElement("documentation", wsdl);
+            documenentattion.setText(servicedescription);
+            ele.addChild(documenentattion);
+        }
+
         ele.addAttribute("targetNamespace", axisService.getTargetNamespace(),
                 null);
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
@@ -155,9 +155,9 @@ public class AxisService2OM implements Java2WSDLConstants {
             if (!Constants.NS_URI_XML.equals(targetNamespace)) {
                 schema.write(writer);
                 String schemaString = writer.toString();
-                if (!"".equals(schemaString)) {                	
+                if (!"".equals(schemaString)) {
                     XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new StringReader(schemaString));
-                    
+
                     StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
                     wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
                 }
