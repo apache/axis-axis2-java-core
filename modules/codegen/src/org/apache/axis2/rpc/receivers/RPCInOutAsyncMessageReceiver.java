@@ -5,13 +5,13 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,18 +76,9 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
 
-           AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            String messageNameSpace = null;
-            if (inaxisMessage != null) {
-                messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
-            }
-
-            OMNamespace namespace = methodElement.getNamespace();
-            if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
-                throw new AxisFault("namespace mismatch require " +
-                        service.getSchematargetNamespace() +
-                        " found " + methodElement.getNamespace().getName());
-            }
+            AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            String messageNameSpace;
+            QName elementQName = null;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -96,15 +87,33 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                     break;
                 }
             }
+            Object resObject = null;
+            if (inaxisMessage != null) {
+                if (inaxisMessage.getElementQName() == null) {
+                    // method accept empty SOAPbody
+                    resObject = method.invoke(obj, new Object[0]);
+                } else {
+                    elementQName = inaxisMessage.getElementQName();
+                    messageNameSpace = elementQName.getNamespaceURI();
+                    OMNamespace namespace = methodElement.getNamespace();
+                    if (messageNameSpace != null) {
+                        if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
+                            throw new AxisFault("namespace mismatch require " +
+                                    messageNameSpace +
+                                    " found " + methodElement.getNamespace().getName());
+                        }
+                    } else if (namespace != null) {
+                        throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
+                                "qualified element. But received a namespace qualified element");
+                    }
 
+                    Object[] objectArray = RPCUtil.processRequest(methodElement, method);
+                    resObject = method.invoke(obj, objectArray);
+                }
 
-            Object[] objectArray = RPCUtil.processRequest(methodElement, method);
-            Object resObject;
-            try {
-                resObject = method.invoke(obj, objectArray);
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage());
             }
+
+
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response
@@ -127,7 +136,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
 
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                         method.getName();
+                    method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }

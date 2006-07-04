@@ -83,22 +83,6 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
             QName elementQName = null;
-            if (inAxisMessage != null && (elementQName = inAxisMessage.getElementQName()) != null) {
-                messageNameSpace = elementQName.getNamespaceURI();
-            }
-
-
-            OMNamespace namespace = methodElement.getNamespace();
-            if (messageNameSpace != null) {
-                if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
-                    throw new AxisFault("namespace mismatch require " +
-                            messageNameSpace +
-                            " found " + methodElement.getNamespace().getName());
-                }
-            } else if (namespace != null) {
-                throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                        "qualified element. But received a namespace qualified element");
-            }
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -107,11 +91,33 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     break;
                 }
             }
+            Object resObject = null;
+            if (inAxisMessage != null) {
+                if (inAxisMessage.getElementQName() == null) {
+                    // method accept empty SOAPbody
+                    resObject = method.invoke(obj, new Object[0]);
+                } else {
+                    elementQName = inAxisMessage.getElementQName();
+                    messageNameSpace = elementQName.getNamespaceURI();
+                    OMNamespace namespace = methodElement.getNamespace();
+                    if (messageNameSpace != null) {
+                        if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
+                            throw new AxisFault("namespace mismatch require " +
+                                    messageNameSpace +
+                                    " found " + methodElement.getNamespace().getName());
+                        }
+                    } else if (namespace != null) {
+                        throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
+                                "qualified element. But received a namespace qualified element");
+                    }
+
+                    Object[] objectArray = RPCUtil.processRequest(methodElement, method);
+                    resObject = method.invoke(obj, objectArray);
+                }
+
+            }
 
 
-            Object[] objectArray = RPCUtil.processRequest(methodElement, method);
-            Object resObject;
-            resObject = method.invoke(obj, objectArray);
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response

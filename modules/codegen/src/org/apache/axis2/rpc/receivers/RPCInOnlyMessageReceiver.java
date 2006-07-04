@@ -3,17 +3,16 @@ package org.apache.axis2.rpc.receivers;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -43,26 +42,16 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj,
-                                                             inMessage.getOperationContext());
+                    inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
-            AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
 
-            AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            String messageNameSpace = null;
-            if (inaxisMessage != null) {
-                messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
-            }
-
-            OMNamespace namespace = methodElement.getNamespace();
-            if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
-                throw new AxisFault("namespace mismatch require " +
-                                    service.getSchematargetNamespace() +
-                                    " found " + methodElement.getNamespace().getName());
-            }
+            AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            String messageNameSpace;
+            QName elementQName = null;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -71,18 +60,36 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     break;
                 }
             }
-            Object[] objectArray = processRequest(methodElement);
-            method.invoke(obj, objectArray);
+            if (inAxisMessage != null) {
+                if (inAxisMessage.getElementQName() == null) {
+                    // method accept empty SOAPbody
+                    method.invoke(obj, new Object[0]);
+                } else {
+                    elementQName = inAxisMessage.getElementQName();
+                    messageNameSpace = elementQName.getNamespaceURI();
+                    OMNamespace namespace = methodElement.getNamespace();
+                    if (messageNameSpace != null) {
+                        if (namespace == null || !messageNameSpace.equals(namespace.getName())) {
+                            throw new AxisFault("namespace mismatch require " +
+                                    messageNameSpace +
+                                    " found " + methodElement.getNamespace().getName());
+                        }
+                    } else if (namespace != null) {
+                        throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
+                                "qualified element. But received a namespace qualified element");
+                    }
+
+                    Object[] objectArray = RPCUtil.processRequest(methodElement, method);
+                    method.invoke(obj, objectArray);
+                }
+
+            }
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                         method.getName();
+                    method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }
     }
 
-    private Object[] processRequest(OMElement methodElement) throws AxisFault {
-        Class[] parameters = method.getParameterTypes();
-        return BeanUtil.deserialize(methodElement, parameters);
-    }
 }
