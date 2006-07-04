@@ -28,7 +28,6 @@ public class RESTSearchClient {
     public static void main(String[] args) {
         try {
 
-//            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch?appid=ApacheRestDemo&query=finances&format=pdf";
             String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
 
             ServiceClient client = new ServiceClient();

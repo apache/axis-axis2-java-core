@@ -18,13 +18,28 @@ package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.*;
-import org.apache.axis2.description.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
@@ -42,7 +57,7 @@ import java.util.ArrayList;
  */
 public class ServiceClient {
 
-    // service and operation names used for anonymously stuff
+    // service and operation names used for anonymous services and operations
     public static final String ANON_SERVICE = "annonService";
 
     public static final QName ANON_OUT_ONLY_OP = new QName(
@@ -120,7 +135,7 @@ public class ServiceClient {
 
 
     /**
-     * This is WOM based constructor to configure the Service Client/
+     * This is WSDL4J based constructor to configure the Service Client/
      * We are going to make this policy aware
      *
      * @param configContext
@@ -156,20 +171,20 @@ public class ServiceClient {
     }
 
     private void initializeTransports(ConfigurationContext configContext) throws AxisFault {
-        ListenerManager trsManager;
+        ListenerManager transportManager;
         if (configContext != null) {
             this.configContext = configContext;
-            trsManager = configContext.getListenerManager();
-            if (trsManager == null) {
-                trsManager = new ListenerManager();
-                trsManager.init(this.configContext);
+            transportManager = configContext.getListenerManager();
+            if (transportManager == null) {
+                transportManager = new ListenerManager();
+                transportManager.init(this.configContext);
             }
         } else {
             if (ListenerManager.defaultConfigurationContext == null) {
                 this.configContext = ConfigurationContextFactory.
                         createConfigurationContextFromFileSystem(null, null);
-                trsManager = new ListenerManager();
-                trsManager.init(this.configContext);
+                transportManager = new ListenerManager();
+                transportManager.init(this.configContext);
                 createConfigCtx = true;
             } else {
                 this.configContext = ListenerManager.defaultConfigurationContext;
@@ -180,6 +195,8 @@ public class ServiceClient {
     /**
      * Create a service client by assuming an anonymous service and any other
      * necessary information.
+     *
+     * @throws AxisFault
      */
     public ServiceClient() throws AxisFault {
         this(null, null);
@@ -225,6 +242,8 @@ public class ServiceClient {
 
     /**
      * Set the client configuration related to this service interaction.
+     *
+     * @param options
      */
     public void setOptions(Options options) {
         this.options = options;
@@ -267,6 +286,10 @@ public class ServiceClient {
         axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);
     }
 
+    /**
+     * Disengage a module for this service client
+     * @param moduleName
+     */
     public void disEngageModule(QName moduleName) {
         AxisModule module = axisConfig.getModule(moduleName);
         if (module != null) {
@@ -288,6 +311,10 @@ public class ServiceClient {
         headers.add(header);
     }
 
+    /**
+     * This will let the user to add SOAP Headers to the out going message
+     * @param header
+     */
     public void addHeader(SOAPHeaderBlock header) {
         if (headers == null) {
             headers = new ArrayList();
@@ -447,10 +474,24 @@ public class ServiceClient {
         mepClient.execute(false);
     }
 
+    /**
+     * This will allow user to do a send and receive invocation just providing the payload.
+     * @param elem
+     * @return
+     * @throws AxisFault
+     */
     public OMElement sendReceive(OMElement elem) throws AxisFault {
         return sendReceive(ANON_OUT_IN_OP, elem);
     }
 
+    /**
+     * Do send receive invocation giving the payload and the operation QName.
+     * 
+     * @param operation
+     * @param elem
+     * @return
+     * @throws AxisFault
+     */
     public OMElement sendReceive(QName operation, OMElement elem)
             throws AxisFault {
         if (options.isUseSeparateListener()) {
@@ -485,9 +526,9 @@ public class ServiceClient {
                 }
 
             }
-            // process the resule of the invocation
+            // process the result of the invocation
             if (callback.envelope != null) {
-                // building soap enevlop
+                // building soap envelop
                 callback.envelope.build();
                 // closing transport
                 return callback.envelope.getBody().getFirstElement();
@@ -499,7 +540,7 @@ public class ServiceClient {
                 } else if (! callback.isComplete()) {
                     throw new AxisFault(Messages.getMessage("responseTimeOut"));
                 } else
-                    throw new AxisFault("Callback completed but there was no envelope or error");
+                    throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
             }
         } else {
             MessageContext mc = new MessageContext();
@@ -513,11 +554,25 @@ public class ServiceClient {
         }
     }
 
+    /**
+     * Invoke send and receive just providing the payload and the call back handler. This will ease
+     * the user by not requiring him to provide an operation name
+     * @param elem
+     * @param callback
+     * @throws AxisFault
+     */
     public void sendReceiveNonBlocking(OMElement elem, Callback callback)
             throws AxisFault {
         sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
     }
 
+    /**
+     * Do a blocking send and receive invocation.
+     * @param operation
+     * @param elem
+     * @param callback
+     * @throws AxisFault
+     */
     public void sendReceiveNonBlocking(QName operation, OMElement elem,
                                        Callback callback) throws AxisFault {
         MessageContext mc = new MessageContext();
@@ -571,7 +626,7 @@ public class ServiceClient {
 
     /**
      * This will close the out put stream or , and remove entry from waiting
-     * queue of the transport Listener queue
+     * queue of the transport Listener queue.
      *
      * @throws AxisFault
      */
@@ -590,7 +645,7 @@ public class ServiceClient {
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory();
         } else {
-            // if its not SOAP 1.2 just assume SOAP 1.1
+            // make the SOAP 1.2 the default SOAP version
             return OMAbstractFactory.getSOAP11Factory();
         }
     }
@@ -605,18 +660,18 @@ public class ServiceClient {
     private void fillSoapEnvelope(MessageContext mc, OMElement elem)
             throws AxisFault {
         mc.setServiceContext(serviceContext);
-        SOAPFactory sf = getSOAPFactory();
-        SOAPEnvelope se = sf.getDefaultEnvelope();
+        SOAPFactory soapFactory = getSOAPFactory();
+        SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
         if (elem != null) {
-            se.getBody().addChild(elem);
+            envelope.getBody().addChild(elem);
         }
         if (headers != null) {
-            SOAPHeader sh = se.getHeader();
+            SOAPHeader sh = envelope.getHeader();
             for (int i = 0; i < headers.size(); i++) {
                 sh.addChild((OMElement) headers.get(i));
             }
         }
-        mc.setEnvelope(se);
+        mc.setEnvelope(envelope);
     }
 
 
@@ -624,6 +679,8 @@ public class ServiceClient {
      * To get the EPR that the service is running
      * transport : can be null , if it is null then epr will be craetd using any available
      * transports
+     *
+     * @throws AxisFault
      */
     public EndpointReference getMyEPR(String transport) throws AxisFault {
         return serviceContext.getMyEPR(transport);
@@ -677,7 +734,7 @@ public class ServiceClient {
     }
 
     /**
-     * To get the service context
+     * To get the service context.
      *
      * @return ServiceContext
      */
@@ -696,6 +753,8 @@ public class ServiceClient {
      * configuration conetxt and null aixsService , in that case it SC will
      * create new axisServices and add that into axisConfig , so to remove the
      * one that this particular SC instance create one can use this method.
+     *
+     * @throws AxisFault
      */
     public void cleanup() throws AxisFault {
         if (!createConfigCtx) {
