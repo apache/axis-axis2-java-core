@@ -18,11 +18,7 @@ package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
@@ -354,11 +350,65 @@ public class ServiceClient {
      *                   received in response (per the Robust In-Only MEP).
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
-        MessageContext mc = new MessageContext();
-        fillSoapEnvelope(mc, elem);
-        OperationClient mepClient = createClient(operation);
-        mepClient.addMessageContext(mc);
-        mepClient.execute(true);
+        if (options.isUseSeparateListener()) {
+
+            // This mean doing a Fault may come through a differnt channel .
+            // If the
+            // transport is two way transport (e.g. http) Only one channel is
+            // used (e.g. in http cases
+            // 202 OK is sent to say no respsone avalible). Axis2 get blocked
+            // return when the response is avalible.
+            SyncCallBack callback = new SyncCallBack();
+
+            // this method call two channel non blocking method to do the work
+            // and wait on the callbck
+            sendReceiveNonBlocking(operation, elem, callback);
+
+            long timeout = options.getTimeOutInMilliSeconds();
+            long waitTime = timeout;
+            long startTime = System.currentTimeMillis();
+
+            synchronized (callback) {
+                while (! callback.isComplete() && waitTime >= 0) {
+                    try {
+                        callback.wait(timeout);
+                    } catch (InterruptedException e) {
+                        // We were interrupted for some reason, keep waiting
+                        // or throw new AxisFault( "Callback was interrupted by someone?" );
+                    }
+                    // The wait finished, compute remaining time
+                    // - wait can end prematurly, see Object.wait( int timeout )
+                    waitTime = timeout - (System.currentTimeMillis() - startTime);
+                }
+
+            }
+            SOAPEnvelope envelope = callback.envelope;
+            // process the resule of the invocation
+            if (envelope != null) {
+                // building soap enevlop
+                envelope.build();
+                // closing transport
+                if (envelope.getBody().hasFault()) {
+                    SOAPFault soapFault = envelope.getBody().getFault();
+                    throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
+                            soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+                }
+            } else {
+                if (callback.error instanceof AxisFault) {
+                    throw (AxisFault) callback.error;
+                } else if (callback.error != null) {
+                    throw new AxisFault(callback.error);
+                } else if (! callback.isComplete()) {
+                    //no exception has occured
+                }
+            }
+        } else {
+            MessageContext mc = new MessageContext();
+            fillSoapEnvelope(mc, elem);
+            OperationClient mepClient = createClient(operation);
+            mepClient.addMessageContext(mc);
+            mepClient.execute(true);
+        }
     }
 
     /**

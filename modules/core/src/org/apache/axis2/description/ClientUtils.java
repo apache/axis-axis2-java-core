@@ -27,6 +27,8 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Utility methods for various clients to use.
@@ -70,6 +72,21 @@ public class ClientUtils {
                                                                        Options options,
                                                                        MessageContext msgCtxt) throws AxisFault {
         String listenerTransportProtocol = options.getTransportInProtocol();
+        if (listenerTransportProtocol == null) {
+            EndpointReference replyTo = msgCtxt.getReplyTo();
+            if (replyTo != null) {
+                try {
+                    URI uri = new URI(replyTo.getAddress());
+                    String scheme = uri.getScheme();
+                    listenerTransportProtocol = scheme;
+                } catch (URISyntaxException e) {
+                    //need to ignore
+                }
+            } else {
+                //assume listner transport as sender transport
+                listenerTransportProtocol = msgCtxt.getTransportOut().getName().getLocalPart();
+            }
+        }
         TransportInDescription transportIn = null;
         if (options.isUseSeparateListener()) {
             if ((listenerTransportProtocol != null) && !"".equals(listenerTransportProtocol)) {
