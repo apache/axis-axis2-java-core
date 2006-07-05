@@ -34,11 +34,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -54,7 +51,6 @@ public class ConfigurationContext extends AbstractContext {
     private Hashtable serviceGroupContextMap = new Hashtable();
     private Hashtable applicationSessionServiceGroupContextTable = new Hashtable();
     private transient AxisConfiguration axisConfiguration;
-    private File rootDir;
     private transient ThreadFactory threadPool;
     //To keep TransportManager instance
     private ListenerManager listenerManager;
@@ -241,11 +237,12 @@ public class ConfigurationContext extends AbstractContext {
      * @param path
      */
     public File getRealPath(String path) {
-        if (rootDir == null) {
-            return new File(path);
-        } else {
-            return new File(rootDir, path);
+        URL repository = axisConfiguration.getRepository();
+        if (repository != null) {
+            File repo = new File(repository.getFile());
+            return new File(repo, path);
         }
+        return null;
     }
 
     public synchronized ServiceGroupContext getServiceGroupContext(String serviceGroupContextId,
@@ -309,13 +306,6 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void setAxisConfiguration(AxisConfiguration configuration) {
         axisConfiguration = configuration;
-    }
-
-    /**
-     * @param file
-     */
-    public void setRootDir(File file) {
-        rootDir = file;
     }
 
     /**
