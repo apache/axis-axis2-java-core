@@ -62,7 +62,7 @@ public class JMSUtils {
             return true;
 
         } else {
-            String[] transports = service.getExposeTransports();
+            String[] transports = service.getExposedTransports();
             for (int i=0; i<transports.length; i++) {
                 if (Constants.TRANSPORT_JMS.equals(transports[i])) {
                     return true;

@@ -73,12 +73,12 @@ public class ListenerManager {
                 Iterator itr_st = startedTransports.values().iterator();
                 if (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener) itr_st.next();
-                    return transportListener.getEPRForService(serviceName + "/" + opName, null);
+                    return transportListener.getEPRForService(serviceName, null);
                 } else {
                     return null;
                 }
             } else {
-                String exposeTransport [] = service.getExposeTransports();
+                String exposeTransport [] = service.getExposedTransports();
                 TransportListener listener = (TransportListener)
                         startedTransports.get(exposeTransport[0]);
                 if (opName == null) {

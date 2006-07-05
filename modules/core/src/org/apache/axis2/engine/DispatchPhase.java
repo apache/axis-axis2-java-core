@@ -79,7 +79,7 @@ public class DispatchPhase extends Phase {
         if (service.isEnableAllTransport()) {
             return;
         } else {
-            String trs [] = service.getExposeTransports();
+            String trs [] = service.getExposedTransports();
             String incommingTrs = msgctx.getIncomingTransportName();
             for (int i = 0; i < trs.length; i++) {
                 String tr = trs[i];

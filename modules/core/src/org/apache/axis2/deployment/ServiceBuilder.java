@@ -189,7 +189,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     OMElement trsEle = (OMElement) transport_itr.next();
                     trs.add(trsEle.getText());
                 }
-                service.setExposeTransports((String[]) trs.toArray(new String[trs.size()]));
+                service.setExposedTransports((String[]) trs.toArray(new String[trs.size()]));
             }
             // processing operations
             Iterator operationsIterator =
@@ -237,7 +237,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 service.removeOperation(new QName(opName));
             }
 
-            // Set the default message receiver for the operations that were 
+            // Set the default message receiver for the operations that were
             // not listed in the services.xml
             Iterator operations = service.getPublishedOperations().iterator();
             while (operations.hasNext()) {
