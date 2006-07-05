@@ -42,7 +42,7 @@
 	</xs:element>
 	<xs:element name="order">
 		<xs:complexType>
-			<xs:attribute name="phase" type="xs:string" use="optional"/>
+			<xs:attribute name="phase" type="xs:string" use="required"/>
 			<xs:attribute name="after" type="xs:string" use="optional"/>
 			<xs:attribute name="before" type="xs:string" use="optional"/>
 			<xs:attribute name="phaseFirst" type="xs:string" use="optional"/>

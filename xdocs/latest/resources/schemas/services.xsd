@@ -22,8 +22,7 @@
 			</xs:element>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute name="mep" type="xs:anyURI" use="required"/>
-		<xs:attribute name="scope" type="xs:string" use="optional"/>
+		<xs:attribute name="mep" type="xs:anyURI" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="parameterType">
 		<xs:annotation>
@@ -49,8 +48,30 @@
 				<xs:element name="description" type="xs:string" minOccurs="0"/>
 				<xs:element name="parameter" type="parameterType" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="operation" type="operationType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="module" minOccurs="0" maxOccurs="unbounded">
+				    <xs:complexType>
+					<xs:attribute name="ref" use="required"/>
+				    </xs:complexType>
+			      </xs:element>
+                        <xs:element name="transports" minOccurs="0" maxOccurs="unbounded">
+                            <xs:sequence>
+				        <xs:element name="transport" type="xs:string" minOccurs="1"/>
+                            </xs:sequence>
+			      </xs:element>
+                        <xs:element name="messageReceivers" minOccurs="0" maxOccurs="unbounded">
+                            <xs:sequence>
+				        <xs:element name="messageReceiver" maxOccurs="unbounded">
+				            <xs:complexType>
+					        <xs:attribute name="mep" type="xs:string"  use="required"/>
+                                       <xs:attribute name="class" type="xs:string"  use="required"/>
+				            </xs:complexType>
+			               </xs:element>
+                            </xs:sequence>
+			      </xs:element>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
+                  <xs:attribute name="scope" type="xs:string" use="optional"/>
+                  <xs:attribute name="targetNamespace" type="xs:string" use="optional"/>
 			<xs:attribute name="wsaddressing" type="xs:string" />
 		</xs:complexType>
 	</xs:element>
