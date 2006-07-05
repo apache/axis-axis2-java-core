@@ -19,24 +19,47 @@ package org.apache.savan.handlers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.savan.SavanConstants;
+import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.configuration.ConfigurationManager;
+import org.apache.savan.configuration.Protocol;
+import org.apache.savan.storage.SubscriberStore;
 import org.apache.savan.subscription.SubscriptionProcessor;
-import org.apache.savan.util.AbstractSavanUtilFactory;
+import org.apache.savan.util.UtilFactory;
 import org.apache.savan.util.ProtocolManager;
-import org.apache.savan.util.SavanUtilFactory;
 
-
+/**
+ * The handler of Savan in the InFlow.
+ * Will handle the control messages like subscription, renew, unsubscription.
+ * 
+ */
 public class SavanInHandler extends AbstractHandler  {
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		
-		int protocolVersion = ProtocolManager.getMessageProtocol (msgContext);
-		SavanUtilFactory utilFactory = AbstractSavanUtilFactory.getUtilFactory(protocolVersion);
+		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		
-		SavanMessageContext smc = utilFactory.createSavanMessageContext (msgContext); 
-		smc.setProtocolVersion(protocolVersion);
+		//setting the Protocol
+		Protocol protocol = ProtocolManager.getMessageProtocol(smc);
+		smc.setProtocol(protocol);
+		
+		AxisService axisService = msgContext.getAxisService();
+		if (axisService==null)
+			throw new SavanException ("Service context is null");
+		
+		//setting the Subscriber Store
+		Parameter parameter = axisService.getParameter(SavanConstants.SUBSCRIBER_STORE);
+		if (parameter==null){
+			setSubscriberStore (smc);
+			parameter = axisService.getParameter(SavanConstants.SUBSCRIBER_STORE);
+		}
+		
+		UtilFactory utilFactory = smc.getProtocol().getUtilFactory();
+		utilFactory.initializeMessage (smc);
 		
 		int messageType = smc.getMessageType ();
 
@@ -48,6 +71,29 @@ public class SavanInHandler extends AbstractHandler  {
 			processor.unsubscribe(smc);
 		} else if (messageType==SavanConstants.MessageTypes.RENEW_MESSAGE) {
 			processor.renewSubscription(smc);
+		}
+	}
+	
+	private void setSubscriberStore (SavanMessageContext smc) throws SavanException {
+		MessageContext msgContext = smc.getMessageContext();
+		AxisService axisService = msgContext.getAxisService();
+		
+		Parameter parameter = axisService.getParameter(SavanConstants.SUBSCRIBER_STORE_KEY);
+		String subscriberStoreKey = SavanConstants.DEFAULT_SUBSCRIBER_STORE_KEY;
+		if (parameter!=null)
+			subscriberStoreKey = (String) parameter.getValue();
+		
+		ConfigurationManager configurationManager = (ConfigurationManager) smc.getConfigurationContext().getProperty(SavanConstants.CONFIGURATION_MANAGER);
+		SubscriberStore store = configurationManager.getSubscriberStoreInstance(subscriberStoreKey);
+
+		parameter = new Parameter ();
+		parameter.setName(SavanConstants.SUBSCRIBER_STORE);
+		parameter.setValue(store);
+		
+		try {
+			axisService.addParameter(parameter);
+		} catch (AxisFault e) {
+			throw new SavanException (e);
 		}
 		
 	}

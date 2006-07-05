@@ -3,17 +3,25 @@ package org.apache.axis2.savan;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+
 import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.ConverterUtil;
+import org.apache.axis2.description.AxisService;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.configuration.Protocol;
 import org.apache.savan.eventing.EventingConstants;
 import org.apache.savan.eventing.EventingSubscriber;
 import org.apache.savan.eventing.EventingSubscriptionProcessor;
+import org.apache.savan.eventing.EventingUtilFactory;
+import org.apache.savan.storage.DefaultSubscriberStore;
+import org.apache.savan.storage.SubscriberStore;
 import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.util.CommonUtil;
 
@@ -21,6 +29,16 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 
 	public void testSubscriberExtraction () throws Exception {
 		SavanMessageContext smc = getSubscriptionMessage();
+		
+		Protocol protocol = new Protocol ();
+		protocol.setName("eventing");
+		protocol.setUtilFactory(new EventingUtilFactory ());
+		
+		SubscriberStore store = new DefaultSubscriberStore ();
+		
+		smc.setProtocol(protocol);
+		smc.setSubscriberStore(store);
+		
 		EventingSubscriptionProcessor esp = new EventingSubscriptionProcessor ();
 		EventingSubscriber eventingSubscriber = (EventingSubscriber) esp.getSubscriberFromMessage(smc);
 		assertNotNull(eventingSubscriber);
@@ -68,6 +86,9 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 		EndpointReference replyToEPR = new EndpointReference ("http://DummyReplyToAddress/");
 		replyToEPR.addReferenceParameter(new QName ("RefParam1"),"RefParamVal1");
 		options.setTo(replyToEPR);
+		
+		//adding a dummy AxisService to avoid NullPointer Exceptions.
+		mc.setAxisService(new AxisService ("DummyService"));
 		
 		options.setAction("urn:uuid:DummyAction");
 		

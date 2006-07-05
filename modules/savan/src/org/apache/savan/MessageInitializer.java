@@ -15,18 +15,12 @@
  *
  */
 
-package org.apache.savan.util;
+package org.apache.savan;
 
-import org.apache.savan.SavanConstants;
-import org.apache.savan.eventing.EventingUtilFactory;
+public class MessageInitializer {
 
-
-public class AbstractSavanUtilFactory {
-
-	public static SavanUtilFactory getUtilFactory (int protocolType) {
-		if (protocolType==SavanConstants.PROTOCOL_EVENTING) 
-			return new EventingUtilFactory ();
-		
-		return null;
+	public static void initializeMessage (SavanMessageContext smc) {
+		//TODO fill the properties in to the SMC,
+		//For e.g. UtilFactory and the SubscriberStore
 	}
 }

@@ -44,6 +44,10 @@ import org.apache.savan.SavanException;
 
 import org.jaxen.JaxenException;
 
+/**
+ * A filter that does filtering of messages based on a XPath string.
+ * 
+ */
 public class XPathBasedFilter extends Filter {
 
 	private String XPathString = null;
@@ -88,4 +92,9 @@ public class XPathBasedFilter extends Filter {
 		XPathString = text.getText();
 	}
 
+	public Object getFilterValue() {
+		return XPathString;
+	}
+
+	
 }

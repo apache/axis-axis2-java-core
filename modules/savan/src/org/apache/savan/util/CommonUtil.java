@@ -31,7 +31,14 @@ import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.databinding.types.Duration;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.savan.SavanConstants;
+import org.apache.savan.storage.SubscriberStore;
 
+/**
+ * A common set of methods that may be used in various places of Savan.
+ */
 public class CommonUtil {
 
 	public static Calendar addDurationToCalendar (Calendar calendar,Duration duration) {
@@ -72,5 +79,13 @@ public class CommonUtil {
 			return true;
 		
 		return false;
+	}
+	
+	public static SubscriberStore getSubscriberStore (AxisService axisService) {
+		Parameter parameter = axisService.getParameter(SavanConstants.SUBSCRIBER_STORE);
+		if (parameter==null)
+			return null;
+		
+		return (SubscriberStore) parameter.getValue();
 	}
 }

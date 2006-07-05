@@ -22,13 +22,32 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.modules.Module;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.savan.SavanConstants;
+import org.apache.savan.SavanException;
+import org.apache.savan.configuration.ConfigurationManager;
 
+/**
+ * Savan Module class. 
+ *
+ */
 public class SavanModule implements Module  {
 
+	private static final Log log = LogFactory.getLog(SavanModule.class);
+	
 	public void engageNotify(AxisDescription axisDescription) throws AxisFault {
 	}
 
 	public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {
+		ConfigurationManager configurationManager = new ConfigurationManager ();
+		try {
+			configurationManager.configure();
+		} catch (SavanException e) {
+			log.debug("Exception thrown while trying to configure the Savan module",e);
+		}
+		
+		configContext.setProperty(SavanConstants.CONFIGURATION_MANAGER,configurationManager);
 	}
 
 	public void shutdown(ConfigurationContext configurationContext) throws AxisFault {

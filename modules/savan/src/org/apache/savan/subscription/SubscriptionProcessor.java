@@ -17,44 +17,43 @@
 
 package org.apache.savan.subscription;
 
-import java.util.HashMap;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.savan.SavanConstants;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.storage.SubscriberStore;
 import org.apache.savan.subscribers.Subscriber;
+import org.apache.savan.util.CommonUtil;
 
+/**
+ * Abstractly defines subscription methods.
+ * Each protocol may extend this to add its own work.
+ */
 public abstract class SubscriptionProcessor {
 	
 	public abstract void init (SavanMessageContext smc) throws SavanException;
 	
 	public void unsubscribe(SavanMessageContext endSubscriptionMessage)  throws SavanException {
-		ConfigurationContext configurationContext = endSubscriptionMessage.getConfigurationContext();
-		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
-		if (subscribers==null) {
-			subscribers = new HashMap ();
-			configurationContext.setProperty(SavanConstants.SUBSCRIBER_TABLE,subscribers);
-		}
-		
 		String subscriberID = getSubscriberID (endSubscriptionMessage);
 		if (subscriberID==null) {
 			String message = "Cannot find the subscriber ID";
 			throw new SavanException (message);
 		}
 		
-		subscribers.remove(subscriberID);
+		SubscriberStore store = endSubscriptionMessage.getSubscriberStore();
+		if (store==null)
+			throw new SavanException ("Subscriber store not found");
+		
+		store.delete (subscriberID);
 	}
 
 	public void renewSubscription(SavanMessageContext renewMessage)  throws SavanException {
-
-		ConfigurationContext configurationContext = renewMessage.getConfigurationContext();
-		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
-		if (subscribers==null) {
-			throw new SavanException ("Given subscriber is not present");
-		}
+		SubscriberStore store = renewMessage.getSubscriberStore();
+		if (store==null)
+			throw new SavanException ("Subscriber store not found");
 			
 		ExpirationBean bean = getExpirationBean(renewMessage);
-		Subscriber subscriber = (Subscriber) subscribers.get(bean.getSubscriberID());
+		Subscriber subscriber = (Subscriber) store.retrieve(bean.getSubscriberID());
 		if (subscriber==null) {
 			throw new SavanException ("Given subscriber is not present");
 		}
@@ -63,15 +62,28 @@ public abstract class SubscriptionProcessor {
 	}
 
 	public void subscribe(SavanMessageContext subscriptionMessage) throws SavanException {
-		ConfigurationContext configurationContext = subscriptionMessage.getConfigurationContext();
-		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
-		if (subscribers==null) {
-			subscribers = new HashMap ();
-			configurationContext.setProperty(SavanConstants.SUBSCRIBER_TABLE,subscribers);
-		}
+		SubscriberStore store = subscriptionMessage.getSubscriberStore();
+		if (store==null)
+			throw new SavanException ("Subscriber store not found");
+			
+		if (store==null)
+			throw new SavanException ("Sabscriber store not found");
 		
 		Subscriber subscriber = getSubscriberFromMessage (subscriptionMessage);
-		subscribers.put(subscriber.getId(),subscriber);
+		store.store (subscriber);
+	}
+	
+	public void endSubscription(String subscriberID,String reason,ServiceContext serviceContext)  throws SavanException {
+		
+		SubscriberStore store =CommonUtil.getSubscriberStore(serviceContext.getAxisService());
+		if (store==null) {
+			//TODO do something
+		}
+		
+		Subscriber subscriber = store.retrieve(subscriberID);
+		doProtocolSpecificEndSubscription(subscriber,reason,serviceContext.getConfigurationContext());
+		
+		store.delete(subscriberID);
 	}
 	
 	public abstract void pauseSubscription (SavanMessageContext pauseSubscriptionMessage) throws SavanException;
@@ -83,5 +95,7 @@ public abstract class SubscriptionProcessor {
 	public abstract ExpirationBean getExpirationBean (SavanMessageContext renewMessage) throws SavanException;
 	
 	public abstract String getSubscriberID (SavanMessageContext smc) throws SavanException;
+	
+	public abstract void doProtocolSpecificEndSubscription (Subscriber subscriber,String reason,ConfigurationContext configurationContext) throws SavanException;
 
 }

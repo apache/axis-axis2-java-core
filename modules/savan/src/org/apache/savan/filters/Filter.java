@@ -21,7 +21,32 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.savan.SavanException;
 
+/**
+ * Defines a filter used by Savan. 
+ *
+ */
 public abstract class Filter {
+	
+	/**
+	 * To check weather the passed envelope is compliant with the current filter.
+	 * @param envelope
+	 * @return
+	 * @throws SavanException
+	 */
 	public abstract boolean checkEnvelopeCompliance (SOAPEnvelope envelope) throws SavanException;
+	
+	/**
+	 * To initialize the filter. The filter value should be sent to the argument
+	 * (for e.g. As a OMText for a String)
+	 * 
+	 * @param element
+	 */
 	public abstract void setUp (OMNode element);
+	
+	/**
+	 * Returns a previously set filter value.
+	 * 
+	 * @return
+	 */
+	public abstract Object getFilterValue ();
 }

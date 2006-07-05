@@ -27,11 +27,19 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
+import org.apache.savan.storage.SubscriberStore;
 
+/**
+ * This can be used to make the Publication Process easy.
+ * Handle things like engaging the savan module correctly and setting the
+ * correct subscriber store.
+ */
 public class PublicationClient {
-
-	public static void sendPublication (SOAPEnvelope publication,ConfigurationContext configurationContext) throws SavanException {
+	
+	public static void sendPublication (SOAPEnvelope publication,ConfigurationContext configurationContext, SubscriberStore store) throws SavanException {
 		
 		try {
 			ServiceClient sc = new ServiceClient (configurationContext,null);
@@ -40,6 +48,12 @@ public class PublicationClient {
 			options.setTo(new EndpointReference ("http://temp.publication.URI"));
 			options.setAction("UUID:TempPublicationAction");
 			sc.setOptions(options);
+			
+			//this will not be required when the 
+			Parameter parameter = new Parameter ();
+			parameter.setName(SavanConstants.SUBSCRIBER_STORE);
+			parameter.setValue(store);
+			sc.getAxisService().addParameter(parameter);
 			
 			//if already engaged, axis2 will neglect this engagement.
 			sc.engageModule( new QName("savan"));
@@ -53,6 +67,9 @@ public class PublicationClient {
 			String message = "Could not send the publication";
 			throw new SavanException (message,e);
 		}
+	}
+	
+	public static void endSubscription (String subscriberID) {
 		
 	}
 }

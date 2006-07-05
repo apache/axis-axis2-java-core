@@ -26,9 +26,16 @@ import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.util.CommonUtil;
 
-
+/**
+ *Defines a single node subscriber. 
+ *
+ */
 public abstract class LeafSubscriber extends Subscriber {
 	
+	/**
+	 * The time at which further notification of messages should be avaoded
+	 * to this subscriber.
+	 */
 	private Date subscriptionEndingTime = null;
 	
 	public void renewSubscription (ExpirationBean bean) {

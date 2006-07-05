@@ -18,9 +18,17 @@
 package org.apache.savan;
 
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.savan.configuration.Protocol;
+import org.apache.savan.storage.SubscriberStore;
 
+/**
+ * This encaptulates a Axis2 Message Context.
+ * Provide some easy methods to access Savan specific properties easily.
+ */
 public class SavanMessageContext {
 
 	MessageContext messageContext = null;
@@ -29,24 +37,17 @@ public class SavanMessageContext {
 		this.messageContext = messageContext;
 	}
 	
-	public int getProtocolVersion () throws SavanException {
-		Integer version = (Integer) messageContext.getProperty(SavanConstants.PROTOCOL_VERSION);
-		if (version==null)
-			throw new SavanException ("Protocol version is not set in the SavanMessageContext");
-		
-		return version.intValue();
-	}
-	
-	public void setProtocolVersion (int protocolVersion) {
-		messageContext.setProperty(SavanConstants.PROTOCOL_VERSION,new Integer (protocolVersion));
-	}
-	
 	public void setMessageType (int type) {
 		messageContext.setProperty(SavanConstants.MESSAGE_TYPE, new Integer (type));
 	}
 	
 	public int getMessageType () {
 		Integer typeInt = (Integer) messageContext.getProperty(SavanConstants.MESSAGE_TYPE);
+		if (typeInt==null) {
+			typeInt = new Integer (SavanConstants.MessageTypes.UNKNOWN);
+			messageContext.setProperty(SavanConstants.MESSAGE_TYPE,typeInt);
+		}
+		
 		return typeInt.intValue();
 	}
 	
@@ -69,4 +70,37 @@ public class SavanMessageContext {
 	public MessageContext getMessageContext () {
 		return messageContext;
 	}
+	
+	public SubscriberStore getSubscriberStore () {
+		Parameter parameter = messageContext.getParameter(SavanConstants.SUBSCRIBER_STORE);
+		SubscriberStore subscriberStore = null;
+		if (parameter!=null) {
+			parameter = messageContext.getParameter(SavanConstants.SUBSCRIBER_STORE);
+			subscriberStore = (SubscriberStore) parameter.getValue();
+		}
+		
+		return subscriberStore;
+	}
+	
+	public void setSubscriberStore (SubscriberStore store) throws SavanException  {
+		Parameter parameter = new Parameter ();
+		parameter.setName(SavanConstants.SUBSCRIBER_STORE);
+		parameter.setValue(store);
+		
+		try {
+			messageContext.getAxisService().addParameter(parameter);
+		} catch (AxisFault e) {
+			String message = "Could not add the Subscriber Store parameter";
+			throw new SavanException (message,e);
+		}
+	}
+	
+	public void setProtocol (Protocol protocol) {
+		messageContext.setProperty(SavanConstants.PROTOCOL, protocol);
+	}
+	
+	public Protocol getProtocol () {
+		return (Protocol) messageContext.getProperty(SavanConstants.PROTOCOL);
+	}
+	
 }

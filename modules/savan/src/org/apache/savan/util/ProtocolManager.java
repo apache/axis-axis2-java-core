@@ -17,15 +17,27 @@
 
 package org.apache.savan.util;
 
-import org.apache.axis2.context.MessageContext;
 import org.apache.savan.SavanConstants;
+import org.apache.savan.SavanException;
+import org.apache.savan.SavanMessageContext;
+import org.apache.savan.configuration.ConfigurationManager;
+import org.apache.savan.configuration.Protocol;
 
-
+/**
+ * Utility class to extract the Protocol type from a MessageContext
+ */
 public class ProtocolManager {
 
-	public static int getMessageProtocol (MessageContext messageContext) {
-		//TODO to this depending on the message
-		return SavanConstants.PROTOCOL_EVENTING;
+	public static Protocol getMessageProtocol (SavanMessageContext smc) throws SavanException {
+		//TODO to this depending on Protocol rules. //TODO make this algorithm efficient
+		
+		ConfigurationManager configurationManager = (ConfigurationManager) smc.getConfigurationContext().getProperty(SavanConstants.CONFIGURATION_MANAGER);
+		if (configurationManager==null)
+			throw new SavanException ("Cant find the Configuration Manager");
+		
+		Protocol protocol = (Protocol) configurationManager.getProtocolMap().get("eventing");
+		
+		return protocol;
 	}
 	
 }

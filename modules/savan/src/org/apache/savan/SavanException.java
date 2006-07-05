@@ -19,6 +19,10 @@ package org.apache.savan;
 
 import org.apache.axis2.AxisFault;
 
+/**
+ * To convey a exception that occured in Savan.
+ * 
+ */
 public class SavanException extends AxisFault {
 
 	public SavanException (String cause) {

@@ -21,6 +21,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
 
+/**
+ * InOnly message deceiver for Savan. 
+ * May get called for control messages depending on the protocol.
+ *
+ */
 public class SavanInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
 	public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {

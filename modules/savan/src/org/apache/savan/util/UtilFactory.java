@@ -17,18 +17,23 @@
 
 package org.apache.savan.util;
 
-import org.apache.axis2.context.MessageContext;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.filters.Filter;
 import org.apache.savan.messagereceiver.MessageReceiverDeligater;
-import org.apache.savan.publication.PublicationProcessor;
+import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.subscription.SubscriptionProcessor;
 
-
-public interface SavanUtilFactory {
+/**
+ * Defines a Utility Factory in Savan. Each Protocol will provide its own set of 
+ * utilities.
+ * These utilities will be used in various levels in Savan.
+ */
+public interface UtilFactory {
 	
-	public SavanMessageContext createSavanMessageContext (MessageContext messageContext);
-	public SubscriptionProcessor createSubscriptionProcessor ();
-	public PublicationProcessor createPublicationProcessor ();
-	public MessageReceiverDeligater createMessageReceiverDeligater ();
+	public abstract SavanMessageContext initializeMessage (SavanMessageContext messageContext);
+	public abstract SubscriptionProcessor createSubscriptionProcessor ();
+	public abstract MessageReceiverDeligater createMessageReceiverDeligater ();
+	public abstract Filter createFilter (String dialect);
+	public abstract Subscriber createSubscriber ();
 	
 }

@@ -20,16 +20,18 @@ package org.apache.savan.eventing;
 import org.apache.axis2.context.MessageContext;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.filters.Filter;
+import org.apache.savan.filters.XPathBasedFilter;
 import org.apache.savan.messagereceiver.MessageReceiverDeligater;
-import org.apache.savan.publication.PublicationProcessor;
+import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.subscription.SubscriptionProcessor;
-import org.apache.savan.util.SavanUtilFactory;
+import org.apache.savan.util.UtilFactory;
 
-public class EventingUtilFactory implements SavanUtilFactory {
+public class EventingUtilFactory implements UtilFactory {
 
-	public SavanMessageContext createSavanMessageContext(MessageContext messageContext) {
+	public SavanMessageContext initializeMessage(SavanMessageContext smc) {
 		
-		SavanMessageContext smc = new SavanMessageContext (messageContext);
+		MessageContext messageContext = smc.getMessageContext();
 		
 		//setting the message type.
 		String action = messageContext.getOptions().getAction();
@@ -59,14 +61,19 @@ public class EventingUtilFactory implements SavanUtilFactory {
 		return new EventingSubscriptionProcessor ();
 	}
 	
-	public PublicationProcessor createPublicationProcessor() {
-		return new EventingPublicationProcessor ();
-	}
-
 	public MessageReceiverDeligater createMessageReceiverDeligater() {
 		return new EventingMessageReceiverDeligater ();
 	}
-	
-	
 
+	public Filter createFilter (String dialect) {
+		if (EventingConstants.FilterDialects.XPath.equals(dialect))
+			return new XPathBasedFilter ();
+		else
+			return null;
+	}
+
+	public Subscriber createSubscriber() {
+		return new EventingSubscriber ();
+	}
+	
 }

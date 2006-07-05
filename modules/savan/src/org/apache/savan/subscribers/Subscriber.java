@@ -18,6 +18,7 @@
 package org.apache.savan.subscribers;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.savan.SavanException;
@@ -26,10 +27,28 @@ import org.apache.savan.filters.Filter;
 import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 
+/**
+ * Defines a subscriber which is the entity that define a specific subscription 
+ * in savan. Independent of the protocol type.
+ *
+ */
 public abstract class Subscriber {
 
 	String id;
 	Filter filter = null;
+	HashMap properties = null;
+	
+	public Subscriber () {
+		properties = new HashMap ();
+	}
+	
+	public void addProperty (String key, Object value) {
+		properties.put(key,value);
+	}
+	
+	public Object getProperty (String key) {
+		return properties.get(key);
+	}
 	
 	public Filter getFilter() {
 		return filter;
@@ -82,5 +101,5 @@ public abstract class Subscriber {
 	 * @param report
 	 * @throws SavanException
 	 */
-	public abstract void sendPublication (SavanMessageContext publication,PublicationReport report) throws SavanException;
+	protected abstract void sendPublication (SavanMessageContext publication,PublicationReport report) throws SavanException;
 }

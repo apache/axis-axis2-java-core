@@ -25,7 +25,10 @@ import org.apache.savan.SavanMessageContext;
 import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 
-
+/**
+ * Defines a set of subscribers that are acting as a group or a Topic.
+ *
+ */
 public class CompositeSubscriber extends Subscriber {
 
 	ArrayList subscribers = null;

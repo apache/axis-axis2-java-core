@@ -1,0 +1,24 @@
+<savan-config>
+
+    <protocols>
+        <protocol>
+        	<name>eventing</name>
+        	<utilFactory>org.apache.savan.eventing.EventingUtilFactory</utilFactory>
+        	<mapping-rules>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/Subscribe</action>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/Renew</action>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/GetStatus</action>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/Unsubscribe</action>
+                <!-- <SOAPAction></SOAPAction> -->
+        	</mapping-rules>
+        </protocol>
+    </protocols>
+    
+    <subscriberStores>
+    	<subscriberStore>
+    		<key>default</key>
+    		<class>org.apache.savan.subscribers.DefaultSubscriberStore</class>
+    	</subscriberStore>
+    </subscriberStores>
+    
+</savan-config>

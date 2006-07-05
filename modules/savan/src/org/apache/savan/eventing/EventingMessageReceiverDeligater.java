@@ -19,23 +19,22 @@ package org.apache.savan.eventing;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-
 import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.messagereceiver.MessageReceiverDeligater;
+import org.apache.savan.storage.SubscriberStore;
+import org.apache.savan.subscribers.Subscriber;
+import org.apache.savan.util.CommonUtil;
 
 
 public class EventingMessageReceiverDeligater implements MessageReceiverDeligater {
@@ -90,6 +89,9 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		subscribeResponseElement.addChild(subscriptionManagerElement);
 		outMessageEnvelope.getBody().addChild(subscribeResponseElement);
 		
+		//setting the message type
+		outMessage.setProperty(SavanConstants.MESSAGE_TYPE,new Integer (SavanConstants.MessageTypes.SUBSCRIPTION_RESPONSE_MESSAGE));
+		
 	}
 	
 	public void handleRenewRequest(SavanMessageContext renewMessage, MessageContext outMessage) throws SavanException {
@@ -127,10 +129,10 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 			String message = "SubscriberID TransferedProperty is not set";
 			throw new SavanException (message);
 		}
-		
-		ConfigurationContext configurationContext = renewMessage.getConfigurationContext();
-		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
-		EventingSubscriber eventingSubscriber = (EventingSubscriber) subscribers.get(subscriberID);
+
+		SubscriberStore store = CommonUtil.getSubscriberStore(renewMessage.getMessageContext().getAxisService());
+		Subscriber subscriber = store.retrieve(subscriberID);
+		EventingSubscriber eventingSubscriber = (EventingSubscriber) subscriber;
 		if (eventingSubscriber==null) {
 			String message = "Cannot find the Subscriber with the given ID";
 			throw new SavanException (message);
@@ -148,6 +150,9 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		}
 		
 		outMessageEnvelope.getBody().addChild(renewResponseElement);
+		
+		//setting the message type
+		outMessage.setProperty(SavanConstants.MESSAGE_TYPE,new Integer (SavanConstants.MessageTypes.RENEW_RESPONSE_MESSAGE));
 	}
 
 	public void handleEndSubscriptionRequest(SavanMessageContext renewMessage, MessageContext outMessage) throws SavanException {
@@ -174,7 +179,10 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 			} catch (AxisFault e) {
 				throw new SavanException (e);
 			}
-		}		
+		}	
+		
+		//setting the message type
+		outMessage.setProperty(SavanConstants.MESSAGE_TYPE,new Integer (SavanConstants.MessageTypes.UNSUBSCRIPTION_RESPONSE_MESSAGE));
 	}
 
 	public void handleGetStatusRequest(SavanMessageContext getStatusMessage, MessageContext outMessage) throws SavanException {
@@ -207,36 +215,35 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 			}
 		}
 		
-		ConfigurationContext configurationContext = getStatusMessage.getConfigurationContext();
-		HashMap subscribers = (HashMap) configurationContext.getProperty(SavanConstants.SUBSCRIBER_TABLE);
+		SubscriberStore store = CommonUtil.getSubscriberStore(getStatusMessage.getMessageContext().getAxisService());
 		
-		if (subscribers==null) {
-			throw new SavanException ("Subscriber not found");
+		
+		if (store==null) {
+			throw new SavanException ("Subscriber Store was not found");
 		}
 		
-		EventingSubscriber subscriber = (EventingSubscriber) subscribers.get(id);
+		EventingSubscriber subscriber = (EventingSubscriber) store.retrieve(id);
 		if (subscriber==null) {
 			throw new SavanException ("Subscriber not found");
 		}
 		
 		OMNamespace ens = factory.createOMNamespace(EventingConstants.EVENTING_NAMESPACE,EventingConstants.EVENTING_PREFIX);
-
 		OMElement getStatusResponseElement = factory.createOMElement(EventingConstants.ElementNames.GetStatusResponse,ens);
 		
 		Date expires = subscriber.getSubscriptionEndingTime();
 		if (expires!=null) {
 			OMElement expiresElement = factory.createOMElement(EventingConstants.ElementNames.Expires,ens);
-			
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(expires);
 			String expirationString = ConverterUtil.convertToString(calendar);
-			
 			expiresElement.setText(expirationString.toString());
-			
 			getStatusResponseElement.addChild(expiresElement);
 		}
 		
 		outMessageEnvelope.getBody().addChild(getStatusResponseElement);
+		
+		//setting the message type
+		outMessage.setProperty(SavanConstants.MESSAGE_TYPE,new Integer (SavanConstants.MessageTypes.GET_STATUS_RESPONSE_MESSAGE));
 	}
 	
 	

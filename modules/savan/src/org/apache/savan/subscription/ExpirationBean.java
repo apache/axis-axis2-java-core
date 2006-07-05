@@ -21,6 +21,9 @@ import java.util.Date;
 
 import org.apache.axis2.databinding.types.Duration;
 
+/**
+ * Defines a expiration. Could be based on a specific time in the future or a duration.
+ */
 public class ExpirationBean {
 
 	Date dateValue;

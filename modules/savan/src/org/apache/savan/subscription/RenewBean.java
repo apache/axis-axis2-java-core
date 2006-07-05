@@ -17,6 +17,9 @@
 
 package org.apache.savan.subscription;
 
+/**
+ * Encapsulates a data for a subscrpition renewal.
+ */
 public class RenewBean {
 
 	long renewMount;

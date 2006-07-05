@@ -22,10 +22,22 @@ import java.util.Hashtable;
 
 import org.apache.savan.SavanException;
 
-
+/**
+ * This will encapsulate error information of a specific publication.
+ * Probably will contain details of each subscriber to which the message could not
+ * be delivered successfully. 
+ */
 public class PublicationReport {
 
+	/**
+	 * The susbscribers to which this msg could not be sent. Probably their ID and the
+	 * Exception that occured.
+	 */
 	private Hashtable errors = null;
+	
+	/**
+	 * Ids of the subscribers to which this msg could be sent successfully.
+	 */
 	private ArrayList notifiedSubscribers;
 	
 	public PublicationReport () {
