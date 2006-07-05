@@ -160,7 +160,7 @@ public class SCTIssuer implements TokenIssuer {
      * @param config
      */
     private void parseEntropyInfo(SOAPEnvelope envelope, SCTIssuerConfig config) {
-        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(Constants.WST_NS, Constants.REQUEST_SECURITY_TOKEN_LN));
+        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(Constants.WST_NS_05_02, Constants.REQUEST_SECURITY_TOKEN_LN));
         if(elem != null) {
             //TODO get the entropy and keysize info
         }

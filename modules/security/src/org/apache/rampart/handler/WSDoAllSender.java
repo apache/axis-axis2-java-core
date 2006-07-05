@@ -402,8 +402,6 @@ public class WSDoAllSender extends WSDoAllHandler {
     }
     
     private void constructMessage(ConversationConfiguration config) throws Exception {
-        
-        Crypto crypto = Util.getCryptoInstace(config);
 
         Document doc = config.getDocument();
 
@@ -428,7 +426,7 @@ public class WSDoAllSender extends WSDoAllHandler {
             String tokenId = sct.getID();
             encrBuilder.setExternalKey(tempSecret, tokenId);
         }
-        encrBuilder.build(doc, crypto, secHeader);
+        encrBuilder.build(doc, secHeader);
 
         WSSecurityUtil.prependChildElement(doc, secHeader.getSecurityHeader(),
                 sct.getElement(), false);

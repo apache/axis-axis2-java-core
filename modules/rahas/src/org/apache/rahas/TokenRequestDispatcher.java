@@ -55,7 +55,7 @@ public class TokenRequestDispatcher {
         RequestSecurityTokenType request = null;
         OMElement rstElem = inMsgCtx.getEnvelope().getBody()
                 .getFirstChildWithName(
-                        new QName(Constants.WST_NS,
+                        new QName(Constants.WST_NS_05_02,
                                 Constants.REQUEST_SECURITY_TOKEN_LN));
         try {
             request = RequestSecurityTokenType.Factory.parse(rstElem

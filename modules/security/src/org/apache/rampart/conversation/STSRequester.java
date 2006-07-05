@@ -87,7 +87,7 @@ public class STSRequester {
             
             Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
-                    .getPullParser(new QName(Constants.WST_NS,
+                    .getPullParser(new QName(Constants.WST_NS_05_02,
                             Constants.REQUEST_SECURITY_TOKEN_LN))));
 
             OMElement rstElem = builder.getDocumentElement();

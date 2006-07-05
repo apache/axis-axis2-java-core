@@ -16,14 +16,29 @@
 
 package org.apache.rahas;
 
-public interface Constants {
+public class Constants {
     
-    public final static String WST_NS = "http://schemas.xmlsoap.org/ws/2005/02/trust";
+    /**
+     * WS-Trust 2005 Feb namespace
+     */
+    public final static String WST_NS_05_02 = "http://schemas.xmlsoap.org/ws/2005/02/trust";
+    
+    /**
+     * WS-SX Namespace
+     */
+    public final static String WST_NS_05_12 = "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
+    
     public final static String WST_PREFIX = "wst";
     
     public final static String WSP_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     public final static String WSP_PREFIX = "wsp";
     
+    public static String NS = WST_NS_05_02;
+    
+    public static void setVersion(String ns) {
+        NS = ns;
+    }
+
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";
     public final static String TOKEN_TYPE_LN = "TokenType";
@@ -40,10 +55,10 @@ public interface Constants {
     public final static String LIFETIME_LN = "Lifetime";
     
     //RequestTypes
-    public final static String REQ_TYPE_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue";
-    public final static String REQ_TYPE_VALIDATE = "http://schemas.xmlsoap.org/ws/2005/02/trust/Validate";
-    public final static String REQ_TYPE_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/Renew";
-    public final static String REQ_TYPE_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/Cancel";
+    public final static String REQ_TYPE_ISSUE = NS + "/Issue";
+    public final static String REQ_TYPE_VALIDATE = NS + "/Validate";
+    public final static String REQ_TYPE_RENEW = NS + "/Renew";
+    public final static String REQ_TYPE_CANCEL = NS + "/Cancel";
 
     //Token types
     public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
@@ -51,22 +66,22 @@ public interface Constants {
     
     
     //RST actions
-    public final static String RST_ACTON_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue";
-    public final static String RST_ACTON_VALIDATE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Renew";
-    public final static String RST_ACTON_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel";
-    public final static String RST_ACTON_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate";
-    public final static String RST_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT";
+    public final static String RST_ACTON_ISSUE = NS + "/RST/Issue";
+    public final static String RST_ACTON_VALIDATE = NS + "/RST/Renew";
+    public final static String RST_ACTON_RENEW = NS + "/RST/Cancel";
+    public final static String RST_ACTON_CANCEL = NS + "/RST/Validate";
+    public final static String RST_ACTON_SCT = NS + "/RST/SCT";
     
     //RSTR actions
-    public final static String RSTR_ACTON_ISSUE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Issue";
-    public final static String RSTR_ACTON_VALIDATE = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Renew";
-    public final static String RSTR_ACTON_RENEW = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Cancel";
-    public final static String RSTR_ACTON_CANCEL = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Validate";
-    public final static String RSTR_ACTON_SCT = "http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/SCT";
+    public final static String RSTR_ACTON_ISSUE = NS + "/RSTR/Issue";
+    public final static String RSTR_ACTON_VALIDATE = NS + "/RSTR/Renew";
+    public final static String RSTR_ACTON_RENEW = NS + "/RSTR/Cancel";
+    public final static String RSTR_ACTON_CANCEL = NS + "/RSTR/Validate";
+    public final static String RSTR_ACTON_SCT = NS + "/RSTR/SCT";
     
     //Attrs
     public final static String ATTR_TYPE = "Type";
     
     //Attr values
-    public final static String BIN_SEC_TYPE_NONCE = WST_NS + "/Nonce";
+    public final static String BIN_SEC_TYPE_NONCE = NS + "/Nonce";
 }

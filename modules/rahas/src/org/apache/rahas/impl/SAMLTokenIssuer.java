@@ -270,7 +270,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
     private int getKeySize(OMElement request, SAMLTokenIssuerConfig config)
             throws TrustException {
         OMElement keySizeElem = request.getFirstChildWithName(
-                    new QName(Constants.WST_NS, Constants.KEY_SIZE_LN));
+                    new QName(Constants.WST_NS_05_02, Constants.KEY_SIZE_LN));
         if (keySizeElem != null) {
             // Try to get the wst:KeySize value
             try {

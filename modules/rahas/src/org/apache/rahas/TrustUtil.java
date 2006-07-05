@@ -54,35 +54,35 @@ public class TrustUtil {
     
     public static OMElement createRequestSecurityTokenResponseElement(
             OMElement parent) {
-        return createOMElement(parent,Constants.WST_NS,
+        return createOMElement(parent,Constants.WST_NS_05_02,
                 Constants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
                 Constants.WST_PREFIX);
     }
 
     public static OMElement createRequestedSecurityTokenElement(OMElement parent) {
-        return createOMElement(parent,Constants.WST_NS,
+        return createOMElement(parent,Constants.WST_NS_05_02,
                 Constants.REQUESTED_SECURITY_TOKEN_LN,
                 Constants.WST_PREFIX);
     }
 
     public static OMElement createRequestedProofTokenElement(OMElement parent) {
-        return createOMElement(parent, Constants.WST_NS,
+        return createOMElement(parent, Constants.WST_NS_05_02,
                 Constants.REQUESTED_PROOF_TOKEN_LN, Constants.WST_PREFIX);
     }
     
     public static OMElement createEntropyElement(OMElement parent) {
-        return createOMElement(parent, Constants.WST_NS,
+        return createOMElement(parent, Constants.WST_NS_05_02,
                 Constants.ENTROPY_LN, Constants.WST_PREFIX);
     }
     
     public static OMElement createtTokenTypeElement(OMElement parent) {
-        return createOMElement(parent, Constants.WST_NS,
+        return createOMElement(parent, Constants.WST_NS_05_02,
                 Constants.TOKEN_TYPE_LN, Constants.WST_PREFIX);
     }
     
     public static OMElement createBinarySecretElement(OMElement parent,
             String type) {
-        OMElement elem = createOMElement(parent, Constants.WST_NS,
+        OMElement elem = createOMElement(parent, Constants.WST_NS_05_02,
                 Constants.BINARY_SECRET_LN, Constants.WST_PREFIX);
         if(type != null) {
             elem.addAttribute(elem.getOMFactory().createOMAttribute(
@@ -93,7 +93,7 @@ public class TrustUtil {
     
     public static OMElement createRequestedUnattachedRef(OMElement parent,
             String refUri, String refValueType) {
-        OMElement elem = createOMElement(parent, Constants.WST_NS,
+        OMElement elem = createOMElement(parent, Constants.WST_NS_05_02,
                             Constants.REQUESTED_UNATTACHED_REFERENCE_LN,
                             Constants.WST_PREFIX);
         elem.addChild((OMElement) createSecurityTokenReference(
@@ -103,7 +103,7 @@ public class TrustUtil {
     
     public static OMElement createRequestedAttachedRef(OMElement parent,
             String refUri, String refValueType) {
-        OMElement elem = createOMElement(parent, Constants.WST_NS,
+        OMElement elem = createOMElement(parent, Constants.WST_NS_05_02,
                             Constants.REQUESTED_ATTACHED_REFERENCE_LN,
                             Constants.WST_PREFIX);
         elem.addChild((OMElement) createSecurityTokenReference(
@@ -112,14 +112,14 @@ public class TrustUtil {
     }
     
     public static OMElement createKeySizeElement(OMElement parent) {
-        return createOMElement(parent, Constants.WST_NS,
+        return createOMElement(parent, Constants.WST_NS_05_02,
                 Constants.KEY_SIZE_LN,
                 Constants.WST_PREFIX);
     }
     
     public static OMElement createLifetimeElement(OMElement parent,
             String created, String expires) {
-        OMElement ltElem = createOMElement(parent, Constants.WST_NS,
+        OMElement ltElem = createOMElement(parent, Constants.WST_NS_05_02,
                 Constants.LIFETIME_LN,
                 Constants.WST_PREFIX);
         
