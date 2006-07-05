@@ -52,7 +52,7 @@
 
 		<xs:complexType name="handlerType">
 			<xs:sequence>
-				<xs:element ref="order" minOccurs="0"/>
+				<xs:element ref="order"/>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
 			<xs:attribute name="class" type="xs:string" use="required"/>
