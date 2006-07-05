@@ -121,6 +121,9 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
             OMElement ele1 = (OMElement) ele.getFirstOMChild();
             OMText binaryNode = (OMText) ele1.getFirstOMChild();
             compareWithActualOMText(binaryNode);
+            OMElement ele2 = (OMElement) ele1.getNextOMSibling();
+            binaryNode = (OMText) ele2.getFirstOMChild();
+            compareWithActualOMText(binaryNode);
             log.info("" + i);
             UtilServer.unDeployClientService();
         }
