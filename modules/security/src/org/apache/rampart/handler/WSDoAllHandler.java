@@ -48,13 +48,6 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     protected HandlerDescription handlerDesc;
     
     /**
-     * This is used to get hold of the message context to extract the
-     * configuration information (from axis2.xml and service.xml)
-     * out of it 
-     */
-    protected RequestData reqData;
-    
-    /**
      * In Axis2, the user cannot set inflow and outflow parameters.
      * Therefore, we need to map the Axis2 specific inflow and outflow 
      * parameters to WSS4J params,
@@ -192,29 +185,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 	 * values of the axis2.xml
 	 */
     public Object getOption(String axisKey) {
-    	
-    	MessageContext msgContext = (MessageContext)this.reqData.getMsgContext();
-    	
-    	int repetition  = this.getCurrentRepetition(msgContext);
-    	
-    	String key  = Axis2Util.getKey(axisKey,inHandler, repetition);
-
-    	Object value = null;
-    	
-        Parameter param = msgContext.getParameter(key);
-		value = (param== null)?null:param.getValue();
-
-        // ---------------------------------------------------------------------
-    	//If value is still null this point then the user has not set the value
-    	  
-    	
-    	//Look in the handlerDesc for the value
-    	if(value == null) {
-    		Parameter parameter = this.handlerDesc.getParameter(key);
-    		value = (parameter== null)?null:parameter.getValue();
-    	}
-
-    	return value;
+        Parameter parameter = this.handlerDesc.getParameter(axisKey);
+        return (parameter== null)?null:parameter.getValue();
     }
 
 	public void setProperty(Object msgContext, String key, Object value) {
@@ -223,14 +195,15 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     /**
      * Overrides the class loader used to load the PW callback class.
+     * @param msgCtx MessageContext
      * @return Returns class loader.
      */
-    public java.lang.ClassLoader getClassLoader() {
+    public java.lang.ClassLoader getClassLoader(Object msgCtx) {
         try {
-            MessageContext msgContext = (MessageContext) this.reqData.getMsgContext();
-            return msgContext.getAxisService().getClassLoader();
+            
+            return ((MessageContext)msgCtx).getAxisService().getClassLoader();
         } catch (Throwable t) {
-            return super.getClassLoader();
+            return super.getClassLoader(msgCtx);
         }
     }
 }

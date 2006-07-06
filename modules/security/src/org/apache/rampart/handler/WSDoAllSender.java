@@ -78,7 +78,7 @@ public class WSDoAllSender extends WSDoAllHandler {
             // Set the DOM impl to DOOM
             DocumentBuilderFactoryImpl.setDOOMRequired(true);
         }
-        
+        RequestData reqData = new RequestData();
         try {
             Parameter param = ConversationConfiguration.getParameter(msgContext);
             
@@ -86,7 +86,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                     WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction()) ||
                     WSSHandlerConstants.RSTR_ACTON_ISSUE.equals(msgContext.getWSAAction())) {
                 //If the msgs are msgs to an STS then use basic WS-Sec
-                processBasic(msgContext, disableDoom);
+                processBasic(msgContext, disableDoom, reqData);
             } else {
                 processSecConv(msgContext);
             }
@@ -147,7 +147,7 @@ public class WSDoAllSender extends WSDoAllHandler {
      * @throws WSSecurityException
      * @throws AxisFault
      */
-    private void processBasic(MessageContext msgContext, boolean disableDoom) throws WSSecurityException, AxisFault {
+    private void processBasic(MessageContext msgContext, boolean disableDoom, RequestData reqData) throws WSSecurityException, AxisFault {
         boolean doDebug = log.isDebugEnabled();
         
         try {
@@ -172,7 +172,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                     inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
         }
         
-        reqData = new RequestData();
+        
         
         reqData.setNoSerialization(false);
         reqData.setMsgContext(msgContext);

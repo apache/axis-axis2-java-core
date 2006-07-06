@@ -86,7 +86,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             // Set the DOM impl to DOOM
             DocumentBuilderFactoryImpl.setDOOMRequired(true);
         }
-
+        RequestData reqData = new RequestData();
         try {
 
             Parameter param = ConversationConfiguration
@@ -97,7 +97,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                             .getWSAAction())
                     || WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext
                             .getWSAAction())) {
-                this.processBasic(msgContext, disableDoom);
+                this.processBasic(msgContext, disableDoom, reqData);
             } else {
                 this.processSecConv(msgContext);
             }
@@ -165,7 +165,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 .getSOAPEnvelopeFromDOOMDocument(config.getDocument()));
     }
 
-    private void processBasic(MessageContext msgContext, boolean disableDoom)
+    private void processBasic(MessageContext msgContext, boolean disableDoom, RequestData reqData)
             throws Exception {
 
         // populate the properties
