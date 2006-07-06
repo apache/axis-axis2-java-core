@@ -13,7 +13,7 @@
             };
         </xsl:if>
         <!--  generate toOM for only non parts - this is WRONG!!!! -->
-        <xsl:for-each select="param[@type!='' and not(@primitive)]">
+        <xsl:for-each select="param[@type!='' and not(@primitive) and not(@partname)]">
             private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
             return param.getOMElement(param.MY_QNAME,
             org.apache.axiom.om.OMAbstractFactory.getOMFactory());
@@ -43,18 +43,19 @@
                     org.apache.axiom.om.OMElement wrapperElt =
                     fac.createOMElement("<xsl:value-of select="$opname"/>","<xsl:value-of select="$opnsuri"/>",null);
                     <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]">
-                        elt = fac.createOMElement("<xsl:value-of select="@partname"/>","",null);
-                        // add the value here
+
                         <xsl:choose>
                             <xsl:when test="@primitive">
+                                elt = fac.createOMElement("<xsl:value-of select="@partname"/>","",null);
                                 elt.setText(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param<xsl:value-of select="position()"/>));
                             </xsl:when>
                             <xsl:otherwise>
-                                elt.addChild(param.getOMElement(param.MY_QNAME,
-                                org.apache.axiom.om.OMAbstractFactory.getOMFactory()));
+                                elt = param<xsl:value-of select="position()"/>.getOMElement(
+                                new javax.xml.namespace.QName("","<xsl:value-of select="@partname"/>"),
+                                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                             </xsl:otherwise>
                         </xsl:choose>
-                        wrapperElt.appendChild(elt);
+                        wrapperElt.addChild(elt);
                     </xsl:for-each>
 
                     org.apache.axis2.databinding.ADBSOAPModelBuilder builder =
