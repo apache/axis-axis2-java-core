@@ -41,6 +41,9 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     //hashmap that contains the type mapping objects
     protected HashMap qName2ObjectMap = new HashMap();
 
+    //hashmap for keeping the status objects.
+    protected HashMap qName2StatusMap = new HashMap();
+
     //counter variable to generate unique parameter ID's
     protected int counter = 0;
 
@@ -142,5 +145,23 @@ public abstract class TypeMappingAdapter implements TypeMapper {
      */
     public void setDefaultMappingName(String defaultMapping) {
         this.defaultClassName = defaultMapping;
+    }
+
+    /**
+     * @see TypeMapper#addTypeMappingStatus(javax.xml.namespace.QName, Object)
+     * @param qName
+     * @param status
+     */
+    public void addTypeMappingStatus(QName qName, Object status) {
+        this.qName2StatusMap.put(qName, status);
+    }
+
+    /**
+     * @see TypeMapper#getTypeMappingStatus(javax.xml.namespace.QName) 
+     * @param qName
+     * @return
+     */
+    public Object getTypeMappingStatus(QName qName) {
+        return this.qName2StatusMap.get(qName);
     }
 }

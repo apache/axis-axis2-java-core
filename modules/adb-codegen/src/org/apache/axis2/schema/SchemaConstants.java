@@ -106,4 +106,9 @@ public class SchemaConstants {
         public static final String PACKAGE = "p";
 
     }
+
+    public static class SchemaCompilerInfoHolder{
+        public static final String CLASSNAME_KEY = "CLASS_NAME";
+        public static final String CLASSNAME_PRIMITVE_KEY = "CLASS_NAME_PRIMITIVE";
+    }
 }

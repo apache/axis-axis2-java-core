@@ -60,9 +60,6 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 operations.hasNext();){
                 AxisOperation op = (AxisOperation)operations.next();
 
-                //todo check whether we need to unwrap this message depending on
-                //the binding state.
-
                 if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())){
                     walkSchema(op.getMessage(
                             WSDLConstants.MESSAGE_LABEL_IN_VALUE),
@@ -104,7 +101,26 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     // traverse through them
                     if (item instanceof XmlSchemaElement){
                         //add the element name to the part name list
-                        partNameList.add(((XmlSchemaElement)item).getQName());
+                        String partName = ((XmlSchemaElement) item).getName();
+
+                        //  part names are not unique across messages. Hence
+                        //  we need some way of making the part name a unique
+                        //  one (due to the fact that the type mapper
+                        //  is a global list of types).
+                        //  The seemingly best way to do that is to
+                        //  specify a namespace for the part QName reference which
+                        //  is stored in the  list. This part qname is
+                        //  temporary and should not be used with it's
+                        //  namespace URI (which happened to be the operation name)
+                        //  with _input attached to it
+
+
+                        partNameList.add(
+                                WSDLUtil.getPartQName(opName.getLocalPart(),
+                                        WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                        partName));
+
+
                     }else{
                         // if the particle contains anything other than
                         // a XMLSchemaElement then we are not in a position
@@ -128,9 +144,9 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     infoHolder.setPartsList(partNameList);
 
                     //attach it to the parameters
-                     message.addParameter(
-                             getParameter(Constants.UNWRAPPED_DETAILS,
-                             infoHolder));
+                    message.addParameter(
+                            getParameter(Constants.UNWRAPPED_DETAILS,
+                                    infoHolder));
 
                 } catch (AxisFault axisFault) {
                     throw new CodeGenerationException(axisFault);
@@ -163,4 +179,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
         return myParameter;
     }
+
+
+
 }

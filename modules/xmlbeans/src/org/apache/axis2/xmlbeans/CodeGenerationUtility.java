@@ -382,6 +382,7 @@ public class CodeGenerationUtility {
     }
 
     /**
+     * Get an array of schema documents
      * @param vec
      * @return
      */
@@ -438,6 +439,7 @@ public class CodeGenerationUtility {
 
     /**
      * Implementation of the entity resolver
+     * A custom entity resolver for XMLBeans
      */
     private static class Axis2EntityResolver implements EntityResolver {
         private SchemaDocument[] schemas;
@@ -453,7 +455,6 @@ public class CodeGenerationUtility {
          * @see EntityResolver#resolveEntity(String, String)
          */
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            //System.out.println("Lookup:" + "[ " + publicId + "]" + "[" + systemId + "]");
             try {
                 for (int i = 0; i < schemas.length; i++){
                     SchemaDocument.Schema schema = schemas[i].getSchema();

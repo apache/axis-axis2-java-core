@@ -82,11 +82,12 @@
                     <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@location='body'])"/></xsl:variable>
                     <xsl:choose>
                         <xsl:when test="$paramCount &gt; 0">skel.<xsl:value-of select="@name"/>(
-                            <xsl:for-each select="input/param[@location='body']">
-                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM(
+                            <xsl:for-each select="input/param[@location='body' and @type!='']">
+                                 (<xsl:value-of select="@type"/>)fromOM(
                                     msgContext.getEnvelope().getBody().getFirstElement(),
                                     <xsl:value-of select="@type"/>.class,
-                                    getEnvelopeNamespaces(msgContext.getEnvelope()))<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
+                                    getEnvelopeNamespaces(msgContext.getEnvelope()))<xsl:if test="position() &gt; 1">,</xsl:if>
+                                
                             </xsl:for-each>);
                         </xsl:when>
                         <!--No input parameters-->

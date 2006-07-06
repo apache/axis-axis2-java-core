@@ -24,8 +24,8 @@ public interface Constants {
     String EXTERNAL_TEMPLATE_PROPERTY_KEY = "externalTemplate";
     String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY = "databindsupporter";
     String XSLT_INCLUDE_TEST_OBJECT_HREF_KEY = "testObject";
-    String UNWRAPPED_KEY = "UNWrapped";
-    String UNWRAPPED_DETAILS = "UNWrapped_details";
+    String UNWRAPPED_KEY = "UnWrapped";
+    String UNWRAPPED_DETAILS = "UnWrapped_details";
 
 
     public interface CodegenStyle {

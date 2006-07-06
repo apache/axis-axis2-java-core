@@ -254,21 +254,26 @@
                                 <!-- style being doclit or rpc does not matter -->
                                 <xsl:when test="$style='rpc' or $style='document'">
                                     //Style is Doc.
-                                    <!-- Let's assume there is only one parameters here -->
-                                    <xsl:for-each select="input/param[@location='body']">
-                                        <xsl:choose>
-                                            <xsl:when test="@type!=''">
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                <xsl:value-of select="@name"/>,
+                                    <xsl:choose>
+                                        <xsl:when test="count(input/param[@location='body' and @type!=''])=1">
+                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
                                                 optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
                                                 "<xsl:value-of select="$method-name"/>")));
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
-                                            </xsl:otherwise>
-                                        </xsl:choose>
+                                        </xsl:when>
+                                        <xsl:when test="count(input/param[@location='body' and @type!='']) &gt; 1">
+                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                 <xsl:for-each select="input/param[@location='body' and @type!='']">
+                                                   <xsl:value-of select="@name"/>,
+                                                 </xsl:for-each>
+                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                "<xsl:value-of select="$method-name"/>")));
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                              env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
+                                        </xsl:otherwise>
+                                    </xsl:choose>
 
-                                    </xsl:for-each>	
                                     <xsl:choose>
                                         <!-- If there are headers then build the envelope -->
                                         <xsl:when test="count(input/param[@location='header'])>0">
@@ -422,16 +427,25 @@
                             <xsl:choose>
                                 <xsl:when test="$style='document' or $style='rpc'">
                                     //Style is Doc.
-                                    <xsl:for-each select="input/param[@location='body']">
-                                        <xsl:choose>
-                                            <xsl:when test="@type!=''">
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                 env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:for-each>
+                                    <xsl:choose>
+                                        <xsl:when test="count(input/param[@location='body' and @type!=''])=1">
+                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
+                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                "<xsl:value-of select="$method-name"/>")));
+                                        </xsl:when>
+                                        <xsl:when test="count(input/param[@location='body' and @type!='']) &gt; 1">
+                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                 <xsl:for-each select="input/param[@location='body' and @type!='']">
+                                                   <xsl:value-of select="@name"/>,
+                                                 </xsl:for-each>
+                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                "<xsl:value-of select="$method-name"/>")));
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                              env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                     <xsl:choose>
                                         <!-- If there are headers then build the envelope  -->
                                         <xsl:when test="count(input/param[@location='header'])>0">

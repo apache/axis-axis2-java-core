@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
  * Builds a SOAPEnvelope around an ADB pull parser
  */
 public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
+    
     public ADBSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
         super(new Envelope(parser).
                 getPullParser(

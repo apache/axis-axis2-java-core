@@ -101,4 +101,23 @@ public interface TypeMapper {
      * @param defaultMapping
      */
     public void setDefaultMappingName(String defaultMapping);
+
+
+    /**
+     * Allows the storage of a status object with a mapping to
+     * the qname. This may be used to store certain status information
+     * that will be used by different type mappers. A given type mapper
+     * may choose not to implement this!
+     * @param qname
+     * @param status
+     */
+    public void addTypeMappingStatus(QName qName,Object status);
+
+    /**
+     * Returns the relevant status object given the qName of the xml element
+     * @see #addTypeMappingStatus(javax.xml.namespace.QName, Object)
+     * @param qName
+     * @return the status object
+     */
+    public Object getTypeMappingStatus(QName qName);
 }

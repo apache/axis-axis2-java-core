@@ -188,13 +188,13 @@ public class SchemaCompiler {
      */
     public void compile(List schemalist) throws SchemaCompilationException {
 
-        
+
         try {
-             //clear the loaded and available maps
+            //clear the loaded and available maps
             loadedSchemaMap.clear();
             availableSchemaMap.clear();
 
-             XmlSchema schema;
+            XmlSchema schema;
             // first round - populate the avaialble map
             for (int i = 0; i < schemalist.size(); i++) {
                 schema = (XmlSchema) schemalist.get(i);
@@ -358,6 +358,9 @@ public class SchemaCompiler {
 
 
         String writtenClassName = writer.write(xsElt, processedTypemap, metainf);
+        //register the class name
+        xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                writtenClassName);
         processedElementMap.put(xsElt.getQName(), writtenClassName);
     }
 
@@ -415,11 +418,24 @@ public class SchemaCompiler {
             //later
 
             if (!isOuter) {
-
                 if (schemaType.getName()!=null){
                     // this element already has a name. Which means we can directly
                     // register it
-                    innerElementMap.put(xsElt.getQName(), findClassName(schemaType.getQName(), isArray(xsElt)));
+                    String className = findClassName(schemaType.getQName(),
+                            isArray(xsElt));
+
+                    innerElementMap.put(xsElt.getQName(), className);
+
+                    //store in the schema map
+                    schemaType.addMetaInfo(
+                            SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            className);
+
+                    if (baseSchemaTypeMap.containsValue(className)){
+                        schemaType.addMetaInfo(
+                                SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY,
+                                Boolean.TRUE);
+                    }
                     //since this is a inner element we should add it to the inner element map
                 }else{
                     //this is an anon type. This should have been already processed and registered at
@@ -436,21 +452,28 @@ public class SchemaCompiler {
                                 null);
                         //remove the reference from the anon list since we named the type
                         processedAnonymousComplexTypesMap.remove(xsElt);
+                        String className = findClassName(schemaType.getQName(), isArray(xsElt));
                         innerElementMap.put(
                                 xsElt.getQName(),
-                                findClassName(schemaType.getQName(), isArray(xsElt)));
+                                className);
+
+                        //store in the schema map
+                        xsElt.addMetaInfo(
+                                SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                                className);
                     }
                 }
             }else{
                 this.processedElementList.add(xsElt.getQName());
             }
-
+            //referenced name
         }else if (xsElt.getRefName()!=null){
 
             //process the referenced type. It could be thought that the referenced element replaces this
             //element
+            XmlSchema currentParentSchema = resolveParentSchema(xsElt.getRefName(),parentSchema);
+            XmlSchemaElement referencedElement = currentParentSchema.getElementByName(xsElt.getRefName());
 
-            XmlSchemaElement referencedElement = parentSchema.getElementByName(xsElt.getRefName());
             //if the element is referenced, then it should be one of the outer (global) ones
             processElement(referencedElement, parentSchema);
 
@@ -462,10 +485,13 @@ public class SchemaCompiler {
                 String className = findClassName(referencedElement.getSchemaTypeName(), isArray(xsElt));
                 //if this element is referenced, there's no QName for this element
                 this.processedElementRefMap.put(referenceEltQName, className);
+
+                referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                        className);
             }else{
                 //this referenced element has an anon type and that anon type has been already
                 //processed. But in this case we need it to be a seperate class since this
-                // complextype has to be added as an attribute in a class.
+                //complextype has to be added as an attribute in a class.
                 //generate a name for this type
                 QName generatedTypeName = generateTypeQName(referenceEltQName, parentSchema);
                 XmlSchemaType referenceSchemaType = referencedElement.getSchemaType();
@@ -486,7 +512,7 @@ public class SchemaCompiler {
                     ));
                 }
             }
-
+            // schema type name is present but not the schema type object
         }else if (xsElt.getSchemaTypeName()!=null){
             //There can be instances where the SchemaType is null but the schemaTypeName is not!
             //this specifically happens with xsd:anyType.
@@ -535,7 +561,7 @@ public class SchemaCompiler {
      * @return
      */
     private XmlSchema resolveParentSchema(QName schemaTypeName,XmlSchema currentSchema)
-      throws SchemaCompilationException{
+            throws SchemaCompilationException{
         String targetNamespace = schemaTypeName.getNamespaceURI();
         Object loadedSchema = loadedSchemaMap.get(targetNamespace);
         if (loadedSchema!=null){
@@ -651,7 +677,8 @@ public class SchemaCompiler {
             }
         } else if (schemaType instanceof XmlSchemaSimpleType) {
             //process simple type
-            processSimpleSchemaType((XmlSchemaSimpleType) schemaType);
+            processSimpleSchemaType((XmlSchemaSimpleType) schemaType,
+                    xsElt);
         }
     }
 
@@ -683,6 +710,10 @@ public class SchemaCompiler {
         // Must do this up front to support recursive types
         String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(complexType.getQName());
         processedTypemap.put(complexType.getQName(), fullyQualifiedClassName);
+
+        //register that in the schema metainfo bag
+        complexType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                fullyQualifiedClassName);
 
         BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType,parentSchema);
 
@@ -787,7 +818,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType)type);
+                    processSimpleSchemaType((XmlSchemaSimpleType)type,null);
                 }
             }
 
@@ -1117,7 +1148,8 @@ public class SchemaCompiler {
      *
      * @param simpleType
      */
-    private void processSimpleSchemaType(XmlSchemaSimpleType simpleType) throws SchemaCompilationException{
+    private void processSimpleSchemaType(XmlSchemaSimpleType simpleType,
+                                         XmlSchemaElement xsElt) throws SchemaCompilationException{
         // handle the restriction
         XmlSchemaSimpleTypeContent content = simpleType.getContent();
         if (content != null) {
@@ -1132,10 +1164,17 @@ public class SchemaCompiler {
                     this.simpleTypesMap.put(simpleType.getQName(), className);
                     //set the old schema type QName and the new schema type QName
                     this.changedTypeMap.put(simpleType.getQName(), baseTypeName);
+                    //add the class name to the meta info map
+                    simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            className);
+
+                    //add an additional flag saying that this is a primitive type
+                    simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY,
+                            Boolean.TRUE);
                 } else {
                     //recurse
                     if (restriction.getBaseType() != null) {
-                        processSimpleSchemaType(restriction.getBaseType());
+                        processSimpleSchemaType(restriction.getBaseType(),xsElt);
                     }
                 }
             }else if (content instanceof XmlSchemaSimpleTypeUnion) {

@@ -310,12 +310,24 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             processPortType(portType, dif);
 
             List list = binding.getBindingOperations();
-
             for (int i = 0; i < list.size(); i++) {
                 BindingOperation wsdl4jBindingOperation = (BindingOperation) list
                         .get(i);
                 AxisOperation operation = axisService.getOperation(new QName(
                         wsdl4jBindingOperation.getName()));
+
+                // this should first check the style of the binding
+                // and then set the style in the axis operation
+                // if that is not present, then only the global style applies
+                // this style is either rpc or doc
+                
+                String style  = getSOAPStyle(wsdl4jBindingOperation);
+                if (style!= null){
+                   operation.setStyle(style);
+                }else if (this.style != null){
+                    operation.setStyle(this.style);
+                }
+
                 copyExtensibleElements(wsdl4jBindingOperation
                         .getExtensibilityElements(), dif, operation,
                         BINDING_OPERATION);
@@ -326,7 +338,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         .getBindingOutput();
                 String MEP = operation.getMessageExchangePattern();
                 if (bindingInput != null) {
-                    if (WSDLUtil.isInputPresentForMEP(MEP)) {
+                    if (WSDLUtil.isInputPresentForMEP(MEP)){
                         AxisMessage inMessage = operation
                                 .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                         copyExtensibleElements(bindingInput
@@ -348,6 +360,25 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
+    /**
+     * A util method that returns the SOAP style
+     * included in the binding operation
+     * @param bindingOp
+     * @return
+     */
+    private String getSOAPStyle(BindingOperation bindingOp){
+        List extensibilityElements = bindingOp.getExtensibilityElements();
+        for (int i = 0; i < extensibilityElements.size(); i++) {
+            Object extElement =  extensibilityElements.get(i);
+            if (extElement instanceof SOAPOperation){
+                return ((SOAPOperation)extElement).getStyle();
+            }
+
+        }
+
+        return null;
+
+    }
     /**
      * Simply Copy information.
      *
@@ -403,9 +434,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             pi.setPolicyRegistry(registry);
         }
 
-        if (style != null) {
-            axisOperation.setStyle(style);
-        }
         copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(), dif,
                 axisOperation, PORT_TYPE_OPERATION);
 
@@ -1374,28 +1402,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 binding.getBindingOperations().iterator();
              bindingOperationsIterator.hasNext();) {
             bindingOp = (BindingOperation) bindingOperationsIterator.next();
-            for (Iterator extElementsIterator =
-                    bindingOp.getExtensibilityElements().iterator();
-                 extElementsIterator.hasNext();) {
-                ExtensibilityElement extElt = (ExtensibilityElement)
-                        extElementsIterator.next();
-                if (extElt instanceof SOAPOperation) {
-                    SOAPOperation soapOperation = (SOAPOperation) extElt;
-                    if (RPC_STYLE.equals(soapOperation.getStyle())) {
-                        //add to the list
-                        returnList.add(bindingOp.getOperation());
-                    } else if (DOCUMENT_STYLE.equals(soapOperation.getStyle())) {
-                        //do nothing - just pass it through
-                    } else {
-                        //no style specified
-                        //use the global style to determine whether to put this one or not
-                        if (isRPC) {
-                            returnList.add(bindingOp.getOperation());
-                        }
-                    }
+            String style = getSOAPStyle(bindingOp) ;
 
+            if (style == null){
+                //no style specified
+                //use the global style to determine whether to put this one or not
+                if (isRPC){
+                    returnList.add(bindingOp.getOperation());
                 }
+            }else if (RPC_STYLE.equals(style)){
+                //add to the list
+                returnList.add(bindingOp.getOperation());
             }
+            // if not RPC we just leave it - default is doc
 
         }
 

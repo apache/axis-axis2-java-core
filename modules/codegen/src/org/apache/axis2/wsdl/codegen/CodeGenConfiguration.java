@@ -85,7 +85,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
 
     /**
-     * Determines whether the parameters are wrappedor unwrapped
+     * Determines whether the parameters are wrapped or unwrapped
      * true by default
      */
     private boolean parametersWrapped = true;
