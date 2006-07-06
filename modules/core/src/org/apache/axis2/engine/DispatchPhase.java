@@ -7,6 +7,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -79,10 +80,10 @@ public class DispatchPhase extends Phase {
         if (service.isEnableAllTransport()) {
             return;
         } else {
-            String trs [] = service.getExposedTransports();
+            List trs = service.getExposedTransports();
             String incommingTrs = msgctx.getIncomingTransportName();
-            for (int i = 0; i < trs.length; i++) {
-                String tr = trs[i];
+            for (int i = 0; i < trs.size(); i++) {
+                String tr = (String) trs.get(i);
                 if (incommingTrs != null && incommingTrs.equals(tr)) {
                     return;
                 }

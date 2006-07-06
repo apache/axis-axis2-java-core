@@ -361,8 +361,9 @@ public class AxisService extends AxisDescription {
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);
-            if (messageReceiver != null)
+            if (messageReceiver != null) {
                 return messageReceiver;
+            }
         }
         if (getParent() != null && getParent().getParent() != null) {
             return ((AxisConfiguration) getParent().getParent()).getMessageReceiver(mepURL);
@@ -401,8 +402,8 @@ public class AxisService extends AxisDescription {
 
         operation.setOutputAction(axisOperation.getOutputAction());
         String[] faultActionNames = axisOperation.getFaultActionNames();
-        for(int i=0;i<faultActionNames.length;i++){
-           operation.addFaultAction(faultActionNames[i],axisOperation.getFaultAction(faultActionNames[i]));
+        for (int i = 0; i < faultActionNames.length; i++) {
+            operation.addFaultAction(faultActionNames[i], axisOperation.getFaultAction(faultActionNames[i]));
         }
 
         return operation;
@@ -508,7 +509,9 @@ public class AxisService extends AxisDescription {
     }
 
     public AxisConfiguration getAxisConfiguration() {
-        if (getParent() != null) return (AxisConfiguration) getParent().getParent();
+        if (getParent() != null) {
+            return (AxisConfiguration) getParent().getParent();
+        }
         return null;
     }
 
@@ -539,9 +542,9 @@ public class AxisService extends AxisDescription {
                 }
             }
         } else {
-            String trs [] = getExposedTransports();
-            for (int i = 0; i < trs.length; i++) {
-                String trsName = trs[i];
+            List trs = getExposedTransports();
+            for (int i = 0; i < trs.size(); i++) {
+                String trsName = (String) trs.get(i);
                 TransportInDescription transportIn = axisConfig.getTransportIn(
                         new QName(trsName));
                 if (transportIn != null) {
@@ -977,26 +980,27 @@ public class AxisService extends AxisDescription {
         return enableAllTransport;
     }
 
-    public String[] getExposedTransports() {
-        return (String[]) (exposedTransports.toArray(new String[exposedTransports.size()]));
+    public List getExposedTransports() {
+        return this.exposedTransports;
     }
 
-    public void setExposedTransports(String[] transports) {
-        if (transports.length > 0) {
+    public void setExposedTransports(List transports) {
+        if (transports.size() > 0) {
             enableAllTransport = false;
-            this.exposedTransports = new Vector();
-            for (int i = 0; i < transports.length; i++) {
-                this.exposedTransports.add(transports[i]);
-            }
+            this.exposedTransports = transports;
         }
     }
 
-    public void addExposedTransport(String transport){
+    public void addExposedTransport(String transport) {
         this.exposedTransports.add(transport);
     }
 
-    public void removeExposedTransport(String transport){
+    public void removeExposedTransport(String transport) {
         this.exposedTransports.remove(transport);
+    }
+
+    public boolean isExposedTransport(String transport) {
+        return exposedTransports.contains(transport);
     }
 
     public void disEngageModule(AxisModule module) {

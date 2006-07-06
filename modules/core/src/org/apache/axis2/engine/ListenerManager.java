@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -78,9 +79,9 @@ public class ListenerManager {
                     return null;
                 }
             } else {
-                String exposeTransport [] = service.getExposedTransports();
+                List exposeTransport = service.getExposedTransports();
                 TransportListener listener = (TransportListener)
-                        startedTransports.get(exposeTransport[0]);
+                        startedTransports.get(exposeTransport.get(0));
                 if (opName == null) {
                     return listener.getEPRForService(serviceName, null);
                 } else return listener.getEPRForService(serviceName + "/" + opName, null);

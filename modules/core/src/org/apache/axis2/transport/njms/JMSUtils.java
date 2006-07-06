@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.List;
 
 public class JMSUtils {
 
@@ -62,16 +63,16 @@ public class JMSUtils {
             return true;
 
         } else {
-            String[] transports = service.getExposedTransports();
-            for (int i=0; i<transports.length; i++) {
-                if (Constants.TRANSPORT_JMS.equals(transports[i])) {
+            List transports = service.getExposedTransports();
+            for (int i=0; i<transports.size(); i++) {
+                if (Constants.TRANSPORT_JMS.equals(transports.get(i))) {
                     return true;
                 }
             }
         }
         return false;
     }
-        
+
     /**
      * Get the JMS destination used by this service
      * @param service the Axis Service
@@ -121,7 +122,7 @@ public class JMSUtils {
      * @param axisCfg configuration context
      */
     public static void markServiceAsFaulty(String serviceName, String msg,
-        AxisConfiguration axisCfg ) {
+                                           AxisConfiguration axisCfg ) {
         if (serviceName != null) {
             try {
                 AxisService service = axisCfg.getService(serviceName);
@@ -129,7 +130,7 @@ public class JMSUtils {
 
             } catch (AxisFault axisFault) {
                 log.warn("Error marking service : " + serviceName +
-                    " as faulty due to : " + msg, axisFault);
+                         " as faulty due to : " + msg, axisFault);
             }
         }
     }
@@ -169,7 +170,7 @@ public class JMSUtils {
 
             } else {
                 handleException("Unsupported JMS message type : " +
-                    message.getClass().getName());
+                                message.getClass().getName());
             }
 
 
@@ -305,11 +306,11 @@ public class JMSUtils {
                 // If charset is not specified
                 if (TransportUtils.getCharSetEncoding(contentType) == null) {
                     xmlreader = StAXUtils.createXMLStreamReader(in,
-                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                     // Set the encoding scheme in the message context
                     msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                           MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                 } else {
                     // get the type of char encoding
@@ -323,12 +324,12 @@ public class JMSUtils {
                 if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                     // it is SOAP 1.2
                     builder = new StAXSOAPModelBuilder(xmlreader,
-                                    SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                                                       SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                     // SOAP 1.1
                     builder =  new StAXSOAPModelBuilder(xmlreader,
-                                    SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                                                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 }
             }
@@ -336,11 +337,11 @@ public class JMSUtils {
 
         if (builder == null) {
             XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
-                MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                                                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
             // Set the encoding scheme in the message context
             msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                   MessageContext.DEFAULT_CHAR_SET_ENCODING);
             builder = new StAXSOAPModelBuilder(
                 xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             envelope = (SOAPEnvelope) builder.getDocumentElement();

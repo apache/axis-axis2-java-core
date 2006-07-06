@@ -189,7 +189,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     OMElement trsEle = (OMElement) transport_itr.next();
                     trs.add(trsEle.getText());
                 }
-                service.setExposedTransports((String[]) trs.toArray(new String[trs.size()]));
+                service.setExposedTransports(trs);
             }
             // processing operations
             Iterator operationsIterator =
