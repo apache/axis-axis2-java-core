@@ -17,19 +17,15 @@
 package org.apache.rahas.impl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
-import org.apache.rahas.Constants;
-import org.apache.rahas.SimpleTokenStore;
+import org.apache.axis2.util.Base64;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.Token;
 import org.apache.rahas.TokenIssuer;
-import org.apache.rahas.TokenStorage;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
-import org.apache.axis2.util.Base64;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
@@ -160,7 +156,7 @@ public class SCTIssuer implements TokenIssuer {
      * @param config
      */
     private void parseEntropyInfo(SOAPEnvelope envelope, SCTIssuerConfig config) {
-        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(Constants.WST_NS_05_02, Constants.REQUEST_SECURITY_TOKEN_LN));
+        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(RahasConstants.WST_NS, RahasConstants.REQUEST_SECURITY_TOKEN_LN));
         if(elem != null) {
             //TODO get the entropy and keysize info
         }
@@ -189,12 +185,12 @@ public class SCTIssuer implements TokenIssuer {
         
         if (config.addRequestedAttachedRef) {
             TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
-                    Constants.TOK_TYPE_SCT);
+                    RahasConstants.TOK_TYPE_SCT);
         }
 
         if (config.addRequestedUnattachedRef) {
             TrustUtil.createRequestedUnattachedRef(
-                    rstrElem, sct.getIdentifier(), Constants.TOK_TYPE_SCT);
+                    rstrElem, sct.getIdentifier(), RahasConstants.TOK_TYPE_SCT);
         }
         
         OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(rstrElem);
@@ -246,12 +242,12 @@ public class SCTIssuer implements TokenIssuer {
         
         if (config.addRequestedAttachedRef) {
             TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
-                    Constants.TOK_TYPE_SCT);
+                    RahasConstants.TOK_TYPE_SCT);
         }
 
         if (config.addRequestedUnattachedRef) {
             TrustUtil.createRequestedUnattachedRef(
-                    rstrElem, sct.getIdentifier(), Constants.TOK_TYPE_SCT);
+                    rstrElem, sct.getIdentifier(), RahasConstants.TOK_TYPE_SCT);
         }
         
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
@@ -276,7 +272,7 @@ public class SCTIssuer implements TokenIssuer {
     }
 
     public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
-        return Constants.RSTR_ACTON_SCT;
+        return RahasConstants.RSTR_ACTON_SCT;
     }
 
     /**

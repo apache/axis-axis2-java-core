@@ -16,7 +16,7 @@
 
 package org.apache.rahas;
 
-public class Constants {
+public class RahasConstants {
     
     /**
      * WS-Trust 2005 Feb namespace
@@ -33,10 +33,10 @@ public class Constants {
     public final static String WSP_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     public final static String WSP_PREFIX = "wsp";
     
-    public static String NS = WST_NS_05_02;
+    public static String WST_NS = WST_NS_05_02;
     
     public static void setVersion(String ns) {
-        NS = ns;
+        WST_NS = ns;
     }
 
     //Local names
@@ -55,10 +55,10 @@ public class Constants {
     public final static String LIFETIME_LN = "Lifetime";
     
     //RequestTypes
-    public final static String REQ_TYPE_ISSUE = NS + "/Issue";
-    public final static String REQ_TYPE_VALIDATE = NS + "/Validate";
-    public final static String REQ_TYPE_RENEW = NS + "/Renew";
-    public final static String REQ_TYPE_CANCEL = NS + "/Cancel";
+    public final static String REQ_TYPE_ISSUE = WST_NS + "/Issue";
+    public final static String REQ_TYPE_VALIDATE = WST_NS + "/Validate";
+    public final static String REQ_TYPE_RENEW = WST_NS + "/Renew";
+    public final static String REQ_TYPE_CANCEL = WST_NS + "/Cancel";
 
     //Token types
     public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
@@ -66,22 +66,22 @@ public class Constants {
     
     
     //RST actions
-    public final static String RST_ACTON_ISSUE = NS + "/RST/Issue";
-    public final static String RST_ACTON_VALIDATE = NS + "/RST/Renew";
-    public final static String RST_ACTON_RENEW = NS + "/RST/Cancel";
-    public final static String RST_ACTON_CANCEL = NS + "/RST/Validate";
-    public final static String RST_ACTON_SCT = NS + "/RST/SCT";
+    public final static String RST_ACTON_ISSUE = WST_NS + "/RST/Issue";
+    public final static String RST_ACTON_VALIDATE = WST_NS + "/RST/Renew";
+    public final static String RST_ACTON_RENEW = WST_NS + "/RST/Cancel";
+    public final static String RST_ACTON_CANCEL = WST_NS + "/RST/Validate";
+    public final static String RST_ACTON_SCT = WST_NS + "/RST/SCT";
     
     //RSTR actions
-    public final static String RSTR_ACTON_ISSUE = NS + "/RSTR/Issue";
-    public final static String RSTR_ACTON_VALIDATE = NS + "/RSTR/Renew";
-    public final static String RSTR_ACTON_RENEW = NS + "/RSTR/Cancel";
-    public final static String RSTR_ACTON_CANCEL = NS + "/RSTR/Validate";
-    public final static String RSTR_ACTON_SCT = NS + "/RSTR/SCT";
+    public final static String RSTR_ACTON_ISSUE = WST_NS + "/RSTR/Issue";
+    public final static String RSTR_ACTON_VALIDATE = WST_NS + "/RSTR/Renew";
+    public final static String RSTR_ACTON_RENEW = WST_NS + "/RSTR/Cancel";
+    public final static String RSTR_ACTON_CANCEL = WST_NS + "/RSTR/Validate";
+    public final static String RSTR_ACTON_SCT = WST_NS + "/RSTR/SCT";
     
     //Attrs
     public final static String ATTR_TYPE = "Type";
     
     //Attr values
-    public final static String BIN_SEC_TYPE_NONCE = NS + "/Nonce";
+    public final static String BIN_SEC_TYPE_NONCE = WST_NS + "/Nonce";
 }

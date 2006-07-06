@@ -22,7 +22,7 @@ import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
-import org.apache.rahas.Constants;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.Token;
 import org.apache.rahas.TokenIssuer;
 import org.apache.rahas.TrustException;
@@ -206,19 +206,19 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 .createRequestSecurityTokenResponseElement(env.getBody());
 
         TrustUtil.createtTokenTypeElement(rstrElem).setText(
-                Constants.TOK_TYPE_SAML_10);
+                RahasConstants.TOK_TYPE_SAML_10);
 
         TrustUtil.createKeySizeElement(rstrElem).setText(
                 Integer.toString(getKeySize(request, config)));
         
         if (config.addRequestedAttachedRef) {
             TrustUtil.createRequestedAttachedRef(rstrElem, "#"
-                    + assertion.getId(), Constants.TOK_TYPE_SAML_10);
+                    + assertion.getId(), RahasConstants.TOK_TYPE_SAML_10);
         }
 
         if (config.addRequestedUnattachedRef) {
             TrustUtil.createRequestedUnattachedRef(rstrElem, assertion.getId(),
-                    Constants.TOK_TYPE_SAML_10);
+                    RahasConstants.TOK_TYPE_SAML_10);
         }
         
         //Use GMT time in milliseconds
@@ -270,7 +270,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
     private int getKeySize(OMElement request, SAMLTokenIssuerConfig config)
             throws TrustException {
         OMElement keySizeElem = request.getFirstChildWithName(
-                    new QName(Constants.WST_NS_05_02, Constants.KEY_SIZE_LN));
+                    new QName(RahasConstants.WST_NS, RahasConstants.KEY_SIZE_LN));
         if (keySizeElem != null) {
             // Try to get the wst:KeySize value
             try {
@@ -298,7 +298,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
             throws WSSecurityException, TrustException {
         
         OMElement appliesToElem = request.getFirstChildWithName(
-                new QName(Constants.WSP_NS, Constants.APPLIES_TO_LN));
+                new QName(RahasConstants.WSP_NS, RahasConstants.APPLIES_TO_LN));
         if(appliesToElem != null) {
             //Right now we only expect the service epr address to be here
             String address = appliesToElem.getText().trim();
@@ -391,7 +391,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
      */
     public String getResponseAction(OMElement request, MessageContext inMsgCtx)
             throws TrustException {
-        return Constants.RSTR_ACTON_ISSUE;
+        return RahasConstants.RSTR_ACTON_ISSUE;
     }
 
     /*

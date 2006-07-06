@@ -17,7 +17,7 @@
 package org.apache.rampart.conversation;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.rahas.Constants;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.Token;
 import org.apache.rahas.TrustException;
 import org.apache.axis2.util.Base64;
@@ -78,7 +78,7 @@ public class Util {
             throws Exception {
         // Extract the SecurityContextToken
         OMElement rstElem = rstr.getFirstChildWithName(new QName(
-                Constants.WST_NS_05_02, Constants.REQUESTED_SECURITY_TOKEN_LN));
+                RahasConstants.WST_NS, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         Token token = null;
         if (rstElem != null) {
             OMElement sctElem = rstElem
@@ -97,8 +97,8 @@ public class Util {
 
         // Process RequestedProofToken and extract the secret
         byte[] secret = null;
-        OMElement rpt = rstr.getFirstChildWithName(new QName(Constants.WST_NS_05_02,
-                Constants.REQUESTED_PROOF_TOKEN_LN));
+        OMElement rpt = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02,
+                RahasConstants.REQUESTED_PROOF_TOKEN_LN));
         if (rpt != null) {
             OMElement elem = rpt.getFirstElement();
 
@@ -111,8 +111,8 @@ public class Util {
                         getCallbackHandlerInstance(config), null, new Vector(),
                         null);
                 secret = processor.getDecryptedBytes();
-            } else if (Constants.BINARY_SECRET_LN.equals(elem.getLocalName())
-                    && Constants.WST_NS_05_02.equals(elem.getNamespace().getName())) {
+            } else if (RahasConstants.BINARY_SECRET_LN.equals(elem.getLocalName())
+                    && RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getName())) {
                 // Handle the wst:BinarySecret case
                 secret = Base64.decode(elem.getText());
             } else {
@@ -126,12 +126,12 @@ public class Util {
 
         // Check for attached ref
         OMElement reqAttElem = rstr.getFirstChildWithName(new QName(
-                Constants.WST_NS_05_02, Constants.REQUESTED_ATTACHED_REFERENCE_LN));
+                RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_ATTACHED_REFERENCE_LN));
         OMElement reqAttRef = reqAttElem == null ? null : reqAttElem
                 .getFirstElement();
 
         OMElement reqUnattElem = rstr.getFirstChildWithName(new QName(
-                Constants.WST_NS_05_02, Constants.REQUESTED_UNATTACHED_REFERENCE_LN));
+                RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_UNATTACHED_REFERENCE_LN));
         OMElement reqUnattRef = reqUnattElem == null ? null : reqUnattElem
                 .getFirstElement();
 

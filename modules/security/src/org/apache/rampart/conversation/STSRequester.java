@@ -30,7 +30,7 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.handler.WSSHandlerConstants;
-import org.apache.rahas.Constants;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TrustUtil;
 import org.apache.rahas.types.RequestSecurityTokenType;
 import org.apache.rampart.util.Axis2Util;
@@ -54,7 +54,7 @@ public class STSRequester {
         
         Options options = new Options();
         options.setTo(new EndpointReference(config.getStsEPRAddress()));
-        options.setAction(Constants.RST_ACTON_SCT);
+        options.setAction(RahasConstants.RST_ACTON_SCT);
         
         //Get the security configurations
         Parameter outFlowParam = msgCtx
@@ -81,14 +81,14 @@ public class STSRequester {
         RequestSecurityTokenType rst = new RequestSecurityTokenType();
         
         try {
-            rst.setRequestType(new URI(Constants.REQ_TYPE_ISSUE));
-            rst.setTokenType(new URI(Constants.TOK_TYPE_SCT));
+            rst.setRequestType(new URI(RahasConstants.REQ_TYPE_ISSUE));
+            rst.setTokenType(new URI(RahasConstants.TOK_TYPE_SCT));
             rst.setContext(new URI("http://get.optional.attrs.working"));
             
             Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
-                    .getPullParser(new QName(Constants.WST_NS_05_02,
-                            Constants.REQUEST_SECURITY_TOKEN_LN))));
+                    .getPullParser(new QName(RahasConstants.WST_NS,
+                            RahasConstants.REQUEST_SECURITY_TOKEN_LN))));
 
             OMElement rstElem = builder.getDocumentElement();
             
@@ -106,7 +106,7 @@ public class STSRequester {
                 
                 byte[] nonce = WSSecurityUtil.generateNonce(nonceLength);
                 OMElement elem = TrustUtil.createBinarySecretElement(entropyElem,
-                        Constants.BIN_SEC_TYPE_NONCE);
+                        RahasConstants.BIN_SEC_TYPE_NONCE);
                 elem.setText(Base64.encode(nonce));
 
                 TrustUtil.createKeySizeElement(rstElem).setText(

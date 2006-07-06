@@ -71,14 +71,14 @@ public class RahasSAMLTokenTest extends TestClient {
 
         RequestSecurityTokenType rst = new RequestSecurityTokenType();
         try {
-            rst.setRequestType(new URI(org.apache.rahas.Constants.REQ_TYPE_ISSUE));
-            rst.setTokenType(new URI(org.apache.rahas.Constants.TOK_TYPE_SAML_10));
+            rst.setRequestType(new URI(org.apache.rahas.RahasConstants.REQ_TYPE_ISSUE));
+            rst.setTokenType(new URI(org.apache.rahas.RahasConstants.TOK_TYPE_SAML_10));
             rst.setContext(new URI("http://get.optional.attrs.working"));
             
             Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
-                    .getPullParser(new QName(org.apache.rahas.Constants.WST_NS_05_02,
-                            org.apache.rahas.Constants.REQUEST_SECURITY_TOKEN_LN))));
+                    .getPullParser(new QName(org.apache.rahas.RahasConstants.WST_NS,
+                            org.apache.rahas.RahasConstants.REQUEST_SECURITY_TOKEN_LN))));
 
             OMElement rstElem = builder.getDocumentElement();
 
@@ -96,7 +96,7 @@ public class RahasSAMLTokenTest extends TestClient {
     }
     
     public void validateRsponse(OMElement resp) {
-        OMElement rst = resp.getFirstChildWithName(new QName(Constants.WST_NS_05_02, Constants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);

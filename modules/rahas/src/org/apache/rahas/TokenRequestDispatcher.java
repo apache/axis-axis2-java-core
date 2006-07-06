@@ -55,16 +55,16 @@ public class TokenRequestDispatcher {
         RequestSecurityTokenType request = null;
         OMElement rstElem = inMsgCtx.getEnvelope().getBody()
                 .getFirstChildWithName(
-                        new QName(Constants.WST_NS_05_02,
-                                Constants.REQUEST_SECURITY_TOKEN_LN));
+                        new QName(RahasConstants.WST_NS,
+                                RahasConstants.REQUEST_SECURITY_TOKEN_LN));
         try {
             request = RequestSecurityTokenType.Factory.parse(rstElem
                     .getXMLStreamReader());
         } catch (Exception e) {
             e.printStackTrace();
             throw new TrustException(TrustException.INVALID_REQUEST, 
-                    new String[] { "missing " + Constants.WST_PREFIX + ":"
-                            + Constants.REQUEST_SECURITY_TOKEN_LN }, e);
+                    new String[] { "missing " + RahasConstants.WST_PREFIX + ":"
+                            + RahasConstants.REQUEST_SECURITY_TOKEN_LN }, e);
         }
         
         URI reqType = request.getRequestType();
@@ -74,7 +74,7 @@ public class TokenRequestDispatcher {
                 || (reqType != null && "".equals(reqType.toString()))) {
             throw new TrustException(TrustException.INVALID_REQUEST);
         }
-        if (Constants.REQ_TYPE_ISSUE.equals(reqType.toString())) {
+        if (RahasConstants.REQ_TYPE_ISSUE.equals(reqType.toString())) {
             TokenIssuer issuer = null;
             if (tokenType == null
                     || (tokenType != null && "".equals(tokenType.toString()))) {
@@ -90,13 +90,13 @@ public class TokenRequestDispatcher {
                     issuer.getResponseAction(rstElem, inMsgCtx));
             
             return response;
-        } else if(Constants.REQ_TYPE_VALIDATE.equals(reqType.toString())) {
+        } else if(RahasConstants.REQ_TYPE_VALIDATE.equals(reqType.toString())) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "validate requests");
-        } else if(Constants.REQ_TYPE_RENEW.equals(reqType.toString())) {
+        } else if(RahasConstants.REQ_TYPE_RENEW.equals(reqType.toString())) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "renew requests");            
-        } else if(Constants.REQ_TYPE_CANCEL.equals(reqType.toString())) {
+        } else if(RahasConstants.REQ_TYPE_CANCEL.equals(reqType.toString())) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "cancel requests");
         } else {

@@ -73,7 +73,7 @@ public class TrustException extends Exception {
            RENEW_NEEDED.equals(code) ||
            REQUEST_FAILED.equals(code) ||
            UNABLE_TO_RENEW.equals(code)) {
-            return Constants.WST_PREFIX + ":" + code;
+            return RahasConstants.WST_PREFIX + ":" + code;
         } else {
             return code;
         }
