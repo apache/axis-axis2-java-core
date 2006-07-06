@@ -51,7 +51,7 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 elt.addChild(param.getOMElement(param.MY_QNAME,
-                                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                                org.apache.axiom.om.OMAbstractFactory.getOMFactory()));
                             </xsl:otherwise>
                         </xsl:choose>
                         wrapperElt.appendChild(elt);

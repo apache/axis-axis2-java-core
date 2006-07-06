@@ -41,6 +41,7 @@ public interface CommandLineOptionConstants {
         String EXTERNAL_MAPPING_OPTION = "em";
         String WSDL_VERSION_OPTION = "wv";
         String FLATTEN_FILES_OPTION = "f";
+        String UNWRAP_PARAMETERS = "uw";
 
         
         //long option constants
@@ -65,6 +66,7 @@ public interface CommandLineOptionConstants {
         String EXTERNAL_MAPPING_OPTION_LONG = "external-mapping";
         String WSDL_VERSION_OPTION_LONG = "wsdl-version";
         String FLATTEN_FILES_OPTION_LONG = "flatten-filess";
+        String UNWRAP_PARAMETERS_LONG = "unwrap-params";
 
         String WSDL_VERSION_2 = "2.0";
         String WSDL_VERSION_2_OPTIONAL = "2";

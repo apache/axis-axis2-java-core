@@ -155,6 +155,14 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             }
         }
 
+         commandLineOption =
+                loadOption(WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                        WSDL2JavaConstants.UNWRAP_PARAMETERS_LONG,
+                        optionMap);
+          if (commandLineOption!=null){
+              config.setParametersWrapped(false);
+          }
+
         commandLineOption =
                 loadOption(WSDL2JavaConstants.WSDL_VERSION_OPTION,
                         WSDL2JavaConstants.WSDL_VERSION_OPTION_LONG,

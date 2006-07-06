@@ -53,6 +53,15 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
      */
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         if (!configuration.isParametersWrapped()){
+
+            ///////////////////////////////////////////////////////////////
+            // A temp check to avoid nasty surprises - Since unwrapping is
+            // supported only for ADB yet
+            if (!"adb".equals(configuration.getDatabindingType())){
+                throw new CodeGenerationException("Unsupported databinding framework for unwrapping!");
+            }
+            ///////////////////////////////////////////////////////////////
+            
             //walk the schema and find the top level elements
             AxisService axisService = configuration.getAxisService();
 
