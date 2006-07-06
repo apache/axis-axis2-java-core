@@ -272,13 +272,15 @@ class OutInAxisOperationClient implements OperationClient {
             //HTTP
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
             AxisEngine engine = new AxisEngine(cc);
+            sc.getAxisService().mapActionToOperation(mc.getSoapAction(),axisOp);
+            mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
             engine.send(mc);
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
                 MessageContext response = send(mc);
                 // check for a fault and return the result
-                if (response!=null) {
+                if (response != null) {
                     SOAPEnvelope resEnvelope = response.getEnvelope();
                     if (resEnvelope.getBody().hasFault()) {
                         SOAPFault soapFault = resEnvelope.getBody().getFault();
@@ -417,7 +419,7 @@ class OutInAxisOperationClient implements OperationClient {
                 // send the request and wait for reponse
                 MessageContext response = send(msgctx);
                 // call the callback
-                if (response!=null) {
+                if (response != null) {
                     SOAPEnvelope resenvelope = response.getEnvelope();
                     SOAPBody body = resenvelope.getBody();
                     if (body.hasFault()) {

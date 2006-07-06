@@ -34,11 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -271,8 +267,8 @@ public abstract class AxisOperation extends AxisDescription
         operation.setWsamappingList(axisOperation.getWsamappingList());
         operation.setOutputAction(axisOperation.getOutputAction());
         String[] faultActionNames = axisOperation.getFaultActionNames();
-        for(int i=0;i<faultActionNames.length;i++){
-            operation.addFaultAction(faultActionNames[i],axisOperation.getFaultAction(faultActionNames[i]));
+        for (int i = 0; i < faultActionNames.length; i++) {
+            operation.addFaultAction(faultActionNames[i], axisOperation.getFaultAction(faultActionNames[i]));
         }
         operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
@@ -306,10 +302,10 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
+                    configContext.getOperationContext(msgContext);
 
             if (null == operationContext) {
-                throw new AxisFault("cannot Correalte Msg " + this.getName().toString() +" for the " +  msgContext.getRelatesTo().getValue());
+                throw new AxisFault("cannot Correalte Msg " + this.getName().toString() + " for the " + msgContext.getRelatesTo().getValue());
             }
         }
 
@@ -353,7 +349,7 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
+                    configContext.getOperationContext(msgContext);
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
@@ -369,11 +365,12 @@ public abstract class AxisOperation extends AxisDescription
     public void registerOperationContext(MessageContext msgContext,
                                          OperationContext operationContext)
             throws AxisFault {
-        msgContext.getConfigurationContext().registerOperationContext(msgContext.getMessageID(),
+        msgContext.setAxisOperation(this);
+        msgContext.getConfigurationContext().registerOperationContext(msgContext.getMessageID()
+                + ":" + this.getMessageExchangePattern(),
                 operationContext);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);
-
         if (operationContext.isComplete()) {
             operationContext.cleanup();
         }
@@ -587,7 +584,7 @@ public abstract class AxisOperation extends AxisDescription
         }
         return result;
     }
-    
+
     public boolean isEngaged(QName moduleName) {
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {

@@ -58,6 +58,7 @@ public class OperationContextTest extends AbstractTestCase {
         messageContext2.setMessageID(UUIDGenerator.getUUID());
         messageContext2.getOptions().addRelatesTo(
                 new RelatesTo(messageContext1.getMessageID()));
+        messageContext2.setAxisOperation(axisOperation);
         OperationContext operationContext2 = axisOperation
                 .findOperationContext(messageContext2, sessionContext);
         assertEquals(operationContext1, operationContext2);

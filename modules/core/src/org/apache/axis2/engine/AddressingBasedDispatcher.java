@@ -44,7 +44,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/",
             "AddressingBasedDispatcher");
-	private static final Log log = LogFactory.getLog(AddressingBasedDispatcher.class);
+    private static final Log log = LogFactory.getLog(AddressingBasedDispatcher.class);
 
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
@@ -68,7 +68,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
         if (toEPR != null) {
             String address = toEPR.getAddress();
-            log.debug(Messages.getMessage("checkingserviceforepr",address));
+            log.debug(Messages.getMessage("checkingserviceforepr", address));
 
             if (Final.WSA_ANONYMOUS_URL.equals(address)
                     || Submission.WSA_ANONYMOUS_URL.equals(address)) {
@@ -76,13 +76,13 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
 
             QName serviceName;
-            String[] values = Utils.parseRequestURLForServiceAndOperation(address ,
+            String[] values = Utils.parseRequestURLForServiceAndOperation(address,
                     messageContext.getConfigurationContext().getServicePath());
             if (values == null) {
                 return null;
             }
 
-            log.debug(Messages.getMessage("checkingserviceforepr",values[0]));
+            log.debug(Messages.getMessage("checkingserviceforepr", values[0]));
 
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
@@ -108,7 +108,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     public void invoke(MessageContext msgctx) throws AxisFault {
 
         // first check we can dispatch using the relates to
-        if (msgctx.getRelatesTo() != null) {
+        if (msgctx.getRelatesTo() != null && msgctx.getAxisOperation() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
 
             log.debug(Messages.getMessage("checkingrelatesto",
@@ -116,7 +116,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
             if ((relatesTo != null) || "".equals(relatesTo)) {
                 OperationContext operationContext =
-                        msgctx.getConfigurationContext().getOperationContext(relatesTo);
+                        msgctx.getConfigurationContext().getOperationContext(msgctx);
 
                 if (operationContext != null) {
                     msgctx.setAxisOperation(operationContext.getAxisOperation());

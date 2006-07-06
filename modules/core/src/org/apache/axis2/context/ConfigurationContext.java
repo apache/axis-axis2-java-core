@@ -220,11 +220,14 @@ public class ConfigurationContext extends AbstractContext {
     /**
      * Gets a OperationContext given a Message ID.
      *
-     * @param messageID
+     * @param msgctx
      * @return Returns OperationContext <code>OperationContext<code>
      */
-    public OperationContext getOperationContext(String messageID) {
-        return (OperationContext) this.operationContextMap.get(messageID);
+    public OperationContext getOperationContext(MessageContext msgctx) {
+        String id = msgctx.getRelatesTo().getValue() + ":" +
+                msgctx.getAxisOperation().getMessageExchangePattern();
+        //String messageID
+        return (OperationContext) this.operationContextMap.get(id);
     }
 
     public Map getOperationContextMap() {
