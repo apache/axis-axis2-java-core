@@ -116,7 +116,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
             if ((relatesTo != null) || "".equals(relatesTo)) {
                 OperationContext operationContext =
-                        msgctx.getConfigurationContext().getOperationContext(msgctx);
+                        msgctx.getConfigurationContext().getOperationContext(msgctx.getRelatesTo().getValue());
 
                 if (operationContext != null) {
                     msgctx.setAxisOperation(operationContext.getAxisOperation());

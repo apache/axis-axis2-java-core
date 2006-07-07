@@ -302,7 +302,7 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext);
+                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault("cannot Correalte Msg " + this.getName().toString() + " for the " + msgContext.getRelatesTo().getValue());
@@ -349,7 +349,7 @@ public abstract class AxisOperation extends AxisDescription
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
-                    configContext.getOperationContext(msgContext);
+                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
