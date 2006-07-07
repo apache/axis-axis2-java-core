@@ -356,9 +356,6 @@ public abstract class AxisOperation extends AxisDescription
                         this.getName().toString(), msgContext.getRelatesTo().getValue()));
             }
         }
-
-        registerOperationContext(msgContext, operationContext);
-
         return operationContext;
     }
 
@@ -366,9 +363,18 @@ public abstract class AxisOperation extends AxisDescription
                                          OperationContext operationContext)
             throws AxisFault {
         msgContext.setAxisOperation(this);
-        msgContext.getConfigurationContext().registerOperationContext(msgContext.getMessageID()
-                + ":" + this.getMessageExchangePattern(),
+        msgContext.getConfigurationContext().registerOperationContext(msgContext.getMessageID(),
                 operationContext);
+        operationContext.addMessageContext(msgContext);
+        msgContext.setOperationContext(operationContext);
+        if (operationContext.isComplete()) {
+            operationContext.cleanup();
+        }
+    }
+
+    public void registerMessageContext(MessageContext msgContext,
+                                       OperationContext operationContext) throws AxisFault {
+        msgContext.setAxisOperation(this);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);
         if (operationContext.isComplete()) {

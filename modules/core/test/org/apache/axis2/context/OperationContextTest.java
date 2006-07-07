@@ -53,6 +53,7 @@ public class OperationContextTest extends AbstractTestCase {
         AxisOperation axisOperation = new InOutAxisOperation(new QName("test"));
         OperationContext operationContext1 = axisOperation
                 .findOperationContext(messageContext1, sessionContext);
+        axisOperation.registerOperationContext(messageContext1,operationContext1);
 
         MessageContext messageContext2 = this.getBasicMessageContext();
         messageContext2.setMessageID(UUIDGenerator.getUUID());

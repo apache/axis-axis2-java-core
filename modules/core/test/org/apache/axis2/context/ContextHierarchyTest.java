@@ -57,6 +57,7 @@ public class ContextHierarchyTest extends TestCase {
         msgctx.setConfigurationContext(configurationContext);
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
                 serviceContext);
+        axisOperation.registerOperationContext(msgctx,opContext);
         msgctx.setServiceContext(serviceContext);
 
         // test the complte Hierarchy built

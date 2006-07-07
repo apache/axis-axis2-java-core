@@ -108,7 +108,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     public void invoke(MessageContext msgctx) throws AxisFault {
 
         // first check we can dispatch using the relates to
-        if (msgctx.getRelatesTo() != null && msgctx.getAxisOperation() != null) {
+        if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
 
             log.debug(Messages.getMessage("checkingrelatesto",

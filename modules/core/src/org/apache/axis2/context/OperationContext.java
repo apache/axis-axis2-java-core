@@ -105,8 +105,7 @@ public class OperationContext extends AbstractContext {
             MessageContext messageContext = (MessageContext) msgContexts.next();
 
             if ((null != messageContext) && (operationContextMap != null)) {
-                operationContextMap.remove(messageContext.getMessageID() + ":"
-                        + getAxisOperation().getMessageExchangePattern());
+                operationContextMap.remove(messageContext.getMessageID());
             }
         }
     }

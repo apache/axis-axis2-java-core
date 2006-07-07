@@ -272,7 +272,6 @@ class OutInAxisOperationClient implements OperationClient {
             //HTTP
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
             AxisEngine engine = new AxisEngine(cc);
-            sc.getAxisService().mapActionToOperation(mc.getSoapAction(),axisOp);
             mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
             engine.send(mc);
         } else {

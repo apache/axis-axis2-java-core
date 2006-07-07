@@ -87,7 +87,7 @@ public class InstanceDispatcher extends AbstractHandler {
         } else {    // 2. if null, create new opCtxt
             operationContext = new OperationContext(axisOperation);
 
-            axisOperation.registerOperationContext(msgContext, operationContext);
+            axisOperation.registerMessageContext(msgContext, operationContext);
             if (serviceContext != null) {
                 // no need to added to configuration conetxt , since we are happy in
                 //  storing in session context
