@@ -49,9 +49,22 @@
                                 elt.setText(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param<xsl:value-of select="position()"/>));
                             </xsl:when>
                             <xsl:otherwise>
-                                elt = param<xsl:value-of select="position()"/>.getOMElement(
+                               <!-- elt = param<xsl:value-of select="position()"/>.getOMElement(
                                 new javax.xml.namespace.QName("","<xsl:value-of select="@partname"/>"),
-                                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                                org.apache.axiom.om.OMAbstractFactory.getOMFactory());  -->
+                                <xsl:variable name="paramname">param<xsl:value-of select="position()"/></xsl:variable>
+                                <xsl:variable name="buildername">builder<xsl:value-of select="position()"/></xsl:variable>
+                                <xsl:variable name="docEltName">docElt<xsl:value-of select="position()"/></xsl:variable>
+                                elt = fac.createOMElement("<xsl:value-of select="@partname"/>","",null);
+
+                               org.apache.axiom.om.impl.builder.StAXOMBuilder <xsl:value-of select="$buildername"/> = new org.apache.axiom.om.impl.builder.StAXOMBuilder(factory,
+                                         <xsl:value-of select="$paramname"/>.getPullParser(elt.getQName()));
+
+                                org.apache.axiom.om.OMElement <xsl:value-of select="$docEltName"/> = <xsl:value-of select="$buildername"/>.getDocumentElement();
+                              (( org.apache.axiom.om.impl.OMNodeEx) <xsl:value-of select="$docEltName"/>).setParent(null);
+                               <xsl:value-of select="$docEltName"/>.build();
+                               elt.addChild(<xsl:value-of select="$docEltName"/>);
+
                             </xsl:otherwise>
                         </xsl:choose>
                         wrapperElt.addChild(elt);

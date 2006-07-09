@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.namespace.QName;
 import java.io.OutputStream;
 import java.io.Writer;
 /*
@@ -27,15 +28,16 @@ import java.io.Writer;
  */
 
 public abstract class ADBDataSource implements OMDataSource {
-
+    protected QName parentQName;
     private ADBBean bean;
 
     /**
      * Constructor taking in an ADBBean
      * @param bean
      */
-    protected ADBDataSource(ADBBean bean) {
+    protected ADBDataSource(ADBBean bean,QName parentQName) {
         this.bean = bean;
+        this.parentQName = parentQName;
     }
 
 
@@ -77,7 +79,7 @@ public abstract class ADBDataSource implements OMDataSource {
     public XMLStreamReader getReader() throws XMLStreamException {
         // since only ADBBeans related to elements can be serialized
         // we are safe in passing null here. 
-        return bean.getPullParser(null);
+        return bean.getPullParser(parentQName);
     }
 
 }

@@ -254,9 +254,11 @@
             final javax.xml.namespace.QName parentQName,
             final org.apache.axiom.om.OMFactory factory){
 
+
         org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this){
-                           public void serialize(
+                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
+
+         public void serialize(
                                   javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
             <xsl:choose>
             <xsl:when test="@type or @anon">
