@@ -581,7 +581,7 @@
         </ant:copy>
 
  <!-- Copy the adb  codegen jar -->
-        <ant:copy toDir="target/temp/war/lib">
+        <ant:copy toDir="target/temp/min/bin/lib">
             <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
         
