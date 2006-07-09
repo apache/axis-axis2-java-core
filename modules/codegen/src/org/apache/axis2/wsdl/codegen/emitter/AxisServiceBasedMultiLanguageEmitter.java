@@ -1077,7 +1077,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
             elt = doc.createElement("name");
             elt.appendChild(doc.createTextNode(axisOperation.getName().getLocalPart()));
-            addAttribute(doc,"opnsuri",axisOperation.getName().getNamespaceURI(),elt);
+
+            //what needs to be put here as the opertation namespace is actually the
+            //traget namespace of the service
+            addAttribute(doc,"opnsuri",axisService.getTargetNamespace(),elt);
             root.appendChild(elt);
         }
 

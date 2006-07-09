@@ -12,7 +12,7 @@
             </xsl:for-each>
             };
         </xsl:if>
-        <!--  generate toOM for only non parts - this is WRONG!!!! -->
+        <!--  generate toOM for only non parts and non primitives!!! -->
         <xsl:for-each select="param[@type!='' and not(@primitive) and not(@partname)]">
             private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
             return param.getOMElement(param.MY_QNAME,
@@ -25,12 +25,11 @@
             <xsl:variable name="opnsuri"><xsl:value-of select="@opnsuri"/></xsl:variable>
             <xsl:choose>
                 <xsl:when test="count(../../param[@type!='' and @direction='in' and @opname=$opname])=1">
+                    <!-- Assumption - The ADBBean here is always an element based bean -->
                     private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"/> param, boolean optimizeContent){
-                    //note - optimize content is not used here !
-                    org.apache.axis2.databinding.ADBSOAPModelBuilder builder =
-                    new org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(<xsl:value-of select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"/>.MY_QNAME),
-                    factory);
-                    return builder.getEnvelope();
+                     org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                     emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                     return emptyEnvelope;
                     }
                 </xsl:when>
                 <xsl:when test="count(../../param[@type!='' and @direction='in' and @opname=$opname]) &gt; 1">
@@ -76,12 +75,11 @@
             </xsl:choose>
              <xsl:choose>
 			      <xsl:when test="count(../../param[@type!='' and @direction='out' and @opname=$opname])=1">
+                    <!-- Assumption - The ADBBean here is always an element based bean -->
                     private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
-                    //note - optimize content is not used here !
-                    org.apache.axis2.databinding.ADBSOAPModelBuilder builder =
-                    new org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(<xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME),
-                    factory);
-                    return builder.getEnvelope();
+                     org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                     emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                     return emptyEnvelope;
                     }
                 </xsl:when>
 	   </xsl:choose>
