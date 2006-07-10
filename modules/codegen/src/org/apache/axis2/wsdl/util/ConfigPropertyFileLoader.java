@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.List;
+import java.util.Arrays;
 
 /**
  * Loads the properties from the config properties.
@@ -43,6 +45,8 @@ public class ConfigPropertyFileLoader {
     private static String[] thirdPartySchemaNames;
     private static String[] languageTypes;
     private static String[] databindingFrameworkNames;
+    private static String[] unwrapSuppoerteddatabindingFrameworkNames;
+
     private static Map languageEmitterMap;
     private static Map languageSpecificPropertiesMap;
     private static Map databindingFrameworkNameToExtensionMap;
@@ -58,6 +62,7 @@ public class ConfigPropertyFileLoader {
     private static final String DEFAULT_LANGUAGE_TYPE_KEY = "codegen.languages.default";
     private static final String EMITTER_CLASS_KEY = "codegen.emitters";
     private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
+    private static final String DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY = "codegen.databinding.unwrap.supported";
     private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
     private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX = "codegen.databinding.";
@@ -152,6 +157,12 @@ public class ConfigPropertyFileLoader {
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
                 databindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
+            }
+
+              //load the unwrap supported data binding framework names
+            tempString = props.getProperty(DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY);
+            if (tempString != null) {
+                unwrapSuppoerteddatabindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
             }
 
             //populate the data binding framework name to extension name map
@@ -315,6 +326,13 @@ public class ConfigPropertyFileLoader {
         return languageEmitterMap;
     }
 
+    /**
+     * Get the list of unwrap supported data binding frameworks
+     * @return
+     */
+    public static List getUnwrapSupportedFrameworkNames(){
+        return Arrays.asList(unwrapSuppoerteddatabindingFrameworkNames);
+    }
     /**
      * Gets the default language name.
      *

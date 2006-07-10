@@ -4,8 +4,10 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisMessage;
@@ -54,14 +56,15 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         if (!configuration.isParametersWrapped()){
 
-            ///////////////////////////////////////////////////////////////
-            // A temp check to avoid nasty surprises - Since unwrapping is
-            // supported only for ADB yet
-            if (!"adb".equals(configuration.getDatabindingType())){
-                throw new CodeGenerationException("Unsupported databinding framework for unwrapping!");
+            // A check to avoid nasty surprises - Since unwrapping is not
+            // supported by all frameworks, we check the framework name to be
+            // compatible
+            if (!ConfigPropertyFileLoader.getUnwrapSupportedFrameworkNames().
+                    contains(configuration.getDatabindingType())){
+                throw new CodeGenerationException(
+                        CodegenMessages.getMessage("extension.unsupportedforunwrapping"));
             }
-            ///////////////////////////////////////////////////////////////
-            
+
             //walk the schema and find the top level elements
             AxisService axisService = configuration.getAxisService();
 

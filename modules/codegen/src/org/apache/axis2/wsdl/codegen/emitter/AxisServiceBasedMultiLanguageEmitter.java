@@ -404,7 +404,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         // add the databind supporters. Now the databind supporters are completly contained inside
         // the stubs implementation and not visible outside
-        rootElement.appendChild(createDOMElementforDatabinders(doc));
+        rootElement.appendChild(createDOMElementforDatabinders(doc,false));
         doc.appendChild(rootElement);
 
         return doc;
@@ -484,7 +484,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         // add the databind supporters. Now the databind supporters are completly contained inside
         // the stubs implementation and not visible outside
-        rootElement.appendChild(createDOMElementforDatabinders(doc));
+        rootElement.appendChild(createDOMElementforDatabinders(doc,false));
 
         Object moduleCodegenPolicyExtensionElement;
 
@@ -952,7 +952,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         boolean isOpsFound = loadOperations(doc, rootElement, mep);
         //put the result in the property map
         infoHolder.put(mep, isOpsFound ? Boolean.TRUE : Boolean.FALSE);
-        rootElement.appendChild(createDOMElementforDatabinders(doc));
+        //create the databinder element with serverside as true
+        rootElement.appendChild(createDOMElementforDatabinders(doc,true));
 
         //attach a list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
@@ -967,11 +968,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     /**
-     * create a dom element for databinders
+     * create a dom element for databinders. This is called by other
      *
      * @param doc
      */
-    protected Element createDOMElementforDatabinders(Document doc) {
+    protected Element createDOMElementforDatabinders(Document doc,boolean isServerside) {
 
         // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
         Map parameterMap = new HashMap();
@@ -989,6 +990,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     //add an attribute to the parameter saying that this is an
                     //input
                     addAttribute(doc,"direction","in",inputParamElement[i]);
+                    //add the short type name
                     parameterMap.put(inputParamElement[i].getAttribute("type"),
                             inputParamElement[i]);
 
@@ -1039,9 +1041,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         Element rootElement = doc.createElement("databinders");
-
+        //add the db type attribute  - the name of the databinding type
+        //this will be used to select the correct template
         addAttribute(doc, "dbtype", codeGenConfiguration.getDatabindingType(), rootElement);
 
+        //add the server side attribute. this helps the databinding template
+        //to determine the methods to generate
+        if (isServerside){
+            addAttribute(doc,"isserverside","yes",rootElement);
+        }
         // add the names of the elements that have base 64 content
         // if the base64 name list is missing then this whole step is skipped
         rootElement.appendChild(getBase64Elements(doc));
@@ -1062,6 +1070,27 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         ////////////////////////////////////////////////
 
         return rootElement;
+    }
+
+    /**
+     * Adds the short type name to the given parameter element
+     * if the type has no '.' characters in its name
+     * the type itself is taken as the shorttype
+     * @param paramElement
+     */
+    protected void addShortType(Element paramElement,String type) {
+        if (type!=null && type.indexOf('.')!=-1){
+            addAttribute(paramElement.getOwnerDocument(),
+                    "shorttype",
+                    type.substring(type.lastIndexOf('.')+1),
+                    paramElement);
+        }else{
+            addAttribute(paramElement.getOwnerDocument(),
+                    "shorttype",
+                    type==null?"":type,
+                    paramElement);
+        }
+
     }
 
     /**
@@ -1730,6 +1759,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         ? ""
                         : typeMapping, paramElement);
 
+                //add the short name
+                addShortType(paramElement,typeMapping);
+
                 String attribValue = (String) instantiatableMessageClassNames.
                         get(msg.getElementQName());
                 addAttribute(doc, "instantiatableType",
@@ -1814,7 +1846,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 new Element[paramElementList.size()]);
     }
 
-     /**
+    /**
      * A convenient method for the generating the parameter
      * element
      * @param doc
@@ -1870,6 +1902,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 ? ""
                 : paramType, paramElement);
 
+        //adds the short type
+        addShortType(paramElement,paramType);
+
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(paramType)) {
             addAttribute(doc, "default", "yes", paramElement);
@@ -1900,7 +1935,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return Returns Element.
      */
     protected Element getOutputParamElement(Document doc, AxisOperation operation) {
-        Element param = doc.createElement("param");
+        Element paramElement = doc.createElement("param");
         AxisMessage outputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
         String typeMappingStr;
         String parameterName;
@@ -1916,19 +1951,23 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             typeMappingStr = "";
         }
 
-        addAttribute(doc, "name", parameterName, param);
-        addAttribute(doc, "type", typeMappingStr, param);
+        addAttribute(doc, "name", parameterName, paramElement);
+        addAttribute(doc, "type", typeMappingStr, paramElement);
+
+        //adds the short type
+        addShortType(paramElement,typeMappingStr);
+
 
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(typeMappingStr)) {
-            addAttribute(doc, "default", "yes", param);
+            addAttribute(doc, "default", "yes", paramElement);
         }
 
         // add this as a body parameter
-        addAttribute(doc, "location", "body", param);
-        addAttribute(doc, "opname", operation.getName().getLocalPart(), param);
+        addAttribute(doc, "location", "body", paramElement);
+        addAttribute(doc, "opname", operation.getName().getLocalPart(), paramElement);
 
-        return param;
+        return paramElement;
     }
 
     /**
