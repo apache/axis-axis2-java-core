@@ -49,7 +49,7 @@ public interface WSDLWrapper {
 	public String getSOAPAction(QName serviceQname, QName portQname);
 	public String getSOAPAction(QName serviceQname, QName portQName, QName operationQname);
 	public String getSOAPAddress(QName serviceQname, QName portQname);
-	public URL getWSLDLocation();
+	public URL getWSDLLocation();
 	public String getTargetNamespace();
 	public Definition getDefinition();
 }

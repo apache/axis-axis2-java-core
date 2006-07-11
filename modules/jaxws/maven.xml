@@ -26,6 +26,31 @@
 				<ant:exclude name="**/*.java"/>
 			</ant:fileset>
 		</ant:copy>
+        <!-- ================================================================ -->
+        <!--- Provider endpoint Service Samples -->
+        <!-- ================================================================ -->
+		<ant:copy toDir="target/test-classes/services/StringProviderService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/provider/string/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/string">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/SourceProviderService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/provider/source/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/source">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
 	</preGoal>
 
     <!-- Create the API and Impl jars --> 

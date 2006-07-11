@@ -36,40 +36,42 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ClientMediator;
 import org.apache.axis2.jaxws.JAXWSClientContext;
+import org.apache.axis2.jaxws.client.JAXBDispatch;
+import org.apache.axis2.jaxws.client.XMLDispatch;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.commons.logging.LogFactory;
 
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 	private Executor executor;
     private Map<QName, org.apache.axis2.jaxws.handler.PortData> ports;
+
+    private ServiceDescription serviceDescription;
     private QName serviceQname;
-    private WSDLWrapper wsdl = null;
-    private URL wsdlLocation;
     private ClientMediator mediator = null;
+
+    // If no binding ID is available, use this one
+    private static String DEFAULT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
     
     public ServiceDelegate(URL url, QName qname, Class clazz) throws WebServiceException{
     	super();
-    	this.wsdlLocation = url;
     	this.serviceQname = qname;
     	ports = new Hashtable<QName, PortData>();
     	mediator = new ClientMediator();
-    	if(!isValidServiceName()){
+
+        if(!isValidServiceName()){
     		throw new WebServiceException("Invalid Service QName, Service Name cannot be null or empty");
     	}
-    	
-    	if(isValidWSDLLocation()){
-    		try{
-    			setWSDLWrapper();
-    		}catch(WSDLException e){
-    			throw new WebServiceException(e.getMessage());
-    		}
-    		if(!isServiceDefined(serviceQname)){
-    			throw new WebServiceException("Service " +qname+ " not defined in WSDL");
-    			
-    		}
-    		readPorts();
+
+        serviceDescription = new ServiceDescription(url, serviceQname, clazz);
+        if (isValidWSDLLocation()) {
+            if(!isServiceDefined(serviceQname)){
+                throw new WebServiceException("Service " + serviceQname + " not defined in WSDL");
+            }
+            readPorts();
         }
     }
      
@@ -81,10 +83,17 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	if("".equals(portName)){
     		throw new WebServiceException("Invalid port name");
     	}
+    	if (endpointAddress == null) {
+    		throw new WebServiceException("Invalid endpointAddress, endpointAddress cannot be null");
+    	}
     	
     	if(bindingId!=null && !bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)){
     		throw new UnsupportedOperationException("Only SOAP11HTTP_BINDING supported at this time.");
     	}
+        
+        if (bindingId == null) {
+            bindingId = DEFAULT_BINDING_ID;
+        }
     	if(!ports.containsKey(portName)){	
     		PortData port = new PortInfoImpl(serviceQname, portName, bindingId, endpointAddress);
     		ports.put(portName, port);
@@ -101,15 +110,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
     private <T> JAXWSClientContext<T> createClientContext(PortData portData, Class<T> clazz, Mode mode){
     	JAXWSClientContext<T> clientContext = new JAXWSClientContext<T>();
+        clientContext.setServiceDescription(serviceDescription);
     	clientContext.setPort(portData);
     	clientContext.setClazz(clazz);
     	clientContext.setServiceMode(mode);
-    	clientContext.setWsdlContext(wsdl);
-    	try{
-    		clientContext.setWsdlContext(getWSDLWrapper());
-		}catch(WSDLException e){
-    		throw new WebServiceException(e.getMessage());
-    	}
     	clientContext.setExecutor(this.getExecutor());	
     	return clientContext;
     }
@@ -130,10 +134,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	addBinding(portData.getBindingID());
     	
     	JAXWSClientContext<T> clientContext = createClientContext(portData, clazz, mode);
-    	Dispatch<T> dispatch = mediator.createDispatch(clientContext);
-    	
-    	return dispatch;
-        
+    	XMLDispatch<T> dispatch = mediator.createXMLDispatch(clientContext);
+    	dispatch.setServiceDelegate(this);
+    	return dispatch;        
     }
     
     public Dispatch<java.lang.Object> createDispatch(QName qname, JAXBContext context, Mode mode) {
@@ -152,7 +155,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         JAXWSClientContext clientCtx = createClientContext(portData, Object.class, mode);
         clientCtx.setJAXBContext(context);
         
-        Dispatch<Object> dispatch = mediator.createDispatch(clientCtx);
+        JAXBDispatch<Object> dispatch = mediator.createJAXBDispatch(clientCtx);
+        dispatch.setServiceDelegate(this);
         return dispatch;
     }
     
@@ -229,9 +233,12 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         return serviceQname;
     }
     
+    public ServiceDescription getServiceDescription() {
+        return serviceDescription;
+    }
+    
     public URL getWSDLDocumentLocation() {
-        // TODO Auto-generated method stub
-        return wsdlLocation;
+        return serviceDescription.getWSDLLocation();
     }
     
     private boolean isPortValid(QName portName){
@@ -243,17 +250,18 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
 
     private boolean isValidWSDLLocation(){
+        URL wsdlLocation = getWSDLDocumentLocation();
     	return wsdlLocation != null && !"".equals(wsdlLocation.toString().trim());
     }
     
     private void readPorts(){
-    	String[] portNames = wsdl.getPorts(serviceQname);
-    	String targetNamespace = wsdl.getTargetNamespace();
+    	String[] portNames = getWSDLWrapper().getPorts(serviceQname);
+    	String targetNamespace = getWSDLWrapper().getTargetNamespace();
     	for(String portName: portNames){
     		QName portQname = new QName(targetNamespace, portName);
-    		String address = wsdl.getSOAPAddress(serviceQname, portQname);
-    		//get Binding ID from WSDL and add it here.
-    		PortData portInfo = new PortInfoImpl(serviceQname, portQname, null, address);
+    		String address = getWSDLWrapper().getSOAPAddress(serviceQname, portQname);
+    		//TODO: get Binding ID from WSDL and add it here.
+    		PortData portInfo = new PortInfoImpl(serviceQname, portQname, DEFAULT_BINDING_ID, address);
     		ports.put(portQname, portInfo);
     	}
     }
@@ -271,23 +279,13 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         // TODO Auto-generated method stub 
     }
     
-    private void setWSDLWrapper()throws WSDLException{
-	    if(isValidWSDLLocation()){
-			wsdl = new WSDL4JWrapper(wsdlLocation);
-		} 
-    }
-    
-    private WSDLWrapper getWSDLWrapper()throws WSDLException{
-    	if(this.wsdl!=null){
-    		return this.wsdl;
-    	}
-    	setWSDLWrapper();
-        
-    	return wsdl;
+    // TODO: Remove this method and put the WSDLWrapper methods on the ServiceDescriptor directly
+    private WSDLWrapper getWSDLWrapper() {
+    	return serviceDescription.getWSDLWrapper();
     }
     
     private boolean isServiceDefined(QName serviceName){
-    	return wsdl.getService(serviceName)!=null;
+    	return getWSDLWrapper().getService(serviceName)!= null;
     }
     
     private void addBinding(String bindingId){

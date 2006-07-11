@@ -58,7 +58,7 @@
             <organization>IBM</organization>
         </contributor>
         <contributor>
-            <name>Daniel Sedov</name>
+            <name>Dan Sedov</name>
             <organization>IBM</organization>
         </contributor>
         <contributor>
@@ -132,6 +132,11 @@
         <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>axiom-impl</artifactId>
+            <version>${axiom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom-dom</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>

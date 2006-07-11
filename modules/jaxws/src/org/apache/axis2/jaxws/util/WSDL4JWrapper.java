@@ -252,7 +252,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
 	
 	
 	
-	public URL getWSLDLocation() {
+	public URL getWSDLLocation() {
 		// TODO Auto-generated method stub
 		return this.wsdlURL;
 	}

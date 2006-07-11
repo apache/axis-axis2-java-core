@@ -50,7 +50,7 @@ public class ParameterUtils {
         SOAPFactory soapfactory =  SoapUtils.getSoapFactory(soapVersionURI);
         SOAPEnvelope env = null;
         try{
-            if(mode !=null && mode.equals(Mode.MESSAGE)){   
+            if(mode != null && mode.equals(Mode.MESSAGE)){   
                 StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(param.getValueAsStreamReader(),
                         soapfactory, soapVersionURI);
                 return builder.getSOAPEnvelope();

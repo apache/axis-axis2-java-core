@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.handler;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceException;
 
 public class PortInfoImpl implements PortData {
 	private QName serviceName = null;
@@ -25,9 +26,22 @@ public class PortInfoImpl implements PortData {
 	private String serviceEndpoint = null;
 	
 
+	/**
+	 * @param serviceName
+	 * @param portName
+	 * @param bindingId
+	 * @param serviceEndpoint
+	 */
 	public PortInfoImpl(QName serviceName, QName portName, String bindingId, String serviceEndpoint) {
 		super();
-		// TODO Auto-generated constructor stub
+		if (serviceName == null)
+			throw new WebServiceException("serviceName cannot be null");
+		if (portName == null)
+			throw new WebServiceException("portName cannot be null");
+		if (bindingId == null)
+			throw new WebServiceException("bindingId cannot be null");
+		if (serviceEndpoint == null)
+			throw new WebServiceException("serviceEndpoint cannot be null");
 		this.serviceName = serviceName;
 		this.portName = portName;
 		this.bindingId = bindingId;
@@ -35,38 +49,71 @@ public class PortInfoImpl implements PortData {
 	}
 
 	public QName getServiceName() {
-		// TODO Auto-generated method stub
 		return serviceName;
 	}
 
 	public QName getPortName() {
-		// TODO Auto-generated method stub
 		return portName;
 	}
 
 	public String getBindingID() {
-		// TODO Auto-generated method stub
 		return bindingId;
-	}
-	
-	public void setServiceName(QName serviceName){
-		this.serviceName = serviceName;
-	}
-	
-	public void setPortName(QName portName){
-		this.portName = portName;
-	}
-	
-	public void setBindingID(String bindingId){
-		this.bindingId = bindingId;
-	}
-	
-	public void setEndPointAddress(String serviceEndpoint){
-		this.serviceEndpoint = serviceEndpoint;
 	}
 	
 	public String getEndpointAddress(){
 		return serviceEndpoint;
 	}
-}
+	
+	/* TODO:  I don't think we need the setters, let's leave the commented for now...
+	public void setServiceName(QName serviceName){
+		if (serviceName == null)
+			throw new RuntimeException("serviceName cannot be null");
+		this.serviceName = serviceName;
+	}
+	
+	public void setPortName(QName portName){
+		if (portName == null)
+			throw new RuntimeException("portName cannot be null");
+		this.portName = portName;
+	}
+	
+	public void setBindingID(String bindingId){
+		if (bindingId == null)
+			throw new RuntimeException("bindingId cannot be null");
+		this.bindingId = bindingId;
+	}
+	
+	public void setEndPointAddress(String serviceEndpoint){
+		if (serviceEndpoint == null)
+			throw new RuntimeException("serviceEndpoint cannot be null");
+		this.serviceEndpoint = serviceEndpoint;
+	}
+	*/
+	
 
+	/*
+	 * PortInfo may be used as a key in a HandlerResolver Map cache, so
+	 * let's override Object.equals and Object.hashcode
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof PortData) {
+			PortData info = (PortData) obj;
+			if (bindingId.equals(info.getBindingID())
+					&& portName.equals(info.getPortName())
+					&& serviceName.equals(info.getServiceName())
+					&& serviceEndpoint.equals(info.getEndpointAddress())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * PortInfo is used as a key in the HandlerResolver cache object, so
+	 * we must override Object.equals and Object.hashcode (just use someone
+	 * else's hashcode that we know works).
+	 */
+	public int hashCode() {
+		return bindingId.hashCode();
+	}
+}

@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Service.Mode;
 
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -32,7 +33,7 @@ public class JAXWSClientContext<T> {
 	private PortData port = null;
 	private Mode serviceMode = null;
 	private ExecutorService executor = null;
-	private WSDLWrapper wsdlContext = null;
+    private ServiceDescription serviceDescription;
 	private Class<T> clazz = null; //SEI class for Proxy or Implementation type for Dispatch
 	private JAXBContext jaxbContext = null;
     
@@ -54,14 +55,17 @@ public class JAXWSClientContext<T> {
 	public void setServiceMode(Mode serviceMode) {
 		this.serviceMode = serviceMode;
 	}
-	public WSDLWrapper getWsdlContext() {
-		return wsdlContext;
+	public ServiceDescription getServiceDescription() {
+        return serviceDescription;
+    }
+    public void setServiceDescription(ServiceDescription serviceDescription) {
+        this.serviceDescription = serviceDescription;
+    }
+    public WSDLWrapper getWsdlContext() {
+		return (serviceDescription != null) ? serviceDescription.getWSDLWrapper() : null;
 	}
-	public void setWsdlContext(WSDLWrapper wsdlContext) {
-		this.wsdlContext = wsdlContext;
-	}
-	public URL getWSDLLocation(){
-		return (wsdlContext != null)? wsdlContext.getWSLDLocation(): null; 	
+    public URL getWSDLLocation(){
+		return (serviceDescription != null) ? serviceDescription.getWSDLLocation() : null; 	
 	}
 	public Class<T> getClazz() {
 		return clazz;

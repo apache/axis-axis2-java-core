@@ -17,11 +17,7 @@
 package org.apache.axis2.jaxws;
 
 import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 
@@ -33,9 +29,9 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.jaxws.client.JAXBDispatch;
+import org.apache.axis2.jaxws.client.XMLDispatch;
 import org.apache.axis2.jaxws.handler.PortData;
-import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 /*
  * This class acts as a mediator to creating Proxy or Dispatch implementation when Client makes a call to Service.
@@ -49,7 +45,32 @@ public class ClientMediator {
 		super();
 	}
 
-	public <T> Dispatch<T> createDispatch(JAXWSClientContext<T> clientContext){
+    public <T> JAXBDispatch<T> createJAXBDispatch(JAXWSClientContext<T> clientContext){
+
+        if (clientContext == null) {
+            throw new WebServiceException(
+                    "Internal Error ... JAXWSClientContext not found");
+        }
+        this.clientContext = clientContext;
+        /*
+         * create Axis Controller, this will route all the calls from Dispatch to
+         * Axis Engine eiter using ServiceClient or instantiating
+         * AxisEngine.
+         */
+        try{
+            AxisController axisController = buildAxisController();
+            axisController.setClientContext(clientContext);
+            
+            JAXBDispatch<T> dispatch = new JAXBDispatch<T>(axisController);
+            dispatch.setMode(clientContext.getServiceMode());
+            dispatch.setJAXBContext(clientContext.getJAXBContext());
+            return dispatch;
+        }catch(AxisFault e){
+            throw new WebServiceException(e.getMessage());
+        }
+    }
+    
+    public <T> XMLDispatch<T> createXMLDispatch(JAXWSClientContext<T> clientContext){
 
 		if (clientContext == null) {
 			throw new WebServiceException(
@@ -64,7 +85,8 @@ public class ClientMediator {
 		try{
 			AxisController axisController = buildAxisController();
 			axisController.setClientContext(clientContext);
-			Dispatch<T> dispatch = new Dispatch<T>(axisController);
+			XMLDispatch<T> dispatch = new XMLDispatch<T>(axisController);
+            dispatch.setMode(clientContext.getServiceMode());
 			return dispatch;
 		}catch(AxisFault e){
 			throw new WebServiceException(e.getMessage());
@@ -143,18 +165,9 @@ public class ClientMediator {
 
 	private ServiceClient getServiceClient(ConfigurationContext axisConfig)
 			throws AxisFault {
-		
-		URL wsdlLocation = clientContext.getWSDLLocation();
-		if (wsdlLocation != null) {
-			Definition definition = clientContext.getWsdlContext().getDefinition();
-			if(definition!=null){
-				return new ServiceClient(axisConfig, definition,
-						getServiceName(), getPortName().getLocalPart());
-			}
-			return new ServiceClient(axisConfig, wsdlLocation,
-					getServiceName(), getPortName().getLocalPart());
-		}
-		return new ServiceClient(axisConfig, null);
+	
+		return new ServiceClient(axisConfig, 
+                clientContext.getServiceDescription().getAxisService());
 
 	}
 
