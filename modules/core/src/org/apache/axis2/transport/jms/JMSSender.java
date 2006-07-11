@@ -210,6 +210,11 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             !AddressingConstants.Final.WSA_ANONYMOUS_URL
                 .equals(msgContext.getTo().getAddress())) {
             endpointAddress = msgContext.getTo().getAddress();
+            
+            if (endpointAddress.equals(AddressingConstants.Final.WSA_NONE_URI)) {
+                //Don't send the message.
+                return;
+            }
         }
         boolean waitForResponse = false;
 
