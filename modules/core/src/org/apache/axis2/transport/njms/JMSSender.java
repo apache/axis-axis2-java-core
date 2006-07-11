@@ -50,26 +50,34 @@ public class JMSSender extends AbstractHandler implements TransportSender {
         log.debug("JMSSender invoke()");
 
         JMSOutTransportInfo transportInfo = null;
-        String targetEpr = null;
+        String targetAddress = null;
 
-        if (msgContext.isServerSide()) {
-            // get the replyto information
-            transportInfo = (JMSOutTransportInfo)
-                msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);
+        // is there a transport url? which may be different from the WS-A To..
+        targetAddress = (String) msgContext.getProperty(
+            MessageContextConstants.TRANSPORT_URL);
 
-        } else {
-            // is there a transport url? which may be different from the WS-A To..
-            targetEpr = (String) msgContext.getProperty(
-                MessageContextConstants.TRANSPORT_URL);
-
-            if (targetEpr == null && msgContext.getTo() != null &&
-                !AddressingConstants.Submission.WSA_ANONYMOUS_URL
-                    .equals(msgContext.getTo().getAddress()) &&
-                !AddressingConstants.Final.WSA_ANONYMOUS_URL
-                    .equals(msgContext.getTo().getAddress())) {
-                targetEpr = msgContext.getTo().getAddress();
+        if (targetAddress != null) {
+            transportInfo = new JMSOutTransportInfo(targetAddress);            
+        }
+        else if (targetAddress == null && msgContext.getTo() != null &&
+            !AddressingConstants.Submission.WSA_ANONYMOUS_URL
+                .equals(msgContext.getTo().getAddress()) &&
+            !AddressingConstants.Final.WSA_ANONYMOUS_URL
+                .equals(msgContext.getTo().getAddress())) {
+            targetAddress = msgContext.getTo().getAddress();
+            
+            if (targetAddress.equals(AddressingConstants.Final.WSA_NONE_URI)) {
+                //Don't send the message.
+                return;
             }
-            transportInfo = new JMSOutTransportInfo(targetEpr);
+            else {
+                transportInfo = new JMSOutTransportInfo(targetAddress);
+            }
+        }
+        else if (msgContext.isServerSide()){
+            // get the jms ReplyTo
+            transportInfo = (JMSOutTransportInfo)
+                msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);                
         }
 
         // should we wait and listen for a response?
@@ -97,7 +105,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
             if (dest == null) {
                 // if it does not exist, create it
-                String name = JMSUtils.getDestination(targetEpr);
+                String name = JMSUtils.getDestination(targetAddress);
                 try {
                     dest = session.createQueue(name);
                 } catch (JMSException e) {
