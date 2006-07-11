@@ -48,13 +48,14 @@ public class RPCUtil {
                 OMElement result = (OMElement) resObject;
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement resWrapper = fac.createOMElement(RETURN_WRAPPER, null);
+                OMElement resWrapper = fac.createOMElement(RETURN_WRAPPER,ns.getName(),
+                        ns.getPrefix());
                 resWrapper.addChild(result);
                 bodyContent.addChild(resWrapper);
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement child = fac.createOMElement(RETURN_WRAPPER, null);
+                OMElement child = fac.createOMElement(RETURN_WRAPPER, ns);
                 child.addChild(fac.createOMText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
@@ -62,7 +63,7 @@ public class RPCUtil {
                         method.getName() + "Response", ns);
                 // Java Beans
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
-                        new QName(RETURN_WRAPPER));
+                        new QName(ns.getName(), RETURN_WRAPPER, ns.getPrefix()));
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
@@ -83,7 +84,8 @@ public class RPCUtil {
     }
 
     public static OMElement getResponseElement(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs, RETURN_WRAPPER);
+        return BeanUtil.getOMElement(resname, objs,
+                new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
     }
 
 }

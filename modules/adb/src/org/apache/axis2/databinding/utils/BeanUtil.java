@@ -40,7 +40,7 @@ import java.util.*;
 
 
 public class BeanUtil {
-    
+
     private static int nsCount = 1;
 
     /**
@@ -454,7 +454,7 @@ public class BeanUtil {
         }
     }
 
-    public static OMElement getOMElement(QName opName, Object [] args, String partName) {
+    public static OMElement getOMElement(QName opName, Object [] args, QName partName) {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;
@@ -503,7 +503,7 @@ public class BeanUtil {
                     if (partName == null) {
                         objects.add(new QName("arg" + argCount));
                     } else {
-                        objects.add(new QName(partName));
+                        objects.add(partName);
                     }
                     if (arg instanceof OMElement) {
                         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -533,7 +533,7 @@ public class BeanUtil {
         stAXOMBuilder.setDoDebug(true);
         return stAXOMBuilder.getDocumentElement();
     }
-    
+
     public static String getUniquePrifix() {
         return "ns" + nsCount++;
     }
