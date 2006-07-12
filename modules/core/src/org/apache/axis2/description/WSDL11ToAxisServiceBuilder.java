@@ -1088,7 +1088,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     private void copyExtensibleElements(List wsdl4jExtensibleElements,
                                         Definition wsdl4jDefinition, AxisDescription description,
-                                        String originOfExtensibilityElements) {
+                                        String originOfExtensibilityElements) throws AxisFault {
         Iterator iterator = wsdl4jExtensibleElements.iterator();
         while (iterator.hasNext()) {
             ExtensibilityElement wsdl4jElement = (ExtensibilityElement) iterator
@@ -1200,6 +1200,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     //find the relevant schema part from the messages
                     Message msg = wsdl4jDefinition.getMessage(soapHeader
                             .getMessage());
+                    if(msg == null) {
+                        throw new AxisFault("message " + soapHeader.getMessage() + " not found in the WSDL ");
+                    }
                     Part msgPart = msg.getPart(soapHeader.getPart());
                     headerMessage.setElement(msgPart.getElementName());
                 }
