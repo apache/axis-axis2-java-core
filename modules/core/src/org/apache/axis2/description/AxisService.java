@@ -985,10 +985,8 @@ public class AxisService extends AxisDescription {
     }
 
     public void setExposedTransports(List transports) {
-        if (transports.size() > 0) {
-            enableAllTransport = false;
-            this.exposedTransports = transports;
-        }
+        enableAllTransport = false;
+        this.exposedTransports = transports;
     }
 
     public void addExposedTransport(String transport) {
